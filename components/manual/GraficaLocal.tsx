@@ -19,24 +19,25 @@ const SECTION_COLORS: Record<string, string> = {
 interface Props {
   current: ProcedureMeta;
   related: ProcedureMeta[];
+  backlinks?: ProcedureMeta[];
 }
 
 const W = 600;
 const H = 340;
 
-export function GraficaLocal({ current, related }: Props) {
+export function GraficaLocal({ current, related, backlinks = [] }: Props) {
   const router = useRouter();
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
   const isPanning = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
   const mouseDownPos = useRef({ x: 0, y: 0 });
+  const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
 
   const { nodes, edges } = useMemo(() => {
     const cx = W / 2;
     const cy = H / 2;
     const radius = Math.min(W, H) * 0.32;
-    const step = (2 * Math.PI) / Math.max(related.length, 1);
 
     const currentNode = {
       id: current.id,
@@ -49,28 +50,54 @@ export function GraficaLocal({ current, related }: Props) {
       r: 14,
     };
 
+    const outgoingStep = Math.PI / Math.max(related.length, 1);
     const relatedNodes = related.map((p, i) => ({
       id: p.id,
       slug: p.slug,
       title: p.title,
       section: p.section,
-      x: cx + radius * Math.cos(i * step - Math.PI / 2),
-      y: cy + radius * Math.sin(i * step - Math.PI / 2),
+      x: cx + radius * Math.cos(i * outgoingStep - Math.PI),
+      y: cy + radius * Math.sin(i * outgoingStep - Math.PI),
       isCurrent: false,
+      relation: "related" as const,
       r: 8,
     }));
 
-    const edges = related.map((p) => ({
-      id: `${current.id}-${p.id}`,
-      source: current.id,
-      target: p.id,
+    const incomingStep = Math.PI / Math.max(backlinks.length, 1);
+    const backlinkNodes = backlinks.map((p, i) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      section: p.section,
+      x: cx + radius * Math.cos(i * incomingStep),
+      y: cy + radius * Math.sin(i * incomingStep),
+      isCurrent: false,
+      relation: "backlink" as const,
+      r: 8,
     }));
 
-    const nodeMap: Record<string, typeof currentNode> = {};
-    for (const n of [currentNode, ...relatedNodes]) nodeMap[n.id] = n;
+    const edges = [
+      ...related.map((p) => ({
+        id: `${current.id}-${p.id}`,
+        source: current.id,
+        target: p.id,
+        relation: "related" as const,
+      })),
+      ...backlinks.map((p) => ({
+        id: `${p.id}-${current.id}`,
+        source: p.id,
+        target: current.id,
+        relation: "backlink" as const,
+      })),
+    ];
 
-    return { nodes: [currentNode, ...relatedNodes], nodeMap, edges };
-  }, [current, related]);
+    const nodeMap: Record<string, typeof currentNode> = {};
+    for (const node of [currentNode, ...relatedNodes, ...backlinkNodes]) {
+      nodeMap[node.id] = node;
+    }
+
+    return { nodes: [currentNode, ...relatedNodes, ...backlinkNodes], nodeMap, edges };
+  }, [backlinks, current, related]);
 
   const nodeMap = useMemo(() => {
     const m: Record<string, (typeof nodes)[0]> = {};
@@ -81,6 +108,7 @@ export function GraficaLocal({ current, related }: Props) {
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) return;
     isPanning.current = true;
+    setCursor("grabbing");
     lastMouse.current = { x: e.clientX, y: e.clientY };
     mouseDownPos.current = { x: e.clientX, y: e.clientY };
   }, []);
@@ -93,7 +121,10 @@ export function GraficaLocal({ current, related }: Props) {
     lastMouse.current = { x: e.clientX, y: e.clientY };
   }, []);
 
-  const onMouseUp = useCallback(() => { isPanning.current = false; }, []);
+  const onMouseUp = useCallback(() => {
+    isPanning.current = false;
+    setCursor("grab");
+  }, []);
 
   const onWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
@@ -120,7 +151,7 @@ export function GraficaLocal({ current, related }: Props) {
         width="100%" height="100%"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        style={{ cursor: isPanning.current ? "grabbing" : "grab" }}
+        style={{ cursor }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
@@ -145,8 +176,11 @@ export function GraficaLocal({ current, related }: Props) {
               <line
                 key={e.id}
                 x1={s.x} y1={s.y} x2={t.x} y2={t.y}
-                stroke={isHighlighted ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.14)"}
+                stroke={e.relation === "backlink"
+                  ? (isHighlighted ? "rgba(56,189,248,0.75)" : "rgba(56,189,248,0.32)")
+                  : (isHighlighted ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.14)")}
                 strokeWidth={isHighlighted ? 1.5 : 0.8}
+                strokeDasharray={e.relation === "backlink" ? "4 3" : undefined}
               />
             );
           })}
@@ -212,6 +246,17 @@ export function GraficaLocal({ current, related }: Props) {
       >
         <Maximize2 className="h-3 w-3" />
       </button>
+
+      <div className="absolute bottom-2 right-2 flex items-center gap-3 rounded-md bg-black/35 px-2 py-1 text-[10px] text-white/60">
+        <span className="inline-flex items-center gap-1">
+          <span className="h-1.5 w-4 rounded-full bg-white/70" />
+          saliente
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="h-1.5 w-4 rounded-full border border-sky-300/70 bg-transparent" />
+          backlink
+        </span>
+      </div>
     </div>
   );
 }

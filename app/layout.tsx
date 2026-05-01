@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
+import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
 import Script from "next/script";
 import "./globals.css";
 
@@ -22,6 +23,7 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
+  interactiveWidget: "resizes-visual",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -29,9 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ViewportHeightObserver />
           <div className="flex flex-col min-h-screen">
             <NavBar />
-            <main className="flex-1 pb-16 md:pb-0">
+            <main className="min-h-0 flex-1 pb-16 md:pb-0">
               {children}
             </main>
           </div>

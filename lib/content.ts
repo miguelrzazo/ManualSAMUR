@@ -1,6 +1,13 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import {
+  buildAutoSynonyms,
+  buildAutoTags,
+  buildBacklinks,
+  deriveRelatedIds,
+  stripMarkdownToText,
+} from "@/lib/manual-data";
 
 const PROCEDURES_DIR = path.join(process.cwd(), "content/procedures");
 
@@ -12,8 +19,10 @@ export interface Procedure {
   tags: string[];
   synonyms: string[];
   related: string[];
+  backlinks: string[];
   updated: string;
   source?: string;
+  searchText: string;
   content: string;
 }
 
@@ -33,7 +42,7 @@ const SECTIONS_ORDER = [
 export function getAllProcedures(): Procedure[] {
   if (!fs.existsSync(PROCEDURES_DIR)) return [];
 
-  return fs
+  const procedures = fs
     .readdirSync(PROCEDURES_DIR)
     .filter((f) => f.endsWith(".md"))
     .map((filename) => {
@@ -45,11 +54,13 @@ export function getAllProcedures(): Procedure[] {
         title: data.title ?? filename,
         section: data.section ?? "General",
         slug: data.slug ?? filename.replace(".md", ""),
-        tags: data.tags ?? [],
-        synonyms: data.synonyms ?? [],
-        related: data.related ?? [],
+        tags: Array.isArray(data.tags) ? data.tags : [],
+        synonyms: Array.isArray(data.synonyms) ? data.synonyms : [],
+        related: Array.isArray(data.related) ? data.related : [],
+        backlinks: [],
         updated: data.updated ?? "",
         source: data.source,
+        searchText: "",
         content,
       } as Procedure;
     })
@@ -59,6 +70,34 @@ export function getAllProcedures(): Procedure[] {
       if (si !== sj) return si - sj;
       return a.id.localeCompare(b.id, "es", { numeric: true });
     });
+
+  const validIds = new Set(procedures.map((procedure) => procedure.id));
+  const enriched = procedures.map((procedure) => {
+    const contentDerived = deriveRelatedIds(procedure.content, validIds).filter((id) => id !== procedure.id);
+    const related = [...new Set([...procedure.related, ...contentDerived])];
+    const tags = procedure.tags.length
+      ? procedure.tags
+      : buildAutoTags(procedure.section, procedure.title, procedure.content);
+    const synonyms = procedure.synonyms.length
+      ? procedure.synonyms
+      : buildAutoSynonyms(procedure.id, procedure.title);
+    const searchText = stripMarkdownToText(procedure.content);
+
+    return {
+      ...procedure,
+      related,
+      tags,
+      synonyms,
+      searchText,
+    };
+  });
+
+  const backlinks = buildBacklinks(enriched);
+
+  return enriched.map((procedure) => ({
+    ...procedure,
+    backlinks: backlinks[procedure.id] ?? [],
+  }));
 }
 
 export function getProcedureBySlug(slug: string): Procedure | null {
@@ -72,7 +111,11 @@ export function getProcedureById(id: string): Procedure | null {
 }
 
 export function getProcedureMeta(): ProcedureMeta[] {
-  return getAllProcedures().map(({ content: _, ...meta }) => meta);
+  return getAllProcedures().map((procedure) => {
+    const { content, ...meta } = procedure;
+    void content;
+    return meta;
+  });
 }
 
 export function getProceduresBySection(): Record<string, ProcedureMeta[]> {
@@ -89,6 +132,14 @@ export function getRelatedProcedures(procedure: Procedure): ProcedureMeta[] {
   if (!procedure.related.length) return [];
   const all = getProcedureMeta();
   return procedure.related
+    .map((id) => all.find((p) => p.id === id))
+    .filter(Boolean) as ProcedureMeta[];
+}
+
+export function getBacklinkProcedures(procedure: Procedure): ProcedureMeta[] {
+  if (!procedure.backlinks.length) return [];
+  const all = getProcedureMeta();
+  return procedure.backlinks
     .map((id) => all.find((p) => p.id === id))
     .filter(Boolean) as ProcedureMeta[];
 }

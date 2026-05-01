@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, X, ChevronDown, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { extractCodeFamily } from "@/lib/manual-data";
 
 interface Code {
   code: string;
@@ -53,6 +54,59 @@ interface GlobalResult extends Code {
   tabPill: string;
 }
 
+const FAMILY_LABELS: Partial<Record<TabKey, Record<string, string>>> = {
+  incidente: {
+    "1": "Accidentes de tráfico",
+    "2": "Traumáticos",
+    "3": "Enfermedad / Patología",
+    "4": "Bomberos / especiales",
+    "5": "Judicial / social",
+    "6": "Ubicación",
+    "7": "Especial / masivos",
+    "8": "Despliegue operativo",
+    "9": "Donante",
+    "10": "Actuación conjunta",
+    "11": "Código infarto",
+    "13": "Código 13",
+    "15": "Politrauma",
+    "16": "SCASEST",
+    "18": "Sepsis",
+    "19": "TEP",
+    "33": "Síncope post esfuerzo",
+  },
+  sva: {
+    C: "Cardiovasculares",
+    R: "Respiratorios",
+    N: "Neurológicos",
+    X: "Intoxicaciones",
+    A: "Anafilaxia",
+    PS: "Psiquiátricos",
+    E: "Endocrino-metabólicos",
+    F: "Agentes físicos",
+    W: "Cierres y no asistenciales",
+    T: "Traumáticos",
+  },
+  svb: {
+    C: "Cardiovasculares",
+    R: "Respiratorios",
+    N: "Neurológicos",
+    D: "Digestivos",
+    G: "Gineco-obstétricos",
+    F: "Agentes físicos",
+    I: "Intoxicaciones",
+    PS: "Psiquiátricos",
+    M: "Miscelánea",
+    W: "Cierres y no asistenciales",
+    T: "Traumáticos",
+  },
+};
+
+function getFamilyMeta(tabKey: TabKey, code: string) {
+  const family = extractCodeFamily(code);
+  const label = FAMILY_LABELS[tabKey]?.[family] ?? `Familia ${family}`;
+  return { family, label };
+}
+
 export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("incidente");
   const [query, setQuery] = useState("");
@@ -60,8 +114,11 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [globalSearch, setGlobalSearch] = useState(false);
 
-  const dataMap: Record<TabKey, Code[]> = { incidente, sva, svb, upsi, pc, icao, comms };
-  const currentData = dataMap[activeTab] ?? [];
+  const dataMap = useMemo<Record<TabKey, Code[]>>(
+    () => ({ incidente, sva, svb, upsi, pc, icao, comms }),
+    [comms, icao, incidente, pc, sva, svb, upsi],
+  );
+  const currentData = useMemo(() => dataMap[activeTab] ?? [], [activeTab, dataMap]);
   const tabInfo = TABS.find((t) => t.key === activeTab)!;
 
   const categories = useMemo(
@@ -94,8 +151,6 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
     }
     return results;
   }, [globalSearch, query, dataMap]);
-
-  const totalResults = globalSearch ? globalResults.length : localFiltered.length;
 
   return (
     <div className="flex flex-col h-full">
@@ -236,45 +291,76 @@ function CodeList({
   expandedRow: string | null;
   setExpandedRow: (k: string | null) => void;
 }) {
+  const grouped = codes.reduce<Record<string, { label: string; items: (Code & { tabKey?: string; tabPill?: string })[] }>>((acc, code) => {
+    const { family, label } = getFamilyMeta(tabKey as TabKey, code.code);
+    if (!acc[family]) {
+      acc[family] = { label, items: [] };
+    }
+    acc[family].items.push(code);
+    return acc;
+  }, {});
+
   return (
-    <div className="divide-y divide-border/30">
-      {codes.map((code, i) => {
-        const rowKey = `${tabKey}-${code.code}-${i}`;
-        const isExpanded = expandedRow === rowKey;
-        const pill = code.tabPill ?? tabPill;
-        return (
-          <div key={rowKey}>
-            <button
-              className="w-full flex items-center gap-3 px-4 md:px-6 py-3 hover:bg-muted/30 transition-colors text-left"
-              onClick={() => setExpandedRow(isExpanded ? null : rowKey)}
-            >
-              <span className={cn(
-                "font-mono font-bold text-sm px-2.5 py-1 rounded-lg flex-shrink-0 min-w-[3.5rem] text-center tabular-nums",
-                pill
-              )}>
-                {code.code}
-              </span>
-              <span className="flex-1 text-sm font-medium leading-snug">{code.name}</span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full hidden sm:inline-flex flex-shrink-0 whitespace-nowrap">
-                {code.category}
-              </span>
-              {code.description && (
-                <ChevronDown className={cn(
-                  "h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0 transition-transform",
-                  isExpanded && "rotate-180"
-                )} />
-              )}
-            </button>
-            {isExpanded && code.description && (
-              <div className="px-4 md:px-6 pb-3">
-                <div className="ml-[calc(3.5rem+0.75rem)] text-sm text-muted-foreground leading-relaxed bg-muted/30 px-3 py-2 rounded-lg">
-                  {code.description}
-                </div>
-              </div>
-            )}
+    <div>
+      {Object.entries(grouped).map(([family, group]) => (
+        <section key={family} className="border-b border-border/30">
+          <div className="sticky top-0 z-10 px-4 md:px-6 py-2.5 bg-background/90 backdrop-blur-sm border-b border-border/30">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-primary">{family}</span>
+              <span className="text-sm font-semibold">{group.label}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{group.items.length}</span>
+            </div>
           </div>
-        );
-      })}
+
+          <div className="divide-y divide-border/20">
+            {group.items.map((code, i) => {
+              const rowKey = `${tabKey}-${family}-${code.code}-${i}`;
+              const isExpanded = expandedRow === rowKey;
+              const pill = code.tabPill ?? tabPill;
+
+              return (
+                <div key={rowKey}>
+                  <button
+                    className="w-full flex items-start gap-3 px-4 md:px-6 py-3.5 hover:bg-muted/30 transition-colors text-left"
+                    onClick={() => setExpandedRow(isExpanded ? null : rowKey)}
+                  >
+                    <span className={cn(
+                      "font-mono font-bold text-sm px-2.5 py-1 rounded-lg flex-shrink-0 min-w-[4.2rem] text-center tabular-nums",
+                      pill,
+                    )}>
+                      {code.code}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold leading-snug">{code.name}</div>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {group.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full inline-flex flex-shrink-0 whitespace-nowrap">
+                          {code.category}
+                        </span>
+                      </div>
+                    </div>
+                    {code.description && (
+                      <ChevronDown className={cn(
+                        "h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0 mt-1 transition-transform",
+                        isExpanded && "rotate-180",
+                      )} />
+                    )}
+                  </button>
+                  {isExpanded && code.description && (
+                    <div className="px-4 md:px-6 pb-4">
+                      <div className="ml-[calc(4.2rem+0.75rem)] text-sm text-muted-foreground leading-relaxed bg-muted/30 px-3 py-2.5 rounded-lg border border-border/40">
+                        {code.description}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

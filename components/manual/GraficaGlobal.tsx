@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useCallback, useEffect } from "react";
+import { useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import type { ProcedureMeta } from "@/lib/content";
@@ -141,6 +141,7 @@ export function GraficaGlobal({ procedures }: Props) {
   const isPanning = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
   const mouseDownPos = useRef({ x: 0, y: 0 });
+  const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
 
   const { nodes, edges } = useMemo(() => {
     const edgeSet = new Set<string>();
@@ -197,6 +198,7 @@ export function GraficaGlobal({ procedures }: Props) {
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) return;
     isPanning.current = true;
+    setCursor("grabbing");
     lastMouse.current = { x: e.clientX, y: e.clientY };
     mouseDownPos.current = { x: e.clientX, y: e.clientY };
   }, []);
@@ -211,6 +213,7 @@ export function GraficaGlobal({ procedures }: Props) {
 
   const onMouseUp = useCallback(() => {
     isPanning.current = false;
+    setCursor("grab");
   }, []);
 
   const onWheel = useCallback((e: React.WheelEvent) => {
@@ -245,7 +248,7 @@ export function GraficaGlobal({ procedures }: Props) {
         height="100%"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        style={{ cursor: isPanning.current ? "grabbing" : "grab" }}
+        style={{ cursor }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}

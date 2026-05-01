@@ -62,7 +62,7 @@
   {
     "id": "lidocaina-perf",
     "drug": "Lidocaína",
-    "drugId": "lidocaina",
+    "drugId": "lidocaina-iv",
     "category": "Antiarrítmicos",
     "indication": "Mantenimiento tras control de TV/FV si amiodarona no disponible",
     "recipe": "1.000 mg + 500 ml SF → 2 mg/ml",
@@ -146,7 +146,7 @@
   {
     "id": "magnesio-perf",
     "drug": "Sulfato de Magnesio",
-    "drugId": "magnesio",
+    "drugId": "sulfato-magnesio",
     "category": "Metabólico",
     "indication": "Torsades de pointes. Eclampsia/preeclampsia grave. Broncoespasmo refractario.",
     "recipe": "2 g en 10 ml SF (para bolo) → 200 mg/ml\nMantenimiento eclampsia: 10 g + 500 ml SF → 20 mg/ml",
@@ -170,7 +170,7 @@
   {
     "id": "insulina-perf",
     "drug": "Insulina Regular",
-    "drugId": "insulina",
+    "drugId": "insulina-regular",
     "category": "Metabólico",
     "indication": "Hiperpotasemia grave (K > 6,5). CAD con glucemia > 200 mg/dl.",
     "recipe": "50 UI + 50 ml SF → 1 UI/ml",
