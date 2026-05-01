@@ -15,20 +15,24 @@ interface Props {
   validIds?: string[];
   className?: string;
   onToggle?: (isFavorite: boolean) => void;
+  /** When provided, overrides the internal state (controlled mode) */
+  isFavorited?: boolean;
 }
 
-export function FavoriteButton({ procedureId, validIds, className, onToggle }: Props) {
+export function FavoriteButton({ procedureId, validIds, className, onToggle, isFavorited }: Props) {
   const validIdSet = useMemo(() => new Set(validIds ?? [procedureId]), [procedureId, validIds]);
-  const [isFavorite, setIsFavorite] = useState(() =>
+  const [isFavoriteLocal, setIsFavoriteLocal] = useState(() =>
     readCollectionCookie(FAVORITES_COOKIE, validIdSet).includes(procedureId),
   );
+
+  const isFavorite = isFavorited !== undefined ? isFavorited : isFavoriteLocal;
 
   function handleToggle() {
     const current = readCollectionCookie(FAVORITES_COOKIE, validIdSet);
     const next = toggleFavoriteId(current, procedureId);
     writeCollectionCookie(FAVORITES_COOKIE, next);
     const nextValue = next.includes(procedureId);
-    setIsFavorite(nextValue);
+    setIsFavoriteLocal(nextValue);
     onToggle?.(nextValue);
   }
 

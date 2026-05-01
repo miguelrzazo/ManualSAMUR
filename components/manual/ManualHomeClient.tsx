@@ -32,10 +32,12 @@ interface Props {
 function ProcedureRow({
   procedure,
   validIds,
+  favoriteIds,
   onFavoritesChange,
 }: {
   procedure: ProcedureMeta;
   validIds: string[];
+  favoriteIds: string[];
   onFavoritesChange: () => void;
 }) {
   return (
@@ -43,6 +45,7 @@ function ProcedureRow({
       <FavoriteButton
         procedureId={procedure.id}
         validIds={validIds}
+        isFavorited={favoriteIds.includes(procedure.id)}
         className="h-8 w-8 p-0 flex-shrink-0"
         onToggle={onFavoritesChange}
       />
@@ -63,12 +66,14 @@ function CollectionSection({
   title,
   procedures,
   validIds,
+  favoriteIds,
   onFavoritesChange,
 }: {
   icon: React.ReactNode;
   title: string;
   procedures: ProcedureMeta[];
   validIds: string[];
+  favoriteIds: string[];
   onFavoritesChange: () => void;
 }) {
   if (!procedures.length) return null;
@@ -86,6 +91,7 @@ function CollectionSection({
             key={`${title}-${procedure.id}`}
             procedure={procedure}
             validIds={validIds}
+            favoriteIds={favoriteIds}
             onFavoritesChange={onFavoritesChange}
           />
         ))}
@@ -138,6 +144,7 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
           title="Favoritos"
           procedures={favorites}
           validIds={validIds}
+          favoriteIds={favoriteIds}
           onFavoritesChange={refreshCollections}
         />
         <CollectionSection
@@ -145,6 +152,7 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
           title="Recientes"
           procedures={recents}
           validIds={validIds}
+          favoriteIds={favoriteIds}
           onFavoritesChange={refreshCollections}
         />
       </div>
@@ -168,6 +176,7 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
                       key={procedure.id}
                       procedure={procedure}
                       validIds={validIds}
+                      favoriteIds={favoriteIds}
                       onFavoritesChange={refreshCollections}
                     />
                   ))}

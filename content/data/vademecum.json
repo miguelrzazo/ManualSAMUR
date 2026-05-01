@@ -1,27 +1,110 @@
 [
   {
+    "id": "aspirina",
+    "name": "Ácido Acetilsalicílico",
+    "synonyms": [
+      "AAS",
+      "Aspirina"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Antiagregantes",
+    "presentation": "Comp 300 mg / 500 mg",
+    "indication": "SCA (SCASEST y SCACEST). ACV isquémico agudo.",
+    "dose": "SCA: 300 mg VO masticado (dosis única de carga)\nDosis de mantenimiento: 100 mg/24h (hospitalaria)",
+    "route": [
+      "VO"
+    ],
+    "contraindications": "Alergia a AINEs. Hemorragia activa. Úlcera péptica activa. Hemofilia.",
+    "notes": "Masticar (no tragar entero) para absorción más rápida. Dar siempre en el SCA salvo contraindicación absoluta."
+  },
+  {
+    "id": "acido-tranexamico",
+    "name": "Ácido Tranexámico",
+    "synonyms": [
+      "Amchafibrin",
+      "TXA"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Hemostáticos",
+    "presentation": "Amp 500 mg/5 ml (100 mg/ml)",
+    "indication": "Hemorragia traumática (dentro de las 3 horas del trauma). Hemorragia postparto. Hemorragia mayor.",
+    "dose": "Trauma: 1 g IV en 10 min; luego 1 g en 8h\nHemorragia postparto: 1 g IV en 10 min; repetir 1 g a los 30 min si no cede",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Antecedente de trombosis (relativa). Insuficiencia renal severa (reducir dosis).",
+    "notes": "Antifibrinolítico. Máxima eficacia en las primeras 3h del trauma (estudio CRASH-2). No dar más allá de las 3h tras el evento salvo hemorragia obstétrica."
+  },
+  {
+    "id": "adenosina",
+    "name": "Adenosina",
+    "synonyms": [],
+    "category": "Cardiovascular",
+    "subcategory": "Antiarrítmicos",
+    "presentation": "Amp 6 mg/2 ml",
+    "indication": "TSV paroxística con QRS estrecho. Diagnóstico diferencial TSV vs TV.",
+    "dose": "6 mg IV rápido + 20 ml SF flush; si no revierte a los 2 min: 12 mg. Puede repetirse 12 mg una vez.",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Bloqueo AV 2.º-3.er grado. Síndrome del seno enfermo sin marcapasos. Asma bronquial severo. WPW con FA.",
+    "notes": "Administrar en vena antecubital o más central. El efecto es muy breve (vida media < 10 s). Puede causar asistolia transitoria — advertir al paciente."
+  },
+  {
     "id": "adrenalina",
     "name": "Adrenalina",
-    "synonyms": ["Epinefrina"],
+    "synonyms": [
+      "Epinefrina"
+    ],
     "category": "Cardiovascular",
     "subcategory": "Vasoactivos",
     "presentation": "Amp 1 mg/1 ml",
     "indication": "PCR (FV/TVSP/AESP/Asistolia). Anafilaxia grave. Broncoespasmo refractario.",
     "dose": "PCR: 1 mg IV/IO cada 3-5 min\nAnafilaxia adulto: 0,5 mg IM cara anterolateral muslo\nAnafilaxia niño: 0,01 mg/kg IM (máx 0,5 mg)\nBroncoespasmo: 0,3 mg SC",
-    "route": ["IV", "IO", "IM", "SC"],
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "SC"
+    ],
     "contraindications": "Sin contraindicaciones absolutas en PCR. Precaución en HTA severa y taquiarritmias.",
     "notes": "En PCR diluir en 10 ml SF para IV en bolo. En anafilaxia preferir IM sobre IV salvo shock refractario. Proteger de la luz."
   },
   {
+    "id": "alteplasa",
+    "name": "Alteplasa",
+    "synonyms": [
+      "Actilyse",
+      "rtPA",
+      "Activador tisular del plasminógeno recombinante"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Fibrinolíticos",
+    "presentation": "Vial 50 mg / 100 mg (liofilizado)",
+    "indication": "TEP masivo con compromiso hemodinámico. Ictus isquémico agudo (< 4,5h de inicio).",
+    "dose": "TEP masivo: 100 mg IV en 2h (bolo 10 mg en 1-2 min + resto en 2h)\nIctus isquémico: 0,9 mg/kg (máx 90 mg) en 1h (10% como bolo inicial en 1 min)",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Hemorragia activa o reciente. Cirugía mayor < 3 meses. Ictus hemorrágico previo. HTA no controlada (> 185/110 mmHg). TCE reciente.",
+    "notes": "En TEP masivo: iniciar solo si hay colapso hemodinámico y no hay contraindicación absoluta. En ictus: uso exclusivamente hospitalario — el SAMUR puede activar código ictus y preparar traslado urgente. NO indicado en SCACEST prehospitalario en España."
+  },
+  {
     "id": "amiodarona",
     "name": "Amiodarona",
-    "synonyms": ["Trangorex"],
+    "synonyms": [
+      "Trangorex"
+    ],
     "category": "Cardiovascular",
     "subcategory": "Antiarrítmicos",
     "presentation": "Amp 150 mg/3 ml",
     "indication": "FV/TVSP refractaria a desfibrilación. TSV y FA con respuesta ventricular rápida. TV estable.",
     "dose": "PCR: 300 mg IV/IO diluidos en 20 ml glucosa 5% (2ª dosis 150 mg)\nArritmia estable: 5 mg/kg IV en 20-60 min, luego perfusión 900 mg/24h",
-    "route": ["IV", "IO"],
+    "route": [
+      "IV",
+      "IO"
+    ],
     "contraindications": "Bloqueo AV de 2.º-3.er grado sin marcapasos. Bradicardia sinusal grave. Alergia al yodo.",
     "notes": "Incompatible con suero salino — usar glucosa 5%. Puede prolongar QT. Vía periférica puede causar flebitis."
   },
@@ -34,35 +117,160 @@
     "presentation": "Amp 1 mg/1 ml",
     "indication": "Bradicardia sinusal sintomática. Bloqueo AV. Asistolia (uso actual limitado en guías ERC). Intoxicación por organofosforados.",
     "dose": "Bradicardia: 0,5 mg IV cada 3-5 min (máx 3 mg)\nIntoxicación organofosforados: 2-4 mg IV repetir hasta secar secreciones",
-    "route": ["IV", "IO", "IM"],
+    "route": [
+      "IV",
+      "IO",
+      "IM"
+    ],
     "contraindications": "Glaucoma de ángulo cerrado. Íleo paralítico. Retención urinaria por obstrucción.",
     "notes": "Dosis < 0,5 mg puede causar bradicardia paradójica. En PCR su uso rutinario no está recomendado por ERC 2021."
   },
   {
-    "id": "adenosina",
-    "name": "Adenosina",
-    "synonyms": [],
-    "category": "Cardiovascular",
-    "subcategory": "Antiarrítmicos",
-    "presentation": "Amp 6 mg/2 ml",
-    "indication": "TSV paroxística con QRS estrecho. Diagnóstico diferencial TSV vs TV.",
-    "dose": "6 mg IV rápido + 20 ml SF flush; si no revierte a los 2 min: 12 mg. Puede repetirse 12 mg una vez.",
-    "route": ["IV"],
-    "contraindications": "Bloqueo AV 2.º-3.er grado. Síndrome del seno enfermo sin marcapasos. Asma bronquial severo. WPW con FA.",
-    "notes": "Administrar en vena antecubital o más central. El efecto es muy breve (vida media < 10 s). Puede causar asistolia transitoria — advertir al paciente."
+    "id": "bicarbonato",
+    "name": "Bicarbonato Sódico 8,4%",
+    "synonyms": [
+      "NaHCO3"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Electrolitos",
+    "presentation": "Amp 10 ml (1 mEq/ml) — Frasco 250 ml",
+    "indication": "Acidosis metabólica severa (pH < 7,1). PCR prolongada. Hiperpotasemia grave. Intoxicación por ATC y cocaína (PCR).",
+    "dose": "1 mEq/kg IV (adulto: 50-100 mEq) — repetir 0,5 mEq/kg según gasometría",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Alcalosis metabólica. Hipocalcemia (sin corregir). Hipocapnia.",
+    "notes": "Incompatible con calcio (precipita). Produce CO2 → necesario hiperventilación. En PCR: uso de rutina NO recomendado salvo hiperpotasemia/ATC/cocaína."
   },
   {
-    "id": "noradrenalina",
-    "name": "Noradrenalina",
-    "synonyms": ["Norepinefrina", "Levophed"],
+    "id": "ipratropio",
+    "name": "Bromuro de Ipratropio",
+    "synonyms": [
+      "Atrovent"
+    ],
+    "category": "Respiratorio",
+    "subcategory": "Broncodilatadores",
+    "presentation": "Nebulización 0,5 mg/2 ml — Inhalador 20 mcg/puff",
+    "indication": "Crisis de asma grave o moderada (en combinación con salbutamol). EPOC agudizado.",
+    "dose": "Nebulización: 0,5 mg nebulizado; puede combinarse con salbutamol en el mismo nebulizador\nIVF: 2-4 puffs",
+    "route": [
+      "Inhalado",
+      "Nebulizado"
+    ],
+    "contraindications": "Alergia a atropina o bromuro.",
+    "notes": "Efecto más lento que salbutamol (inicio 15-30 min, pico 1-2h). Sinérgico con salbutamol en crisis grave. Poco efecto sistémico."
+  },
+  {
+    "id": "carbon-activado",
+    "name": "Carbón Activado",
+    "synonyms": [
+      "Carbón Medicinalis",
+      "Carbón Medicinal"
+    ],
+    "category": "Antídotos",
+    "subcategory": "Descontaminación gastrointestinal",
+    "presentation": "Polvo/suspensión 50 g/250 ml",
+    "indication": "Intoxicaciones agudas por vía oral (< 1h tras ingesta). Sobredosis de fármacos adsorbibles.",
+    "dose": "Adulto: 50 g VO (suspensión acuosa)\nNiño: 1 g/kg VO (máx 50 g)",
+    "route": [
+      "VO"
+    ],
+    "contraindications": "Vía aérea no protegida / GCS alterado (riesgo aspiración). Ingesta de cáusticos o hidrocarburos. Íleo paralítico. Perforación GI.",
+    "notes": "Eficacia óptima en la primera hora tras la ingesta. No adsorbe: alcoholes, ácidos/bases fuertes, metales pesados, litio, hierro. Administrar con SNG si el paciente no puede tragar."
+  },
+  {
+    "id": "cloruro-calcico",
+    "name": "Cloruro Cálcico 10%",
+    "synonyms": [
+      "CaCl2"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Electrolitos",
+    "presentation": "Amp 10 ml (100 mg/ml = 6,8 mEq/amp)",
+    "indication": "Hipocalcemia grave. Hiperpotasemia con cambios ECG. Intoxicación por bloqueantes de calcio. Hipermagnesemia.",
+    "dose": "5-10 ml IV lento en 5-10 min; repetir si necesario",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Hipercalcemia. Fibrilación ventricular. Digitalización (aumenta toxicidad).",
+    "notes": "Incompatible con bicarbonato (precipita). Muy irritante IV periférico — usar vía central preferible. Tres veces más potente en aporte de calcio que el gluconato cálcico."
+  },
+  {
+    "id": "dexametasona",
+    "name": "Dexametasona",
+    "synonyms": [
+      "Fortecortin"
+    ],
+    "category": "Respiratorio",
+    "subcategory": "Corticosteroides",
+    "presentation": "Amp 4 mg/1 ml — Amp 8 mg/2 ml",
+    "indication": "Edema cerebral. Crup laríngeo. Vómitos (antiemético oncológico). Meningitis bacteriana.",
+    "dose": "Edema cerebral: 10 mg IV (carga) luego 4 mg/6h\nCrup: 0,15-0,6 mg/kg IM/VO (máx 10 mg)",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "VO"
+    ],
+    "contraindications": "Similar a metilprednisolona.",
+    "notes": "Mayor potencia antiinflamatoria que metilprednisolona (7x). Menor efecto mineralocorticoide. No de elección en crisis asmática aguda."
+  },
+  {
+    "id": "diazepam",
+    "name": "Diazepam",
+    "synonyms": [
+      "Valium"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Benzodiacepinas",
+    "presentation": "Amp 10 mg/2 ml — Comp 5 mg/10 mg",
+    "indication": "Status epiléptico. Sedación. Espasmo muscular. Síndrome de abstinencia alcohólica.",
+    "dose": "Status epiléptico adulto: 10 mg IV lento (2 mg/min); repetir 5 mg si no cede\nNiño: 0,3 mg/kg IV/rectal\nSedación: 2-5 mg IV",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "Rectal"
+    ],
+    "contraindications": "Insuficiencia respiratoria grave no ventilada. Miastenia gravis.",
+    "notes": "No mezclar con otros fármacos en la misma jeringa. La vía IM tiene absorción errática — preferir IV. Sedación prolongada por vida media larga (20-100h)."
+  },
+  {
+    "id": "diclofenaco",
+    "name": "Diclofenaco",
+    "synonyms": [
+      "Voltaren inyectable",
+      "Diclofenaco sódico"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "AINEs",
+    "presentation": "Amp 75 mg/3 ml",
+    "indication": "Cólico renal/biliar. Dolor musculoesquelético agudo. Dismenorrea. Dolor postoperatorio.",
+    "dose": "75 mg IM profundo en glúteo; puede repetirse a las 4-6h si necesario\nDosis máxima: 150 mg/día",
+    "route": [
+      "IM"
+    ],
+    "contraindications": "Insuficiencia renal o hepática graves. Úlcera péptica activa. Hemorragia GI. Embarazo (3.er trimestre). Alergia a AINEs. ICC.",
+    "notes": "Administrar en inyección IM profunda en glúteo (no en deltoides). Alta eficacia en cólico renal. No administrar IV directo (formulación no apta). Riesgo cardiovascular en uso crónico."
+  },
+  {
+    "id": "dobutamina",
+    "name": "Dobutamina",
+    "synonyms": [
+      "Dobutrex"
+    ],
     "category": "Cardiovascular",
     "subcategory": "Vasoactivos",
-    "presentation": "Amp 4 mg/4 ml (1 mg/ml)",
-    "indication": "Shock séptico. Shock distributivo. Hipotensión refractaria a fluidos.",
-    "dose": "0,1-3 mcg/kg/min IV en perfusión continua; titular según TA",
-    "route": ["IV"],
-    "contraindications": "Hipovolemia no corregida (relativa). Precaución en cardiopatía isquémica.",
-    "notes": "Requiere vía central para perfusión prolongada. Extravasación causa necrosis tisular — usar vía periférica solo en emergencia."
+    "presentation": "Amp 250 mg/20 ml (12,5 mg/ml)",
+    "indication": "Shock cardiogénico con PA mantenida. Insuficiencia cardíaca aguda con bajo gasto y PA conservada.",
+    "dose": "2-20 mcg/kg/min IV en perfusión continua; iniciar a 2,5 mcg/kg/min y titular por respuesta",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Estenosis aórtica severa. Miocardiopatía hipertrófica obstructiva. Taquiarritmias.",
+    "notes": "Inotrópico positivo con leve vasodilatación periférica. Puede aumentar la FC — monitorizar ECG. No usar si FC > 130 lpm. No mezclar con bicarbonato."
   },
   {
     "id": "dopamina",
@@ -73,412 +281,140 @@
     "presentation": "Amp 200 mg/5 ml (40 mg/ml)",
     "indication": "Shock cardiogénico. Bradicardia refractaria a atropina (como puente a marcapasos).",
     "dose": "2-20 mcg/kg/min IV en perfusión continua\nBradicardia: 5-10 mcg/kg/min",
-    "route": ["IV"],
+    "route": [
+      "IV"
+    ],
     "contraindications": "FV. Feocromocitoma.",
     "notes": "A dosis bajas (< 5 mcg/kg/min) efecto renal predominante. A dosis medias (5-10 mcg/kg/min) efecto inotrópico. A dosis altas (> 10 mcg/kg/min) efecto vasoconstrictor."
   },
   {
-    "id": "nitroglicerina",
-    "name": "Nitroglicerina",
-    "synonyms": ["NTG", "Solinitrina", "Trinipatch"],
+    "id": "enoxaparina",
+    "name": "Enoxaparina",
+    "synonyms": [
+      "Clexane",
+      "HBPM"
+    ],
     "category": "Cardiovascular",
-    "subcategory": "Vasodilatadores",
-    "presentation": "Amp 5 mg/1 ml — Comp sublingual 0,4 mg",
-    "indication": "Angina de pecho. SCA. Edema agudo de pulmón. HTA hipertensiva.",
-    "dose": "SL: 0,4 mg sl; repetir a los 5 min (máx 3 dosis)\nIV: 10-200 mcg/min en perfusión; ajustar por TA",
-    "route": ["SL", "IV", "Tópica"],
-    "contraindications": "TA sistólica < 90 mmHg. Uso de inhibidores de PDE-5 (sildenafilo, tadalafilo) en las últimas 24-48h. Infarto de VD.",
-    "notes": "Dilatar periférica y venosa → puede causar hipotensión importante. Pedir TA antes de administrar."
+    "subcategory": "Anticoagulantes",
+    "presentation": "Jeringa precargada 20/40/60/80/100 mg SC",
+    "indication": "SCACEST (< 75 años sin insuficiencia renal). SCASEST/NSTEMI. Profilaxis y tratamiento de TVP/TEP.",
+    "dose": "SCACEST < 75 años: 30 mg IV bolo + 1 mg/kg SC cada 12h\nSCACEST ≥ 75 años: 0,75 mg/kg SC cada 12h (sin bolo IV)\nSCASEST: 1 mg/kg SC cada 12h",
+    "route": [
+      "SC",
+      "IV"
+    ],
+    "contraindications": "Insuficiencia renal grave (ClCr < 30 ml/min — reducir dosis o usar HNF). HIT previa. Hemorragia activa.",
+    "notes": "No requiere monitorización de TTPA rutinaria. En insuficiencia renal grave ajustar a 1 mg/kg/24h. No tiene antídoto tan eficaz como la HNF (protamina neutraliza parcialmente ~60%)."
   },
   {
-    "id": "aspirina",
-    "name": "Ácido Acetilsalicílico",
-    "synonyms": ["AAS", "Aspirina"],
+    "id": "esmolol",
+    "name": "Esmolol",
+    "synonyms": [
+      "Brevibloc"
+    ],
     "category": "Cardiovascular",
-    "subcategory": "Antiagregantes",
-    "presentation": "Comp 300 mg / 500 mg",
-    "indication": "SCA (SCASEST y SCACEST). ACV isquémico agudo.",
-    "dose": "SCA: 300 mg VO masticado (dosis única de carga)\nDosis de mantenimiento: 100 mg/24h (hospitalaria)",
-    "route": ["VO"],
-    "contraindications": "Alergia a AINEs. Hemorragia activa. Úlcera péptica activa. Hemofilia.",
-    "notes": "Masticar (no tragar entero) para absorción más rápida. Dar siempre en el SCA salvo contraindicación absoluta."
+    "subcategory": "Antihipertensivos",
+    "presentation": "Vial 2500 mg/250 ml (10 mg/ml)",
+    "indication": "TSV/FA con respuesta ventricular rápida y PA conservada. Crisis hipertensiva perioperatoria. Control de FC en disección aórtica.",
+    "dose": "Bolo de carga: 500 mcg/kg IV en 1 min\nMantenimiento: 50-200 mcg/kg/min en perfusión\nTitular incrementando 50 mcg/kg/min cada 4 min según respuesta",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Asma bronquial. Broncoespasmo. Bloqueo AV 2.º-3.er grado. Bradicardia severa. Hipotensión.",
+    "notes": "Betabloqueante de vida media muy corta (~9 min) — ideal para titular en emergencias. Los efectos desaparecen en 20-30 min tras suspensión. No usar en broncoespasmo."
   },
   {
-    "id": "midazolam",
-    "name": "Midazolam",
-    "synonyms": ["Dormicum"],
+    "id": "etomidato",
+    "name": "Etomidato",
+    "synonyms": [
+      "Hypnovel",
+      "Etomidate-Lipuro"
+    ],
     "category": "Analgesia y Sedación",
-    "subcategory": "Benzodiacepinas",
-    "presentation": "Amp 15 mg/3 ml (5 mg/ml) — Amp 5 mg/5 ml (1 mg/ml)",
-    "indication": "Sedación procedimental. Status epiléptico. Sedoanalgesia en intubación. Agitación psicomotriz.",
-    "dose": "Sedación: 0,05-0,1 mg/kg IV lento (adulto: 2-5 mg)\nStatus epiléptico: 10 mg IM/IO/intranasal\nInducción IOT: 0,1-0,2 mg/kg IV",
-    "route": ["IV", "IO", "IM", "Intranasal"],
-    "contraindications": "Alergia a BZD. Insuficiencia respiratoria severa no ventilada. Miastenia gravis.",
-    "notes": "Vida media 1-4h. Antagonizable con flumazenil. Administrar lento IV para evitar apnea. Reducir dosis en ancianos y EPOC."
-  },
-  {
-    "id": "diazepam",
-    "name": "Diazepam",
-    "synonyms": ["Valium"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Benzodiacepinas",
-    "presentation": "Amp 10 mg/2 ml — Comp 5 mg/10 mg",
-    "indication": "Status epiléptico. Sedación. Espasmo muscular. Síndrome de abstinencia alcohólica.",
-    "dose": "Status epiléptico adulto: 10 mg IV lento (2 mg/min); repetir 5 mg si no cede\nNiño: 0,3 mg/kg IV/rectal\nSedación: 2-5 mg IV",
-    "route": ["IV", "IO", "IM", "Rectal"],
-    "contraindications": "Insuficiencia respiratoria grave no ventilada. Miastenia gravis.",
-    "notes": "No mezclar con otros fármacos en la misma jeringa. La vía IM tiene absorción errática — preferir IV. Sedación prolongada por vida media larga (20-100h)."
-  },
-  {
-    "id": "morfina",
-    "name": "Morfina",
-    "synonyms": ["Cloruro mórfico"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Opioides",
-    "presentation": "Amp 10 mg/1 ml",
-    "indication": "Dolor severo (SCA, quemaduras, trauma). Edema agudo de pulmón.",
-    "dose": "Adulto: 2-5 mg IV lento, repetir 2-3 mg/10 min según respuesta (máx 0,1 mg/kg)\nNiño: 0,05-0,1 mg/kg IV",
-    "route": ["IV", "IO", "IM", "SC"],
-    "contraindications": "Depresión respiratoria severa. Hipotensión. TCE con hipertensión intracraneal.",
-    "notes": "Diluir a 1 mg/ml con SF. Tener naloxona disponible. Puede causar hipotensión y náuseas."
+    "subcategory": "Anestésicos IV",
+    "presentation": "Amp 20 mg/10 ml (2 mg/ml)",
+    "indication": "Inducción en IOT de secuencia rápida (RSI) como alternativa al propofol, especialmente en pacientes hemodinámicamente inestables.",
+    "dose": "RSI: 0,3 mg/kg IV (adulto: ~20 mg IV)",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Insuficiencia suprarrenal conocida. Uso prolongado (suprime síntesis de cortisol).",
+    "notes": "Mínimo efecto hemodinámico — de elección en RSI con hipotensión o shock. No tiene propiedades analgésicas — asociar opioide. Suprime cortisol hasta 24h incluso con dosis única."
   },
   {
     "id": "fentanilo",
     "name": "Fentanilo",
-    "synonyms": ["Fentanest"],
+    "synonyms": [
+      "Fentanest"
+    ],
     "category": "Analgesia y Sedación",
     "subcategory": "Opioides",
     "presentation": "Amp 0,5 mg/10 ml (50 mcg/ml)",
     "indication": "Analgesia potente. Inducción a IOT (componente analgésico). Dolor severo con compromiso hemodinámico.",
     "dose": "Analgesia: 1-2 mcg/kg IV lento (adulto: 50-100 mcg)\nInducción IOT: 2-3 mcg/kg IV",
-    "route": ["IV", "IO", "Intranasal"],
+    "route": [
+      "IV",
+      "IO",
+      "Intranasal"
+    ],
     "contraindications": "Depresión respiratoria severa no ventilada.",
     "notes": "100 veces más potente que morfina. Inicio de acción rápido (1-2 min IV). Menor efecto hipotensor que morfina. Intranasalmente: dosis igual pero 50% biodisponibilidad."
   },
   {
-    "id": "ketamina",
-    "name": "Ketamina",
-    "synonyms": ["Ketolar"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Anestésicos disociativos",
-    "presentation": "Vial 500 mg/10 ml (50 mg/ml)",
-    "indication": "Inducción en IOT de secuencia rápida (RSI). Sedación procedimental. Analgesia en trauma. Broncoespasmo severo.",
-    "dose": "RSI IV: 1-2 mg/kg IV\nSedación: 0,5-1 mg/kg IV / 4-6 mg/kg IM\nAnalgesia subanestésica: 0,1-0,3 mg/kg IV",
-    "route": ["IV", "IO", "IM"],
-    "contraindications": "HTA severa no controlada. Aneurisma cerebral/aórtico conocido. Psicosis activa.",
-    "notes": "Anestésico disociativo: mantiene reflejos laríngeos y tono muscular. Broncodilatador útil en asma. Puede provocar hipertensión e hipersalivación. Asociar midazolam para reducir alucinaciones."
-  },
-  {
-    "id": "propofol",
-    "name": "Propofol",
-    "synonyms": ["Diprivan"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Anestésicos IV",
-    "presentation": "Amp/vial 200 mg/20 ml (10 mg/ml)",
-    "indication": "Inducción anestésica en IOT. Sedación en paciente ventilado.",
-    "dose": "Inducción: 1-2 mg/kg IV lento (reducir en ancianos y compromiso HD)\nSedación: 0,3-4 mg/kg/h en perfusión",
-    "route": ["IV"],
-    "contraindications": "Alergia al huevo o soja. Hipovolemia severa. Bradicardia severa.",
-    "notes": "Produce hipotensión importante. No tiene propiedades analgésicas. Usar siempre con opioide para IOT. Agitar antes de usar (emulsión lipídica)."
-  },
-  {
-    "id": "succinilcolina",
-    "name": "Succinilcolina",
-    "synonyms": ["Suxametonio", "Anectine"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Bloqueantes neuromusculares",
-    "presentation": "Amp 200 mg/2 ml (100 mg/ml)",
-    "indication": "Relajación muscular para IOT de secuencia rápida (RSI) — fármaco de elección.",
-    "dose": "1-1,5 mg/kg IV (adulto: 100 mg IV)",
-    "route": ["IV", "IO"],
-    "contraindications": "Hiperpotasemia (quemados > 24h, aplastamientos > 24h, paraplejia crónica). Miopatías. Historia de hipertermia maligna.",
-    "notes": "Bloqueo de acción muy corta (5-10 min). Puede causar bradicardia — tener atropina preparada. Produce fasciculaciones antes del bloqueo."
-  },
-  {
-    "id": "rocuronio",
-    "name": "Rocuronio",
-    "synonyms": ["Esmeron"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Bloqueantes neuromusculares",
-    "presentation": "Vial 50 mg/5 ml (10 mg/ml)",
-    "indication": "Relajación muscular para IOT (RSI cuando succinilcolina está contraindicada).",
-    "dose": "RSI: 1,2 mg/kg IV (adulto: ~80 mg)\nIntubación estándar: 0,6 mg/kg IV",
-    "route": ["IV", "IO"],
-    "contraindications": "Alergia conocida. Insuficiencia hepática grave (metabolismo prolongado).",
-    "notes": "A dosis 1,2 mg/kg, inicio similar a succinilcolina (60-90 s). Antagonizable con sugammadex (rescate: 16 mg/kg IV). Duración 60-90 min a dosis estándar."
-  },
-  {
-    "id": "naloxona",
-    "name": "Naloxona",
-    "synonyms": ["Narcan"],
-    "category": "Antídotos",
-    "subcategory": "Antagonistas opioides",
-    "presentation": "Amp 0,4 mg/1 ml",
-    "indication": "Intoxicación por opioides (depresión respiratoria). Sobredosis de heroína/morfina/fentanilo.",
-    "dose": "Adulto: 0,4-2 mg IV/IM/SC; repetir cada 2-3 min hasta revertir (máx 10 mg)\nNiño: 0,01 mg/kg IV\nIntranasal: 2 mg por fosa nasal",
-    "route": ["IV", "IO", "IM", "SC", "Intranasal"],
-    "contraindications": "Precaución en dependientes de opioides (puede precipitar síndrome de abstinencia agudo).",
-    "notes": "Vida media más corta que la mayoría de opioides (30-90 min): vigilar reintoxicación. Puede necesitar dosis repetidas o perfusión continua (2/3 de la dosis efectiva/hora)."
-  },
-  {
     "id": "flumazenil",
     "name": "Flumazenil",
-    "synonyms": ["Anexate"],
+    "synonyms": [
+      "Anexate"
+    ],
     "category": "Antídotos",
     "subcategory": "Antagonistas BZD",
     "presentation": "Amp 0,5 mg/5 ml (0,1 mg/ml)",
     "indication": "Reversión de sedación por benzodiacepinas. Diagnóstico diferencial en coma.",
     "dose": "0,2 mg IV en 15 s; repetir 0,1 mg/min hasta respuesta (máx 1 mg)",
-    "route": ["IV"],
+    "route": [
+      "IV"
+    ],
     "contraindications": "Intoxicación por antidepresivos tricíclicos (riesgo convulsiones). Epilépticos en tratamiento con BZD. Hipertensión intracraneal.",
     "notes": "Vida media < 1h — reaparición de sedación frecuente. No revertir sedación en pacientes en los que las BZD son el único agente anticomicial."
   },
   {
-    "id": "glucosa33",
-    "name": "Glucosa 33%",
-    "synonyms": ["Glucosa hipertónica", "Dextrosa 33%"],
-    "category": "Metabólico",
-    "subcategory": "Glucosa",
-    "presentation": "Amp 10 ml (3,3 g/amp)",
-    "indication": "Hipoglucemia sintomática grave (coma hipoglucémico). Hipoglucemia severa cuando no es posible la vía oral.",
-    "dose": "Adulto: 20-50 ml IV (2-5 ampollas) en bolo lento\nNiño: 2 ml/kg IV (0,5-1 g/kg)",
-    "route": ["IV", "IO"],
-    "contraindications": "Hiperglucemia. Contraindicada IM.",
-    "notes": "Muy irritante venovascular — usar vía gruesa y lavar con SF tras administración. Comprobar glucemia a los 10 min. Si no responde, repetir y buscar otra causa."
-  },
-  {
-    "id": "glucagon",
-    "name": "Glucagón",
-    "synonyms": ["GlucaGen"],
-    "category": "Metabólico",
-    "subcategory": "Glucosa",
-    "presentation": "Vial 1 mg (liofilizado + disolvente)",
-    "indication": "Hipoglucemia grave cuando no hay acceso IV. Intoxicación por betabloqueantes (dosis altas). Bradicardia por betabloqueantes.",
-    "dose": "Hipoglucemia: 1 mg IM/SC\nIntoxicación betabloqueantes: 3-10 mg IV lento, luego perfusión 3-5 mg/h",
-    "route": ["IV", "IM", "SC"],
-    "contraindications": "Feocromocitoma. Insulinoma.",
-    "notes": "Inicio de acción IM: 10-20 min. Dar carbohidratos en cuanto el paciente pueda tragar. Puede provocar náuseas y vómitos."
-  },
-  {
-    "id": "insulina-regular",
-    "name": "Insulina Regular",
-    "synonyms": ["Insulina Humana", "Actrapid"],
-    "category": "Metabólico",
-    "subcategory": "Glucosa",
-    "presentation": "Vial 1000 UI / 10 ml (100 UI/ml)",
-    "indication": "Hiperpotasemia grave junto a glucosa. Cetoacidosis diabética. Control de hiperglucemia crítica.",
-    "dose": "Hiperpotasemia: 10 UI IV + Glucosa 25 g IV\nCAD: 0,1 UI/kg/h IV en perfusión continua tras reposición inicial\nHiperglucemia crítica: titular según protocolo y glucemia capilar",
-    "route": ["IV", "SC"],
-    "contraindications": "Hipoglucemia. Hipopotasemia no corregida.",
-    "notes": "En perfusión, purgar el sistema por adsorción al PVC. Asociar siempre glucosa en hiperpotasemia si no hay hiperglucemia marcada. Monitorizar glucemia y potasio seriados."
-  },
-  {
-    "id": "bicarbonato",
-    "name": "Bicarbonato Sódico 8,4%",
-    "synonyms": ["NaHCO3"],
-    "category": "Metabólico",
-    "subcategory": "Electrolitos",
-    "presentation": "Amp 10 ml (1 mEq/ml) — Frasco 250 ml",
-    "indication": "Acidosis metabólica severa (pH < 7,1). PCR prolongada. Hiperpotasemia grave. Intoxicación por ATC y cocaína (PCR).",
-    "dose": "1 mEq/kg IV (adulto: 50-100 mEq) — repetir 0,5 mEq/kg según gasometría",
-    "route": ["IV", "IO"],
-    "contraindications": "Alcalosis metabólica. Hipocalcemia (sin corregir). Hipocapnia.",
-    "notes": "Incompatible con calcio (precipita). Produce CO2 → necesario hiperventilación. En PCR: uso de rutina NO recomendado salvo hiperpotasemia/ATC/cocaína."
-  },
-  {
-    "id": "cloruro-calcico",
-    "name": "Cloruro Cálcico 10%",
-    "synonyms": ["CaCl2"],
-    "category": "Metabólico",
-    "subcategory": "Electrolitos",
-    "presentation": "Amp 10 ml (100 mg/ml = 6,8 mEq/amp)",
-    "indication": "Hipocalcemia grave. Hiperpotasemia con cambios ECG. Intoxicación por bloqueantes de calcio. Hipermagnesemia.",
-    "dose": "5-10 ml IV lento en 5-10 min; repetir si necesario",
-    "route": ["IV", "IO"],
-    "contraindications": "Hipercalcemia. Fibrilación ventricular. Digitalización (aumenta toxicidad).",
-    "notes": "Incompatible con bicarbonato (precipita). Muy irritante IV periférico — usar vía central preferible. Tres veces más potente en aporte de calcio que el gluconato cálcico."
-  },
-  {
-    "id": "sulfato-magnesio",
-    "name": "Sulfato de Magnesio",
-    "synonyms": ["MgSO4"],
-    "category": "Metabólico",
-    "subcategory": "Electrolitos",
-    "presentation": "Amp 1,5 g/10 ml — Amp 10 g/10 ml",
-    "indication": "Taquicardia ventricular tipo torsades de pointes. Eclampsia/preeclampsia severa. Broncoespasmo refractario. Hipomagnesemia.",
-    "dose": "Torsades: 2 g (4 ml de 50%) IV en 2-3 min\nEclampsia: 4 g IV en 20 min, luego 1 g/h perfusión\nBroncoespasmo: 1,2-2 g IV en 20 min",
-    "route": ["IV", "IO"],
-    "contraindications": "Bloqueo cardíaco. Miastenia gravis. Insuficiencia renal severa.",
-    "notes": "Antídoto: gluconato/cloruro cálcico. Monitorizar: reflejos osteotendinosos (primer signo de toxicidad), FR y diuresis."
-  },
-  {
-    "id": "salbutamol",
-    "name": "Salbutamol",
-    "synonyms": ["Ventolin", "Albuterol"],
-    "category": "Respiratorio",
-    "subcategory": "Broncodilatadores",
-    "presentation": "Inhalador 100 mcg/puff — Nebulización 2,5 mg/2,5 ml",
-    "indication": "Broncoespasmo. Crisis de asma. EPOC agudizado. Anafilaxia con broncoespasmo.",
-    "dose": "Nebulización: 2,5-5 mg nebulizado con O2 6-8 lpm; repetir cada 20 min\nIVF: 2-4 puffs cada 20 min (4 en crisis graves)",
-    "route": ["Inhalado", "Nebulizado", "IV"],
-    "contraindications": "Precaución en taquiarritmias. Hiperpotasemia (efecto hipopotasemiante).",
-    "notes": "En crisis severa, la vía nebulizada es equivalente o superior al uso de MDI + cámara. Puede causar taquicardia y temblor."
-  },
-  {
-    "id": "ipratropio",
-    "name": "Bromuro de Ipratropio",
-    "synonyms": ["Atrovent"],
-    "category": "Respiratorio",
-    "subcategory": "Broncodilatadores",
-    "presentation": "Nebulización 0,5 mg/2 ml — Inhalador 20 mcg/puff",
-    "indication": "Crisis de asma grave o moderada (en combinación con salbutamol). EPOC agudizado.",
-    "dose": "Nebulización: 0,5 mg nebulizado; puede combinarse con salbutamol en el mismo nebulizador\nIVF: 2-4 puffs",
-    "route": ["Inhalado", "Nebulizado"],
-    "contraindications": "Alergia a atropina o bromuro.",
-    "notes": "Efecto más lento que salbutamol (inicio 15-30 min, pico 1-2h). Sinérgico con salbutamol en crisis grave. Poco efecto sistémico."
-  },
-  {
-    "id": "metilprednisolona",
-    "name": "Metilprednisolona",
-    "synonyms": ["Urbason", "Solumoderin"],
-    "category": "Respiratorio",
-    "subcategory": "Corticosteroides",
-    "presentation": "Vial 40 mg / 125 mg / 500 mg (polvo)",
-    "indication": "Crisis de asma. EPOC agudizado. Anafilaxia (2.ª línea). Edema cerebral vasogénico. Shock medular.",
-    "dose": "Asma/EPOC: 40-80 mg IV\nAnafilaxia: 125 mg IV\nShock medular: 30 mg/kg IV en 15 min (protocolo NASCIS — uso controvertido)",
-    "route": ["IV", "IO", "IM"],
-    "contraindications": "Infección sistémica activa no tratada. Relativa: diabetes descompensada, psicosis.",
-    "notes": "Efecto no inmediato (2-4h). En asma complementa pero no sustituye a broncodilatadores. En anafilaxia la adrenalina es el fármaco de elección."
-  },
-  {
-    "id": "dexametasona",
-    "name": "Dexametasona",
-    "synonyms": ["Fortecortin"],
-    "category": "Respiratorio",
-    "subcategory": "Corticosteroides",
-    "presentation": "Amp 4 mg/1 ml — Amp 8 mg/2 ml",
-    "indication": "Edema cerebral. Crup laríngeo. Vómitos (antiemético oncológico). Meningitis bacteriana.",
-    "dose": "Edema cerebral: 10 mg IV (carga) luego 4 mg/6h\nCrup: 0,15-0,6 mg/kg IM/VO (máx 10 mg)",
-    "route": ["IV", "IO", "IM", "VO"],
-    "contraindications": "Similar a metilprednisolona.",
-    "notes": "Mayor potencia antiinflamatoria que metilprednisolona (7x). Menor efecto mineralocorticoide. No de elección en crisis asmática aguda."
-  },
-  {
     "id": "furosemida",
     "name": "Furosemida",
-    "synonyms": ["Seguril", "Lasix"],
+    "synonyms": [
+      "Seguril",
+      "Lasix"
+    ],
     "category": "Cardiovascular",
     "subcategory": "Diuréticos",
     "presentation": "Amp 20 mg/2 ml",
     "indication": "Edema agudo de pulmón. Insuficiencia cardíaca congestiva aguda. Hiperpotasemia. Hipercalcemia.",
     "dose": "EAP: 40-80 mg IV lento (1 mg/min); puede repetirse a los 60 min\nInsuficiencia renal crónica: dosis más altas (hasta 120-250 mg)",
-    "route": ["IV", "IO", "IM"],
+    "route": [
+      "IV",
+      "IO",
+      "IM"
+    ],
     "contraindications": "Anuria. Deshidratación severa. Alergia a sulfamidas.",
     "notes": "Efecto vasodilatador inmediato (antes del diurético). En paciente con insuficiencia renal crónica se necesitan dosis más altas. Puede causar hipopotasemia e hiponatremia."
   },
   {
-    "id": "labetalol",
-    "name": "Labetalol",
-    "synonyms": ["Trandate"],
-    "category": "Cardiovascular",
-    "subcategory": "Antihipertensivos",
-    "presentation": "Amp 100 mg/20 ml (5 mg/ml)",
-    "indication": "Crisis hipertensiva. Disección aórtica. Preeclampsia severa. HTA asociada a SCA.",
-    "dose": "Crisis HTA: 20 mg IV lento en 2 min; si no responde repetir 40-80 mg cada 10 min (máx 300 mg)\nPerfusión: 0,5-2 mg/min",
-    "route": ["IV"],
-    "contraindications": "Asma bronquial. Bloqueo AV 2.º-3.er grado. Bradicardia. ICC descompensada. Feocromocitoma.",
-    "notes": "Alfa y betabloqueante combinado. Reduce FC y RVP sin reflejo taquicárdico. Ideal en disección aórtica y embarazo."
-  },
-  {
-    "id": "paracetamol-iv",
-    "name": "Paracetamol IV",
-    "synonyms": ["Perfalgan", "Acetaminofeno"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Analgésicos no opioides",
-    "presentation": "Bolsa 1 g/100 ml",
-    "indication": "Dolor moderado. Fiebre. Analgesia multimodal (para reducir necesidad de opioides).",
-    "dose": "1 g IV en 15 min cada 6-8h (adultos > 50 kg)\nNiño: 15 mg/kg IV (máx 1 g/dosis)",
-    "route": ["IV"],
-    "contraindications": "Insuficiencia hepática severa. Alergia.",
-    "notes": "Bien tolerado. No tiene efecto antiinflamatorio relevante. Mínimos efectos sobre TA y FC. Útil como componente analgésico multimodal."
-  },
-  {
-    "id": "metamizol",
-    "name": "Metamizol",
-    "synonyms": ["Nolotil", "Dipirona"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Analgésicos no opioides",
-    "presentation": "Amp 2 g/5 ml",
-    "indication": "Dolor moderado-severo. Cólico renal/biliar. Fiebre refractaria.",
-    "dose": "Adulto: 2 g IV diluido en 100 ml SF en 20-30 min (nunca en bolo directo)\n0,5-1 g IM",
-    "route": ["IV", "IM", "VO"],
-    "contraindications": "Alergia a pirazolonas. Agranulocitosis previa. Primer y último trimestre embarazo. Niños < 3 meses.",
-    "notes": "IV en bolo directo causa hipotensión grave — SIEMPRE diluir. Antiespástico útil en cólico. Precaución: raro pero posible agranulocitosis."
-  },
-  {
-    "id": "tramadol",
-    "name": "Tramadol",
-    "synonyms": ["Adolonta", "Tradonal"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Opioides débiles",
-    "presentation": "Amp 100 mg/2 ml",
-    "indication": "Dolor moderado-severo. Alternativa a opioides mayores en dolor agudo.",
-    "dose": "100 mg IV diluido en 100 ml SF en 20-30 min; o 50-100 mg IM\nDosis máxima: 400 mg/24h",
-    "route": ["IV", "IM", "SC", "VO"],
-    "contraindications": "Epilepsia no controlada. Uso de IMAO (últimas 2 semanas). Insuficiencia respiratoria grave.",
-    "notes": "Mecanismo mixto (opioide + serotoninérgico). IV rápido puede causar náuseas, vómitos e hipotensión — diluir y dar lento. Umbral convulsivo disminuido."
-  },
-  {
-    "id": "ondansetron",
-    "name": "Ondansetrón",
-    "synonyms": ["Zofran"],
-    "category": "Otros",
-    "subcategory": "Antieméticos",
-    "presentation": "Amp 4 mg/2 ml — Amp 8 mg/4 ml",
-    "indication": "Náuseas y vómitos (inducidos por opioides, movimiento, postoperatorio). Mareo por movimiento.",
-    "dose": "4-8 mg IV lento (> 30 s); repetir a los 4h si necesario\n8 mg IV en profilaxis antiemética",
-    "route": ["IV", "IO", "IM", "VO", "SL"],
-    "contraindications": "QT largo congénito. Uso con fármacos que prolongan QT.",
-    "notes": "Preferible a metoclopramida por menos efectos extrapiramidales. Puede prolongar QT ligeramente — monitorizar ECG."
-  },
-  {
-    "id": "haloperidol",
-    "name": "Haloperidol",
-    "synonyms": ["Haloperidol Esteve", "Serenace"],
-    "category": "Psiquiátrico",
-    "subcategory": "Antipsicóticos típicos",
-    "presentation": "Amp 5 mg/1 ml",
-    "indication": "Agitación psicomotriz. Delirium. Crisis psicótica aguda.",
-    "dose": "Agitación moderada: 5 mg IM; grave: 5-10 mg IM; repetir 5 mg a los 30 min si necesario\nIV: 5 mg en 10 min (monitorización ECG)",
-    "route": ["IM", "IV"],
-    "contraindications": "QT largo. Parkinson. Depresión SNC severa. Epilepsia no controlada.",
-    "notes": "Puede prolongar QT → riesgo torsades. No tiene efecto sedante potente; asociar BZD para sedación. Alta tasa de efectos extrapiramidales."
-  },
-  {
-    "id": "oxitocina",
-    "name": "Oxitocina",
-    "synonyms": ["Syntocinon"],
-    "category": "Obstétrico",
-    "subcategory": "Uterotónicos",
-    "presentation": "Amp 5 UI/1 ml",
-    "indication": "Hemorragia postparto (1.ª línea). Parto activo (hospitalario). Atonía uterina.",
-    "dose": "Hemorragia postparto: 10 UI IM inmediatamente tras el parto (o 5 UI IV lento)\nPerfusión: 10-40 UI en 1000 ml SF a 20-40 mUI/min",
-    "route": ["IM", "IV"],
-    "contraindications": "Hipertonía uterina. Sufrimiento fetal. Parto obstruido.",
-    "notes": "IV rápido causa hipotensión importante — administrar IM o diluida. Conservar en frío (2-8 °C). Primera línea en hemorragia postparto."
-  },
-  {
-    "id": "acido-tranexamico",
-    "name": "Ácido Tranexámico",
-    "synonyms": ["Amchafibrin", "TXA"],
-    "category": "Cardiovascular",
-    "subcategory": "Hemostáticos",
-    "presentation": "Amp 500 mg/5 ml (100 mg/ml)",
-    "indication": "Hemorragia traumática (dentro de las 3 horas del trauma). Hemorragia postparto. Hemorragia mayor.",
-    "dose": "Trauma: 1 g IV en 10 min; luego 1 g en 8h\nHemorragia postparto: 1 g IV en 10 min; repetir 1 g a los 30 min si no cede",
-    "route": ["IV", "IO"],
-    "contraindications": "Antecedente de trombosis (relativa). Insuficiencia renal severa (reducir dosis).",
-    "notes": "Antifibrinolítico. Máxima eficacia en las primeras 3h del trauma (estudio CRASH-2). No dar más allá de las 3h tras el evento salvo hemorragia obstétrica."
+    "id": "glucagon",
+    "name": "Glucagón",
+    "synonyms": [
+      "GlucaGen"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Glucosa",
+    "presentation": "Vial 1 mg (liofilizado + disolvente)",
+    "indication": "Hipoglucemia grave cuando no hay acceso IV. Intoxicación por betabloqueantes (dosis altas). Bradicardia por betabloqueantes.",
+    "dose": "Hipoglucemia: 1 mg IM/SC\nIntoxicación betabloqueantes: 3-10 mg IV lento, luego perfusión 3-5 mg/h",
+    "route": [
+      "IV",
+      "IM",
+      "SC"
+    ],
+    "contraindications": "Feocromocitoma. Insulinoma.",
+    "notes": "Inicio de acción IM: 10-20 min. Dar carbohidratos en cuanto el paciente pueda tragar. Puede provocar náuseas y vómitos."
   },
   {
     "id": "gluconato-calcico",
@@ -489,307 +425,715 @@
     "presentation": "Amp 10 ml (1 g/amp, 4,5 mEq Ca)",
     "indication": "Hipocalcemia. Hiperpotasemia con cambios ECG. Antídoto en sobredosis de bloqueantes del calcio.",
     "dose": "10-20 ml IV lento (5-10 min); repetir si necesario",
-    "route": ["IV", "IO"],
+    "route": [
+      "IV",
+      "IO"
+    ],
     "contraindications": "Hipercalcemia. Digitalización (relativa).",
     "notes": "Menos irritante que el cloruro cálcico — puede usarse en vía periférica. Menor concentración de calcio iónico que el cloruro (3x menos potente). Incompatible con bicarbonato."
   },
   {
-    "id": "suero-fisiologico",
-    "name": "Suero Fisiológico 0,9%",
-    "synonyms": ["SF", "NaCl 0,9%", "Solución salina"],
-    "category": "Fluidos IV",
-    "subcategory": "Cristaloides",
-    "presentation": "Bolsa 100 ml / 250 ml / 500 ml / 1000 ml",
-    "indication": "Reposición de volumen. Diluyente para fármacos. Irrigación de heridas.",
-    "dose": "Resucitación: 500 ml IV en bolo, valorar respuesta; repetir según TA y signos de perfusión",
-    "route": ["IV", "IO"],
-    "contraindications": "Hipernatremia. Acidosis hiperclorémica (infusión masiva).",
-    "notes": "Compatible con la mayoría de fármacos IV. El cristaloide más utilizado en emergencias. Infusión masiva puede causar acidosis hiperclorémica — considerar Ringer Lactato."
+    "id": "glucosa33",
+    "name": "Glucosa 33%",
+    "synonyms": [
+      "Glucosa hipertónica",
+      "Dextrosa 33%"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Glucosa",
+    "presentation": "Amp 10 ml (3,3 g/amp)",
+    "indication": "Hipoglucemia sintomática grave (coma hipoglucémico). Hipoglucemia severa cuando no es posible la vía oral.",
+    "dose": "Adulto: 20-50 ml IV (2-5 ampollas) en bolo lento\nNiño: 2 ml/kg IV (0,5-1 g/kg)",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Hiperglucemia. Contraindicada IM.",
+    "notes": "Muy irritante venovascular — usar vía gruesa y lavar con SF tras administración. Comprobar glucemia a los 10 min. Si no responde, repetir y buscar otra causa."
   },
   {
-    "id": "ringer-lactato",
-    "name": "Ringer Lactato",
-    "synonyms": ["Hartmann", "Solución de Ringer"],
-    "category": "Fluidos IV",
-    "subcategory": "Cristaloides",
-    "presentation": "Bolsa 500 ml / 1000 ml",
-    "indication": "Reposición de volumen en trauma. Quemaduras (Fórmula Parkland). Cirugía. Alternativa al SF en resucitación masiva.",
-    "dose": "Resucitación: 500 ml IV en bolo, valorar respuesta\nQuemaduras: fórmula Parkland (4 ml/kg/% superficie quemada en 24h)",
-    "route": ["IV", "IO"],
-    "contraindications": "Hiperpotasemia (contiene K+). Alcalosis metabólica. Insuficiencia hepática grave (no puede metabolizar lactato).",
-    "notes": "Composición más fisiológica que el SF. Menos riesgo de acidosis hiperclorémica en infusión masiva. Incompatible con hemoderivados (puede precipitar)."
-  },
-  {
-    "id": "oxigeno",
-    "name": "Oxígeno",
-    "synonyms": ["O2", "Oxigenoterapia"],
-    "category": "Respiratorio",
-    "subcategory": "Gases medicinales",
-    "presentation": "Botella presurizada — Concentrador (domicilio)",
-    "indication": "Hipoxemia (SpO2 < 94%). PCR. Intoxicación por CO. Anafilaxia. SCA.",
-    "dose": "Hipoxemia leve: gafas nasales 2-4 lpm (SpO2 objetivo 94-98%)\nHipoxemia grave / PCR: mascarilla con reservorio 10-15 lpm (FiO2 ~80%)\nCO: 100% O2 — mascarilla con reservorio hasta CO-Hb < 5%",
-    "route": ["Inhalado"],
-    "contraindications": "Evitar hiperoxia en EPOC con retención crónica de CO2 (objetivo SpO2 88-92%). No usar fuente de llamas cerca.",
-    "notes": "En PCR: administrar al 100%. En SCA: solo si SpO2 < 94% (la hiperoxia es perjudicial). En EPOC: titular para SpO2 88-92%."
-  },
-  {
-    "id": "etomidato",
-    "name": "Etomidato",
-    "synonyms": ["Hypnovel", "Etomidate-Lipuro"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "Anestésicos IV",
-    "presentation": "Amp 20 mg/10 ml (2 mg/ml)",
-    "indication": "Inducción en IOT de secuencia rápida (RSI) como alternativa al propofol, especialmente en pacientes hemodinámicamente inestables.",
-    "dose": "RSI: 0,3 mg/kg IV (adulto: ~20 mg IV)",
-    "route": ["IV"],
-    "contraindications": "Insuficiencia suprarrenal conocida. Uso prolongado (suprime síntesis de cortisol).",
-    "notes": "Mínimo efecto hemodinámico — de elección en RSI con hipotensión o shock. No tiene propiedades analgésicas — asociar opioide. Suprime cortisol hasta 24h incluso con dosis única."
-  },
-  {
-    "id": "lidocaina-iv",
-    "name": "Lidocaína IV",
-    "synonyms": ["Lidocaína Braun", "Xilocaína"],
-    "category": "Cardiovascular",
-    "subcategory": "Antiarrítmicos",
-    "presentation": "Amp 200 mg/10 ml (20 mg/ml) — Vial 1 g/50 ml",
-    "indication": "Arritmia ventricular (TV/FV) cuando amiodarona no disponible. Coadyuvante en RSI para atenuar respuesta hemodinámica a la intubación (especialmente en TCE).",
-    "dose": "Antiarritmia: 1-1,5 mg/kg IV en bolo lento, luego perfusión 1-4 mg/min\nRSI (coadyuvante): 1,5 mg/kg IV 3 min antes de la intubación",
-    "route": ["IV", "IO"],
-    "contraindications": "Bloqueo AV de alto grado. Síndrome de Adams-Stokes. Alergia a anestésicos locales tipo amida.",
-    "notes": "Monitorizar signos de toxicidad: acúfenos, sabor metálico, convulsiones, arritmias. Reducir dosis en insuficiencia hepática grave. En RSI, atenúa el aumento de PIC y presión arterial."
-  },
-  {
-    "id": "dobutamina",
-    "name": "Dobutamina",
-    "synonyms": ["Dobutrex"],
-    "category": "Cardiovascular",
-    "subcategory": "Vasoactivos",
-    "presentation": "Amp 250 mg/20 ml (12,5 mg/ml)",
-    "indication": "Shock cardiogénico con PA mantenida. Insuficiencia cardíaca aguda con bajo gasto y PA conservada.",
-    "dose": "2-20 mcg/kg/min IV en perfusión continua; iniciar a 2,5 mcg/kg/min y titular por respuesta",
-    "route": ["IV"],
-    "contraindications": "Estenosis aórtica severa. Miocardiopatía hipertrófica obstructiva. Taquiarritmias.",
-    "notes": "Inotrópico positivo con leve vasodilatación periférica. Puede aumentar la FC — monitorizar ECG. No usar si FC > 130 lpm. No mezclar con bicarbonato."
-  },
-  {
-    "id": "n-acetilcisteina",
-    "name": "N-Acetilcisteína IV",
-    "synonyms": ["NAC", "Flumil IV", "Acemuk IV"],
-    "category": "Antídotos",
-    "subcategory": "Antídotos específicos",
-    "presentation": "Amp 300 mg/3 ml (100 mg/ml)",
-    "indication": "Intoxicación por paracetamol. Hepatoprotección en sobredosis.",
-    "dose": "Protocolo Prescott (3 fases):\n1.ª fase: 150 mg/kg en 250 ml G5% en 1h\n2.ª fase: 50 mg/kg en 500 ml G5% en 4h\n3.ª fase: 100 mg/kg en 1000 ml G5% en 16h",
-    "route": ["IV"],
-    "contraindications": "Alergia conocida a la N-acetilcisteína (precaución — puede causar reacciones anafilactoides).",
-    "notes": "Máxima eficacia si se administra en las primeras 8-10h tras la ingesta. Siempre diluir en glucosa 5% (el SF puede reducir la estabilidad). Calcular dosis según peso del paciente."
-  },
-  {
-    "id": "carbon-activado",
-    "name": "Carbón Activado",
-    "synonyms": ["Carbón Medicinalis", "Carbón Medicinal"],
-    "category": "Antídotos",
-    "subcategory": "Descontaminación gastrointestinal",
-    "presentation": "Polvo/suspensión 50 g/250 ml",
-    "indication": "Intoxicaciones agudas por vía oral (< 1h tras ingesta). Sobredosis de fármacos adsorbibles.",
-    "dose": "Adulto: 50 g VO (suspensión acuosa)\nNiño: 1 g/kg VO (máx 50 g)",
-    "route": ["VO"],
-    "contraindications": "Vía aérea no protegida / GCS alterado (riesgo aspiración). Ingesta de cáusticos o hidrocarburos. Íleo paralítico. Perforación GI.",
-    "notes": "Eficacia óptima en la primera hora tras la ingesta. No adsorbe: alcoholes, ácidos/bases fuertes, metales pesados, litio, hierro. Administrar con SNG si el paciente no puede tragar."
+    "id": "haloperidol",
+    "name": "Haloperidol",
+    "synonyms": [
+      "Haloperidol Esteve",
+      "Serenace"
+    ],
+    "category": "Psiquiátrico",
+    "subcategory": "Antipsicóticos típicos",
+    "presentation": "Amp 5 mg/1 ml",
+    "indication": "Agitación psicomotriz. Delirium. Crisis psicótica aguda.",
+    "dose": "Agitación moderada: 5 mg IM; grave: 5-10 mg IM; repetir 5 mg a los 30 min si necesario\nIV: 5 mg en 10 min (monitorización ECG)",
+    "route": [
+      "IM",
+      "IV"
+    ],
+    "contraindications": "QT largo. Parkinson. Depresión SNC severa. Epilepsia no controlada.",
+    "notes": "Puede prolongar QT → riesgo torsades. No tiene efecto sedante potente; asociar BZD para sedación. Alta tasa de efectos extrapiramidales."
   },
   {
     "id": "heparina",
     "name": "Heparina Sódica",
-    "synonyms": ["Heparina Rovi", "HNF"],
+    "synonyms": [
+      "Heparina Rovi",
+      "HNF"
+    ],
     "category": "Cardiovascular",
     "subcategory": "Anticoagulantes",
     "presentation": "Amp 5000 UI/1 ml — Vial 25000 UI/5 ml",
     "indication": "SCACEST (coadyuvante a fibrinolisis o ACTP). SCASEST/NSTEMI. TEP masivo o submasivo. Trombosis venosa profunda.",
     "dose": "SCACEST: 60 UI/kg IV bolo (máx 4000 UI), luego perfusión 12 UI/kg/h (máx 1000 UI/h)\nTEP masivo: 80 UI/kg IV bolo, luego 18 UI/kg/h en perfusión\nAjustar por TTPA (objetivo 60-100 s)",
-    "route": ["IV", "SC"],
+    "route": [
+      "IV",
+      "SC"
+    ],
     "contraindications": "Hemorragia activa mayor. Trombocitopenia inducida por heparina (HIT). Cirugía reciente del SNC.",
     "notes": "Antídoto: sulfato de protamina (1 mg neutraliza 100 UI de heparina). Monitorizar TTPA a las 6h del inicio. Riesgo de HIT — controlar plaquetas."
   },
   {
-    "id": "enoxaparina",
-    "name": "Enoxaparina",
-    "synonyms": ["Clexane", "HBPM"],
-    "category": "Cardiovascular",
-    "subcategory": "Anticoagulantes",
-    "presentation": "Jeringa precargada 20/40/60/80/100 mg SC",
-    "indication": "SCACEST (< 75 años sin insuficiencia renal). SCASEST/NSTEMI. Profilaxis y tratamiento de TVP/TEP.",
-    "dose": "SCACEST < 75 años: 30 mg IV bolo + 1 mg/kg SC cada 12h\nSCACEST ≥ 75 años: 0,75 mg/kg SC cada 12h (sin bolo IV)\nSCASEST: 1 mg/kg SC cada 12h",
-    "route": ["SC", "IV"],
-    "contraindications": "Insuficiencia renal grave (ClCr < 30 ml/min — reducir dosis o usar HNF). HIT previa. Hemorragia activa.",
-    "notes": "No requiere monitorización de TTPA rutinaria. En insuficiencia renal grave ajustar a 1 mg/kg/24h. No tiene antídoto tan eficaz como la HNF (protamina neutraliza parcialmente ~60%)."
-  },
-  {
-    "id": "ketorolaco",
-    "name": "Ketorolaco",
-    "synonyms": ["Droal", "Toradol"],
-    "category": "Analgesia y Sedación",
-    "subcategory": "AINEs",
-    "presentation": "Amp 30 mg/1 ml",
-    "indication": "Dolor moderado-severo agudo. Cólico renal. Dolor postoperatorio. Alternativa o complemento a opioides.",
-    "dose": "15-30 mg IV lento o IM; puede repetirse cada 6h\nDosis máxima: 90 mg/día IV/IM; no superar 5 días",
-    "route": ["IV", "IM"],
-    "contraindications": "Insuficiencia renal. Úlcera péptica activa o hemorragia GI. Coagulopatía. Embarazo (3.er trimestre). Alergia a AINEs.",
-    "notes": "AINE con potencia analgésica comparable a morfina 10 mg IM. Sin efecto depresor respiratorio. Usar como parte de analgesia multimodal. Contraindicado en cólico renal con insuficiencia renal."
-  },
-  {
-    "id": "metoclopramida",
-    "name": "Metoclopramida",
-    "synonyms": ["Primperán"],
-    "category": "Otros",
-    "subcategory": "Antieméticos",
-    "presentation": "Amp 10 mg/2 ml",
-    "indication": "Náuseas y vómitos agudos. Gastroparesia. Procinético en vaciado gástrico retardado.",
-    "dose": "10 mg IV lento (mínimo 3 min); puede repetirse cada 6-8h\nDosis máxima: 30 mg/día",
-    "route": ["IV", "IM", "VO"],
-    "contraindications": "Obstrucción intestinal mecánica. Feocromocitoma. Epilepsia. Parkinson. Hemorragia GI.",
-    "notes": "Riesgo de efectos extrapiramidales (distonía aguda, acatisia) — más frecuente en jóvenes. Antídoto de distonía: biperideno (Akineton) 5 mg IV. Preferir ondansetrón si disponible."
-  },
-  {
     "id": "hidrocortisona",
     "name": "Hidrocortisona",
-    "synonyms": ["Actocortina", "Solu-Cortef"],
+    "synonyms": [
+      "Actocortina",
+      "Solu-Cortef"
+    ],
     "category": "Respiratorio",
     "subcategory": "Corticosteroides",
     "presentation": "Vial 100 mg / 500 mg (polvo liofilizado)",
     "indication": "Insuficiencia suprarrenal aguda (crisis addisoniana). Anafilaxia (2.ª línea tras adrenalina). Crisis de asma grave. Shock séptico refractario (dosis de estrés).",
     "dose": "Insuficiencia suprarrenal aguda: 100 mg IV bolo, luego 200 mg/24h en perfusión\nAnafilaxia: 200 mg IV\nAsma grave: 200 mg IV\nShock séptico refractario: 200 mg/día en perfusión continua",
-    "route": ["IV", "IM"],
+    "route": [
+      "IV",
+      "IM"
+    ],
     "contraindications": "Infección sistémica sin tratamiento (relativa). Úlcera péptica activa.",
     "notes": "Corticoide con efecto mineralocorticoide significativo (a diferencia de metilprednisolona). De elección en insuficiencia suprarrenal aguda. En anafilaxia no sustituye a la adrenalina."
   },
   {
-    "id": "tiamina",
-    "name": "Tiamina",
-    "synonyms": ["Vitamina B1", "Benerva"],
+    "id": "insulina-regular",
+    "name": "Insulina Regular",
+    "synonyms": [
+      "Insulina Humana",
+      "Actrapid"
+    ],
     "category": "Metabólico",
-    "subcategory": "Vitaminas",
-    "presentation": "Amp 100 mg/1 ml",
-    "indication": "Encefalopatía de Wernicke (prevención y tratamiento). Alcohólicos crónicos antes de administrar glucosa. Déficit de tiamina.",
-    "dose": "Encefalopatía de Wernicke: 200-500 mg IV lento 3 veces/día durante 3-5 días\nProfilaxis en alcohólico agudo: 100 mg IV antes de glucosa",
-    "route": ["IV", "IM"],
-    "contraindications": "Alergia conocida (rara). Administración IV rápida (riesgo de reacción anafilactoide).",
-    "notes": "SIEMPRE administrar antes de la glucosa en pacientes alcohólicos — la glucosa sin tiamina puede precipitar encefalopatía de Wernicke. Administrar IV lento en 10-30 min."
+    "subcategory": "Glucosa",
+    "presentation": "Vial 1000 UI / 10 ml (100 UI/ml)",
+    "indication": "Hiperpotasemia grave junto a glucosa. Cetoacidosis diabética. Control de hiperglucemia crítica.",
+    "dose": "Hiperpotasemia: 10 UI IV + Glucosa 25 g IV\nCAD: 0,1 UI/kg/h IV en perfusión continua tras reposición inicial\nHiperglucemia crítica: titular según protocolo y glucemia capilar",
+    "route": [
+      "IV",
+      "SC"
+    ],
+    "contraindications": "Hipoglucemia. Hipopotasemia no corregida.",
+    "notes": "En perfusión, purgar el sistema por adsorción al PVC. Asociar siempre glucosa en hiperpotasemia si no hay hiperglucemia marcada. Monitorizar glucemia y potasio seriados."
   },
   {
-    "id": "manitol",
-    "name": "Manitol 20%",
-    "synonyms": ["Manitol B.Braun"],
-    "category": "Metabólico",
-    "subcategory": "Diuréticos osmóticos",
-    "presentation": "Bolsa 250 ml / 500 ml (200 mg/ml)",
-    "indication": "Hipertensión intracraneal (HTIC) aguda. Edema cerebral traumático o postisquémico. Glaucoma agudo (urgencia).",
-    "dose": "HTIC: 0,25-1 g/kg IV en 20 min (adulto: 250-500 ml de solución 20%)\nPuede repetirse cada 4-6h según monitorización de PIC",
-    "route": ["IV"],
-    "contraindications": "Anuria. Hipovolemia severa. Insuficiencia cardíaca congestiva grave. Edema pulmonar.",
-    "notes": "Filtrar antes de administrar (puede cristalizar). Monitorizar osmolaridad sérica (objetivo < 320 mOsm/kg). Usar catéter urinario para controlar diuresis. El suero salino hipertónico es alternativa eficaz."
-  },
-  {
-    "id": "sugammadex",
-    "name": "Sugammadex",
-    "synonyms": ["Bridion"],
+    "id": "ketamina",
+    "name": "Ketamina",
+    "synonyms": [
+      "Ketolar"
+    ],
     "category": "Analgesia y Sedación",
-    "subcategory": "Antagonistas NMB",
-    "presentation": "Vial 200 mg/2 ml (100 mg/ml)",
-    "indication": "Reversión del bloqueo neuromuscular inducido por rocuronio o vecuronio. Rescate en situación «no intubar/no ventilar» (CICV).",
-    "dose": "Reversión estándar (bloqueo profundo): 4 mg/kg IV\nRescate de emergencia (CICV): 16 mg/kg IV inmediato\nReversión moderada (T2 en TOF): 2 mg/kg IV",
-    "route": ["IV"],
-    "contraindications": "Alergia conocida. Solo antagoniza rocuronio y vecuronio (NO succinilcolina ni otros BNM).",
-    "notes": "En situación CICV con rocuronio: 16 mg/kg IV revierte el bloqueo en 3 min. Efecto inmediato sin necesidad de monitorización previa. No requiere neostigmina ni atropina."
+    "subcategory": "Anestésicos disociativos",
+    "presentation": "Vial 500 mg/10 ml (50 mg/ml)",
+    "indication": "Inducción en IOT de secuencia rápida (RSI). Sedación procedimental. Analgesia en trauma. Broncoespasmo severo.",
+    "dose": "RSI IV: 1-2 mg/kg IV\nSedación: 0,5-1 mg/kg IV / 4-6 mg/kg IM\nAnalgesia subanestésica: 0,1-0,3 mg/kg IV",
+    "route": [
+      "IV",
+      "IO",
+      "IM"
+    ],
+    "contraindications": "HTA severa no controlada. Aneurisma cerebral/aórtico conocido. Psicosis activa.",
+    "notes": "Anestésico disociativo: mantiene reflejos laríngeos y tono muscular. Broncodilatador útil en asma. Puede provocar hipertensión e hipersalivación. Asociar midazolam para reducir alucinaciones."
+  },
+  {
+    "id": "ketorolaco",
+    "name": "Ketorolaco",
+    "synonyms": [
+      "Droal",
+      "Toradol"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "AINEs",
+    "presentation": "Amp 30 mg/1 ml",
+    "indication": "Dolor moderado-severo agudo. Cólico renal. Dolor postoperatorio. Alternativa o complemento a opioides.",
+    "dose": "15-30 mg IV lento o IM; puede repetirse cada 6h\nDosis máxima: 90 mg/día IV/IM; no superar 5 días",
+    "route": [
+      "IV",
+      "IM"
+    ],
+    "contraindications": "Insuficiencia renal. Úlcera péptica activa o hemorragia GI. Coagulopatía. Embarazo (3.er trimestre). Alergia a AINEs.",
+    "notes": "AINE con potencia analgésica comparable a morfina 10 mg IM. Sin efecto depresor respiratorio. Usar como parte de analgesia multimodal. Contraindicado en cólico renal con insuficiencia renal."
+  },
+  {
+    "id": "labetalol",
+    "name": "Labetalol",
+    "synonyms": [
+      "Trandate"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Antihipertensivos",
+    "presentation": "Amp 100 mg/20 ml (5 mg/ml)",
+    "indication": "Crisis hipertensiva. Disección aórtica. Preeclampsia severa. HTA asociada a SCA.",
+    "dose": "Crisis HTA: 20 mg IV lento en 2 min; si no responde repetir 40-80 mg cada 10 min (máx 300 mg)\nPerfusión: 0,5-2 mg/min",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Asma bronquial. Bloqueo AV 2.º-3.er grado. Bradicardia. ICC descompensada. Feocromocitoma.",
+    "notes": "Alfa y betabloqueante combinado. Reduce FC y RVP sin reflejo taquicárdico. Ideal en disección aórtica y embarazo."
+  },
+  {
+    "id": "lidocaina-iv",
+    "name": "Lidocaína IV",
+    "synonyms": [
+      "Lidocaína Braun",
+      "Xilocaína"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Antiarrítmicos",
+    "presentation": "Amp 200 mg/10 ml (20 mg/ml) — Vial 1 g/50 ml",
+    "indication": "Arritmia ventricular (TV/FV) cuando amiodarona no disponible. Coadyuvante en RSI para atenuar respuesta hemodinámica a la intubación (especialmente en TCE).",
+    "dose": "Antiarritmia: 1-1,5 mg/kg IV en bolo lento, luego perfusión 1-4 mg/min\nRSI (coadyuvante): 1,5 mg/kg IV 3 min antes de la intubación",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Bloqueo AV de alto grado. Síndrome de Adams-Stokes. Alergia a anestésicos locales tipo amida.",
+    "notes": "Monitorizar signos de toxicidad: acúfenos, sabor metálico, convulsiones, arritmias. Reducir dosis en insuficiencia hepática grave. En RSI, atenúa el aumento de PIC y presión arterial."
   },
   {
     "id": "lorazepam",
     "name": "Lorazepam",
-    "synonyms": ["Orfidal", "Ativan"],
+    "synonyms": [
+      "Orfidal",
+      "Ativan"
+    ],
     "category": "Analgesia y Sedación",
     "subcategory": "Benzodiacepinas",
     "presentation": "Amp 4 mg/1 ml",
     "indication": "Status epiléptico (primera línea IV en muchos protocolos). Agitación severa. Ansiedad aguda.",
     "dose": "Status epiléptico: 0,05-0,1 mg/kg IV lento (adulto: 4-8 mg); repetir a los 5 min si no cede\nIM si no hay acceso IV: 4 mg IM",
-    "route": ["IV", "IM"],
+    "route": [
+      "IV",
+      "IM"
+    ],
     "contraindications": "Insuficiencia respiratoria grave no ventilada. Miastenia gravis. Alergia a BZD.",
     "notes": "Mayor duración de acción anticomicial que diazepam (vida media 10-20h). Menos sedación residual que diazepam. Preferido sobre diazepam en status epiléptico en muchos protocolos internacionales."
   },
   {
-    "id": "alteplasa",
-    "name": "Alteplasa",
-    "synonyms": ["Actilyse", "rtPA", "Activador tisular del plasminógeno recombinante"],
+    "id": "manitol",
+    "name": "Manitol 20%",
+    "synonyms": [
+      "Manitol B.Braun"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Diuréticos osmóticos",
+    "presentation": "Bolsa 250 ml / 500 ml (200 mg/ml)",
+    "indication": "Hipertensión intracraneal (HTIC) aguda. Edema cerebral traumático o postisquémico. Glaucoma agudo (urgencia).",
+    "dose": "HTIC: 0,25-1 g/kg IV en 20 min (adulto: 250-500 ml de solución 20%)\nPuede repetirse cada 4-6h según monitorización de PIC",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Anuria. Hipovolemia severa. Insuficiencia cardíaca congestiva grave. Edema pulmonar.",
+    "notes": "Filtrar antes de administrar (puede cristalizar). Monitorizar osmolaridad sérica (objetivo < 320 mOsm/kg). Usar catéter urinario para controlar diuresis. El suero salino hipertónico es alternativa eficaz."
+  },
+  {
+    "id": "metamizol",
+    "name": "Metamizol",
+    "synonyms": [
+      "Nolotil",
+      "Dipirona"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Analgésicos no opioides",
+    "presentation": "Amp 2 g/5 ml",
+    "indication": "Dolor moderado-severo. Cólico renal/biliar. Fiebre refractaria.",
+    "dose": "Adulto: 2 g IV diluido en 100 ml SF en 20-30 min (nunca en bolo directo)\n0,5-1 g IM",
+    "route": [
+      "IV",
+      "IM",
+      "VO"
+    ],
+    "contraindications": "Alergia a pirazolonas. Agranulocitosis previa. Primer y último trimestre embarazo. Niños < 3 meses.",
+    "notes": "IV en bolo directo causa hipotensión grave — SIEMPRE diluir. Antiespástico útil en cólico. Precaución: raro pero posible agranulocitosis."
+  },
+  {
+    "id": "metilprednisolona",
+    "name": "Metilprednisolona",
+    "synonyms": [
+      "Urbason",
+      "Solumoderin"
+    ],
+    "category": "Respiratorio",
+    "subcategory": "Corticosteroides",
+    "presentation": "Vial 40 mg / 125 mg / 500 mg (polvo)",
+    "indication": "Crisis de asma. EPOC agudizado. Anafilaxia (2.ª línea). Edema cerebral vasogénico. Shock medular.",
+    "dose": "Asma/EPOC: 40-80 mg IV\nAnafilaxia: 125 mg IV\nShock medular: 30 mg/kg IV en 15 min (protocolo NASCIS — uso controvertido)",
+    "route": [
+      "IV",
+      "IO",
+      "IM"
+    ],
+    "contraindications": "Infección sistémica activa no tratada. Relativa: diabetes descompensada, psicosis.",
+    "notes": "Efecto no inmediato (2-4h). En asma complementa pero no sustituye a broncodilatadores. En anafilaxia la adrenalina es el fármaco de elección."
+  },
+  {
+    "id": "metoclopramida",
+    "name": "Metoclopramida",
+    "synonyms": [
+      "Primperán"
+    ],
+    "category": "Otros",
+    "subcategory": "Antieméticos",
+    "presentation": "Amp 10 mg/2 ml",
+    "indication": "Náuseas y vómitos agudos. Gastroparesia. Procinético en vaciado gástrico retardado.",
+    "dose": "10 mg IV lento (mínimo 3 min); puede repetirse cada 6-8h\nDosis máxima: 30 mg/día",
+    "route": [
+      "IV",
+      "IM",
+      "VO"
+    ],
+    "contraindications": "Obstrucción intestinal mecánica. Feocromocitoma. Epilepsia. Parkinson. Hemorragia GI.",
+    "notes": "Riesgo de efectos extrapiramidales (distonía aguda, acatisia) — más frecuente en jóvenes. Antídoto de distonía: biperideno (Akineton) 5 mg IV. Preferir ondansetrón si disponible."
+  },
+  {
+    "id": "midazolam",
+    "name": "Midazolam",
+    "synonyms": [
+      "Dormicum"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Benzodiacepinas",
+    "presentation": "Amp 15 mg/3 ml (5 mg/ml) — Amp 5 mg/5 ml (1 mg/ml)",
+    "indication": "Sedación procedimental. Status epiléptico. Sedoanalgesia en intubación. Agitación psicomotriz.",
+    "dose": "Sedación: 0,05-0,1 mg/kg IV lento (adulto: 2-5 mg)\nStatus epiléptico: 10 mg IM/IO/intranasal\nInducción IOT: 0,1-0,2 mg/kg IV",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "Intranasal"
+    ],
+    "contraindications": "Alergia a BZD. Insuficiencia respiratoria severa no ventilada. Miastenia gravis.",
+    "notes": "Vida media 1-4h. Antagonizable con flumazenil. Administrar lento IV para evitar apnea. Reducir dosis en ancianos y EPOC."
+  },
+  {
+    "id": "morfina",
+    "name": "Morfina",
+    "synonyms": [
+      "Cloruro mórfico"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Opioides",
+    "presentation": "Amp 10 mg/1 ml",
+    "indication": "Dolor severo (SCA, quemaduras, trauma). Edema agudo de pulmón.",
+    "dose": "Adulto: 2-5 mg IV lento, repetir 2-3 mg/10 min según respuesta (máx 0,1 mg/kg)\nNiño: 0,05-0,1 mg/kg IV",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "SC"
+    ],
+    "contraindications": "Depresión respiratoria severa. Hipotensión. TCE con hipertensión intracraneal.",
+    "notes": "Diluir a 1 mg/ml con SF. Tener naloxona disponible. Puede causar hipotensión y náuseas."
+  },
+  {
+    "id": "n-acetilcisteina",
+    "name": "N-Acetilcisteína IV",
+    "synonyms": [
+      "NAC",
+      "Flumil IV",
+      "Acemuk IV"
+    ],
+    "category": "Antídotos",
+    "subcategory": "Antídotos específicos",
+    "presentation": "Amp 300 mg/3 ml (100 mg/ml)",
+    "indication": "Intoxicación por paracetamol. Hepatoprotección en sobredosis.",
+    "dose": "Protocolo Prescott (3 fases):\n1.ª fase: 150 mg/kg en 250 ml G5% en 1h\n2.ª fase: 50 mg/kg en 500 ml G5% en 4h\n3.ª fase: 100 mg/kg en 1000 ml G5% en 16h",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Alergia conocida a la N-acetilcisteína (precaución — puede causar reacciones anafilactoides).",
+    "notes": "Máxima eficacia si se administra en las primeras 8-10h tras la ingesta. Siempre diluir en glucosa 5% (el SF puede reducir la estabilidad). Calcular dosis según peso del paciente."
+  },
+  {
+    "id": "naloxona",
+    "name": "Naloxona",
+    "synonyms": [
+      "Narcan"
+    ],
+    "category": "Antídotos",
+    "subcategory": "Antagonistas opioides",
+    "presentation": "Amp 0,4 mg/1 ml",
+    "indication": "Intoxicación por opioides (depresión respiratoria). Sobredosis de heroína/morfina/fentanilo.",
+    "dose": "Adulto: 0,4-2 mg IV/IM/SC; repetir cada 2-3 min hasta revertir (máx 10 mg)\nNiño: 0,01 mg/kg IV\nIntranasal: 2 mg por fosa nasal",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "SC",
+      "Intranasal"
+    ],
+    "contraindications": "Precaución en dependientes de opioides (puede precipitar síndrome de abstinencia agudo).",
+    "notes": "Vida media más corta que la mayoría de opioides (30-90 min): vigilar reintoxicación. Puede necesitar dosis repetidas o perfusión continua (2/3 de la dosis efectiva/hora)."
+  },
+  {
+    "id": "nitroglicerina",
+    "name": "Nitroglicerina",
+    "synonyms": [
+      "NTG",
+      "Solinitrina",
+      "Trinipatch"
+    ],
     "category": "Cardiovascular",
-    "subcategory": "Fibrinolíticos",
-    "presentation": "Vial 50 mg / 100 mg (liofilizado)",
-    "indication": "TEP masivo con compromiso hemodinámico. Ictus isquémico agudo (< 4,5h de inicio).",
-    "dose": "TEP masivo: 100 mg IV en 2h (bolo 10 mg en 1-2 min + resto en 2h)\nIctus isquémico: 0,9 mg/kg (máx 90 mg) en 1h (10% como bolo inicial en 1 min)",
-    "route": ["IV"],
-    "contraindications": "Hemorragia activa o reciente. Cirugía mayor < 3 meses. Ictus hemorrágico previo. HTA no controlada (> 185/110 mmHg). TCE reciente.",
-    "notes": "En TEP masivo: iniciar solo si hay colapso hemodinámico y no hay contraindicación absoluta. En ictus: uso exclusivamente hospitalario — el SAMUR puede activar código ictus y preparar traslado urgente. NO indicado en SCACEST prehospitalario en España."
+    "subcategory": "Vasodilatadores",
+    "presentation": "Amp 5 mg/1 ml — Comp sublingual 0,4 mg",
+    "indication": "Angina de pecho. SCA. Edema agudo de pulmón. HTA hipertensiva.",
+    "dose": "SL: 0,4 mg sl; repetir a los 5 min (máx 3 dosis)\nIV: 10-200 mcg/min en perfusión; ajustar por TA",
+    "route": [
+      "SL",
+      "IV",
+      "Tópica"
+    ],
+    "contraindications": "TA sistólica < 90 mmHg. Uso de inhibidores de PDE-5 (sildenafilo, tadalafilo) en las últimas 24-48h. Infarto de VD.",
+    "notes": "Dilatar periférica y venosa → puede causar hipotensión importante. Pedir TA antes de administrar."
+  },
+  {
+    "id": "noradrenalina",
+    "name": "Noradrenalina",
+    "synonyms": [
+      "Norepinefrina",
+      "Levophed"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Vasoactivos",
+    "presentation": "Amp 4 mg/4 ml (1 mg/ml)",
+    "indication": "Shock séptico. Shock distributivo. Hipotensión refractaria a fluidos.",
+    "dose": "0,1-3 mcg/kg/min IV en perfusión continua; titular según TA",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Hipovolemia no corregida (relativa). Precaución en cardiopatía isquémica.",
+    "notes": "Requiere vía central para perfusión prolongada. Extravasación causa necrosis tisular — usar vía periférica solo en emergencia."
   },
   {
     "id": "olanzapina",
     "name": "Olanzapina",
-    "synonyms": ["Zyprexa", "Zyprexa Velotab", "Zydis"],
+    "synonyms": [
+      "Zyprexa",
+      "Zyprexa Velotab",
+      "Zydis"
+    ],
     "category": "Psiquiátrico",
     "subcategory": "Antipsicóticos atípicos",
     "presentation": "Vial IM 10 mg (polvo liofilizado)",
     "indication": "Agitación psicomotriz moderada-grave. Episodio maníaco agudo. Crisis psicótica aguda.",
     "dose": "Agitación: 10 mg IM; repetir 5-10 mg a las 2h si necesario\nDosis máxima: 30 mg/día IM",
-    "route": ["IM", "VO"],
+    "route": [
+      "IM",
+      "VO"
+    ],
     "contraindications": "Depresión severa del SNC. QT largo. Glaucoma de ángulo cerrado.",
     "notes": "NO combinar con benzodiacepinas IM — riesgo de depresión respiratoria grave y muerte. Si se necesita BZD, esperar al menos 1h tras olanzapina IM. Menor riesgo extrapiramidal que haloperidol."
   },
   {
-    "id": "vasopresina",
-    "name": "Vasopresina",
-    "synonyms": ["Pitressin", "ADH", "Hormona antidiurética"],
-    "category": "Cardiovascular",
-    "subcategory": "Vasoactivos",
-    "presentation": "Amp 20 UI/1 ml",
-    "indication": "Shock vasopléjico/séptico refractario a noradrenalina (coadyuvante). PCR en asistolia (alternativa a adrenalina — uso limitado).",
-    "dose": "PCR (alternativa a adrenalina): 40 UI IV bolo único\nShock vasopléjico refractario: 0,01-0,04 UI/min en perfusión continua (dosis fija, no titular)",
-    "route": ["IV"],
-    "contraindications": "Cardiopatía isquémica grave (vasoconstricción coronaria). Isquemia mesentérica.",
-    "notes": "En shock séptico se añade como coadyuvante a noradrenalina, no como sustituto. Dosis fija sin escalada en shock séptico (guías SSC). Puede causar vasoconstricción esplácnica — cautela en isquemia intestinal."
+    "id": "ondansetron",
+    "name": "Ondansetrón",
+    "synonyms": [
+      "Zofran"
+    ],
+    "category": "Otros",
+    "subcategory": "Antieméticos",
+    "presentation": "Amp 4 mg/2 ml — Amp 8 mg/4 ml",
+    "indication": "Náuseas y vómitos (inducidos por opioides, movimiento, postoperatorio). Mareo por movimiento.",
+    "dose": "4-8 mg IV lento (> 30 s); repetir a los 4h si necesario\n8 mg IV en profilaxis antiemética",
+    "route": [
+      "IV",
+      "IO",
+      "IM",
+      "VO",
+      "SL"
+    ],
+    "contraindications": "QT largo congénito. Uso con fármacos que prolongan QT.",
+    "notes": "Preferible a metoclopramida por menos efectos extrapiramidales. Puede prolongar QT ligeramente — monitorizar ECG."
+  },
+  {
+    "id": "oxigeno",
+    "name": "Oxígeno",
+    "synonyms": [
+      "O2",
+      "Oxigenoterapia"
+    ],
+    "category": "Respiratorio",
+    "subcategory": "Gases medicinales",
+    "presentation": "Botella presurizada — Concentrador (domicilio)",
+    "indication": "Hipoxemia (SpO2 < 94%). PCR. Intoxicación por CO. Anafilaxia. SCA.",
+    "dose": "Hipoxemia leve: gafas nasales 2-4 lpm (SpO2 objetivo 94-98%)\nHipoxemia grave / PCR: mascarilla con reservorio 10-15 lpm (FiO2 ~80%)\nCO: 100% O2 — mascarilla con reservorio hasta CO-Hb < 5%",
+    "route": [
+      "Inhalado"
+    ],
+    "contraindications": "Evitar hiperoxia en EPOC con retención crónica de CO2 (objetivo SpO2 88-92%). No usar fuente de llamas cerca.",
+    "notes": "En PCR: administrar al 100%. En SCA: solo si SpO2 < 94% (la hiperoxia es perjudicial). En EPOC: titular para SpO2 88-92%."
+  },
+  {
+    "id": "oxitocina",
+    "name": "Oxitocina",
+    "synonyms": [
+      "Syntocinon"
+    ],
+    "category": "Obstétrico",
+    "subcategory": "Uterotónicos",
+    "presentation": "Amp 5 UI/1 ml",
+    "indication": "Hemorragia postparto (1.ª línea). Parto activo (hospitalario). Atonía uterina.",
+    "dose": "Hemorragia postparto: 10 UI IM inmediatamente tras el parto (o 5 UI IV lento)\nPerfusión: 10-40 UI en 1000 ml SF a 20-40 mUI/min",
+    "route": [
+      "IM",
+      "IV"
+    ],
+    "contraindications": "Hipertonía uterina. Sufrimiento fetal. Parto obstruido.",
+    "notes": "IV rápido causa hipotensión importante — administrar IM o diluida. Conservar en frío (2-8 °C). Primera línea en hemorragia postparto."
+  },
+  {
+    "id": "paracetamol-iv",
+    "name": "Paracetamol IV",
+    "synonyms": [
+      "Perfalgan",
+      "Acetaminofeno"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Analgésicos no opioides",
+    "presentation": "Bolsa 1 g/100 ml",
+    "indication": "Dolor moderado. Fiebre. Analgesia multimodal (para reducir necesidad de opioides).",
+    "dose": "1 g IV en 15 min cada 6-8h (adultos > 50 kg)\nNiño: 15 mg/kg IV (máx 1 g/dosis)",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Insuficiencia hepática severa. Alergia.",
+    "notes": "Bien tolerado. No tiene efecto antiinflamatorio relevante. Mínimos efectos sobre TA y FC. Útil como componente analgésico multimodal."
+  },
+  {
+    "id": "propofol",
+    "name": "Propofol",
+    "synonyms": [
+      "Diprivan"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Anestésicos IV",
+    "presentation": "Amp/vial 200 mg/20 ml (10 mg/ml)",
+    "indication": "Inducción anestésica en IOT. Sedación en paciente ventilado.",
+    "dose": "Inducción: 1-2 mg/kg IV lento (reducir en ancianos y compromiso HD)\nSedación: 0,3-4 mg/kg/h en perfusión",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Alergia al huevo o soja. Hipovolemia severa. Bradicardia severa.",
+    "notes": "Produce hipotensión importante. No tiene propiedades analgésicas. Usar siempre con opioide para IOT. Agitar antes de usar (emulsión lipídica)."
+  },
+  {
+    "id": "ringer-lactato",
+    "name": "Ringer Lactato",
+    "synonyms": [
+      "Hartmann",
+      "Solución de Ringer"
+    ],
+    "category": "Fluidos IV",
+    "subcategory": "Cristaloides",
+    "presentation": "Bolsa 500 ml / 1000 ml",
+    "indication": "Reposición de volumen en trauma. Quemaduras (Fórmula Parkland). Cirugía. Alternativa al SF en resucitación masiva.",
+    "dose": "Resucitación: 500 ml IV en bolo, valorar respuesta\nQuemaduras: fórmula Parkland (4 ml/kg/% superficie quemada en 24h)",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Hiperpotasemia (contiene K+). Alcalosis metabólica. Insuficiencia hepática grave (no puede metabolizar lactato).",
+    "notes": "Composición más fisiológica que el SF. Menos riesgo de acidosis hiperclorémica en infusión masiva. Incompatible con hemoderivados (puede precipitar)."
+  },
+  {
+    "id": "rocuronio",
+    "name": "Rocuronio",
+    "synonyms": [
+      "Esmeron"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Bloqueantes neuromusculares",
+    "presentation": "Vial 50 mg/5 ml (10 mg/ml)",
+    "indication": "Relajación muscular para IOT (RSI cuando succinilcolina está contraindicada).",
+    "dose": "RSI: 1,2 mg/kg IV (adulto: ~80 mg)\nIntubación estándar: 0,6 mg/kg IV",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Alergia conocida. Insuficiencia hepática grave (metabolismo prolongado).",
+    "notes": "A dosis 1,2 mg/kg, inicio similar a succinilcolina (60-90 s). Antagonizable con sugammadex (rescate: 16 mg/kg IV). Duración 60-90 min a dosis estándar."
+  },
+  {
+    "id": "salbutamol",
+    "name": "Salbutamol",
+    "synonyms": [
+      "Ventolin",
+      "Albuterol"
+    ],
+    "category": "Respiratorio",
+    "subcategory": "Broncodilatadores",
+    "presentation": "Inhalador 100 mcg/puff — Nebulización 2,5 mg/2,5 ml",
+    "indication": "Broncoespasmo. Crisis de asma. EPOC agudizado. Anafilaxia con broncoespasmo.",
+    "dose": "Nebulización: 2,5-5 mg nebulizado con O2 6-8 lpm; repetir cada 20 min\nIVF: 2-4 puffs cada 20 min (4 en crisis graves)",
+    "route": [
+      "Inhalado",
+      "Nebulizado",
+      "IV"
+    ],
+    "contraindications": "Precaución en taquiarritmias. Hiperpotasemia (efecto hipopotasemiante).",
+    "notes": "En crisis severa, la vía nebulizada es equivalente o superior al uso de MDI + cámara. Puede causar taquicardia y temblor."
+  },
+  {
+    "id": "succinilcolina",
+    "name": "Succinilcolina",
+    "synonyms": [
+      "Suxametonio",
+      "Anectine"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Bloqueantes neuromusculares",
+    "presentation": "Amp 200 mg/2 ml (100 mg/ml)",
+    "indication": "Relajación muscular para IOT de secuencia rápida (RSI) — fármaco de elección.",
+    "dose": "1-1,5 mg/kg IV (adulto: 100 mg IV)",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Hiperpotasemia (quemados > 24h, aplastamientos > 24h, paraplejia crónica). Miopatías. Historia de hipertermia maligna.",
+    "notes": "Bloqueo de acción muy corta (5-10 min). Puede causar bradicardia — tener atropina preparada. Produce fasciculaciones antes del bloqueo."
+  },
+  {
+    "id": "suero-fisiologico",
+    "name": "Suero Fisiológico 0,9%",
+    "synonyms": [
+      "SF",
+      "NaCl 0,9%",
+      "Solución salina"
+    ],
+    "category": "Fluidos IV",
+    "subcategory": "Cristaloides",
+    "presentation": "Bolsa 100 ml / 250 ml / 500 ml / 1000 ml",
+    "indication": "Reposición de volumen. Diluyente para fármacos. Irrigación de heridas.",
+    "dose": "Resucitación: 500 ml IV en bolo, valorar respuesta; repetir según TA y signos de perfusión",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Hipernatremia. Acidosis hiperclorémica (infusión masiva).",
+    "notes": "Compatible con la mayoría de fármacos IV. El cristaloide más utilizado en emergencias. Infusión masiva puede causar acidosis hiperclorémica — considerar Ringer Lactato."
+  },
+  {
+    "id": "sugammadex",
+    "name": "Sugammadex",
+    "synonyms": [
+      "Bridion"
+    ],
+    "category": "Analgesia y Sedación",
+    "subcategory": "Antagonistas NMB",
+    "presentation": "Vial 200 mg/2 ml (100 mg/ml)",
+    "indication": "Reversión del bloqueo neuromuscular inducido por rocuronio o vecuronio. Rescate en situación «no intubar/no ventilar» (CICV).",
+    "dose": "Reversión estándar (bloqueo profundo): 4 mg/kg IV\nRescate de emergencia (CICV): 16 mg/kg IV inmediato\nReversión moderada (T2 en TOF): 2 mg/kg IV",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Alergia conocida. Solo antagoniza rocuronio y vecuronio (NO succinilcolina ni otros BNM).",
+    "notes": "En situación CICV con rocuronio: 16 mg/kg IV revierte el bloqueo en 3 min. Efecto inmediato sin necesidad de monitorización previa. No requiere neostigmina ni atropina."
+  },
+  {
+    "id": "sulfato-magnesio",
+    "name": "Sulfato de Magnesio",
+    "synonyms": [
+      "MgSO4"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Electrolitos",
+    "presentation": "Amp 1,5 g/10 ml — Amp 10 g/10 ml",
+    "indication": "Taquicardia ventricular tipo torsades de pointes. Eclampsia/preeclampsia severa. Broncoespasmo refractario. Hipomagnesemia.",
+    "dose": "Torsades: 2 g (4 ml de 50%) IV en 2-3 min\nEclampsia: 4 g IV en 20 min, luego 1 g/h perfusión\nBroncoespasmo: 1,2-2 g IV en 20 min",
+    "route": [
+      "IV",
+      "IO"
+    ],
+    "contraindications": "Bloqueo cardíaco. Miastenia gravis. Insuficiencia renal severa.",
+    "notes": "Antídoto: gluconato/cloruro cálcico. Monitorizar: reflejos osteotendinosos (primer signo de toxicidad), FR y diuresis."
   },
   {
     "id": "terbutalina",
     "name": "Terbutalina",
-    "synonyms": ["Bricanyl"],
+    "synonyms": [
+      "Bricanyl"
+    ],
     "category": "Respiratorio",
     "subcategory": "Broncodilatadores",
     "presentation": "Amp 0,5 mg/1 ml",
     "indication": "Broncoespasmo severo (cuando salbutamol SC es preferido). Tocolisis (inhibición del parto prematuro).",
     "dose": "Broncoespasmo: 0,25 mg SC; puede repetirse a los 15-20 min (máx 3 dosis)\nTocolisis (parto prematuro): 0,25 mg SC cada 20 min (máx 3 dosis) — solo como medida de emergencia",
-    "route": ["SC", "IM", "IV"],
+    "route": [
+      "SC",
+      "IM",
+      "IV"
+    ],
     "contraindications": "Taquiarritmias. Hipertiroidismo. Cardiopatía grave. Preeclampsia grave.",
     "notes": "Agonista beta-2 adrenérgico de acción similar a salbutamol. Puede causar taquicardia importante — monitorizar FC. En tocolisis de emergencia, preparar traslado urgente a centro obstétrico."
   },
   {
-    "id": "esmolol",
-    "name": "Esmolol",
-    "synonyms": ["Brevibloc"],
-    "category": "Cardiovascular",
-    "subcategory": "Antihipertensivos",
-    "presentation": "Vial 2500 mg/250 ml (10 mg/ml)",
-    "indication": "TSV/FA con respuesta ventricular rápida y PA conservada. Crisis hipertensiva perioperatoria. Control de FC en disección aórtica.",
-    "dose": "Bolo de carga: 500 mcg/kg IV en 1 min\nMantenimiento: 50-200 mcg/kg/min en perfusión\nTitular incrementando 50 mcg/kg/min cada 4 min según respuesta",
-    "route": ["IV"],
-    "contraindications": "Asma bronquial. Broncoespasmo. Bloqueo AV 2.º-3.er grado. Bradicardia severa. Hipotensión.",
-    "notes": "Betabloqueante de vida media muy corta (~9 min) — ideal para titular en emergencias. Los efectos desaparecen en 20-30 min tras suspensión. No usar en broncoespasmo."
+    "id": "tiamina",
+    "name": "Tiamina",
+    "synonyms": [
+      "Vitamina B1",
+      "Benerva"
+    ],
+    "category": "Metabólico",
+    "subcategory": "Vitaminas",
+    "presentation": "Amp 100 mg/1 ml",
+    "indication": "Encefalopatía de Wernicke (prevención y tratamiento). Alcohólicos crónicos antes de administrar glucosa. Déficit de tiamina.",
+    "dose": "Encefalopatía de Wernicke: 200-500 mg IV lento 3 veces/día durante 3-5 días\nProfilaxis en alcohólico agudo: 100 mg IV antes de glucosa",
+    "route": [
+      "IV",
+      "IM"
+    ],
+    "contraindications": "Alergia conocida (rara). Administración IV rápida (riesgo de reacción anafilactoide).",
+    "notes": "SIEMPRE administrar antes de la glucosa en pacientes alcohólicos — la glucosa sin tiamina puede precipitar encefalopatía de Wernicke. Administrar IV lento en 10-30 min."
   },
   {
-    "id": "diclofenaco",
-    "name": "Diclofenaco",
-    "synonyms": ["Voltaren inyectable", "Diclofenaco sódico"],
+    "id": "tramadol",
+    "name": "Tramadol",
+    "synonyms": [
+      "Adolonta",
+      "Tradonal"
+    ],
     "category": "Analgesia y Sedación",
-    "subcategory": "AINEs",
-    "presentation": "Amp 75 mg/3 ml",
-    "indication": "Cólico renal/biliar. Dolor musculoesquelético agudo. Dismenorrea. Dolor postoperatorio.",
-    "dose": "75 mg IM profundo en glúteo; puede repetirse a las 4-6h si necesario\nDosis máxima: 150 mg/día",
-    "route": ["IM"],
-    "contraindications": "Insuficiencia renal o hepática graves. Úlcera péptica activa. Hemorragia GI. Embarazo (3.er trimestre). Alergia a AINEs. ICC.",
-    "notes": "Administrar en inyección IM profunda en glúteo (no en deltoides). Alta eficacia en cólico renal. No administrar IV directo (formulación no apta). Riesgo cardiovascular en uso crónico."
+    "subcategory": "Opioides débiles",
+    "presentation": "Amp 100 mg/2 ml",
+    "indication": "Dolor moderado-severo. Alternativa a opioides mayores en dolor agudo.",
+    "dose": "100 mg IV diluido en 100 ml SF en 20-30 min; o 50-100 mg IM\nDosis máxima: 400 mg/24h",
+    "route": [
+      "IV",
+      "IM",
+      "SC",
+      "VO"
+    ],
+    "contraindications": "Epilepsia no controlada. Uso de IMAO (últimas 2 semanas). Insuficiencia respiratoria grave.",
+    "notes": "Mecanismo mixto (opioide + serotoninérgico). IV rápido puede causar náuseas, vómitos e hipotensión — diluir y dar lento. Umbral convulsivo disminuido."
+  },
+  {
+    "id": "vasopresina",
+    "name": "Vasopresina",
+    "synonyms": [
+      "Pitressin",
+      "ADH",
+      "Hormona antidiurética"
+    ],
+    "category": "Cardiovascular",
+    "subcategory": "Vasoactivos",
+    "presentation": "Amp 20 UI/1 ml",
+    "indication": "Shock vasopléjico/séptico refractario a noradrenalina (coadyuvante). PCR en asistolia (alternativa a adrenalina — uso limitado).",
+    "dose": "PCR (alternativa a adrenalina): 40 UI IV bolo único\nShock vasopléjico refractario: 0,01-0,04 UI/min en perfusión continua (dosis fija, no titular)",
+    "route": [
+      "IV"
+    ],
+    "contraindications": "Cardiopatía isquémica grave (vasoconstricción coronaria). Isquemia mesentérica.",
+    "notes": "En shock séptico se añade como coadyuvante a noradrenalina, no como sustituto. Dosis fija sin escalada en shock séptico (guías SSC). Puede causar vasoconstricción esplácnica — cautela en isquemia intestinal."
   }
 ]

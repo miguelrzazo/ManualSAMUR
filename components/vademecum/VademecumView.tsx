@@ -348,7 +348,7 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
           normalize(d.category).includes(q)
       );
     }
-    return items;
+    return [...items].sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" }));
   }, [drugs, query, activeCategory]);
 
   const filteredPerf = useMemo(() => {
@@ -364,7 +364,7 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
           normalize(p.recipe).includes(q)
       );
     }
-    return items;
+    return [...items].sort((a, b) => a.drug.localeCompare(b.drug, "es", { sensitivity: "base" }));
   }, [perfusiones, query, activeCategory]);
 
   const normalizedCommercials = useMemo(() => {

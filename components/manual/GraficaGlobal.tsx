@@ -1,130 +1,47 @@
 "use client";
 
-import { useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, RefreshCw } from "lucide-react";
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide,
+  type Simulation,
+  type SimulationNodeDatum,
+} from "d3-force";
 import type { ProcedureMeta } from "@/lib/content";
 
 const SECTION_COLORS: Record<string, string> = {
   Administrativos: "#94a3b8",
-  Comunicaciones: "#a78bfa",
-  Operativos:     "#fbbf24",
-  SVA:            "#f87171",
-  SVB:            "#60a5fa",
-  "Psicológicos": "#34d399",
-  Técnicas:       "#22d3ee",
-  General:        "#94a3b8",
+  Comunicaciones:  "#a78bfa",
+  Operativos:      "#fbbf24",
+  SVA:             "#f87171",
+  SVB:             "#60a5fa",
+  "Psicológicos":  "#34d399",
+  Técnicas:        "#22d3ee",
+  General:         "#94a3b8",
 };
 
 const SECTION_ORDER = [
-  "Administrativos","Comunicaciones","Operativos","SVA","SVB","Psicológicos","Técnicas","General",
+  "Administrativos", "Comunicaciones", "Operativos", "SVA", "SVB", "Psicológicos", "Técnicas", "General",
 ];
 
-interface NodeData {
+interface SimNode extends SimulationNodeDatum {
   id: string;
   slug: string;
   title: string;
   section: string;
-  x: number;
-  y: number;
   degree: number;
 }
 
-interface EdgeData {
+interface SimLink {
   id: string;
-  source: string;
-  target: string;
-}
-
-function forceLayout(
-  procs: ProcedureMeta[],
-  edgePairs: { source: string; target: string }[],
-  width: number,
-  height: number
-): Record<string, { x: number; y: number }> {
-  const n = procs.length;
-  if (n === 0) return {};
-
-  const k = Math.sqrt((width * height) / n) * 1.2;
-  const cx = width / 2;
-  const cy = height / 2;
-
-  // Seed positions: section clusters around canvas center
-  const sections = SECTION_ORDER.filter((s) => procs.some((p) => p.section === s));
-  const positions: Record<string, { x: number; y: number }> = {};
-
-  procs.forEach((p) => {
-    const si = sections.indexOf(p.section);
-    const sectionAngle = (2 * Math.PI * si) / Math.max(sections.length, 1);
-    const sectionR = Math.min(width, height) * 0.28;
-    const scx = cx + Math.cos(sectionAngle) * sectionR;
-    const scy = cy + Math.sin(sectionAngle) * sectionR;
-    const peers = procs.filter((q) => q.section === p.section);
-    const pi = peers.indexOf(p);
-    const peerR = 20 + peers.length * 10;
-    const peerAngle = (2 * Math.PI * pi) / Math.max(peers.length, 1);
-    positions[p.id] = {
-      x: scx + Math.cos(peerAngle) * peerR + (Math.random() - 0.5) * 15,
-      y: scy + Math.sin(peerAngle) * peerR + (Math.random() - 0.5) * 15,
-    };
-  });
-
-  const vel: Record<string, { dx: number; dy: number }> = {};
-  for (const p of procs) vel[p.id] = { dx: 0, dy: 0 };
-
-  const ITERATIONS = 120;
-  for (let iter = 0; iter < ITERATIONS; iter++) {
-    const temp = k * 2 * (1 - iter / ITERATIONS);
-    for (const p of procs) vel[p.id] = { dx: 0, dy: 0 };
-
-    // Repulsion between all pairs
-    for (let i = 0; i < procs.length; i++) {
-      for (let j = i + 1; j < procs.length; j++) {
-        const a = procs[i], b = procs[j];
-        const dx = positions[a.id].x - positions[b.id].x;
-        const dy = positions[a.id].y - positions[b.id].y;
-        const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 0.1);
-        const f = (k * k) / dist;
-        vel[a.id].dx += (dx / dist) * f;
-        vel[a.id].dy += (dy / dist) * f;
-        vel[b.id].dx -= (dx / dist) * f;
-        vel[b.id].dy -= (dy / dist) * f;
-      }
-    }
-
-    // Attraction along edges
-    for (const e of edgePairs) {
-      if (!positions[e.source] || !positions[e.target]) continue;
-      const dx = positions[e.target].x - positions[e.source].x;
-      const dy = positions[e.target].y - positions[e.source].y;
-      const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 0.1);
-      const f = (dist * dist) / k;
-      vel[e.source].dx += (dx / dist) * f;
-      vel[e.source].dy += (dy / dist) * f;
-      vel[e.target].dx -= (dx / dist) * f;
-      vel[e.target].dy -= (dy / dist) * f;
-    }
-
-    // Gravity towards center
-    for (const p of procs) {
-      vel[p.id].dx += (cx - positions[p.id].x) * 0.01;
-      vel[p.id].dy += (cy - positions[p.id].y) * 0.01;
-    }
-
-    // Apply with clamping
-    for (const p of procs) {
-      const len = Math.sqrt(vel[p.id].dx ** 2 + vel[p.id].dy ** 2);
-      if (len === 0) continue;
-      const disp = Math.min(len, temp);
-      positions[p.id].x = Math.max(30, Math.min(width - 30,
-        positions[p.id].x + (vel[p.id].dx / len) * disp));
-      positions[p.id].y = Math.max(30, Math.min(height - 30,
-        positions[p.id].y + (vel[p.id].dy / len) * disp));
-    }
-  }
-
-  return positions;
+  source: SimNode;
+  target: SimNode;
 }
 
 interface Props {
@@ -134,16 +51,27 @@ interface Props {
 const W = 900;
 const H = 660;
 
+function nodeRadius(n: SimNode) {
+  return 5 + Math.min(n.degree * 1.4, 9);
+}
+
 export function GraficaGlobal({ procedures }: Props) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
-  const svgRef = useRef<SVGSVGElement>(null);
+
+  const [tick, setTick] = useState(0);
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
+  const [cursor, setCursor] = useState<"grab" | "grabbing" | "pointer">("grab");
+
+  const nodesRef = useRef<SimNode[]>([]);
+  const linksRef = useRef<SimLink[]>([]);
+  const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
+
+  const draggingNode = useRef<SimNode | null>(null);
   const isPanning = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
   const mouseDownPos = useRef({ x: 0, y: 0 });
-  const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
 
   const palette = resolvedTheme === "dark"
     ? {
@@ -151,121 +79,217 @@ export function GraficaGlobal({ procedures }: Props) {
         border: "rgba(255,255,255,0.08)",
         pattern: "rgba(255,255,255,0.07)",
         edge: "rgba(196,205,222,0.18)",
-        edgeStrong: "rgba(224,231,255,0.34)",
+        edgeStrong: "rgba(224,231,255,0.42)",
         labelBg: "rgba(13,18,28,0.92)",
         labelText: "#f3f7ff",
         buttonBg: "rgba(255,255,255,0.08)",
         buttonText: "rgba(255,255,255,0.74)",
         legendText: "rgba(240,244,255,0.64)",
-        countText: "rgba(255,255,255,0.42)",
+        countText: "rgba(255,255,255,0.38)",
       }
     : {
         background: "#f7f8fc",
         border: "rgba(15,23,42,0.10)",
         pattern: "rgba(15,23,42,0.08)",
         edge: "rgba(71,85,105,0.16)",
-        edgeStrong: "rgba(51,65,85,0.28)",
+        edgeStrong: "rgba(51,65,85,0.36)",
         labelBg: "rgba(255,255,255,0.94)",
         labelText: "#162033",
         buttonBg: "rgba(255,255,255,0.72)",
         buttonText: "rgba(15,23,42,0.72)",
         legendText: "rgba(15,23,42,0.64)",
-        countText: "rgba(15,23,42,0.42)",
+        countText: "rgba(15,23,42,0.38)",
       };
 
-  const { nodes, edges } = useMemo(() => {
+  const sections = useMemo(
+    () => SECTION_ORDER.filter((s) => procedures.some((p) => p.section === s)),
+    [procedures],
+  );
+
+  // Build and start simulation
+  useEffect(() => {
     const edgeSet = new Set<string>();
-    const edgePairs: { source: string; target: string }[] = [];
     const degreeMap: Record<string, number> = {};
+    const rawEdges: { source: string; target: string; id: string }[] = [];
 
     for (const p of procedures) {
-      degreeMap[p.id] = (degreeMap[p.id] || 0);
       for (const rel of p.related) {
         const key = [p.id, rel].sort().join("--");
-        if (!edgeSet.has(key) && procedures.find((q) => q.id === rel)) {
+        if (!edgeSet.has(key) && procedures.some((q) => q.id === rel)) {
           edgeSet.add(key);
-          edgePairs.push({ source: p.id, target: rel });
+          rawEdges.push({ source: p.id, target: rel, id: key });
           degreeMap[p.id] = (degreeMap[p.id] || 0) + 1;
           degreeMap[rel] = (degreeMap[rel] || 0) + 1;
         }
       }
     }
 
-    const positions = forceLayout(procedures, edgePairs, W, H);
+    // Seed positions in section clusters
+    const sects = SECTION_ORDER.filter((s) => procedures.some((p) => p.section === s));
+    const newNodes: SimNode[] = procedures.map((p) => {
+      const si = sects.indexOf(p.section);
+      const angle = (2 * Math.PI * si) / Math.max(sects.length, 1);
+      const r = Math.min(W, H) * 0.26;
+      return {
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        section: p.section,
+        degree: degreeMap[p.id] || 0,
+        x: W / 2 + Math.cos(angle) * r + (Math.random() - 0.5) * 50,
+        y: H / 2 + Math.sin(angle) * r + (Math.random() - 0.5) * 50,
+      };
+    });
 
-    const nodes: NodeData[] = procedures.map((p) => ({
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      section: p.section,
-      x: positions[p.id]?.x ?? W / 2,
-      y: positions[p.id]?.y ?? H / 2,
-      degree: degreeMap[p.id] || 0,
-    }));
+    nodesRef.current = newNodes;
 
-    const edges: EdgeData[] = edgePairs.map((e) => ({
-      id: `${e.source}--${e.target}`,
-      source: e.source,
-      target: e.target,
-    }));
+    const nodeById = new Map(newNodes.map((n) => [n.id, n]));
+    const newLinks = rawEdges
+      .filter((e) => nodeById.has(e.source) && nodeById.has(e.target))
+      .map((e) => ({
+        ...e,
+        source: nodeById.get(e.source)!,
+        target: nodeById.get(e.target)!,
+      }));
+    linksRef.current = newLinks;
 
-    return { nodes, edges };
+    simRef.current?.stop();
+
+    const sim = forceSimulation(newNodes)
+      .force(
+        "link",
+        forceLink<SimNode, SimLink>(newLinks)
+          .id((d) => d.id)
+          .distance(68)
+          .strength(0.3),
+      )
+      .force("charge", forceManyBody<SimNode>().strength(-170))
+      .force("center", forceCenter(W / 2, H / 2).strength(0.055))
+      .force("collision", forceCollide<SimNode>().radius((d) => nodeRadius(d) + 5))
+      .alphaDecay(0.018)
+      .on("tick", () => setTick((v) => v + 1));
+
+    simRef.current = sim;
+
+    return () => { sim.stop(); };
   }, [procedures]);
 
-  const nodeMap = useMemo(() => {
-    const m: Record<string, NodeData> = {};
-    for (const n of nodes) m[n.id] = n;
-    return m;
-  }, [nodes]);
-
-  const sections = useMemo(
-    () => SECTION_ORDER.filter((s) => procedures.some((p) => p.section === s)),
-    [procedures]
-  );
+  const reheat = useCallback(() => {
+    simRef.current?.alpha(0.6).restart();
+  }, []);
 
   const resetView = useCallback(() => setVb({ x: 0, y: 0, scale: 1 }), []);
 
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    isPanning.current = true;
-    setCursor("grabbing");
-    lastMouse.current = { x: e.clientX, y: e.clientY };
-    mouseDownPos.current = { x: e.clientX, y: e.clientY };
-  }, []);
+  // Convert screen coords to SVG canvas coords
+  const screenToCanvas = useCallback(
+    (sx: number, sy: number) => {
+      const svgEl = svgRef.current;
+      if (!svgEl) return { x: 0, y: 0 };
+      const rect = svgEl.getBoundingClientRect();
+      const scaleX = W / rect.width;
+      const scaleY = H / rect.height;
+      return {
+        x: ((sx - rect.left) * scaleX - vb.x) / vb.scale,
+        y: ((sy - rect.top) * scaleY - vb.y) / vb.scale,
+      };
+    },
+    [vb],
+  );
 
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isPanning.current) return;
-    const dx = e.clientX - lastMouse.current.x;
-    const dy = e.clientY - lastMouse.current.y;
-    setVb((v) => ({ ...v, x: v.x + dx, y: v.y + dy }));
-    lastMouse.current = { x: e.clientX, y: e.clientY };
-  }, []);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  const onMouseUp = useCallback(() => {
-    isPanning.current = false;
-    setCursor("grab");
-  }, []);
+  const findNodeAt = useCallback(
+    (cx: number, cy: number): SimNode | null => {
+      for (const n of nodesRef.current) {
+        const r = nodeRadius(n) + 8;
+        const dx = (n.x ?? 0) - cx;
+        const dy = (n.y ?? 0) - cy;
+        if (dx * dx + dy * dy <= r * r) return n;
+      }
+      return null;
+    },
+    [],
+  );
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.button !== 0) return;
+      mouseDownPos.current = { x: e.clientX, y: e.clientY };
+      const canvasPos = screenToCanvas(e.clientX, e.clientY);
+      const node = findNodeAt(canvasPos.x, canvasPos.y);
+      if (node) {
+        draggingNode.current = node;
+        node.fx = node.x;
+        node.fy = node.y;
+        simRef.current?.alphaTarget(0.3).restart();
+        setCursor("grabbing");
+      } else {
+        isPanning.current = true;
+        lastMouse.current = { x: e.clientX, y: e.clientY };
+        setCursor("grabbing");
+      }
+    },
+    [screenToCanvas, findNodeAt],
+  );
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (draggingNode.current) {
+        const canvasPos = screenToCanvas(e.clientX, e.clientY);
+        draggingNode.current.fx = canvasPos.x;
+        draggingNode.current.fy = canvasPos.y;
+        return;
+      }
+      if (!isPanning.current) return;
+      const dx = e.clientX - lastMouse.current.x;
+      const dy = e.clientY - lastMouse.current.y;
+      setVb((v) => ({ ...v, x: v.x + dx, y: v.y + dy }));
+      lastMouse.current = { x: e.clientX, y: e.clientY };
+    },
+    [screenToCanvas],
+  );
+
+  const onMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      if (draggingNode.current) {
+        // If barely moved, treat as click
+        const d = Math.hypot(
+          e.clientX - mouseDownPos.current.x,
+          e.clientY - mouseDownPos.current.y,
+        );
+        if (d < 5) {
+          const node = draggingNode.current;
+          draggingNode.current = null;
+          node.fx = undefined;
+          node.fy = undefined;
+          simRef.current?.alphaTarget(0);
+          router.push(`/manual/${node.slug}`);
+          setCursor("grab");
+          return;
+        }
+        // Release node (let physics take over again)
+        draggingNode.current.fx = undefined;
+        draggingNode.current.fy = undefined;
+        draggingNode.current = null;
+        simRef.current?.alphaTarget(0);
+      }
+      isPanning.current = false;
+      setCursor("grab");
+    },
+    [router],
+  );
 
   const onWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const factor = e.deltaY > 0 ? 0.88 : 1.14;
     setVb((v) => ({
       ...v,
-      scale: Math.max(0.15, Math.min(6, v.scale * factor)),
+      scale: Math.max(0.12, Math.min(8, v.scale * factor)),
     }));
   }, []);
 
-  const handleNodeClick = useCallback(
-    (e: React.MouseEvent, node: NodeData) => {
-      const d = Math.hypot(
-        e.clientX - mouseDownPos.current.x,
-        e.clientY - mouseDownPos.current.y
-      );
-      if (d > 5) return; // was a pan, not a click
-      router.push(`/manual/${node.slug}`);
-    },
-    [router]
-  );
+  const nodes = nodesRef.current;
+  const links = linksRef.current;
 
   return (
     <div
@@ -286,27 +310,29 @@ export function GraficaGlobal({ procedures }: Props) {
         onWheel={onWheel}
       >
         <defs>
-          <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+          <pattern id="ggg-dots" width="24" height="24" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="0.8" fill={palette.pattern} />
           </pattern>
         </defs>
 
-        <rect width={W} height={H} fill="url(#dots)" />
+        <rect width={W} height={H} fill="url(#ggg-dots)" />
 
         <g transform={`translate(${vb.x},${vb.y}) scale(${vb.scale})`}>
           {/* Edges */}
-          {edges.map((e) => {
-            const s = nodeMap[e.source];
-            const t = nodeMap[e.target];
-            if (!s || !t) return null;
-            const isHighlighted = hovered === e.source || hovered === e.target;
+          {links.map((e) => {
+            const sx = (e.source as SimNode).x ?? 0;
+            const sy = (e.source as SimNode).y ?? 0;
+            const tx = (e.target as SimNode).x ?? 0;
+            const ty = (e.target as SimNode).y ?? 0;
+            const isHighlighted =
+              hovered === (e.source as SimNode).id || hovered === (e.target as SimNode).id;
             return (
               <line
                 key={e.id}
-                x1={s.x} y1={s.y}
-                x2={t.x} y2={t.y}
+                x1={sx} y1={sy}
+                x2={tx} y2={ty}
                 stroke={isHighlighted ? palette.edgeStrong : palette.edge}
-                strokeWidth={isHighlighted ? 1.5 : 0.8}
+                strokeWidth={isHighlighted ? 1.6 : 0.8}
               />
             );
           })}
@@ -315,56 +341,55 @@ export function GraficaGlobal({ procedures }: Props) {
           {nodes.map((node) => {
             const color = SECTION_COLORS[node.section] ?? "#94a3b8";
             const isHovered = hovered === node.id;
-            const r = 5 + Math.min(node.degree * 1.5, 8);
-            const glow = isHovered
-              ? `drop-shadow(0 0 8px ${color}88) drop-shadow(0 0 3px ${color}55)`
-              : `drop-shadow(0 0 3px ${color}55)`;
+            const r = nodeRadius(node);
+            const nx = node.x ?? 0;
+            const ny = node.y ?? 0;
 
             return (
               <g
                 key={node.id}
                 onMouseEnter={() => setHovered(node.id)}
                 onMouseLeave={() => setHovered(null)}
-                onClick={(e) => handleNodeClick(e, node)}
                 style={{ cursor: "pointer" }}
               >
-                {/* Hit area */}
-                <circle cx={node.x} cy={node.y} r={r + 10} fill="transparent" />
-                {/* Outer glow ring */}
+                <circle cx={nx} cy={ny} r={r + 10} fill="transparent" />
                 {isHovered && (
-                  <circle cx={node.x} cy={node.y} r={r + 5}
+                  <circle
+                    cx={nx} cy={ny} r={r + 5}
                     fill="transparent"
                     stroke={color}
                     strokeWidth={1}
                     opacity={0.3}
                   />
                 )}
-                {/* Main node */}
                 <circle
-                  cx={node.x} cy={node.y} r={r}
+                  cx={nx} cy={ny} r={r}
                   fill={color}
-                  style={{ filter: glow }}
+                  style={{
+                    filter: isHovered
+                      ? `drop-shadow(0 0 8px ${color}99) drop-shadow(0 0 3px ${color}66)`
+                      : `drop-shadow(0 0 4px ${color}44)`,
+                  }}
                 />
-                {/* Label on hover */}
                 {isHovered && (
                   <g>
                     <rect
-                      x={node.x + r + 6}
-                      y={node.y - 10}
+                      x={nx + r + 6}
+                      y={ny - 10}
                       width={Math.min(node.title.length * 7, 200) + 12}
                       height={20}
                       rx={4}
                       fill={palette.labelBg}
                     />
                     <text
-                      x={node.x + r + 12}
-                      y={node.y + 4}
+                      x={nx + r + 12}
+                      y={ny + 4}
                       fill={palette.labelText}
                       fontSize={12}
                       fontFamily="var(--font-sans, ui-sans-serif)"
                       style={{ pointerEvents: "none", userSelect: "none" }}
                     >
-                      {node.id} · {node.title.length > 28 ? node.title.slice(0, 28) + "…" : node.title}
+                      {node.id} · {node.title.length > 28 ? node.title.slice(0, 27) + "…" : node.title}
                     </text>
                   </g>
                 )}
@@ -380,23 +405,25 @@ export function GraficaGlobal({ procedures }: Props) {
           <div key={s} className="flex items-center gap-1.5">
             <div
               className="w-2 h-2 rounded-full"
-              style={{ background: SECTION_COLORS[s], boxShadow: `0 0 3px ${SECTION_COLORS[s]}55` }}
+              style={{ background: SECTION_COLORS[s], boxShadow: `0 0 4px ${SECTION_COLORS[s]}66` }}
             />
             <span className="text-[10px]" style={{ color: palette.legendText }}>{s}</span>
           </div>
         ))}
       </div>
 
-      {/* Zoom controls */}
+      {/* Controls */}
       <div className="absolute top-3 right-3 flex flex-col gap-1">
         {[
-          { icon: ZoomIn, action: () => setVb((v) => ({ ...v, scale: Math.min(6, v.scale * 1.3) })) },
-          { icon: ZoomOut, action: () => setVb((v) => ({ ...v, scale: Math.max(0.15, v.scale * 0.77) })) },
+          { icon: ZoomIn,    action: () => setVb((v) => ({ ...v, scale: Math.min(8, v.scale * 1.3) })) },
+          { icon: ZoomOut,   action: () => setVb((v) => ({ ...v, scale: Math.max(0.12, v.scale * 0.77) })) },
           { icon: Maximize2, action: resetView },
-        ].map(({ icon: Icon, action }, i) => (
+          { icon: RefreshCw, action: reheat, title: "Reheat simulation" },
+        ].map(({ icon: Icon, action, title }, i) => (
           <button
             key={i}
             onClick={action}
+            title={title}
             className="p-1.5 rounded-md transition-colors"
             style={{ background: palette.buttonBg, color: palette.buttonText }}
           >
@@ -405,10 +432,23 @@ export function GraficaGlobal({ procedures }: Props) {
         ))}
       </div>
 
-      {/* Node count */}
-      <div className="absolute top-3 left-3 text-[10px] pointer-events-none" style={{ color: palette.countText }}>
-        {nodes.length} procedimientos · {edges.length} conexiones
+      {/* Stats */}
+      <div
+        className="absolute top-3 left-3 text-[10px] pointer-events-none"
+        style={{ color: palette.countText }}
+      >
+        {nodes.length} procedimientos · {links.length} conexiones
       </div>
+
+      {/* Drag hint */}
+      {tick === 0 && (
+        <div
+          className="absolute bottom-3 right-3 text-[10px] pointer-events-none"
+          style={{ color: palette.countText }}
+        >
+          Arrastra nodos · scroll para zoom
+        </div>
+      )}
     </div>
   );
 }
