@@ -260,6 +260,19 @@
     "notes": "Inicio de acción IM: 10-20 min. Dar carbohidratos en cuanto el paciente pueda tragar. Puede provocar náuseas y vómitos."
   },
   {
+    "id": "insulina-regular",
+    "name": "Insulina Regular",
+    "synonyms": ["Insulina Humana", "Actrapid"],
+    "category": "Metabólico",
+    "subcategory": "Glucosa",
+    "presentation": "Vial 1000 UI / 10 ml (100 UI/ml)",
+    "indication": "Hiperpotasemia grave junto a glucosa. Cetoacidosis diabética. Control de hiperglucemia crítica.",
+    "dose": "Hiperpotasemia: 10 UI IV + Glucosa 25 g IV\nCAD: 0,1 UI/kg/h IV en perfusión continua tras reposición inicial\nHiperglucemia crítica: titular según protocolo y glucemia capilar",
+    "route": ["IV", "SC"],
+    "contraindications": "Hipoglucemia. Hipopotasemia no corregida.",
+    "notes": "En perfusión, purgar el sistema por adsorción al PVC. Asociar siempre glucosa en hiperpotasemia si no hay hiperglucemia marcada. Monitorizar glucemia y potasio seriados."
+  },
+  {
     "id": "bicarbonato",
     "name": "Bicarbonato Sódico 8,4%",
     "synonyms": ["NaHCO3"],

@@ -21,6 +21,9 @@ export default function ManualLayout({ children }: { children: React.ReactNode }
 
       {/* Main content */}
       <div className="flex-1 overflow-auto">
+        <div className="md:hidden p-3 border-b border-border/60">
+          <SearchBar procedures={allProcedures} />
+        </div>
         {children}
       </div>
     </div>

@@ -46,6 +46,11 @@ interface Props {
 
 type MarkerType = { kind: "hospital"; data: Hospital } | { kind: "base"; data: Base };
 
+const MADRID_BOUNDS: [[number, number], [number, number]] = [
+  [-4.15, 40.25],
+  [-3.45, 40.68],
+];
+
 export function MapaView({ hospitals, bases, status4 }: Props) {
   const [showBases, setShowBases] = useState(true);
   const [showHospitals, setShowHospitals] = useState(true);
@@ -59,7 +64,13 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
   return (
     <div className="relative flex h-[calc(100vh-3.5rem-4rem)] md:h-[calc(100vh-3.5rem)]">
       <div className="flex-1 relative">
-        <Map center={[-3.703, 40.416]} zoom={11} className="h-full w-full">
+        <Map
+          center={[-3.703, 40.416]}
+          zoom={11}
+          minZoom={9.8}
+          maxBounds={MADRID_BOUNDS}
+          className="h-full w-full"
+        >
           <MapControls position="bottom-right" showZoom showLocate />
 
           {/* Public hospital markers */}
