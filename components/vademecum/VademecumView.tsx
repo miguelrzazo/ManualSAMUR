@@ -7,11 +7,12 @@ import {
   ChevronDown,
   ChevronUp,
   Droplets,
-  Tags,
   Table2,
+  Tags,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { VADEMECUM_TABS, type VademecumTabKey } from "@/lib/vademecum-config";
 
 interface Drug {
   id: string;
@@ -251,8 +252,7 @@ function PerfusionCard({ perf }: { perf: Perfusion }) {
   );
 }
 
-type Tab = "farmacos" | "perfusiones";
-type DrugSubview = "fichas" | "fluidos" | "comerciales";
+type Tab = VademecumTabKey;
 
 function FluidCard({ fluid }: { fluid: FluidRow }) {
   return (
@@ -327,7 +327,6 @@ function CommercialCard({ row }: { row: CommercialRow }) {
 
 export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Props) {
   const [tab, setTab] = useState<Tab>("farmacos");
-  const [drugSubview, setDrugSubview] = useState<DrugSubview>("fichas");
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -423,38 +422,36 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
   }, [normalizedCommercials, query]);
 
   const categories =
-    tab === "perfusiones"
-      ? perfCategories
-      : drugSubview === "fichas"
-        ? drugCategories
-        : drugSubview === "fluidos"
+    tab === "farmacos"
+      ? drugCategories
+      : tab === "perfusiones"
+        ? perfCategories
+        : tab === "fluidos"
           ? fluidTypes
           : [];
 
   const resultCount =
-    tab === "perfusiones"
-      ? filteredPerf.length
-      : drugSubview === "fichas"
-        ? filteredDrugs.length
-        : drugSubview === "fluidos"
+    tab === "farmacos"
+      ? filteredDrugs.length
+      : tab === "perfusiones"
+        ? filteredPerf.length
+        : tab === "fluidos"
           ? filteredFluids.length
           : filteredCommercials.length;
 
   const totalCount =
-    tab === "perfusiones"
-      ? perfusiones.length
-      : drugSubview === "fichas"
-        ? drugs.length
-        : drugSubview === "fluidos"
+    tab === "farmacos"
+      ? drugs.length
+      : tab === "perfusiones"
+        ? perfusiones.length
+        : tab === "fluidos"
           ? fluidos.length
           : normalizedCommercials.length;
 
   function handleTabChange(t: Tab) {
     setTab(t);
     setActiveCategory(null);
-    if (t === "farmacos") {
-      setDrugSubview("fichas");
-    }
+    setQuery("");
   }
 
   return (
@@ -462,62 +459,55 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
       {/* Tab bar */}
       <div className="border-b border-border/60 px-4 md:px-6 pt-5 pb-0">
         <div className="flex gap-0 -mb-px">
-          <button
-            onClick={() => handleTabChange("farmacos")}
-            className={cn(
-              "px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap",
-              tab === "farmacos"
-                ? "border-current text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            )}
-          >
-            Fármacos
-            <span className="ml-1.5 text-xs font-normal text-muted-foreground tabular-nums">{drugs.length}</span>
-          </button>
-          <button
-            onClick={() => handleTabChange("perfusiones")}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap",
-              tab === "perfusiones"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <Droplets className="h-3.5 w-3.5" />
-            Perfusiones
-            <span className="text-xs font-normal text-muted-foreground tabular-nums">{perfusiones.length}</span>
-          </button>
+          {VADEMECUM_TABS.map((tabConfig) => {
+            const item = {
+              key: tabConfig.key,
+              label: tabConfig.label,
+              count:
+                tabConfig.key === "farmacos"
+                  ? drugs.length
+                  : tabConfig.key === "perfusiones"
+                    ? perfusiones.length
+                    : tabConfig.key === "fluidos"
+                      ? fluidos.length
+                      : normalizedCommercials.length,
+              icon:
+                tabConfig.key === "perfusiones"
+                  ? <Droplets className="h-3.5 w-3.5" />
+                  : tabConfig.key === "fluidos"
+                    ? <Table2 className="h-3.5 w-3.5" />
+                    : tabConfig.key === "comerciales"
+                      ? <Tags className="h-3.5 w-3.5" />
+                      : null,
+              active:
+                tabConfig.key === "farmacos"
+                  ? "border-current text-primary"
+                  : tabConfig.key === "perfusiones"
+                    ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                    : tabConfig.key === "fluidos"
+                      ? "border-cyan-500 text-cyan-700 dark:text-cyan-300"
+                      : "border-amber-500 text-amber-700 dark:text-amber-300",
+            };
+
+            return (
+            <button
+              key={item.key}
+              onClick={() => handleTabChange(item.key)}
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap",
+                tab === item.key
+                  ? item.active
+                  : "border-transparent text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {item.icon}
+              {item.label}
+              <span className="text-xs font-normal text-muted-foreground tabular-nums">{item.count}</span>
+            </button>
+            );
+          })}
         </div>
       </div>
-
-      {tab === "farmacos" && (
-        <div className="px-4 md:px-6 py-3 border-b border-border/40 bg-background">
-          <div className="flex flex-wrap gap-2">
-            {[
-              { key: "fichas" as const, label: "Fichas", icon: null },
-              { key: "fluidos" as const, label: "Fluidos", icon: <Table2 className="h-3.5 w-3.5" /> },
-              { key: "comerciales" as const, label: "Nombres comerciales", icon: <Tags className="h-3.5 w-3.5" /> },
-            ].map((item) => (
-              <button
-                key={item.key}
-                onClick={() => {
-                  setDrugSubview(item.key);
-                  setActiveCategory(null);
-                }}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors",
-                  drugSubview === item.key
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border/60 bg-background text-muted-foreground hover:text-foreground hover:border-border",
-                )}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Search + category filters */}
       <div className="px-4 md:px-6 py-3 flex flex-wrap gap-2 items-center border-b border-border/40 bg-muted/10">
@@ -527,11 +517,11 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
-              tab === "perfusiones"
-                ? "Fármaco, indicación..."
-                : drugSubview === "fichas"
-                  ? "Nombre, indicación..."
-                  : drugSubview === "fluidos"
+              tab === "farmacos"
+                ? "Nombre, indicación..."
+                : tab === "perfusiones"
+                  ? "Fármaco, indicación..."
+                  : tab === "fluidos"
                     ? "Fluido, composición, contraindicación..."
                     : "Principio activo o nombre comercial..."
             }
@@ -549,7 +539,7 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {categories.map((cat) => {
-              const color = getColor(cat);
+              const color = tab === "fluidos" ? getColor("Fluidos IV") : getColor(cat);
               return (
                 <button
                   key={cat}
@@ -576,19 +566,19 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
           <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
             Sin resultados
           </div>
-        ) : tab === "farmacos" && drugSubview === "fichas" ? (
+        ) : tab === "farmacos" ? (
           <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
             {filteredDrugs.map((drug) => (
               <DrugCard key={drug.id} drug={drug} />
             ))}
           </div>
-        ) : tab === "farmacos" && drugSubview === "fluidos" ? (
+        ) : tab === "fluidos" ? (
           <div className="grid gap-3 xl:grid-cols-2">
             {filteredFluids.map((fluid) => (
               <FluidCard key={fluid.id} fluid={fluid} />
             ))}
           </div>
-        ) : tab === "farmacos" && drugSubview === "comerciales" ? (
+        ) : tab === "comerciales" ? (
           <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
             {filteredCommercials.map((row) => (
               <CommercialCard key={row.drugId} row={row} />
@@ -604,15 +594,14 @@ export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Prop
       </div>
 
       <div className="px-4 py-2.5 text-xs text-muted-foreground border-t border-border/30 bg-muted/10 sticky bottom-0">
-        {resultCount} de {totalCount} {
-          tab === "perfusiones"
+        {resultCount} de {totalCount}{" "}
+        {tab === "farmacos"
+          ? "fármacos"
+          : tab === "perfusiones"
             ? "perfusiones"
-            : drugSubview === "fichas"
-              ? "fármacos"
-              : drugSubview === "fluidos"
-                ? "fluidos"
-                : "relaciones comerciales"
-        }
+            : tab === "fluidos"
+              ? "fluidos"
+              : "relaciones comerciales"}
       </div>
     </div>
   );

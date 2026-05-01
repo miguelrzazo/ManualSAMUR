@@ -44,10 +44,18 @@ export function SearchBar({ procedures }: Props) {
   const handleSelect = useCallback(
     (slug: string) => {
       setOpen(false);
+      setQuery("");
       router.push(`/manual/${slug}`);
     },
     [router]
   );
+
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      setQuery("");
+    }
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -73,7 +81,7 @@ export function SearchBar({ procedures }: Props) {
         </kbd>
       </button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <CommandInput
           placeholder="Buscar procedimientos, sinónimos, tags..."
           value={query}

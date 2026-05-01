@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getAllProcedures,
@@ -19,10 +20,41 @@ import {
 import { ProcedureLinkCard } from "@/components/manual/ProcedureLinkCard";
 import { ProcedureVisitTracker } from "@/components/manual/ProcedureVisitTracker";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
+import type { ComponentPropsWithoutRef } from "react";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+const mdxComponents = {
+  a: ({ href = "", children, ...props }: ComponentPropsWithoutRef<"a">) => {
+    if (!href || href === "#") {
+      return <span className="font-medium text-foreground">{children}</span>;
+    }
+
+    if (href.startsWith("/manual/")) {
+      return (
+        <Link href={href} className="font-medium text-primary no-underline hover:underline">
+          {children}
+        </Link>
+      );
+    }
+
+    return (
+      <a
+        {...props}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-primary no-underline hover:underline"
+      >
+        {children}
+      </a>
+    );
+  },
+  img: () => null,
+  hr: () => <hr className="my-8 border-border/60" />,
+};
 
 export async function generateStaticParams() {
   const procedures = getAllProcedures();
@@ -119,7 +151,7 @@ export default async function ProcedurePage({ params }: Props) {
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:py-2
           prose-ul:my-5 prose-ol:my-5 prose-li:leading-7 prose-li:my-1.5
         ">
-          <MDXRemote source={procedure.content} />
+          <MDXRemote source={procedure.content} components={mdxComponents} />
         </div>
 
         {/* Source link */}
@@ -147,7 +179,7 @@ export default async function ProcedurePage({ params }: Props) {
             <GraficaLocal current={procedure} related={related} backlinks={backlinks} />
             <div className="mt-4 grid gap-4">
               <ProcedureLinkCard
-                title="Backlinks"
+                title="Enlaces entrantes"
                 icon={<GitBranch className="h-3.5 w-3.5" />}
                 procedures={backlinks}
                 emptyLabel="Ningún otro artículo enlaza aquí"
@@ -167,7 +199,7 @@ export default async function ProcedurePage({ params }: Props) {
         <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0">
           <div className="sticky top-6 flex flex-col gap-4">
             <ProcedureLinkCard
-              title="Backlinks"
+              title="Enlaces entrantes"
               icon={<GitBranch className="h-3.5 w-3.5" />}
               procedures={backlinks}
               emptyLabel="Ningún otro artículo enlaza aquí"

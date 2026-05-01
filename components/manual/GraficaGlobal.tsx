@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import type { ProcedureMeta } from "@/lib/content";
 
@@ -135,6 +136,7 @@ const H = 660;
 
 export function GraficaGlobal({ procedures }: Props) {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const svgRef = useRef<SVGSVGElement>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
@@ -142,6 +144,34 @@ export function GraficaGlobal({ procedures }: Props) {
   const lastMouse = useRef({ x: 0, y: 0 });
   const mouseDownPos = useRef({ x: 0, y: 0 });
   const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
+
+  const palette = resolvedTheme === "dark"
+    ? {
+        background: "#10141c",
+        border: "rgba(255,255,255,0.08)",
+        pattern: "rgba(255,255,255,0.07)",
+        edge: "rgba(196,205,222,0.18)",
+        edgeStrong: "rgba(224,231,255,0.34)",
+        labelBg: "rgba(13,18,28,0.92)",
+        labelText: "#f3f7ff",
+        buttonBg: "rgba(255,255,255,0.08)",
+        buttonText: "rgba(255,255,255,0.74)",
+        legendText: "rgba(240,244,255,0.64)",
+        countText: "rgba(255,255,255,0.42)",
+      }
+    : {
+        background: "#f7f8fc",
+        border: "rgba(15,23,42,0.10)",
+        pattern: "rgba(15,23,42,0.08)",
+        edge: "rgba(71,85,105,0.16)",
+        edgeStrong: "rgba(51,65,85,0.28)",
+        labelBg: "rgba(255,255,255,0.94)",
+        labelText: "#162033",
+        buttonBg: "rgba(255,255,255,0.72)",
+        buttonText: "rgba(15,23,42,0.72)",
+        legendText: "rgba(15,23,42,0.64)",
+        countText: "rgba(15,23,42,0.42)",
+      };
 
   const { nodes, edges } = useMemo(() => {
     const edgeSet = new Set<string>();
@@ -239,8 +269,8 @@ export function GraficaGlobal({ procedures }: Props) {
 
   return (
     <div
-      className="relative w-full rounded-xl overflow-hidden border border-white/10"
-      style={{ background: "#0d1117", height: "560px" }}
+      className="relative w-full rounded-xl overflow-hidden border"
+      style={{ background: palette.background, borderColor: palette.border, height: "560px" }}
     >
       <svg
         ref={svgRef}
@@ -257,7 +287,7 @@ export function GraficaGlobal({ procedures }: Props) {
       >
         <defs>
           <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="0.8" fill="rgba(255,255,255,0.06)" />
+            <circle cx="1" cy="1" r="0.8" fill={palette.pattern} />
           </pattern>
         </defs>
 
@@ -275,7 +305,7 @@ export function GraficaGlobal({ procedures }: Props) {
                 key={e.id}
                 x1={s.x} y1={s.y}
                 x2={t.x} y2={t.y}
-                stroke={isHighlighted ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.12)"}
+                stroke={isHighlighted ? palette.edgeStrong : palette.edge}
                 strokeWidth={isHighlighted ? 1.5 : 0.8}
               />
             );
@@ -286,7 +316,9 @@ export function GraficaGlobal({ procedures }: Props) {
             const color = SECTION_COLORS[node.section] ?? "#94a3b8";
             const isHovered = hovered === node.id;
             const r = 5 + Math.min(node.degree * 1.5, 8);
-            const glow = isHovered ? `drop-shadow(0 0 10px ${color}) drop-shadow(0 0 4px ${color})` : `drop-shadow(0 0 5px ${color}88)`;
+            const glow = isHovered
+              ? `drop-shadow(0 0 8px ${color}88) drop-shadow(0 0 3px ${color}55)`
+              : `drop-shadow(0 0 3px ${color}55)`;
 
             return (
               <g
@@ -322,12 +354,12 @@ export function GraficaGlobal({ procedures }: Props) {
                       width={Math.min(node.title.length * 7, 200) + 12}
                       height={20}
                       rx={4}
-                      fill="rgba(0,0,0,0.75)"
+                      fill={palette.labelBg}
                     />
                     <text
                       x={node.x + r + 12}
                       y={node.y + 4}
-                      fill="white"
+                      fill={palette.labelText}
                       fontSize={12}
                       fontFamily="var(--font-sans, ui-sans-serif)"
                       style={{ pointerEvents: "none", userSelect: "none" }}
@@ -348,9 +380,9 @@ export function GraficaGlobal({ procedures }: Props) {
           <div key={s} className="flex items-center gap-1.5">
             <div
               className="w-2 h-2 rounded-full"
-              style={{ background: SECTION_COLORS[s], boxShadow: `0 0 4px ${SECTION_COLORS[s]}` }}
+              style={{ background: SECTION_COLORS[s], boxShadow: `0 0 3px ${SECTION_COLORS[s]}55` }}
             />
-            <span className="text-[10px] text-white/50">{s}</span>
+            <span className="text-[10px]" style={{ color: palette.legendText }}>{s}</span>
           </div>
         ))}
       </div>
@@ -365,7 +397,8 @@ export function GraficaGlobal({ procedures }: Props) {
           <button
             key={i}
             onClick={action}
-            className="p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-colors"
+            className="p-1.5 rounded-md transition-colors"
+            style={{ background: palette.buttonBg, color: palette.buttonText }}
           >
             <Icon className="h-3.5 w-3.5" />
           </button>
@@ -373,7 +406,7 @@ export function GraficaGlobal({ procedures }: Props) {
       </div>
 
       {/* Node count */}
-      <div className="absolute top-3 left-3 text-[10px] text-white/30 pointer-events-none">
+      <div className="absolute top-3 left-3 text-[10px] pointer-events-none" style={{ color: palette.countText }}>
         {nodes.length} procedimientos · {edges.length} conexiones
       </div>
     </div>

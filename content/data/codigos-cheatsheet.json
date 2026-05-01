@@ -1,0 +1,238 @@
+[
+  {
+    "key": "plantillas",
+    "title": "Plantillas operativas",
+    "kind": "cards",
+    "items": [
+      {
+        "title": "Operatividad (Por SAMUR-2)",
+        "lines": [
+          "Clave 11, Clave 0, con TETRA 12___ y 12___, Móvil ___.",
+          "Nos dirigimos al preventivo de ______ / retén / otro.",
+          "Estaremos ubicados en __.",
+          "A la escucha en canal SAMUR __."
+        ]
+      },
+      {
+        "title": "Solicitud Clave 16 de SVA (Por SAMUR-1)",
+        "lines": [
+          "Solicito Clave 16 de SVA para sexo, edad y motivo principal.",
+          "Añadir FR, SpO2, FC, TA y nivel de conciencia.",
+          "Si es trauma, indicar mecanismo lesional y lesiones principales.",
+          "Añadir otra información relevante."
+        ]
+      },
+      {
+        "title": "Paso a Clave 0 (Por SAMUR-3)",
+        "lines": [
+          "En el lugar (Clave 3): Clave 0 en el punto.",
+          "Se hace cargo SAMUR XXX / 091 / 092 / SAMUR Social / otro.",
+          "Código final _.__ y código de valoración _.__.__.",
+          "En hospital (Clave 5): Clave 0 en el hospital ______."
+        ]
+      },
+      {
+        "title": "Finalización del servicio",
+        "lines": [
+          "En el lugar: Solicitamos Clave 14 por finalización del evento.",
+          "Añadir sin asistencias o con __ asistencias.",
+          "Al llegar a B0: Clave 12."
+        ]
+      },
+      {
+        "title": "Estructura de un mensaje de aviso",
+        "lines": [
+          "8___ / _.__ / Lugar / __ / XXXXXX / Información / HH:MM / H__",
+          "Incluye unidad, código inicial, ubicación, distrito, número de informe, observaciones, hora y hospital de referencia si aplica."
+        ]
+      }
+    ]
+  },
+  {
+    "key": "grupos",
+    "title": "Asignación de grupos de habla",
+    "kind": "table",
+    "columns": ["Grupo", "Uso", "Indicativo"],
+    "items": [
+      { "Grupo": "SAMUR-1", "Uso": "Operativo ordinario", "Indicativo": "Central" },
+      { "Grupo": "SAMUR-2", "Uso": "Operatividad (C11, C12)", "Indicativo": "Central" },
+      { "Grupo": "SAMUR-3", "Uso": "Cierres (C0), Traslados (C4)", "Indicativo": "Central" },
+      { "Grupo": "SAMUR-XX", "Uso": "Preventivos, Otros", "Indicativo": "Central, Base, Eco 0, Lima, Sierra, etc." }
+    ]
+  },
+  {
+    "key": "tetra",
+    "title": "Utilidades TETRA Motorola",
+    "kind": "cards",
+    "items": [
+      {
+        "title": "Activar localización (GPS)",
+        "lines": ["Menú → Ubicación → Interfaz → Activar → Selecc."]
+      },
+      {
+        "title": "Pasar a Metro",
+        "lines": [
+          "Paso 1: Menú → Redes → Selec. Red → Cualquier red → Selecc.",
+          "Paso 2: Pulsación prolongada del botón verde lateral izquierdo.",
+          "Debe aparecer METRO / SAMUR MTR si hay cobertura de la red TETRA de Metro."
+        ]
+      },
+      {
+        "title": "Bloquear o desbloquear teclado",
+        "lines": ["Tecla menú + *"]
+      },
+      {
+        "title": "Cambiar modo Red (TMO) ↔ Directo (DMO)",
+        "lines": ["Pulsación prolongada # o *"]
+      },
+      {
+        "title": "Llamada privada o cerrada",
+        "lines": [
+          "Recepción: cuando suena la llamada, pulsar PTT para descolgar.",
+          "Emisión: en pantalla principal teclear el número y después pulsar PTT."
+        ]
+      }
+    ]
+  },
+  {
+    "key": "estatus",
+    "title": "Estatus",
+    "kind": "table",
+    "columns": ["Estatus", "Descripción"],
+    "items": [
+      { "Estatus": "1", "Descripción": "Clave 1" },
+      { "Estatus": "2", "Descripción": "Clave 2 / Sólo desde el Tetra del vehículo, si no por voz" },
+      { "Estatus": "3", "Descripción": "Clave 3" },
+      { "Estatus": "4", "Descripción": "Clave 4 / Indicar hospital por status o voz por SAMUR-3" },
+      { "Estatus": "5", "Descripción": "Clave 5" },
+      { "Estatus": "7", "Descripción": "Aceptar solicitud mensaje Clave Victor o Clave 14" },
+      { "Estatus": "8", "Descripción": "Rechazar solicitud mensaje Clave Victor o Clave 14" },
+      { "Estatus": "9", "Descripción": "Paso a Clave 0 después de inoperatividad (C6.1, C22, etc.)" }
+    ]
+  },
+  {
+    "key": "icao",
+    "title": "ICAO",
+    "kind": "table",
+    "columns": ["Código", "Nombre", "Tipo"],
+    "items": [
+      { "Código": "A", "Nombre": "Alfa", "Tipo": "Letra" },
+      { "Código": "B", "Nombre": "Bravo", "Tipo": "Letra" },
+      { "Código": "C", "Nombre": "Charlie", "Tipo": "Letra" },
+      { "Código": "D", "Nombre": "Delta", "Tipo": "Letra" },
+      { "Código": "E", "Nombre": "Echo", "Tipo": "Letra" },
+      { "Código": "F", "Nombre": "Foxtrot", "Tipo": "Letra" },
+      { "Código": "G", "Nombre": "Golf", "Tipo": "Letra" },
+      { "Código": "H", "Nombre": "Hotel", "Tipo": "Letra" },
+      { "Código": "I", "Nombre": "India", "Tipo": "Letra" },
+      { "Código": "J", "Nombre": "Juliett", "Tipo": "Letra" },
+      { "Código": "K", "Nombre": "Kilo", "Tipo": "Letra" },
+      { "Código": "L", "Nombre": "Lima", "Tipo": "Letra" },
+      { "Código": "M", "Nombre": "Mike", "Tipo": "Letra" },
+      { "Código": "N", "Nombre": "November", "Tipo": "Letra" },
+      { "Código": "O", "Nombre": "Oscar", "Tipo": "Letra" },
+      { "Código": "P", "Nombre": "Papa", "Tipo": "Letra" },
+      { "Código": "Q", "Nombre": "Quebec", "Tipo": "Letra" },
+      { "Código": "R", "Nombre": "Romeo", "Tipo": "Letra" },
+      { "Código": "S", "Nombre": "Sierra", "Tipo": "Letra" },
+      { "Código": "T", "Nombre": "Tango", "Tipo": "Letra" },
+      { "Código": "U", "Nombre": "Uniform", "Tipo": "Letra" },
+      { "Código": "V", "Nombre": "Victor", "Tipo": "Letra" },
+      { "Código": "W", "Nombre": "Whiskey", "Tipo": "Letra" },
+      { "Código": "X", "Nombre": "X-Ray", "Tipo": "Letra" },
+      { "Código": "Y", "Nombre": "Yankee", "Tipo": "Letra" },
+      { "Código": "Z", "Nombre": "Zulu", "Tipo": "Letra" },
+      { "Código": "Ñ", "Nombre": "Ñoño", "Tipo": "Letra" },
+      { "Código": "0", "Nombre": "Negativo", "Tipo": "Número" },
+      { "Código": "1", "Nombre": "Primero", "Tipo": "Número" },
+      { "Código": "2", "Nombre": "Segundo", "Tipo": "Número" },
+      { "Código": "3", "Nombre": "Tercero", "Tipo": "Número" },
+      { "Código": "4", "Nombre": "Cuarto", "Tipo": "Número" },
+      { "Código": "5", "Nombre": "Quinto", "Tipo": "Número" },
+      { "Código": "6", "Nombre": "Sexto", "Tipo": "Número" },
+      { "Código": "7", "Nombre": "Séptimo", "Tipo": "Número" },
+      { "Código": "8", "Nombre": "Octavo", "Tipo": "Número" },
+      { "Código": "9", "Nombre": "Noveno", "Tipo": "Número" }
+    ]
+  },
+  {
+    "key": "hospitales",
+    "title": "Hospitales",
+    "kind": "table",
+    "columns": ["H", "Sta", "Hospital", "Acceso Urgencias"],
+    "items": [
+      { "H": "HCO", "Sta": "1", "Hospital": "Concepción / FJD", "Acceso Urgencias": "Av/ Reyes Católicos, 2" },
+      { "H": "HGM", "Sta": "2", "Hospital": "Gregorio Marañón", "Acceso Urgencias": "C/ Ibiza, 47" },
+      { "H": "HDO", "Sta": "3", "Hospital": "12 de Octubre", "Acceso Urgencias": "Glorieta de Málaga" },
+      { "H": "HCL", "Sta": "5", "Hospital": "Clínico San Carlos", "Acceso Urgencias": "C/ Prof Martín Lagos, s/n" },
+      { "H": "HLP", "Sta": "6", "Hospital": "La Paz", "Acceso Urgencias": "Paseo Castellana, 261" },
+      { "H": "HRC", "Sta": "7", "Hospital": "Ramón y Cajal", "Acceso Urgencias": "C/ San Modesto, 42" },
+      { "H": "HPR", "Sta": "8", "Hospital": "La Princesa", "Acceso Urgencias": "C/ Maldonado, 50" },
+      { "H": "HIL", "Sta": "9", "Hospital": "Infanta Leonor", "Acceso Urgencias": "Av/ Gran Vía del Este, 80" },
+      { "H": "HGU", "Sta": "", "Hospital": "Gómez Ulla / Defensa", "Acceso Urgencias": "Glorieta del Ejército, 1" }
+    ]
+  },
+  {
+    "key": "bases",
+    "title": "Bases operativas",
+    "kind": "table",
+    "columns": ["Nº", "Base", "Dirección", "Distrito"],
+    "items": [
+      { "Nº": "0", "Base": "B-0 / Base central / M-0", "Dirección": "Ronda de las Provincias, 7", "Distrito": "Moncloa-Aravaca" },
+      { "Nº": "1", "Base": "El Espinillo", "Dirección": "Av/ Orovilla, 50", "Distrito": "Villaverde" },
+      { "Nº": "2", "Base": "Centro", "Dirección": "C/ San Bernardo, 68", "Distrito": "Centro" },
+      { "Nº": "3", "Base": "Chamartín", "Dirección": "C/ Federico Salmón, 8", "Distrito": "Chamartín" },
+      { "Nº": "4", "Base": "Ciudad Lineal", "Dirección": "C/ Peloponeso, 9", "Distrito": "Ciudad Lineal" },
+      { "Nº": "5", "Base": "Carabanchel", "Dirección": "C/ Eugenia de Montijo, 90", "Distrito": "Carabanchel" },
+      { "Nº": "6", "Base": "Francos Rodríguez", "Dirección": "C/ Pirineos, 1", "Distrito": "Moncloa-Aravaca" },
+      { "Nº": "7", "Base": "La Estrella", "Dirección": "Travesía del Vino, 1", "Distrito": "Moncloa-Aravaca" },
+      { "Nº": "8", "Base": "Pacífico", "Dirección": "C/ Hoyuelo, 7", "Distrito": "Retiro" },
+      { "Nº": "9", "Base": "Usera", "Dirección": "C/ Antonio López, 142 (posterior)", "Distrito": "Usera" },
+      { "Nº": "10", "Base": "Tetuán", "Dirección": "C/ Infanta Mercedes, 34", "Distrito": "Tetuán" },
+      { "Nº": "11", "Base": "Hortaleza", "Dirección": "C/ Arequipa, 8", "Distrito": "Hortaleza" },
+      { "Nº": "12", "Base": "Moratalaz", "Dirección": "C/ Brujas, 28", "Distrito": "Moratalaz" },
+      { "Nº": "13", "Base": "Avenida Valladolid", "Dirección": "Av/ Valladolid, 6", "Distrito": "Moncloa-Aravaca" },
+      { "Nº": "14", "Base": "Fuerte de Navidad", "Dirección": "C/ Casuarina, 10", "Distrito": "Latina" },
+      { "Nº": "15", "Base": "Colón", "Dirección": "Pl/ de Colón (subterráneo)", "Distrito": "Salamanca" },
+      { "Nº": "16", "Base": "Isla de Tabarca", "Dirección": "C/ Doct. Ramón Castroviejo, 47", "Distrito": "Fuencarral-El Pardo" },
+      { "Nº": "17", "Base": "Vicálvaro", "Dirección": "C/ las Santeras, 39", "Distrito": "Vicálvaro" },
+      { "Nº": "18", "Base": "Las Rosas (Metropolitano)", "Dirección": "C/ María Sevilla de Diago, 40", "Distrito": "San Blas - Canillejas" },
+      { "Nº": "20", "Base": "Vallecas", "Dirección": "Travesía Puerto de Reinosa, 4", "Distrito": "Villa de Vallecas" },
+      { "Nº": "21", "Base": "Barajas", "Dirección": "C/ Playa de América, 34", "Distrito": "Barajas" },
+      { "Nº": "22", "Base": "Ventas", "Dirección": "C/ Pedro Heredia, 34", "Distrito": "Salamanca" },
+      { "Nº": "23", "Base": "Legazpi", "Dirección": "Pl/ Legazpi, 7", "Distrito": "Arganzuela" },
+      { "Nº": "25", "Base": "Chamberí", "Dirección": "C/ del Monte Esquinza, 41", "Distrito": "Chamberí" },
+      { "Nº": "26", "Base": "Puente de Vallecas", "Dirección": "Av/ de Buenos Aires, 17", "Distrito": "Puente de Vallecas" }
+    ]
+  },
+  {
+    "key": "distritos",
+    "title": "Distritos",
+    "kind": "table",
+    "columns": ["Nº", "Distrito"],
+    "items": [
+      { "Nº": "1", "Distrito": "Centro" },
+      { "Nº": "2", "Distrito": "Arganzuela" },
+      { "Nº": "3", "Distrito": "Retiro" },
+      { "Nº": "4", "Distrito": "Salamanca" },
+      { "Nº": "5", "Distrito": "Chamartín" },
+      { "Nº": "6", "Distrito": "Tetuán" },
+      { "Nº": "7", "Distrito": "Chamberí" },
+      { "Nº": "8", "Distrito": "Fuencarral-El Pardo" },
+      { "Nº": "9", "Distrito": "Moncloa-Aravaca" },
+      { "Nº": "10", "Distrito": "Latina" },
+      { "Nº": "11", "Distrito": "Carabanchel" },
+      { "Nº": "12", "Distrito": "Usera" },
+      { "Nº": "13", "Distrito": "Pte de Vallecas" },
+      { "Nº": "14", "Distrito": "Moratalaz" },
+      { "Nº": "15", "Distrito": "Ciudad Lineal" },
+      { "Nº": "16", "Distrito": "Hortaleza" },
+      { "Nº": "17", "Distrito": "Villaverde" },
+      { "Nº": "18", "Distrito": "Villa de Vallecas" },
+      { "Nº": "19", "Distrito": "Vicálvaro" },
+      { "Nº": "20", "Distrito": "San Blas-Canillejas" },
+      { "Nº": "21", "Distrito": "Barajas" },
+      { "Nº": "99", "Distrito": "Fuera de Madrid" }
+    ]
+  }
+]

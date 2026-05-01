@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, X, ChevronDown, Globe } from "lucide-react";
+import { Search, X, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
@@ -111,7 +111,6 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
   const [activeTab, setActiveTab] = useState<TabKey>("incidente");
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [globalSearch, setGlobalSearch] = useState(false);
 
   const dataMap = useMemo<Record<TabKey, Code[]>>(
@@ -163,7 +162,6 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
               onClick={() => {
                 setActiveTab(tab.key);
                 setActiveCategory(null);
-                setExpandedRow(null);
                 setGlobalSearch(false);
               }}
               className={cn(
@@ -255,8 +253,7 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
                       <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{tab.label}</span>
                       <span className="text-xs text-muted-foreground ml-1 tabular-nums">{tabResults.length}</span>
                     </div>
-                    <CodeList codes={tabResults} tabPill={tab.pill} tabKey={tab.key}
-                      expandedRow={expandedRow} setExpandedRow={setExpandedRow} />
+                    <CodeList codes={tabResults} tabPill={tab.pill} tabKey={tab.key} />
                   </div>
                 );
               })}
@@ -267,8 +264,7 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
           localFiltered.length === 0 ? (
             <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">Sin resultados</div>
           ) : (
-            <CodeList codes={localFiltered} tabPill={tabInfo.pill} tabKey={tabInfo.key}
-              expandedRow={expandedRow} setExpandedRow={setExpandedRow} />
+            <CodeList codes={localFiltered} tabPill={tabInfo.pill} tabKey={tabInfo.key} />
           )
         )}
 
@@ -283,13 +279,11 @@ export function CodigosView({ incidente, sva, svb, upsi, pc, icao, comms }: Prop
 }
 
 function CodeList({
-  codes, tabPill, tabKey, expandedRow, setExpandedRow,
+  codes, tabPill, tabKey,
 }: {
   codes: (Code & { tabKey?: string; tabPill?: string })[];
   tabPill: string;
   tabKey: string;
-  expandedRow: string | null;
-  setExpandedRow: (k: string | null) => void;
 }) {
   const grouped = codes.reduce<Record<string, { label: string; items: (Code & { tabKey?: string; tabPill?: string })[] }>>((acc, code) => {
     const { family, label } = getFamilyMeta(tabKey as TabKey, code.code);
@@ -304,9 +298,11 @@ function CodeList({
     <div>
       {Object.entries(grouped).map(([family, group]) => (
         <section key={family} className="border-b border-border/30">
-          <div className="sticky top-0 z-10 px-4 md:px-6 py-2.5 bg-background/90 backdrop-blur-sm border-b border-border/30">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-primary">{family}</span>
+          <div className="sticky top-0 z-10 border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur-md md:px-6">
+            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/25 px-3 py-2 shadow-sm">
+              <span className={cn("rounded-full px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em]", tabPill)}>
+                {family}
+              </span>
               <span className="text-sm font-semibold">{group.label}</span>
               <span className="text-xs text-muted-foreground tabular-nums">{group.items.length}</span>
             </div>
@@ -314,16 +310,11 @@ function CodeList({
 
           <div className="divide-y divide-border/20">
             {group.items.map((code, i) => {
-              const rowKey = `${tabKey}-${family}-${code.code}-${i}`;
-              const isExpanded = expandedRow === rowKey;
               const pill = code.tabPill ?? tabPill;
 
               return (
-                <div key={rowKey}>
-                  <button
-                    className="w-full flex items-start gap-3 px-4 md:px-6 py-3.5 hover:bg-muted/30 transition-colors text-left"
-                    onClick={() => setExpandedRow(isExpanded ? null : rowKey)}
-                  >
+                <div key={`${tabKey}-${family}-${code.code}-${i}`} className="px-4 py-3.5 transition-colors hover:bg-muted/20 md:px-6">
+                  <div className="flex items-start gap-3 text-left">
                     <span className={cn(
                       "font-mono font-bold text-sm px-2.5 py-1 rounded-lg flex-shrink-0 min-w-[4.2rem] text-center tabular-nums",
                       pill,
@@ -340,21 +331,13 @@ function CodeList({
                           {code.category}
                         </span>
                       </div>
+                      {code.description && (
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {code.description}
+                        </p>
+                      )}
                     </div>
-                    {code.description && (
-                      <ChevronDown className={cn(
-                        "h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0 mt-1 transition-transform",
-                        isExpanded && "rotate-180",
-                      )} />
-                    )}
-                  </button>
-                  {isExpanded && code.description && (
-                    <div className="px-4 md:px-6 pb-4">
-                      <div className="ml-[calc(4.2rem+0.75rem)] text-sm text-muted-foreground leading-relaxed bg-muted/30 px-3 py-2.5 rounded-lg border border-border/40">
-                        {code.description}
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureSidebarSection } from "@/lib/content";
 
 interface Props {
-  proceduresBySection: Record<string, ProcedureMeta[]>;
+  sections: ProcedureSidebarSection[];
 }
 
 const SECTION_COLORS: Record<string, string> = {
@@ -22,13 +22,11 @@ const SECTION_COLORS: Record<string, string> = {
   General: "bg-slate-400",
 };
 
-export function ProcedureSidebar({ proceduresBySection }: Props) {
+export function ProcedureSidebar({ sections }: Props) {
   const pathname = usePathname();
-  const sections = Object.keys(proceduresBySection);
 
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
-    // Auto-expand section of current page
     return init;
   });
 
@@ -39,15 +37,18 @@ export function ProcedureSidebar({ proceduresBySection }: Props) {
   return (
     <nav className="flex flex-col gap-0.5 py-2">
       {sections.map((section) => {
-        const procedures = proceduresBySection[section];
-        const dotColor = SECTION_COLORS[section] ?? "bg-slate-400";
-        const isOpen = collapsed[section] !== true;
-        const hasActive = procedures.some((p) => pathname === `/manual/${p.slug}`);
+        const dotColor = SECTION_COLORS[section.section] ?? "bg-slate-400";
+        const isOpen = collapsed[section.section] !== true;
+        const hasActive = section.groups.some((group) =>
+          group.subgroups.some((subgroup) =>
+            subgroup.procedures.some((procedure) => pathname === `/manual/${procedure.slug}`),
+          ),
+        );
 
         return (
-          <div key={section}>
+          <div key={section.section}>
             <button
-              onClick={() => toggleSection(section)}
+              onClick={() => toggleSection(section.section)}
               className={cn(
                 "w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs font-semibold uppercase tracking-wide transition-colors",
                 hasActive
@@ -56,7 +57,7 @@ export function ProcedureSidebar({ proceduresBySection }: Props) {
               )}
             >
               <span className={cn("h-2 w-2 rounded-full flex-shrink-0", dotColor)} />
-              <span className="flex-1 text-left">{section}</span>
+              <span className="flex-1 text-left">{section.section}</span>
               {isOpen ? (
                 <ChevronDown className="h-3 w-3" />
               ) : (
@@ -65,27 +66,45 @@ export function ProcedureSidebar({ proceduresBySection }: Props) {
             </button>
 
             {isOpen && (
-              <div className="ml-5 flex flex-col gap-0.5 mb-1">
-                {procedures.map((p) => {
-                  const active = pathname === `/manual/${p.slug}`;
-                  return (
-                    <Link
-                      key={p.id}
-                      href={`/manual/${p.slug}`}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-sm transition-colors leading-snug",
-                        active
-                          ? "bg-primary/10 text-primary font-medium"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                      )}
-                    >
-                      <span className="text-xs text-muted-foreground/60 font-mono mr-1.5">
-                        {p.id}
-                      </span>
-                      {p.title}
-                    </Link>
-                  );
-                })}
+              <div className="ml-4 mb-2 flex flex-col gap-3">
+                {section.groups.map((group) => (
+                  <div key={`${section.section}-${group.name}`} className="rounded-xl border border-border/50 bg-muted/15 p-2">
+                    <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      {group.name}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {group.subgroups.map((subgroup) => (
+                        <div key={`${group.name}-${subgroup.name}`}>
+                          <div className="px-2 pb-1 text-[11px] font-medium text-primary/80">
+                            {subgroup.name}
+                          </div>
+                          <div className="flex flex-col gap-0.5">
+                            {subgroup.procedures.map((procedure) => {
+                              const active = pathname === `/manual/${procedure.slug}`;
+                              return (
+                                <Link
+                                  key={procedure.id}
+                                  href={`/manual/${procedure.slug}`}
+                                  className={cn(
+                                    "px-2.5 py-1.5 rounded-lg text-sm transition-colors leading-snug",
+                                    active
+                                      ? "bg-primary/10 text-primary font-medium"
+                                      : "text-muted-foreground hover:text-foreground hover:bg-background",
+                                  )}
+                                >
+                                  <span className="text-xs text-muted-foreground/60 font-mono mr-1.5">
+                                    {procedure.id}
+                                  </span>
+                                  {procedure.title}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

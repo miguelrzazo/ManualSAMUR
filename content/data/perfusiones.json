@@ -178,5 +178,153 @@
     "rate": "Hiperpotasemia: 10 UI bolo + Glucosa 33% 50 ml → perfusión 0,1 UI/kg/h\nCAD: 0,1 UI/kg/h",
     "preparation": "Uso de Insulina Actrapid/Regular. La insulina se absorbe en el PVC — purgar el equipo antes.",
     "notes": "Hiperpotasemia: asociar siempre glucosa (evitar hipoglucemia). CAD: monitorizar glucemia cada hora. Preparar siempre 50 ml G33% de rescate."
+  },
+  {
+    "id": "digoxina-perf",
+    "drug": "Digoxina",
+    "category": "Cardiovascular",
+    "indication": "Control de frecuencia y situaciones seleccionadas de insuficiencia cardiaca.",
+    "recipe": "2 amp + 98 ml SG 5%",
+    "rate": "0,5 mg en 10-20 min → 300 ml/h",
+    "preparation": "Presentación 0,25 mg/1 ml. Diluir en glucosa 5% antes de infundir.",
+    "notes": "Perfusión recogida en la Lista de Perfusiones SAMUR 2006. Vigilar bradicardia, bloqueo AV y toxicidad digitálica."
+  },
+  {
+    "id": "fenitoina-perf",
+    "drug": "Fenitoína",
+    "category": "Otros",
+    "indication": "Carga anticonvulsivante en estatus epiléptico o convulsiones refractarias.",
+    "recipe": "5 amp + 75 ml SSF 0,9%",
+    "rate": "18 mg/kg en 30 min (máx 50 mg/min) → 200 ml/h",
+    "preparation": "Usar suero fisiológico. Presentación 250 mg/5 ml.",
+    "notes": "Monitorizar ECG y TA durante la perfusión. Evitar velocidades superiores a 50 mg/min."
+  },
+  {
+    "id": "flumazenil-perf",
+    "drug": "Flumazenil",
+    "drugId": "flumazenil",
+    "category": "Antídotos",
+    "indication": "Reversión titulada de sedación por benzodiacepinas.",
+    "recipe": "1 amp + 95 ml SG 5%",
+    "rate": "0,1-0,4 mg/h → 20-80 ml/h",
+    "preparation": "Presentación 0,5 mg/5 ml. Diluir en glucosa 5% y titular según respuesta clínica.",
+    "notes": "Útil cuando se busca reversión parcial y controlada. Vigilar resedación y precipitación de convulsiones."
+  },
+  {
+    "id": "gluconato-calcico-perf",
+    "drug": "Gluconato Cálcico",
+    "drugId": "gluconato-calcico",
+    "category": "Metabólico",
+    "indication": "Hipocalcemia sintomática, hiperpotasemia con cambios ECG y estabilización de membrana.",
+    "recipe": "1 a 2,5 amp + 90 ml SG 5%",
+    "recipeAlt": "Mantenimiento en hipocalcemia: 6 amp + 440 ml SG 5%",
+    "rate": "90 mg en 10-20 min → 50-100 ml/h\nMantenimiento: 2 mg/kg/min → 144 ml/h",
+    "preparation": "Presentación 90 mg/10 ml. Administrar con monitorización y buena vía venosa.",
+    "notes": "Evitar extravasación. La pauta de mantenimiento procede de la Lista de Perfusiones SAMUR 2006."
+  },
+  {
+    "id": "metilprednisolona-perf",
+    "drug": "Metilprednisolona",
+    "drugId": "metilprednisolona",
+    "category": "Respiratorio",
+    "indication": "Bolus/perfusión de corticoide en broncoespasmo grave, anafilaxia o protocolos específicos.",
+    "recipe": "2 amp + 60 ml SG 5%",
+    "rate": "30 mg/kg en 15 min → 400 ml/h",
+    "preparation": "Presentación 1 g/15,6 ml. Reconstituir y diluir en glucosa 5%.",
+    "notes": "Pauta de perfusión recogida en la Lista de Perfusiones SAMUR 2006."
+  },
+  {
+    "id": "n-acetilcisteina-perf",
+    "drug": "N-Acetilcisteína",
+    "drugId": "n-acetilcisteina",
+    "category": "Antídotos",
+    "indication": "Antídoto en intoxicación por paracetamol.",
+    "recipe": "5 amp + 50 ml SG 5%",
+    "recipeAlt": "Segundo tramo: 2 amp + 500 ml SG 5%",
+    "rate": "1.º 150 mg/kg en 15 min → 400 ml/h\n2.º 50 mg/kg en 4 h → 125 ml/h",
+    "preparation": "Presentación 2 g/10 ml. Preparar los dos tramos secuenciales indicados en el protocolo.",
+    "notes": "La pauta reproduce la lista histórica de perfusiones del manual SAMUR."
+  },
+  {
+    "id": "naloxona-perf",
+    "drug": "Naloxona",
+    "drugId": "naloxona",
+    "category": "Antídotos",
+    "indication": "Mantenimiento tras reversión de intoxicación por opioides con riesgo de resedación.",
+    "recipe": "1 amp + 99 ml SG 5%",
+    "rate": "13 mcg/min → 195 ml/h",
+    "preparation": "Presentación 0,4 mg/ml. Ajustar sobre la dosis efectiva previa de rescate.",
+    "notes": "La naloxona tiene vida media más corta que muchos opioides; vigilar recaída clínica."
+  },
+  {
+    "id": "nitroprusiato-perf",
+    "drug": "Nitroprusiato",
+    "category": "Cardiovascular",
+    "indication": "Crisis hipertensiva grave y control fino de poscarga en entorno monitorizado.",
+    "recipe": "1 ml + 100 ml SG 5%",
+    "rate": "0,5-10 mcg/kg/min → 20-400 ml/h",
+    "preparation": "Comenzar a 20 ml/h y aumentar de 20 en 20 ml/h según respuesta. Proteger de la luz.",
+    "notes": "Vasodilatador potente. Vigilar hipotensión brusca y toxicidad por cianuro/tiocianato en exposiciones prolongadas."
+  },
+  {
+    "id": "omeprazol-perf",
+    "drug": "Omeprazol",
+    "category": "Otros",
+    "indication": "Hemorragia digestiva alta y protección gástrica IV en pacientes seleccionados.",
+    "recipe": "1 amp + 100 ml SSF o SG 5%",
+    "rate": "40 mg en 20-30 min → 200-300 ml/h",
+    "preparation": "Usar presentación liofilizada de 40 mg y perfundir tras reconstitución.",
+    "notes": "La lista histórica admite dilución en suero fisiológico o glucosa 5%."
+  },
+  {
+    "id": "ritodrina-perf",
+    "drug": "Ritodrina",
+    "category": "Obstétrico",
+    "indication": "Tocolisis de emergencia en amenaza de parto prematuro.",
+    "recipe": "1 amp + 95 ml SG 5%",
+    "rate": "0,05-0,35 mg/min\nComenzar con 6 ml/h y aumentar de 6 en 6 ml/h (máx 40 ml/h)",
+    "preparation": "Presentación 50 mg/5 ml. Ajustar respuesta uterina y tolerancia hemodinámica.",
+    "notes": "Monitorizar frecuencia cardiaca materna. Uso protocolizado histórico del manual."
+  },
+  {
+    "id": "salbutamol-perf",
+    "drug": "Salbutamol",
+    "drugId": "salbutamol",
+    "category": "Respiratorio",
+    "indication": "Broncoespasmo grave y asma refractaria.",
+    "recipe": "1 amp + 95 ml SG 5%",
+    "rate": "4 mcg/kg en 15-30 min → 60 ml/h, aumentar de 5 en 5 ml/h",
+    "preparation": "Presentación 0,5 mg/1 ml. Titular con monitorización de frecuencia cardiaca y potasio.",
+    "notes": "La pauta procede de la Lista de Perfusiones SAMUR 2006."
+  },
+  {
+    "id": "teofilina-perf",
+    "drug": "Teofilina",
+    "category": "Respiratorio",
+    "indication": "Broncoespasmo refractario en protocolos donde se contemple aminofilina/teofilina.",
+    "recipe": "1,5 amp + 85 ml SG 5%",
+    "rate": "5 mg/kg en 30 min → 200-400 ml/h",
+    "preparation": "Presentación 240 mg/10 ml. Administrar con monitorización cardiaca.",
+    "notes": "Vigilar arritmias, náuseas y toxicidad por xantinas."
+  },
+  {
+    "id": "urapidil-perf",
+    "drug": "Urapidil",
+    "category": "Cardiovascular",
+    "indication": "Control de hipertensión severa con necesidad de vasodilatación titulable.",
+    "recipe": "1 amp + 90 ml SG 5%",
+    "rate": "2,5-7 mcg/kg/min → 20-60 ml/h",
+    "preparation": "Presentación 50 mg/10 ml. Ajustar la perfusión según respuesta tensional.",
+    "notes": "Perfusión recogida en la Lista de Perfusiones SAMUR 2006."
+  },
+  {
+    "id": "valproico-perf",
+    "drug": "Valproico Ácido",
+    "category": "Otros",
+    "indication": "Mantenimiento tras bolo anticonvulsivante o estatus epiléptico seleccionado.",
+    "recipe": "1 amp + 96 ml SG 5%",
+    "rate": "Tras bolo: 1 mg/kg/h → 7,5-25 ml/h",
+    "preparation": "Presentación 400 mg/4 ml. Diluir en glucosa 5% para la infusión de mantenimiento.",
+    "notes": "Vigilar función hepática y nivel de consciencia."
   }
 ]

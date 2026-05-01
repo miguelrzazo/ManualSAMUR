@@ -1,10 +1,10 @@
-import { getProceduresBySection, getProcedureMeta } from "@/lib/content";
+import { getProcedureMeta, getProcedureSidebarSections } from "@/lib/content";
 import { ProcedureSidebar } from "@/components/manual/ProcedureSidebar";
 import { SearchBar } from "@/components/manual/SearchBar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ManualLayout({ children }: { children: React.ReactNode }) {
-  const proceduresBySection = getProceduresBySection();
+  const sidebarSections = getProcedureSidebarSections();
   const allProcedures = getProcedureMeta();
 
   return (
@@ -15,7 +15,7 @@ export default function ManualLayout({ children }: { children: React.ReactNode }
           <SearchBar procedures={allProcedures} />
         </div>
         <ScrollArea className="flex-1">
-          <ProcedureSidebar proceduresBySection={proceduresBySection} />
+          <ProcedureSidebar sections={sidebarSections} />
         </ScrollArea>
       </aside>
 

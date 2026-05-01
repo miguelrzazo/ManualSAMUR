@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { Maximize2 } from "lucide-react";
 import type { ProcedureMeta } from "@/lib/content";
 
@@ -27,12 +28,45 @@ const H = 340;
 
 export function GraficaLocal({ current, related, backlinks = [] }: Props) {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
   const isPanning = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
   const mouseDownPos = useRef({ x: 0, y: 0 });
   const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
+
+  const palette = resolvedTheme === "dark"
+    ? {
+        background: "#10141c",
+        border: "rgba(255,255,255,0.08)",
+        pattern: "rgba(255,255,255,0.07)",
+        edge: "rgba(196,205,222,0.26)",
+        edgeStrong: "rgba(224,231,255,0.48)",
+        incoming: "rgba(103, 193, 245, 0.4)",
+        incomingStrong: "rgba(103, 193, 245, 0.72)",
+        labelBg: "rgba(13,18,28,0.92)",
+        labelText: "#f3f7ff",
+        buttonBg: "rgba(255,255,255,0.08)",
+        buttonText: "rgba(255,255,255,0.74)",
+        legendBg: "rgba(13,18,28,0.75)",
+        legendText: "rgba(240,244,255,0.72)",
+      }
+    : {
+        background: "#f7f8fc",
+        border: "rgba(15,23,42,0.10)",
+        pattern: "rgba(15,23,42,0.08)",
+        edge: "rgba(71,85,105,0.24)",
+        edgeStrong: "rgba(51,65,85,0.42)",
+        incoming: "rgba(14, 116, 144, 0.34)",
+        incomingStrong: "rgba(14, 116, 144, 0.66)",
+        labelBg: "rgba(255,255,255,0.94)",
+        labelText: "#162033",
+        buttonBg: "rgba(255,255,255,0.72)",
+        buttonText: "rgba(15,23,42,0.72)",
+        legendBg: "rgba(255,255,255,0.82)",
+        legendText: "rgba(15,23,42,0.68)",
+      };
 
   const { nodes, edges } = useMemo(() => {
     const cx = W / 2;
@@ -144,8 +178,8 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
 
   return (
     <div
-      className="relative w-full rounded-xl overflow-hidden border border-white/10"
-      style={{ background: "#0d1117", height: "280px" }}
+      className="relative w-full rounded-xl overflow-hidden border"
+      style={{ background: palette.background, borderColor: palette.border, height: "280px" }}
     >
       <svg
         width="100%" height="100%"
@@ -160,7 +194,7 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
       >
         <defs>
           <pattern id="ldots" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="0.7" fill="rgba(255,255,255,0.06)" />
+            <circle cx="1" cy="1" r="0.7" fill={palette.pattern} />
           </pattern>
         </defs>
         <rect width={W} height={H} fill="url(#ldots)" />
@@ -177,8 +211,8 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
                 key={e.id}
                 x1={s.x} y1={s.y} x2={t.x} y2={t.y}
                 stroke={e.relation === "backlink"
-                  ? (isHighlighted ? "rgba(56,189,248,0.75)" : "rgba(56,189,248,0.32)")
-                  : (isHighlighted ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.14)")}
+                  ? (isHighlighted ? palette.incomingStrong : palette.incoming)
+                  : (isHighlighted ? palette.edgeStrong : palette.edge)}
                 strokeWidth={isHighlighted ? 1.5 : 0.8}
                 strokeDasharray={e.relation === "backlink" ? "4 3" : undefined}
               />
@@ -189,8 +223,9 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
           {nodes.map((node) => {
             const color = SECTION_COLORS[node.section] ?? "#94a3b8";
             const isHovered = hovered === node.id;
-            const glowStrength = node.isCurrent ? "12px" : isHovered ? "10px" : "5px";
-            const glow = `drop-shadow(0 0 ${glowStrength} ${color}) ${node.isCurrent ? `drop-shadow(0 0 3px ${color})` : ""}`;
+            const glowStrength = node.isCurrent ? "8px" : isHovered ? "6px" : "2px";
+            const glow = `drop-shadow(0 0 ${glowStrength} ${color}66)`;
+            const showLabel = node.isCurrent || isHovered || nodes.length <= 8;
 
             return (
               <g
@@ -210,8 +245,7 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
                   fill={color}
                   style={{ filter: glow }}
                 />
-                {/* Always show label for current; hover for related */}
-                {(node.isCurrent || isHovered) && (
+                {showLabel && (
                   <g>
                     <rect
                       x={node.x + node.r + 5}
@@ -219,12 +253,12 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
                       width={Math.min(node.title.length * 7, 190) + 10}
                       height={18}
                       rx={3}
-                      fill="rgba(0,0,0,0.8)"
+                      fill={palette.labelBg}
                     />
                     <text
                       x={node.x + node.r + 10}
                       y={node.y + 4}
-                      fill="white"
+                      fill={palette.labelText}
                       fontSize={node.isCurrent ? 12 : 11}
                       fontWeight={node.isCurrent ? "600" : "400"}
                       fontFamily="var(--font-sans, ui-sans-serif)"
@@ -242,19 +276,23 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
 
       <button
         onClick={() => setVb({ x: 0, y: 0, scale: 1 })}
-        className="absolute top-2 right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white/50 hover:text-white transition-colors"
+        className="absolute top-2 right-2 p-1.5 rounded-md transition-colors"
+        style={{ background: palette.buttonBg, color: palette.buttonText }}
       >
         <Maximize2 className="h-3 w-3" />
       </button>
 
-      <div className="absolute bottom-2 right-2 flex items-center gap-3 rounded-md bg-black/35 px-2 py-1 text-[10px] text-white/60">
+      <div
+        className="absolute bottom-2 right-2 flex items-center gap-3 rounded-md px-2 py-1 text-[10px]"
+        style={{ background: palette.legendBg, color: palette.legendText }}
+      >
         <span className="inline-flex items-center gap-1">
-          <span className="h-1.5 w-4 rounded-full bg-white/70" />
+          <span className="h-1.5 w-4 rounded-full" style={{ background: palette.edgeStrong }} />
           saliente
         </span>
         <span className="inline-flex items-center gap-1">
-          <span className="h-1.5 w-4 rounded-full border border-sky-300/70 bg-transparent" />
-          backlink
+          <span className="h-1.5 w-4 rounded-full border bg-transparent" style={{ borderColor: palette.incomingStrong }} />
+          entrante
         </span>
       </div>
     </div>
