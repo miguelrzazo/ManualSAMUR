@@ -1,0 +1,227 @@
+[
+  {
+    "id": "B0",
+    "number": 0,
+    "name": "Sede Central",
+    "district": "Moncloa-Aravaca",
+    "address": "Ronda de las Provincias, 7",
+    "lat": 40.4118,
+    "lng": -3.7431
+  },
+  {
+    "id": "B1",
+    "number": 1,
+    "name": "El Espinillo",
+    "district": "Villaverde",
+    "address": "Av. de Orovilla, 50",
+    "lat": 40.3467,
+    "lng": -3.7018
+  },
+  {
+    "id": "B2",
+    "number": 2,
+    "name": "Centro",
+    "district": "Centro",
+    "address": "C/ San Bernardo, 68",
+    "lat": 40.4244,
+    "lng": -3.7059
+  },
+  {
+    "id": "B3",
+    "number": 3,
+    "name": "Chamartín",
+    "district": "Chamartín",
+    "address": "C/ Federico Salmón, 8",
+    "lat": 40.4637,
+    "lng": -3.6678
+  },
+  {
+    "id": "B4",
+    "number": 4,
+    "name": "Ciudad Lineal",
+    "district": "Ciudad Lineal",
+    "address": "C/ Peloponeso, 9",
+    "lat": 40.4151,
+    "lng": -3.6240
+  },
+  {
+    "id": "B5",
+    "number": 5,
+    "name": "Carabanchel",
+    "district": "Carabanchel",
+    "address": "C/ Eugenia de Montijo, 90",
+    "lat": 40.3783,
+    "lng": -3.7483
+  },
+  {
+    "id": "B6",
+    "number": 6,
+    "name": "Francos Rodríguez",
+    "district": "Moncloa-Aravaca",
+    "address": "C/ Pirineos, 1",
+    "lat": 40.4548,
+    "lng": -3.7183
+  },
+  {
+    "id": "B7",
+    "number": 7,
+    "name": "Casa de Campo",
+    "district": "Moncloa-Aravaca",
+    "address": "Travesía del Vino, 1",
+    "lat": 40.4109,
+    "lng": -3.7403
+  },
+  {
+    "id": "B8",
+    "number": 8,
+    "name": "Pacífico",
+    "district": "Retiro",
+    "address": "C/ Hoyuelo, 7",
+    "lat": 40.4012,
+    "lng": -3.6757
+  },
+  {
+    "id": "B9",
+    "number": 9,
+    "name": "Usera",
+    "district": "Usera",
+    "address": "C/ Antonio López, 142",
+    "lat": 40.3907,
+    "lng": -3.7026
+  },
+  {
+    "id": "B10",
+    "number": 10,
+    "name": "Tetuán",
+    "district": "Tetuán",
+    "address": "C/ Infanta Mercedes, 34",
+    "lat": 40.4566,
+    "lng": -3.6980
+  },
+  {
+    "id": "B11",
+    "number": 11,
+    "name": "Hortaleza",
+    "district": "Hortaleza",
+    "address": "C/ Arequipa, 8",
+    "lat": 40.4690,
+    "lng": -3.6405
+  },
+  {
+    "id": "B12",
+    "number": 12,
+    "name": "Moratalaz",
+    "district": "Moratalaz",
+    "address": "C/ Brujas, 28",
+    "lat": 40.4028,
+    "lng": -3.6263
+  },
+  {
+    "id": "B13",
+    "number": 13,
+    "name": "Avenida Valladolid",
+    "district": "Moncloa-Aravaca",
+    "address": "Av. Valladolid, 6",
+    "lat": 40.4298,
+    "lng": -3.7299
+  },
+  {
+    "id": "B14",
+    "number": 14,
+    "name": "Las Águilas",
+    "district": "Latina",
+    "address": "C/ Casuarina, 10",
+    "lat": 40.3804,
+    "lng": -3.7648
+  },
+  {
+    "id": "B15",
+    "number": 15,
+    "name": "Colón",
+    "district": "Salamanca",
+    "address": "Pl. de Colón (subterráneo)",
+    "lat": 40.4253,
+    "lng": -3.6905
+  },
+  {
+    "id": "B16",
+    "number": 16,
+    "name": "Fuencarral",
+    "district": "Fuencarral-El Pardo",
+    "address": "C/ Dr. Ramón Castroviejo, 47",
+    "lat": 40.4774,
+    "lng": -3.7180
+  },
+  {
+    "id": "B17",
+    "number": 17,
+    "name": "Vicálvaro",
+    "district": "Vicálvaro",
+    "address": "C/ Las Santeras, 39",
+    "lat": 40.3916,
+    "lng": -3.5896
+  },
+  {
+    "id": "B19",
+    "number": 19,
+    "name": "Las Rosas",
+    "district": "San Blas-Canillejas",
+    "address": "C/ María Sevilla de Diago, 40",
+    "lat": 40.4335,
+    "lng": -3.6054
+  },
+  {
+    "id": "B20",
+    "number": 20,
+    "name": "Vallecas",
+    "district": "Villa de Vallecas",
+    "address": "Travesía Puerto de Reinosa, 4",
+    "lat": 40.3789,
+    "lng": -3.6161
+  },
+  {
+    "id": "B21",
+    "number": 21,
+    "name": "Barajas",
+    "district": "Barajas",
+    "address": "C/ Playa de América, 34",
+    "lat": 40.4743,
+    "lng": -3.5866
+  },
+  {
+    "id": "B22",
+    "number": 22,
+    "name": "Ventas",
+    "district": "Salamanca",
+    "address": "C/ Pedro Heredia, 34",
+    "lat": 40.4299,
+    "lng": -3.6625
+  },
+  {
+    "id": "B23",
+    "number": 23,
+    "name": "Legazpi",
+    "district": "Arganzuela",
+    "address": "Pl. de Legazpi, 7",
+    "lat": 40.3892,
+    "lng": -3.6970
+  },
+  {
+    "id": "B25",
+    "number": 25,
+    "name": "Chamberí",
+    "district": "Chamberí",
+    "address": "C/ del Monte Esquinza, 41",
+    "lat": 40.4289,
+    "lng": -3.6920
+  },
+  {
+    "id": "B26",
+    "number": 26,
+    "name": "Puente de Vallecas",
+    "district": "Puente de Vallecas",
+    "address": "Av. de Buenos Aires, 17",
+    "lat": 40.3877,
+    "lng": -3.6531
+  }
+]

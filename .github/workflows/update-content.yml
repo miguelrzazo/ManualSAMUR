@@ -1,0 +1,30 @@
+name: Update content from samurpc.net
+
+on:
+  schedule:
+    # Every Monday at 4am UTC
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scraper
+        run: npx ts-node --project tsconfig.json scripts/scrape.ts
+
+      - name: Commit updated content
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update procedures from samurpc.net"
+          file_pattern: "content/procedures/*.md"
