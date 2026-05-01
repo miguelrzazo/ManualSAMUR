@@ -1,0 +1,206 @@
+[
+  {
+    "drugId": "adrenalina",
+    "activeIngredient": "Adrenalina",
+    "presentation": "Ampolla 1 mg / 1 ml",
+    "brandNames": ["Adrenalina B. Braun 1mg amp. 1 ml"]
+  },
+  {
+    "drugId": "amiodarona",
+    "activeIngredient": "Amiodarona clorhidrato",
+    "presentation": "Ampolla 150 mg / 3 ml",
+    "brandNames": ["Trangorex 150mg amp. 3ml"]
+  },
+  {
+    "drugId": "aspirina",
+    "activeIngredient": "Ácido acetilsalicílico",
+    "presentation": "Comprimido 100 mg / 500 mg",
+    "brandNames": ["Adiro 100mg", "Aspirina 500mg", "AAS 500mg"]
+  },
+  {
+    "drugId": "adenosina",
+    "activeIngredient": "Adenosina",
+    "presentation": "Ampolla 6 mg / 2 ml",
+    "brandNames": ["Adenocor 6mg amp. 2ml"]
+  },
+  {
+    "drugId": "atropina",
+    "activeIngredient": "Atropina sulfato",
+    "presentation": "Ampolla 1 mg / 1 ml",
+    "brandNames": ["Atropina B. Braun 1mg amp. 1ml"]
+  },
+  {
+    "drugId": "cloruro-potasico",
+    "activeIngredient": "Cloruro potásico",
+    "presentation": "Ampolla 745 mg / 10 ml",
+    "brandNames": ["Cloruro Potasi. 7,45% Braun", "Cloruro Potasi. 1M Grifols"]
+  },
+  {
+    "drugId": "diazepam",
+    "activeIngredient": "Diazepam",
+    "presentation": "Comprimido 5 mg / Ampolla 10 mg / 2 ml",
+    "brandNames": ["Diazepan Prodes", "Diazepan Normon", "Valium", "Stesolid"]
+  },
+  {
+    "drugId": "dopamina",
+    "activeIngredient": "Dopamina clorhidrato",
+    "presentation": "Ampolla 200 mg / 5 ml",
+    "brandNames": ["Dopamina Grifols 200mg amp 5ml"]
+  },
+  {
+    "drugId": "etomidato",
+    "activeIngredient": "Etomidato",
+    "presentation": "Ampolla 20 mg / 10 ml",
+    "brandNames": ["Hypnomidate 20mg amp. 10ml"]
+  },
+  {
+    "drugId": "fentanilo",
+    "activeIngredient": "Fentanilo",
+    "presentation": "Ampolla 0,15 mg / 3 ml",
+    "brandNames": ["Fentanest 0,15 mg/3ml"]
+  },
+  {
+    "drugId": "flumazenilo",
+    "activeIngredient": "Flumazenil",
+    "presentation": "Ampolla 0,5 mg / 5 ml",
+    "brandNames": ["Anexate Roche 0,5mg amp. 5ml"]
+  },
+  {
+    "drugId": "furosemida",
+    "activeIngredient": "Furosemida",
+    "presentation": "Ampolla 20 mg / 2 ml",
+    "brandNames": ["Furosemida Fresenius", "Furosemida Inibsa", "Furosemida Gesfur", "Seguril"]
+  },
+  {
+    "drugId": "glucosa",
+    "activeIngredient": "Glucosa",
+    "presentation": "Ampolla 10 g / 20 ml (50%)",
+    "brandNames": ["Glucocemin 50%", "Glucosada Grifols 50%", "Suero Glucosado 5%"]
+  },
+  {
+    "drugId": "haloperidol",
+    "activeIngredient": "Haloperidol",
+    "presentation": "Ampolla 5 mg / 1 ml",
+    "brandNames": ["Haloperidol Esteve 5mg amp. 1ml"]
+  },
+  {
+    "drugId": "heparina",
+    "activeIngredient": "Heparina sódica",
+    "presentation": "Vial 50 mg / 5 ml",
+    "brandNames": ["Heparina Hospira 5000UI"]
+  },
+  {
+    "drugId": "hidrocortisona",
+    "activeIngredient": "Hidrocortisona fosfato",
+    "presentation": "Vial 100 mg / 1 ml",
+    "brandNames": ["Actocortina", "Hidrocortisona Color"]
+  },
+  {
+    "drugId": "ipratropio",
+    "activeIngredient": "Ipratropio bromuro",
+    "presentation": "Monodosis 250-500 mcg",
+    "brandNames": ["Atrovent", "Bromuro de Ipratropio"]
+  },
+  {
+    "drugId": "ketamina",
+    "activeIngredient": "Ketamina",
+    "presentation": "Vial 500 mg / 10 ml",
+    "brandNames": ["Ketolar", "Ketalar"]
+  },
+  {
+    "drugId": "labetalol",
+    "activeIngredient": "Labetalol clorhidrato",
+    "presentation": "Ampolla 100 mg / 20 ml",
+    "brandNames": ["Trandate 100mg amp. 20ml"]
+  },
+  {
+    "drugId": "lidocaina-iv",
+    "activeIngredient": "Lidocaína clorhidrato",
+    "presentation": "Ampolla 500 mg / 10 ml",
+    "brandNames": ["Lidocaina 5% Braun", "Xilocaína"]
+  },
+  {
+    "drugId": "lorazepam",
+    "activeIngredient": "Lorazepam",
+    "presentation": "Comprimido 1 mg",
+    "brandNames": ["Lorazepam Normon", "Orfidal"]
+  },
+  {
+    "drugId": "sulfato-magnesio",
+    "activeIngredient": "Magnesio sulfato",
+    "presentation": "Ampolla 1,5 g / 10 ml",
+    "brandNames": ["Sulfato Magnesio 15% amp. 10ml"]
+  },
+  {
+    "drugId": "metamizol",
+    "activeIngredient": "Metamizol magnésico",
+    "presentation": "Ampolla 2 g / 5 ml",
+    "brandNames": ["Nolotil", "Metamizol Normon"]
+  },
+  {
+    "drugId": "metilprednisolona",
+    "activeIngredient": "Metilprednisolona",
+    "presentation": "Vial 40 mg",
+    "brandNames": ["Urbasón 40 mg"]
+  },
+  {
+    "drugId": "metoclopramida",
+    "activeIngredient": "Metoclopramida hidrocloruro",
+    "presentation": "Ampolla 10 mg / 2 ml",
+    "brandNames": ["Primperan", "Metoclopramida Kern"]
+  },
+  {
+    "drugId": "midazolam",
+    "activeIngredient": "Midazolam",
+    "presentation": "Ampolla 15 mg / 3 ml",
+    "brandNames": ["Midazolam Normon", "Dormicum"]
+  },
+  {
+    "drugId": "morfina",
+    "activeIngredient": "Morfina hidrocloruro",
+    "presentation": "Ampolla 10 mg / ml",
+    "brandNames": ["Morfina 1% B. Braun"]
+  },
+  {
+    "drugId": "naloxona",
+    "activeIngredient": "Naloxona hidrocloruro",
+    "presentation": "Ampolla 0,4 mg / ml",
+    "brandNames": ["Naloxone 0,4mg amp. 1ml"]
+  },
+  {
+    "drugId": "nitroglicerina",
+    "activeIngredient": "Nitroglicerina",
+    "presentation": "Ampolla 5 mg / 5 ml / Aerosol 0,4 mg",
+    "brandNames": ["Solinitrina", "Trinispray", "Cafinitrina"]
+  },
+  {
+    "drugId": "noradrenalina",
+    "activeIngredient": "Norepinefrina bitartrato",
+    "presentation": "Ampolla 10 mg / 10 ml",
+    "brandNames": ["Noradrenalina Normon", "Levophed"]
+  },
+  {
+    "drugId": "omeprazol",
+    "activeIngredient": "Omeprazol",
+    "presentation": "Vial 40 mg",
+    "brandNames": ["Omeprazol GES", "Omeprazol Normon"]
+  },
+  {
+    "drugId": "paracetamol",
+    "activeIngredient": "Paracetamol",
+    "presentation": "Frasco 1 g / 100 ml",
+    "brandNames": ["Paracetamol GES", "Perfalgan", "Febrectal"]
+  },
+  {
+    "drugId": "rocuronio",
+    "activeIngredient": "Rocuronio bromuro",
+    "presentation": "Vial 50 mg / 5 ml",
+    "brandNames": ["Esmeron 10mg/ml vial 5 ml"]
+  },
+  {
+    "drugId": "salbutamol",
+    "activeIngredient": "Salbutamol sulfato",
+    "presentation": "Ampolla 2,5-5 mg / 2,5 ml",
+    "brandNames": ["Salbuair", "Ventolín"]
+  }
+]
