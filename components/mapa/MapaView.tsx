@@ -62,8 +62,8 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
   const privateHospitals = hospitals.filter((h) => h.type === "private");
 
   return (
-    <div className="relative flex h-[calc(100vh-3.5rem-4rem)] md:h-[calc(100vh-3.5rem)]">
-      <div className="flex-1 relative">
+    <div className="map-route-shell relative flex">
+      <div className="relative min-h-0 flex-1">
         <Map
           center={[-3.703, 40.416]}
           zoom={11}

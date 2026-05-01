@@ -187,6 +187,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
   const currentStyleRef = useRef<MapStyleOption | null>(null);
   const styleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resizeFrameRef = useRef<number | null>(null);
   const internalUpdateRef = useRef(false);
   const resolvedTheme = useResolvedTheme(themeProp);
 
@@ -212,6 +213,19 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       styleTimeoutRef.current = null;
     }
   }, []);
+
+  const scheduleResize = useCallback(() => {
+    if (!mapInstance) return;
+
+    if (resizeFrameRef.current !== null) {
+      cancelAnimationFrame(resizeFrameRef.current);
+    }
+
+    resizeFrameRef.current = requestAnimationFrame(() => {
+      resizeFrameRef.current = null;
+      mapInstance.resize();
+    });
+  }, [mapInstance]);
 
   // Initialize the map
   useEffect(() => {
@@ -244,7 +258,10 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
         }
       }, 100);
     };
-    const loadHandler = () => setIsLoaded(true);
+    const loadHandler = () => {
+      setIsLoaded(true);
+      requestAnimationFrame(() => map.resize());
+    };
 
     // Viewport change handler - skip if triggered by internal update
     const handleMove = () => {
@@ -269,6 +286,41 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!mapInstance || !containerRef.current) return;
+
+    scheduleResize();
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(() => {
+            scheduleResize();
+          });
+    resizeObserver?.observe(containerRef.current);
+
+    const visualViewport = window.visualViewport;
+    window.addEventListener("resize", scheduleResize);
+    window.addEventListener("orientationchange", scheduleResize);
+    window.addEventListener("pageshow", scheduleResize);
+    visualViewport?.addEventListener("resize", scheduleResize);
+    visualViewport?.addEventListener("scroll", scheduleResize);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", scheduleResize);
+      window.removeEventListener("orientationchange", scheduleResize);
+      window.removeEventListener("pageshow", scheduleResize);
+      visualViewport?.removeEventListener("resize", scheduleResize);
+      visualViewport?.removeEventListener("scroll", scheduleResize);
+
+      if (resizeFrameRef.current !== null) {
+        cancelAnimationFrame(resizeFrameRef.current);
+        resizeFrameRef.current = null;
+      }
+    };
+  }, [mapInstance, scheduleResize]);
 
   // Sync controlled viewport to map
   useEffect(() => {
