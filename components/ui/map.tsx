@@ -17,7 +17,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import { X, Minus, Plus, Locate, Maximize, Loader2, Building2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -750,12 +750,16 @@ type MapControlsProps = {
   showCompass?: boolean;
   /** Show locate button to find user's location (default: false) */
   showLocate?: boolean;
+  /** Show nearest hospital button (default: false) */
+  showNearestHospital?: boolean;
   /** Show fullscreen toggle button (default: false) */
   showFullscreen?: boolean;
   /** Additional CSS classes for the controls container */
   className?: string;
   /** Callback with user coordinates when located */
   onLocate?: (coords: { longitude: number; latitude: number }) => void;
+  /** Callback when nearest hospital is requested */
+  onNearestHospital?: (coords: { longitude: number; latitude: number }) => void;
 };
 
 const positionClasses = {
@@ -808,9 +812,11 @@ function MapControls({
   showZoom = true,
   showCompass = false,
   showLocate = false,
+  showNearestHospital = false,
   showFullscreen = false,
   className,
   onLocate,
+  onNearestHospital,
 }: MapControlsProps) {
   const { map } = useMap();
   const [waitingForLocation, setWaitingForLocation] = useState(false);
@@ -851,6 +857,26 @@ function MapControls({
       );
     }
   }, [map, onLocate]);
+
+  const handleNearestHospital = useCallback(() => {
+    setWaitingForLocation(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = {
+            longitude: pos.coords.longitude,
+            latitude: pos.coords.latitude,
+          };
+          onNearestHospital?.(coords);
+          setWaitingForLocation(false);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          setWaitingForLocation(false);
+        },
+      );
+    }
+  }, [onNearestHospital]);
 
   const handleFullscreen = useCallback(() => {
     const container = map?.getContainer();
@@ -896,6 +922,21 @@ function MapControls({
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Locate className="size-4" />
+            )}
+          </ControlButton>
+        </ControlGroup>
+      )}
+      {showNearestHospital && (
+        <ControlGroup>
+          <ControlButton
+            onClick={handleNearestHospital}
+            label="Hospital más cercano"
+            disabled={waitingForLocation}
+          >
+            {waitingForLocation ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Building2 className="size-4" />
             )}
           </ControlButton>
         </ControlGroup>

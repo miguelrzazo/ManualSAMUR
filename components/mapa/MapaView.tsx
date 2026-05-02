@@ -6,6 +6,7 @@ import { Status4Cheatsheet } from "@/components/mapa/Status4Cheatsheet";
 import { NavigationSheet } from "@/components/mapa/NavigationSheet";
 import { cn } from "@/lib/utils";
 import { Building2, MapPin, ChevronRight, Lock } from "lucide-react";
+import { useToast } from "@/lib/hooks/use-toast";
 
 interface Hospital {
   id: string;
@@ -47,8 +48,8 @@ interface Props {
 type MarkerType = { kind: "hospital"; data: Hospital } | { kind: "base"; data: Base };
 
 const MADRID_BOUNDS: [[number, number], [number, number]] = [
-  [-4.15, 40.25],
-  [-3.45, 40.68],
+  [-3.9, 40.3],
+  [-3.5, 40.55],
 ];
 
 export function MapaView({ hospitals, bases, status4 }: Props) {
@@ -57,9 +58,39 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
   const [showPrivate, setShowPrivate] = useState(false);
   const [selected, setSelected] = useState<MarkerType | null>(null);
   const [showStatus4, setShowStatus4] = useState(false);
+  const { toast } = useToast();
 
   const publicHospitals = hospitals.filter((h) => h.type === "public");
   const privateHospitals = hospitals.filter((h) => h.type === "private");
+
+  const findNearestHospital = (userCoords: { longitude: number; latitude: number }) => {
+    let nearestHospital: Hospital | null = null;
+    let minDistance = Infinity;
+
+    for (const hospital of publicHospitals) {
+      const distance = Math.sqrt(
+        Math.pow(hospital.lng - userCoords.longitude, 2) +
+        Math.pow(hospital.lat - userCoords.latitude, 2)
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestHospital = hospital;
+      }
+    }
+
+    if (nearestHospital) {
+      toast({
+        title: "Hospital más cercano",
+        description: `${nearestHospital.shortName} - ${nearestHospital.name}`,
+      });
+      // Optionally fly to the hospital
+      // map?.flyTo({
+      //   center: [nearestHospital.lng, nearestHospital.lat],
+      //   zoom: 14,
+      //   duration: 1500,
+      // });
+    }
+  };
 
   return (
     <div className="map-route-shell relative flex h-[calc(100dvh-4rem)] md:h-[calc(100dvh-3.5rem)]">
@@ -71,7 +102,7 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
           maxBounds={MADRID_BOUNDS}
           className="h-full w-full"
         >
-          <MapControls position="bottom-right" showZoom showLocate />
+          <MapControls position="bottom-right" showZoom showNearestHospital onNearestHospital={findNearestHospital} />
 
           {/* Public hospital markers */}
           {showHospitals && publicHospitals.map((h) => (

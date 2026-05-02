@@ -30,12 +30,21 @@ interface Props {
 export function Status4Cheatsheet({ status4, hospitals, onSelectHospital }: Props) {
   return (
     <div className="p-4">
-      <div className="mb-4">
-        <h2 className="font-semibold text-sm">Cheat Sheet Status 4</h2>
+            <div className="mb-4">
+        <h2 className="font-semibold text-sm">Hoja de Referencia Status 4</h2>
         <p className="text-xs text-muted-foreground mt-1">
           Tras enviar Status 4, el siguiente status determina el hospital de destino automático.
         </p>
       </div>
+
+      <div className="mb-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/50 rounded-xl p-4 ring-1 ring-foreground/10">
+        <h3 className="font-semibold text-sm text-amber-800 dark:text-amber-200 mb-2">Aviso Importante</h3>
+        <p className="text-xs text-amber-700 dark:text-amber-300">
+          Cuando el traslado se realice a la Maternidad o al Hospital Infantil de alguno de estos hospitales, se informará de ello por voz y por canal 1 a continuación de enviar la clave 4 y el status que corresponda. Cuando las unidades hagan clave 4 a cualquier otro hospital que no esté en este listado, se tendrá que comunicar por voz (Canal 3).
+        </p>
+      </div>
+
+
 
       <div className="flex flex-col gap-1.5">
         {status4.map((entry) => {

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
+import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
 import "./globals.css";
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </main>
           </div>
+          <Toaster />
         </ThemeProvider>
         <Script id="sw-registration" strategy="afterInteractive">
           {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }`}
