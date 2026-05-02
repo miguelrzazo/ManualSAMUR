@@ -70,9 +70,9 @@
   { "code": "C.8.0", "name": "Arritmia", "category": "Cardiovascular", "description": "Arritmia cardiaca de causa no especificada" },
   { "code": "W.0.0", "name": "Éxitus sin asistencia previa", "category": "Cierre", "description": "Fallecimiento confirmado sin asistencia" },
   { "code": "W.0.1", "name": "Éxitus con asistencia previa", "category": "Cierre", "description": "Fallecimiento tras maniobras de resucitación" },
-  { "code": "W.2.0", "name": "Servicio sin paciente", "category": "Cierre", "description": "No hay paciente al llegar. Sin informe asistencial" },
-  { "code": "W.3.0", "name": "No hubo incidente", "category": "Cierre", "description": "Incidente no confirmado. Sin informe asistencial" },
-  { "code": "W.4.0", "name": "No precisa asistencia", "category": "Cierre", "description": "Paciente no requiere asistencia. Sin informe asistencial" },
+  { "code": "W.2.0", "name": "Servicio sin paciente", "category": "Cierre", "description": "No hay paciente al llegar. Sin informe asistencial", "noReport": true },
+  { "code": "W.3.0", "name": "No hubo incidente", "category": "Cierre", "description": "Incidente no confirmado. Sin informe asistencial", "noReport": true },
+  { "code": "W.4.0", "name": "No precisa asistencia", "category": "Cierre", "description": "Paciente no requiere asistencia. Sin informe asistencial", "noReport": true },
   { "code": "W.5.0", "name": "Problema social", "category": "Cierre", "description": "Servicio de contenido social" },
   { "code": "W.8.0", "name": "Rechazo de asistencia", "category": "Cierre", "description": "El paciente rechaza la asistencia médica" }
 ]

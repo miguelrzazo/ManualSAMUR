@@ -1,0 +1,14 @@
+[
+  { "code": "AS.1.1", "name": "Identificación y registro de riesgos", "category": "Análisis de riesgos", "description": "Identificación y registro de riesgos específicos para seguimiento" },
+  { "code": "AS.1.2", "name": "Identificación de riesgos en zona", "category": "Análisis de riesgos", "description": "Identificación de riesgos en zona o local ante futura activación" },
+  { "code": "AS.2.1", "name": "Otras (a indicar)", "category": "Riesgos meteorológicos", "description": "Otros riesgos meteorológicos a indicar expresamente" },
+  { "code": "AS.2.2", "name": "Nevadas", "category": "Riesgos meteorológicos", "description": "Alerta o seguimiento por nevadas" },
+  { "code": "AS.2.3", "name": "Lluvias torrenciales", "category": "Riesgos meteorológicos", "description": "Alerta o seguimiento por lluvias torrenciales" },
+  { "code": "AS.3.1", "name": "Manifestaciones", "category": "Eventos", "description": "Seguimiento de manifestaciones y concentraciones de protesta" },
+  { "code": "AS.3.2", "name": "Concentraciones", "category": "Eventos", "description": "Seguimiento de concentraciones públicas" },
+  { "code": "AS.3.3", "name": "Fiestas", "category": "Eventos", "description": "Seguimiento de fiestas populares o eventos festivos" },
+  { "code": "AS.3.4", "name": "Otros eventos", "category": "Eventos", "description": "Otros tipos de eventos a indicar expresamente" },
+  { "code": "AS.4.1", "name": "Verificación de instalaciones", "category": "Verificación", "description": "Verificación presencial de instalaciones o zonas de riesgo" },
+  { "code": "AS.4.2", "name": "Activación en tiempo real", "category": "Verificación", "description": "Activación operativa en tiempo real ante un riesgo emergente" },
+  { "code": "AS.4.3", "name": "Mixto: verificación y activación", "category": "Verificación", "description": "Modalidad mixta que combina verificación previa y activación operativa" }
+]
