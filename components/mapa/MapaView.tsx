@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Map, MapMarker, MarkerContent, MapControls } from "@/components/ui/map";
 import { Status4Cheatsheet } from "@/components/mapa/Status4Cheatsheet";
 import { NavigationSheet } from "@/components/mapa/NavigationSheet";
 import { cn } from "@/lib/utils";
-import { Building2, MapPin, ChevronRight, Lock } from "lucide-react";
+import { Building2, MapPin, ChevronRight } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 
 interface Hospital {
@@ -59,9 +60,26 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
   const [selected, setSelected] = useState<MarkerType | null>(null);
   const [showStatus4, setShowStatus4] = useState(false);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const publicHospitals = hospitals.filter((h) => h.type === "public");
   const privateHospitals = hospitals.filter((h) => h.type === "private");
+
+  // Auto-select hospital from URL parameter
+  useEffect(() => {
+    const hospitalId = searchParams.get('hospital');
+    if (hospitalId) {
+      const hospital = hospitals.find(h => h.id === hospitalId);
+      if (hospital) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelected({ kind: "hospital", data: hospital });
+        toast({
+          title: "Hospital seleccionado",
+          description: hospital.shortName,
+        });
+      }
+    }
+  }, [searchParams, hospitals, toast]);
 
   const findNearestHospital = (userCoords: { longitude: number; latitude: number }) => {
     let nearestHospital: Hospital | null = null;
@@ -117,7 +135,7 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
                   <div className="flex flex-col items-center">
                     <div
                       className={cn(
-                        "h-8 w-8 rounded-lg border-2 border-white shadow-lg flex items-center justify-center",
+                        "h-8 w-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center",
                         "bg-red-500 hover:scale-110 transition-transform"
                       )}
                       style={{ boxShadow: "0 2px 8px rgba(239,68,68,0.5)" }}
@@ -147,12 +165,12 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
                 <div className="relative cursor-pointer group">
                   <div className="flex flex-col items-center">
                     <div
-                      className="h-7 w-7 rounded-lg border-2 border-white shadow-lg flex items-center justify-center bg-emerald-600 hover:scale-110 transition-transform"
-                      style={{ boxShadow: "0 2px 8px rgba(5,150,105,0.5)" }}
+                      className="h-7 w-7 rotate-45 border-2 border-white shadow-lg flex items-center justify-center bg-violet-600 hover:scale-110 transition-transform"
+                      style={{ boxShadow: "0 2px 8px rgba(124,58,237,0.5)" }}
                     >
-                      <Lock className="h-3 w-3 text-white" />
+                      <span className="-rotate-45 text-[10px] font-bold text-white leading-none">H</span>
                     </div>
-                    <span className="text-[9px] font-bold text-white bg-emerald-700/80 backdrop-blur-sm px-1 py-0.5 rounded mt-0.5 whitespace-nowrap shadow">
+                    <span className="text-[9px] font-bold text-white bg-violet-700/80 backdrop-blur-sm px-1 py-0.5 rounded mt-1.5 whitespace-nowrap shadow">
                       {h.shortName.length > 12 ? h.shortName.slice(0, 11) + "…" : h.shortName}
                     </span>
                   </div>
@@ -200,9 +218,9 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
             {
               active: showPrivate,
               toggle: () => setShowPrivate((v) => !v),
-              icon: Lock,
+              icon: Building2,
               label: `Privados (${privateHospitals.length})`,
-              activeClass: "bg-emerald-600 text-white border-emerald-700",
+              activeClass: "bg-violet-600 text-white border-violet-700",
             },
             {
               active: showBases,

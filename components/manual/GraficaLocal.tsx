@@ -56,10 +56,11 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
 
-  const [tick, setTick] = useState(0);
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
   const [cursor, setCursor] = useState<"grab" | "grabbing" | "pointer">("grab");
+  const [nodes, setNodes] = useState<SimNode[]>([]);
+  const [edges, setEdges] = useState<SimEdge[]>([]);
 
   const nodesRef = useRef<SimNode[]>([]);
   const edgesRef = useRef<SimEdge[]>([]);
@@ -148,6 +149,8 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
 
     const allNodes = [currentNode, ...relatedNodes, ...backlinkNodes];
     nodesRef.current = allNodes;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNodes(allNodes);
 
     const nodeById = new Map(allNodes.map((n) => [n.id, n]));
 
@@ -170,6 +173,7 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
         })),
     ];
     edgesRef.current = allEdges;
+    setEdges(allEdges);
 
     simRef.current?.stop();
 
@@ -185,7 +189,7 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
       .force("center", forceCenter(cx, cy).strength(0.04))
       .force("collision", forceCollide<SimNode>().radius((d) => d.r + 8))
       .alphaDecay(0.025)
-      .on("tick", () => setTick((v) => v + 1));
+      .on("tick", () => setNodes([...nodesRef.current]));
 
     simRef.current = sim;
 
@@ -287,8 +291,6 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
     setVb((v) => ({ ...v, scale: Math.max(0.2, Math.min(5, v.scale * factor)) }));
   }, []);
 
-  const nodes = nodesRef.current;
-  const edges = edgesRef.current;
   const totalNodes = nodes.length;
 
   return (

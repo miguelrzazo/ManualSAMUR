@@ -1,8 +1,9 @@
 const MARKDOWN_LINK_RE = /\[[^\]]+\]\(([^)]+)\)/g;
 const PROCEDURE_LINK_RE = /(?:^|\/)([0-9][^./]*|[A-Z]{1,3}[^./]*)\.htm(?:$|[#?])/i;
-const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(\.\.\/images\/(?:print|trans|logo)\.gif\)\s*$/gim;
-const LEGACY_PRINT_LINK_RE = /\(javascript:[^)]+\)/gi;
-const LEGACY_PRINT_GIF_RE = /^\s*\[!\[[^\n]*print\.gif[^\n]*\]\s*$/gim;
+const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
+const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(\.\.\/images\/[^)]+\)\s*$/gim;
+const STANDALONE_BANG_RE = /^!\s*$/gm;
+const IMAGE_IN_LINK_RE = /\[!\[[^\]]*\]\([^)]+\)\s*([^\]]*)\]\(([^)]+)\)/g;
 const FOOTER_RE = /^\s*Manual de Procedimientos SAMUR-Protección Civil.*$/gim;
 const VADEMECUM_PLACEHOLDER_LINK_RE = /\[([^\]]+)]\(#(?:\s+"[^"]*")?\)/g;
 const LOCAL_MARKDOWN_LINK_RE = /\[([^\]]+)]\(([^)\s]+\.htm)(?:\s+"[^"]*")?\)/gi;
@@ -22,15 +23,27 @@ export function deriveRelatedIds(content: string, validIds: Set<string>): string
   return [...related];
 }
 
+function resolveRelativeUrl(href: string, sourceUrl?: string): string {
+  if (!href.startsWith("../") && !href.startsWith("./")) return href;
+  if (!sourceUrl) return href;
+  try { return new URL(href, sourceUrl).href; } catch { return href; }
+}
+
 export function normalizeProcedureContent(
   content: string,
   idToSlug = new Map<string, string>(),
+  sourceUrl?: string,
 ): string {
   return content
     .replace(/\r\n/g, "\n")
-    .replace(LEGACY_PRINT_LINK_RE, "")
-    .replace(LEGACY_PRINT_GIF_RE, "")
+    .replace(LEGACY_PRINT_BUTTON_RE, "")
     .replace(LEGACY_IMAGE_LINE_RE, "")
+    .replace(STANDALONE_BANG_RE, "")
+    .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {
+      const cleanLabel = label.trim();
+      const resolvedHref = resolveRelativeUrl(href, sourceUrl);
+      return cleanLabel ? `[${cleanLabel}](${resolvedHref})` : "";
+    })
     .replace(FOOTER_RE, "")
     .replace(VADEMECUM_PLACEHOLDER_LINK_RE, "$1")
     .replace(LOCAL_MARKDOWN_LINK_RE, (_, label: string, href: string) => {

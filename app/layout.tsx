@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
+import { SuppressNextThemesWarning } from "@/components/shared/SuppressNextThemesWarning";
 import { Toaster } from "@/components/ui/toaster";
-import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
@@ -33,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ViewportHeightObserver />
+          <SuppressNextThemesWarning />
           <div className="flex flex-col min-h-screen">
             <NavBar />
             <main className="min-h-0 flex-1 pb-16 md:pb-0">
@@ -41,9 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <Toaster />
         </ThemeProvider>
-        <Script id="sw-registration" strategy="afterInteractive">
+        {/* <Script id="sw-registration" strategy="afterInteractive">
           {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }`}
-        </Script>
+        </Script> */}
       </body>
     </html>
   );

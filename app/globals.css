@@ -145,3 +145,115 @@
     height: calc(100vh - 3.5rem);
   }
 }
+
+/* Prose-like styling inside MDX alert/note components (not-prose zones) */
+.component-prose {
+  & ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  & ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  & li {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.6;
+  }
+  & li > ul,
+  & li > ol {
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+  & p {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+  & p:last-child {
+    margin-bottom: 0;
+  }
+  & strong {
+    font-weight: 600;
+  }
+  & h3, & h4 {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+@media print {
+  nav,
+  header,
+  footer,
+  [data-print-hide],
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  .prose {
+    max-width: 100% !important;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  h1 {
+    font-size: 18pt;
+    page-break-after: avoid;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+    color: black !important;
+    border-color: #ccc !important;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  .rounded-2xl,
+  .rounded-xl {
+    border-radius: 0 !important;
+  }
+
+  /* procedure header card */
+  .bg-card\/50,
+  .bg-background\/70 {
+    background: none !important;
+    border-color: #ddd !important;
+  }
+}

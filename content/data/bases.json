@@ -14,8 +14,8 @@
     "name": "El Espinillo",
     "district": "Villaverde",
     "address": "Av. de Orovilla, 50",
-    "lat": 40.3467,
-    "lng": -3.7018
+    "lat": 40.3587,
+    "lng": -3.689
   },
   {
     "id": "B2",
@@ -23,8 +23,8 @@
     "name": "Centro",
     "district": "Centro",
     "address": "C/ San Bernardo, 68",
-    "lat": 40.4244,
-    "lng": -3.7059
+    "lat": 40.4258,
+    "lng": -3.7069
   },
   {
     "id": "B3",
@@ -32,17 +32,17 @@
     "name": "Chamartín",
     "district": "Chamartín",
     "address": "C/ Federico Salmón, 8",
-    "lat": 40.4637,
-    "lng": -3.6678
+    "lat": 40.4633,
+    "lng": -3.6675
   },
   {
     "id": "B4",
     "number": 4,
     "name": "Ciudad Lineal",
     "district": "Ciudad Lineal",
-    "address": "C/ Peloponeso, 9",
-    "lat": 40.4151,
-    "lng": -3.6240
+    "address": "C/ Peloponeso, 10",
+    "lat": 40.4155,
+    "lng": -3.6243
   },
   {
     "id": "B5",
@@ -50,8 +50,8 @@
     "name": "Carabanchel",
     "district": "Carabanchel",
     "address": "C/ Eugenia de Montijo, 90",
-    "lat": 40.3783,
-    "lng": -3.7483
+    "lat": 40.3782,
+    "lng": -3.7486
   },
   {
     "id": "B6",
@@ -59,8 +59,8 @@
     "name": "Francos Rodríguez",
     "district": "Moncloa-Aravaca",
     "address": "C/ Pirineos, 1",
-    "lat": 40.4548,
-    "lng": -3.7183
+    "lat": 40.4582,
+    "lng": -3.716
   },
   {
     "id": "B7",
@@ -68,8 +68,8 @@
     "name": "Casa de Campo",
     "district": "Moncloa-Aravaca",
     "address": "Travesía del Vino, 1",
-    "lat": 40.4109,
-    "lng": -3.7403
+    "lat": 40.4111,
+    "lng": -3.7397
   },
   {
     "id": "B8",
@@ -87,7 +87,7 @@
     "district": "Usera",
     "address": "C/ Antonio López, 142",
     "lat": 40.3907,
-    "lng": -3.7026
+    "lng": -3.7031
   },
   {
     "id": "B10",
@@ -95,8 +95,8 @@
     "name": "Tetuán",
     "district": "Tetuán",
     "address": "C/ Infanta Mercedes, 34",
-    "lat": 40.4566,
-    "lng": -3.6980
+    "lat": 40.4569,
+    "lng": -3.6979
   },
   {
     "id": "B11",
@@ -104,8 +104,8 @@
     "name": "Hortaleza",
     "district": "Hortaleza",
     "address": "C/ Arequipa, 8",
-    "lat": 40.4690,
-    "lng": -3.6405
+    "lat": 40.4689,
+    "lng": -3.6415
   },
   {
     "id": "B12",
@@ -113,8 +113,8 @@
     "name": "Moratalaz",
     "district": "Moratalaz",
     "address": "C/ Brujas, 28",
-    "lat": 40.4028,
-    "lng": -3.6263
+    "lat": 40.3998,
+    "lng": -3.628
   },
   {
     "id": "B13",
@@ -131,8 +131,8 @@
     "name": "Las Águilas",
     "district": "Latina",
     "address": "C/ Casuarina, 10",
-    "lat": 40.3804,
-    "lng": -3.7648
+    "lat": 40.3801,
+    "lng": -3.7655
   },
   {
     "id": "B15",
@@ -140,8 +140,8 @@
     "name": "Colón",
     "district": "Salamanca",
     "address": "Pl. de Colón (subterráneo)",
-    "lat": 40.4253,
-    "lng": -3.6905
+    "lat": 40.425,
+    "lng": -3.6897
   },
   {
     "id": "B16",
@@ -149,8 +149,8 @@
     "name": "Fuencarral",
     "district": "Fuencarral-El Pardo",
     "address": "C/ Dr. Ramón Castroviejo, 47",
-    "lat": 40.4774,
-    "lng": -3.7180
+    "lat": 40.4783,
+    "lng": -3.7165
   },
   {
     "id": "B17",
@@ -159,7 +159,7 @@
     "district": "Vicálvaro",
     "address": "C/ Las Santeras, 39",
     "lat": 40.3916,
-    "lng": -3.5896
+    "lng": -3.5886
   },
   {
     "id": "B19",
@@ -167,8 +167,8 @@
     "name": "Las Rosas",
     "district": "San Blas-Canillejas",
     "address": "C/ María Sevilla de Diago, 40",
-    "lat": 40.4335,
-    "lng": -3.6054
+    "lat": 40.4336,
+    "lng": -3.6042
   },
   {
     "id": "B20",
@@ -176,8 +176,8 @@
     "name": "Vallecas",
     "district": "Villa de Vallecas",
     "address": "Travesía Puerto de Reinosa, 4",
-    "lat": 40.3789,
-    "lng": -3.6161
+    "lat": 40.3788,
+    "lng": -3.6151
   },
   {
     "id": "B21",
@@ -185,8 +185,8 @@
     "name": "Barajas",
     "district": "Barajas",
     "address": "C/ Playa de América, 34",
-    "lat": 40.4743,
-    "lng": -3.5866
+    "lat": 40.4748,
+    "lng": -3.5859
   },
   {
     "id": "B22",
@@ -194,7 +194,7 @@
     "name": "Ventas",
     "district": "Salamanca",
     "address": "C/ Pedro Heredia, 34",
-    "lat": 40.4299,
+    "lat": 40.4301,
     "lng": -3.6625
   },
   {
@@ -203,8 +203,8 @@
     "name": "Legazpi",
     "district": "Arganzuela",
     "address": "Pl. de Legazpi, 7",
-    "lat": 40.3892,
-    "lng": -3.6970
+    "lat": 40.3904,
+    "lng": -3.6954
   },
   {
     "id": "B25",
@@ -212,7 +212,7 @@
     "name": "Chamberí",
     "district": "Chamberí",
     "address": "C/ del Monte Esquinza, 41",
-    "lat": 40.4289,
+    "lat": 40.4294,
     "lng": -3.6920
   },
   {
@@ -221,7 +221,7 @@
     "name": "Puente de Vallecas",
     "district": "Puente de Vallecas",
     "address": "Av. de Buenos Aires, 17",
-    "lat": 40.3877,
-    "lng": -3.6531
+    "lat": 40.3887,
+    "lng": -3.6526
   }
 ]

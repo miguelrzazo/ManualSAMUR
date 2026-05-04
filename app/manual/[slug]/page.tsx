@@ -20,6 +20,17 @@ import {
 import { ProcedureLinkCard } from "@/components/manual/ProcedureLinkCard";
 import { ProcedureVisitTracker } from "@/components/manual/ProcedureVisitTracker";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
+import { PrintButton } from "@/components/manual/PrintButton";
+import {
+  Caution,
+  Checklist,
+  Diagram,
+  KeyPoints,
+  Note,
+  Step,
+  Steps,
+  Warning,
+} from "@/components/manual/mdx-extras";
 import type { ComponentPropsWithoutRef } from "react";
 
 interface Props {
@@ -46,14 +57,32 @@ const mdxComponents = {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-medium text-primary no-underline hover:underline"
+        className="font-medium text-primary no-underline hover:underline inline-flex items-center gap-0.5"
       >
         {children}
+        <ExternalLink className="h-3 w-3 opacity-60 flex-shrink-0" />
       </a>
     );
   },
-  img: () => null,
+  img: ({ src, alt, ...props }: ComponentPropsWithoutRef<"img">) =>
+    typeof src === "string" && src && !src.startsWith("../") ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt ?? ""}
+        className="rounded-xl border border-border/60 my-6 max-w-full h-auto mx-auto"
+        {...props}
+      />
+    ) : null,
   hr: () => <hr className="my-8 border-border/60" />,
+  KeyPoints,
+  Warning,
+  Caution,
+  Note,
+  Steps,
+  Step,
+  Checklist,
+  Diagram,
 };
 
 export async function generateStaticParams() {
@@ -125,20 +154,23 @@ export default async function ProcedurePage({ params }: Props) {
                 </div>
               )}
             </div>
-            <FavoriteButton
-              procedureId={procedure.id}
-              validIds={allProcedures.map((item) => item.id)}
-              className="h-9 w-9 p-0 flex-shrink-0"
-            />
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <PrintButton />
+              <FavoriteButton
+                procedureId={procedure.id}
+                validIds={allProcedures.map((item) => item.id)}
+                className="h-9 w-9 p-0"
+              />
+            </div>
           </div>
         </div>
 
         {/* MDX Content */}
         <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-5 py-5 md:px-8 md:py-7
           prose-headings:font-semibold prose-headings:tracking-tight
-          prose-h2:text-lg prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
-          prose-h3:text-base prose-h3:mt-7 prose-h3:mb-3
-          prose-p:leading-8 prose-p:text-foreground/90 prose-p:my-4
+          prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
+          prose-h3:text-[1.05rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/80
+          prose-p:leading-8 prose-p:text-foreground/90 prose-p:my-5
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
           prose-table:text-sm
           prose-table:block prose-table:w-full prose-table:overflow-x-auto
@@ -149,7 +181,7 @@ export default async function ProcedurePage({ params }: Props) {
           prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
           prose-pre:bg-muted prose-pre:border prose-pre:border-border/60
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:py-2
-          prose-ul:my-5 prose-ol:my-5 prose-li:leading-7 prose-li:my-1.5
+          prose-ul:my-6 prose-ol:my-6 prose-li:leading-7 prose-li:my-2
         ">
           <MDXRemote source={procedure.content} components={mdxComponents} />
         </div>
@@ -171,7 +203,7 @@ export default async function ProcedurePage({ params }: Props) {
 
         {/* Graph — visible on mobile too, below content */}
         {(related.length > 0 || backlinks.length > 0) && (
-          <div className="mt-8 lg:hidden">
+          <div className="mt-8 lg:hidden" data-print-hide>
             <div className="flex items-center gap-2 mb-3">
               <Network className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold text-muted-foreground">Gráfica de conexiones</h3>
@@ -196,7 +228,7 @@ export default async function ProcedurePage({ params }: Props) {
 
       {/* Right sidebar — desktop only */}
       {(related.length > 0 || backlinks.length > 0) && (
-        <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0">
+        <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
           <div className="sticky top-6 flex flex-col gap-4">
             <ProcedureLinkCard
               title="Enlaces entrantes"

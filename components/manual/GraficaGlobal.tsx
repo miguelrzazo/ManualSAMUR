@@ -59,10 +59,12 @@ export function GraficaGlobal({ procedures }: Props) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
 
-  const [tick, setTick] = useState(0);
   const [hovered, setHovered] = useState<string | null>(null);
   const [vb, setVb] = useState({ x: 0, y: 0, scale: 1 });
   const [cursor, setCursor] = useState<"grab" | "grabbing" | "pointer">("grab");
+  const [nodes, setNodes] = useState<SimNode[]>([]);
+  const [links, setLinks] = useState<SimLink[]>([]);
+  const [hasTicked, setHasTicked] = useState(false);
 
   const nodesRef = useRef<SimNode[]>([]);
   const linksRef = useRef<SimLink[]>([]);
@@ -142,6 +144,8 @@ export function GraficaGlobal({ procedures }: Props) {
     });
 
     nodesRef.current = newNodes;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNodes(newNodes);
 
     const nodeById = new Map(newNodes.map((n) => [n.id, n]));
     const newLinks = rawEdges
@@ -152,6 +156,7 @@ export function GraficaGlobal({ procedures }: Props) {
         target: nodeById.get(e.target)!,
       }));
     linksRef.current = newLinks;
+    setLinks(newLinks);
 
     simRef.current?.stop();
 
@@ -167,7 +172,10 @@ export function GraficaGlobal({ procedures }: Props) {
       .force("center", forceCenter(W / 2, H / 2).strength(0.055))
       .force("collision", forceCollide<SimNode>().radius((d) => nodeRadius(d) + 5))
       .alphaDecay(0.018)
-      .on("tick", () => setTick((v) => v + 1));
+      .on("tick", () => {
+        setHasTicked(true);
+        setNodes([...nodesRef.current]);
+      });
 
     simRef.current = sim;
 
@@ -287,9 +295,6 @@ export function GraficaGlobal({ procedures }: Props) {
       scale: Math.max(0.12, Math.min(8, v.scale * factor)),
     }));
   }, []);
-
-  const nodes = nodesRef.current;
-  const links = linksRef.current;
 
   return (
     <div
@@ -414,6 +419,7 @@ export function GraficaGlobal({ procedures }: Props) {
 
       {/* Controls */}
       <div className="absolute top-3 right-3 flex flex-col gap-1">
+        {/* eslint-disable-next-line react-hooks/refs */}
         {[
           { icon: ZoomIn,    action: () => setVb((v) => ({ ...v, scale: Math.min(8, v.scale * 1.3) })) },
           { icon: ZoomOut,   action: () => setVb((v) => ({ ...v, scale: Math.max(0.12, v.scale * 0.77) })) },
@@ -441,7 +447,7 @@ export function GraficaGlobal({ procedures }: Props) {
       </div>
 
       {/* Drag hint */}
-      {tick === 0 && (
+      {!hasTicked && (
         <div
           className="absolute bottom-3 right-3 text-[10px] pointer-events-none"
           style={{ color: palette.countText }}

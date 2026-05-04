@@ -208,19 +208,6 @@
     "emergency": true,
     "specialty": "pediatrics"
   },
-  {
-  "id": "HSM",
-  "code": null,
-  "name": "Hospital Sanitas La Moraleja",
-  "shortName": "Sanitas La Moraleja",
-  "address": "Calle O'Donnell, 50",
-  "district": "Alcobendas",
-  "lat": 40.547,
-  "lng": -3.641,
-  "type": "private",
-  "status4": null,
-  "emergency": true
-},
 {
   "id": "HSR",
   "code": null,
@@ -254,8 +241,21 @@
   "shortName": "HM Sanchinarro",
   "address": "Calle Oña, 10",
   "district": "Hortaleza",
-  "lat": 40.494,
-  "lng": -3.661,
+  "lat": 40.4897,
+  "lng": -3.667,
+  "type": "private",
+  "status4": null,
+  "emergency": true
+},
+{
+  "id": "HSM",
+  "code": null,
+  "name": "Hospital Sanitas La Moraleja",
+  "shortName": "Sanitas La Moraleja",
+  "address": "Av Franciso Pi y Margall, 83",
+  "district": "Hortaleza",
+  "lat": 40.4923,
+  "lng": -3.663,
   "type": "private",
   "status4": null,
   "emergency": true

@@ -97,7 +97,7 @@ export function getAllProcedures(): Procedure[] {
   const enriched = procedures.map((procedure) => {
     const contentDerived = deriveRelatedIds(procedure.content, validIds).filter((id) => id !== procedure.id);
     const related = [...new Set([...procedure.related, ...contentDerived])];
-    const content = normalizeProcedureContent(procedure.content, idToSlug);
+    const content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source);
     const sidebarMeta = getProcedureSidebarMeta(procedure.section, procedure.id, procedure.title);
     const tags = procedure.tags.length
       ? procedure.tags

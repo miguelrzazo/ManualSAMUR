@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Code2, Map, FlaskConical } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { GlobalSearch } from "@/components/shared/GlobalSearch";
+import { AppMenu } from "@/components/shared/AppMenu";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -15,11 +18,12 @@ const navItems = [
 
 export function NavBar() {
   const pathname = usePathname();
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <>
       {/* Desktop top nav */}
-      <header className="hidden md:flex sticky top-0 z-50 h-14 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-6 gap-1">
+      <header className="hidden md:flex sticky top-0 z-50 h-14 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-6 gap-4">
         <Link href="/manual" className="mr-6 flex items-center gap-2">
           <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
             <span className="text-[10px] font-bold text-primary-foreground">S</span>
@@ -48,10 +52,25 @@ export function NavBar() {
           })}
         </nav>
 
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center gap-2 w-64 px-3 py-2 rounded-lg border border-border/60 bg-muted/40 text-muted-foreground text-sm hover:bg-muted transition-colors"
+          >
+            <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span className="flex-1 text-left">Buscar...</span>
+            <kbd className="hidden lg:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs border border-border bg-background font-mono">
+              ⌘K
+            </kbd>
+          </button>
+          <AppMenu />
+          <ThemeToggle />
+        </div>
       </header>
 
-      {/* Mobile top bar (just logo + theme) */}
+      {/* Mobile top bar (just logo + search + theme) */}
       <header className="flex md:hidden sticky top-0 z-50 h-12 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-4 justify-between">
         <Link href="/manual" className="flex items-center gap-2">
           <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
@@ -59,7 +78,18 @@ export function NavBar() {
           </div>
           <span className="font-semibold text-sm">SAMUR Manual</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+          <AppMenu />
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Mobile bottom nav */}
@@ -81,6 +111,8 @@ export function NavBar() {
           );
         })}
       </nav>
+
+      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 }

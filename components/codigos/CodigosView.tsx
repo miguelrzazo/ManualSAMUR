@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X, Globe, FileX, MapPin, Navigation } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useState, useMemo, useRef, useCallback } from "react";
+import { FileX, MapPin, Navigation, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
 
@@ -100,6 +99,21 @@ const FAMILY_COLORS: Record<string, { pill: string; text: string; dot: string }>
   M:  { pill: "bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300",       text: "text-gray-600 dark:text-gray-400",     dot: "#6b7280" },
 };
 
+// Per-category colors for Incidente
+const CATEGORY_COLORS: Record<string, { pill: string; text: string; dot: string }> = {
+  "Accidentes": { pill: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", text: "text-red-700 dark:text-red-400", dot: "#dc2626" },
+  "Traumáticos": { pill: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300", text: "text-orange-700 dark:text-orange-400", dot: "#ea580c" },
+  "Enfermedad": { pill: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", text: "text-blue-700 dark:text-blue-400", dot: "#2563eb" },
+  "Bomberos": { pill: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", text: "text-amber-700 dark:text-amber-400", dot: "#d97706" },
+  "Psiquiátricos": { pill: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", text: "text-purple-700 dark:text-purple-400", dot: "#9333ea" },
+  "Cadáver": { pill: "bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400", text: "text-slate-600 dark:text-slate-400", dot: "#64748b" },
+  "Eventos especiales": { pill: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300", text: "text-indigo-700 dark:text-indigo-400", dot: "#4338ca" },
+  "Recursos solicitados": { pill: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400", dot: "#059669" },
+  "Donante": { pill: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300", text: "text-pink-700 dark:text-pink-400", dot: "#db2777" },
+  "Componente Herido": { pill: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300", text: "text-cyan-700 dark:text-cyan-400", dot: "#0891b2" },
+  "Especificos": { pill: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300", text: "text-violet-700 dark:text-violet-400", dot: "#7c3aed" },
+};
+
 const FAMILY_LABELS: Partial<Record<TopTabKey, Record<string, string>>> = {
   incidente: {
     "1": "Accidentes de tráfico", "2": "Traumáticos", "3": "Enfermedad / Patología",
@@ -151,14 +165,6 @@ const HGU_EXTRA: Hospital = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function normalize(s: string) {
-  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
-
-function matchesQuery(code: Code, q: string) {
-  return normalize(code.code).includes(q) || normalize(code.name).includes(q) || normalize(code.category).includes(q);
-}
-
 function getFamilyMeta(tabKey: TopTabKey, code: string) {
   const family = extractCodeFamily(code);
   const label = FAMILY_LABELS[tabKey]?.[family] ?? `Familia ${family}`;
@@ -170,10 +176,27 @@ function getFamilyMeta(tabKey: TopTabKey, code: string) {
 export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, claves, bases, hospitals, status4, lima }: Props) {
   const [activeTab, setActiveTab] = useState<TopTabKey>("incidente");
   const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>("icao");
-  const [query, setQuery] = useState("");
-  const [otrosQuery, setOtrosQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [globalSearch, setGlobalSearch] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    setShowBackToTop((scrollContainerRef.current?.scrollTop ?? 0) > 200);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const jumpToSection = useCallback((key: string) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const el = container.querySelector(`[data-section-key="${key}"]`) as HTMLElement | null;
+    if (!el) return;
+    const containerRect = container.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    container.scrollBy({ top: elRect.top - containerRect.top, behavior: "smooth" });
+  }, []);
 
   const codeDataMap = useMemo<Record<string, Code[]>>(
     () => ({ incidente, sva, svb, upsi }),
@@ -189,41 +212,49 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
   );
 
   const perFamilyColor = activeTab === "sva" || activeTab === "svb";
+  const perCategoryColor = activeTab === "incidente";
   const groupByCategory = activeTab === "upsi";
 
-  const categories = useMemo(
-    () => [...new Set(currentData.map((c) => c.category))],
-    [currentData],
-  );
-
   const localFiltered = useMemo(() => {
-    let items = currentData;
-    if (activeCategory) items = items.filter((c) => c.category === activeCategory);
-    if (query.trim().length >= 1) {
-      const q = normalize(query);
-      items = items.filter((c) => matchesQuery(c, q));
-    }
-    return items;
-  }, [currentData, query, activeCategory]);
-
-  const globalResults = useMemo(() => {
-    if (!globalSearch || query.trim().length < 1) return [];
-    const q = normalize(query);
-    return TOP_TABS.filter((t) => !t.placeholder && t.key !== "otros")
-      .flatMap((tab) =>
-        (codeDataMap[tab.key] ?? [])
-          .filter((c) => matchesQuery(c, q))
-          .map((c) => ({ ...c, tabKey: tab.key, tabLabel: tab.label, tabPill: tab.pill })),
-      );
-  }, [globalSearch, query, codeDataMap]);
+    if (activeCategory) return currentData.filter((c) => c.category === activeCategory);
+    return currentData;
+  }, [currentData, activeCategory]);
 
   const hasNoReport = perFamilyColor && localFiltered.some((c) => c.noReport);
+
+  const jumpGroups = useMemo(() => {
+    if (!isCodeTab) return [];
+    const seen = new Set<string>();
+    const result: { key: string; label: string; pill?: string }[] = [];
+    for (const code of localFiltered) {
+      let key: string;
+      let label: string;
+      let pill: string | undefined;
+      if (groupByCategory) {
+        key = code.category;
+        label = code.category;
+      } else if (activeTab === "incidente" && code.category === "Especificos") {
+        key = "Especificos";
+        label = "Especificos";
+        pill = CATEGORY_COLORS["Especificos"]?.pill;
+      } else {
+        const { family, label: familyLabel } = getFamilyMeta(activeTab as TopTabKey, code.code);
+        key = family;
+        label = familyLabel;
+        if (perFamilyColor) pill = FAMILY_COLORS[family]?.pill;
+        else if (perCategoryColor && code.category) pill = CATEGORY_COLORS[code.category]?.pill;
+      }
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push({ key, label, pill });
+      }
+    }
+    return result;
+  }, [localFiltered, isCodeTab, groupByCategory, perFamilyColor, perCategoryColor, activeTab]);
 
   const switchTab = (key: TopTabKey) => {
     setActiveTab(key);
     setActiveCategory(null);
-    setQuery("");
-    setGlobalSearch(false);
   };
 
   // Hospitales: status4 joined with hospitals, plus HGU
@@ -271,7 +302,7 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
             {OTROS_TABS.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => { setActiveOtrosTab(tab.key); setOtrosQuery(""); }}
+                onClick={() => setActiveOtrosTab(tab.key)}
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors",
                   activeOtrosTab === tab.key
@@ -286,55 +317,6 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
         </div>
       )}
 
-      {/* ── Search bar (code tabs only) ── */}
-      {isCodeTab && (
-        <div className="px-4 md:px-6 py-3 flex flex-wrap gap-2 items-center border-b border-border/40 bg-muted/10">
-          <div className="relative flex-1 min-w-[180px] max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={globalSearch ? "Buscar en todos los tabs…" : `Buscar en ${tabInfo.label}…`}
-              className="pl-8 h-8 text-sm bg-background"
-            />
-            {query && (
-              <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-          <button
-            onClick={() => { setGlobalSearch((v) => !v); setActiveCategory(null); }}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors",
-              globalSearch
-                ? "bg-primary text-primary-foreground border-primary"
-                : "border-border/60 text-muted-foreground hover:border-border hover:text-foreground bg-background",
-            )}
-          >
-            <Globe className="h-3.5 w-3.5" />
-            Global
-          </button>
-          {!globalSearch && !perFamilyColor && (
-            <div className="flex flex-wrap gap-1.5">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-                  className={cn(
-                    "text-xs px-2.5 py-1 rounded-full font-medium transition-colors border",
-                    activeCategory === cat
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border/60 text-muted-foreground hover:border-border hover:text-foreground bg-background",
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* ── No-report legend (SVA/SVB only) ── */}
       {perFamilyColor && hasNoReport && (
@@ -345,14 +327,41 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
       )}
 
       {/* ── Content ── */}
-      <div className="flex-1 overflow-auto">
+      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 min-h-0 overflow-y-auto relative">
+        {/* ── Section jump nav (scrolls with content) ── */}
+        {isCodeTab && jumpGroups.length > 1 && (
+          <div className="px-4 md:px-6 py-2.5 flex flex-wrap gap-1.5 border-b border-border/30">
+            {jumpGroups.map((g) => {
+              const displayLabel = groupByCategory
+                ? g.label
+                : perFamilyColor
+                  ? g.label
+                  : g.key === "Especificos"
+                    ? g.label
+                    : `${g.key}. ${g.label.split(" ")[0]}`;
+              return (
+                <button
+                  key={g.key}
+                  onClick={() => jumpToSection(g.key)}
+                  className={cn(
+                    "px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap",
+                    g.pill
+                      ? g.pill + " hover:opacity-80"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                  )}
+                >
+                  {displayLabel}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {activeTab === "upsq" ? (
           <UpsqPlaceholder />
         ) : activeTab === "otros" ? (
           <OtrosContent
             tab={activeOtrosTab}
-            query={otrosQuery}
-            setQuery={setOtrosQuery}
             icao={icao}
             indicativos={indicativos}
             claves={claves}
@@ -360,41 +369,23 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
             hospitales={hospitalesData}
             lima={lima}
           />
-        ) : globalSearch && query.trim().length >= 1 ? (
-          globalResults.length === 0 ? (
-            <Empty />
-          ) : (
-            <div>
-              {TOP_TABS.filter((t) => !t.placeholder && t.key !== "otros").map((tab) => {
-                const rows = globalResults.filter((r) => r.tabKey === tab.key);
-                if (!rows.length) return null;
-                return (
-                  <div key={tab.key}>
-                    <div className="sticky top-0 px-4 md:px-6 py-2 bg-muted/60 backdrop-blur-sm border-b border-border/30 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full" style={{ background: tab.color }} />
-                      <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{tab.label}</span>
-                      <span className="text-xs text-muted-foreground tabular-nums">{rows.length}</span>
-                    </div>
-                    <CodeList codes={rows} tabKey={tab.key as TopTabKey} defaultPill={tab.pill} perFamilyColor={false} groupByCategory={tab.key === "upsi"} />
-                  </div>
-                );
-              })}
-            </div>
-          )
         ) : localFiltered.length === 0 ? (
           <Empty />
         ) : (
-          <CodeList codes={localFiltered} tabKey={activeTab} defaultPill={tabInfo.pill} perFamilyColor={perFamilyColor} groupByCategory={groupByCategory} />
-        )}
-
-        {isCodeTab && (
-          <div className="px-4 py-2.5 text-xs text-muted-foreground border-t border-border/30 bg-muted/10 sticky bottom-0">
-            {globalSearch && query.trim().length >= 1
-              ? `${globalResults.length} resultados en todos los tabs`
-              : `${localFiltered.length} de ${currentData.length} en ${tabInfo.label}`}
-          </div>
+          <CodeList codes={localFiltered} tabKey={activeTab} defaultPill={tabInfo.pill} perFamilyColor={perFamilyColor} groupByCategory={groupByCategory} perCategoryColor={perCategoryColor} />
         )}
       </div>
+
+      {/* ── Back to top ── */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-background border border-border/60 shadow-md text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+          aria-label="Volver al inicio"
+        >
+          <ChevronUp className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -402,54 +393,59 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
 // ─── Code List ────────────────────────────────────────────────────────────────
 
 function CodeList({
-  codes, tabKey, defaultPill, perFamilyColor, groupByCategory,
+  codes, tabKey, defaultPill, perFamilyColor, groupByCategory, perCategoryColor = false,
 }: {
   codes: (Code & { tabKey?: string; tabPill?: string })[];
   tabKey: TopTabKey;
   defaultPill: string;
   perFamilyColor: boolean;
   groupByCategory: boolean;
+  perCategoryColor?: boolean;
 }) {
   const grouped = useMemo(() => {
-    const acc: Record<string, { label: string; items: typeof codes; familyColor?: typeof FAMILY_COLORS[string] }> = {};
+    const acc: Record<string, { label: string; items: typeof codes; familyColor?: typeof FAMILY_COLORS[string]; categoryColor?: typeof CATEGORY_COLORS[string] }> = {};
     for (const code of codes) {
       let key: string;
       let label: string;
       let familyColor: typeof FAMILY_COLORS[string] | undefined;
+      let categoryColor: typeof CATEGORY_COLORS[string] | undefined;
 
       if (groupByCategory) {
         key = code.category;
         label = code.category;
+      } else if (tabKey === "incidente" && code.category === "Especificos") {
+        key = "Especificos";
+        label = "Especificos";
+        categoryColor = CATEGORY_COLORS["Especificos"];
       } else {
         const { family, label: l } = getFamilyMeta(tabKey, code.code);
         key = family;
         label = l;
         if (perFamilyColor) familyColor = FAMILY_COLORS[family];
+        else if (perCategoryColor && code.category) categoryColor = CATEGORY_COLORS[code.category];
       }
 
-      if (!acc[key]) acc[key] = { label, items: [], familyColor };
+      if (!acc[key]) acc[key] = { label, items: [], familyColor, categoryColor };
       acc[key].items.push(code);
     }
     return acc;
-  }, [codes, tabKey, perFamilyColor, groupByCategory]);
+  }, [codes, tabKey, perFamilyColor, groupByCategory, perCategoryColor]);
 
   return (
     <div>
       {Object.entries(grouped).map(([key, group]) => {
-        const headerDot = group.familyColor?.dot;
-        const headerText = group.familyColor?.text ?? "text-muted-foreground";
-        const headerPill = group.familyColor?.pill ?? defaultPill;
+        const headerText = group.categoryColor?.text ?? group.familyColor?.text ?? "text-muted-foreground";
+        const headerPill = group.categoryColor?.pill ?? group.familyColor?.pill ?? defaultPill;
 
         return (
-          <section key={key} className="border-b border-border/30">
-            <div className="sticky top-0 z-10 border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur-md md:px-6">
+          <section key={key} data-section-key={key} className="border-b border-border/30">
+            <div className="sticky top-0 z-10 border-b border-border/40 bg-background px-4 py-3 md:px-6">
               <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/25 px-3 py-2 shadow-sm">
-                {headerDot ? (
-                  <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ background: headerDot }} />
-                ) : null}
-                <span className={cn("rounded-full px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em]", headerPill)}>
-                  {key}
-                </span>
+                {!groupByCategory && (
+                  <span className={cn("rounded-full px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em]", headerPill)}>
+                    {key}
+                  </span>
+                )}
                 <span className={cn("text-sm font-semibold", headerText)}>{group.label}</span>
                 <span className="text-xs text-muted-foreground tabular-nums">{group.items.length}</span>
               </div>
@@ -459,7 +455,9 @@ function CodeList({
               {group.items.map((code, i) => {
                 const pill = perFamilyColor
                   ? (FAMILY_COLORS[extractCodeFamily(code.code)]?.pill ?? defaultPill)
-                  : (code.tabPill ?? defaultPill);
+                  : perCategoryColor && code.category
+                    ? (CATEGORY_COLORS[code.category]?.pill ?? defaultPill)
+                    : (code.tabPill ?? defaultPill);
 
                 return (
                   <div key={`${tabKey}-${key}-${code.code}-${i}`} className="px-4 py-3 transition-colors hover:bg-muted/20 md:px-6">
@@ -507,11 +505,9 @@ function Empty() {
 // ─── Otros Content ────────────────────────────────────────────────────────────
 
 function OtrosContent({
-  tab, query, setQuery, icao, indicativos, claves, bases, hospitales, lima,
+  tab, icao, indicativos, claves, bases, hospitales, lima,
 }: {
   tab: OtrosTabKey;
-  query: string;
-  setQuery: (q: string) => void;
   icao: { code: string; name: string }[];
   indicativos: Indicativo[];
   claves: Code[];
@@ -520,59 +516,28 @@ function OtrosContent({
   lima: Code[];
 }) {
   const filteredIcao = useMemo(() => {
-    if (!query.trim()) return icao;
-    const q = normalize(query);
-    return icao.filter((i) => normalize(i.code).includes(q) || normalize(i.name).includes(q));
-  }, [icao, query]);
+    return icao;
+  }, [icao]);
 
   const filteredIndicativos = useMemo(() => {
-    if (!query.trim()) return indicativos;
-    const q = normalize(query);
-    return indicativos.filter((i) => normalize(i.code).includes(q) || normalize(i.name).includes(q));
-  }, [indicativos, query]);
+    return indicativos.filter((i) => i.group !== "Propios · Bases");
+  }, [indicativos]);
 
   const filteredClaves = useMemo(() => {
-    if (!query.trim()) return claves;
-    const q = normalize(query);
-    return claves.filter((c) => normalize(c.code).includes(q) || normalize(c.name).includes(q));
-  }, [claves, query]);
+    return claves;
+  }, [claves]);
 
   const filteredHospitales = useMemo(() => {
-    if (!query.trim()) return hospitales;
-    const q = normalize(query);
-    return hospitales.filter((h) => normalize(h.name).includes(q) || normalize(h.shortName ?? "").includes(q) || normalize(h.id).includes(q));
-  }, [hospitales, query]);
+    return hospitales;
+  }, [hospitales]);
 
   const filteredLima = useMemo(() => {
-    if (!query.trim()) return lima;
-    const q = normalize(query);
-    return lima.filter((c) => normalize(c.code).includes(q) || normalize(c.name).includes(q));
-  }, [lima, query]);
-
-  const showSearch = ["icao", "indicativos", "claves", "hospitales", "lima"].includes(tab);
+    return lima;
+  }, [lima]);
 
   return (
     <div className="flex flex-col h-full">
-      {showSearch && (
-        <div className="px-4 md:px-6 py-3 border-b border-border/40 bg-muted/10">
-          <div className="relative max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={`Buscar…`}
-              className="pl-8 h-8 text-sm bg-background"
-            />
-            {query && (
-              <button onClick={() => setQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {tab === "icao" && <IcaoList items={filteredIcao} />}
         {tab === "indicativos" && <IndicativosList items={filteredIndicativos} />}
         {tab === "claves" && <ClavesList items={filteredClaves} />}

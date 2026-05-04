@@ -1,0 +1,208 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { FileText, Pill, Code, MapPin } from "lucide-react";
+import { globalSearch, type SearchResult } from "@/lib/global-search";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+interface Props {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const RESULT_ICONS = {
+  procedure: FileText,
+  drug: Pill,
+  code: Code,
+  hospital: MapPin,
+};
+
+const RESULT_TYPES = {
+  procedure: "Procedimiento",
+  drug: "Medicamento",
+  code: "Código",
+  hospital: "Hospital",
+};
+
+export function GlobalSearch({ isOpen, onOpenChange }: Props) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<{ procedures: any[]; drugs: any[]; codes: any[]; hospitals: any[] } | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const [
+          vademecum,
+          indicativos,
+          claves,
+          incidente,
+          pc,
+          icao,
+          lima,
+          sva,
+          svb,
+          upsi,
+          hospitals,
+        ] = await Promise.all([
+          import("@/content/data/vademecum.json"),
+          import("@/content/data/codigos-indicativos.json"),
+          import("@/content/data/codigos-claves.json"),
+          import("@/content/data/codigos-incidente.json"),
+          import("@/content/data/codigos-pc.json"),
+          import("@/content/data/codigos-icao.json"),
+          import("@/content/data/codigos-lima.json"),
+          import("@/content/data/codigos-sva.json"),
+          import("@/content/data/codigos-svb.json"),
+          import("@/content/data/codigos-upsi.json"),
+          import("@/content/data/hospitals.json"),
+        ]);
+
+        if (!mounted) return;
+
+        const drugs = vademecum.default;
+        const codes = [
+          ...indicativos.default,
+          ...claves.default,
+          ...incidente.default,
+          ...pc.default,
+          ...icao.default,
+          ...lima.default,
+          ...sva.default,
+          ...svb.default,
+          ...upsi.default,
+        ];
+
+        setData({ procedures: [], drugs, codes, hospitals: hospitals.default });
+      } catch (error) {
+        console.error("Failed to load search data:", error);
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
+    const performSearch = async () => {
+      if (!query.trim() || !data) {
+        setResults([]);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const searchResults = await globalSearch(query, data.procedures, data.drugs, data.codes, data.hospitals);
+        setResults(searchResults);
+      } catch (error) {
+        console.error("Search failed:", error);
+        setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const id = setTimeout(performSearch, 150);
+    return () => clearTimeout(id);
+  }, [query, data]);
+
+  const grouped = results.reduce<Record<string, SearchResult[]>>((acc, result) => {
+    if (!acc[result.type]) acc[result.type] = [];
+    acc[result.type].push(result);
+    return acc;
+  }, {});
+
+  const handleSelect = useCallback(
+    (result: SearchResult) => {
+      onOpenChange(false);
+      setQuery("");
+      router.push(result.href);
+    },
+    [router, onOpenChange]
+  );
+
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
+    onOpenChange(nextOpen);
+    if (!nextOpen) setQuery("");
+  }, [onOpenChange]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        onOpenChange(!isOpen);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen, onOpenChange]);
+
+  return (
+    <CommandDialog
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      commandProps={{ shouldFilter: false }}
+      className="sm:max-w-lg"
+    >
+      <CommandInput
+        placeholder="Buscar procedimientos, medicamentos, códigos..."
+        value={query}
+        onValueChange={setQuery}
+      />
+      <CommandList>
+        {isLoading && (
+          <div className="p-4 text-center text-sm text-muted-foreground">Buscando...</div>
+        )}
+        {!isLoading && query.length >= 2 && results.length === 0 && (
+          <CommandEmpty>Sin resultados para &quot;{query}&quot;</CommandEmpty>
+        )}
+        {!isLoading && query.length < 2 && !results.length && (
+          <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+            Escribe para buscar en procedimientos, medicamentos y códigos
+          </div>
+        )}
+        {Object.entries(grouped).map(([type, items]) => (
+          <CommandGroup key={type} heading={RESULT_TYPES[type as keyof typeof RESULT_TYPES]}>
+            {items.map((result) => {
+              const Icon = RESULT_ICONS[result.type as keyof typeof RESULT_ICONS];
+              return (
+                <CommandItem
+                  key={`${result.type}-${result.id}`}
+                  value={`${result.type}-${result.id}`}
+                  onSelect={() => handleSelect(result)}
+                  className="flex items-center gap-3 py-2"
+                >
+                  <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm leading-snug">{result.title}</div>
+                    {result.subtitle && (
+                      <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                        {result.subtitle}
+                      </div>
+                    )}
+                  </div>
+                  {result.badge && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex-shrink-0 font-mono">
+                      {result.badge}
+                    </span>
+                  )}
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        ))}
+      </CommandList>
+    </CommandDialog>
+  );
+}
