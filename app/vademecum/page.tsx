@@ -7,7 +7,12 @@ export const metadata = {
   description: "Guía rápida de fármacos de emergencia SAMUR-Protección Civil",
 };
 
-export default function VademecumPage() {
+interface PageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function VademecumPage({ searchParams }: PageProps) {
+  const { q } = await searchParams;
   const drugs = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"));
   const perfusiones = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/perfusiones.json"), "utf8"));
   const fluidos = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/fluidos.json"), "utf8"));
@@ -20,6 +25,7 @@ export default function VademecumPage() {
         perfusiones={perfusiones}
         fluidos={fluidos}
         comerciales={comerciales}
+        initialQuery={q}
       />
     </div>
   );

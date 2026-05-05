@@ -1,0 +1,59 @@
+---
+id: "hiponatremia"
+title: "Hiponatremia"
+section: "SVA"
+slug: "hiponatremia-hiponatremia"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVA/Urgencias%20endocrino-metab%C3%B3licas/Hiponatremia/"
+---
+* Se considera hiponatremia una concentración sérica de **sodio <135 mmol/L **con la siguiente clasificación según la gravedad bioquímica:
+  * Leve: Na+: 130-134 mmol/L.
+  * Moderada: Na+: 125-129 mmol/L.
+  * Grave: Na+: <125 mmol/L.
+* Se trata del trastorno hidroelectrolítico más frecuente, siendo a pesar de ello frecuentemente infravalorado. Se asocia a una elevada morbimortalidad (osteoporosis, fracturas óseas, mayor riesgo de IAM, TEP, IC, HTP, etc.)
+* Es posible que el perfil típico del paciente cuenta con síntomas como cansancio, somnolencia, agitación o irritabilidad. A veces se expresa con espasmos o calambres musculares e incluso, si es más avanzada, con convulsiones.
+* Para valorar la gravedad del cuadro, tenga en cuenta tanto los valores bioquímicos como la rapidez de instauración, la gravedad de los síntomas y la depleción de volumen del paciente.
+Grados de gravedad según los síntomas:
+  * Sintomatología** leve: **cefalea, irritabilidad, problemas de concentración, alteración del estado de ánimo, depresión.
+  * Sintomatología **moderada**: náuseas, vómitos, desorientación, somnolencia, calambres.
+  * Sintomatología **grave**: distrés respiratorio, estupor, convulsiones, coma.
+* Valoración inicial: ABCDE.
+* Realice anamnesis e historia clínica orientada en la búsqueda de antecedentes personales (neoplasia, fármacos antihipertensivos principalmente tiazidas, anticomiciales, ICC, cirrosis, insuficiencia suprarrenal, polidipsia, etc.). Explore la posible depleción de volumen (hemorragias, pérdidas gastro intestinales, ejercicio, IRC, etc.)
+* Realice una exploración clínica detallada incluyendo una exploración neurológica y recuerde que el cuadro clínico va a depender de la gravedad de la hiponatremia y su velocidad de instauración.
+* Monitorice: TA, FC, FR, ECG continuo, SatO2, así como ETCO2 en pacientes con aislamiento de vía aérea.
+* Canalice una vía periférica.
+* Realice una analítica sanguínea y glucemia.
+* Trate, como objetivo principal, la hiponatremia hipotónica, aquella generalmente causada por pérdidas de volumen extrarrenales como diarreas, vómitos y pérdidas al tercer espacio.
+* Descarte siempre la hiponatremia hiperglucemia ya que suele ser la causante de la mayoría de las hiponatremias no hipotónicas (las que no es preciso tratar en nuestro medio).(((
+El sodio sérico disminuye alrededor de 1,6 mEq/l por cada 100 mg/dl de incremento de la glucemia. Por ello, para estimar la concentración sérica de sodio en función de la glucemia, si esta última está elevada, realice la siguiente corrección:
+
+* Añada 2,4 mmol/l a la concentración sérica de sodio medida, por cada 100 mg/dl de aumento de glucemia por encima de 100 mg/dl.
+
+Se puede estimar la concentración sérica de sodio corregida con la siguiente tabla:
+
+|(% colspan="8" style="background-color:#50a7d4" %)**                                                                                                                           Glucosa (mg/dl)**
+|(% style="background-color:#50a7d4" %)**Na+ (mmol/l)**|(% style="background-color:#50a7d4" %)100|(% style="background-color:#50a7d4" %)200|(% style="background-color:#50a7d4" %)300|(% style="background-color:#50a7d4" %)400|(% style="background-color:#50a7d4" %)500|(% style="background-color:#50a7d4" %)600|(% style="background-color:#50a7d4" %)700
+|(% style="background-color:#50a7d4" %)**135**|135|137|140|142|145|147|149
+|(% style="background-color:#50a7d4" %)**130**|130|132|135|137|140|142|144
+|(% style="background-color:#50a7d4" %)**125**|125|127|130|132|135|137|139
+|(% style="background-color:#50a7d4" %)**120**|120|122|125|127|130|132|134
+|(% style="background-color:#50a7d4" %)**115**|115|117|120|122|125|127|129
+|(% style="background-color:#50a7d4" %)**110**|110|112|115|117|120|122|124
+|(% style="background-color:#50a7d4" %)**105**|105|107|110|112|115|117|119
+|(% style="background-color:#50a7d4" %)**100**|100|102|105|107|110|112|114
+|(% style="background-color:#50a7d4" %)**95**|95|97|100|102|105|107|109
+|(% style="background-color:#50a7d4" %)**90**|90|92|95|97|100|102|104
+* Haga, también, un diagnóstico diferencial con **la hiponatremia grave asociada al ejercicio **y el **golpe de calor **(por ejercicio físico). La clínica es similar (ambos pueden cursar con afectación neurológica y disnea) pero los tratamientos son diferentes.
+  * En el golpe de calor hay una temperatura central > 40ºC y requiere una fluidoterapia agresiva.
+  * En la hiponatremia asociada al ejercicio, siga las pautas descritas anteriormente.
+* Trate a los pacientes que cumplan dos criterios de gravedad de la hiponatremia: **bioquímico** (Na+ <125 mmol/l) y la **sintomatología de gravedad**.
+  * Administre 100 ml de suero salino hipertónico al 3% en 20 minutos. Para ello añada 11 ml de Cloruro Sódico al 20% (una ampolla y 1 ml) a 89 ml de SSF 0.9% (retire 11 ml del envase).
+  * Mida la concentración sérica de sodio a los 20 minutos. Si no ha obtenido un ascenso de **5 mmol/l** en la natremia, repita el bolo de 100 ml en 20 minutos (máximo 3 bolos).
+* Evite la sobrecorrección de la hiponatremia durante el tratamiento por el riesgo potencial de desarrollar el síndrome de desmielinización osmótica.  
+* Reevalúe la corrección del equilibrio electrolítico y ácido-base mediante la analítica sanguínea.
+* Traslade en USVA con preaviso hospitalario dependiendo de la gravedad del cuadro.
+
+Inicio página>>doc:

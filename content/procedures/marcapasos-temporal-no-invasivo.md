@@ -1,0 +1,106 @@
+---
+id: "marcapasos-temporal-no-invasivo"
+title: "Marcapasos temporal no invasivo"
+section: "Técnicas"
+slug: "marcapasos-temporal-no-invasivo-marcapasos-temporal-no-invasivo"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/T%C3%A9cnicas/Cardiacos/Marcapasos%20temporal%20no%20invasivo/"
+---
+# Indicación**:
+
+Tratamiento de bradiarritmias hemodinámicamente inestables o que no responden al tratamiento farmacológico.
+
+**Material**: Monitor, electrodos de monitorización, cable de marcapasos, electrodos de marcapasos autoadhesivos, tijeras, gasas.
+
+# Técnica**:
+
+* Coloque al paciente en una posición cómoda (semisentado o en decúbito supino).Tanto el paciente como el monitor deben situarse lejos de fuentes de interferencia eléctrica tales como cables de alimentación, barandillas de la camilla, etc.
+* Si procede, explique al paciente el procedimiento y la posibilidad de que sienta dolor durante la estimulación. Valore la necesidad de analgesia/sedación.
+* Aplique los electrodos adhesivos del marcapasos a la piel limpia y seca. Si el paciente tuviera un exceso de vello en el tórax, éste debe recortarse en vez de afeitarse, ya que pequeños cortes en la piel aumentarían las molestias. Evite colocar los electrodos sobre la piel dañada.
+* Las posiciones en las que se colocarán los electrodos son:
+  * **Posición anterior-posterior:** el electrodo negativo se coloca en la parte anterior izquierda del tórax, a medio camino entre la apófisis xifoides y el pezón izquierdo, con el borde superior del electrodo debajo de la línea del pezón. Esto se corresponde con la posición del electrodo V2-V3 del ECG. El electrodo positivo se sitúa en la parte posterior izquierda del tórax, debajo de la escápula, en situación paravertebral.
+  * **Posición anterior-lateral:** El electrodo negativo se sitúa en la parte anterior derecha del tórax en el área subclavicular y el electrodo positivo en la parte izquierda del tórax, región media-axilar, sobre el 4º espacio intercostal. Esta colocación es de segunda elección ya que interfiere con la colocación de las palas de desfibrilación y tiende a causar estimulación del músculo pectoral.
+* Conecte los electrodos de ECG y colóquelos sobre el paciente. Si el paciente no tiene puestos los electrodos ECG el monitor no podrá realizar función marcapasos.
+* Encienda el monitor. Asegúrese de seleccionar una derivación con ritmo visible óptimo (I-II-III).
+* Tenga en cuenta que la mayoría de los monitores se encienden en la posición A DEMANDA excepto Lifepak15 que comienza en posición FIJA.
+
+# Consideraciones especiales**:
+
+* (((
+Los electrodos están diseñados para pacientes que pesen más de 15 kg.
+* Los pacientes conscientes pueden sentir molestias que precisen analgesia y/o sedación.
+* Asegúrese de que los electrodos de estimulación:
+  * Quepan completamente en el torso.
+  * Estén colocados con un espacio mínimo entre ellos de 2,5 a 5 cm.
+  * No estén colocados sobre las prominencias óseas del esternón o la columna vertebral.
+  * En su colocación produzcan la menor sensación de molestia. Para ello evite colocar el electrodo negativo en la posición posterior o en la zona antero-superior derecha del tórax.
+  * En pacientes con senos grandes, en colocación anterior-posterior, coloque el electrodo negro anterior más cerca de V2 que de V3.
+* Cuando están activados, el ECG y el Sumario de sucesos registran los parámetros de estimulación. Cada estímulo está marcado con una flecha.
+
+# LIFEPAK 15
+
+* (((
+Conecte el cable del marcapasos al conector MARCAPASOS en el lateral del desfibrilador/monitor.
+* Pulse **MARCP** hasta que se ilumine el indicador correspondiente.
+image:60304_f1.jpg||alt="Figura 1" width="400px"
+* Observe el ritmo del ECG. Confirme que un marcador de detección en forma de triángulo aparece cerca del centro de cada complejo QRS. Si los marcadores de detección no aparecen o se presentan en el lugar equivocado (por ejemplo, en la onda T), ajuste el parámetro TAMAÑO DE ECG o seleccione otra derivación.
+* Pulse **FRECUEN** o gire el SELECTOR RÁPIDO para seleccionar la frecuencia de estimulación cardíaca deseada.
+* Pulse **CORRNTE** o gire el SELECTOR RÁPIDO para aumentar la corriente hasta que se produzca una captura eléctrica. Esta captura eléctrica se indica mediante un complejo QRS ancho y una onda T a continuación del marcador de estimulación. Con cada impulso de estimulación cardíaca administrado, se añade un marcador positivo de estimulación a la forma de onda del ECG.(((
+Nota: Durante la estimulación cardíaca externa, la pantalla de inicio muestra guiones (~-~--) en lugar de la frecuencia cardíaca y las alarmas de frecuencia cardíaca se desactivan.
+* Tome el pulso del paciente o verifique su presión sanguínea para evaluar la captura mecánica.
+* Para modificar la frecuencia o la corriente durante la estimulación cardíaca, pulse FRECUEN o CORRNTE, respectivamente. Los botones FRECUEN y CORRNTE permiten realizar cambios en incrementos de 10; a su vez, el SELECTOR RÁPIDO permite realizar cambios en incrementos de 5.
+image:60304_f2.jpg||alt="Figura 2" width="400px"
+* Para interrumpir la estimulación cardíaca y ver el ritmo intrínseco del paciente, pulse y mantenga pulsado **PAUSA**. De este modo, el marcapasos administra estimulación cardíaca al 25% de la frecuencia establecida. Deje de pulsar PAUSA para reanudar la estimulación cardíaca a la frecuencia establecida.
+* Para dejar de estimular, reduzca la corriente a cero o pulse MARCAP.
+* El modo de estimulación cardíaca asíncrono o a “no demanda” se puede seleccionar si hay ruido o artefactos que obstaculizan la detección apropiada de los complejos QRS. Pulse **OPCIONES** para acceder al modo de estimulación cardíaca a “no demanda”.
+
+# PHILIPS HEARTSTART MRX
+
+* (((
+Gire el selector de energía hasta la posición **Marcap**.
+image:60304_f3.jpg||alt="Figura 3" width="400px"
+* Pulse el botón de selección de derivaciones para seleccionar la derivación más adecuada con una onda R fácilmente detectable.
+image:60304_f4.jpg||alt="Figura 4"
+* Compruebe que los marcadores blancos de la onda R aparecen sobre la forma de onda del ECG. Un único marcador deberá asociarse con cada onda R. Si dichos marcadores no aparecen o no coinciden con la onda R, seleccione otra derivación.
+* Pulse **[Frecuencia Marcap.]** y utilice los botones de flecha y de selección de menú para seleccionar el número que desee de impulsos de marcapasos por minuto.
+* Si es necesario, ajuste la intensidad de marcapasos inicial. Para ello, pulse **[Intensidad Marcap.]** y utilice los botones de flecha y de selección de menú para seleccionar la intensidad que desee.
+* Pulse **[Iniciar Marcap.]**. Aparecerá el mensaje Marcapasos funcionando.
+* Verifique la presencia de un pulso periférico.
+* Para detener la administración de impulsos de marcapasos, pulse [Detener Marcap.]. Una vez en pausa, pulse [Reanudar Marcap.] para reanudar la administración de impulsos del marcapasos. También puede detener la administración de impulsos del marcapasos si mueve el selector de energía a otra posición que no sea Marcap.
+* Cambie el modo de marcapasos a modo fijo mediante las opciones de menú.
+image:60304_f5.jpg||alt="Figura 5" width="350px"
+
+# CORPULS3
+
+* La función de marcapasos se inicia pulsando la tecla **Estimulador.**
+* El momento de estimulación se indica mediante una línea vertical verde (flecha) en las curvas del ECG. Un pequeño símbolo con forma de rombo se coloca bajo cada una de las flechas. Además, un rombo más grande aparece intermitente en la esquina superior izquierda del campo de la curva. El símbolo de rombo de la esquina superior izquierda indica el impulso de estimulación de un marcapasos implantado.
+* El modo marcapasos se identifica mediante el mensaje “STIM” en la esquina izquierda superior del campo de curva. Cuando se realiza la estimulación, el mensaje "**ESTIM**" aparece intermitentemente. Cuando "**ESTIM**" se muestra permanentemente, se indica que el marcapasos está encendido (por ejemplo, en modo DEMAND) pero no está activo (no hay estimulación). Solo cuando el marcapasos esté apagado o en pausa se dejará de mostrar el mensaje "**ESTIM**".
+* Pulse la tecla blanda **[Frecuencia]** y ajuste la frecuencia mediante la rueda de selección.
+* Pulse la tecla blanda **[Intens]** y ajuste la intensidad deseada con la rueda de selección.
+
+image:60304_f6.jpg||alt="Figura 6" width="450px"
+
+## Marcapasos, pantalla inicial
+
+* (((
+Área de parámetros de ritmo cardiaco
+* ECG actual (derivaciones II/DEauto)
+* Campo de curvas configurable
+* Modo de funcionamiento de marcapasos
+* Intensidad seleccionada
+* Designación de las teclas blandas
+* Instrucciones de funcionamiento
+* Frecuencia seleccionada
+
+## ATENCION: El marcapasos se inicia automáticamente cuando se selecciona una intensidad de más de 0 mA.
+
+* (((
+Si fuera necesario, pulse la tecla blanda [**Pausa]** para interrumpir el marcapasos. Confirme el mensaje ¿Parar estimulación? mediante la teclablanda [Sí].
+* Si se ha parado la estimulación, pulse la tecla blanda **[Continuar marcapasos**] para continuar la estimulación. Confirme la pregunta ¿Continuar marcapasos? mediante la tecla blanda [Sí].
+* Para finalizar la estimulación, pulse la tecla blanda **[Apagar].** Confirme la pregunta ¿Apagar marcapasos? mediante la tecla blanda [Sí] para finalizar o reiniciar el marcapasos (DEMAND, 0 mA, 70/min)
+* Pulse la tecla blanda **[Modo],** si se va a utilizar el modo FIX (Fijo).
+
+Inicio página>>doc:

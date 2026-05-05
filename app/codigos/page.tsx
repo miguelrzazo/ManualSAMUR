@@ -3,6 +3,7 @@ import codigosIncidente from "@/content/data/codigos-incidente.json";
 import codigosSva from "@/content/data/codigos-sva.json";
 import codigosSvb from "@/content/data/codigos-svb.json";
 import codigosUpsi from "@/content/data/codigos-upsi.json";
+import codigosUpsq from "@/content/data/codigos-upsq.json";
 import codigosIcao from "@/content/data/codigos-icao.json";
 import codigosIndicativos from "@/content/data/codigos-indicativos.json";
 import codigosClaves from "@/content/data/codigos-pc.json";
@@ -22,6 +23,7 @@ export default function CodigosPage() {
       sva={codigosSva}
       svb={codigosSvb}
       upsi={codigosUpsi}
+      upsq={codigosUpsq}
       icao={codigosIcao}
       indicativos={codigosIndicativos}
       claves={codigosClaves}

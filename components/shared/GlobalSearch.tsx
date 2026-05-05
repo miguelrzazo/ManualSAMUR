@@ -56,6 +56,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           sva,
           svb,
           upsi,
+          upsq,
           hospitals,
         ] = await Promise.all([
           import("@/content/data/vademecum.json"),
@@ -68,6 +69,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           import("@/content/data/codigos-sva.json"),
           import("@/content/data/codigos-svb.json"),
           import("@/content/data/codigos-upsi.json"),
+          import("@/content/data/codigos-upsq.json"),
           import("@/content/data/hospitals.json"),
         ]);
 
@@ -84,6 +86,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           ...sva.default,
           ...svb.default,
           ...upsi.default,
+          ...upsq.default,
         ];
 
         setData({ procedures: [], drugs, codes, hospitals: hospitals.default });

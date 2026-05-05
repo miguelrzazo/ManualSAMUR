@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { AlertCircle, AlertTriangle, CheckSquare, Info, Lightbulb, Square } from "lucide-react";
+import { useState, useEffect, useRef, useId } from "react";
+import { AlertCircle, AlertTriangle, CheckSquare, ChevronDown, Info, Lightbulb, Pill, Square } from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import mermaid from "mermaid";
 
 export function KeyPoints({ children }: { children: React.ReactNode }) {
   return (
@@ -133,5 +136,82 @@ export function Diagram({ src, alt, caption }: { src: string; alt?: string; capt
         </figcaption>
       )}
     </figure>
+  );
+}
+
+export function Collapsible({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details
+      className="my-6 rounded-xl border border-border/60 bg-card/60 not-prose group"
+      {...(defaultOpen ? { open: true } : {})}
+    >
+      <summary className="flex items-center justify-between px-5 py-3 cursor-pointer list-none select-none hover:bg-muted/30 rounded-xl transition-colors">
+        <span className="text-sm font-semibold">{title}</span>
+        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+      </summary>
+      <div className="component-prose px-5 pb-4 pt-1 text-sm">
+        {children}
+      </div>
+    </details>
+  );
+}
+
+export function MermaidDiagram({ chart, title }: { chart: string; title?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const uid = useId().replace(/[^a-z0-9]/gi, "x");
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: resolvedTheme === "dark" ? "dark" : "default",
+      securityLevel: "loose",
+    });
+
+    mermaid.render(`m${uid}`, chart).then(({ svg }) => {
+      if (containerRef.current) containerRef.current.innerHTML = svg;
+    }).catch(() => {
+      if (containerRef.current) {
+        containerRef.current.innerHTML =
+          `<pre class="text-xs text-muted-foreground p-2 whitespace-pre-wrap">${chart}</pre>`;
+      }
+    });
+  }, [chart, resolvedTheme, uid]);
+
+  const inner = (
+    <div
+      ref={containerRef}
+      className="overflow-x-auto w-full py-2 flex justify-center [&>svg]:max-w-full [&>svg]:h-auto"
+    />
+  );
+
+  if (title) {
+    return <Collapsible title={title}>{inner}</Collapsible>;
+  }
+
+  return (
+    <div className="my-6 rounded-xl border border-border/60 bg-card/60 not-prose overflow-hidden">
+      {inner}
+    </div>
+  );
+}
+
+export function DrugLink({ name }: { name: string }) {
+  return (
+    <Link
+      href={`/vademecum?q=${encodeURIComponent(name)}`}
+      className="inline-flex items-center gap-0.5 text-primary font-medium hover:underline underline-offset-2"
+    >
+      <Pill className="h-3 w-3 opacity-50 flex-shrink-0" />
+      {name}
+    </Link>
   );
 }

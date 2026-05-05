@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useCallback } from "react";
-import { FileX, MapPin, Navigation, ChevronUp } from "lucide-react";
+import { FileX, MapPin, Navigation, ChevronUp, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
 
@@ -11,6 +11,7 @@ interface Code {
   code: string;
   name: string;
   category: string;
+  group?: string;
   description?: string;
   noReport?: boolean;
 }
@@ -45,6 +46,7 @@ interface Props {
   sva: Code[];
   svb: Code[];
   upsi: Code[];
+  upsq: Code[];
   icao: { code: string; name: string }[];
   indicativos: Indicativo[];
   claves: Code[];
@@ -67,7 +69,7 @@ const TOP_TABS: Array<{ key: TopTabKey; label: string; color: string; pill: stri
   { key: "otros",     label: "Otros",     color: "#7c3aed", pill: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300", text: "text-violet-700 dark:text-violet-400" },
 ];
 
-type OtrosTabKey = "icao" | "indicativos" | "claves" | "bases" | "hospitales" | "tetra" | "comunicaciones" | "distritos" | "lima";
+type OtrosTabKey = "icao" | "indicativos" | "claves" | "bases" | "hospitales" | "comunicaciones" | "distritos" | "lima";
 
 const OTROS_TABS: Array<{ key: OtrosTabKey; label: string }> = [
   { key: "icao",          label: "ICAO" },
@@ -75,11 +77,15 @@ const OTROS_TABS: Array<{ key: OtrosTabKey; label: string }> = [
   { key: "claves",        label: "Claves" },
   { key: "bases",         label: "Bases" },
   { key: "hospitales",    label: "Hospitales" },
-  { key: "tetra",         label: "TETRA" },
   { key: "comunicaciones", label: "Comunicaciones" },
   { key: "distritos",     label: "Distritos" },
   { key: "lima",          label: "Lima" },
 ];
+
+const FAMILY_ORDER: Partial<Record<TopTabKey, string[]>> = {
+  svb: ["T", "C", "R", "N", "D", "G", "F", "I", "PS", "M", "W"],
+  sva: ["T", "D", "N", "U", "I", "O", "G", "C", "R", "A", "PS", "X", "E", "F", "V", "RR", "M", "W"],
+};
 
 // Per-family colors for SVA/SVB
 const FAMILY_COLORS: Record<string, { pill: string; text: string; dot: string }> = {
@@ -118,20 +124,43 @@ const FAMILY_LABELS: Partial<Record<TopTabKey, Record<string, string>>> = {
   incidente: {
     "1": "Accidentes de tráfico", "2": "Traumáticos", "3": "Enfermedad / Patología",
     "4": "Bomberos / especiales", "5": "Judicial / social", "6": "Ubicación",
-    "7": "Especial / masivos", "8": "Despliegue operativo", "9": "Donante",
-    "10": "Actuación conjunta", "11": "Código infarto", "13": "Código 13",
+    "7": "Especial / masivos", "8": "Programados", "9": "Donante",
+    "10": "Componente Herido", "11": "Código infarto", "13": "Código 13",
     "15": "Politrauma", "16": "SCASEST", "18": "Sepsis", "19": "TEP",
     "33": "Síncope post esfuerzo",
   },
   sva: {
-    C: "Cardiovasculares", R: "Respiratorios", N: "Neurológicos", X: "Intoxicaciones",
-    A: "Anafilaxia", PS: "Psiquiátricos", E: "Endocrino-metabólicos",
-    F: "Agentes físicos", W: "Cierres y no asistenciales", T: "Traumáticos",
+    T: "Traumáticos",
+    D: "Digestivos",
+    N: "Neurológicos",
+    U: "Urológicos",
+    I: "Infecciosos",
+    O: "Obstétricos",
+    G: "Ginecológicos",
+    C: "Cardiovasculares",
+    R: "Respiratorios",
+    A: "Anafilaxia",
+    PS: "Psiquiátricos",
+    X: "Intoxicaciones",
+    E: "Endocrino-metabólicos",
+    F: "Agentes físicos",
+    V: "Oftalmológicas",
+    RR: "ORL",
+    M: "Miscelánea",
+    W: "Otros",
   },
   svb: {
-    C: "Cardiovasculares", R: "Respiratorios", N: "Neurológicos", D: "Digestivos",
-    G: "Gineco-obstétricos", F: "Agentes físicos", I: "Intoxicaciones",
-    PS: "Psiquiátricos", M: "Miscelánea", W: "Cierres y no asistenciales", T: "Traumáticos",
+    T: "Traumáticos",
+    C: "Cardiovasculares",
+    R: "Respiratorios",
+    N: "Neurológicos",
+    D: "Digestivos",
+    G: "Gineco / obstétricos",
+    F: "Físicos",
+    I: "Intoxicaciones",
+    PS: "Psiquiátricos",
+    M: "Miscelánea",
+    W: "Otros",
   },
 };
 
@@ -171,9 +200,16 @@ function getFamilyMeta(tabKey: TopTabKey, code: string) {
   return { family, label };
 }
 
+function getFamilyOrderIndex(tabKey: TopTabKey, family: string) {
+  const order = FAMILY_ORDER[tabKey];
+  if (!order) return Number.POSITIVE_INFINITY;
+  const index = order.indexOf(family);
+  return index === -1 ? Number.POSITIVE_INFINITY : index;
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, claves, bases, hospitals, status4, lima }: Props) {
+export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos, claves, bases, hospitals, status4, lima }: Props) {
   const [activeTab, setActiveTab] = useState<TopTabKey>("incidente");
   const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>("icao");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -199,11 +235,11 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
   }, []);
 
   const codeDataMap = useMemo<Record<string, Code[]>>(
-    () => ({ incidente, sva, svb, upsi }),
-    [incidente, sva, svb, upsi],
+    () => ({ incidente, sva, svb, upsi, upsq }),
+    [incidente, sva, svb, upsi, upsq],
   );
 
-  const isCodeTab = activeTab !== "otros" && activeTab !== "upsq";
+  const isCodeTab = activeTab !== "otros";
   const tabInfo = TOP_TABS.find((t) => t.key === activeTab)!;
 
   const currentData = useMemo(
@@ -248,6 +284,9 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
         seen.add(key);
         result.push({ key, label, pill });
       }
+    }
+    if (perFamilyColor) {
+      result.sort((a, b) => getFamilyOrderIndex(activeTab, a.key) - getFamilyOrderIndex(activeTab, b.key));
     }
     return result;
   }, [localFiltered, isCodeTab, groupByCategory, perFamilyColor, perCategoryColor, activeTab]);
@@ -318,16 +357,15 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
       )}
 
 
-      {/* ── No-report legend (SVA/SVB only) ── */}
-      {perFamilyColor && hasNoReport && (
-        <div className="px-4 md:px-6 py-2 flex items-center gap-2 text-xs text-muted-foreground border-b border-border/30 bg-muted/5">
-          <FileX className="h-3.5 w-3.5 flex-shrink-0" />
-          <span>Los códigos marcados con este icono <strong>no generan informe asistencial</strong></span>
-        </div>
-      )}
-
       {/* ── Content ── */}
       <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 min-h-0 overflow-y-auto relative">
+        {/* ── No-report legend (SVA/SVB only) ── */}
+        {perFamilyColor && hasNoReport && (
+          <div className="px-4 md:px-6 py-2 flex items-center gap-2 text-xs text-muted-foreground border-b border-border/30 bg-muted/5">
+            <FileX className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>Los códigos marcados con este icono <strong>no generan informe asistencial</strong></span>
+          </div>
+        )}
         {/* ── Section jump nav (scrolls with content) ── */}
         {isCodeTab && jumpGroups.length > 1 && (
           <div className="px-4 md:px-6 py-2.5 flex flex-wrap gap-1.5 border-b border-border/30">
@@ -339,27 +377,32 @@ export function CodigosView({ incidente, sva, svb, upsi, icao, indicativos, clav
                   : g.key === "Especificos"
                     ? g.label
                     : `${g.key}. ${g.label.split(" ")[0]}`;
-              return (
-                <button
-                  key={g.key}
-                  onClick={() => jumpToSection(g.key)}
-                  className={cn(
-                    "px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap",
-                    g.pill
-                      ? g.pill + " hover:opacity-80"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-                  )}
-                >
-                  {displayLabel}
-                </button>
-              );
+                return (
+                  <button
+                    key={g.key}
+                    onClick={() => jumpToSection(g.key)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap",
+                      g.pill
+                        ? g.pill + " hover:opacity-80"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                    )}
+                  >
+                    {g.key === "Especificos" ? (
+                      <>
+                        <Target className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span className="sr-only">Especificos</span>
+                      </>
+                    ) : (
+                      displayLabel
+                    )}
+                  </button>
+                );
             })}
           </div>
         )}
 
-        {activeTab === "upsq" ? (
-          <UpsqPlaceholder />
-        ) : activeTab === "otros" ? (
+        {activeTab === "otros" ? (
           <OtrosContent
             tab={activeOtrosTab}
             icao={icao}
@@ -433,17 +476,51 @@ function CodeList({
 
   return (
     <div>
-      {Object.entries(grouped).map(([key, group]) => {
+      {(perFamilyColor
+        ? Object.entries(grouped).sort(
+          ([keyA], [keyB]) => getFamilyOrderIndex(tabKey, keyA) - getFamilyOrderIndex(tabKey, keyB),
+        )
+        : Object.entries(grouped)
+      ).map(([key, group]) => {
         const headerText = group.categoryColor?.text ?? group.familyColor?.text ?? "text-muted-foreground";
         const headerPill = group.categoryColor?.pill ?? group.familyColor?.pill ?? defaultPill;
+        const rows: Array<
+          | { type: "subgroup"; title: string }
+          | { type: "code"; item: (typeof codes)[number]; isGrouped: boolean }
+        > = [];
+        let lastSubgroup: string | null = null;
+
+        for (const item of group.items) {
+          const subgroup = item.group?.trim();
+          if (subgroup && subgroup !== lastSubgroup) {
+            rows.push({ type: "subgroup", title: subgroup });
+            lastSubgroup = subgroup;
+          } else if (!subgroup) {
+            lastSubgroup = null;
+          }
+
+          rows.push({ type: "code", item, isGrouped: Boolean(subgroup) });
+        }
 
         return (
           <section key={key} data-section-key={key} className="border-b border-border/30">
             <div className="sticky top-0 z-10 border-b border-border/40 bg-background px-4 py-3 md:px-6">
               <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/25 px-3 py-2 shadow-sm">
                 {!groupByCategory && (
-                  <span className={cn("rounded-full px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em]", headerPill)}>
-                    {key}
+                  <span
+                    className={cn(
+                      "rounded-full px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em]",
+                      headerPill,
+                    )}
+                  >
+                    {key === "Especificos" ? (
+                      <>
+                        <Target className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span className="sr-only">Especificos</span>
+                      </>
+                    ) : (
+                      key
+                    )}
                   </span>
                 )}
                 <span className={cn("text-sm font-semibold", headerText)}>{group.label}</span>
@@ -452,23 +529,41 @@ function CodeList({
             </div>
 
             <div className="divide-y divide-border/20">
-              {group.items.map((code, i) => {
+              {rows.map((row, i) => {
+                if (row.type === "subgroup") {
+                  return (
+                    <div
+                      key={`${tabKey}-${key}-subgroup-${row.title}-${i}`}
+                      className="sticky top-[60px] z-[5] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground bg-background/95 border-b border-border/20 md:px-6"
+                    >
+                      {row.title}
+                    </div>
+                  );
+                }
+
+                const { item } = row;
                 const pill = perFamilyColor
-                  ? (FAMILY_COLORS[extractCodeFamily(code.code)]?.pill ?? defaultPill)
-                  : perCategoryColor && code.category
-                    ? (CATEGORY_COLORS[code.category]?.pill ?? defaultPill)
-                    : (code.tabPill ?? defaultPill);
+                  ? (FAMILY_COLORS[extractCodeFamily(item.code)]?.pill ?? defaultPill)
+                  : perCategoryColor && item.category
+                    ? (CATEGORY_COLORS[item.category]?.pill ?? defaultPill)
+                    : (item.tabPill ?? defaultPill);
 
                 return (
-                  <div key={`${tabKey}-${key}-${code.code}-${i}`} className="px-4 py-3 transition-colors hover:bg-muted/20 md:px-6">
+                  <div
+                    key={`${tabKey}-${key}-${item.code}-${i}`}
+                    className={cn(
+                      "py-3 transition-colors hover:bg-muted/20",
+                      row.isGrouped ? "pl-10 pr-4 md:pl-12 md:pr-6" : "px-4 md:px-6",
+                    )}
+                  >
                     <div className="flex items-center gap-3">
                       <span className={cn("font-mono font-bold text-sm px-2.5 py-1 rounded-lg flex-shrink-0 min-w-[4rem] text-center tabular-nums", pill)}>
-                        {code.code}
+                        {item.code}
                       </span>
-                      {code.noReport && (
+                      {item.noReport && (
                         <FileX className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" aria-label="Sin informe asistencial" />
                       )}
-                      <span className="text-sm font-medium leading-snug">{code.name}</span>
+                      <span className="text-sm font-medium leading-snug">{item.name}</span>
                     </div>
                   </div>
                 );
@@ -477,21 +572,6 @@ function CodeList({
           </section>
         );
       })}
-    </div>
-  );
-}
-
-// ─── UPSQ Placeholder ────────────────────────────────────────────────────────
-
-function UpsqPlaceholder() {
-  return (
-    <div className="flex flex-col items-center justify-center h-64 gap-3 text-center px-6">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 px-3 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
-        Próximamente
-      </span>
-      <p className="text-sm text-muted-foreground max-w-xs">
-        Los códigos de la Unidad de Psiquiatría (UPSQ) se añadirán próximamente.
-      </p>
     </div>
   );
 }
@@ -543,7 +623,6 @@ function OtrosContent({
         {tab === "claves" && <ClavesList items={filteredClaves} />}
         {tab === "bases" && <BasesList bases={bases} />}
         {tab === "hospitales" && <HospitalesList hospitales={filteredHospitales} />}
-        {tab === "tetra" && <TetraContent />}
         {tab === "comunicaciones" && <ComunicacionesContent />}
         {tab === "distritos" && <DistritosContent bases={bases} />}
         {tab === "lima" && <LimaList items={filteredLima} />}
@@ -609,35 +688,15 @@ function IndicativosList({ items }: { items: Indicativo[] }) {
 // ─── Claves List ──────────────────────────────────────────────────────────────
 
 function ClavesList({ items }: { items: Code[] }) {
-  const grouped = useMemo(() => {
-    const acc: Record<string, Code[]> = {};
-    for (const item of items) {
-      (acc[item.category] ??= []).push(item);
-    }
-    return acc;
-  }, [items]);
-
   return (
-    <div>
-      {Object.entries(grouped).map(([cat, catItems]) => (
-        <section key={cat} className="border-b border-border/30">
-          <div className="sticky top-0 z-10 border-b border-border/40 bg-background/95 px-4 py-3 backdrop-blur-md md:px-6">
-            <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/25 px-3 py-2 shadow-sm">
-              <span className="text-sm font-semibold">{cat}</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{catItems.length}</span>
-            </div>
-          </div>
-          <div className="divide-y divide-border/20">
-            {catItems.map((item, i) => (
-              <div key={`${cat}-${i}`} className="flex items-center gap-4 px-4 md:px-6 py-3 hover:bg-muted/20 transition-colors">
-                <span className="font-mono font-bold text-sm flex-shrink-0 min-w-[4rem] text-center bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded-lg px-2 py-0.5">
-                  {item.code}
-                </span>
-                <span className="text-sm font-medium">{item.name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+    <div className="divide-y divide-border/20">
+      {items.map((item, i) => (
+        <div key={`${item.code}-${i}`} className="flex items-center gap-4 px-4 md:px-6 py-3 hover:bg-muted/20 transition-colors">
+          <span className="font-mono font-bold text-sm flex-shrink-0 min-w-[4rem] text-center bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 rounded-lg px-2 py-0.5">
+            {item.code}
+          </span>
+          <span className="text-sm font-medium">{item.name}</span>
+        </div>
       ))}
     </div>
   );
@@ -798,7 +857,7 @@ function TetraContent() {
   ];
 
   return (
-    <div className="px-4 md:px-6 py-4 space-y-3">
+    <div className="space-y-3">
       {items.map((item) => (
         <div key={item.title} className="rounded-xl border border-border/50 bg-muted/20 px-4 py-3">
           <p className="text-sm font-semibold mb-2">{item.title}</p>
@@ -863,6 +922,12 @@ function ComunicacionesContent() {
 
   return (
     <div className="px-4 md:px-6 py-4 space-y-6">
+      {/* TETRA */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Tetra</h3>
+        <TetraContent />
+      </div>
+
       {/* Frases típicas */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Frases típicas</h3>

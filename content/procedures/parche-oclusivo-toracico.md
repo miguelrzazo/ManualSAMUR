@@ -1,0 +1,53 @@
+---
+id: "parche-oclusivo-toracico"
+title: "Parche oclusivo torácico"
+section: "Técnicas"
+slug: "parche-oclusivo-toracico-parche-oclusivo-toracico"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/T%C3%A9cnicas/Trauma/Parche%20oclusivo%20tor%C3%A1cico/"
+---
+En el servicio disponemos de un parche torácico tipo Asherman preparado y listo para su uso en las USVA y USVB.
+
+Se trata de un parche de gran adherencia, generalmente transparente para poder observar la zona a tratar, estéril y que dispone de una válvula unidireccional para permitir la salida de aire y dificultar su entrada en la cavidad torácica. Su utilización está indicada en todos aquellos traumatismos abiertos en la zona torácica como prevención del neumotórax a tensión.
+
+**Técnica con parche Asherman**
+
+**Material**
+
+Parche Asherman, gafas de protección, guantes, suero fisiológico, gasas estériles.
+
+* Proceda a limpiar la zona circundante de la herida en zona torácica con suero fisiológico y gasas estériles, de los posibles fluidos presentes (sudor, sangre, suciedad) Sea cuidadoso para no aumentar la contaminación de la herida.
+* En caso de existir vello, el fabricante indica que el adhesivo utilizado realiza un sellado adecuado del parche a pesar de su presencia. Si el sanitario valora que la cantidad de este puede llegar a comprometer el correcto sellado, rasure la zona de aplicación.
+* Proceda a abrir el envase preservando de contacto la zona estéril que va a ser aplicada directamente sobre la herida.
+image:https://servpub.madrid.es/manualsamur/images/603a_01.jpg||alt="parche Asherman" width="450px"
+* Aplique de manera firme el apósito sobre la herida confirmando que se ha producido un correcto sellado.
+* Prosiga con la valoración continua del paciente.
+
+En caso de encontrarse un objeto enclavado en la herida, **NO lo retire, proceda a la fijación del mismo y no aplique el parche oclusivo**.
+En caso de no disponer del elemento anteriormente referenciado o necesitar un mayor número de estos, es posible realizar un parche torácico de fortuna con materiales presentes en nuestras unidades.
+
+image:Técnica con parche Asherman.png||alt="Técnica con parche Asherman"
+*Figure 1*
+
+**Técnica con material de fortuna**
+
+**Material**
+
+Gafas de protección, guantes, suero fisiológico, envoltorio de gasas estériles, gasas estériles y esparadrapo.
+
+* Proceda a limpiar la zona circundante de la herida en zona torácica con suero fisiológico y gasas estériles, de los posibles fluidos presentes (sudor, sangre, suciedad).Sea cuidadoso de no aumentar la contaminación de la herida.
+* En caso de existir vello y valorar que la adherencia del esparadrapo pueda estar comprometida, proceda a rasurar la zona.
+* Proceda a abrir un sobre de gasas estériles, siendo cuidadoso en mantener la esterilidad de las gasas y de la parte interior plástica transparente del envoltorio.
+* Coloque directamente en la herida una gasa estéril.
+* Cubra ésta **completamente con la parte interior del envoltorio transparente**, situando la parte estéril directamente sobre la gasa (cerciórese que la zona plástica cubre completamente la gasa para asegurar un perfecto sellado).
+* Proceda a fijar el envoltorio por 3 de sus 4 lados con esparadrapo.
+* Utilice todo el esparadrapo que sea necesario para asegurar el fijado y la estanqueidad de los tres lados fijados.
+* Compruebe el correcto sellado y funcionamiento del parche.
+* Prosiga con la valoración continua del paciente.
+
+(% style="text-align:center" %)image:1755169880953-532.jpeg
+
+Inicio página>>doc:

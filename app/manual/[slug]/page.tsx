@@ -24,14 +24,19 @@ import { PrintButton } from "@/components/manual/PrintButton";
 import {
   Caution,
   Checklist,
+  Collapsible,
   Diagram,
+  DrugLink,
   KeyPoints,
+  MermaidDiagram,
   Note,
   Step,
   Steps,
   Warning,
 } from "@/components/manual/mdx-extras";
+import { TableOfContents } from "@/components/manual/TableOfContents";
 import type { ComponentPropsWithoutRef } from "react";
+import rehypeSlug from "rehype-slug";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -83,6 +88,9 @@ const mdxComponents = {
   Step,
   Checklist,
   Diagram,
+  Collapsible,
+  MermaidDiagram,
+  DrugLink,
 };
 
 export async function generateStaticParams() {
@@ -126,7 +134,7 @@ export default async function ProcedurePage({ params }: Props) {
         validIds={allProcedures.map((item) => item.id)}
       />
       {/* Main content */}
-      <article className="flex-1 min-w-0 max-w-3xl">
+      <article id="procedure-content" className="flex-1 min-w-0 max-w-3xl">
         {/* Header */}
         <div className="mb-8 rounded-2xl border border-border/60 bg-card/50 p-5 md:p-6">
           <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -183,7 +191,11 @@ export default async function ProcedurePage({ params }: Props) {
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:py-2
           prose-ul:my-6 prose-ol:my-6 prose-li:leading-7 prose-li:my-2
         ">
-          <MDXRemote source={procedure.content} components={mdxComponents} />
+          <MDXRemote
+            source={procedure.content}
+            components={mdxComponents}
+            options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+          />
         </div>
 
         {/* Source link */}
@@ -227,9 +239,10 @@ export default async function ProcedurePage({ params }: Props) {
       </article>
 
       {/* Right sidebar — desktop only */}
-      {(related.length > 0 || backlinks.length > 0) && (
-        <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
-          <div className="sticky top-6 flex flex-col gap-4">
+      <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
+        <div className="sticky top-6 flex flex-col gap-4">
+          <TableOfContents articleId="procedure-content" />
+          {(related.length > 0 || backlinks.length > 0) && (<>
             <ProcedureLinkCard
               title="Enlaces entrantes"
               icon={<GitBranch className="h-3.5 w-3.5" />}
@@ -248,9 +261,9 @@ export default async function ProcedurePage({ params }: Props) {
               icon={<Link2 className="h-3.5 w-3.5" />}
               procedures={related}
             />
-          </div>
-        </aside>
-      )}
+          </>)}
+        </div>
+      </aside>
     </div>
   );
 }

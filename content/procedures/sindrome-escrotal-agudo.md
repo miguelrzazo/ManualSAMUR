@@ -1,0 +1,98 @@
+---
+id: "sindrome-escrotal-agudo"
+title: "Síndrome escrotal agudo"
+section: "SVA"
+slug: "sindrome-escrotal-agudo-sindrome-escrotal-agudo"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVA/Urgencias%20nefrourol%C3%B3gicas/S%C3%ADndrome%20escrotal%20agudo/"
+---
+Síndrome caracterizado por dolor escrotal agudo e intenso. Las causas más frecuentes (95%) son intra-escrotales son: Torsión del cordón espermático y la Orquiepididimitis aguda. El objetivo es identificar qué casos precisan de una intervención médica o quirúrgica urgente.
+
+# TORSIÓN TESTICULAR
+
+* Valoración inicial: ABC. De manera general el síntoma cardinal del síndrome escrotal agudo es el dolor, que depende de la intensidad, evolución y localización.
+
+* Características clínicas: Dolor agudo, súbito, intenso e incapacitante de intensidad variable según el grado de torsión y el tiempo trascurrido. El dolor se puede irradiar hacia la región inguinal (25%). De forma menos frecuente náuseas, vómitos o fiebre (secundaria a necrosis testicular isquémica) y no se acompaña de un cuadro miccional.
+* Observe en la exploración:
+  * Inspección visual del escroto: escroto muy doloroso, tumefacto, suele estar edematoso pudiendo objetivar umblicación escrotal de la piel secundaria a la tracción del testículo.
+  * Palpación testicular (empezar la exploración por el lado no patológico):
+    * Tamaño: debe ser similar.
+    * Forma: ovoide.
+    * Consistencia: homogénea, dura pero elástica, debe ser similar en ambos lados.
+    * En testículo patológico: elevación y horizontalización del testículo afectado respecto al contralateral (signo de Governeur positivo).
+    * Valorar reflejos:
+      * Reflejo cremastérico: en condiciones normales al acariciar la cara interna de muslo, el testículo ipsilateral asciende. En caso de la torsión testicular el reflejo cremastérico está disminuido o ausente.
+      * **Signo de Prehn**, con el paciente en bipedestación, elevar el testículo doloroso:
+        * El signo de Prehn es positivo: si el dolor mejora al elevar el testículo.
+        * El signo de Prehn es negativo: no alivia el dolor o incluso lo empeora en la torsión testicular.
+    * Transiluminación escrotal: colocar linterna en la cara posterior del escroto enfocando al mismo. Es positiva cuando hay hidrocele, pero en torsión testicular no debe haber alteraciones.
+* Monitorice: TA, FC, FR, ECG, SatO2 y temperatura.
+* Canalice una vía periférica con SSF de mantenimiento.
+* Administre analgesia:
+  * <DrugLink name="Ketorolaco Trometamol" /> im a dosis de 30 mg o iv a dosis de 30 mg diluido en 100 ml de SSF, a pasar en no menos de 15 segundos; ( dosis máxima; 90 mg/día, si menos de 15 kg de peso o mayores de 65 años, dosis máxima 60 mg/día; recomendado como máximo en tratamientos de 2 días por la vía parenteral).
+o
+  * <DrugLink name="Metamizol Magnesico" /> im a dosis de 2 g o iv diluido en 100 ml de SSF dosis única; si indica uso continuado, administre 1 g/8h.
+* Valore sedación asociada al analgésico:
+  * <DrugLink name="Diazepam2" /> vo a dosis de 5 mg/8 horas; o
+  * <DrugLink name="Lorazepam" /> sl a dosis de 1 mg vía sublingual.
+* Si hay náuseas y/o vómitos, administre <DrugLink name="Metoclopramida Hidrocloruro" /> iv a dosis de 10 mg.
+Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intravenosa en función del nivel de conciencia del paciente y su tolerancia a la vía oral.
+  * **Dosis adultos**:
+    * Vía oral bucodispersable: 8 mg en dosis única
+    * Vía iv o im: 4 mg en dosis única en no menos de 30 sg. Máx. 8 mg dosis. También se puede administrar im.
+  * **Dosis niños**:
+    * Vía oral, según peso corporal, en dosis única:
+      * Niños de 8 a 15 Kg: 2 mg
+      * Niños de 15 a 30 Kg: 4 mg
+      * Niños de 30 a 50 Kg: 6 mg
+      * Niños > 50 kg: 8 mg
+    * Vía iv en inyección lenta, no menos de 30 sg. (Ondansetron, viales de 4 mg/ 2 ml):
+      * Niños ≥ 2 años y < 40 kg: 0,1 mg/kg iv. Máximo 4 mg.
+      * Niños > 40 kg: 4 mg/dosis.
+
+* Valore la realización de un ECO-Doppler (prueba de elección) para ver la interrupción de flujo sanguíneo en el testículo afectado con respecto al sano.
+* Valore la detorsión manual de los testículos si el tiempo de evolución desde inicio de cuadro clínico hasta la cirugía se demora más de 2 horas. Para ello:
+  * Realice sedación suplementaria del paciente.
+  * Mirando desde los pies del paciente se procede a detorcer el testículo izquierdo en sentido horario del reloj y el derecho en sentido anti-horario, (siempre desde el rafe escrotal hacia afuera), cambiando el sentido si con la maniobra inicial aumenta el dolor. Estas maniobras no sustituyen a la fijación quirúrgica posterior, sólo reducen la urgencia.
+* Realice traslado hospitalario urgente en USVA para tratamiento definitivo.
+
+# ORQUIEPIDIDIMITIS
+
+Es la causa más frecuente del síndrome escrotal agudo en adultos. La causa más común es infecciosa, su origen suele radicar en una infección urinaria previa oligosintomática no curada que se extiende al epidídimo y/o testículo y causa el cuadro. *N. gonorrhoeae* y *C. trachomatis* son los organismos más comunes responsables de la epididimitis aguda en hombres menores de 35 años. *Escherichia coli*, otros coliformes y especies de *Pseudomonas* son más frecuentes en hombres mayores, a menudo en asociación con uropatía obstructiva por hiperplasia prostática benigna.
+
+* Valoración inicial: ABC.
+* Características clínicas: dolor testicular localizado de instauración progresiva con aumento de la sensibilidad en la zona asociado en aproximadamente un 50 % de los pacientes a síndrome miccional (urgencia, disuria, polaquiuria) o a síntomas miccionales en días previos. Asocia febrícula o fiebre (39-40 º) y malestar general.
+* Monitorice: TA, FC, FR, ECG, SatO2 y temperatura.
+* Diagnóstico: historia clínica y exploración física:
+  * Inspección visual de escroto: piel eritematosa, aumento de temperatura, puede presentar signos de celulitis.
+  * Palpación testicular: dolor a la palpación selectiva de epidídimo o incluso con el roce; epidídimo doloroso, indurado y aumentado de tamaño. Podría presentar un hidrocele reactivo.
+  * Reflejos:
+    * Reflejo cremastérico se encuentra conservado, no alteraciones.
+    * Signo de Prehn positivo.
+  * Transiluminación escrotal: si hay existencia de hidrocele, la luz atraviesa el escroto de forma homogénea.
+* Canalice una vía venosa periférica con SSF de mantenimiento.
+* Administre analgesia:
+  * <DrugLink name="Ketorolaco Trometamol" /> im a dosis de 30 mg o iv a dosis de 30 mg diluido en 100 ml de SSF, a pasar en no menos de 15 segundos; (dosis máxima; 90 mg/día, si menos de 15 kg de peso o mayores de 65 años, dosis máxima de 60 mg/día; recomendado como máximo en tratamientos de 2 días por la vía parenteral).
+o
+  * <DrugLink name="Metamizol Magnesico" /> im a dosis de 2 g o iv diluido en 100 ml de SSF dosis única; si indica uso continuado, administre 1 g/8h.
+* Si hay náuseas y/o vómitos, administre <DrugLink name="Metoclopramida Hidrocloruro" /> iv a dosis de 10 mg.
+Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intravenosa en función del nivel de conciencia del paciente y su tolerancia a la vía oral.
+  * **Dosis adultos**:
+    * Vía oral bucodispersable: 8 mg en dosis única
+    * Vía iv o im: 4 mg en dosis única en no menos de 30 sg. Máx. 8 mg dosis. También se puede administrar im.
+  * **Dosis niños**:
+    * Vía oral, según peso corporal, en dosis única:
+      * Niños de 8 a 15 Kg: 2 mg
+      * Niños de 15 a 40 Kg: 4 mg
+      * Niños > 40 kg: 8 mg
+    * Vía iv en inyección lenta, no menos de 30 sg. (Ondansetron, viales de 4 mg/ 2 ml):
+      * Niños ≥ 2 años y < 40 kg: 0,1 mg/kg iv. Máximo 4 mg.
+      * Niños > 40 kg: 4 mg/dosis.
+
+* En la mayoría de los casos se trata de forma ambulatoria, se aconseja uso de AINEs, aplicación de frío y elevación de escroto. Si el dolor agudo se controla, acudirá a su médico para valoración de antibioterapia oral y control
+* Realice traslado hospitalario en USVB o USVA, si hay uso de medicación intravenosa y el dolor no se controla.
+
+Inicio página>>doc:

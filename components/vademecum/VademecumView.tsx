@@ -69,6 +69,7 @@ interface Props {
   perfusiones: Perfusion[];
   fluidos: FluidRow[];
   comerciales: CommercialRow[];
+  initialQuery?: string;
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -325,9 +326,9 @@ function CommercialCard({ row }: { row: CommercialRow }) {
   );
 }
 
-export function VademecumView({ drugs, perfusiones, fluidos, comerciales }: Props) {
+export function VademecumView({ drugs, perfusiones, fluidos, comerciales, initialQuery }: Props) {
   const [tab, setTab] = useState<Tab>("farmacos");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery ?? "");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const drugCategories = useMemo(() => [...new Set(drugs.map((d) => d.category))], [drugs]);

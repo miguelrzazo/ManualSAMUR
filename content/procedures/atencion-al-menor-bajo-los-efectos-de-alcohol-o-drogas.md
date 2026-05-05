@@ -1,0 +1,46 @@
+---
+id: "atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas"
+title: "Atención al menor bajo los efectos de alcohol o drogas"
+section: "SVA"
+slug: "atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas-atencion-al-menor-bajo-lo"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVA/Urgencias%20pedi%C3%A1tricas/Atenci%C3%B3n%20al%20menor%20bajo%20los%20efectos%20de%20alcohol%20o%20drogas/"
+---
+Atienda según el procedimiento específico de intoxicaciones.
+
+A este respecto, **se considera menor a toda persona que aún no ha cumplido los 18 años**.
+
+**Si el menor precisa traslado tras la asistencia sanitaria:**
+
+* Si el menor tiene **menos de 16 años** y **precisa traslado** al hospital, se deberá comunicar la situación del menor a los padres o tutores para que éstos se hagan cargo del menor.
+* Asimismo, también se pondrá en conocimiento de dichos padres o tutores cuando fuese **entre 16 y 18 años** y la situación, a juicio facultativo, pudiera considerarse de gravedad. Si NO se considera GRAVE, no hay que comunicar nada a padres o tutores SI ÉL NO QUIERE.
+* Solicite al menor la filiación de sus padres o tutores, incluyendo teléfono de contacto, así como la filiación personal.
+* Transmita esta información a la **Central de Comunicaciones**. La Central actuará de la siguiente manera:
+  * Informará de la situación a Policía Municipal si aún no está en el lugar o es desconocedora del suceso. Policía Municipal intentará localizar a los padres o tutores
+  * Les comunicará la situación del menor, informándoles de la necesidad de traslado hospitalario e instándoles a que se dirijan al mismo.
+  * Si informan de su proximidad y no hay inconveniente a juicio clínico para la demora del traslado, se esperará a los padres o tutores para que acompañen al menor en el traslado.
+  * En caso de no localización o negativa a hacerse cargo del menor, se pondrá el traslado del menor en conocimiento de la Policía que actuará en consecuencia con sus procedimientos.
+
+**Si el menor no precisa traslado tras la asistencia sanitaria:**
+
+* No se le dará el alta médica si no existe un adulto familiar directo que firme en el informe de asistencia **responsabilizándose** del paciente o una Unidad de **Policía** que se haga cargo de este.
+  * En caso de menor de** más de 16 años, quedará al cargo de familiar o, al menos, de responsable adecuado**. Firmando este último con nombre y DNI la asunción de dicha responsabilidad.
+  * En caso de que los padres, tutores o familiares directos estén ausentes, pero indiquen que van hasta el lugar a hacerse cargo del menor, este deberá quedar a cargo de Policía Municipal hasta su llegada, o caso de ausencia de esta, de la dotación del recurso asistencial.
+
+Resumen:
+
+|(% style="background-color:#50a7d4" %)**SITUACIÓN**|(% style="background-color:#50a7d4" %)**MENOR DE 16 AÑOS**|(% style="background-color:#50a7d4" %)**16 - 18 AÑOS**
+|(% style="background-color:#87caed" %)Leve|(% style="background-color:#87caed" %)Informar a padres siempre.
+**Deciden padres.**|(% style="background-color:#87caed" %)No informar a padres si el menor no quiere.
+**Decide él.**
+|(% style="background-color:#87caed" %)Grave|(% style="background-color:#87caed" %)**Deciden padres**. Se les espera si es posible.
+**Si no hay padres: Policía.**|(% style="background-color:#87caed" %)Se informa a padres
+No necesario esperar.
+Si no hay padres, aconsejable Policía.
+|(% style="background-color:#87caed" %)Alta|(% style="background-color:#87caed" %)Queda con familiar siempre o policía municipal/unidad SAMUR a la espera de familiares.
+Firma del informe de asistencia por familiar o referencia a indicativo policial.|(% style="background-color:#87caed" %)Aconsejable que quede con familiar o responsable que no se encuentre en su mismo estado de intoxicación y que firme el informe asistencial.
+
+Inicio página>>doc:

@@ -1,0 +1,104 @@
+---
+id: "codigo-crisis"
+title: "Código Crisis"
+section: "Operativos"
+slug: "codigo-crisis-codigo-crisis"
+tags: []
+synonyms: []
+related: []
+updated: "2026-05-05"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20Operativos/C%C3%B3digos/C%C3%B3digo%20Crisis/"
+---
+El objetivo del procedimiento consiste en regular la actuación operativa a seguir, en todas aquellas situaciones donde por parte de los facultativos de Samur Protección Civil se constate la existencia de un paciente con signos y síntomas compatibles con crisis epiléptica grave que cumpla los criterios de inclusión.
+
+Este procedimiento se integra dentro del proceso asistencial de la crisis epiléptica urgente en la Comunidad de Madrid (Código Crisis), código que se extiende a toda el área territorial de la Comunidad de Madrid.
+
+Son objetivos específicos de este Procedimiento:
+
+* Estructurar y organizar la atención de los pacientes de cualquier edad con crisis epilépticas urgentes en los diferentes niveles asistenciales facilitando la toma de decisiones.
+* Mejorar los tiempos de asistencia.
+* Prevenir el estado de mal epiléptico (Estatus Epiléptico) a través del diagnóstico y tratamiento precoz de las crisis epilépticas promoviendo nuevas estrategias de manejo como el inicio con una biterapia precoz.
+
+# Definición Estatus Epiléptico. Activación de Código Crisis
+
+El axioma “el tiempo es cerebro” es aplicable a las crisis epilépticas, de acuerdo a los “tiempos” que definen el Estatus Epiléptico.
+
+En este sentido, se han establecido dos periodos de tiempos:
+
+* **T1** (tiempo de duración de la crisis a partir del cual estaríamos ante un Estatus Epiléptico)
+  * 5 minutos para Estatus Epiléptico convulsivo.
+  * 10 minutos para Estatus Epiléptico focal.
+  * 15 minutos para Estatus Epiléptico de ausencias.
+* **T2** (tiempo de duración de la crisis, a partir del cual se produce daño neuronal que puede ser irreversible)
+  * 30 minutos para Estatus Epiléptico convulsivo.
+  * 60 minutos para Estatus Epiléptico focal.
+  * No definido para Estatus Epiléptico ausencias.
+
+Serán incluidos como código crisis los siguientes perfiles de pacientes, atendiendo a sus características clínicas:
+
+* Estatus Epiléptico generalizado con una duración superior a 5 minutos.
+* Estatus Epiléptico focal con afectación de nivel de conciencia cuando se prolonguen más de 5 minutos.
+* Estatus Epiléptico focal sin alteración de consciencia en menores de 16 años cuando se prolonguen más de 5 minutos.
+* Sospecha de Estatus Epiléptico no convulsivo (bajo nivel de conciencia, confusión sin causa o estado postcrítico con afectación de nivel de conciencia >1 hora).
+* Déficit neurológico focal postcrítico de nueva aparición.
+* CE en acúmulos: 2 o más crisis generalizadas tónico-clónicas o focales con alteraciones del nivel de conciencia en un periodo menor de 24 horas sin criterios de estatus epiléptico.
+* Primera crisis en menores de 1 mes de vida.
+
+Si cumple una de las anteriores **excluir la activación** del Código Crisis en las siguientes situaciones:
+
+* En adultos, situación previa de gran dependencia en relación con enfermedad progresiva (Rankin 3-4).
+* Pacientes en seguimiento por la Unidad de Cuidados Paliativos nivel 3
+
+En menores de 1 mes, dada la alta prevalencia de eventos paroxísticos no epilépticos, no se iniciará tratamiento antiepiléptico sin confirmación de las crisis mediante EEG, EXCEPTO si presenta deterioro clínico (alteración del nivel de consciencia, pausas de apnea, desaturación, afectación del estado general: iniciar Levetiracetam, si precisa sedación administrar midazolam.
+
+Ante la inclusión de un paciente en este procedimiento:
+
+* Informe a la Central de la existencia de un "Código Crisis”.
+* La Central de Comunicaciones activará al Jefe de Guardia e irá cursando el preaviso hospitalario.
+* Actúe conforme al procedimiento de Estatus Epiléptico
+* La Central de Comunicaciones designará el hospital de referencia para el Código Crisis en función de los siguientes criterios por orden de importancia:
+  * Menor tiempo de traslado del paciente (proximidad).
+  * Disponibilidad del centro.
+  * Edad del paciente (adulto, pediátrico, neonatal).
+* La Central de comunicaciones contactará con el hospital de referencia para el Código Crisis elegido por estos criterios, para ampliar la información necesaria:
+  * Características del paciente: antecedentes de epilepsia o primera crisis y edad
+  * Tipo de crisis. Focal o generalizada
+  * Duración de la crisis actual. Número de crisis
+  * Situación clínica: alteración del nivel de conciencia, estabilidad hemodinámica
+  * Existencia de déficit focal
+  * Tratamiento administrado.
+  * Tiempo aproximado de llegada.
+* El centro receptor establecerá los mecanismos que aseguren una recepción directa y adecuada del paciente. El médico responsable del centro receptor designará el lugar donde debe ser ubicado el paciente y tendrá la posibilidad de mantener contacto directo con el medico que realiza el traslado.
+  * En circuito asistencial adultos: neurólogo de guardia.
+  * En circuito asistencial pediátrico:
+    * De 8.00-15.00 en días laborales: neuropediatra encargado del Código Crisis del hospital. En menores de 1 mes avisará a Neonatología para ingreso directo.
+    * De 15.00-8.00 y en días festivos: neuropediatra, pediatra de urgencias, pediatra de planta de hospitalización e intensivista pediátrico o neonatólogo según el criterio del Hospital de Referencia.
+
+# Hospitales de referencia para el Código Crisis epiléptica grave
+
+Adultos
+
+* Hospital Clínico San Carlos.
+* Hospital Universitario La Princesa.
+* Hospital Universitario La Paz.
+* Hospital Universitario 12 de Octubre.
+* Hospital Universitario Ramón y Cajal.
+* Hospital General Universitario Gregorio Marañón.
+* Fundación Jiménez Díaz.
+
+Pediatría
+
+* Hospital Universitario La Paz.
+* Hospital Universitario 12 de Octubre.
+* Hospital General Universitario Gregorio Marañón.
+* Hospital Infantil Universitario Niño Jesús.
+* Hospital Universitario Ramón y Cajal.
+* Hospital Clínico San Carlos.
+
+Neonatos
+
+* Hospital Universitario La Paz.
+* Hospital Universitario 12 de Octubre.
+* Hospital General Universitario Gregorio Marañón.
+
+Inicio página>>doc:

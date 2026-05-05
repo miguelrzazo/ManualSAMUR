@@ -1,33 +1,134 @@
 [
-  { "code": "0", "name": "Recurso operativo", "group": "Estado" },
-  { "code": "1", "name": "Recurso en emergencia", "group": "Estado" },
-  { "code": "2", "name": "Salida hacia el lugar de actuación", "group": "Estado" },
-  { "code": "2.1", "name": "Función de control de operativo", "group": "Supervisión" },
-  { "code": "3", "name": "Llegada al lugar de actuación", "group": "Estado" },
-  { "code": "4", "name": "Salida del lugar del suceso hacia hospital", "group": "Traslado" },
-  { "code": "5", "name": "Llegada al hospital o centro asistencial", "group": "Traslado" },
-  { "code": "6", "name": "Unidad inutilizada por causa sin definir", "group": "Operatividad" },
-  { "code": "6.1", "name": "Unidad en período de restitución de su operatividad", "group": "Operatividad" },
-  { "code": "7", "name": "Ubicación en su base", "group": "Ubicación" },
-  { "code": "7.1", "name": "Ubicación en su zona", "group": "Ubicación" },
-  { "code": "8", "name": "Establecimiento de contacto telefónico para comunicación", "group": "Comunicación" },
-  { "code": "8.1", "name": "Establecimiento de contacto por TETRA o red principal en llamada privada", "group": "Comunicación" },
-  { "code": "9", "name": "Lugar de localización geográfica de la unidad", "group": "Comunicación" },
-  { "code": "10", "name": "Peligro para la dotación de la unidad", "group": "Urgencia operativa" },
-  { "code": "10.1", "name": "Necesidad de presencia policial", "group": "Urgencia operativa" },
-  { "code": "11", "name": "Inicio de la jornada laboral o servicio programado", "group": "Jornada" },
-  { "code": "12", "name": "Finalización de la jornada laboral o servicio programado", "group": "Jornada" },
-  { "code": "13", "name": "Imposibilidad de dar información en ese momento", "group": "Comunicación" },
-  { "code": "14", "name": "Indicación de inicio de relevo", "group": "Jornada" },
-  { "code": "15", "name": "Solicitud de apoyo de Bomberos", "group": "Urgencia operativa" },
-  { "code": "16", "name": "Solicitud de apoyo de otra unidad SAMUR o Jefe de División de Guardia", "group": "Urgencia operativa" },
-  { "code": "17", "name": "Solicitud de traslado con TATS de apoyo de otra unidad, Jefe de División de Guardia, Delta o Romeo", "group": "Traslado" },
-  { "code": "18", "name": "Solicitud de contacto con Charly por personal de enfermería", "group": "Comunicación" },
-  { "code": "19", "name": "Solicitud de contacto con Charly por la unidad solicitante", "group": "Comunicación" },
-  { "code": "20", "name": "Comunicación a Relaciones Externas del aviso", "group": "Comunicación" },
-  { "code": "22", "name": "Solicitud de repostaje", "group": "Logística" },
-  { "code": "23", "name": "Solicitud del programa de traducción", "group": "Logística" },
-  { "code": "100", "name": "Solicitud de recurso urgente de Policía o SAMUR", "group": "Supervisión" },
-  { "code": "VICTOR", "name": "En descanso, asuntos internos o avituallamiento", "group": "Jornada" },
-  { "code": "CQ", "name": "Llamada general o de grupo a los operativos", "group": "Comunicación" }
+  {
+    "code": "0",
+    "name": "Recurso operativo"
+  },
+  {
+    "code": "1",
+    "name": "Recurso en emergencia"
+  },
+  {
+    "code": "2",
+    "name": "Salida hacia lugar de actuación"
+  },
+  {
+    "code": "2.1",
+    "name": "Función de supervisión (activación voluntaria)"
+  },
+  {
+    "code": "3",
+    "name": "Llegada al lugar de actuación"
+  },
+  {
+    "code": "4",
+    "name": "Salida del lugar en dirección al hospital"
+  },
+  {
+    "code": "5",
+    "name": "Llegada al hospital o centro asistencial"
+  },
+  {
+    "code": "6",
+    "name": "Unidad inoperativa. Requiere aclaración y autorización"
+  },
+  {
+    "code": "6.1",
+    "name": "Unidad en operatividad parcial. En C0"
+  },
+  {
+    "code": "7",
+    "name": "Unidad en su base"
+  },
+  {
+    "code": "7.1",
+    "name": "Unidad en su zona"
+  },
+  {
+    "code": "8",
+    "name": "Solicitud llamada telefónica"
+  },
+  {
+    "code": "8.1",
+    "name": "Solicitud llamada por TETRA"
+  },
+  {
+    "code": "9",
+    "name": "Localización geográfica precisa"
+  },
+  {
+    "code": "10",
+    "name": "Integridad dotación en riesgo"
+  },
+  {
+    "code": "10.1",
+    "name": "Solicitud de policía - Tráfico, presión social, etc."
+  },
+  {
+    "code": "11",
+    "name": "Inicio jornada laboral o servicio - Al salir de B0"
+  },
+  {
+    "code": "12",
+    "name": "Fin jornada laboral o servicio - Al llegar a B0"
+  },
+  {
+    "code": "13",
+    "name": "Imposibilidad dar información en el momento"
+  },
+  {
+    "code": "14",
+    "name": "Solicitud inicio de relevo / Fin DRP"
+  },
+  {
+    "code": "15",
+    "name": "Solicitud de Bomberos"
+  },
+  {
+    "code": "16",
+    "name": "Solicitud de apoyo de otra unidad de SAMUR-PC"
+  },
+  {
+    "code": "17",
+    "name": "Traslado con Charly, Delta, Romeo, Tecnico, ..."
+  },
+  {
+    "code": "18",
+    "name": "Solicitud contacto con Charly por Enfermería"
+  },
+  {
+    "code": "19",
+    "name": "Solicitud contacto con Charly por unidad"
+  },
+  {
+    "code": "20",
+    "name": "Comunicación a Prensa / Emergencias Madrid"
+  },
+  {
+    "code": "21",
+    "name": "Solicitud de farmacia móvil"
+  },
+  {
+    "code": "22",
+    "name": "Solicitud de repostaje"
+  },
+  {
+    "code": "23",
+    "name": "Solicitud teletraducción"
+  },
+  {
+    "code": "29",
+    "name": "En Clave 3, no paciente (rellamada a demandante)"
+  },
+  {
+    "code": "100",
+    "name": "Solicitud policía urgente (Conjunta con PMM)"
+  },
+  {
+    "code": "CQ",
+    "name": "Llamada general / a un grupo específico"
+  },
+  {
+    "code": "VICTOR",
+    "name": "Descanso, asuntos internos o avituallamiento"
+  }
 ]

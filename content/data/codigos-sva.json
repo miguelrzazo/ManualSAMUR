@@ -1,137 +1,2471 @@
 [
-  { "code": "T.0.0", "name": "TCE cerrado", "category": "Trauma", "description": "Traumatismo craneoencefálico cerrado" },
-  { "code": "T.0.1", "name": "TCE con fractura craneal", "category": "Trauma", "description": "Traumatismo craneoencefálico con fractura craneal asociada" },
-  { "code": "T.1.0", "name": "Contractura / distensión muscular", "category": "Trauma", "description": "Contractura o distensión muscular" },
-  { "code": "T.1.1", "name": "Rotura fibrilar grado I", "category": "Trauma", "description": "Rotura fibrilar grado I" },
-  { "code": "T.1.2", "name": "Rotura fibrilar grado II", "category": "Trauma", "description": "Rotura fibrilar grado II (parcial)" },
-  { "code": "T.1.3", "name": "Rotura fibrilar grado III", "category": "Trauma", "description": "Rotura fibrilar grado III (completa)" },
-  { "code": "T.2.0", "name": "Fractura cervical", "category": "Trauma", "description": "Fractura de columna cervical" },
-  { "code": "T.2.1", "name": "Fractura de mano", "category": "Trauma", "description": "Fractura de huesos de la mano" },
-  { "code": "T.2.2", "name": "Fractura de rodilla", "category": "Trauma", "description": "Fractura a nivel de rodilla (rótula, platillos tibiales)" },
-  { "code": "T.2.3", "name": "Fractura de tobillo", "category": "Trauma", "description": "Fractura maleolar o de tobillo" },
-  { "code": "T.2.4", "name": "Fractura facial", "category": "Trauma", "description": "Fractura de huesos de la cara" },
-  { "code": "T.2.5", "name": "Fractura mandibular", "category": "Trauma", "description": "Fractura de mandíbula" },
-  { "code": "T.2.6", "name": "Fractura de hombro / clavícula", "category": "Trauma", "description": "Fractura de hombro, clavícula o escápula" },
-  { "code": "T.2.7", "name": "Fractura de codo", "category": "Trauma", "description": "Fractura a nivel de codo" },
-  { "code": "T.2.8", "name": "Fractura de brazo", "category": "Trauma", "description": "Fractura de húmero" },
-  { "code": "T.2.9", "name": "Fractura de muñeca", "category": "Trauma", "description": "Fractura de muñeca (radio/cúbito distal)" },
-  { "code": "T.2.10", "name": "Fractura de columna dorsolumbar", "category": "Trauma", "description": "Fractura de columna dorsal o lumbar" },
-  { "code": "T.2.11", "name": "Fractura de costillas", "category": "Trauma", "description": "Fractura de una o varias costillas" },
-  { "code": "T.2.12", "name": "Fractura de cadera / pelvis", "category": "Trauma", "description": "Fractura de cadera o pelvis" },
-  { "code": "T.2.13", "name": "Fractura de fémur", "category": "Trauma", "description": "Fractura de fémur (proximal, diafisaria o distal)" },
-  { "code": "T.3.0", "name": "Fractura abierta cervical", "category": "Trauma", "description": "Fractura abierta de columna cervical" },
-  { "code": "T.3.1", "name": "Fractura abierta de mano", "category": "Trauma", "description": "Fractura abierta de huesos de la mano" },
-  { "code": "T.4.0", "name": "Herida en cabeza", "category": "Trauma", "description": "Herida en región craneal o cuero cabelludo" },
-  { "code": "T.4.1", "name": "Herida facial", "category": "Trauma", "description": "Herida en región facial" },
-  { "code": "T.4.2", "name": "Herida ocular", "category": "Trauma", "description": "Herida o traumatismo ocular" },
-  { "code": "T.4.3", "name": "Herida cervical", "category": "Trauma", "description": "Herida en cuello" },
-  { "code": "T.4.4", "name": "Herida en hombro", "category": "Trauma", "description": "Herida en región del hombro" },
-  { "code": "T.4.5", "name": "Herida en brazo", "category": "Trauma", "description": "Herida en brazo o antebrazo" },
-  { "code": "T.4.6", "name": "Herida en codo", "category": "Trauma", "description": "Herida en región del codo" },
-  { "code": "T.4.7", "name": "Herida en muñeca", "category": "Trauma", "description": "Herida en muñeca" },
-  { "code": "T.4.8", "name": "Herida en mano", "category": "Trauma", "description": "Herida en mano o dedos" },
-  { "code": "T.4.9", "name": "Herida torácica", "category": "Trauma", "description": "Herida en tórax" },
-  { "code": "T.4.10", "name": "Herida dorsal", "category": "Trauma", "description": "Herida en espalda" },
-  { "code": "T.4.11", "name": "Herida abdominal", "category": "Trauma", "description": "Herida en abdomen" },
-  { "code": "T.4.12", "name": "Herida genital", "category": "Trauma", "description": "Herida en región genital o perineal" },
-  { "code": "T.4.13", "name": "Herida en cadera", "category": "Trauma", "description": "Herida en cadera o región glútea" },
-  { "code": "T.4.14", "name": "Herida en rodilla", "category": "Trauma", "description": "Herida en rodilla" },
-  { "code": "T.4.15", "name": "Herida en pierna", "category": "Trauma", "description": "Herida en muslo o pierna" },
-  { "code": "T.4.16", "name": "Herida en pie", "category": "Trauma", "description": "Herida en pie o tobillo" },
-  { "code": "T.5.0", "name": "Luxación de hombro", "category": "Trauma", "description": "Luxación glenohumeral o acromioclavicular" },
-  { "code": "T.5.1", "name": "Luxación de codo", "category": "Trauma", "description": "Luxación de codo" },
-  { "code": "T.5.2", "name": "Luxación de muñeca", "category": "Trauma", "description": "Luxación de muñeca o carpo" },
-  { "code": "T.5.3", "name": "Luxación de cadera", "category": "Trauma", "description": "Luxación coxofemoral" },
-  { "code": "T.5.4", "name": "Luxación de rodilla", "category": "Trauma", "description": "Luxación femorotibial o rotuliana" },
-  { "code": "T.5.5", "name": "Luxación de tobillo", "category": "Trauma", "description": "Luxación de tobillo" },
-  { "code": "T.6.0", "name": "Trauma craneofacial penetrante", "category": "Trauma", "description": "Traumatismo craneofacial con objeto penetrante" },
-  { "code": "T.7.0", "name": "Síndrome de aplastamiento", "category": "Trauma", "description": "Síndrome de aplastamiento (crush syndrome)" },
-  { "code": "T.8.0", "name": "Contusión esplénica", "category": "Trauma", "description": "Trauma abdominal cerrado con afectación esplénica" },
-  { "code": "T.8.1", "name": "Contusión renal", "category": "Trauma", "description": "Trauma abdominal con afectación renal" },
-  { "code": "T.8.2", "name": "Neumotórax simple", "category": "Trauma", "description": "Neumotórax traumático simple" },
-  { "code": "T.8.3", "name": "Neumotórax a tensión", "category": "Trauma", "description": "Neumotórax a tensión" },
-  { "code": "T.8.4", "name": "Hemotórax", "category": "Trauma", "description": "Hemotórax traumático" },
-  { "code": "C.0.0", "name": "PCR — Recuperado", "category": "Cardiovascular", "description": "Parada cardiorrespiratoria con recuperación de circulación espontánea (ROSC)" },
-  { "code": "C.0.1", "name": "PCR — Código 9 (éxitus)", "category": "Cardiovascular", "description": "Parada cardiorrespiratoria sin recuperación — fallecimiento confirmado (Código 9)" },
-  { "code": "C.0.2", "name": "PCR — Soporte ECMO", "category": "Cardiovascular", "description": "PCR refractaria en candidato a oxigenación por membrana extracorpórea" },
-  { "code": "C.1.0", "name": "Fibrilación auricular", "category": "Cardiovascular", "description": "Fibrilación auricular con o sin respuesta ventricular rápida" },
-  { "code": "C.1.1", "name": "Flutter auricular", "category": "Cardiovascular", "description": "Flutter auricular" },
-  { "code": "C.2.0", "name": "IAM anterolateral", "category": "Cardiovascular", "description": "Infarto agudo de miocardio anterolateral (STEMI)" },
-  { "code": "C.2.1", "name": "IAM anterior", "category": "Cardiovascular", "description": "Infarto agudo de miocardio anterior" },
-  { "code": "C.2.2", "name": "IAM inferolateral", "category": "Cardiovascular", "description": "Infarto agudo de miocardio inferolateral" },
-  { "code": "C.2.3", "name": "IAM inferior", "category": "Cardiovascular", "description": "Infarto agudo de miocardio inferior" },
-  { "code": "C.3.0", "name": "Angina de decúbito", "category": "Cardiovascular", "description": "Angina de pecho en decúbito" },
-  { "code": "C.3.1", "name": "Angina de Prinzmetal", "category": "Cardiovascular", "description": "Angina vasoespástica de Prinzmetal" },
-  { "code": "C.3.2", "name": "Angina inestable", "category": "Cardiovascular", "description": "Angina inestable (SCASEST)" },
-  { "code": "C.4.0", "name": "Edema agudo de pulmón", "category": "Cardiovascular", "description": "Edema agudo de pulmón de origen cardiogénico" },
-  { "code": "C.5.0", "name": "Shock hipovolémico", "category": "Cardiovascular", "description": "Shock por hipovolemia" },
-  { "code": "C.5.1", "name": "Shock cardiogénico", "category": "Cardiovascular", "description": "Shock de origen cardiogénico" },
-  { "code": "C.7.0", "name": "Taquicardia supraventricular", "category": "Cardiovascular", "description": "Taquicardia supraventricular paroxística" },
-  { "code": "C.7.1", "name": "Taquicardia ventricular con pulso", "category": "Cardiovascular", "description": "Taquicardia ventricular estable (con pulso)" },
-  { "code": "C.8.0", "name": "Bloqueo AV completo", "category": "Cardiovascular", "description": "Bloqueo auriculoventricular de tercer grado" },
-  { "code": "C.10.0", "name": "HTA crisis hipertensiva", "category": "Cardiovascular", "description": "Crisis hipertensiva" },
-  { "code": "C.10.1", "name": "HTA urgencia hipertensiva", "category": "Cardiovascular", "description": "Urgencia hipertensiva" },
-  { "code": "C.11.0", "name": "Síncope vasovagal", "category": "Cardiovascular", "description": "Síncope de origen vasovagal" },
-  { "code": "C.11.1", "name": "Síncope de esfuerzo", "category": "Cardiovascular", "description": "Síncope o presíncope durante o tras esfuerzo físico" },
-  { "code": "R.0.0", "name": "Parada respiratoria", "category": "Respiratorio", "description": "Parada respiratoria o bradipnea grave" },
-  { "code": "R.1.0", "name": "Crisis asmática", "category": "Respiratorio", "description": "Crisis de asma bronquial" },
-  { "code": "R.3.0", "name": "EPOC descompensado", "category": "Respiratorio", "description": "Exacerbación aguda de EPOC" },
-  { "code": "R.3.1", "name": "Bronquitis aguda", "category": "Respiratorio", "description": "Bronquitis aguda con distrés respiratorio" },
-  { "code": "R.4.0", "name": "Obstrucción por cuerpo extraño", "category": "Respiratorio", "description": "OVACE — obstrucción de la vía aérea por cuerpo extraño" },
-  { "code": "R.5.0", "name": "Tromboembolismo pulmonar", "category": "Respiratorio", "description": "TEP — tromboembolismo pulmonar" },
-  { "code": "R.6.0", "name": "Neumotórax espontáneo", "category": "Respiratorio", "description": "Neumotórax espontáneo" },
-  { "code": "R.7.0", "name": "Otra distrés respiratoria aguda", "category": "Respiratorio", "description": "Insuficiencia respiratoria aguda de otra causa" },
-  { "code": "N.0.0", "name": "Ictus — Código 13", "category": "Neurológico", "description": "Accidente cerebrovascular — activación código ictus" },
-  { "code": "N.0.1", "name": "AIT", "category": "Neurológico", "description": "Accidente isquémico transitorio" },
-  { "code": "N.0.2", "name": "ACV hemorrágico", "category": "Neurológico", "description": "Accidente cerebrovascular hemorrágico" },
-  { "code": "N.1.0", "name": "Coma de causa médica", "category": "Neurológico", "description": "Coma de etiología médica (no traumático)" },
-  { "code": "N.2.0", "name": "Crisis convulsiva febril", "category": "Neurológico", "description": "Convulsión febril" },
-  { "code": "N.2.1", "name": "Crisis epiléptica", "category": "Neurológico", "description": "Crisis epiléptica conocida" },
-  { "code": "N.2.2", "name": "Status epilepticus", "category": "Neurológico", "description": "Status epiléptico" },
-  { "code": "N.3.0", "name": "Alteración del habla", "category": "Neurológico", "description": "Afasia, disartria u otra alteración del lenguaje" },
-  { "code": "N.4.0", "name": "Hemiplejia / hemiparesia", "category": "Neurológico", "description": "Déficit motor unilateral" },
-  { "code": "N.4.1", "name": "Paraplejia / paraparesia", "category": "Neurológico", "description": "Déficit motor bilateral en miembros inferiores" },
-  { "code": "N.5.0", "name": "Temblor esencial", "category": "Neurológico", "description": "Temblor esencial o fisiológico" },
-  { "code": "N.5.1", "name": "Crisis parkinsoniana", "category": "Neurológico", "description": "Crisis o descompensación de la enfermedad de Parkinson" },
-  { "code": "X.0.0", "name": "Intoxicación alimentaria", "category": "Intoxicaciones", "description": "Intoxicación por alimentos en mal estado" },
-  { "code": "X.1.0", "name": "Sobredosis opiáceos", "category": "Intoxicaciones", "description": "Sobredosis de opiáceos (heroína, fentanilo, etc.)" },
-  { "code": "X.1.1", "name": "Intoxicación por cocaína", "category": "Intoxicaciones", "description": "Intoxicación aguda por cocaína" },
-  { "code": "X.2.0", "name": "Intoxicación farmacológica", "category": "Intoxicaciones", "description": "Sobredosis o intoxicación por fármacos" },
-  { "code": "X.3.0", "name": "Inhalación de gases tóxicos", "category": "Intoxicaciones", "description": "Intoxicación por inhalación de gases (CO, etc.)" },
-  { "code": "A.0.0", "name": "Anafilaxia grave", "category": "Alérgico", "description": "Reacción anafiláctica grave con compromiso hemodinámico" },
-  { "code": "A.1.0", "name": "Angioedema", "category": "Alérgico", "description": "Angioedema con o sin urticaria" },
-  { "code": "A.2.0", "name": "Urticaria", "category": "Alérgico", "description": "Reacción urticarial sin compromiso sistémico" },
-  { "code": "PS.0.0", "name": "Delirium / síndrome confusional", "category": "Psiquiátrico", "description": "Síndrome confusional agudo" },
-  { "code": "PS.1.0", "name": "Crisis psicótica", "category": "Psiquiátrico", "description": "Descompensación psicótica aguda" },
-  { "code": "PS.2.0", "name": "Episodio maníaco", "category": "Psiquiátrico", "description": "Episodio maníaco o hipomaníaco agudo" },
-  { "code": "PS.3.0", "name": "Crisis depresiva mayor", "category": "Psiquiátrico", "description": "Episodio depresivo mayor con riesgo autolítico" },
-  { "code": "PS.4.0", "name": "Crisis de ansiedad / pánico", "category": "Psiquiátrico", "description": "Crisis de ansiedad o pánico" },
-  { "code": "PS.5.0", "name": "Intento de suicidio — medicamentos", "category": "Psiquiátrico", "description": "Tentativa suicida por ingesta medicamentosa" },
-  { "code": "PS.5.1", "name": "Intento de suicidio — traumático", "category": "Psiquiátrico", "description": "Tentativa suicida por método traumático (precipitación, arma, etc.)" },
-  { "code": "E.0.0", "name": "Hipoglucemia", "category": "Endocrino-metabólico", "description": "Hipoglucemia sintomática" },
-  { "code": "E.1.0", "name": "Hiperglucemia", "category": "Endocrino-metabólico", "description": "Hiperglucemia con o sin cetoacidosis" },
-  { "code": "E.2.0", "name": "Crisis tiroidea", "category": "Endocrino-metabólico", "description": "Tormenta tiroidea o crisis tirotóxica" },
-  { "code": "E.3.0", "name": "Alteración electrolítica grave", "category": "Endocrino-metabólico", "description": "Hiper/hipopotasemia u otra alteración electrolítica grave" },
-  { "code": "E.4.0", "name": "Hipotermia", "category": "Endocrino-metabólico", "description": "Hipotermia accidental o patológica" },
-  { "code": "F.0.0", "name": "Quemadura leve", "category": "Agentes físicos", "description": "Quemadura de primer grado o pequeña extensión" },
-  { "code": "F.0.1", "name": "Quemadura moderada-grave", "category": "Agentes físicos", "description": "Quemadura de segundo o tercer grado con extensión significativa" },
-  { "code": "F.1.0", "name": "Electrocución", "category": "Agentes físicos", "description": "Lesión por descarga eléctrica de alta o baja tensión" },
-  { "code": "F.2.0", "name": "Golpe de calor", "category": "Agentes físicos", "description": "Hipertermia grave — golpe de calor" },
-  { "code": "F.3.0", "name": "Congelación", "category": "Agentes físicos", "description": "Lesión tisular por congelación" },
-  { "code": "F.4.0", "name": "Ahogamiento", "category": "Agentes físicos", "description": "Casi-ahogamiento con compromiso respiratorio" },
-  { "code": "W.0.0", "name": "Éxitus sin asistencia previa", "category": "Cierre", "description": "Fallecimiento confirmado sin asistencia previa" },
-  { "code": "W.0.1", "name": "Éxitus con asistencia previa", "category": "Cierre", "description": "Fallecimiento tras maniobras de resucitación" },
-  { "code": "W.1.0", "name": "Llamada desde 091", "category": "Cierre", "description": "Servicio originado por llamada de Policía Nacional (091)" },
-  { "code": "W.1.1", "name": "Llamada desde 092", "category": "Cierre", "description": "Servicio originado por llamada de Policía Municipal (092)" },
-  { "code": "W.1.2", "name": "Llamada desde 112", "category": "Cierre", "description": "Servicio originado por coordinación con 112" },
-  { "code": "W.1.3", "name": "Llamada desde SUMMA112", "category": "Cierre", "description": "Servicio originado por coordinación con SUMMA112" },
-  { "code": "W.1.4", "name": "Llamada desde 080", "category": "Cierre", "description": "Servicio originado por Bomberos (080)" },
-  { "code": "W.2.0", "name": "Servicio sin paciente", "category": "Cierre", "description": "Llegada al lugar: no hay paciente. Sin informe asistencial", "noReport": true },
-  { "code": "W.3.0", "name": "No hubo incidente", "category": "Cierre", "description": "Servicio cancelado: no se confirma el incidente. Sin informe asistencial", "noReport": true },
-  { "code": "W.4.0", "name": "No precisa asistencia", "category": "Cierre", "description": "El paciente no requiere asistencia sanitaria. Sin informe asistencial", "noReport": true },
-  { "code": "W.5.0", "name": "Problema social", "category": "Cierre", "description": "Servicio con componente predominantemente social" },
-  { "code": "W.8.0", "name": "Rechazo de asistencia (paciente colaborador)", "category": "Cierre", "description": "El paciente rechaza la asistencia y es colaborador" },
-  { "code": "W.8.1", "name": "Rechazo de asistencia (paciente agresivo)", "category": "Cierre", "description": "El paciente rechaza la asistencia y es agresivo" },
-  { "code": "W.8.2", "name": "Rechazo de asistencia (niega su identidad)", "category": "Cierre", "description": "El paciente rechaza la asistencia y niega su identidad" },
-  { "code": "W.11.0", "name": "Otra institución asume la asistencia", "category": "Cierre", "description": "Otro servicio sanitario o institución se hace cargo del paciente" }
+  {
+    "code": "A.0.0",
+    "name": "Urticaria generalizada",
+    "category": "Alérgico",
+    "description": "Reacción anafiláctica grave con compromiso hemodinámico"
+  },
+  {
+    "code": "A.0.1",
+    "name": "Reacción anafiláctica local/ eczema/ dermatitis",
+    "category": "Alérgico",
+    "description": "Reacción anafiláctica local/ eczema/ dermatitis"
+  },
+  {
+    "code": "A.1.0",
+    "name": "Edema de glotis",
+    "category": "Alérgico",
+    "description": "Angioedema con o sin urticaria"
+  },
+  {
+    "code": "A.2.0",
+    "name": "Anafilaxia/ Shock debido a fármacos (dosis correcta)",
+    "category": "Alérgico",
+    "description": "Reacción urticarial sin compromiso sistémico"
+  },
+  {
+    "code": "A.2.1",
+    "name": "Anafilaxia/ Shock después de picadura",
+    "category": "Alérgico",
+    "description": ".01 .01 Anafilaxia/ Shock después de picadura"
+  },
+  {
+    "code": "A.2.2",
+    "name": "Anafilaxia/ Shock debido a alimentos",
+    "category": "Alérgico",
+    "description": "Anafilaxia/ Shock debido a alimentos"
+  },
+  {
+    "code": "C.0.0",
+    "name": "PCR-Recuperada",
+    "category": "Cardiovascular",
+    "description": "Parada cardiorrespiratoria con recuperación de circulación espontánea (ROSC)"
+  },
+  {
+    "code": "C.0.1",
+    "name": "PCR Código 9",
+    "category": "Cardiovascular",
+    "description": "Parada cardiorrespiratoria sin recuperación — fallecimiento confirmado (Código 9)"
+  },
+  {
+    "code": "C.0.2",
+    "name": "PCR ECMO.",
+    "category": "Cardiovascular",
+    "description": "PCR refractaria en candidato a oxigenación por membrana extracorpórea"
+  },
+  {
+    "code": "C.1.0",
+    "name": "Fibrilación Auricular",
+    "category": "Cardiovascular",
+    "description": "Fibrilación auricular con o sin respuesta ventricular rápida"
+  },
+  {
+    "code": "C.1.1",
+    "name": "Fluter ventricular",
+    "category": "Cardiovascular",
+    "description": "Flutter auricular"
+  },
+  {
+    "code": "C.1.2",
+    "name": "Extrasístoles ventriculares",
+    "category": "Cardiovascular",
+    "description": "Extrasístoles ventriculares"
+  },
+  {
+    "code": "C.1.3",
+    "name": "Extrasístoles supraventriculares",
+    "category": "Cardiovascular",
+    "description": "Extrasístoles supraventriculares"
+  },
+  {
+    "code": "C.1.4",
+    "name": "Arritmia",
+    "category": "Cardiovascular",
+    "description": "Arritmia"
+  },
+  {
+    "code": "C.2.0",
+    "name": "IAM sin expresión ECG",
+    "category": "Cardiovascular",
+    "description": "Infarto agudo de miocardio anterolateral (STEMI)"
+  },
+  {
+    "code": "C.2.1",
+    "name": "IAM pared antero-lateral",
+    "category": "Cardiovascular",
+    "description": "Infarto agudo de miocardio anterior"
+  },
+  {
+    "code": "C.2.2",
+    "name": "IAM pared anterior",
+    "category": "Cardiovascular",
+    "description": "Infarto agudo de miocardio inferolateral"
+  },
+  {
+    "code": "C.2.3",
+    "name": "IAM pared infero-lateral",
+    "category": "Cardiovascular",
+    "description": "Infarto agudo de miocardio inferior"
+  },
+  {
+    "code": "C.2.4",
+    "name": "IAM pared infero-posterior",
+    "category": "Cardiovascular",
+    "description": "IAM pared infero-posterior"
+  },
+  {
+    "code": "C.2.5",
+    "name": "IAM pared inferior",
+    "category": "Cardiovascular",
+    "description": "IAM pared inferior"
+  },
+  {
+    "code": "C.2.6",
+    "name": "IAM otra pared lateral",
+    "category": "Cardiovascular",
+    "description": "IAM otra pared lateral"
+  },
+  {
+    "code": "C.2.7",
+    "name": "IAM otra pared posterior",
+    "category": "Cardiovascular",
+    "description": "IAM otra pared posterior"
+  },
+  {
+    "code": "C.2.8",
+    "name": "IAM sub-endocardico",
+    "category": "Cardiovascular",
+    "description": "IAM sub-endocardico"
+  },
+  {
+    "code": "C.2.9",
+    "name": "IAM otros sitios no especificados",
+    "category": "Cardiovascular",
+    "description": "IAM otros sitios no especificados"
+  },
+  {
+    "code": "C.3.0",
+    "name": "Angina de decúbito/ reposo",
+    "category": "Cardiovascular",
+    "description": "Angina de pecho en decúbito"
+  },
+  {
+    "code": "C.3.1",
+    "name": "Angina de Prizmetal",
+    "category": "Cardiovascular",
+    "description": "Angina vasoespástica de Prinzmetal"
+  },
+  {
+    "code": "C.3.2",
+    "name": "Otra angina de pecho",
+    "category": "Cardiovascular",
+    "description": "Angina inestable (SCASEST)"
+  },
+  {
+    "code": "C.3.3",
+    "name": "Angina inestable",
+    "category": "Cardiovascular",
+    "description": "Angina inestable"
+  },
+  {
+    "code": "C.4.0",
+    "name": "EAP",
+    "category": "Cardiovascular",
+    "description": "Edema agudo de pulmón de origen cardiogénico"
+  },
+  {
+    "code": "C.5.0",
+    "name": "SHOCK Hipovolémico",
+    "category": "Cardiovascular",
+    "description": "Shock por hipovolemia"
+  },
+  {
+    "code": "C.5.1",
+    "name": "SHOCK Cardiogénico",
+    "category": "Cardiovascular",
+    "description": "Shock de origen cardiogénico"
+  },
+  {
+    "code": "C.6.0",
+    "name": "Insuficiencia cardiaca sistólica aguda",
+    "category": "Cardiovascular",
+    "description": "Insuficiencia cardiaca sistólica aguda"
+  },
+  {
+    "code": "C.6.1",
+    "name": "Insuficiencia cardiaca diastólica aguda",
+    "category": "Cardiovascular",
+    "description": "seralucsavoidraC Insuficiencia cardiaca diastólica aguda"
+  },
+  {
+    "code": "C.7.0",
+    "name": "Taquicardia supra-ventricular paroxística",
+    "category": "Cardiovascular",
+    "description": "Taquicardia supraventricular paroxística"
+  },
+  {
+    "code": "C.7.1",
+    "name": "Taquicardia ventricular paroxística",
+    "category": "Cardiovascular",
+    "description": "Taquicardia ventricular estable (con pulso)"
+  },
+  {
+    "code": "C.7.2",
+    "name": "Fluter Auricular",
+    "category": "Cardiovascular",
+    "description": "Fluter Auricular"
+  },
+  {
+    "code": "C.7.3",
+    "name": "Bradicardia sinusal",
+    "category": "Cardiovascular",
+    "description": "Bradicardia sinusal"
+  },
+  {
+    "code": "C.8.0",
+    "name": "BAV completo/ BAV. De tercer grado",
+    "category": "Cardiovascular",
+    "description": "Bloqueo auriculoventricular de tercer grado"
+  },
+  {
+    "code": "C.8.1",
+    "name": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO II",
+    "category": "Cardiovascular",
+    "description": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO II"
+  },
+  {
+    "code": "C.8.2",
+    "name": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO I. Wekenbach",
+    "category": "Cardiovascular",
+    "description": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO I. Wekenbach"
+  },
+  {
+    "code": "C.8.3",
+    "name": "BAV inc/ BAV. De 1º grado. Intervalo PR prolongado",
+    "category": "Cardiovascular",
+    "description": "BAV inc/ BAV. De 1º grado. Intervalo PR prolongado"
+  },
+  {
+    "code": "C.8.4",
+    "name": "HBRIz del fascículo",
+    "category": "Cardiovascular",
+    "description": "HBRIz del fascículo"
+  },
+  {
+    "code": "C.8.5",
+    "name": "BRIz del fascículo",
+    "category": "Cardiovascular",
+    "description": "BRIz del fascículo"
+  },
+  {
+    "code": "C.8.6",
+    "name": "BRD del fascículo",
+    "category": "Cardiovascular",
+    "description": "BRD del fascículo"
+  },
+  {
+    "code": "C.8.7",
+    "name": "Otro Bloqueo bilateral de la Rama del fascículo",
+    "category": "Cardiovascular",
+    "description": "Otro Bloqueo bilateral de la Rama del fascículo"
+  },
+  {
+    "code": "C.8.8",
+    "name": "Otro Bloqueo cardiaco (Incluye QTR largo)",
+    "category": "Cardiovascular",
+    "description": "Otro Bloqueo cardiaco (Incluye QTR largo)"
+  },
+  {
+    "code": "C.8.9",
+    "name": "Síndrome Wolff Parkinson White",
+    "category": "Cardiovascular",
+    "description": "Síndrome Wolff Parkinson White"
+  },
+  {
+    "code": "C.9.0",
+    "name": "Venas varicosas en MMII con sangrado",
+    "category": "Cardiovascular",
+    "description": "Venas varicosas en MMII con sangrado"
+  },
+  {
+    "code": "C.9.1",
+    "name": "Flebitis y tromboflebitis en MM.II",
+    "category": "Cardiovascular",
+    "description": "Flebitis y tromboflebitis en MM.II"
+  },
+  {
+    "code": "C.9.2",
+    "name": "Flebitis y tromboflebitis en MM.SS",
+    "category": "Cardiovascular",
+    "description": "Flebitis y tromboflebitis en MM.SS"
+  },
+  {
+    "code": "C.9.4",
+    "name": "Enfermedad vascular periférica no especificada",
+    "category": "Cardiovascular",
+    "description": "Enfermedad vascular periférica no especificada"
+  },
+  {
+    "code": "C.9.5",
+    "name": "Disección aórtica/ Aneurisma",
+    "category": "Cardiovascular",
+    "description": "Disección aórtica/ Aneurisma"
+  },
+  {
+    "code": "C.10.0",
+    "name": "HTA esencial / primaria / sistémica",
+    "category": "Cardiovascular",
+    "description": "Crisis hipertensiva"
+  },
+  {
+    "code": "C.10.1",
+    "name": "Encefalopatía hipertensiva",
+    "category": "Cardiovascular",
+    "description": "Urgencia hipertensiva"
+  },
+  {
+    "code": "C.10.2",
+    "name": "Cardiopatía hipertensiva con Insuficiencia cardiaca",
+    "category": "Cardiovascular",
+    "description": "Cardiopatía hipertensiva con Insuficiencia cardiaca"
+  },
+  {
+    "code": "C.10.3",
+    "name": "HTA secundaria renovascular",
+    "category": "Cardiovascular",
+    "description": "HTA secundaria renovascular"
+  },
+  {
+    "code": "C.10.4",
+    "name": "Otra HTA secundaria",
+    "category": "Cardiovascular",
+    "description": "Otra HTA secundaria"
+  },
+  {
+    "code": "C.10.5",
+    "name": "Crisis hipertensiva (Sin repercusión en órganos Diana)",
+    "category": "Cardiovascular",
+    "description": "Crisis hipertensiva (Sin repercusión en órganos Diana)"
+  },
+  {
+    "code": "C.11.0",
+    "name": "Pericarditis aguda no especificada",
+    "category": "Cardiovascular",
+    "description": "Síncope de origen vasovagal"
+  },
+  {
+    "code": "C.12.0",
+    "name": "Hipo TA sintomática",
+    "category": "Cardiovascular",
+    "description": "Hipo TA sintomática"
+  },
+  {
+    "code": "C.12.1",
+    "name": "Sincope vasovagal",
+    "category": "Cardiovascular",
+    "description": "Sincope vasovagal"
+  },
+  {
+    "code": "C.12.2",
+    "name": "Sincope no filiado",
+    "category": "Cardiovascular",
+    "description": "Sincope no filiado"
+  },
+  {
+    "code": "C.12.3",
+    "name": "Sincope tras esfuerzo",
+    "category": "Cardiovascular",
+    "description": "Sincope tras esfuerzo"
+  },
+  {
+    "code": "C.13.0",
+    "name": "OTROS/ Enfermedad cardiovascular",
+    "category": "Cardiovascular",
+    "description": "OTROS/ Enfermedad cardiovascular"
+  },
+  {
+    "code": "D.0.0",
+    "name": "Hernia inguinal",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.0.1",
+    "name": "Hernia umbilical",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.0.2",
+    "name": "Hernia ventral",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.1.0",
+    "name": "Hemorragia digestiva alta",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.1.1",
+    "name": "Melenas",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.1.2",
+    "name": "Rectorragia",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.0",
+    "name": "Abdomen Agudo No traumático",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.1",
+    "name": "Dolor abdominal no Tco. CSD",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.2",
+    "name": "Dolor abdominal no Tco. CSI",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.3",
+    "name": "Dolor abdominal no Tco. CID",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.4",
+    "name": "Dolor abdominal no Tco. CII",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.5",
+    "name": "Dolor abdominal no Tco. Periumbilical",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.2.6",
+    "name": "Dolor abdominal no Tco. Epigástrico",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.3.0",
+    "name": "Dispepsia",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.3.2",
+    "name": "Diarrea",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.4.0",
+    "name": "Cólico Biliar",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.5.0",
+    "name": "Gastritis aguda",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.6.0",
+    "name": "Pancreatitis aguda",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.7.0",
+    "name": "Otras gastroenteritis/ colitis no especificadas",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.8.0",
+    "name": "Hepatopatías no infecciosas",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.8.1",
+    "name": "Cirrosis hepática alcohólica",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.8.2",
+    "name": "Cirrosis hepática no alcohólica",
+    "category": "Digestivo"
+  },
+  {
+    "code": "D.9.0",
+    "name": "OTROS/ Enfermedad sistema digestivo",
+    "category": "Digestivo"
+  },
+  {
+    "code": "E.0.0",
+    "name": "Hipoglucemias",
+    "category": "Endocrino-metabólico",
+    "description": "Hipoglucemia sintomática"
+  },
+  {
+    "code": "E.0.1",
+    "name": "Hipoglucemias diabéticas/ ADO",
+    "category": "Endocrino-metabólico",
+    "description": "Hipoglucemias diabéticas/ ADO"
+  },
+  {
+    "code": "E.0.2",
+    "name": "Hipoglucemia insulínica",
+    "category": "Endocrino-metabólico",
+    "description": "Hipoglucemia insulínica"
+  },
+  {
+    "code": "E.0.3",
+    "name": "Coma diabético hipoglucémico",
+    "category": "Endocrino-metabólico",
+    "description": "Coma diabético hipoglucémico"
+  },
+  {
+    "code": "E.0.4",
+    "name": "Cetoacidosis diabética",
+    "category": "Endocrino-metabólico",
+    "description": "Cetoacidosis diabética"
+  },
+  {
+    "code": "E.0.5",
+    "name": "Coma hiperosmolar",
+    "category": "Endocrino-metabólico",
+    "description": "sacilóbatem-onircodnE Coma hiperosmolar"
+  },
+  {
+    "code": "E.1.0",
+    "name": "Hiperglucemia",
+    "category": "Endocrino-metabólico",
+    "description": "Hiperglucemia con o sin cetoacidosis"
+  },
+  {
+    "code": "E.2.0",
+    "name": "Hipertiroidismo",
+    "category": "Endocrino-metabólico",
+    "description": "Tormenta tiroidea o crisis tirotóxica"
+  },
+  {
+    "code": "E.2.1",
+    "name": "Hipotiroidismo",
+    "category": "Endocrino-metabólico",
+    "description": "Hipotiroidismo"
+  },
+  {
+    "code": "E.2.2",
+    "name": "Trastorno no específico de tiroides",
+    "category": "Endocrino-metabólico",
+    "description": "Trastorno no específico de tiroides"
+  },
+  {
+    "code": "E.3.0",
+    "name": "Hiperosmolaridad/ hipernatremia",
+    "category": "Endocrino-metabólico",
+    "description": "Hiper/hipopotasemia u otra alteración electrolítica grave"
+  },
+  {
+    "code": "E.3.1",
+    "name": "Hipoosmolaridad/ hiponatremia",
+    "category": "Endocrino-metabólico",
+    "description": "Hipoosmolaridad/ hiponatremia"
+  },
+  {
+    "code": "E.4.0",
+    "name": "Hiperpotasemia",
+    "category": "Endocrino-metabólico",
+    "description": "Hipotermia accidental o patológica"
+  },
+  {
+    "code": "E.4.1",
+    "name": "Hipopotasemia",
+    "category": "Endocrino-metabólico",
+    "description": "Hipopotasemia"
+  },
+  {
+    "code": "E.4.2",
+    "name": "Otros trastornos electrolíticos",
+    "category": "Endocrino-metabólico",
+    "description": "Otros trastornos electrolíticos"
+  },
+  {
+    "code": "E.5.0",
+    "name": "Deshidratación",
+    "category": "Endocrino-metabólico",
+    "description": "Deshidratación"
+  },
+  {
+    "code": "E.5.1",
+    "name": "Desnutrición",
+    "category": "Endocrino-metabólico",
+    "description": "Desnutrición"
+  },
+  {
+    "code": "E.5.2",
+    "name": "Desnutrición en niño por falta de cuidado",
+    "category": "Endocrino-metabólico",
+    "description": "Desnutrición en niño por falta de cuidado"
+  },
+  {
+    "code": "E.6.0",
+    "name": "OTROS/ Enfermedad metabólica",
+    "category": "Endocrino-metabólico",
+    "description": "OTROS/ Enfermedad metabólica"
+  },
+  {
+    "code": "E.6.1",
+    "name": "OTROS/ Enfermedad endocrina",
+    "category": "Endocrino-metabólico",
+    "description": "OTROS/ Enfermedad endocrina"
+  },
+  {
+    "code": "F.0.0",
+    "name": "Hipotermia",
+    "category": "Agentes físicos",
+    "description": "Quemadura de primer grado o pequeña extensión"
+  },
+  {
+    "code": "F.1.0",
+    "name": "Lesiones por congelación no especificados",
+    "category": "Agentes físicos",
+    "description": "Lesión por descarga eléctrica de alta o baja tensión"
+  },
+  {
+    "code": "F.1.1",
+    "name": "Lesión congelación de cara",
+    "category": "Agentes físicos",
+    "description": "Lesión congelación de cara"
+  },
+  {
+    "code": "F.1.2",
+    "name": "Lesión congelación de mano",
+    "category": "Agentes físicos",
+    "description": "Lesión congelación de mano"
+  },
+  {
+    "code": "F.1.3",
+    "name": "Congelación de pie",
+    "category": "Agentes físicos",
+    "description": "Congelación de pie"
+  },
+  {
+    "code": "F.2.0",
+    "name": "Cara/cabeza/ cuello/ grado 1",
+    "category": "Agentes físicos",
+    "description": "Hipertermia grave — golpe de calor"
+  },
+  {
+    "code": "F.2.1",
+    "name": "Cara/cabeza/ cuello/ grado 2",
+    "category": "Agentes físicos",
+    "description": "Cara/cabeza/ cuello/ grado 2"
+  },
+  {
+    "code": "F.2.2",
+    "name": "Cara/cabeza/ cuello/ grado 3",
+    "category": "Agentes físicos",
+    "description": "Cara/cabeza/ cuello/ grado 3"
+  },
+  {
+    "code": "F.2.3",
+    "name": "Tronco grado 1",
+    "category": "Agentes físicos",
+    "description": "Tronco grado 1"
+  },
+  {
+    "code": "F.2.4",
+    "name": "Tronco grado 2",
+    "category": "Agentes físicos",
+    "description": "Tronco grado 2"
+  },
+  {
+    "code": "F.2.5",
+    "name": "Tronco grado 3",
+    "category": "Agentes físicos",
+    "description": "Tronco grado 3"
+  },
+  {
+    "code": "F.2.6",
+    "name": "Miembro superior grado 1",
+    "category": "Agentes físicos",
+    "description": "sarudameuQ Miembro superior grado 1"
+  },
+  {
+    "code": "F.2.7",
+    "name": "Miembro superior grado 2",
+    "category": "Agentes físicos",
+    "description": "Miembro superior grado 2"
+  },
+  {
+    "code": "F.2.9",
+    "name": "Muñeca y mano grado 1",
+    "category": "Agentes físicos",
+    "description": "Muñeca y mano grado 1"
+  },
+  {
+    "code": "F.2.10",
+    "name": "Muñeca y mano grado 2",
+    "category": "Agentes físicos",
+    "description": "Muñeca y mano grado 2"
+  },
+  {
+    "code": "F.2.11",
+    "name": "Muñeca y mano grado 3",
+    "category": "Agentes físicos",
+    "description": "Muñeca y mano grado 3"
+  },
+  {
+    "code": "F.2.12",
+    "name": "Miembro inferior grado 1",
+    "category": "Agentes físicos",
+    "description": "Miembro inferior grado 1"
+  },
+  {
+    "code": "F.2.13",
+    "name": "Miembro inferior grado 2",
+    "category": "Agentes físicos",
+    "description": "Miembro inferior grado 2"
+  },
+  {
+    "code": "F.2.14",
+    "name": "Miembro inferior grado 3",
+    "category": "Agentes físicos",
+    "description": ".41 Miembro inferior grado 3"
+  },
+  {
+    "code": "F.2.15",
+    "name": "Otros sitios especificados",
+    "category": "Agentes físicos",
+    "description": "otros sitios especificados"
+  },
+  {
+    "code": "F.2.16",
+    "name": "Múltiples sitios (Gran quemado)",
+    "category": "Agentes físicos",
+    "description": "Múltiples sitios (Gran quemado)"
+  },
+  {
+    "code": "F.3.0",
+    "name": "Lesiones químicas",
+    "category": "Agentes físicos",
+    "description": "Lesión tisular por congelación"
+  },
+  {
+    "code": "F.3.1",
+    "name": "Lesiones por electricidad descarga",
+    "category": "Agentes físicos",
+    "description": "Lesiones por electricidad descarga"
+  },
+  {
+    "code": "F.3.2",
+    "name": "Lesiones por rayo",
+    "category": "Agentes físicos",
+    "description": "Lesiones por rayo"
+  },
+  {
+    "code": "F.4.0",
+    "name": "Hipertermia de origen ambiental",
+    "category": "Agentes físicos",
+    "description": "Casi-ahogamiento con compromiso respiratorio"
+  },
+  {
+    "code": "F.4.1",
+    "name": "Sincope por calor",
+    "category": "Agentes físicos",
+    "description": "Sincope por calor"
+  },
+  {
+    "code": "F.4.2",
+    "name": "Otros efectos especificados del calor",
+    "category": "Agentes físicos",
+    "description": "Otros efectos especificados del calor"
+  },
+  {
+    "code": "F.4.3",
+    "name": "Hipertermia maligna",
+    "category": "Agentes físicos",
+    "description": "Hipertermia maligna"
+  },
+  {
+    "code": "F.5.0",
+    "name": "Ahogamiento por inmersión",
+    "category": "Agentes físicos",
+    "description": "Ahogamiento por inmersión"
+  },
+  {
+    "code": "F.6.0",
+    "name": "Efectos por presión aire por explosión/ BLAST",
+    "category": "Agentes físicos",
+    "description": "Efectos por presión aire por explosión/ BLAST"
+  },
+  {
+    "code": "F.7.0",
+    "name": "OTROS/ Otros efectos de causas externas",
+    "category": "Agentes físicos",
+    "description": "OTROS/ Otros efectos de causas externas"
+  },
+  {
+    "code": "G.0.0",
+    "name": "Metrorragia",
+    "category": "Ginecológico"
+  },
+  {
+    "code": "G.1.0",
+    "name": "Hipermenorrea",
+    "category": "Ginecológico"
+  },
+  {
+    "code": "G.2.0",
+    "name": "Dismenorrea",
+    "category": "Ginecológico"
+  },
+  {
+    "code": "G.3.0",
+    "name": "Dolor de Origen Ginecológico periodo no menstrual",
+    "category": "Ginecológico"
+  },
+  {
+    "code": "G.4.0",
+    "name": "Otros sínt. rel. con órganos genitales femeninos",
+    "category": "Ginecológico"
+  },
+  {
+    "code": "I.0.0",
+    "name": "Infección en Vías respiratorias altas",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.1.0",
+    "name": "Bronquitis",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.1.1",
+    "name": "Neumonía",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.2.0",
+    "name": "Infección muco cutáneas",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.3.0",
+    "name": "Hepatitis infecciosa",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.4.0",
+    "name": "SIDA",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.5.0",
+    "name": "Viriasis",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.6.0",
+    "name": "Herpes zoster",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.7.0",
+    "name": "Meningitis",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.8.0",
+    "name": "Shock séptico",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "I.9.0",
+    "name": "OTROS/ Enfermedad infecciosa y/o parasitaria",
+    "category": "Infeccioso"
+  },
+  {
+    "code": "M.0.0",
+    "name": "Enfermedad Hematológica",
+    "category": "Otros",
+    "description": "Enfermedad Hematológica"
+  },
+  {
+    "code": "M.0.1",
+    "name": "Trastorno/ defecto de la coagulación/ hemostasia",
+    "category": "Otros",
+    "description": "aenálecsiM Trastorno/ defecto de la coagulación/ hemostasia"
+  },
+  {
+    "code": "M.0.2",
+    "name": "Anemia",
+    "category": "Otros",
+    "description": "Anemia"
+  },
+  {
+    "code": "M.1.0",
+    "name": "Enfermedad reumática",
+    "category": "Otros",
+    "description": "Enfermedad reumática"
+  },
+  {
+    "code": "M.2.0",
+    "name": "Neoplasia 1ª/ 2ª",
+    "category": "Otros",
+    "description": "Neoplasia 1ª/ 2ª"
+  },
+  {
+    "code": "M.2.1",
+    "name": "Neoplasia benigna",
+    "category": "Otros",
+    "description": "Neoplasia benigna"
+  },
+  {
+    "code": "M.3.0",
+    "name": "Enfermedad dermatológica",
+    "category": "Otros",
+    "description": "Enfermedad dermatológica"
+  },
+  {
+    "code": "M.4.0",
+    "name": "Persona que finge estar enferma",
+    "category": "Otros",
+    "description": "Persona que finge estar enferma"
+  },
+  {
+    "code": "N.0.0",
+    "name": "ACVA. (EVCA)",
+    "category": "Neurológico",
+    "description": "Accidente cerebrovascular — activación código ictus"
+  },
+  {
+    "code": "N.0.1",
+    "name": "ACVA. CODIGO 13",
+    "category": "Neurológico",
+    "description": "Accidente isquémico transitorio"
+  },
+  {
+    "code": "N.0.2",
+    "name": "TIA",
+    "category": "Neurológico",
+    "description": "Accidente cerebrovascular hemorrágico"
+  },
+  {
+    "code": "N.1.0",
+    "name": "Coma",
+    "category": "Neurológico",
+    "description": "Coma de etiología médica (no traumático)"
+  },
+  {
+    "code": "N.1.1",
+    "name": "Coma farmacológico",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.2.0",
+    "name": "Crisis convulsiva",
+    "category": "Neurológico",
+    "description": "Convulsión febril"
+  },
+  {
+    "code": "N.2.1",
+    "name": "Crisis convulsiva febril",
+    "category": "Neurológico",
+    "description": "Crisis epiléptica conocida"
+  },
+  {
+    "code": "N.3.0",
+    "name": "Status epiléptico",
+    "category": "Neurológico",
+    "description": "Afasia, disartria u otra alteración del lenguaje"
+  },
+  {
+    "code": "N.4.0",
+    "name": "Cefalea",
+    "category": "Neurológico",
+    "description": "Déficit motor unilateral"
+  },
+  {
+    "code": "N.4.1",
+    "name": "Alteraciones en el habla",
+    "category": "Neurológico",
+    "description": "Déficit motor bilateral en miembros inferiores"
+  },
+  {
+    "code": "N.4.2",
+    "name": "Falta de coordinación",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.4.3",
+    "name": "Déficit motor y/ o sensitivo",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.4.4",
+    "name": "Temblor",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.4.5",
+    "name": "Otros signos y/o síntomas SN y/o Músculo esquelético",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.5.0",
+    "name": "Parkinson",
+    "category": "Neurológico",
+    "description": "Temblor esencial o fisiológico"
+  },
+  {
+    "code": "N.5.1",
+    "name": "Alzheimer",
+    "category": "Neurológico",
+    "description": "Crisis o descompensación de la enfermedad de Parkinson"
+  },
+  {
+    "code": "N.5.2",
+    "name": "Degeneración cerebral",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.5.3",
+    "name": "Síndrome confusional",
+    "category": "Neurológico"
+  },
+  {
+    "code": "N.6.1",
+    "name": "OTROS/ Enfermedad SNP",
+    "category": "Neurológico"
+  },
+  {
+    "code": "O.0.0",
+    "name": "Gestante en expulsivo eutócico/ Parto normal",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.0.1",
+    "name": "Gestante en expulsivo / Parto prematuro (< 37 semanas)",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.0.2",
+    "name": "Gestante en expulsivo distócico/ Otras situaciones",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.1.0",
+    "name": "Hemorragia del 1º trimestre. (< de 22 semanas)",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.1.1",
+    "name": "Hemorragia del 2º trimestre",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.1.2",
+    "name": "Hemorragia del 3º trimestre",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.2.0",
+    "name": "Hemorragia Posparto. (Inmediata al parto)",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.2.1",
+    "name": "Hemorragia Posparto. (Después de 24 horas)",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.3.0",
+    "name": "Preeclampsia grave",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.3.1",
+    "name": "Eclampsia",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.5.0",
+    "name": "Amenaza de parto",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.5.1",
+    "name": "Aborto espontáneo",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.6.0",
+    "name": "RN/ Niño único nacido vivo",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.6.1",
+    "name": "RN/ Niño único nacido mortinato",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.6.2",
+    "name": "Gemelo y co-gemelo nacido vivo",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.6.3",
+    "name": "Gemelo vivo y co-gemelo mortinato",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "O.7.0",
+    "name": "OTROS/ Enfermedades y/o complicaciones del",
+    "category": "Obstétrico"
+  },
+  {
+    "code": "PS.0.0",
+    "name": "Demencia senil",
+    "category": "Psiquiátrico",
+    "description": "Síndrome confusional agudo"
+  },
+  {
+    "code": "PS.0.1",
+    "name": "Demencia senil con delirium",
+    "category": "Psiquiátrico"
+  },
+  {
+    "code": "PS.1.0",
+    "name": "Delírium trémens",
+    "category": "Psiquiátrico",
+    "description": "Descompensación psicótica aguda"
+  },
+  {
+    "code": "PS.1.1",
+    "name": "Síndrome de abstinencia por alcohol",
+    "category": "Psiquiátrico",
+    "description": "Síndrome de abstinencia por alcohol"
+  },
+  {
+    "code": "PS.1.2",
+    "name": "Otras psicosis por alcohol",
+    "category": "Psiquiátrico",
+    "description": "Otras psicosis por alcohol"
+  },
+  {
+    "code": "PS.2.0",
+    "name": "Psicosis por drogas/ Alucinaciones inducidas por drogas",
+    "category": "Psiquiátrico",
+    "description": "Episodio maníaco o hipomaníaco agudo"
+  },
+  {
+    "code": "PS.2.1",
+    "name": "Psicosis por drogas/ Amnesia inducida por droga",
+    "category": "Psiquiátrico",
+    "description": "Psicosis por drogas/ Amnesia inducida por droga"
+  },
+  {
+    "code": "PS.2.2",
+    "name": "Psicosis por drogas/ síndrome de abstinencia",
+    "category": "Psiquiátrico",
+    "description": "Psicosis por drogas/ síndrome de abstinencia"
+  },
+  {
+    "code": "PS.2.3",
+    "name": "Psicosis por drogas/ estado depresivo por drogas",
+    "category": "Psiquiátrico",
+    "description": "Psicosis por drogas/ estado depresivo por drogas"
+  },
+  {
+    "code": "PS.2.4",
+    "name": "Psicosis por drogas/ otros estados mentales por drogas",
+    "category": "Psiquiátrico",
+    "description": "Psicosis por drogas/ otros estados mentales por drogas"
+  },
+  {
+    "code": "PS.3.0",
+    "name": "Esquizofrenia tipo catatónico",
+    "category": "Psiquiátrico",
+    "description": "Episodio depresivo mayor con riesgo autolítico"
+  },
+  {
+    "code": "PS.3.1",
+    "name": "Esquizofrenia tipo paranoide",
+    "category": "Psiquiátrico",
+    "description": "Esquizofrenia tipo paranoide"
+  },
+  {
+    "code": "PS.3.2",
+    "name": "Esquizofrenia tipo NEOM",
+    "category": "Psiquiátrico",
+    "description": "Esquizofrenia tipo NEOM"
+  },
+  {
+    "code": "PS.4.1",
+    "name": "Trastorno depresivo/ episodio recurrente",
+    "category": "Psiquiátrico",
+    "description": "Trastorno depresivo/ episodio recurrente"
+  },
+  {
+    "code": "PS.4.2",
+    "name": "Trastorno afectivo bipolar/ mixto",
+    "category": "Psiquiátrico",
+    "description": "Trastorno afectivo bipolar/ mixto"
+  },
+  {
+    "code": "PS.5.0",
+    "name": "Psicosis de tipo depresivo",
+    "category": "Psiquiátrico",
+    "description": "Tentativa suicida por ingesta medicamentosa"
+  },
+  {
+    "code": "PS.5.1",
+    "name": "Psicosis de tipo agitado",
+    "category": "Psiquiátrico",
+    "description": "Tentativa suicida por método traumático (precipitación, arma, etc.)"
+  },
+  {
+    "code": "PS.6.0",
+    "name": "Estado de ansiedad",
+    "category": "Psiquiátrico",
+    "description": ".11 .11 Estado de ansiedad"
+  },
+  {
+    "code": "PS.6.1",
+    "name": "Reacción aguda al estrés",
+    "category": "Psiquiátrico",
+    "description": "Reacción aguda al estrés"
+  },
+  {
+    "code": "PS.6.2",
+    "name": "Ataque de pánico",
+    "category": "Psiquiátrico",
+    "description": "Ataque de pánico"
+  },
+  {
+    "code": "PS.6.3",
+    "name": "Ataque de histeria",
+    "category": "Psiquiátrico",
+    "description": "Ataque de histeria"
+  },
+  {
+    "code": "PS.6.4",
+    "name": "Trastorno neurótico",
+    "category": "Psiquiátrico",
+    "description": "Trastorno neurótico"
+  },
+  {
+    "code": "PS.6.5",
+    "name": "Estado paranoico",
+    "category": "Psiquiátrico",
+    "description": "Estado paranoico"
+  },
+  {
+    "code": "PS.6.6",
+    "name": "Enfermedad ficticia con síntomas psicológicos",
+    "category": "Psiquiátrico",
+    "description": "Enfermedad ficticia con síntomas psicológicos"
+  },
+  {
+    "code": "PS.7.0",
+    "name": "Anorexia de origen no orgánico (Nerviosa)",
+    "category": "Psiquiátrico",
+    "description": "Anorexia de origen no orgánico (Nerviosa)"
+  },
+  {
+    "code": "PS.7.1",
+    "name": "Oligofrenia/ retraso mental",
+    "category": "Psiquiátrico",
+    "description": "Oligofrenia/ retraso mental"
+  },
+  {
+    "code": "PS.8.4",
+    "name": "Trastorno de la personalidad",
+    "category": "Psiquiátrico",
+    "description": "Trastorno de la personalidad"
+  },
+  {
+    "code": "PS.9.0",
+    "name": "OTROS/ Enfermedad Psiquiátrica",
+    "category": "Psiquiátrico",
+    "description": "OTROS/ Enfermedad Psiquiátrica"
+  },
+  {
+    "code": "PS.10.0",
+    "name": "Intento autolítico (Código 100)",
+    "category": "Psiquiátrico",
+    "description": "Intento autolítico (Código 100)"
+  },
+  {
+    "code": "R.0.0",
+    "name": "Parada Respiratoria",
+    "category": "Respiratorio",
+    "description": "Parada respiratoria o bradipnea grave"
+  },
+  {
+    "code": "R.2.0",
+    "name": "Gripe",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.3.0",
+    "name": "EPOC reag./ Bronquitis crón. Obs. con exacerbación",
+    "category": "Respiratorio",
+    "description": "Exacerbación aguda de EPOC"
+  },
+  {
+    "code": "R.3.1",
+    "name": "Bronquitis crónica obstructiva sin exacerbación",
+    "category": "Respiratorio",
+    "description": "Bronquitis aguda con distrés respiratorio"
+  },
+  {
+    "code": "R.3.2",
+    "name": "Bronquitis aguda/ Incluidas con broncoespasmo",
+    "category": "Respiratorio",
+    "description": "Bronquitis aguda/ Incluidas con broncoespasmo"
+  },
+  {
+    "code": "R.4.0",
+    "name": "Obstrucción por cuerpo extraño en tracto respiratorio",
+    "category": "Respiratorio",
+    "description": "OVACE — obstrucción de la vía aérea por cuerpo extraño"
+  },
+  {
+    "code": "R.4.1",
+    "name": "Obstrucción por moco en tracto respiratorio",
+    "category": "Respiratorio",
+    "description": "Obstrucción por moco en tracto respiratorio"
+  },
+  {
+    "code": "R.5.0",
+    "name": "Embolismo pulmonar/ infarto",
+    "category": "Respiratorio",
+    "description": "TEP — tromboembolismo pulmonar"
+  },
+  {
+    "code": "R.5.1",
+    "name": "Asfixia por ahorcamiento/ soterramiento/ presión",
+    "category": "Respiratorio",
+    "description": "Asfixia por ahorcamiento/ soterramiento/ presión"
+  },
+  {
+    "code": "R.6.0",
+    "name": "Neumotórax espontáneo",
+    "category": "Respiratorio",
+    "description": "Neumotórax espontáneo"
+  },
+  {
+    "code": "R.6.1",
+    "name": "Neumotórax con traumatismo cerrado",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.2",
+    "name": "Neumotórax por herida penetrante",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.3",
+    "name": "Neumohemotórax con traumatismo cerrado",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.4",
+    "name": "Neumohemotórax por herida penetrante",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.7.0",
+    "name": "Otras insuf. agudas y/o distres resp. en adulto",
+    "category": "Respiratorio",
+    "description": "Insuficiencia respiratoria aguda de otra causa"
+  },
+  {
+    "code": "R.8.0",
+    "name": "OTROS/ Enfermedad respiratoria",
+    "category": "Respiratorio",
+    "description": "OTROS/ Enfermedad respiratoria"
+  },
+  {
+    "code": "RR.0.0",
+    "name": "Cuerpo extraño en oído",
+    "category": "Otros",
+    "description": "Cuerpo extraño en oído"
+  },
+  {
+    "code": "RR.0.1",
+    "name": "Cuerpo extraño en nariz",
+    "category": "Otros",
+    "description": "Cuerpo extraño en nariz"
+  },
+  {
+    "code": "RR.1.0",
+    "name": "Otras infecciones agudas del oído externo",
+    "category": "Otros",
+    "description": "Otras infecciones agudas del oído externo"
+  },
+  {
+    "code": "RR.2.0",
+    "name": "Hemorragias orofaríngeas",
+    "category": "Otros",
+    "description": "Hemorragias orofaríngeas"
+  },
+  {
+    "code": "RR.3.0",
+    "name": "Vértigo periférico",
+    "category": "Otros",
+    "description": "LRO Vértigo periférico"
+  },
+  {
+    "code": "RR.4.0",
+    "name": "Epistaxis",
+    "category": "Otros",
+    "description": "Epistaxis"
+  },
+  {
+    "code": "RR.4.1",
+    "name": "Otorragia",
+    "category": "Otros",
+    "description": ".61 Otorragia"
+  },
+  {
+    "code": "RR.5.0",
+    "name": "Otalgia",
+    "category": "Otros",
+    "description": "Otalgia"
+  },
+  {
+    "code": "RR.6.0",
+    "name": "Perdida de audición repentina",
+    "category": "Otros",
+    "description": "Perdida de audición repentina"
+  },
+  {
+    "code": "RR.7.0",
+    "name": "OTROS/ Enfermedad oído",
+    "category": "Otros",
+    "description": "OTROS/ Enfermedad oído"
+  },
+  {
+    "code": "RR.7.1",
+    "name": "OTROS/ Enfermedad nariz",
+    "category": "Otros",
+    "description": "OTROS/ Enfermedad nariz"
+  },
+  {
+    "code": "T.0.0",
+    "name": "Contusiones menores/abrasiones x fricción/Otros",
+    "category": "Trauma",
+    "description": "Traumatismo craneoencefálico cerrado"
+  },
+  {
+    "code": "T.0.1",
+    "name": "Policontusionado / múltiples sitios",
+    "category": "Trauma",
+    "description": "Traumatismo craneoencefálico con fractura craneal asociada"
+  },
+  {
+    "code": "T.1.0",
+    "name": "Rotura fibrilar",
+    "category": "Trauma",
+    "description": "Contractura o distensión muscular"
+  },
+  {
+    "code": "T.1.1",
+    "name": "Esguince / torcedura de cervical",
+    "category": "Trauma",
+    "group": "Esguince / torcedura",
+    "description": "Rotura fibrilar grado I"
+  },
+  {
+    "code": "T.1.2",
+    "name": "Esguince / torcedura de muñeca",
+    "category": "Trauma",
+    "group": "Esguince / torcedura",
+    "description": "Rotura fibrilar grado II (parcial)"
+  },
+  {
+    "code": "T.1.3",
+    "name": "Esguince / torcedura de mano",
+    "category": "Trauma",
+    "group": "Esguince / torcedura",
+    "description": "Rotura fibrilar grado III (completa)"
+  },
+  {
+    "code": "T.1.4",
+    "name": "Esguince / torcedura de rodilla y pierna",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.1.5",
+    "name": "Esguince / torcedura de tobillo y pie",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.2.0",
+    "name": "Fractura de nasal",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de columna cervical"
+  },
+  {
+    "code": "T.2.1",
+    "name": "Fractura de mandíbula",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de huesos de la mano"
+  },
+  {
+    "code": "T.2.2",
+    "name": "Fractura de hombro",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura a nivel de rodilla (rótula, platillos tibiales)"
+  },
+  {
+    "code": "T.2.3",
+    "name": "Fractura de brazo",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura maleolar o de tobillo"
+  },
+  {
+    "code": "T.2.4",
+    "name": "Fractura de codo",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de huesos de la cara"
+  },
+  {
+    "code": "T.2.5",
+    "name": "Fractura de antebrazo",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de mandíbula"
+  },
+  {
+    "code": "T.2.6",
+    "name": "Fractura de muñeca",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de hombro, clavícula o escápula"
+  },
+  {
+    "code": "T.2.7",
+    "name": "Fractura de mano",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura a nivel de codo"
+  },
+  {
+    "code": "T.2.8",
+    "name": "Fractura de dedo de la mano",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de húmero"
+  },
+  {
+    "code": "T.2.9",
+    "name": "Fractura de columna vertebral",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de muñeca (radio/cúbito distal)"
+  },
+  {
+    "code": "T.2.10",
+    "name": "Fractura de clavícula",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de columna dorsal o lumbar"
+  },
+  {
+    "code": "T.2.11",
+    "name": "Fractura de escápula",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de una o varias costillas"
+  },
+  {
+    "code": "T.2.12",
+    "name": "Fractura de esternón",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de cadera o pelvis"
+  },
+  {
+    "code": "T.2.13",
+    "name": "Fractura de costilla",
+    "category": "Trauma",
+    "group": "Fractura cerrada",
+    "description": "Fractura de fémur (proximal, diafisaria o distal)"
+  },
+  {
+    "code": "T.2.14",
+    "name": "Fractura de cadera (incluye cuello y/o cabeza fémur)",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.15",
+    "name": "Fractura de fémur",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.16",
+    "name": "Fractura de rodilla",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.17",
+    "name": "Fractura de pierna",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.18",
+    "name": "Fractura de tobillo",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.19",
+    "name": "Fractura de pie",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.20",
+    "name": "Fractura de dedo pie",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.3.0",
+    "name": "Fractura abierta de nasal",
+    "category": "Trauma",
+    "group": "Fractura abierta",
+    "description": "Fractura abierta de columna cervical"
+  },
+  {
+    "code": "T.3.1",
+    "name": "Fractura abierta de mandíbula",
+    "category": "Trauma",
+    "group": "Fractura abierta",
+    "description": "Fractura abierta de huesos de la mano"
+  },
+  {
+    "code": "T.3.2",
+    "name": "Fractura abierta de hombro",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.3",
+    "name": "Fractura abierta de brazo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.4",
+    "name": "Fractura abierta de codo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.5",
+    "name": "Fractura abierta de antebrazo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.6",
+    "name": "Fractura abierta de muñeca",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.7",
+    "name": "Fractura abierta de mano",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.8",
+    "name": "Fractura abierta de dedo de la mano",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.9",
+    "name": "Fractura abierta de clavícula",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.10",
+    "name": "Fractura abierta de escápula",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.11",
+    "name": "Fractura abierta de cadera (incluye cuello y/o cabeza fémur)",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.12",
+    "name": "Fractura abierta de fémur",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.13",
+    "name": "Fractura abierta de rodilla",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.14",
+    "name": "Fractura abierta de pierna",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.15",
+    "name": "Fractura abierta de tobillo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.16",
+    "name": "Fractura abierta de pie",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.17",
+    "name": "Fractura abierta de dedo pie",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.4.0",
+    "name": "Herida abierta de cabeza (brecha)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en región craneal o cuero cabelludo"
+  },
+  {
+    "code": "T.4.1",
+    "name": "Herida abierta de cara (incluye herida/amputación nariz/oreja)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en región facial"
+  },
+  {
+    "code": "T.4.2",
+    "name": "Herida abierta de ojo (no globo, también zona periocular)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida o traumatismo ocular"
+  },
+  {
+    "code": "T.4.3",
+    "name": "Herida abierta de cuello",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en cuello"
+  },
+  {
+    "code": "T.4.4",
+    "name": "Herida abierta de hombro",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en región del hombro"
+  },
+  {
+    "code": "T.4.5",
+    "name": "Herida abierta de brazo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en brazo o antebrazo"
+  },
+  {
+    "code": "T.4.6",
+    "name": "Herida abierta de codo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en región del codo"
+  },
+  {
+    "code": "T.4.7",
+    "name": "Herida abierta de antebrazo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en muñeca"
+  },
+  {
+    "code": "T.4.8",
+    "name": "Herida abierta de muñeca",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en mano o dedos"
+  },
+  {
+    "code": "T.4.9",
+    "name": "Herida abierta de mano",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en tórax"
+  },
+  {
+    "code": "T.4.10",
+    "name": "Herida abierta de dedo de la mano",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en espalda"
+  },
+  {
+    "code": "T.4.11",
+    "name": "Herida abierta de tórax",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en abdomen"
+  },
+  {
+    "code": "T.4.12",
+    "name": "Herida abierta de espalda (incluye axila)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en región genital o perineal"
+  },
+  {
+    "code": "T.4.13",
+    "name": "Herida abierta de abdomen",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en cadera o región glútea"
+  },
+  {
+    "code": "T.4.14",
+    "name": "Herida abierta de órganos genitales (incluye amputación)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en rodilla"
+  },
+  {
+    "code": "T.4.15",
+    "name": "Herida abierta de muslo y/o cadera y/o glúteo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en muslo o pierna"
+  },
+  {
+    "code": "T.4.16",
+    "name": "Herida abierta de rodilla y/o pierna",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada",
+    "description": "Herida en pie o tobillo"
+  },
+  {
+    "code": "T.4.17",
+    "name": "Herida abierta de pie",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.18",
+    "name": "Herida abierta de dedo del pie",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.5.0",
+    "name": "Luxación de mandíbula",
+    "category": "Trauma",
+    "group": "Posible luxación",
+    "description": "Luxación glenohumeral o acromioclavicular"
+  },
+  {
+    "code": "T.5.2",
+    "name": "Luxación de codo",
+    "category": "Trauma",
+    "group": "Posible luxación",
+    "description": "Luxación de muñeca o carpo"
+  },
+  {
+    "code": "T.5.3",
+    "name": "Luxación de muñeca",
+    "category": "Trauma",
+    "group": "Posible luxación",
+    "description": "Luxación coxofemoral"
+  },
+  {
+    "code": "T.5.4",
+    "name": "Luxación de dedo de la mano",
+    "category": "Trauma",
+    "group": "Posible luxación",
+    "description": "Luxación femorotibial o rotuliana"
+  },
+  {
+    "code": "T.5.5",
+    "name": "Luxación de rodilla + rótula",
+    "category": "Trauma",
+    "group": "Posible luxación",
+    "description": "Luxación de tobillo"
+  },
+  {
+    "code": "T.5.6",
+    "name": "Luxación de tobillo",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.7",
+    "name": "Luxación de pie",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.6.0",
+    "name": "Amputación de dedo de la mano",
+    "category": "Trauma",
+    "group": "Amputación",
+    "description": "Traumatismo craneofacial con objeto penetrante"
+  },
+  {
+    "code": "T.6.1",
+    "name": "Amputación de ión",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.2",
+    "name": "Amputación de pu miembro superior",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.3",
+    "name": "Amputación de dedo de pie",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.4",
+    "name": "Amputación de miembro inferior",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.7.0",
+    "name": "TCE cerrado: Sin laceración (\"Chichón\")",
+    "category": "Trauma",
+    "group": "TCE",
+    "description": "Síndrome de aplastamiento (crush syndrome)"
+  },
+  {
+    "code": "T.7.2",
+    "name": "TCE cerrado: Con lacer. sin pérd. de conoc. (SCALP)",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.3",
+    "name": "TCE cerrado: Con laceración con pérd. de conoc.",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.4",
+    "name": "TCE cerrado: Fx de base de cráneo",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.5",
+    "name": "TCE Abierto",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.6",
+    "name": "TCE Abierto con salida de masa encefálica",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.8.0",
+    "name": "Traumatismo de Facial (incluye cuello)",
+    "category": "Trauma",
+    "description": "Trauma abdominal cerrado con afectación esplénica"
+  },
+  {
+    "code": "T.8.1",
+    "name": "Traumatismo de Torácico",
+    "category": "Trauma",
+    "description": "Trauma abdominal con afectación renal"
+  },
+  {
+    "code": "T.8.2",
+    "name": "Traumatismo de Abdominal",
+    "category": "Trauma",
+    "description": "Neumotórax traumático simple"
+  },
+  {
+    "code": "T.8.3",
+    "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+    "category": "Trauma",
+    "description": "Neumotórax a tensión"
+  },
+  {
+    "code": "T.8.4",
+    "name": "Traumatismo de Medular",
+    "category": "Trauma",
+    "description": "Hemotórax traumático"
+  },
+  {
+    "code": "T.8.5",
+    "name": "Traumatismo de Mayor / Politrauma",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.6",
+    "name": "Traumatismo de Globo ocular",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.7",
+    "name": "Traumatismo de Fosa renal",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.8",
+    "name": "Traumatismo de Perineo (incluye genitales externos)",
+    "category": "Trauma"
+  },
+  {
+    "code": "U.0.0",
+    "name": "Cólico Nefrítico",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.1.0",
+    "name": "Anuria",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.2.0",
+    "name": "Torsión Testicular",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.3.0",
+    "name": "Infección renal",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.3.1",
+    "name": "Infección tracto urinario",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.4.0",
+    "name": "Hematuria",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.5.0",
+    "name": "OTROS/ Enfermedad urinaria",
+    "category": "Urológico"
+  },
+  {
+    "code": "U.5.1",
+    "name": "OTROS/ Enfermedad renal/ uretral",
+    "category": "Urológico"
+  },
+  {
+    "code": "V.0.0",
+    "name": "Cuerpo extraño",
+    "category": "Otros",
+    "description": "Cuerpo extraño"
+  },
+  {
+    "code": "V.1.0",
+    "name": "Ojo rojo",
+    "category": "Otros",
+    "description": "Ojo rojo"
+  },
+  {
+    "code": "V.2.0",
+    "name": "Amaurosis brusca",
+    "category": "Otros",
+    "description": "sacigólomlatfO Amaurosis brusca"
+  },
+  {
+    "code": "V.2.1",
+    "name": "Visión borrosa",
+    "category": "Otros",
+    "description": "Visión borrosa"
+  },
+  {
+    "code": "V.2.2",
+    "name": "Perturbación visual no especificada",
+    "category": "Otros",
+    "description": "Perturbación visual no especificada"
+  },
+  {
+    "code": "V.3.0",
+    "name": "Avulsión ocular",
+    "category": "Otros",
+    "description": "Avulsión ocular"
+  },
+  {
+    "code": "V.3.1",
+    "name": "Perforación ocular",
+    "category": "Otros",
+    "description": "Perforación ocular"
+  },
+  {
+    "code": "V.4.0",
+    "name": "Glaucoma",
+    "category": "Otros",
+    "description": "Glaucoma"
+  },
+  {
+    "code": "V.4.1",
+    "name": "Conjuntivitis",
+    "category": "Otros",
+    "description": "Conjuntivitis"
+  },
+  {
+    "code": "V.5.0",
+    "name": "OTROS/ Enfermedad/ trastorno del ojo",
+    "category": "Otros",
+    "description": "OTROS/ Enfermedad/ trastorno del ojo"
+  },
+  {
+    "code": "W.0.0",
+    "name": "Éxitus sin asistencia / Probable éxitus sin asistencia",
+    "category": "Cierre",
+    "description": "Fallecimiento confirmado sin asistencia previa"
+  },
+  {
+    "code": "W.0.1",
+    "name": "Éxitus con asistencia",
+    "category": "Cierre",
+    "description": "Fallecimiento tras maniobras de resucitación"
+  },
+  {
+    "code": "W.1.0",
+    "name": "Otros",
+    "category": "Cierre",
+    "description": "Servicio originado por llamada de Policía Nacional (091)"
+  },
+  {
+    "code": "W.1.1",
+    "name": "Por 091",
+    "category": "Cierre",
+    "description": "Servicio originado por llamada de Policía Municipal (092)"
+  },
+  {
+    "code": "W.1.2",
+    "name": "Por 092",
+    "category": "Cierre",
+    "description": "Servicio originado por coordinación con 112"
+  },
+  {
+    "code": "W.1.3",
+    "name": "Por 112",
+    "category": "Cierre",
+    "description": "Servicio originado por coordinación con SUMMA112"
+  },
+  {
+    "code": "W.1.4",
+    "name": "Por SUMMA112",
+    "category": "Cierre",
+    "description": "Servicio originado por Bomberos (080)"
+  },
+  {
+    "code": "W.1.5",
+    "name": "Por 080",
+    "category": "Cierre",
+    "description": "por 080"
+  },
+  {
+    "code": "W.1.6",
+    "name": "Tras rellamada",
+    "category": "Cierre",
+    "description": "tras rellamada"
+  },
+  {
+    "code": "W.1.7",
+    "name": "Por demandante",
+    "category": "Cierre",
+    "description": "por demandante"
+  },
+  {
+    "code": "W.1.8",
+    "name": "Por recurso más cercano",
+    "category": "Cierre",
+    "description": "por recurso más cercano"
+  },
+  {
+    "code": "W.2.0",
+    "name": "Suceso sin paciente o sin heridos",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.3.0",
+    "name": "No paciente (suceso existió, pero no está el pac.)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.4.0",
+    "name": "No hubo suceso (no suceso y/o ni paciente)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.5.0",
+    "name": "No precisa asistencia/negativo incidente sanitario",
+    "category": "Cierre",
+    "description": "Servicio con componente predominantemente social"
+  },
+  {
+    "code": "W.6.0",
+    "name": "Problema social",
+    "category": "Cierre",
+    "description": "Problema social"
+  },
+  {
+    "code": "W.7.0",
+    "name": "Actuación riesgos previsibles sin heridos (4.6)",
+    "category": "Cierre",
+    "description": "Actuación riesgos previsibles sin heridos (4.6)"
+  },
+  {
+    "code": "W.7.1",
+    "name": "Actuación riesgos prev. Progr. sin heridos (8.x)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.8.0",
+    "name": "Paciente renuncia ser atendido",
+    "category": "Cierre",
+    "description": "El paciente rechaza la asistencia y es colaborador"
+  },
+  {
+    "code": "W.8.1",
+    "name": "Paciente renuncia ser atendido-AGRESIVO",
+    "category": "Cierre",
+    "description": "El paciente rechaza la asistencia y es agresivo"
+  },
+  {
+    "code": "W.8.2",
+    "name": "Paciente renuncia ser atendido-NIEGA FILIACIÓN",
+    "category": "Cierre",
+    "description": "El paciente rechaza la asistencia y niega su identidad"
+  },
+  {
+    "code": "W.9.0",
+    "name": "Colaboración/seguimiento de directivo",
+    "category": "Cierre",
+    "description": "Colaboración/seguimiento de directivo"
+  },
+  {
+    "code": "W.9.1",
+    "name": "Colaboración/seguimiento de Charly",
+    "category": "Cierre",
+    "description": "Colaboración/seguimiento de Charly"
+  },
+  {
+    "code": "W.9.2",
+    "name": "Colaboración/seguimiento de Fénix",
+    "category": "Cierre",
+    "description": "Colaboración/seguimiento de Fénix"
+  },
+  {
+    "code": "W.9.3",
+    "name": "Colaboración/seguimiento de Delta",
+    "category": "Cierre",
+    "description": "Colaboración/seguimiento de Delta"
+  },
+  {
+    "code": "W.10.0",
+    "name": "Otros motivos de Clave 0",
+    "category": "Cierre",
+    "description": "Otros motivos de Clave 0"
+  },
+  {
+    "code": "W.11.0",
+    "name": "Se hace cargo otra institución",
+    "category": "Cierre",
+    "description": "Otro servicio sanitario o institución se hace cargo del paciente"
+  },
+  {
+    "code": "X.0.0",
+    "name": "Alimentaria",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación por alimentos en mal estado"
+  },
+  {
+    "code": "X.1.5",
+    "name": "Por fármacos. Anticonvulsivos",
+    "category": "Intoxicaciones",
+    "description": "por fármacos. Anticonvulsivos"
+  },
+  {
+    "code": "X.1.7",
+    "name": "Por fármacos. Depresores del SNC",
+    "category": "Intoxicaciones",
+    "description": "por fármacos. Depresores del SNC"
+  },
+  {
+    "code": "X.1.8",
+    "name": "Por fármacos. Psicotrópicos",
+    "category": "Intoxicaciones",
+    "description": "por fármacos. Psicotrópicos"
+  },
+  {
+    "code": "X.1.14",
+    "name": "Por fármacos no especificados",
+    "category": "Intoxicaciones",
+    "description": "nóicacixotnI por fármacos no especificados"
+  },
+  {
+    "code": "X.2.0",
+    "name": "Alcohólica aguda",
+    "category": "Intoxicaciones",
+    "description": "Sobredosis o intoxicación por fármacos"
+  },
+  {
+    "code": "X.2.1",
+    "name": "Alcohólica aguda sobre crónica",
+    "category": "Intoxicaciones",
+    "description": "alcohólica aguda sobre crónica"
+  },
+  {
+    "code": "X.3.0",
+    "name": "Por drogas de abuso. Cocaína",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación por inhalación de gases (CO, etc.)"
+  },
+  {
+    "code": "X.3.1",
+    "name": "Por drogas de abuso. Heroína",
+    "category": "Intoxicaciones",
+    "description": "por drogas de abuso. Heroína"
+  },
+  {
+    "code": "X.3.2",
+    "name": "Por drogas de abuso. Alucinógenos",
+    "category": "Intoxicaciones",
+    "description": "senoicacixotnI por drogas de abuso. Alucinógenos"
+  },
+  {
+    "code": "X.3.3",
+    "name": "Por drogas de abuso. Cannabis",
+    "category": "Intoxicaciones",
+    "description": "por drogas de abuso. Cannabis"
+  },
+  {
+    "code": "X.3.4",
+    "name": "Por drogas de abuso. Politoxicomanías",
+    "category": "Intoxicaciones",
+    "description": "por drogas de abuso. Politoxicomanías"
+  },
+  {
+    "code": "X.3.5",
+    "name": "Por drogas de abuso no especificadas",
+    "category": "Intoxicaciones",
+    "description": "por drogas de abuso no especificadas"
+  },
+  {
+    "code": "X.3.6",
+    "name": "Síndrome de abstinencia por opiáceos",
+    "category": "Intoxicaciones",
+    "description": "Síndrome de abstinencia por opiáceos"
+  },
+  {
+    "code": "X.4.0",
+    "name": "Intoxicación por agentes corrosivos",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación por agentes corrosivos"
+  },
+  {
+    "code": "X.5.0",
+    "name": "Gases de plomo",
+    "category": "Intoxicaciones",
+    "description": "Gases de plomo"
+  },
+  {
+    "code": "X.5.1",
+    "name": "Gases de metales",
+    "category": "Intoxicaciones",
+    "description": "Gases de metales"
+  },
+  {
+    "code": "X.5.2",
+    "name": "Monóxido de carbono",
+    "category": "Intoxicaciones",
+    "description": "Monóxido de carbono"
+  },
+  {
+    "code": "X.5.3",
+    "name": "Gas licuado/ butano/ propano",
+    "category": "Intoxicaciones",
+    "description": "Gas licuado/ butano/ propano"
+  },
+  {
+    "code": "X.5.4",
+    "name": "Derivados nitrosos",
+    "category": "Intoxicaciones",
+    "description": "Derivados nitrosos"
+  },
+  {
+    "code": "X.5.5",
+    "name": "Gas lacrimógeno",
+    "category": "Intoxicaciones",
+    "description": "Gas lacrimógeno"
+  },
+  {
+    "code": "X.5.6",
+    "name": "Gas de cloro",
+    "category": "Intoxicaciones",
+    "description": "Gas de cloro"
+  },
+  {
+    "code": "X.5.7",
+    "name": "Derivados sulfurosos (Cianhídrico)",
+    "category": "Intoxicaciones",
+    "description": "Derivados sulfurosos (Cianhídrico)"
+  },
+  {
+    "code": "X.5.8",
+    "name": "Otras intoxicaciones químicas",
+    "category": "Intoxicaciones",
+    "description": "Otras intoxicaciones químicas"
+  },
+  {
+    "code": "X.6.0",
+    "name": "Síndrome de Inhalación de humos",
+    "category": "Intoxicaciones",
+    "description": "Síndrome de Inhalación de humos"
+  },
+  {
+    "code": "X.6.1",
+    "name": "Inhalación de Humos/ Gases no especificados",
+    "category": "Intoxicaciones",
+    "description": "Inhalación de Humos/ Gases no especificados"
+  }
 ]

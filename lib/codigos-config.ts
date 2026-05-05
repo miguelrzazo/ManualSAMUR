@@ -32,6 +32,7 @@ export const CODIGOS_PATHOLOGY_SUBTABS = [
   { key: "sva", label: "SVA" },
   { key: "svb", label: "SVB" },
   { key: "upsi", label: "UPSI" },
+  { key: "upsq", label: "UPSQ" },
 ] as const;
 
 export type CodigosTopLevelTabKey = (typeof CODIGOS_TOP_LEVEL_TABS)[number]["key"];

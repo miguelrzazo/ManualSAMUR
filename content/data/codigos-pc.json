@@ -1,33 +1,200 @@
 [
-  { "code": "C.0", "name": "Recurso operativo", "category": "Claves de estado", "description": "Clave 0: unidad disponible y operativa" },
-  { "code": "C.1", "name": "Recurso en emergencia", "category": "Claves de estado", "description": "Clave 1: unidad activa en emergencia" },
-  { "code": "C.2", "name": "Salida hacia lugar de actuación", "category": "Claves de estado", "description": "Clave 2: unidad en camino al lugar del incidente" },
-  { "code": "C.3", "name": "Llegada al lugar", "category": "Claves de estado", "description": "Clave 3: unidad en el lugar de la actuación" },
-  { "code": "C.4", "name": "Salida hacia hospital", "category": "Claves de estado", "description": "Clave 4: unidad trasladando paciente al hospital" },
-  { "code": "C.5", "name": "Llegada al hospital", "category": "Claves de estado", "description": "Clave 5: unidad en el centro asistencial" },
-  { "code": "C.6", "name": "Unidad inoperativa", "category": "Claves de estado", "description": "Clave 6: unidad no disponible" },
-  { "code": "C.6.1", "name": "Operatividad parcial", "category": "Claves de estado", "description": "Clave 6.1: unidad con operatividad parcial" },
-  { "code": "C.7", "name": "Unidad en su base", "category": "Claves de estado", "description": "Clave 7: unidad disponible en su base de guardia" },
-  { "code": "C.7.1", "name": "Unidad en su zona", "category": "Claves de estado", "description": "Clave 7.1: unidad disponible en su zona de cobertura" },
-  { "code": "C.8", "name": "Solicitud de llamada telefónica", "category": "Claves de comunicación", "description": "Clave 8: solicita contacto por teléfono" },
-  { "code": "C.8.1", "name": "Solicitud de llamada TETRA", "category": "Claves de comunicación", "description": "Clave 8.1: solicita comunicación por radio TETRA" },
-  { "code": "C.9", "name": "Localización geográfica precisa", "category": "Claves de comunicación", "description": "Clave 9: solicita localización exacta de la unidad" },
-  { "code": "C.10", "name": "Integridad de la dotación en riesgo", "category": "Urgencias operativas", "description": "Clave 10: personal de la unidad en situación de riesgo" },
-  { "code": "C.10.1", "name": "Solicitud de Policía", "category": "Urgencias operativas", "description": "Clave 10.1: solicita apoyo policial urgente" },
-  { "code": "C.11", "name": "Inicio de jornada laboral", "category": "Jornada", "description": "Clave 11: inicio de turno (salida de base B0)" },
-  { "code": "C.12", "name": "Fin de jornada laboral", "category": "Jornada", "description": "Clave 12: fin de turno (llegada a base B0)" },
-  { "code": "C.13", "name": "Imposibilidad de dar información", "category": "Claves de comunicación", "description": "Clave 13: no es posible facilitar información en este momento" },
-  { "code": "C.14", "name": "Solicitud de inicio de relevo / fin DRP", "category": "Jornada", "description": "Clave 14: solicita relevo de unidad o cierre de dispositivo preventivo" },
-  { "code": "C.15", "name": "Solicitud de Bomberos", "category": "Urgencias operativas", "description": "Clave 15: solicita apoyo de Bomberos" },
-  { "code": "C.16", "name": "Solicitud de apoyo SAMUR", "category": "Urgencias operativas", "description": "Clave 16: solicita apoyo adicional de SAMUR-PC" },
-  { "code": "C.17", "name": "Traslado con especialistas", "category": "Claves de estado", "description": "Clave 17: traslado acompañado por especialistas externos" },
-  { "code": "C.18", "name": "Solicitud de contacto con hospital", "category": "Claves de comunicación", "description": "Clave 18: solicita contacto con el hospital de destino" },
-  { "code": "C.19", "name": "Aviso de llegada a hospital", "category": "Claves de comunicación", "description": "Clave 19: prenotificación de llegada al hospital" },
-  { "code": "C.20", "name": "Solicitud de SUMMA112", "category": "Urgencias operativas", "description": "Clave 20: solicita coordinación o apoyo de SUMMA112" },
-  { "code": "C.21", "name": "Solicitud de recursos adicionales", "category": "Urgencias operativas", "description": "Clave 21: solicita recursos adicionales no especificados" },
-  { "code": "C.22", "name": "Aviso a Urgencias", "category": "Claves de comunicación", "description": "Clave 22: aviso al servicio de urgencias del hospital receptor" },
-  { "code": "C.23", "name": "Solicitud de información clínica", "category": "Claves de comunicación", "description": "Clave 23: solicita información clínica al hospital" },
-  { "code": "C.29", "name": "Llamada general / grupo específico", "category": "Claves de comunicación", "description": "Clave 29 / CQ: llamada a todos los recursos o a un grupo específico" },
-  { "code": "C.100", "name": "Activación de supervisión", "category": "Supervisión", "description": "Clave 100: activación del procedimiento de supervisión" },
-  { "code": "VICTOR", "name": "Aceptar / Rechazar (Clave 14 o Víctor)", "category": "Confirmaciones", "description": "Confirmación o rechazo de mensajes de relevo o código Víctor" }
+  {
+    "code": "0",
+    "name": "Recurso operativo",
+    "category": "Claves de estado",
+    "description": "Recurso operativo"
+  },
+  {
+    "code": "1",
+    "name": "Recurso en emergencia",
+    "category": "Claves de estado",
+    "description": "Recurso en emergencia"
+  },
+  {
+    "code": "2",
+    "name": "Salida hacia lugar de actuación",
+    "category": "Claves de estado",
+    "description": "Salida hacia lugar de actuación"
+  },
+  {
+    "code": "2.1",
+    "name": "Función de supervisión (activación voluntaria)",
+    "category": "Supervisión",
+    "description": "Función de supervisión (activación voluntaria)"
+  },
+  {
+    "code": "3",
+    "name": "Llegada al lugar de actuación",
+    "category": "Claves de estado",
+    "description": "Llegada al lugar de actuación"
+  },
+  {
+    "code": "4",
+    "name": "Salida del lugar en dirección al hospital",
+    "category": "Claves de estado",
+    "description": "Salida del lugar en dirección al hospital"
+  },
+  {
+    "code": "5",
+    "name": "Llegada al hospital o centro asistencial",
+    "category": "Claves de estado",
+    "description": "Llegada al hospital o centro asistencial"
+  },
+  {
+    "code": "6",
+    "name": "Unidad inoperativa. Requiere aclaración y autorización",
+    "category": "Claves de estado",
+    "description": "Unidad inoperativa. Requiere aclaración y autorización"
+  },
+  {
+    "code": "6.1",
+    "name": "Unidad en operatividad parcial. En C0",
+    "category": "Claves de estado",
+    "description": "Unidad en operatividad parcial. En C0"
+  },
+  {
+    "code": "7",
+    "name": "Unidad en su base",
+    "category": "Claves de estado",
+    "description": "Unidad en su base"
+  },
+  {
+    "code": "7.1",
+    "name": "Unidad en su zona",
+    "category": "Claves de estado",
+    "description": "Unidad en su zona"
+  },
+  {
+    "code": "8",
+    "name": "Solicitud llamada telefónica",
+    "category": "Claves de comunicación",
+    "description": "Solicitud llamada telefónica"
+  },
+  {
+    "code": "8.1",
+    "name": "Solicitud llamada por TETRA",
+    "category": "Claves de comunicación",
+    "description": "Solicitud llamada por TETRA"
+  },
+  {
+    "code": "9",
+    "name": "Localización geográfica precisa",
+    "category": "Claves de comunicación",
+    "description": "Localización geográfica precisa"
+  },
+  {
+    "code": "10",
+    "name": "Integridad dotación en riesgo",
+    "category": "Urgencias operativas",
+    "description": "Integridad dotación en riesgo"
+  },
+  {
+    "code": "10.1",
+    "name": "Solicitud de policía - Tráfico, presión social, etc.",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de policía - Tráfico, presión social, etc."
+  },
+  {
+    "code": "11",
+    "name": "Inicio jornada laboral o servicio - Al salir de B0",
+    "category": "Jornada",
+    "description": "Inicio jornada laboral o servicio - Al salir de B0"
+  },
+  {
+    "code": "12",
+    "name": "Fin jornada laboral o servicio - Al llegar a B0",
+    "category": "Jornada",
+    "description": "Fin jornada laboral o servicio - Al llegar a B0"
+  },
+  {
+    "code": "13",
+    "name": "Imposibilidad dar información en el momento",
+    "category": "Claves de comunicación",
+    "description": "Imposibilidad dar información en el momento"
+  },
+  {
+    "code": "14",
+    "name": "Solicitud inicio de relevo / Fin DRP",
+    "category": "Jornada",
+    "description": "Solicitud inicio de relevo / Fin DRP"
+  },
+  {
+    "code": "15",
+    "name": "Solicitud de Bomberos",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de Bomberos"
+  },
+  {
+    "code": "16",
+    "name": "Solicitud de apoyo de otra unidad de SAMUR-PC",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de apoyo de otra unidad de SAMUR-PC"
+  },
+  {
+    "code": "17",
+    "name": "Traslado con Charly, Delta, Romeo, Tecnico, ...",
+    "category": "Claves de estado",
+    "description": "Traslado con Charly, Delta, Romeo, Tecnico, ..."
+  },
+  {
+    "code": "18",
+    "name": "Solicitud contacto con Charly por Enfermería",
+    "category": "Claves de comunicación",
+    "description": "Solicitud contacto con Charly por Enfermería"
+  },
+  {
+    "code": "19",
+    "name": "Solicitud contacto con Charly por unidad",
+    "category": "Claves de comunicación",
+    "description": "Solicitud contacto con Charly por unidad"
+  },
+  {
+    "code": "20",
+    "name": "Comunicación a Prensa / Emergencias Madrid",
+    "category": "Claves de comunicación",
+    "description": "Comunicación a Prensa / Emergencias Madrid"
+  },
+  {
+    "code": "21",
+    "name": "Solicitud de farmacia móvil",
+    "category": "Logística",
+    "description": "Solicitud de farmacia móvil"
+  },
+  {
+    "code": "22",
+    "name": "Solicitud de repostaje",
+    "category": "Logística",
+    "description": "Solicitud de repostaje"
+  },
+  {
+    "code": "23",
+    "name": "Solicitud teletraducción",
+    "category": "Logística",
+    "description": "Solicitud teletraducción"
+  },
+  {
+    "code": "29",
+    "name": "En Clave 3, no paciente (rellamada a demandante)",
+    "category": "Claves de comunicación",
+    "description": "En Clave 3, no paciente (rellamada a demandante)"
+  },
+  {
+    "code": "100",
+    "name": "Solicitud policía urgente (Conjunta con PMM)",
+    "category": "Supervisión",
+    "description": "Solicitud policía urgente (Conjunta con PMM)"
+  },
+  {
+    "code": "VICTOR",
+    "name": "Descanso, asuntos internos o avituallamiento",
+    "category": "Jornada",
+    "description": "Descanso, asuntos internos o avituallamiento"
+  },
+  {
+    "code": "CQ",
+    "name": "Llamada general / a un grupo específico",
+    "category": "Claves de comunicación",
+    "description": "Llamada general / a un grupo específico"
+  }
 ]
