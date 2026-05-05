@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:vademecum": "node --experimental-strip-types scripts/scrape-vademecum.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

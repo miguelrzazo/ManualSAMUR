@@ -44,24 +44,6 @@
     ]
   },
   {
-    "id": "voluven-6",
-    "name": "Voluven 6%",
-    "presentation": "100 ml",
-    "type": "Coloide",
-    "osmolarity": "308 mOsm/l",
-    "sodium": "154 mmol/l",
-    "chloride": "154 mmol/l",
-    "glucose": "0 g",
-    "calcium": "0 mmol/l",
-    "potassium": "0 mmol/l",
-    "lactate": "0 mmol/l",
-    "ph": "5,5",
-    "contraindications": [
-      "Fenitoína",
-      "Tenecteplase"
-    ]
-  },
-  {
     "id": "salino-hipertonico-75",
     "name": "Suero salino hipertónico 7,5%",
     "presentation": "250 ml",
@@ -82,6 +64,24 @@
       "Edemas en general",
       "Amiodarona",
       "Ritodrina"
+    ]
+  },
+  {
+    "id": "voluven-6",
+    "name": "Voluven 6%",
+    "presentation": "100 ml",
+    "type": "Coloide",
+    "osmolarity": "308 mOsm/l",
+    "sodium": "154 mmol/l",
+    "chloride": "154 mmol/l",
+    "glucose": "0 g",
+    "calcium": "0 mmol/l",
+    "potassium": "0 mmol/l",
+    "lactate": "0 mmol/l",
+    "ph": "5,5",
+    "contraindications": [
+      "Fenitoína",
+      "Tenecteplase"
     ]
   }
 ]

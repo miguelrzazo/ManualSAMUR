@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import path from "path";
 import { VademecumView } from "@/components/vademecum/VademecumView";
+import { resolveVademecumRouteState } from "@/lib/vademecum-utils";
 
 export const metadata = {
   title: "Vademécum — SAMUR Manual",
@@ -8,11 +9,11 @@ export const metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string | string[]; farmaco?: string | string[] }>;
 }
 
 export default async function VademecumPage({ searchParams }: PageProps) {
-  const { q } = await searchParams;
+  const routeState = resolveVademecumRouteState(await searchParams);
   const drugs = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"));
   const perfusiones = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/perfusiones.json"), "utf8"));
   const fluidos = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/fluidos.json"), "utf8"));
@@ -21,11 +22,12 @@ export default async function VademecumPage({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem-4rem)] md:h-[calc(100vh-3.5rem)]">
       <VademecumView
+        key={routeState.highlightedDrugId ?? "base"}
         drugs={drugs}
         perfusiones={perfusiones}
         fluidos={fluidos}
         comerciales={comerciales}
-        initialQuery={q}
+        highlightedDrugId={routeState.highlightedDrugId}
       />
     </div>
   );

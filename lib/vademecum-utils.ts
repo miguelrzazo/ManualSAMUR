@@ -1,4 +1,4 @@
-import type { VademecumTabKey } from "@/lib/vademecum-config";
+import type { VademecumTabKey } from "./vademecum-config.ts";
 
 export interface AlphabetSection<T> {
   key: string;
@@ -20,7 +20,7 @@ export function normalizeForSearch(value: string): string {
 }
 
 export function normalizeInitialLetter(value: string): string {
-  const normalized = normalizeForSearch(value).replace(/^[^a-z]*/, "");
+  const normalized = normalizeForSearch(value);
   const letter = normalized.charAt(0).toUpperCase();
   return /^[A-Z]$/.test(letter) ? letter : "#";
 }
