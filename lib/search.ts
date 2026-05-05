@@ -66,8 +66,10 @@ export function buildSearchIndex(procedures: ProcedureMeta[]): Fuse<ProcedureMet
   return fuseInstance;
 }
 
-function normalizeForSearch(value: string): string {
-  return value
+function normalizeForSearch(value: unknown): string {
+  if (value == null) return "";
+  const str = String(value);
+  return str
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
@@ -82,12 +84,13 @@ function tokenizeQuery(query: string): string[] {
   )];
 }
 
-function normalizeWithMap(value: string) {
+function normalizeWithMap(value: unknown) {
+  const str = value == null ? "" : String(value);
   let normalized = "";
   const map: number[] = [];
 
-  for (let index = 0; index < value.length; index += 1) {
-    const pieces = value[index]
+  for (let index = 0; index < str.length; index += 1) {
+    const pieces = str[index]
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
