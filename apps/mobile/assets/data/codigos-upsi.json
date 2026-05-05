@@ -1,0 +1,182 @@
+[
+  {
+    "code": "AP.0.0",
+    "name": "Amortiguación del impacto emocional por PCR de origen no traumático",
+    "category": "Impacto emocional",
+    "description": "Amortiguación del impacto emocional por PCR de origen no traumático"
+  },
+  {
+    "code": "AP.0.1",
+    "name": "Amortiguación del impacto emocional por accidentes de tráfico",
+    "category": "Impacto emocional",
+    "description": "Amortiguación del impacto emocional por accidentes de tráfico"
+  },
+  {
+    "code": "AP.0.2",
+    "name": "Amortiguación del impacto emocional por accidente laboral",
+    "category": "Impacto emocional",
+    "description": "Amortiguación del impacto emocional por accidente laboral"
+  },
+  {
+    "code": "AP.0.3",
+    "name": "Amortiguación del impacto emocional por intento autolítico",
+    "category": "Impacto emocional",
+    "description": "Amortiguación del impacto emocional por intento autolítico"
+  },
+  {
+    "code": "AP.0.4",
+    "name": "Amortiguación del impacto emocional por incidente crítico",
+    "category": "Impacto emocional",
+    "description": "Amortiguación del impacto emocional por incidente crítico"
+  },
+  {
+    "code": "AP.1.0",
+    "name": "Inicio del duelo por PCR de origen no traumático",
+    "category": "Duelo",
+    "description": "Inicio del duelo por PCR de origen no traumático"
+  },
+  {
+    "code": "AP.1.1",
+    "name": "Inicio del duelo por accidente de tráfico",
+    "category": "Duelo",
+    "description": "Inicio del duelo por accidente de tráfico"
+  },
+  {
+    "code": "AP.1.2",
+    "name": "Apoyo inicio del duelo por accidente laboral",
+    "category": "Duelo",
+    "description": "Apoyo inicio del duelo por accidente laboral"
+  },
+  {
+    "code": "AP.1.3",
+    "name": "Inicio del duelo por suicidio consumado",
+    "category": "Duelo",
+    "description": "Inicio del duelo por suicidio consumado"
+  },
+  {
+    "code": "AP.1.4",
+    "name": "Inicio del duelo por otros incidentes",
+    "category": "Duelo",
+    "description": "Inicio del duelo por otros incidentes"
+  },
+  {
+    "code": "AP.2.0",
+    "name": "Evaluación y/o intervención psicológica en ideación o tentativa suicida",
+    "category": "Crisis suicida",
+    "description": "Evaluación y/o intervención psicológica en ideación o tentativa suicida"
+  },
+  {
+    "code": "AP.2.1",
+    "name": "Manejo psicológico en intentos autolíticos en curso",
+    "category": "Crisis suicida",
+    "description": "Manejo psicológico en intentos autolíticos en curso"
+  },
+  {
+    "code": "AP.3.0",
+    "name": "Reducción de sintomatología psicosomática en sucesos no traumáticos",
+    "category": "Apoyo psicológico",
+    "description": "Reducción de sintomatología psicosomática en sucesos no traumáticos"
+  },
+  {
+    "code": "AP.4.0",
+    "name": "Código 9",
+    "category": "Apoyo a equipos",
+    "description": "Código 9"
+  },
+  {
+    "code": "AP.4.1",
+    "name": "Intervención en casos de violencia de género",
+    "category": "Apoyo a equipos",
+    "description": "Intervención en casos de violencia de género"
+  },
+  {
+    "code": "AP.4.2",
+    "name": "Intervención en casos de agresión sexual",
+    "category": "Apoyo a equipos",
+    "description": "Intervención en casos de agresión sexual"
+  },
+  {
+    "code": "AP.4.3",
+    "name": "Intervención en situaciones de maltrato infantil",
+    "category": "Intervención psicológica",
+    "description": "Intervención en situaciones de maltrato infantil"
+  },
+  {
+    "code": "AP.4.4",
+    "name": "Intervención en mayores en riesgo social / sospecha de maltrato",
+    "category": "Intervención psicológica",
+    "description": "Intervención en mayores en riesgo social / sospecha de maltrato"
+  },
+  {
+    "code": "AP.4.5",
+    "name": "Otras intervenciones en situaciones de crisis",
+    "category": "Intervención psicológica",
+    "description": "Otras intervenciones en situaciones de crisis"
+  },
+  {
+    "code": "AP.5.0",
+    "name": "Intervención en atentados terroristas",
+    "category": "Catástrofe",
+    "description": "Intervención en atentados terroristas"
+  },
+  {
+    "code": "AP.5.1",
+    "name": "Intervención en accidentes de avión",
+    "category": "Catástrofe",
+    "description": "Intervención en accidentes de avión"
+  },
+  {
+    "code": "AP.5.2",
+    "name": "Intervención en accidentes de tren",
+    "category": "Intervención psicológica",
+    "description": "Intervención en accidentes de tren"
+  },
+  {
+    "code": "AP.6.0",
+    "name": "Intervención en sucesos de impacto social",
+    "category": "Educación",
+    "description": "Intervención en sucesos de impacto social"
+  },
+  {
+    "code": "AP.6.1",
+    "name": "Intervención en AMV",
+    "category": "Intervención psicológica",
+    "description": "Intervención en AMV"
+  },
+  {
+    "code": "AP.6.2",
+    "name": "Intervención en desastre / catástrofe",
+    "category": "Intervención psicológica",
+    "description": "Intervención en desastre / catástrofe"
+  },
+  {
+    "code": "AP.7.0",
+    "name": "Intervención psicoeducativa en programa de sensibilización y reeducación vial",
+    "category": "Otras",
+    "description": "Intervención psicoeducativa en programa de sensibilización y reeducación vial"
+  },
+  {
+    "code": "AP.8.0",
+    "name": "Apoyo en tareas a equipo interviniente en el suceso",
+    "category": "Seguimiento",
+    "description": "Apoyo en tareas a equipo interviniente en el suceso"
+  },
+  {
+    "code": "AP.9.0",
+    "name": "Negativa paciente no precisa asistencia psicológica",
+    "category": "Derivación",
+    "description": "Negativa paciente no precisa asistencia psicológica"
+  },
+  {
+    "code": "AP.9.1",
+    "name": "Asistencia: paciente renuncia a ser atendido",
+    "category": "Derivación",
+    "description": "Asistencia: paciente renuncia a ser atendido"
+  },
+  {
+    "code": "AP.9.2",
+    "name": "Asistencia: sin suceso/paciente",
+    "category": "Derivación",
+    "description": "Asistencia: sin suceso/paciente"
+  }
+]

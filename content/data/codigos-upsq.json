@@ -1,1 +1,452 @@
-[]
+[
+	{
+		"code": "P.0.0",
+		"name": "Sin clasificar. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.1.0",
+		"name": "No requisitos administrativos. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.1.1",
+		"name": "No requisitos administrativos. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.1.2",
+		"name": "No requisitos administrativos. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.0",
+		"name": "Riesgo suicida. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.1",
+		"name": "Riesgo suicida. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.2",
+		"name": "Riesgo suicida. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.3",
+		"name": "Riesgo suicida. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.4",
+		"name": "Riesgo suicida. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.5",
+		"name": "Riesgo suicida. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.6",
+		"name": "Riesgo suicida. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.2.7",
+		"name": "Riesgo suicida. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.0",
+		"name": "Agresividad - Heteroagresividad. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.1",
+		"name": "Agresividad - Heteroagresividad. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.2",
+		"name": "Agresividad - Heteroagresividad. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.3",
+		"name": "Agresividad - Heteroagresividad. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.4",
+		"name": "Agresividad - Heteroagresividad. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.5",
+		"name": "Agresividad - Heteroagresividad. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.6",
+		"name": "Agresividad - Heteroagresividad. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.3.7",
+		"name": "Agresividad - Heteroagresividad. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.0",
+		"name": "Agitación psicomotriz. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.1",
+		"name": "Agitación psicomotriz. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.2",
+		"name": "Agitación psicomotriz. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.3",
+		"name": "Agitación psicomotriz. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.4",
+		"name": "Agitación psicomotriz. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.5",
+		"name": "Agitación psicomotriz. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.6",
+		"name": "Agitación psicomotriz. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.4.7",
+		"name": "Agitación psicomotriz. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.0",
+		"name": "Signos de psicosis. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.1",
+		"name": "Signos de psicosis. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.2",
+		"name": "Signos de psicosis. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.3",
+		"name": "Signos de psicosis. Conducción",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.4",
+		"name": "Signos de psicosis. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.5",
+		"name": "Signos de psicosis. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.6",
+		"name": "Signos de psicosis. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.5.7",
+		"name": "Signos de psicosis. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.0",
+		"name": "Trastorno del comportamiento. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.1",
+		"name": "Trastorno del comportamiento. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.2",
+		"name": "Trastorno del comportamiento. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.3",
+		"name": "Trastorno del comportamiento. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.4",
+		"name": "Trastorno del comportamiento. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.5",
+		"name": "Trastorno del comportamiento. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.6",
+		"name": "Trastorno del comportamiento. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.6.7",
+		"name": "Trastorno del comportamiento. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.0",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.1",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.2",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.3",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.4",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.5",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.6",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.7.7",
+		"name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.0",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.1",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.2",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.3",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.4",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.5",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.6",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.8.7",
+		"name": "Descompensación en paciente con Trastorno Bipolar. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.0",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.1",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.2",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.3",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.4",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.5",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.6",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.9.7",
+		"name": "Descompensación en paciente con Trastorno Depresivo. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.0",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.1",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.2",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.3",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.4",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.5",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.6",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.10.7",
+		"name": "Descompensación en paciente con Trastorno Personalidad. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.0",
+		"name": "Abandono de medicación. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.1",
+		"name": "Abandono de medicación. Voluntario",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.2",
+		"name": "Abandono de medicación. Reducción verbal",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.3",
+		"name": "Abandono de medicación. Conducción. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.4",
+		"name": "Abandono de medicación. Reducción Física",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.5",
+		"name": "Abandono de medicación. Reducción mecánica. Transferencia efectiva",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.6",
+		"name": "Abandono de medicación. Empeoramiento en traslado",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.11.7",
+		"name": "Abandono de medicación. Reducción Mecánica. Preaviso",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.12.0",
+		"name": "Prevalece patología NO psiquiátrica. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.13.0",
+		"name": "Imposibilidad acceso al domicilio. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.14.0",
+		"name": "Ausencia de paciente. No suceso. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.15.0",
+		"name": "Anulado en ruta. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.16.0",
+		"name": "Negativa a la familia. Sin identificar",
+		"category": "Psiquiátrico"
+	},
+	{
+		"code": "P.17.0",
+		"name": "Clave 17 en otra unidad. Sin identificar",
+		"category": "Psiquiátrico"
+	}
+]

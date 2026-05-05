@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   buildAlphabetSections,
   normalizeInitialLetter,
+  resolveDrugIdReference,
   resolveVademecumRouteState,
 } from "../lib/vademecum-utils.ts";
 import {
@@ -42,19 +43,49 @@ test("buildAlphabetSections groups items by normalized initial", () => {
   );
 });
 
-test("resolveVademecumRouteState prioritizes farmaco deep-links and ignores legacy q filtering", () => {
+test("resolveDrugIdReference resolves ids, names and compact legacy aliases against the dataset", () => {
+  const drugs = [
+    { id: "lorazepam", name: "Lorazepam", synonyms: [] },
+    { id: "labetalol", name: "Labetalol", synonyms: ["Labetalol Clorhidrato"] },
+    { id: "morfina", name: "Morfina", synonyms: ["Morfina Clorhidrato"] },
+  ];
+
+  assert.equal(resolveDrugIdReference("lorazepam", drugs), "lorazepam");
+  assert.equal(resolveDrugIdReference("Lorazepam", drugs), "lorazepam");
+  assert.equal(resolveDrugIdReference("LabetalolClorhidrato", drugs), "labetalol");
+  assert.equal(resolveDrugIdReference("Morfina Clorhidrato", drugs), "morfina");
+  assert.equal(resolveDrugIdReference("Fármaco inexistente", drugs), null);
+});
+
+test("resolveVademecumRouteState prioritizes farmaco and resolves legacy q as fallback", () => {
+  const drugs = [
+    { id: "adrenalina", name: "Adrenalina", synonyms: ["Epinefrina"] },
+    { id: "midazolam", name: "Midazolam", synonyms: [] },
+    { id: "amiodarona", name: "Amiodarona", synonyms: [] },
+  ];
+
   assert.deepEqual(
     resolveVademecumRouteState({
       farmaco: ["adrenalina", "midazolam"],
       q: "shock",
-    }),
+    }, drugs),
     {
       initialTab: "farmacos",
       highlightedDrugId: "adrenalina",
     },
   );
 
-  assert.deepEqual(resolveVademecumRouteState({ q: "amiodarona" }), {
+  assert.deepEqual(resolveVademecumRouteState({ q: "amiodarona" }, drugs), {
+    initialTab: "farmacos",
+    highlightedDrugId: "amiodarona",
+  });
+
+  assert.deepEqual(resolveVademecumRouteState({ farmaco: "Epinefrina" }, drugs), {
+    initialTab: "farmacos",
+    highlightedDrugId: "adrenalina",
+  });
+
+  assert.deepEqual(resolveVademecumRouteState({ q: "shock" }, drugs), {
     initialTab: "farmacos",
     highlightedDrugId: null,
   });
@@ -111,8 +142,8 @@ test("parseWikiDrugsFromHtml extracts drug blocks by letter and preserves clinic
     ],
   );
   assert.match(drugs[0].dose, /Dosis de Ataque: 150 mg\/kg/);
-  assert.match(drugs[0].notes ?? "", /Función: antídoto/);
-  assert.match(drugs[0].notes ?? "", /Efectos secundarios: náuseas, vómito/);
+  assert.match(drugs[0].funcion ?? "", /antídoto/);
+  assert.match(drugs[0].efectos_secundarios ?? "", /náuseas, vómito/);
   assert.equal(drugs[1].presentation, "ampolla de 50 mg/10 ml.");
 });
 

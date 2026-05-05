@@ -1,0 +1,137 @@
+[
+  {
+    "id": "301-summary",
+    "type": "summary",
+    "targetHeading": "__start",
+    "placement": "before",
+    "title": "Resumen operativo",
+    "label": "Material operativo añadido",
+    "items": [
+      "Iniciar RCP de alta calidad en ciclos de 2 minutos y confirmar el ritmo sin demoras evitables.",
+      "Asegurar vía aérea, ventilación y monitorización con foco en ETCO2, SatO2 y ECG.",
+      "Canalizar acceso vascular precoz y usar vía intraósea si la periférica no está disponible.",
+      "Tratar causas reversibles durante la reanimación y sostener la reevaluación clínica y metabólica.",
+      "La decisión de continuar o parar la reanimación se basa en oportunidad y beneficio, no solo en tiempo."
+    ]
+  },
+  {
+    "id": "301-editorial-note",
+    "type": "editorial-note",
+    "targetHeading": "__start",
+    "placement": "after",
+    "title": "Lectura editorial",
+    "label": "Material operativo añadido",
+    "content": "Esta página conserva el texto original del manual como fuente canónica y mezcla objetos operativos junto a los apartados donde aportan contexto. Los anexos originales se muestran como objetos navegables y el índice lateral sigue reflejando únicamente la estructura del documento fuente."
+  },
+  {
+    "id": "301-original-attachments",
+    "type": "attachment-group",
+    "targetHeading": "__start",
+    "placement": "after",
+    "title": "Adjuntos originales",
+    "label": "Adjuntos originales",
+    "items": [
+      {
+        "localPath": "/docs/procedures/301/301_algoritmo_SVA.pdf",
+        "title": "Algoritmo SVA adulto",
+        "description": "PDF oficial asociado al procedimiento."
+      }
+    ]
+  },
+  {
+    "id": "301-ritmos-cheatsheet",
+    "type": "cheatsheet",
+    "targetHeading": "ritmos-no-desfibrilables",
+    "placement": "before",
+    "title": "Cheatsheet de secuencia",
+    "label": "Material operativo añadido",
+    "items": [
+      "RCP 2 min o 5 ciclos 30:2 antes de la nueva comprobación de ritmo.",
+      "Pulso solo si aparece ritmo organizado y siempre en menos de 10 segundos.",
+      "ETCO2 para confirmar TET y para reevaluar la calidad de la reanimación.",
+      "Analítica inicial: pH, EB, K+ y glucemia entre otras determinaciones.",
+      "Adrenalina 1 mg iv/io cada 3 a 5 min con bolo posterior de suero."
+    ]
+  },
+  {
+    "id": "301-ritmos-diagram",
+    "type": "diagram",
+    "targetHeading": "ritmos-no-desfibrilables",
+    "placement": "after",
+    "title": "Lectura rápida del flujo",
+    "label": "Material operativo añadido",
+    "content": "flowchart TD\n  A[Confirmar PCR no desfibrilable] --> B[RCP 2 min]\n  B --> C[Comprobar ritmo y pulso si hay ritmo organizado]\n  C --> D[Asegurar vía aérea y ventilación]\n  D --> E[Acceso vascular y analítica]\n  E --> F[Adrenalina cada 3 a 5 min]\n  F --> G[Buscar y tratar 5 H y 5 T]\n  G --> H[Reevaluación clínica y metabólica continua]"
+  },
+  {
+    "id": "301-aesp-checklist",
+    "type": "checklist",
+    "targetHeading": "actividad-electrica-sin-pulso-aesp-o-asistolia",
+    "placement": "before",
+    "title": "Checklist de intervención",
+    "label": "Material operativo añadido",
+    "items": [
+      "Compresiones torácicas según estándar de RCP.",
+      "Ventilación con reservorio y oxígeno a alto flujo.",
+      "Confirmación del TET con ETCO2 si se intuba.",
+      "Acceso vascular periférico o intraóseo.",
+      "Monitorización ECG, SatO2 y ETCO2.",
+      "Analítica inicial y reevaluación de causas reversibles."
+    ]
+  },
+  {
+    "id": "301-aesp-drugs",
+    "type": "cited-drugs",
+    "targetHeading": "actividad-electrica-sin-pulso-aesp-o-asistolia",
+    "placement": "after",
+    "title": "Fármacos citados",
+    "label": "Derivado automáticamente"
+  },
+  {
+    "id": "301-aesp-techniques",
+    "type": "cited-techniques",
+    "targetHeading": "actividad-electrica-sin-pulso-aesp-o-asistolia",
+    "placement": "after",
+    "title": "Técnicas citadas",
+    "label": "Derivado automáticamente"
+  },
+  {
+    "id": "301-pcr-warning",
+    "type": "warning",
+    "targetHeading": "pcr-no-recuperada",
+    "placement": "before",
+    "title": "Decisiones críticas",
+    "label": "Material operativo añadido",
+    "items": [
+      "La cronología aislada no debe ser el único criterio para finalizar la reanimación.",
+      "Revisar periodo no-flow, primeros respondientes, causa probable, ritmo inicial y analítica de forma conjunta.",
+      "En asistolia sin causa tratable identificable, puede considerarse parar tras 20 minutos de SVA si el resto del contexto no favorece continuar."
+    ]
+  },
+  {
+    "id": "301-pcr-related",
+    "type": "related-links",
+    "targetHeading": "pcr-no-recuperada",
+    "placement": "after",
+    "title": "Procedimientos útiles a continuación",
+    "label": "Material operativo añadido",
+    "items": [
+      "301a",
+      "302",
+      "212"
+    ]
+  },
+  {
+    "id": "301-original-image",
+    "type": "image-gallery",
+    "targetHeading": "pcr-no-recuperada",
+    "placement": "after",
+    "title": "Imagen original del procedimiento",
+    "label": "Adjuntos originales",
+    "items": [
+      {
+        "localPath": "/images/procedures/301/descarga.jpeg",
+        "title": "RCP extracorpórea"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1268 @@
+[
+  {
+    "code": "C.0.0",
+    "name": "PCR-Recuperada / PCR-Código 9",
+    "category": "Cardiovascular",
+    "description": "Parada cardiorrespiratoria con ROSC"
+  },
+  {
+    "code": "C.0.1",
+    "name": "Dolor torácico de probable origen cardiaco",
+    "category": "Cardiovascular",
+    "description": "Parada cardiorrespiratoria sin recuperación"
+  },
+  {
+    "code": "C.2.0",
+    "name": "Síncope",
+    "category": "Cardiovascular",
+    "description": "Dolor torácico con sospecha de infarto"
+  },
+  {
+    "code": "C.2.1",
+    "name": "Síncope tras esfuerzo",
+    "category": "Cardiovascular"
+  },
+  {
+    "code": "C.3.0",
+    "name": "Lectura de TA anormalmente alta",
+    "category": "Cardiovascular",
+    "description": "Pérdida transitoria del conocimiento"
+  },
+  {
+    "code": "C.4.0",
+    "name": "Lectura de TA anormalmente baja",
+    "category": "Cardiovascular",
+    "description": "Síncope durante o tras esfuerzo físico"
+  },
+  {
+    "code": "C.5.0",
+    "name": "Taquicardia",
+    "category": "Cardiovascular",
+    "description": "Urgencia hipertensiva"
+  },
+  {
+    "code": "C.6.0",
+    "name": "Bradicardia",
+    "category": "Cardiovascular",
+    "description": "Frecuencia cardiaca elevada sintomática"
+  },
+  {
+    "code": "C.7.0",
+    "name": "Arritmia",
+    "category": "Cardiovascular",
+    "description": "Frecuencia cardiaca baja sintomática"
+  },
+  {
+    "code": "C.8.0",
+    "name": "Otros signos y/o síntomas cardiovasculares",
+    "category": "Cardiovascular",
+    "description": "Arritmia cardiaca de causa no especificada"
+  },
+  {
+    "code": "D.0.0",
+    "name": "Diarrea",
+    "category": "Digestivo",
+    "description": "Diarrea aguda, con o sin vómitos"
+  },
+  {
+    "code": "D.1.0",
+    "name": "Vómitos",
+    "category": "Digestivo",
+    "description": "Vómitos sin diarrea"
+  },
+  {
+    "code": "D.2.0",
+    "name": "Hematemesis",
+    "category": "Digestivo",
+    "description": "Vómitos con sangre"
+  },
+  {
+    "code": "D.3.0",
+    "name": "Melenas",
+    "category": "Digestivo",
+    "description": "Deposiciones negras y malolientes (hemorragia digestiva alta)"
+  },
+  {
+    "code": "D.4.0",
+    "name": "Dolor abdominal no traumático",
+    "category": "Digestivo",
+    "description": "Dolor abdominal de inicio agudo"
+  },
+  {
+    "code": "D.5.0",
+    "name": "Otros signos y/o síntomas del aparato digestivo",
+    "category": "Digestivo",
+    "description": "Otros síntomas del aparato digestivo"
+  },
+  {
+    "code": "F.0.0",
+    "name": "Hipotermia",
+    "category": "Agentes físicos",
+    "description": "Hipotermia accidental"
+  },
+  {
+    "code": "F.1.0",
+    "name": "Lesiones congelación no especificados",
+    "category": "Agentes físicos",
+    "description": "Lesión por exposición al frío"
+  },
+  {
+    "code": "F.2.0",
+    "name": "En cara/cabeza/cuero cabelludo",
+    "category": "Agentes físicos",
+    "description": "Quemadura térmica o química"
+  },
+  {
+    "code": "F.2.1",
+    "name": "En tronco",
+    "category": "Agentes físicos",
+    "description": "en tronco"
+  },
+  {
+    "code": "F.2.2",
+    "name": "En miembro superior",
+    "category": "Agentes físicos",
+    "description": "en miembro superior"
+  },
+  {
+    "code": "F.2.3",
+    "name": "En muñeca y mano",
+    "category": "Agentes físicos",
+    "description": "en muñeca y mano"
+  },
+  {
+    "code": "F.2.4",
+    "name": "De miembro inferior",
+    "category": "Agentes físicos",
+    "description": "de miembro inferior"
+  },
+  {
+    "code": "F.2.5",
+    "name": "En múltiples sitios / GRAN QUEMADO",
+    "category": "Agentes físicos",
+    "description": "en múltiples sitios / GRAN QUEMADO"
+  },
+  {
+    "code": "F.2.6",
+    "name": "En múltiples sitios",
+    "category": "Agentes físicos",
+    "description": "en múltiples sitios"
+  },
+  {
+    "code": "F.3.0",
+    "name": "Químicas",
+    "category": "Agentes físicos",
+    "description": "Lesión por descarga eléctrica"
+  },
+  {
+    "code": "F.3.1",
+    "name": "Nes por electricidad descarga",
+    "category": "Agentes físicos",
+    "description": "porelectricidad descarga"
+  },
+  {
+    "code": "F.3.2",
+    "name": "Por rayo",
+    "category": "Agentes físicos",
+    "description": "porrayo"
+  },
+  {
+    "code": "F.4.0",
+    "name": "Hipertermia de origen ambiental",
+    "category": "Agentes físicos",
+    "description": "Hipertermia por exposición al calor"
+  },
+  {
+    "code": "F.4.1",
+    "name": "Calor Síncope de calor",
+    "category": "Agentes físicos",
+    "description": "Síncope de calor"
+  },
+  {
+    "code": "F.4.2",
+    "name": "Otros efectos especificados del calor",
+    "category": "Agentes físicos",
+    "description": "Otros efectos especificados del calor"
+  },
+  {
+    "code": "F.5.0",
+    "name": "Ahogamiento por inmersión",
+    "category": "Agentes físicos",
+    "description": "Sumersión con compromiso respiratorio"
+  },
+  {
+    "code": "F.5.1",
+    "name": "Asfixia por ahorcamiento/soterramiento/presión",
+    "category": "Agentes físicos",
+    "description": "Asfixia por ahorcamiento/soterramiento/presión"
+  },
+  {
+    "code": "F.6.0",
+    "name": "Efectos por presión aire por explosión",
+    "category": "Agentes físicos",
+    "description": "Lesiones por onda expansiva u explosión"
+  },
+  {
+    "code": "G.0.0",
+    "name": "Parto normal",
+    "category": "Obstétrico",
+    "description": "Parto eutócico inminente o en curso"
+  },
+  {
+    "code": "G.0.1",
+    "name": "Parto de nalgas",
+    "category": "Obstétrico",
+    "description": "Presentación podálica inminente"
+  },
+  {
+    "code": "G.0.2",
+    "name": "Amenaza de parto",
+    "category": "Obstétrico",
+    "description": "Contracciones con feto prematuro"
+  },
+  {
+    "code": "G.1.0",
+    "name": "Recién nacido único",
+    "category": "Obstétrico",
+    "description": "Asistencia al recién nacido único"
+  },
+  {
+    "code": "G.1.1",
+    "name": "Recién nacido gemelo, co gemelo",
+    "category": "Obstétrico",
+    "description": "Asistencia a recién nacidos múltiples (gemelos, etc.)"
+  },
+  {
+    "code": "G.2.0",
+    "name": "Hemorragia embarazada después de 22 semanas",
+    "category": "Obstétrico",
+    "description": "Hemorragia durante el embarazo"
+  },
+  {
+    "code": "G.2.1",
+    "name": "Hemorragia embarazada hasta 22 semanas",
+    "category": "Obstétrico",
+    "description": "Hemorragia tras el parto"
+  },
+  {
+    "code": "G.2.2",
+    "name": "Hemorragia ginecológica",
+    "category": "Obstétrico",
+    "description": "Hemorragia ginecológica"
+  },
+  {
+    "code": "G.3.0",
+    "name": "HTA en embarazo",
+    "category": "Obstétrico",
+    "description": "Hipertensión en gestante o preeclampsia"
+  },
+  {
+    "code": "G.4.0",
+    "name": "Vómitos que complican el embarazo",
+    "category": "Obstétrico",
+    "description": "Hiperémesis gravídica u otros vómitos en la gestante"
+  },
+  {
+    "code": "G.5.0",
+    "name": "Otras complicaciones del embarazo",
+    "category": "Obstétrico",
+    "description": "Otras urgencias obstétricas"
+  },
+  {
+    "code": "G.6.0",
+    "name": "Dolor origen gine. periodo menst. (dismenorrea)",
+    "category": "Obstétrico",
+    "description": "Dolor pélvico o ginecológico agudo"
+  },
+  {
+    "code": "G.6.1",
+    "name": "Dolor origen ginecológico periodo no menstrual",
+    "category": "Obstétrico",
+    "description": "Metrorragia no relacionada con el embarazo"
+  },
+  {
+    "code": "G.6.2",
+    "name": "Otros signos y/o síntomas rel. órg. genitales fem.",
+    "category": "Obstétrico",
+    "description": "Otros signos y/o síntomas rel. órg. genitales fem."
+  },
+  {
+    "code": "I.0.0",
+    "name": "Etílicas",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación aguda por alcohol"
+  },
+  {
+    "code": "I.1.0",
+    "name": "No especificados",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación aguda por drogas de abuso"
+  },
+  {
+    "code": "I.1.1",
+    "name": "Monóxido de carbono",
+    "category": "Intoxicaciones",
+    "description": "monóxido de carbono"
+  },
+  {
+    "code": "I.1.2",
+    "name": "Cloro",
+    "category": "Intoxicaciones",
+    "description": "cloro"
+  },
+  {
+    "code": "I.1.3",
+    "name": "Butano / propano / ciudad",
+    "category": "Intoxicaciones",
+    "description": "Butano / propano / ciudad"
+  },
+  {
+    "code": "I.2.0",
+    "name": "Farmacológicas",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación por inhalación (CO, etc.)"
+  },
+  {
+    "code": "I.3.1",
+    "name": "Químicas",
+    "category": "Intoxicaciones",
+    "description": "Químicas"
+  },
+  {
+    "code": "I.4.0",
+    "name": "Otras",
+    "category": "Intoxicaciones",
+    "description": "Sobredosis o intoxicación medicamentosa"
+  },
+  {
+    "code": "I.4.1",
+    "name": "Drogas Cocaína",
+    "category": "Intoxicaciones",
+    "description": "Cocaína"
+  },
+  {
+    "code": "I.4.2",
+    "name": "Heroína",
+    "category": "Intoxicaciones",
+    "description": "Heroína"
+  },
+  {
+    "code": "I.4.3",
+    "name": "Politoxicomanías",
+    "category": "Intoxicaciones",
+    "description": "Politoxicomanías"
+  },
+  {
+    "code": "I.5.0",
+    "name": "Intoxicación alimentaria",
+    "category": "Intoxicaciones",
+    "description": "Intoxicación por otras sustancias"
+  },
+  {
+    "code": "M.0.0",
+    "name": "Dolor músculo-esquelético",
+    "category": "Miscelánea",
+    "description": "Dolor de origen musculoesquelético no traumático"
+  },
+  {
+    "code": "M.1.0",
+    "name": "Reacción alérgica",
+    "category": "Miscelánea",
+    "description": "Reacción alérgica sin componente anafiláctico grave"
+  },
+  {
+    "code": "M.2.0",
+    "name": "Infecciones",
+    "category": "Miscelánea",
+    "description": "Sospecha de infección aguda"
+  },
+  {
+    "code": "M.3.0",
+    "name": "Enfermedades de la piel",
+    "category": "Miscelánea",
+    "description": "Patología cutánea aguda"
+  },
+  {
+    "code": "M.4.0",
+    "name": "Antecedentes diabetes y/o sintomatología",
+    "category": "Miscelánea",
+    "description": "Síntomas de hiper o hipoglucemia"
+  },
+  {
+    "code": "M.5.0",
+    "name": "Otros signos y síntomas aparato genitourinario",
+    "category": "Miscelánea",
+    "description": "Urgencia genitourinaria"
+  },
+  {
+    "code": "N.0.0",
+    "name": "Disminución grave nivel de conciencia",
+    "category": "Neurológico",
+    "description": "GCS bajo o paciente no reactivo"
+  },
+  {
+    "code": "N.1.0",
+    "name": "Convulsiones",
+    "category": "Neurológico",
+    "description": "Crisis convulsiva o epiléptica"
+  },
+  {
+    "code": "N.2.0",
+    "name": "Alteraciones en el habla",
+    "category": "Neurológico",
+    "description": "Dificultad para hablar o afasia"
+  },
+  {
+    "code": "N.3.0",
+    "name": "Falta de coordinación",
+    "category": "Neurológico",
+    "description": "Ataxia, incoordinación o inestabilidad"
+  },
+  {
+    "code": "N.4.0",
+    "name": "Déficit motor y sensitivo",
+    "category": "Neurológico",
+    "description": "Debilidad o entumecimiento en extremidades"
+  },
+  {
+    "code": "N.5.0",
+    "name": "Vértigos",
+    "category": "Neurológico",
+    "description": "Vértigo o mareos intensos"
+  },
+  {
+    "code": "N.6.0",
+    "name": "Temblor",
+    "category": "Neurológico",
+    "description": "Temblor de reposo o de acción"
+  },
+  {
+    "code": "N.7.0",
+    "name": "Cefalea",
+    "category": "Neurológico",
+    "description": "Cefalea de inicio brusco o de gran intensidad"
+  },
+  {
+    "code": "N.8.0",
+    "name": "Otros signos y/o síntomas que afectan al SN",
+    "category": "Neurológico",
+    "description": "Otros signos y/o síntomas que afectan al SN"
+  },
+  {
+    "code": "PS.0.0",
+    "name": "Crisis nerviosa / trastornos de ansiedad",
+    "category": "Psiquiátrico",
+    "description": "Crisis de ansiedad o pánico"
+  },
+  {
+    "code": "PS.0.1",
+    "name": "Paciente agitado y/o violento",
+    "category": "Psiquiátrico",
+    "description": "Agitación psicomotriz de cualquier causa"
+  },
+  {
+    "code": "PS.0.2",
+    "name": "Intento autolítico (incluye ideas suicidas)",
+    "category": "Psiquiátrico",
+    "description": "Paciente con ideación autolítica activa"
+  },
+  {
+    "code": "PS.0.3",
+    "name": "Alucinaciones",
+    "category": "Psiquiátrico",
+    "description": "Alucinaciones auditivas, visuales u otras"
+  },
+  {
+    "code": "PS.0.4",
+    "name": "Otros signos y síntomas",
+    "category": "Psiquiátrico",
+    "description": "Otros síntomas de origen psiquiátrico"
+  },
+  {
+    "code": "R.0.0",
+    "name": "Parada Respiratoria/Bradipnea",
+    "category": "Respiratorio",
+    "description": "Parada o frecuencia respiratoria gravemente disminuida"
+  },
+  {
+    "code": "R.1.0",
+    "name": "Dolor torácico de origen no cardiaco",
+    "category": "Respiratorio",
+    "description": "Dolor torácico de origen no cardiogénico"
+  },
+  {
+    "code": "R.2.0",
+    "name": "Obstrucción x cuerpo extraño (atragantamiento)",
+    "category": "Respiratorio",
+    "description": "Cuerpo extraño ocular"
+  },
+  {
+    "code": "R.2.1",
+    "name": "Cuerpo extraño en ojo",
+    "category": "Respiratorio",
+    "description": "Cuerpo extraño en fosa nasal"
+  },
+  {
+    "code": "R.2.2",
+    "name": "Cuerpo extraño en nariz",
+    "category": "Respiratorio",
+    "description": "Cuerpo extraño en canal auditivo"
+  },
+  {
+    "code": "R.2.3",
+    "name": "Cuerpo extraño en oído",
+    "category": "Respiratorio",
+    "description": "Cuerpo extraño en oído"
+  },
+  {
+    "code": "R.3.0",
+    "name": "Disnea",
+    "category": "Respiratorio",
+    "description": "Dificultad respiratoria de causa no especificada"
+  },
+  {
+    "code": "R.4.0",
+    "name": "Epistaxis",
+    "category": "Respiratorio",
+    "description": "Hemorragia nasal (epistaxis)"
+  },
+  {
+    "code": "R.5.0",
+    "name": "Taquipnea",
+    "category": "Respiratorio",
+    "description": "Frecuencia respiratoria elevada"
+  },
+  {
+    "code": "R.6.0",
+    "name": "Hemoptisis",
+    "category": "Respiratorio",
+    "description": "Expectoración con sangre"
+  },
+  {
+    "code": "R.6.1",
+    "name": "Neumotórax con traumatismo cerrado",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.2",
+    "name": "Neumotórax por herida penetrante",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.3",
+    "name": "Neumohemotórax con traumatismo cerrado",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.6.4",
+    "name": "Neumohemotórax por herida penetrante",
+    "category": "Respiratorio"
+  },
+  {
+    "code": "R.7.0",
+    "name": "Otros síntomas que afectan respiración / tórax",
+    "category": "Respiratorio",
+    "description": "Otros síntomas del aparato respiratorio"
+  },
+  {
+    "code": "T.0.0",
+    "name": "Contusiones menores/abrasiones x fricción/Otros",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.0.1",
+    "name": "Policontusionado / múltiples sitios",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.1.0",
+    "name": "Rotura fibrilar",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.1.1",
+    "name": "Esguince / torcedura de cervical",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.1.2",
+    "name": "Esguince / torcedura de muñeca",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.1.3",
+    "name": "Esguince / torcedura de mano",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.1.4",
+    "name": "Esguince / torcedura de rodilla y pierna",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.1.5",
+    "name": "Esguince / torcedura de tobillo y pie",
+    "category": "Trauma",
+    "group": "Esguince / torcedura"
+  },
+  {
+    "code": "T.2.0",
+    "name": "Fractura de nasal",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.1",
+    "name": "Fractura de mandíbula",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.2",
+    "name": "Fractura de hombro",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.3",
+    "name": "Fractura de brazo",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.4",
+    "name": "Fractura de codo",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.5",
+    "name": "Fractura de antebrazo",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.6",
+    "name": "Fractura de muñeca",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.7",
+    "name": "Fractura de mano",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.8",
+    "name": "Fractura de dedo de la mano",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.9",
+    "name": "Fractura de columna vertebral",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.10",
+    "name": "Fractura de clavícula",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.11",
+    "name": "Fractura de escápula",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.12",
+    "name": "Fractura de esternón",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.13",
+    "name": "Fractura de costilla",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.14",
+    "name": "Fractura de cadera (incluye cuello y/o cabeza fémur)",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.15",
+    "name": "Fractura de fémur",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.16",
+    "name": "Fractura de rodilla",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.17",
+    "name": "Fractura de pierna",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.18",
+    "name": "Fractura de tobillo",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.19",
+    "name": "Fractura de pie",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.2.20",
+    "name": "Fractura de dedo pie",
+    "category": "Trauma",
+    "group": "Fractura cerrada"
+  },
+  {
+    "code": "T.3.0",
+    "name": "Fractura abierta de nasal",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.1",
+    "name": "Fractura abierta de mandíbula",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.2",
+    "name": "Fractura abierta de hombro",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.3",
+    "name": "Fractura abierta de brazo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.4",
+    "name": "Fractura abierta de codo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.5",
+    "name": "Fractura abierta de antebrazo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.6",
+    "name": "Fractura abierta de muñeca",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.7",
+    "name": "Fractura abierta de mano",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.8",
+    "name": "Fractura abierta de dedo de la mano",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.9",
+    "name": "Fractura abierta de clavícula",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.10",
+    "name": "Fractura abierta de escápula",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.11",
+    "name": "Fractura abierta de cadera (incluye cuello y/o cabeza fémur)",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.12",
+    "name": "Fractura abierta de fémur",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.13",
+    "name": "Fractura abierta de rodilla",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.14",
+    "name": "Fractura abierta de pierna",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.15",
+    "name": "Fractura abierta de tobillo",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.16",
+    "name": "Fractura abierta de pie",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.3.17",
+    "name": "Fractura abierta de dedo pie",
+    "category": "Trauma",
+    "group": "Fractura abierta"
+  },
+  {
+    "code": "T.4.0",
+    "name": "Herida abierta de cabeza (brecha)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.1",
+    "name": "Herida abierta de cara (incluye herida/amputación nariz/oreja)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.2",
+    "name": "Herida abierta de ojo (no globo, también zona periocular)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.3",
+    "name": "Herida abierta de cuello",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.4",
+    "name": "Herida abierta de hombro",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.5",
+    "name": "Herida abierta de brazo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.6",
+    "name": "Herida abierta de codo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.7",
+    "name": "Herida abierta de antebrazo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.8",
+    "name": "Herida abierta de muñeca",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.9",
+    "name": "Herida abierta de mano",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.10",
+    "name": "Herida abierta de dedo de la mano",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.11",
+    "name": "Herida abierta de tórax",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.12",
+    "name": "Herida abierta de espalda (incluye axila)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.13",
+    "name": "Herida abierta de abdomen",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.14",
+    "name": "Herida abierta de órganos genitales (incluye amputación)",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.15",
+    "name": "Herida abierta de muslo y/o cadera y/o glúteo",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.16",
+    "name": "Herida abierta de rodilla y/o pierna",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.17",
+    "name": "Herida abierta de pie",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.4.18",
+    "name": "Herida abierta de dedo del pie",
+    "category": "Trauma",
+    "group": "Herida abierta/complicada"
+  },
+  {
+    "code": "T.5.0",
+    "name": "Luxación de mandíbula",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.1",
+    "name": "Luxación de hombro",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.2",
+    "name": "Luxación de codo",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.3",
+    "name": "Luxación de muñeca",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.4",
+    "name": "Luxación de dedo de la mano",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.5",
+    "name": "Luxación de rodilla + rótula",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.6",
+    "name": "Luxación de tobillo",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.5.7",
+    "name": "Luxación de pie",
+    "category": "Trauma",
+    "group": "Posible luxación"
+  },
+  {
+    "code": "T.6.0",
+    "name": "Amputación de dedo de la mano",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.1",
+    "name": "Amputación de dedo pulgar de la mano",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.2",
+    "name": "Amputación de miembro superior",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.3",
+    "name": "Amputación de dedo de pie",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.6.4",
+    "name": "Amputación de miembro inferior",
+    "category": "Trauma",
+    "group": "Amputación"
+  },
+  {
+    "code": "T.7.0",
+    "name": "TCE cerrado: Sin laceración (\"Chichón\")",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.1",
+    "name": "TCE cerrado: Sin laceración, con pérd. de conoc.",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.2",
+    "name": "TCE cerrado: Con lacer. sin pérd. de conoc. (SCALP)",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.3",
+    "name": "TCE cerrado: Con laceración con pérd. de conoc.",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.4",
+    "name": "TCE cerrado: Fx de base de cráneo",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.5",
+    "name": "TCE Abierto",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.7.6",
+    "name": "TCE Abierto con salida de masa encefálica",
+    "category": "Trauma",
+    "group": "TCE"
+  },
+  {
+    "code": "T.8.0",
+    "name": "Traumatismo de Facial (incluye cuello)",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.1",
+    "name": "Traumatismo de Torácico",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.2",
+    "name": "Traumatismo de Abdominal",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.3",
+    "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.4",
+    "name": "Traumatismo de Medular",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.5",
+    "name": "Traumatismo de Mayor / Politrauma",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.6",
+    "name": "Traumatismo de Globo ocular",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.7",
+    "name": "Traumatismo de Fosa renal",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.8.8",
+    "name": "Traumatismo de Perineo (incluye genitales externos)",
+    "category": "Trauma"
+  },
+  {
+    "code": "T.9.0",
+    "name": "Síndrome de aplastamiento",
+    "category": "Trauma"
+  },
+  {
+    "code": "W.0.0",
+    "name": "Probable éxitus sin asistencia",
+    "category": "Cierre",
+    "description": "Fallecimiento confirmado sin asistencia"
+  },
+  {
+    "code": "W.0.1",
+    "name": "Éxitus con asistencia",
+    "category": "Cierre",
+    "description": "Fallecimiento tras maniobras de resucitación"
+  },
+  {
+    "code": "W.1.0",
+    "name": "Otros",
+    "category": "Cierre",
+    "description": "Otros"
+  },
+  {
+    "code": "W.1.1",
+    "name": "Por 091",
+    "category": "Cierre",
+    "description": "por 091"
+  },
+  {
+    "code": "W.1.2",
+    "name": "Por 092",
+    "category": "Cierre",
+    "description": "por 092"
+  },
+  {
+    "code": "W.1.3",
+    "name": "Por 112",
+    "category": "Cierre",
+    "description": "por 112"
+  },
+  {
+    "code": "W.1.4",
+    "name": "Por SUMMA112",
+    "category": "Cierre",
+    "description": "por SUMMA112"
+  },
+  {
+    "code": "W.1.5",
+    "name": "Por 080",
+    "category": "Cierre",
+    "description": "por 080"
+  },
+  {
+    "code": "W.1.6",
+    "name": "Tras rellamada",
+    "category": "Cierre",
+    "description": "tras rellamada"
+  },
+  {
+    "code": "W.1.7",
+    "name": "Por demandante",
+    "category": "Cierre",
+    "description": "por demandante"
+  },
+  {
+    "code": "W.1.8",
+    "name": "Por recurso más cercano",
+    "category": "Cierre",
+    "description": "por recurso más cercano"
+  },
+  {
+    "code": "W.2.0",
+    "name": "Suceso sin paciente o sin heridos",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.3.0",
+    "name": "No paciente (suceso existió, pero no está el pac.)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.4.0",
+    "name": "No hubo suceso (no suceso y/o ni paciente)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.5.0",
+    "name": "No precisa asistencia/negativo incidente sanitario",
+    "category": "Cierre",
+    "description": "Servicio de contenido social"
+  },
+  {
+    "code": "W.6.0",
+    "name": "Problema social",
+    "category": "Cierre",
+    "description": "Problema social"
+  },
+  {
+    "code": "W.7.0",
+    "name": "Actuación riesgos previsibles sin heridos (4.6)",
+    "category": "Cierre",
+    "description": "Actuación riesgos previsibles sin heridos (4.6)"
+  },
+  {
+    "code": "W.7.1",
+    "name": "Actuación riesgos prev. Progr. sin heridos (8.x)",
+    "category": "Cierre",
+    "noReport": true
+  },
+  {
+    "code": "W.8.0",
+    "name": "Paciente renuncia ser atendido",
+    "category": "Cierre",
+    "description": "El paciente rechaza la asistencia médica"
+  },
+  {
+    "code": "W.8.1",
+    "name": "Paciente renuncia ser atendido-AGRESIVO",
+    "category": "Cierre",
+    "description": "Paciente renuncia ser atendido-AGRESIVO"
+  },
+  {
+    "code": "W.8.2",
+    "name": "Paciente renuncia ser atendido-NIEGA FILIACIÓN",
+    "category": "Cierre",
+    "description": "Paciente renuncia ser atendido-NIEGA FILIACIÓN"
+  },
+  {
+    "code": "W.10.0",
+    "name": "Otros motivos de Clave 0",
+    "category": "Cierre",
+    "description": "Otros motivos de Clave 0"
+  },
+  {
+    "code": "W.11.0",
+    "name": "Se hace cargo otra institución",
+    "category": "Cierre",
+    "description": "Se hace cargo otra institución"
+  }
+]

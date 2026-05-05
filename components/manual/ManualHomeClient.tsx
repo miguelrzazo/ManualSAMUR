@@ -7,8 +7,11 @@ import {
   BookMarked,
   BookOpen,
   ChevronDown,
+  FilterX,
   History,
   LayoutGrid,
+  Network,
+  Rows3,
 } from "lucide-react";
 import { ManualGraphToggle } from "@/components/manual/ManualGraphToggle";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
@@ -18,7 +21,8 @@ import {
   readCollectionCookie,
   writeCollectionCookie,
 } from "@/lib/manual-cookies";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
+import type { ManualSyncMetadata } from "@/lib/manual-sync";
 
 const SECTION_META: Record<string, { dot: string; badge: string; card: string }> = {
   Administrativos: {
@@ -66,8 +70,28 @@ const SECTION_META: Record<string, { dot: string; badge: string; card: string }>
 const FALLBACK = SECTION_META.General;
 
 interface Props {
-  proceduresBySection: Record<string, ProcedureMeta[]>;
+  sidebarSections: ProcedureSidebarSection[];
   allProcedures: ProcedureMeta[];
+  syncMetadata: ManualSyncMetadata;
+  initialSection?: string;
+  initialGroup?: string;
+  initialSubgroup?: string;
+}
+
+function formatSyncDate(value: string) {
+  if (!value) return "Pendiente";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("es", { dateStyle: "medium" }).format(date);
+}
+
+function buildManualHref(section?: string, group?: string, subgroup?: string) {
+  const params = new URLSearchParams();
+  if (section) params.set("section", section);
+  if (group) params.set("group", group);
+  if (subgroup) params.set("subgroup", subgroup);
+  const query = params.toString();
+  return query ? `/manual?${query}` : "/manual";
 }
 
 function ProcedureRow({
@@ -145,31 +169,45 @@ function CollectionSection({
 
 function SectionCard({
   section,
-  procedures,
+  selectedSection,
+  selectedGroup,
+  selectedSubgroup,
   validIds,
   favoriteIds,
   onFavoritesChange,
 }: {
-  section: string;
-  procedures: ProcedureMeta[];
+  section: ProcedureSidebarSection;
+  selectedSection?: string;
+  selectedGroup?: string;
+  selectedSubgroup?: string;
   validIds: string[];
   favoriteIds: string[];
   onFavoritesChange: () => void;
 }) {
-  const [expanded, setExpanded] = useState(true);
-  const meta = SECTION_META[section] ?? FALLBACK;
+  const [expanded, setExpanded] = useState(
+    !selectedSection || selectedSection === section.section,
+  );
+  const meta = SECTION_META[section.section] ?? FALLBACK;
+  const procedures = section.groups.flatMap((group) =>
+    group.subgroups.flatMap((subgroup) => subgroup.procedures),
+  );
 
   return (
     <section
-      id={`section-${section.toLowerCase()}`}
+      id={`section-${section.section.toLowerCase()}`}
       className={`rounded-2xl border bg-card/40 overflow-hidden ${meta.card}`}
     >
       <button
-        onClick={() => setExpanded((v) => !v)}
+        onClick={() => setExpanded((value) => !value)}
         className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/30 transition-colors text-left"
       >
         <div className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${meta.dot}`} />
-        <h2 className="font-semibold text-sm flex-1">{section}</h2>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-sm">{section.section}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {section.groups.length} grupos · {procedures.length} procedimientos
+          </div>
+        </div>
         <span className={`text-xs px-2 py-0.5 rounded-full font-semibold tabular-nums ${meta.badge}`}>
           {procedures.length}
         </span>
@@ -179,30 +217,104 @@ function SectionCard({
       </button>
 
       {expanded && (
-        <div className="px-3 pb-3 grid gap-0.5">
-          {procedures.map((procedure) => (
-            <ProcedureRow
-              key={procedure.id}
-              procedure={procedure}
-              validIds={validIds}
-              favoriteIds={favoriteIds}
-              onFavoritesChange={onFavoritesChange}
-            />
-          ))}
+        <div className="px-4 pb-4 space-y-4">
+          <div className="flex flex-wrap gap-2 pt-1">
+            <Link
+              href={buildManualHref(section.section)}
+              className="rounded-full border border-border/60 px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              Ver sección
+            </Link>
+            {section.groups.flatMap((group) =>
+              group.subgroups.map((subgroup) => {
+                const active = selectedSection === section.section
+                  && selectedGroup === group.name
+                  && selectedSubgroup === subgroup.name;
+                return (
+                  <Link
+                    key={`${group.name}-${subgroup.name}`}
+                    href={buildManualHref(section.section, group.name, subgroup.name)}
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted/50 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {subgroup.name}
+                  </Link>
+                );
+              }),
+            )}
+          </div>
+
+          {section.groups.map((group) => {
+            const visibleSubgroups = group.subgroups.filter((subgroup) => (
+              (!selectedGroup || group.name === selectedGroup)
+              && (!selectedSubgroup || subgroup.name === selectedSubgroup)
+            ));
+
+            if (!visibleSubgroups.length) return null;
+
+            return (
+              <div key={`${section.section}-${group.name}`} className="rounded-xl border border-border/50 bg-muted/15 p-3">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {group.name}
+                  </div>
+                  <Link
+                    href={buildManualHref(section.section, group.name)}
+                    className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    filtrar grupo
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {visibleSubgroups.map((subgroup) => (
+                    <div key={`${group.name}-${subgroup.name}`}>
+                      <div className="mb-1.5 flex items-center gap-2">
+                        <Rows3 className="h-3.5 w-3.5 text-muted-foreground/60" />
+                        <div className="text-xs font-medium text-foreground/85">{subgroup.name}</div>
+                        <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+                          {subgroup.procedures.length}
+                        </span>
+                      </div>
+                      <div className="grid gap-0.5">
+                        {subgroup.procedures.map((procedure) => (
+                          <ProcedureRow
+                            key={procedure.id}
+                            procedure={procedure}
+                            validIds={validIds}
+                            favoriteIds={favoriteIds}
+                            onFavoritesChange={onFavoritesChange}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </section>
   );
 }
 
-export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) {
+export function ManualHomeClient({
+  sidebarSections,
+  allProcedures,
+  syncMetadata,
+  initialSection,
+  initialGroup,
+  initialSubgroup,
+}: Props) {
   const validIds = useMemo(() => allProcedures.map((p) => p.id), [allProcedures]);
   const validIdSet = useMemo(() => new Set(validIds), [validIds]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFavoriteIds(readCollectionCookie(FAVORITES_COOKIE, validIdSet));
     setRecentIds(readCollectionCookie(RECENT_COOKIE, validIdSet));
   }, [validIdSet]);
@@ -223,28 +335,42 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
     .map((id) => allProcedures.find((p) => p.id === id))
     .filter(Boolean) as ProcedureMeta[];
 
-  const sectionCount = Object.keys(proceduresBySection).length;
-  const latestUpdate = allProcedures
-    .map((p) => p.updated)
-    .filter(Boolean)
-    .sort()
-    .at(-1);
+  const visibleSections = sidebarSections
+    .map((section) => ({
+      ...section,
+      groups: section.groups
+        .map((group) => ({
+          ...group,
+          subgroups: group.subgroups.filter((subgroup) =>
+            (!initialGroup || group.name === initialGroup)
+            && (!initialSubgroup || subgroup.name === initialSubgroup),
+          ),
+        }))
+        .filter((group) => group.subgroups.length > 0),
+    }))
+    .filter((section) =>
+      (!initialSection || section.section === initialSection)
+      && section.groups.length > 0,
+    );
+
+  const visibleProcedures = visibleSections.flatMap((section) =>
+    section.groups.flatMap((group) => group.subgroups.flatMap((subgroup) => subgroup.procedures)),
+  );
+  const sectionCount = sidebarSections.length;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 md:py-10">
-      {/* Header */}
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
       <div className="mb-6">
         <div className="inline-flex items-center gap-2 mb-2">
           <BookOpen className="h-6 w-6 text-primary" />
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Manual de Procedimientos</h1>
         </div>
-        <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-          Manual de SAMUR-Protección Civil. Usa la búsqueda para ir directo a un procedimiento y mantén a mano tus favoritos y los últimos artículos abiertos.
+        <p className="text-muted-foreground text-sm leading-relaxed max-w-3xl">
+          Índice visual del manual de SAMUR-Protección Civil. Explora por secciones, grupos y subgrupos para entrar al corpus desde su estructura real, o salta a la gráfica global para recorrer la red entre procedimientos.
         </p>
       </div>
 
-      {/* Stats row */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 bg-card/60 text-sm">
           <LayoutGrid className="h-3.5 w-3.5 text-primary" />
           <span className="font-bold tabular-nums text-foreground">{allProcedures.length}</span>
@@ -254,15 +380,47 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
           <span className="font-bold tabular-nums text-foreground">{sectionCount}</span>
           <span className="text-muted-foreground">secciones</span>
         </div>
-        {latestUpdate && (
-          <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 bg-card/60 text-sm">
-            <span className="text-muted-foreground">Actualizado</span>
-            <span className="font-medium text-foreground">{latestUpdate}</span>
-          </div>
-        )}
+        <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 bg-card/60 text-sm">
+          <span className="text-muted-foreground">Versión</span>
+          <span className="font-medium text-foreground">{syncMetadata.manualVersion}</span>
+          {syncMetadata.lastSyncAt && (
+            <>
+              <span className="h-4 w-px bg-border" />
+              <span className="text-muted-foreground">Sync</span>
+              <span className="font-medium text-foreground">{formatSyncDate(syncMetadata.lastSyncAt)}</span>
+            </>
+          )}
+        </div>
+        <a
+          href="#manual-graph"
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border/60 bg-card/60 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Network className="h-3.5 w-3.5" />
+          Abrir gráfica global
+        </a>
       </div>
 
-      {/* Favorites + Recents */}
+      {(initialSection || initialGroup || initialSubgroup) && (
+        <div className="mb-6 rounded-2xl border border-border/60 bg-card/60 p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold">Filtro activo</span>
+            {initialSection && <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{initialSection}</span>}
+            {initialGroup && <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{initialGroup}</span>}
+            {initialSubgroup && <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{initialSubgroup}</span>}
+            <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+              {visibleProcedures.length} resultados
+            </span>
+            <Link
+              href="/manual"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <FilterX className="h-3.5 w-3.5" />
+              Limpiar
+            </Link>
+          </div>
+        </div>
+      )}
+
       {(favorites.length > 0 || recents.length > 0) && (
         <div className="grid gap-4 mb-8 md:grid-cols-2">
           <CollectionSection
@@ -284,21 +442,24 @@ export function ManualHomeClient({ proceduresBySection, allProcedures }: Props) 
         </div>
       )}
 
-      {/* Section cards */}
-      <ManualGraphToggle procedures={allProcedures}>
-        <div className="grid gap-3 md:grid-cols-2">
-          {Object.entries(proceduresBySection).map(([section, procedures]) => (
-            <SectionCard
-              key={section}
-              section={section}
-              procedures={procedures}
-              validIds={validIds}
-              favoriteIds={favoriteIds}
-              onFavoritesChange={refreshCollections}
-            />
-          ))}
-        </div>
-      </ManualGraphToggle>
+      <div id="manual-graph">
+        <ManualGraphToggle procedures={visibleProcedures.length ? visibleProcedures : allProcedures}>
+          <div className="grid gap-4 md:grid-cols-2">
+            {visibleSections.map((section) => (
+              <SectionCard
+                key={section.section}
+                section={section}
+                selectedSection={initialSection}
+                selectedGroup={initialGroup}
+                selectedSubgroup={initialSubgroup}
+                validIds={validIds}
+                favoriteIds={favoriteIds}
+                onFavoritesChange={refreshCollections}
+              />
+            ))}
+          </div>
+        </ManualGraphToggle>
+      </div>
     </div>
   );
 }

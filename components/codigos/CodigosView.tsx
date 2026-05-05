@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useCallback } from "react";
-import { FileX, MapPin, Navigation, ChevronUp, Target } from "lucide-react";
+import { FileX, MapPin, Navigation, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
 
@@ -65,7 +65,7 @@ const TOP_TABS: Array<{ key: TopTabKey; label: string; color: string; pill: stri
   { key: "svb",       label: "SVB",       color: "#2563eb", pill: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",   text: "text-blue-700 dark:text-blue-400" },
   { key: "sva",       label: "SVA",       color: "#dc2626", pill: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",       text: "text-red-700 dark:text-red-400" },
   { key: "upsi",      label: "UPSI",      color: "#059669", pill: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400" },
-  { key: "upsq",      label: "UPSQ",      color: "#94a3b8", pill: "bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400", text: "text-slate-500 dark:text-slate-400", placeholder: true },
+  { key: "upsq",      label: "UPSQ",      color: "#94a3b8", pill: "bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400", text: "text-slate-500 dark:text-slate-400" },
   { key: "otros",     label: "Otros",     color: "#7c3aed", pill: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300", text: "text-violet-700 dark:text-violet-400" },
 ];
 
@@ -249,7 +249,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
 
   const perFamilyColor = activeTab === "sva" || activeTab === "svb";
   const perCategoryColor = activeTab === "incidente";
-  const groupByCategory = activeTab === "upsi";
+  const groupByCategory = activeTab === "upsi" || activeTab === "upsq";
 
   const localFiltered = useMemo(() => {
     if (activeCategory) return currentData.filter((c) => c.category === activeCategory);
@@ -389,10 +389,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
                     )}
                   >
                     {g.key === "Especificos" ? (
-                      <>
-                        <Target className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span className="sr-only">Especificos</span>
-                      </>
+                      "Específicos"
                     ) : (
                       displayLabel
                     )}
@@ -514,10 +511,7 @@ function CodeList({
                     )}
                   >
                     {key === "Especificos" ? (
-                      <>
-                        <Target className="h-3.5 w-3.5" aria-hidden="true" />
-                        <span className="sr-only">Especificos</span>
-                      </>
+                      "Específicos"
                     ) : (
                       key
                     )}

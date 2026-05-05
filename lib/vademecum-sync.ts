@@ -10,10 +10,15 @@ export interface DrugRecord {
   category: string;
   subcategory: string;
   presentation: string;
+  funcion?: string;
   indication: string;
   dose: string;
   route: string[];
   contraindications: string;
+  efectos_secundarios?: string;
+  precauciones?: string;
+  interacciones?: string;
+  incompatibilidades?: string;
   notes?: string;
 }
 
@@ -22,9 +27,14 @@ export interface WikiDrugEntry {
   initialLetter: string;
   name: string;
   presentation: string;
+  funcion?: string;
   indication: string;
   dose: string;
   contraindications: string;
+  efectos_secundarios?: string;
+  precauciones?: string;
+  interacciones?: string;
+  incompatibilidades?: string;
   notes?: string;
 }
 
@@ -86,6 +96,7 @@ const WIKI_LABELS = [
   "Advertencias y precauciones especiales de uso",
   "Interacciones",
   "Efectos secundarios",
+  "Incompatibilidades",
   "Presentación",
 ];
 
@@ -93,16 +104,16 @@ function squeezeWhitespace(value: string) {
   return value.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
 }
 
-function getTagName(element: any) {
+function getTagName(element: cheerio.Element) {
   return element?.type === "tag" ? element.tagName?.toLowerCase?.() ?? null : null;
 }
 
-function getNodeText($: any, element: any) {
+function getNodeText($: ReturnType<typeof cheerio.load>, element: cheerio.Element) {
   const tagName = getTagName(element);
   if (tagName === "ul" || tagName === "ol") {
     return $(element)
       .find("li")
-      .map((_index: any, li: any) => squeezeWhitespace($(li).text()))
+      .map((_index, li) => `- ${squeezeWhitespace($(li).text())}`)
       .get()
       .filter(Boolean)
       .join("\n");
@@ -148,22 +159,32 @@ function pushDrug(
     initialLetter: currentDrug.initialLetter ?? "#",
     name: currentDrug.name,
     presentation: currentDrug.presentation ?? "",
+    funcion: currentDrug.funcion || undefined,
     indication: currentDrug.indication ?? "",
     dose: currentDrug.dose ?? "",
     contraindications: currentDrug.contraindications ?? "",
+    efectos_secundarios: currentDrug.efectos_secundarios || undefined,
+    precauciones: currentDrug.precauciones || undefined,
+    interacciones: currentDrug.interacciones || undefined,
+    incompatibilidades: currentDrug.incompatibilidades || undefined,
     notes: currentDrug.noteSections?.filter(Boolean).join("\n") || undefined,
   });
 }
 
 export function parseWikiDrugsFromHtml(html: string): WikiDrugEntry[] {
   const $ = cheerio.load(html);
-  const container = $(".wiki-content").first().length ? $(".wiki-content").first() : $.root();
+  const container =
+    $(".wiki-content").first().length > 0
+      ? $(".wiki-content").first()
+      : $("#xwikicontent").first().length > 0
+        ? $("#xwikicontent").first()
+        : $("body").first();
   const drugs: WikiDrugEntry[] = [];
   let currentLetter = "#";
   let currentDrug: (Partial<WikiDrugEntry> & { noteSections?: string[] }) | null = null;
   let lastField: "dose" | "indication" | "contraindications" | "notes" | null = null;
 
-  const elements = (container.length ? container.children().toArray() : $.root().children().toArray()) as any[];
+  const elements = (container.length ? container.children().toArray() : $.root().children().toArray()) as cheerio.Element[];
   for (const element of elements) {
     const tagName = getTagName(element);
     const text = getNodeText($, element);
@@ -196,6 +217,11 @@ export function parseWikiDrugsFromHtml(html: string): WikiDrugEntry[] {
       for (const segment of segments) {
         if (!segment.value) continue;
         switch (segment.label) {
+          case "Función":
+          case "Acciones":
+            currentDrug.funcion = appendField(currentDrug.funcion ?? "", segment.value);
+            lastField = null;
+            break;
           case "Indicaciones":
             currentDrug.indication = appendField(currentDrug.indication ?? "", segment.value);
             lastField = "indication";
@@ -207,6 +233,23 @@ export function parseWikiDrugsFromHtml(html: string): WikiDrugEntry[] {
           case "Contraindicaciones":
             currentDrug.contraindications = appendField(currentDrug.contraindications ?? "", segment.value);
             lastField = "contraindications";
+            break;
+          case "Efectos secundarios":
+            currentDrug.efectos_secundarios = appendField(currentDrug.efectos_secundarios ?? "", segment.value);
+            lastField = null;
+            break;
+          case "Precauciones":
+          case "Advertencias y precauciones especiales de uso":
+            currentDrug.precauciones = appendField(currentDrug.precauciones ?? "", segment.value);
+            lastField = null;
+            break;
+          case "Interacciones":
+            currentDrug.interacciones = appendField(currentDrug.interacciones ?? "", segment.value);
+            lastField = null;
+            break;
+          case "Incompatibilidades":
+            currentDrug.incompatibilidades = appendField(currentDrug.incompatibilidades ?? "", segment.value);
+            lastField = null;
             break;
           case "Presentación":
             currentDrug.presentation = appendField(currentDrug.presentation ?? "", segment.value);
@@ -295,10 +338,15 @@ export function mergeImportedDrugs(
       category: existingDrug?.category ?? "Pendiente de clasificar",
       subcategory: existingDrug?.subcategory ?? "Revisar manualmente",
       presentation: importedDrug.presentation || existingDrug?.presentation || "",
+      funcion: importedDrug.funcion || existingDrug?.funcion,
       indication: importedDrug.indication || existingDrug?.indication || "",
       dose: importedDrug.dose || existingDrug?.dose || "",
       route: existingDrug?.route ?? [],
       contraindications: importedDrug.contraindications || existingDrug?.contraindications || "",
+      efectos_secundarios: importedDrug.efectos_secundarios || existingDrug?.efectos_secundarios,
+      precauciones: importedDrug.precauciones || existingDrug?.precauciones,
+      interacciones: importedDrug.interacciones || existingDrug?.interacciones,
+      incompatibilidades: importedDrug.incompatibilidades || existingDrug?.incompatibilidades,
       notes: importedDrug.notes || existingDrug?.notes,
     });
   }

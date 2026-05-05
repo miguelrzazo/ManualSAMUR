@@ -10,6 +10,12 @@ export interface VademecumRouteState {
   highlightedDrugId: string | null;
 }
 
+export interface VademecumDrugReference {
+  id: string;
+  name: string;
+  synonyms?: string[];
+}
+
 export function normalizeForSearch(value: string): string {
   return value
     .toLowerCase()
@@ -17,6 +23,10 @@ export function normalizeForSearch(value: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function normalizeDrugReferenceKey(value: string): string {
+  return normalizeForSearch(value).replace(/[^a-z0-9]+/g, "");
 }
 
 export function normalizeInitialLetter(value: string): string {
@@ -60,12 +70,43 @@ function getFirstValue(value: string | string[] | undefined): string | null {
   return value?.trim() || null;
 }
 
+export function resolveDrugIdReference(
+  reference: string,
+  drugs: VademecumDrugReference[],
+): string | null {
+  const lookupKey = normalizeDrugReferenceKey(reference);
+  if (!lookupKey) return null;
+
+  for (const drug of drugs) {
+    if (normalizeDrugReferenceKey(drug.id) === lookupKey) return drug.id;
+    if (normalizeDrugReferenceKey(drug.name) === lookupKey) return drug.id;
+
+    for (const synonym of drug.synonyms ?? []) {
+      if (normalizeDrugReferenceKey(synonym) === lookupKey) return drug.id;
+    }
+  }
+
+  return null;
+}
+
+export function buildVademecumHref(referenceOrDrugId: string): string {
+  return `/vademecum?farmaco=${encodeURIComponent(referenceOrDrugId)}`;
+}
+
 export function resolveVademecumRouteState(searchParams: {
   farmaco?: string | string[];
   q?: string | string[];
-}): VademecumRouteState {
+}, drugs: VademecumDrugReference[] = []): VademecumRouteState {
+  const farmaco = getFirstValue(searchParams.farmaco);
+  const legacyQuery = getFirstValue(searchParams.q);
+  const highlightedDrugId = farmaco
+    ? resolveDrugIdReference(farmaco, drugs) ?? farmaco
+    : legacyQuery
+      ? resolveDrugIdReference(legacyQuery, drugs)
+      : null;
+
   return {
     initialTab: "farmacos",
-    highlightedDrugId: getFirstValue(searchParams.farmaco),
+    highlightedDrugId,
   };
 }

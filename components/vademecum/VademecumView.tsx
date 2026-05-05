@@ -19,10 +19,15 @@ interface Drug {
   category: string;
   subcategory: string;
   presentation: string;
+  funcion?: string;
   indication: string;
   dose: string;
   route: string[];
   contraindications: string;
+  efectos_secundarios?: string;
+  precauciones?: string;
+  interacciones?: string;
+  incompatibilidades?: string;
   notes?: string;
 }
 
@@ -78,6 +83,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }>
   "Antídotos": { bg: "bg-amber-100 dark:bg-amber-900/20", text: "text-amber-700 dark:text-amber-300", dot: "bg-amber-500" },
   "Obstétrico": { bg: "bg-pink-100 dark:bg-pink-900/20", text: "text-pink-700 dark:text-pink-300", dot: "bg-pink-500" },
   "Psiquiátrico": { bg: "bg-purple-100 dark:bg-purple-900/20", text: "text-purple-700 dark:text-purple-300", dot: "bg-purple-500" },
+  "Neurológico": { bg: "bg-indigo-100 dark:bg-indigo-900/20", text: "text-indigo-700 dark:text-indigo-300", dot: "bg-indigo-500" },
   "Fluidos IV": { bg: "bg-blue-100 dark:bg-blue-900/20", text: "text-blue-700 dark:text-blue-300", dot: "bg-blue-500" },
   "Vasoactivos": { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700 dark:text-red-300", dot: "bg-red-500" },
   "Antiarrítmicos": { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700 dark:text-orange-300", dot: "bg-orange-500" },
@@ -100,11 +106,73 @@ function RouteChip({ route }: { route: string }) {
   );
 }
 
+function RichText({ text }: { text: string }) {
+  const lines = text.split("\n");
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+
+    // Grouped bullet list
+    if (line.startsWith("- ")) {
+      const items: { label: string | null; body: string }[] = [];
+      while (i < lines.length && lines[i].startsWith("- ")) {
+        const content = lines[i].slice(2);
+        const labelMatch = content.match(/^([A-ZÁÉÍÓÚÑ0-9][^:]{0,30}):\s*$/);
+        items.push({ label: labelMatch ? content.replace(/:\s*$/, "") : null, body: labelMatch ? "" : content });
+        i++;
+      }
+      nodes.push(
+        <ul key={`ul-${i}`} className="space-y-0.5 pl-0">
+          {items.map((item, j) =>
+            item.label ? (
+              <li key={j} className="text-sm font-semibold mt-1.5 first:mt-0 list-none">{item.label}:</li>
+            ) : (
+              <li key={j} className="text-sm leading-relaxed flex gap-2">
+                <span className="text-muted-foreground select-none flex-shrink-0">·</span>
+                <span>{item.body}</span>
+              </li>
+            )
+          )}
+        </ul>
+      );
+      continue;
+    }
+
+    // Section header: "Word(s):" with value on same line
+    const headerMatch = line.match(/^([A-ZÁÉÍÓÚÑ0-9][^:\n]{1,40}):\s*(.+)$/);
+    if (headerMatch) {
+      nodes.push(
+        <p key={i} className="text-sm leading-relaxed">
+          <span className="font-semibold">{headerMatch[1]}:</span>{" "}{headerMatch[2]}
+        </p>
+      );
+      i++;
+      continue;
+    }
+
+    // Standalone header with no value (next line is the content)
+    const standaloneHeader = line.match(/^([A-ZÁÉÍÓÚÑ][^:\n]{1,40}):\s*$/);
+    if (standaloneHeader) {
+      nodes.push(
+        <p key={i} className="text-sm font-semibold mt-1.5 first:mt-0">{standaloneHeader[1]}:</p>
+      );
+      i++;
+      continue;
+    }
+
+    nodes.push(<p key={i} className="text-sm leading-relaxed">{line}</p>);
+    i++;
+  }
+  return <div className="space-y-0.5">{nodes}</div>;
+}
+
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
-      <p className="text-sm leading-relaxed whitespace-pre-line">{value}</p>
+      <RichText text={value} />
     </div>
   );
 }
@@ -155,13 +223,12 @@ function DrugCard({ drug, isHighlighted }: { drug: Drug; isHighlighted: boolean 
 
       {open && (
         <div className="border-t border-border/40 px-4 pt-3 pb-4 bg-muted/10 space-y-3">
+          {drug.funcion && <InfoRow label="Función" value={drug.funcion} />}
           <InfoRow label="Indicación" value={drug.indication} />
           <div>
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Dosis</p>
-            <div className="bg-background rounded-lg px-3 py-2 border border-border/50">
-              {drug.dose.split("\n").map((line, index) => (
-                <p key={index} className="text-sm leading-relaxed">{line}</p>
-              ))}
+            <div className="bg-background rounded-lg px-3 py-2.5 border border-border/50">
+              <RichText text={drug.dose} />
             </div>
           </div>
           <div>
@@ -171,10 +238,16 @@ function DrugCard({ drug, isHighlighted }: { drug: Drug; isHighlighted: boolean 
             </div>
           </div>
           <InfoRow label="Contraindicaciones" value={drug.contraindications} />
+          {drug.efectos_secundarios && <InfoRow label="Efectos secundarios" value={drug.efectos_secundarios} />}
+          {drug.precauciones && <InfoRow label="Precauciones" value={drug.precauciones} />}
+          {drug.interacciones && <InfoRow label="Interacciones" value={drug.interacciones} />}
+          {drug.incompatibilidades && <InfoRow label="Incompatibilidades" value={drug.incompatibilidades} />}
           {drug.notes && (
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Notas</p>
-              <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{drug.notes}</p>
+              <div className="text-muted-foreground">
+                <RichText text={drug.notes} />
+              </div>
             </div>
           )}
         </div>

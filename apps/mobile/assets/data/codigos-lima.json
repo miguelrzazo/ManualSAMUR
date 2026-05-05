@@ -1,0 +1,74 @@
+[
+  {
+    "code": "AS.1.1",
+    "name": "Identificación y registro de riesgos específicos",
+    "category": "Análisis de riesgos",
+    "description": "Identificación y registro de riesgos específicos"
+  },
+  {
+    "code": "AS.1.2",
+    "name": "Identificación de riesgos en zona/local ante futura activación",
+    "category": "Análisis de riesgos",
+    "description": "Identificación de riesgos en zona/local ante futura activación"
+  },
+  {
+    "code": "AS.2.1",
+    "name": "Nevadas",
+    "category": "Riesgos meteorológicos",
+    "description": "Nevadas"
+  },
+  {
+    "code": "AS.2.2",
+    "name": "Lluvias torrenciales",
+    "category": "Riesgos meteorológicos",
+    "description": "Lluvias torrenciales"
+  },
+  {
+    "code": "AS.2.3",
+    "name": "Otras, a indicar",
+    "category": "Riesgos meteorológicos",
+    "description": "Otras, a indicar"
+  },
+  {
+    "code": "AS.3.1",
+    "name": "Manifestaciones",
+    "category": "Eventos",
+    "description": "Manifestaciones"
+  },
+  {
+    "code": "AS.3.2",
+    "name": "Concentraciones",
+    "category": "Eventos",
+    "description": "Concentraciones"
+  },
+  {
+    "code": "AS.3.3",
+    "name": "Fiestas",
+    "category": "Eventos",
+    "description": "Fiestas"
+  },
+  {
+    "code": "AS.3.4",
+    "name": "Otros",
+    "category": "Eventos",
+    "description": "Otros"
+  },
+  {
+    "code": "AS.4.1",
+    "name": "Verificación de instalaciones",
+    "category": "Verificación",
+    "description": "Verificación de instalaciones"
+  },
+  {
+    "code": "AS.4.2",
+    "name": "Activación en tiempo real",
+    "category": "Verificación",
+    "description": "Activación en tiempo real"
+  },
+  {
+    "code": "AS.4.3",
+    "name": "Mixto: Verificación y activación",
+    "category": "Verificación",
+    "description": "Mixto: Verificación y activación"
+  }
+]

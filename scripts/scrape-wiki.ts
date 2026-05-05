@@ -58,13 +58,32 @@ function slugify(title: string): string {
     .replace(/-$/, "");
 }
 
+function sectionToSubfolder(section: string): string {
+  return section
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function walkProceduresDir(dir: string): string[] {
+  const files: string[] = [];
+  if (!fs.existsSync(dir)) return files;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...walkProceduresDir(p));
+    else if (entry.isFile() && entry.name.endsWith(".md")) files.push(p);
+  }
+  return files;
+}
+
 /** Load all existing procedure titles → id map for matching */
 function loadExistingProcedures(): Map<string, string> {
   const map = new Map<string, string>();
   if (!fs.existsSync(PROCEDURES_DIR)) return map;
-  for (const file of fs.readdirSync(PROCEDURES_DIR)) {
-    if (!file.endsWith(".md")) continue;
-    const content = fs.readFileSync(path.join(PROCEDURES_DIR, file), "utf8");
+  for (const filePath of walkProceduresDir(PROCEDURES_DIR)) {
+    const content = fs.readFileSync(filePath, "utf8");
     const titleMatch = content.match(/^title:\s*["']?(.+?)["']?\s*$/m);
     const idMatch = content.match(/^id:\s*["']?(.+?)["']?\s*$/m);
     if (titleMatch && idMatch) {
@@ -230,13 +249,6 @@ function anchorIdToDrugName(anchorId: string): string {
   if (known[anchorId]) return known[anchorId];
   // CamelCase split
   return anchorId.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
-}
-
-/** Convert a XWiki doc path to a link token we can process later */
-function docPathToRef(docPath: string): string {
-  // "Técnicas.Cardiacos.Desfibrilación.WebHome" → last meaningful segment
-  const parts = docPath.split(".").filter((p) => p && p !== "WebHome" && p !== "xwiki");
-  return parts[parts.length - 1] ?? docPath;
 }
 
 /** Convert XWiki 2.0 markup to Markdown */
@@ -457,7 +469,7 @@ async function main() {
   }
 
   const existingMap = loadExistingProcedures();
-  const existingFiles = new Set(fs.readdirSync(PROCEDURES_DIR).map((f) => f.replace(".md", "")));
+  const existingFiles = new Set(walkProceduresDir(PROCEDURES_DIR).map((f) => path.basename(f, ".md")));
 
   let created = 0, updated = 0, skipped = 0, failed = 0;
 
@@ -466,7 +478,9 @@ async function main() {
 
     const localId = findLocalId(space.title, existingMap);
     const targetId = localId ?? slugify(space.title);
-    const targetFile = path.join(PROCEDURES_DIR, `${targetId}.md`);
+    const subfolder = sectionToSubfolder(space.section);
+    const procedureDir = path.join(PROCEDURES_DIR, subfolder);
+    const targetFile = path.join(procedureDir, `${targetId}.md`);
 
     if (newOnly && existingFiles.has(targetId)) {
       skipped++;
@@ -511,6 +525,7 @@ async function main() {
     const fileContent = frontmatter + markdown + "\n";
     const isNew = !fs.existsSync(targetFile);
 
+    fs.mkdirSync(procedureDir, { recursive: true });
     fs.writeFileSync(targetFile, fileContent, "utf8");
 
     if (isNew) {
@@ -524,7 +539,7 @@ async function main() {
 
   console.log(`\n${"═".repeat(60)}`);
   console.log(`Done. Created: ${created} | Updated: ${updated} | Skipped: ${skipped} | Failed: ${failed}`);
-  console.log(`Total local procedures: ${fs.readdirSync(PROCEDURES_DIR).filter((f) => f.endsWith(".md")).length}`);
+  console.log(`Total local procedures: ${walkProceduresDir(PROCEDURES_DIR).length}`);
 }
 
 main().catch((err) => {
