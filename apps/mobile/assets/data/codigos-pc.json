@@ -1,0 +1,200 @@
+[
+  {
+    "code": "0",
+    "name": "Recurso operativo",
+    "category": "Claves de estado",
+    "description": "Recurso operativo"
+  },
+  {
+    "code": "1",
+    "name": "Recurso en emergencia",
+    "category": "Claves de estado",
+    "description": "Recurso en emergencia"
+  },
+  {
+    "code": "2",
+    "name": "Salida hacia lugar de actuación",
+    "category": "Claves de estado",
+    "description": "Salida hacia lugar de actuación"
+  },
+  {
+    "code": "2.1",
+    "name": "Función de supervisión (activación voluntaria)",
+    "category": "Supervisión",
+    "description": "Función de supervisión (activación voluntaria)"
+  },
+  {
+    "code": "3",
+    "name": "Llegada al lugar de actuación",
+    "category": "Claves de estado",
+    "description": "Llegada al lugar de actuación"
+  },
+  {
+    "code": "4",
+    "name": "Salida del lugar en dirección al hospital",
+    "category": "Claves de estado",
+    "description": "Salida del lugar en dirección al hospital"
+  },
+  {
+    "code": "5",
+    "name": "Llegada al hospital o centro asistencial",
+    "category": "Claves de estado",
+    "description": "Llegada al hospital o centro asistencial"
+  },
+  {
+    "code": "6",
+    "name": "Unidad inoperativa. Requiere aclaración y autorización",
+    "category": "Claves de estado",
+    "description": "Unidad inoperativa. Requiere aclaración y autorización"
+  },
+  {
+    "code": "6.1",
+    "name": "Unidad en operatividad parcial. En C0",
+    "category": "Claves de estado",
+    "description": "Unidad en operatividad parcial. En C0"
+  },
+  {
+    "code": "7",
+    "name": "Unidad en su base",
+    "category": "Claves de estado",
+    "description": "Unidad en su base"
+  },
+  {
+    "code": "7.1",
+    "name": "Unidad en su zona",
+    "category": "Claves de estado",
+    "description": "Unidad en su zona"
+  },
+  {
+    "code": "8",
+    "name": "Solicitud llamada telefónica",
+    "category": "Claves de comunicación",
+    "description": "Solicitud llamada telefónica"
+  },
+  {
+    "code": "8.1",
+    "name": "Solicitud llamada por TETRA",
+    "category": "Claves de comunicación",
+    "description": "Solicitud llamada por TETRA"
+  },
+  {
+    "code": "9",
+    "name": "Localización geográfica precisa",
+    "category": "Claves de comunicación",
+    "description": "Localización geográfica precisa"
+  },
+  {
+    "code": "10",
+    "name": "Integridad dotación en riesgo",
+    "category": "Urgencias operativas",
+    "description": "Integridad dotación en riesgo"
+  },
+  {
+    "code": "10.1",
+    "name": "Solicitud de policía - Tráfico, presión social, etc.",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de policía - Tráfico, presión social, etc."
+  },
+  {
+    "code": "11",
+    "name": "Inicio jornada laboral o servicio - Al salir de B0",
+    "category": "Jornada",
+    "description": "Inicio jornada laboral o servicio - Al salir de B0"
+  },
+  {
+    "code": "12",
+    "name": "Fin jornada laboral o servicio - Al llegar a B0",
+    "category": "Jornada",
+    "description": "Fin jornada laboral o servicio - Al llegar a B0"
+  },
+  {
+    "code": "13",
+    "name": "Imposibilidad dar información en el momento",
+    "category": "Claves de comunicación",
+    "description": "Imposibilidad dar información en el momento"
+  },
+  {
+    "code": "14",
+    "name": "Solicitud inicio de relevo / Fin DRP",
+    "category": "Jornada",
+    "description": "Solicitud inicio de relevo / Fin DRP"
+  },
+  {
+    "code": "15",
+    "name": "Solicitud de Bomberos",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de Bomberos"
+  },
+  {
+    "code": "16",
+    "name": "Solicitud de apoyo de otra unidad de SAMUR-PC",
+    "category": "Urgencias operativas",
+    "description": "Solicitud de apoyo de otra unidad de SAMUR-PC"
+  },
+  {
+    "code": "17",
+    "name": "Traslado con Charly, Delta, Romeo, Tecnico, ...",
+    "category": "Claves de estado",
+    "description": "Traslado con Charly, Delta, Romeo, Tecnico, ..."
+  },
+  {
+    "code": "18",
+    "name": "Solicitud contacto con Charly por Enfermería",
+    "category": "Claves de comunicación",
+    "description": "Solicitud contacto con Charly por Enfermería"
+  },
+  {
+    "code": "19",
+    "name": "Solicitud contacto con Charly por unidad",
+    "category": "Claves de comunicación",
+    "description": "Solicitud contacto con Charly por unidad"
+  },
+  {
+    "code": "20",
+    "name": "Comunicación a Prensa / Emergencias Madrid",
+    "category": "Claves de comunicación",
+    "description": "Comunicación a Prensa / Emergencias Madrid"
+  },
+  {
+    "code": "21",
+    "name": "Solicitud de farmacia móvil",
+    "category": "Logística",
+    "description": "Solicitud de farmacia móvil"
+  },
+  {
+    "code": "22",
+    "name": "Solicitud de repostaje",
+    "category": "Logística",
+    "description": "Solicitud de repostaje"
+  },
+  {
+    "code": "23",
+    "name": "Solicitud teletraducción",
+    "category": "Logística",
+    "description": "Solicitud teletraducción"
+  },
+  {
+    "code": "29",
+    "name": "En Clave 3, no paciente (rellamada a demandante)",
+    "category": "Claves de comunicación",
+    "description": "En Clave 3, no paciente (rellamada a demandante)"
+  },
+  {
+    "code": "100",
+    "name": "Solicitud policía urgente (Conjunta con PMM)",
+    "category": "Supervisión",
+    "description": "Solicitud policía urgente (Conjunta con PMM)"
+  },
+  {
+    "code": "VICTOR",
+    "name": "Descanso, asuntos internos o avituallamiento",
+    "category": "Jornada",
+    "description": "Descanso, asuntos internos o avituallamiento"
+  },
+  {
+    "code": "CQ",
+    "name": "Llamada general / a un grupo específico",
+    "category": "Claves de comunicación",
+    "description": "Llamada general / a un grupo específico"
+  }
+]

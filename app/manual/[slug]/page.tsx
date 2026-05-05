@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  getAdjacentProcedures,
   getAllProcedures,
   getBacklinkProcedures,
   getProcedureBySlug,
   getProcedureMeta,
   getRelatedProcedures,
+  getSuggestedProcedures,
 } from "@/lib/content";
+import {
+  groupProcedureEditorialBlocks,
+  splitProcedureContentSections,
+} from "@/lib/manual-data";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { GraficaLocal } from "@/components/manual/GraficaLocal";
 import { Badge } from "@/components/ui/badge";
@@ -35,8 +41,12 @@ import {
   Warning,
 } from "@/components/manual/mdx-extras";
 import { TableOfContents } from "@/components/manual/TableOfContents";
+import { Breadcrumbs } from "@/components/manual/Breadcrumbs";
+import { ProcedureNav } from "@/components/manual/ProcedureNav";
+import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
+import type { ProcedureRelation } from "@/lib/manual-data";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -115,7 +125,24 @@ export default async function ProcedurePage({ params }: Props) {
 
   const related = getRelatedProcedures(procedure);
   const backlinks = getBacklinkProcedures(procedure);
+  const suggested = getSuggestedProcedures(procedure);
   const allProcedures = getProcedureMeta();
+  const { prev, next } = getAdjacentProcedures(procedure.id);
+  const hasEditorialBlocks = procedure.editorialBlocks.length > 0;
+  const procedureSections = hasEditorialBlocks ? splitProcedureContentSections(procedure.content) : [];
+  const groupedEditorialBlocks = hasEditorialBlocks
+    ? groupProcedureEditorialBlocks(procedure.editorialBlocks, procedureSections)
+    : null;
+
+  if (
+    groupedEditorialBlocks
+    && groupedEditorialBlocks.unresolvedIds.length > 0
+    && process.env.NODE_ENV !== "production"
+  ) {
+    console.warn(
+      `[manual] unresolved editorial blocks for ${procedure.id}: ${groupedEditorialBlocks.unresolvedIds.join(", ")}`,
+    );
+  }
 
   const SECTION_COLORS: Record<string, string> = {
     Administrativos: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
@@ -126,6 +153,12 @@ export default async function ProcedurePage({ params }: Props) {
     "Psicológicos": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
     Técnicas: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
   };
+  const relationsByProcedureId = procedure.relations.reduce<Record<string, ProcedureRelation[]>>((acc, relation) => {
+    acc[relation.id] ??= [];
+    acc[relation.id].push(relation);
+    return acc;
+  }, {});
+  const hasGraphData = related.length > 0 || backlinks.length > 0 || suggested.length > 0;
 
   return (
     <div className="flex gap-6 px-4 md:px-6 py-6 md:py-8 max-w-7xl mx-auto">
@@ -135,6 +168,11 @@ export default async function ProcedurePage({ params }: Props) {
       />
       {/* Main content */}
       <article id="procedure-content" className="flex-1 min-w-0 max-w-3xl">
+        <Breadcrumbs
+          section={procedure.section}
+          group={procedure.sidebarGroup}
+          subgroup={procedure.sidebarSubgroup}
+        />
         {/* Header */}
         <div className="mb-8 rounded-2xl border border-border/60 bg-card/50 p-5 md:p-6">
           <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -145,7 +183,13 @@ export default async function ProcedurePage({ params }: Props) {
             {procedure.updated && (
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                {procedure.updated}
+                Rev. {procedure.updated}
+              </span>
+            )}
+            {procedure.sourceUpdated && (
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                Sync {procedure.sourceUpdated}
               </span>
             )}
           </div>
@@ -174,12 +218,14 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
 
         {/* MDX Content */}
-        <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-5 py-5 md:px-8 md:py-7
+        <div data-manual-body className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-5 py-5 md:px-8 md:py-7
           prose-headings:font-semibold prose-headings:tracking-tight
           prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
           prose-h3:text-[1.05rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/80
           prose-p:leading-8 prose-p:text-foreground/90 prose-p:my-5
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+          prose-img:mx-auto prose-img:block prose-img:rounded-xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm
+          prose-figure:my-8
           prose-table:text-sm
           prose-table:block prose-table:w-full prose-table:overflow-x-auto
           prose-thead:bg-muted/50
@@ -188,14 +234,54 @@ export default async function ProcedurePage({ params }: Props) {
           prose-tr:border-b prose-tr:border-border/40
           prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
           prose-pre:bg-muted prose-pre:border prose-pre:border-border/60
-          prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:py-2
-          prose-ul:my-6 prose-ol:my-6 prose-li:leading-7 prose-li:my-2
+          prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:px-4 prose-blockquote:py-2
+          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-5 prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-5 prose-li:leading-7 prose-li:my-2 prose-li:marker:text-muted-foreground
         ">
-          <MDXRemote
-            source={procedure.content}
-            components={mdxComponents}
-            options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
-          />
+          {groupedEditorialBlocks ? (
+            <>
+              {procedureSections.map((section) => (
+                <div key={section.key}>
+                  {groupedEditorialBlocks.bySection[section.key]?.before.map((block) => (
+                    <ProcedureEditorialBlockRenderer
+                      key={block.id}
+                      block={block}
+                      procedure={procedure}
+                      allProcedures={allProcedures}
+                    />
+                  ))}
+                  {section.content ? (
+                    <MDXRemote
+                      source={section.content}
+                      components={mdxComponents}
+                      options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+                    />
+                  ) : null}
+                  {groupedEditorialBlocks.bySection[section.key]?.after.map((block) => (
+                    <ProcedureEditorialBlockRenderer
+                      key={block.id}
+                      block={block}
+                      procedure={procedure}
+                      allProcedures={allProcedures}
+                    />
+                  ))}
+                </div>
+              ))}
+              {groupedEditorialBlocks.afterAll.map((block) => (
+                <ProcedureEditorialBlockRenderer
+                  key={block.id}
+                  block={block}
+                  procedure={procedure}
+                  allProcedures={allProcedures}
+                />
+              ))}
+            </>
+          ) : (
+            <MDXRemote
+              source={procedure.content}
+              components={mdxComponents}
+              options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+            />
+          )}
         </div>
 
         {/* Source link */}
@@ -213,55 +299,76 @@ export default async function ProcedurePage({ params }: Props) {
           </div>
         )}
 
-        {/* Graph — visible on mobile too, below content */}
-        {(related.length > 0 || backlinks.length > 0) && (
-          <div className="mt-8 lg:hidden" data-print-hide>
-            <div className="flex items-center gap-2 mb-3">
-              <Network className="h-4 w-4 text-muted-foreground" />
-              <h3 className="text-sm font-semibold text-muted-foreground">Gráfica de conexiones</h3>
+        <ProcedureNav prev={prev} next={next} />
+
+        <div className="mt-8 grid gap-4 lg:hidden" data-print-hide>
+          <ProcedureLinkCard
+            title="Enlaces salientes"
+            icon={<Link2 className="h-3.5 w-3.5" />}
+            procedures={related}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
+          />
+          <ProcedureLinkCard
+            title="Enlaces entrantes"
+            icon={<GitBranch className="h-3.5 w-3.5" />}
+            procedures={backlinks}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Ningún otro artículo enlaza aquí"
+          />
+          <ProcedureLinkCard
+            title="Relacionados sugeridos"
+            icon={<Network className="h-3.5 w-3.5" />}
+            procedures={suggested}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+          />
+          {hasGraphData && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Network className="h-4 w-4 text-muted-foreground" />
+                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica de conexiones</h3>
+              </div>
+              <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
             </div>
-            <GraficaLocal current={procedure} related={related} backlinks={backlinks} />
-            <div className="mt-4 grid gap-4">
-              <ProcedureLinkCard
-                title="Enlaces entrantes"
-                icon={<GitBranch className="h-3.5 w-3.5" />}
-                procedures={backlinks}
-                emptyLabel="Ningún otro artículo enlaza aquí"
-              />
-              <ProcedureLinkCard
-                title="Relacionados"
-                icon={<Link2 className="h-3.5 w-3.5" />}
-                procedures={related}
-              />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </article>
 
       {/* Right sidebar — desktop only */}
       <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
         <div className="sticky top-6 flex flex-col gap-4">
-          <TableOfContents articleId="procedure-content" />
-          {(related.length > 0 || backlinks.length > 0) && (<>
-            <ProcedureLinkCard
-              title="Enlaces entrantes"
-              icon={<GitBranch className="h-3.5 w-3.5" />}
-              procedures={backlinks}
-              emptyLabel="Ningún otro artículo enlaza aquí"
-            />
+          <TableOfContents articleId="procedure-content" pageTitle={procedure.title} />
+          <ProcedureLinkCard
+            title="Enlaces salientes"
+            icon={<Link2 className="h-3.5 w-3.5" />}
+            procedures={related}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
+          />
+          <ProcedureLinkCard
+            title="Enlaces entrantes"
+            icon={<GitBranch className="h-3.5 w-3.5" />}
+            procedures={backlinks}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Ningún otro artículo enlaza aquí"
+          />
+          <ProcedureLinkCard
+            title="Relacionados sugeridos"
+            icon={<Network className="h-3.5 w-3.5" />}
+            procedures={suggested}
+            relationsByProcedureId={relationsByProcedureId}
+            emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+          />
+          {hasGraphData && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Network className="h-4 w-4 text-muted-foreground" />
                 <h3 className="text-sm font-semibold text-muted-foreground">Gráfica local</h3>
               </div>
-              <GraficaLocal current={procedure} related={related} backlinks={backlinks} />
+              <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
             </div>
-            <ProcedureLinkCard
-              title="Relacionados"
-              icon={<Link2 className="h-3.5 w-3.5" />}
-              procedures={related}
-            />
-          </>)}
+          )}
         </div>
       </aside>
     </div>

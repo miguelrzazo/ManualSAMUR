@@ -1,0 +1,56 @@
+[
+  {
+    "status": 1,
+    "hospitalId": "HCO",
+    "hospitalName": "La Concepción",
+    "description": "Status 4 + Status 1 → La unidad pasa a clave cuatro con hospital de destino La Concepción"
+  },
+  {
+    "status": 2,
+    "hospitalId": "HGM",
+    "hospitalName": "Gregorio Marañón",
+    "description": "Status 4 + Status 2 → La unidad pasa a clave cuatro con hospital de destino Gregorio Marañón"
+  },
+  {
+    "status": 3,
+    "hospitalId": "HDO",
+    "hospitalName": "Doce de Octubre",
+    "description": "Status 4 + Status 3 → La unidad pasa a clave cuatro con hospital de destino Doce de Octubre"
+  },
+  {
+    "status": 4,
+    "hospitalId": null,
+    "hospitalName": null,
+    "description": "Status 4 + Status 4 → No operativo, solo se pasa clave cuatro"
+  },
+  {
+    "status": 5,
+    "hospitalId": "HCL",
+    "hospitalName": "Clínico San Carlos",
+    "description": "Status 4 + Status 5 → La unidad pasa a clave cuatro con hospital de destino Clínico San Carlos"
+  },
+  {
+    "status": 6,
+    "hospitalId": "HLP",
+    "hospitalName": "La Paz",
+    "description": "Status 4 + Status 6 → La unidad pasa a clave cuatro con hospital de destino La Paz"
+  },
+  {
+    "status": 7,
+    "hospitalId": "HRC",
+    "hospitalName": "Ramón y Cajal",
+    "description": "Status 4 + Status 7 → La unidad pasa a clave cuatro con hospital de destino Ramón y Cajal"
+  },
+  {
+    "status": 8,
+    "hospitalId": "HPR",
+    "hospitalName": "La Princesa",
+    "description": "Status 4 + Status 8 → La unidad pasa a clave cuatro con hospital de destino La Princesa"
+  },
+  {
+    "status": 9,
+    "hospitalId": "HIL",
+    "hospitalName": "Infanta Leonor",
+    "description": "Status 4 + Status 9 → La unidad pasa a clave cuatro con hospital de destino Infanta Leonor"
+  }
+]

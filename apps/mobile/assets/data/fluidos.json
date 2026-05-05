@@ -1,0 +1,87 @@
+[
+  {
+    "id": "glucosado-5",
+    "name": "Glucosado 5%",
+    "presentation": "100 ml",
+    "type": "Cristaloide glucosado",
+    "osmolarity": "278 mOsm/l",
+    "sodium": "0 mmol/l",
+    "chloride": "0 mmol/l",
+    "glucose": "5 g",
+    "calcium": "0 mmol/l",
+    "potassium": "0 mmol/l",
+    "lactate": "0 mmol/l",
+    "ph": "4 - 5,5",
+    "contraindications": [
+      "Hipernatremia grave",
+      "Hipercloremia",
+      "Insuficiencia hepática grave",
+      "Fallo renal con anuria",
+      "Sobrecarga de líquidos"
+    ]
+  },
+  {
+    "id": "ssf-09",
+    "name": "Suero fisiológico 0,9%",
+    "presentation": "100 ml",
+    "type": "Cristaloide isotónico",
+    "osmolarity": "308 mOsm/l",
+    "sodium": "154 mmol/l",
+    "chloride": "154 mmol/l",
+    "glucose": "0 g",
+    "calcium": "0 mmol/l",
+    "potassium": "0 mmol/l",
+    "lactate": "0 mmol/l",
+    "ph": "5,7",
+    "contraindications": [
+      "Hipercloremia",
+      "Hipopotasemia",
+      "Hipernatremia",
+      "Hipertensión",
+      "Edemas en general",
+      "Amiodarona",
+      "Ritodrina"
+    ]
+  },
+  {
+    "id": "salino-hipertonico-75",
+    "name": "Suero salino hipertónico 7,5%",
+    "presentation": "250 ml",
+    "type": "Cristaloide hipertónico",
+    "osmolarity": "2567 mOsm/l",
+    "sodium": "1283 mmol/l",
+    "chloride": "1283 mmol/l",
+    "glucose": "0 g",
+    "calcium": "0 mmol/l",
+    "potassium": "0 mmol/l",
+    "lactate": "0 mmol/l",
+    "ph": "5",
+    "contraindications": [
+      "Hipercloremia",
+      "Hipopotasemia",
+      "Hipernatremia",
+      "Hipertensión",
+      "Edemas en general",
+      "Amiodarona",
+      "Ritodrina"
+    ]
+  },
+  {
+    "id": "voluven-6",
+    "name": "Voluven 6%",
+    "presentation": "100 ml",
+    "type": "Coloide",
+    "osmolarity": "308 mOsm/l",
+    "sodium": "154 mmol/l",
+    "chloride": "154 mmol/l",
+    "glucose": "0 g",
+    "calcium": "0 mmol/l",
+    "potassium": "0 mmol/l",
+    "lactate": "0 mmol/l",
+    "ph": "5,5",
+    "contraindications": [
+      "Fenitoína",
+      "Tenecteplase"
+    ]
+  }
+]

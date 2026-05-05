@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pill, Code, MapPin } from "lucide-react";
 import { globalSearch, type SearchResult } from "@/lib/global-search";
+import type { ProcedureMeta } from "@/lib/content";
 import {
   CommandDialog,
   CommandEmpty,
@@ -16,6 +18,7 @@ import {
 interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  procedures: ProcedureMeta[];
 }
 
 const RESULT_ICONS = {
@@ -32,14 +35,47 @@ const RESULT_TYPES = {
   hospital: "Hospital",
 };
 
-export function GlobalSearch({ isOpen, onOpenChange }: Props) {
+function renderHighlightedSnippet(result: SearchResult): ReactNode {
+  if (!result.snippet) return null;
+
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+
+  result.snippet.highlights.forEach(([start, end], index) => {
+    if (start > cursor) {
+      parts.push(
+        <span key={`plain-${index}-${cursor}`}>
+          {result.snippet!.text.slice(cursor, start)}
+        </span>
+      );
+    }
+
+    parts.push(
+      <mark
+        key={`mark-${index}-${start}`}
+        className="rounded-sm bg-primary/15 px-0.5 text-foreground"
+      >
+        {result.snippet!.text.slice(start, end)}
+      </mark>
+    );
+    cursor = end;
+  });
+
+  if (cursor < result.snippet.text.length) {
+    parts.push(<span key={`tail-${cursor}`}>{result.snippet.text.slice(cursor)}</span>);
+  }
+
+  return parts;
+}
+
+export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<{ procedures: any[]; drugs: any[]; codes: any[]; hospitals: any[] } | null>(null);
+  const [data, setData] = useState<{ drugs: any[]; codes: any[]; hospitals: any[] } | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -89,7 +125,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           ...upsq.default,
         ];
 
-        setData({ procedures: [], drugs, codes, hospitals: hospitals.default });
+        setData({ drugs, codes, hospitals: hospitals.default });
       } catch (error) {
         console.error("Failed to load search data:", error);
       }
@@ -106,7 +142,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
       }
       setIsLoading(true);
       try {
-        const searchResults = await globalSearch(query, data.procedures, data.drugs, data.codes, data.hospitals);
+        const searchResults = await globalSearch(query, procedures, data.drugs, data.codes, data.hospitals);
         setResults(searchResults);
       } catch (error) {
         console.error("Search failed:", error);
@@ -118,7 +154,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
 
     const id = setTimeout(performSearch, 150);
     return () => clearTimeout(id);
-  }, [query, data]);
+  }, [query, data, procedures]);
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, result) => {
     if (!acc[result.type]) acc[result.type] = [];
@@ -189,6 +225,11 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
                   <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm leading-snug">{result.title}</div>
+                    {result.snippet && (
+                      <div className="mt-1 text-[11px] leading-snug text-muted-foreground line-clamp-2">
+                        {renderHighlightedSnippet(result)}
+                      </div>
+                    )}
                     {result.subtitle && (
                       <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
                         {result.subtitle}

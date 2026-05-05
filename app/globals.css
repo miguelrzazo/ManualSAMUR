@@ -4,6 +4,29 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes manual-news-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.manual-news-mask {
+  mask-image: linear-gradient(90deg, transparent, black 3rem, black calc(100% - 3rem), transparent);
+}
+
+.manual-news-track {
+  animation: manual-news-scroll 45s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manual-news-track {
+    animation: none;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

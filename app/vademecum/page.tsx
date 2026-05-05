@@ -13,8 +13,8 @@ interface PageProps {
 }
 
 export default async function VademecumPage({ searchParams }: PageProps) {
-  const routeState = resolveVademecumRouteState(await searchParams);
   const drugs = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"));
+  const routeState = resolveVademecumRouteState(await searchParams, drugs);
   const perfusiones = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/perfusiones.json"), "utf8"));
   const fluidos = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/fluidos.json"), "utf8"));
   const comerciales = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum-comerciales.json"), "utf8"));

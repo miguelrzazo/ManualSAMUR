@@ -1,5 +1,6 @@
-import Fuse from "fuse.js";
-import type { ProcedureMeta } from "@/lib/content";
+import Fuse, { type FuseResult, type FuseResultMatch } from "fuse.js";
+import type { ProcedureMeta } from "./content.ts";
+import { search as searchProcedures, type SearchSnippet } from "./search.ts";
 
 interface Drug {
   id: string;
@@ -35,48 +36,30 @@ export interface SearchResult {
   badge?: string;
   href: string;
   searchText: string;
+  score: number;
+  matchedField: string;
+  snippet?: SearchSnippet;
 }
 
-// Cache for search instances
-let proceduresFuse: Fuse<ProcedureMeta> | null = null;
 let drugsFuse: Fuse<Drug> | null = null;
 let codesFuse: Fuse<Code> | null = null;
 let hospitalsFuse: Fuse<Hospital> | null = null;
 
-function buildProceduresFuse(procedures: ProcedureMeta[]): Fuse<ProcedureMeta> {
-  proceduresFuse = new Fuse(procedures, {
-    keys: [
-      { name: "id", weight: 2 },
-      { name: "title", weight: 2 },
-      { name: "tags", weight: 1.5 },
-      { name: "synonyms", weight: 1.5 },
-      { name: "backlinks", weight: 0.6 },
-      { name: "searchText", weight: 1.2 },
-      { name: "section", weight: 0.5 },
-    ],
-    threshold: 0.32,
-    includeScore: true,
-    includeMatches: true,
-    ignoreLocation: true,
-    minMatchCharLength: 2,
-  });
-  return proceduresFuse;
-}
-
 function buildDrugsFuse(drugs: Drug[]): Fuse<Drug> {
   drugsFuse = new Fuse(drugs, {
     keys: [
-      { name: "id", weight: 2 },
+      { name: "id", weight: 2.2 },
       { name: "name", weight: 2 },
       { name: "synonyms", weight: 1.5 },
-      { name: "category", weight: 1 },
-      { name: "subcategory", weight: 1 },
-      { name: "indication", weight: 0.8 },
+      { name: "category", weight: 0.85 },
+      { name: "subcategory", weight: 0.8 },
+      { name: "indication", weight: 0.65 },
     ],
     threshold: 0.35,
     includeScore: true,
     includeMatches: true,
     ignoreLocation: true,
+    ignoreDiacritics: true,
     minMatchCharLength: 2,
   });
   return drugsFuse;
@@ -85,16 +68,17 @@ function buildDrugsFuse(drugs: Drug[]): Fuse<Drug> {
 function buildCodesFuse(codes: Code[]): Fuse<Code> {
   codesFuse = new Fuse(codes, {
     keys: [
-      { name: "code", weight: 2 },
+      { name: "code", weight: 2.4 },
       { name: "name", weight: 2 },
-      { name: "group", weight: 1 },
-      { name: "category", weight: 0.8 },
-      { name: "description", weight: 0.6 },
+      { name: "group", weight: 0.9 },
+      { name: "category", weight: 0.7 },
+      { name: "description", weight: 0.5 },
     ],
     threshold: 0.35,
     includeScore: true,
     includeMatches: true,
     ignoreLocation: true,
+    ignoreDiacritics: true,
     minMatchCharLength: 2,
   });
   return codesFuse;
@@ -103,19 +87,130 @@ function buildCodesFuse(codes: Code[]): Fuse<Code> {
 function buildHospitalsFuse(hospitals: Hospital[]): Fuse<Hospital> {
   hospitalsFuse = new Fuse(hospitals, {
     keys: [
-      { name: "id", weight: 2 },
+      { name: "id", weight: 2.1 },
       { name: "name", weight: 2 },
-      { name: "shortName", weight: 1.5 },
-      { name: "address", weight: 1 },
+      { name: "shortName", weight: 1.45 },
+      { name: "address", weight: 0.95 },
       { name: "district", weight: 0.8 },
     ],
     threshold: 0.35,
     includeScore: true,
     includeMatches: true,
     ignoreLocation: true,
+    ignoreDiacritics: true,
     minMatchCharLength: 2,
   });
   return hospitalsFuse;
+}
+
+function normalizeForSearch(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function resolveMatchedField(matches: readonly FuseResultMatch[]): string {
+  return matches[0]?.key ?? "unknown";
+}
+
+function computeCommonScore(
+  query: string,
+  score: number | undefined,
+  matches: readonly FuseResultMatch[],
+  values: string[],
+  penalty = 0
+): number {
+  const normalizedQuery = normalizeForSearch(query.trim());
+  let bonus = 0;
+
+  for (const value of values) {
+    const normalizedValue = normalizeForSearch(value);
+    if (!normalizedValue) continue;
+
+    if (normalizedValue === normalizedQuery) bonus = Math.max(bonus, 0.04);
+    else if (normalizedValue.startsWith(normalizedQuery)) bonus = Math.max(bonus, 0.02);
+    else if (normalizedValue.includes(normalizedQuery)) bonus = Math.max(bonus, 0.01);
+  }
+
+  const matchedField = resolveMatchedField(matches);
+  const fieldPenalty = matchedField === "description" || matchedField === "indication" ? 0.04 : penalty;
+
+  return (score ?? 1) + fieldPenalty - bonus;
+}
+
+function sortResults(results: SearchResult[]): SearchResult[] {
+  return results.sort((left, right) => {
+    if (left.score !== right.score) return left.score - right.score;
+    return left.title.localeCompare(right.title, "es");
+  });
+}
+
+function flattenGroups(groups: SearchResult[][]): SearchResult[] {
+  return groups
+    .filter((group) => group.length > 0)
+    .sort((left, right) => left[0].score - right[0].score)
+    .flatMap((group) => group);
+}
+
+function mapDrugResult(query: string, result: FuseResult<Drug>): SearchResult {
+  const matches = result.matches ?? [];
+  return {
+    type: "drug",
+    id: result.item.id,
+    title: result.item.name,
+    subtitle: `${result.item.category} • ${result.item.subcategory}`,
+    badge: result.item.presentation,
+    href: `/vademecum?farmaco=${result.item.id}`,
+    searchText: `${result.item.id} ${result.item.name} ${result.item.synonyms.join(" ")} ${result.item.category} ${result.item.subcategory}`,
+    score: computeCommonScore(
+      query,
+      result.score,
+      matches,
+      [result.item.id, result.item.name, ...result.item.synonyms, result.item.category, result.item.subcategory]
+    ),
+    matchedField: resolveMatchedField(matches),
+  };
+}
+
+function mapCodeResult(query: string, result: FuseResult<Code>): SearchResult {
+  const matches = result.matches ?? [];
+  return {
+    type: "code",
+    id: result.item.code,
+    title: result.item.name,
+    subtitle: result.item.group,
+    badge: result.item.code,
+    href: "/codigos",
+    searchText: `${result.item.code} ${result.item.name} ${result.item.group}`,
+    score: computeCommonScore(
+      query,
+      result.score,
+      matches,
+      [result.item.code, result.item.name, result.item.group, result.item.category ?? "", result.item.description ?? ""]
+    ),
+    matchedField: resolveMatchedField(matches),
+  };
+}
+
+function mapHospitalResult(query: string, result: FuseResult<Hospital>): SearchResult {
+  const matches = result.matches ?? [];
+  return {
+    type: "hospital",
+    id: result.item.id,
+    title: result.item.name,
+    subtitle: `${result.item.district} • ${result.item.address}`,
+    badge: result.item.id,
+    href: `/mapa?hospital=${result.item.id}`,
+    searchText: `${result.item.id} ${result.item.name} ${result.item.shortName} ${result.item.address} ${result.item.district}`,
+    score: computeCommonScore(
+      query,
+      result.score,
+      matches,
+      [result.item.id, result.item.name, result.item.shortName, result.item.address, result.item.district]
+    ),
+    matchedField: resolveMatchedField(matches),
+  };
 }
 
 export async function globalSearch(
@@ -127,67 +222,29 @@ export async function globalSearch(
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  const results: SearchResult[] = [];
-
-  // Search procedures
-  const proceduresFuse = buildProceduresFuse(procedures);
-  const procedureResults = proceduresFuse.search(query).slice(0, 5);
-  results.push(
-    ...procedureResults.map((r) => ({
+  const procedureResults = searchProcedures(query, procedures)
+    .slice(0, 5)
+    .map((result) => ({
       type: "procedure" as const,
-      id: r.item.id,
-      title: r.item.title,
-      subtitle: r.item.section,
-      badge: r.item.id,
-      href: `/manual/${r.item.slug}`,
-      searchText: `${r.item.id} ${r.item.title} ${r.item.synonyms.join(" ")} ${r.item.tags.join(" ")}`,
-    }))
-  );
+      id: result.item.id,
+      title: result.item.title,
+      subtitle: result.item.section,
+      badge: result.item.id,
+      href: `/manual/${result.item.slug}`,
+      searchText: `${result.item.id} ${result.item.title} ${result.item.synonyms.join(" ")} ${result.item.tags.join(" ")}`,
+      score: result.score,
+      matchedField: result.matchedField,
+      snippet: result.snippet,
+    }));
 
-  // Search drugs
-  const drugsFuse = buildDrugsFuse(drugs);
-  const drugResults = drugsFuse.search(query).slice(0, 5);
-  results.push(
-    ...drugResults.map((r) => ({
-      type: "drug" as const,
-      id: r.item.id,
-      title: r.item.name,
-      subtitle: `${r.item.category} • ${r.item.subcategory}`,
-      badge: r.item.presentation,
-      href: `/vademecum?farmaco=${r.item.id}`,
-      searchText: `${r.item.id} ${r.item.name} ${r.item.synonyms.join(" ")} ${r.item.category} ${r.item.subcategory}`,
-    }))
-  );
+  const drugResults = sortResults(buildDrugsFuse(drugs).search(query).slice(0, 5).map((result) => mapDrugResult(query, result)));
+  const codeResults = sortResults(buildCodesFuse(codes).search(query).slice(0, 5).map((result) => mapCodeResult(query, result)));
+  const hospitalResults = sortResults(buildHospitalsFuse(hospitals).search(query).slice(0, 5).map((result) => mapHospitalResult(query, result)));
 
-  // Search codes
-  const codesFuse = buildCodesFuse(codes);
-  const codeResults = codesFuse.search(query).slice(0, 5);
-  results.push(
-    ...codeResults.map((r) => ({
-      type: "code" as const,
-      id: r.item.code,
-      title: r.item.name,
-      subtitle: r.item.group,
-      badge: r.item.code,
-      href: `/codigos`,
-      searchText: `${r.item.code} ${r.item.name} ${r.item.group}`,
-    }))
-  );
-
-  // Search hospitals
-  const hospitalsFuse = buildHospitalsFuse(hospitals);
-  const hospitalResults = hospitalsFuse.search(query).slice(0, 5);
-  results.push(
-    ...hospitalResults.map((r) => ({
-      type: "hospital" as const,
-      id: r.item.id,
-      title: r.item.name,
-      subtitle: `${r.item.district} • ${r.item.address}`,
-      badge: r.item.id,
-      href: `/mapa?hospital=${r.item.id}`,
-      searchText: `${r.item.id} ${r.item.name} ${r.item.shortName} ${r.item.address} ${r.item.district}`,
-    }))
-  );
-
-  return results;
+  return flattenGroups([
+    procedureResults,
+    drugResults,
+    codeResults,
+    hospitalResults,
+  ]);
 }

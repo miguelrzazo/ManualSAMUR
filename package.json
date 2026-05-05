@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "sync:vademecum": "node --experimental-strip-types scripts/scrape-vademecum.ts"
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "sync:manualsamur": "node --experimental-strip-types scripts/sync-manualsamur.ts --all",
+    "sync:vademecum": "node --experimental-strip-types scripts/scrape-vademecum.ts",
+    "migrate:subfolders": "node --experimental-strip-types scripts/migrate-to-subfolders.ts",
+    "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -48,6 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
+    "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.3"
   }
 }

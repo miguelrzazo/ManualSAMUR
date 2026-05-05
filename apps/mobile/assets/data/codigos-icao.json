@@ -1,0 +1,146 @@
+[
+  {
+    "code": "A",
+    "name": "Alfa"
+  },
+  {
+    "code": "B",
+    "name": "Bravo"
+  },
+  {
+    "code": "C",
+    "name": "Charlie"
+  },
+  {
+    "code": "D",
+    "name": "Delta"
+  },
+  {
+    "code": "E",
+    "name": "Echo"
+  },
+  {
+    "code": "F",
+    "name": "Foxtrot"
+  },
+  {
+    "code": "G",
+    "name": "Golf"
+  },
+  {
+    "code": "H",
+    "name": "Hotel"
+  },
+  {
+    "code": "I",
+    "name": "India"
+  },
+  {
+    "code": "J",
+    "name": "Juliett"
+  },
+  {
+    "code": "K",
+    "name": "Kilo"
+  },
+  {
+    "code": "L",
+    "name": "Lima"
+  },
+  {
+    "code": "M",
+    "name": "Mike"
+  },
+  {
+    "code": "N",
+    "name": "November"
+  },
+  {
+    "code": "O",
+    "name": "Oscar"
+  },
+  {
+    "code": "P",
+    "name": "Papa"
+  },
+  {
+    "code": "Q",
+    "name": "Quebec"
+  },
+  {
+    "code": "R",
+    "name": "Romeo"
+  },
+  {
+    "code": "S",
+    "name": "Sierra"
+  },
+  {
+    "code": "T",
+    "name": "Tango"
+  },
+  {
+    "code": "U",
+    "name": "Uniform"
+  },
+  {
+    "code": "V",
+    "name": "Victor"
+  },
+  {
+    "code": "W",
+    "name": "Whiskey"
+  },
+  {
+    "code": "X",
+    "name": "X-ray"
+  },
+  {
+    "code": "Y",
+    "name": "Yankee"
+  },
+  {
+    "code": "Z",
+    "name": "Zulu"
+  },
+  {
+    "code": "0",
+    "name": "Negativo"
+  },
+  {
+    "code": "1",
+    "name": "Primero"
+  },
+  {
+    "code": "2",
+    "name": "Segundo"
+  },
+  {
+    "code": "3",
+    "name": "Tercero"
+  },
+  {
+    "code": "4",
+    "name": "Cuarto"
+  },
+  {
+    "code": "5",
+    "name": "Quinto"
+  },
+  {
+    "code": "6",
+    "name": "Sexto"
+  },
+  {
+    "code": "7",
+    "name": "Séptimo"
+  },
+  {
+    "code": "8",
+    "name": "Octavo"
+  },
+  {
+    "code": "9",
+    "name": "Noveno"
+  }
+]

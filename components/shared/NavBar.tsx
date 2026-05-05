@@ -8,6 +8,7 @@ import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { AppMenu } from "@/components/shared/AppMenu";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import type { ProcedureMeta } from "@/lib/content";
 
 const navItems = [
   { href: "/manual", label: "Manual", icon: BookOpen },
@@ -16,7 +17,11 @@ const navItems = [
   { href: "/mapa", label: "Mapa", icon: Map },
 ];
 
-export function NavBar() {
+interface Props {
+  procedures: ProcedureMeta[];
+}
+
+export function NavBar({ procedures }: Props) {
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -112,7 +117,7 @@ export function NavBar() {
         })}
       </nav>
 
-      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
+      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} procedures={procedures} />
     </>
   );
 }

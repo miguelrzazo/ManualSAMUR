@@ -11,6 +11,7 @@ import {
   normalizeProcedureContent,
   normalizeCookieIds,
 } from "../lib/manual-data.ts";
+import * as manualData from "../lib/manual-data.ts";
 import { CODIGOS_COMMUNICATION_SUBTABS, CODIGOS_PATHOLOGY_SUBTABS, CODIGOS_TOP_LEVEL_TABS } from "../lib/codigos-config.ts";
 import { VADEMECUM_TABS } from "../lib/vademecum-config.ts";
 
@@ -71,6 +72,11 @@ test("normalizeProcedureContent removes legacy chrome and rewrites internal manu
     Manual de Procedimientos SAMUR-Protección Civil · edición 2015 0.0
     `,
     new Map([["122", "122-gestion-de-llamadas-de-emergencia"]]),
+    undefined,
+    {
+      resolveDrugHref: (reference) =>
+        reference === "Lorazepam" ? "/vademecum?farmaco=lorazepam" : null,
+    },
   );
 
   assert.ok(!normalized.includes("javascript:window.print"));
@@ -78,8 +84,162 @@ test("normalizeProcedureContent removes legacy chrome and rewrites internal manu
   assert.ok(!normalized.includes("../images/logo.gif"));
   assert.ok(!normalized.includes("Manual de Procedimientos SAMUR-Protección Civil"));
   assert.ok(normalized.includes("/manual/122-gestion-de-llamadas-de-emergencia"));
-  assert.ok(!normalized.includes('(# "consultar vademecum")'));
-  assert.ok(normalized.includes("Lorazepam"));
+  assert.ok(normalized.includes("[Lorazepam](/vademecum?farmaco=lorazepam)"));
+});
+
+test("normalizeProcedureContent keeps unresolved vademecum placeholders as plain text", () => {
+  const normalized = normalizeProcedureContent(
+    `Valore [Fármaco desconocido](# "consultar vademecum").`,
+    new Map(),
+    undefined,
+    {
+      resolveDrugHref: () => null,
+    },
+  );
+
+  assert.equal(normalized, "Valore Fármaco desconocido.");
+});
+
+test("normalizeProcedureContent removes scraped procedure artifacts and preserves readable local assets", () => {
+  const normalized = normalizeProcedureContent(`
+Ver anexo: Algoritmo SVA>>/docs/procedures/301/301_algoritmo_SVA.pdf
+* Inicio de maniobras:(((
+![](/images/procedures/301/descarga.jpeg)
+*Figure 1: RCP extracorpórea>>/images/procedures/301/descarga.jpeg*
+Inicio página>>doc:
+  `);
+
+  assert.ok(!normalized.includes("((("));
+  assert.ok(!normalized.includes("Inicio página>>doc:"));
+  assert.ok(normalized.includes("[Ver anexo: Algoritmo SVA](/docs/procedures/301/301_algoritmo_SVA.pdf)"));
+  assert.ok(normalized.includes("*Figure 1: RCP extracorpórea*"));
+});
+
+test("normalizeProcedureContent links only safe plain code mentions and preserves explicit manual links", () => {
+  const normalized = normalizeProcedureContent(
+    `
+    Active Código 13 si procede.
+    Considere Código 16.1 y Código infarto.
+    Mantenga [Código 100](214d.htm) como enlace explícito.
+    Código 33 no debe enlazarse.
+    `,
+    new Map([
+      ["214", "214-reperfusion-precoz-en-el-ictus-agudo"],
+      ["213", "213-codigo-infarto"],
+      ["213a", "213a-codigo-16"],
+      ["214d", "214d-codigo-100"],
+    ]),
+  );
+
+  assert.match(normalized, /\[Código 13]\(\/manual\/214-reperfusion-precoz-en-el-ictus-agudo\)/);
+  assert.match(normalized, /\[Código 16\.1]\(\/manual\/213a-codigo-16\)/);
+  assert.match(normalized, /\[Código infarto]\(\/manual\/213-codigo-infarto\)/);
+  assert.match(normalized, /\[Código 100]\(\/manual\/214d-codigo-100\)/);
+  assert.match(normalized, /Código 33 no debe enlazarse\./);
+  assert.doesNotMatch(normalized, /\[Código 33]/);
+});
+
+test("splitProcedureContentSections creates intro and heading keyed sections from normalized markdown", () => {
+  assert.equal(typeof manualData.splitProcedureContentSections, "function");
+
+  const sections = manualData.splitProcedureContentSections?.(`
+Resumen introductorio.
+
+## **Ritmos no desfibrilables**
+Texto uno.
+
+### **Actividad eléctrica sin pulso (AESP) o asistolia.**
+Texto dos.
+`);
+
+  assert.ok(sections);
+  assert.deepEqual(
+    sections?.map((section) => ({
+      key: section.key,
+      title: section.heading,
+      level: section.level,
+    })),
+    [
+      { key: "__start", title: null, level: 0 },
+      { key: "ritmos-no-desfibrilables", title: "Ritmos no desfibrilables", level: 2 },
+      {
+        key: "actividad-electrica-sin-pulso-aesp-o-asistolia",
+        title: "Actividad eléctrica sin pulso (AESP) o asistolia.",
+        level: 3,
+      },
+    ],
+  );
+});
+
+test("groupProcedureEditorialBlocks anchors blocks by heading and falls back unmatched entries to the end", () => {
+  assert.equal(typeof manualData.groupProcedureEditorialBlocks, "function");
+
+  const sections = manualData.splitProcedureContentSections?.(`
+Introducción.
+
+## Ritmos no desfibrilables
+Texto.
+
+### PCR no recuperada
+Texto final.
+`) ?? [];
+
+  const grouped = manualData.groupProcedureEditorialBlocks?.(
+    [
+      {
+        id: "summary",
+        type: "summary",
+        targetHeading: "__start",
+        placement: "before",
+        items: ["RCP inmediata"],
+      },
+      {
+        id: "cheatsheet",
+        type: "cheatsheet",
+        targetHeading: "ritmos-no-desfibrilables",
+        placement: "after",
+        items: ["ETCO2"],
+      },
+      {
+        id: "unmatched",
+        type: "editorial-note",
+        targetHeading: "heading-inexistente",
+        placement: "before",
+        content: "fallback",
+      },
+    ],
+    sections,
+  );
+
+  assert.ok(grouped);
+  assert.deepEqual(grouped?.bySection.__start.before.map((block) => block.id), ["summary"]);
+  assert.deepEqual(grouped?.bySection["ritmos-no-desfibrilables"].after.map((block) => block.id), ["cheatsheet"]);
+  assert.deepEqual(grouped?.afterAll.map((block) => block.id), ["unmatched"]);
+  assert.deepEqual(grouped?.unresolvedIds, ["unmatched"]);
+});
+
+test("collectCitedDrugs and collectCitedTechniques derive reusable operational references from content", () => {
+  assert.equal(typeof manualData.collectCitedDrugs, "function");
+  assert.equal(typeof manualData.collectCitedTechniques, "function");
+
+  const source = `
+  * Realice intubación endotraqueal conforme a procedimiento.
+  * Si no es posible vía periférica, canalice preferentemente vía intraósea.
+  * Realice exploración ecográfica para descartar causas reversibles.
+  * Si existe neumotórax a tensión, realice drenaje. (ver toracocentesis. Técnicas).
+  * Si existe taponamiento cardíaco, realice pericardiocentesis mientras prepara toracotomía de reanimación.
+  * Administre <DrugLink name="Adrenalina" /> y <DrugLink name="BicarbonatoSodico" />.
+  `;
+
+  assert.deepEqual(manualData.collectCitedDrugs?.(source), ["Adrenalina", "BicarbonatoSodico"]);
+  assert.deepEqual(manualData.collectCitedTechniques?.(source), [
+    "Intubación endotraqueal",
+    "Vía intraósea",
+    "Exploración ecográfica",
+    "Toracocentesis",
+    "Pericardiocentesis",
+    "Toracotomía de reanimación",
+  ]);
 });
 
 test("getProcedureSidebarMeta derives nested manual groupings from section and procedure id", () => {
@@ -90,7 +250,7 @@ test("getProcedureSidebarMeta derives nested manual groupings from section and p
 
   assert.deepEqual(
     getProcedureSidebarMeta("Operativos", "217_03", "Actuación con Bomberos"),
-    { group: "Coordinación interservicios", subgroup: "Otros servicios" },
+    { group: "Coordinación interservicios", subgroup: "Actuaciones conjuntas" },
   );
 
   assert.deepEqual(
@@ -147,7 +307,7 @@ test("codigos navigation removes PC/Lima and nests communications subtabs", () =
 
   assert.deepEqual(
     CODIGOS_PATHOLOGY_SUBTABS.map((tab) => tab.key),
-    ["sva", "svb", "upsi"],
+    ["sva", "svb", "upsi", "upsq"],
   );
 });
 
@@ -173,4 +333,34 @@ test("communications datasets exist with minimum expected sections", () => {
     ["plantillas", "grupos", "tetra", "estatus", "icao", "hospitales", "bases", "distritos"],
   );
   assert.ok(cheatsheet.every((section) => Array.isArray(section.items) && section.items.length > 0));
+});
+
+test("procedure content uses stable SAMUR ids without slug-generated ids", () => {
+  const procedureDir = path.join(process.cwd(), "content/procedures");
+  const files = fs.readdirSync(procedureDir).filter((file) => file.endsWith(".md"));
+  const ids = new Map<string, string[]>();
+
+  for (const file of files) {
+    const raw = fs.readFileSync(path.join(procedureDir, file), "utf8");
+    const id = raw.match(/^id:\s*["']?(.+?)["']?\s*$/m)?.[1] ?? "";
+    assert.match(id, /^[0-9]{3}(?:[_a-z0-9]*)?$/i, `${file} has unstable id ${id}`);
+    ids.set(id, [...(ids.get(id) ?? []), file]);
+  }
+
+  const duplicates = [...ids.entries()].filter(([, idFiles]) => idFiles.length > 1);
+  assert.deepEqual(duplicates, []);
+});
+
+test("procedure content has no unresolved XWiki attachment options", () => {
+  const procedureDir = path.join(process.cwd(), "content/procedures");
+  const files = fs.readdirSync(procedureDir).filter((file) => file.endsWith(".md"));
+
+  for (const file of files) {
+    const raw = fs.readFileSync(path.join(procedureDir, file), "utf8");
+    assert.ok(!raw.includes("%7C%7C"), `${file} has encoded XWiki link options`);
+    assert.ok(!raw.includes("-target-_blank-"), `${file} has target flag in local attachment path`);
+    assert.ok(!/\bimage:/.test(raw), `${file} has unresolved XWiki image syntax`);
+    assert.ok(!/\(%[\s\S]*?%\)/.test(raw), `${file} has unresolved XWiki style syntax`);
+    assert.ok(!/<(?!\/?DrugLink\b)/.test(raw), `${file} has raw less-than syntax that can break MDX`);
+  }
 });

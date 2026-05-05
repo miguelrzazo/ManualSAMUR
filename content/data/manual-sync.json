@@ -1,0 +1,68 @@
+{
+  "manualVersion": "Abril 2026",
+  "lastSyncAt": "2026-05-05T19:49:05.189Z",
+  "tickerEnabled": false,
+  "tickerItems": [],
+  "runs": [
+    {
+      "id": "2026-05-05T19:49:05.189Z",
+      "startedAt": "2026-05-05T19:45:40.890Z",
+      "finishedAt": "2026-05-05T19:49:05.189Z",
+      "dryRun": false,
+      "summary": {
+        "procedures": {
+          "discovered": 241,
+          "created": 0,
+          "updated": 0,
+          "unchanged": 218,
+          "failed": 0,
+          "skipped": 23
+        },
+        "vademecum": {
+          "created": 0,
+          "updated": 0,
+          "unchanged": 0,
+          "failed": 0,
+          "skipped": 0
+        },
+        "codigos": {
+          "created": 0,
+          "updated": 0,
+          "unchanged": 0,
+          "failed": 0,
+          "skipped": 0
+        }
+      }
+    },
+    {
+      "id": "2026-05-05T19:42:01.784Z",
+      "startedAt": "2026-05-05T19:38:30.521Z",
+      "finishedAt": "2026-05-05T19:42:01.784Z",
+      "dryRun": false,
+      "summary": {
+        "procedures": {
+          "discovered": 241,
+          "created": 11,
+          "updated": 91,
+          "unchanged": 116,
+          "failed": 0,
+          "skipped": 23
+        },
+        "vademecum": {
+          "created": 0,
+          "updated": 0,
+          "unchanged": 0,
+          "failed": 0,
+          "skipped": 0
+        },
+        "codigos": {
+          "created": 0,
+          "updated": 0,
+          "unchanged": 0,
+          "failed": 0,
+          "skipped": 0
+        }
+      }
+    }
+  ]
+}

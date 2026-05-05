@@ -30,6 +30,7 @@ interface Props {
   current: ProcedureMeta;
   related: ProcedureMeta[];
   backlinks?: ProcedureMeta[];
+  suggested?: ProcedureMeta[];
 }
 
 const W = 600;
@@ -41,7 +42,7 @@ interface SimNode extends SimulationNodeDatum {
   title: string;
   section: string;
   isCurrent: boolean;
-  relation?: "related" | "backlink";
+  relation?: "related" | "backlink" | "suggested";
   r: number;
 }
 
@@ -49,10 +50,10 @@ interface SimEdge {
   id: string;
   source: SimNode;
   target: SimNode;
-  relation: "related" | "backlink";
+  relation: "related" | "backlink" | "suggested";
 }
 
-export function GraficaLocal({ current, related, backlinks = [] }: Props) {
+export function GraficaLocal({ current, related, backlinks = [], suggested = [] }: Props) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
 
@@ -81,6 +82,8 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
         edgeStrong: "rgba(224,231,255,0.55)",
         incoming: "rgba(103, 193, 245, 0.36)",
         incomingStrong: "rgba(103, 193, 245, 0.75)",
+        suggested: "rgba(250, 204, 21, 0.32)",
+        suggestedStrong: "rgba(250, 204, 21, 0.72)",
         labelBg: "rgba(13,18,28,0.92)",
         labelText: "#f3f7ff",
         buttonBg: "rgba(255,255,255,0.08)",
@@ -96,6 +99,8 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
         edgeStrong: "rgba(51,65,85,0.42)",
         incoming: "rgba(14, 116, 144, 0.30)",
         incomingStrong: "rgba(14, 116, 144, 0.65)",
+        suggested: "rgba(217, 119, 6, 0.26)",
+        suggestedStrong: "rgba(217, 119, 6, 0.62)",
         labelBg: "rgba(255,255,255,0.94)",
         labelText: "#162033",
         buttonBg: "rgba(255,255,255,0.72)",
@@ -147,7 +152,19 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
       y: cy + Math.sin((i / Math.max(backlinks.length, 1)) * Math.PI) * spread + (Math.random() - 0.5) * 20,
     }));
 
-    const allNodes = [currentNode, ...relatedNodes, ...backlinkNodes];
+    const suggestedNodes: SimNode[] = suggested.map((p, i) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      section: p.section,
+      isCurrent: false,
+      relation: "suggested",
+      r: 8,
+      x: cx + Math.cos((i / Math.max(suggested.length, 1)) * Math.PI + Math.PI / 2) * (spread * 0.86) + (Math.random() - 0.5) * 18,
+      y: cy + Math.sin((i / Math.max(suggested.length, 1)) * Math.PI + Math.PI / 2) * (spread * 0.86) + (Math.random() - 0.5) * 18,
+    }));
+
+    const allNodes = [currentNode, ...relatedNodes, ...backlinkNodes, ...suggestedNodes];
     nodesRef.current = allNodes;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNodes(allNodes);
@@ -170,6 +187,14 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
           source: nodeById.get(p.id)!,
           target: currentNode,
           relation: "backlink" as const,
+        })),
+      ...suggested
+        .filter((p) => nodeById.has(p.id))
+        .map((p) => ({
+          id: `${current.id}-${p.id}-suggested`,
+          source: currentNode,
+          target: nodeById.get(p.id)!,
+          relation: "suggested" as const,
         })),
     ];
     edgesRef.current = allEdges;
@@ -194,7 +219,7 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
     simRef.current = sim;
 
     return () => { sim.stop(); };
-  }, [current, related, backlinks]);
+  }, [current, related, backlinks, suggested]);
 
   const screenToCanvas = useCallback(
     (sx: number, sy: number) => {
@@ -333,9 +358,17 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
                 x1={sx} y1={sy} x2={tx} y2={ty}
                 stroke={e.relation === "backlink"
                   ? (isHighlighted ? palette.incomingStrong : palette.incoming)
-                  : (isHighlighted ? palette.edgeStrong : palette.edge)}
+                  : e.relation === "suggested"
+                    ? (isHighlighted ? palette.suggestedStrong : palette.suggested)
+                    : (isHighlighted ? palette.edgeStrong : palette.edge)}
                 strokeWidth={isHighlighted ? 1.6 : 0.9}
-                strokeDasharray={e.relation === "backlink" ? "4 3" : undefined}
+                strokeDasharray={
+                  e.relation === "backlink"
+                    ? "4 3"
+                    : e.relation === "suggested"
+                      ? "2 4"
+                      : undefined
+                }
               />
             );
           })}
@@ -419,6 +452,10 @@ export function GraficaLocal({ current, related, backlinks = [] }: Props) {
         <span className="inline-flex items-center gap-1">
           <span className="h-1.5 w-4 rounded-full border bg-transparent" style={{ borderColor: palette.incomingStrong }} />
           entrante
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="h-1.5 w-4 rounded-full border bg-transparent" style={{ borderColor: palette.suggestedStrong }} />
+          sugerido
         </span>
       </div>
     </div>

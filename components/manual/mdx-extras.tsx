@@ -5,6 +5,7 @@ import { AlertCircle, AlertTriangle, CheckSquare, ChevronDown, Info, Lightbulb, 
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import mermaid from "mermaid";
+import { buildVademecumHref } from "@/lib/vademecum-utils";
 
 export function KeyPoints({ children }: { children: React.ReactNode }) {
   return (
@@ -207,7 +208,7 @@ export function MermaidDiagram({ chart, title }: { chart: string; title?: string
 export function DrugLink({ name }: { name: string }) {
   return (
     <Link
-      href={`/vademecum?q=${encodeURIComponent(name)}`}
+      href={buildVademecumHref(name)}
       className="inline-flex items-center gap-0.5 text-primary font-medium hover:underline underline-offset-2"
     >
       <Pill className="h-3 w-3 opacity-50 flex-shrink-0" />

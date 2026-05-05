@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { List } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { filterTableOfContentsHeadings } from "@/lib/manual-data";
 
 interface Heading {
   id: string;
@@ -12,9 +13,10 @@ interface Heading {
 
 interface Props {
   articleId?: string;
+  pageTitle?: string;
 }
 
-export function TableOfContents({ articleId = "procedure-content" }: Props) {
+export function TableOfContents({ articleId = "procedure-content", pageTitle }: Props) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
@@ -22,7 +24,7 @@ export function TableOfContents({ articleId = "procedure-content" }: Props) {
     const article = document.getElementById(articleId);
     if (!article) return;
 
-    const elements = Array.from(article.querySelectorAll("h2, h3")) as HTMLElement[];
+    const elements = Array.from(article.querySelectorAll("[data-manual-body] h2, [data-manual-body] h3")) as HTMLElement[];
     const parsed = elements
       .filter((el) => el.id)
       .map((el) => ({
@@ -30,7 +32,8 @@ export function TableOfContents({ articleId = "procedure-content" }: Props) {
         text: el.textContent?.trim() ?? "",
         level: el.tagName === "H2" ? 2 : 3,
       }));
-    setHeadings(parsed);
+    const filtered = filterTableOfContentsHeadings(parsed, pageTitle);
+    const frame = window.requestAnimationFrame(() => setHeadings(filtered));
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,8 +44,11 @@ export function TableOfContents({ articleId = "procedure-content" }: Props) {
     );
 
     elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [articleId]);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [articleId, pageTitle]);
 
   if (headings.length === 0) return null;
 
