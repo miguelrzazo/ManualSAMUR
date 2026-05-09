@@ -397,13 +397,6 @@ export function appendSyncRun(
         href: change.id ? `/manual?procedure=${encodeURIComponent(change.id)}` : "/manual",
         procedureId: change.id,
       })),
-    ...run.changes.main
-      .filter((change) => change.changeType !== "unchanged")
-      .slice(0, 4)
-      .map((change) => ({
-        label: `Main actualizado: ${change.title}`,
-        href: "/manual#historial-global",
-      })),
   ].slice(0, 12);
 
   return {

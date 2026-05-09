@@ -42,6 +42,7 @@ interface SimLink {
   id: string;
   source: SimNode;
   target: SimNode;
+  inferred?: boolean;
 }
 
 interface Props {
@@ -113,6 +114,7 @@ export function GraficaGlobal({ procedures }: Props) {
     const edgeSet = new Set<string>();
     const degreeMap: Record<string, number> = {};
     const rawEdges: { source: string; target: string; id: string }[] = [];
+    const proceduresById = new Map(procedures.map((procedure) => [procedure.id, procedure]));
 
     for (const p of procedures) {
       for (const rel of p.related) {
@@ -123,6 +125,32 @@ export function GraficaGlobal({ procedures }: Props) {
           degreeMap[p.id] = (degreeMap[p.id] || 0) + 1;
           degreeMap[rel] = (degreeMap[rel] || 0) + 1;
         }
+      }
+    }
+
+    // Add conservative inferred links to increase graph discoverability.
+    for (const p of procedures) {
+      const candidates = procedures
+        .filter((q) => q.id !== p.id && q.section === p.section)
+        .map((q) => {
+          const left = new Set(p.related ?? []);
+          const right = new Set(q.related ?? []);
+          const shared = [...left].filter((id) => right.has(id)).length;
+          const direct = left.has(q.id) || right.has(p.id) ? 2 : 0;
+          return { id: q.id, score: shared + direct };
+        })
+        .filter((candidate) => candidate.score >= 2)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 2);
+
+      for (const candidate of candidates) {
+        if (!proceduresById.has(candidate.id)) continue;
+        const key = [p.id, candidate.id].sort().join("--");
+        if (edgeSet.has(key)) continue;
+        edgeSet.add(key);
+        rawEdges.push({ source: p.id, target: candidate.id, id: `inferred:${key}` });
+        degreeMap[p.id] = (degreeMap[p.id] || 0) + 1;
+        degreeMap[candidate.id] = (degreeMap[candidate.id] || 0) + 1;
       }
     }
 
@@ -337,7 +365,8 @@ export function GraficaGlobal({ procedures }: Props) {
                 x1={sx} y1={sy}
                 x2={tx} y2={ty}
                 stroke={isHighlighted ? palette.edgeStrong : palette.edge}
-                strokeWidth={isHighlighted ? 1.6 : 0.8}
+                strokeWidth={isHighlighted ? 1.6 : e.id.startsWith("inferred:") ? 0.7 : 0.8}
+                strokeDasharray={e.id.startsWith("inferred:") ? "3 3" : undefined}
               />
             );
           })}

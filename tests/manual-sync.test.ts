@@ -84,9 +84,8 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
   assert.deepEqual(metadata.tickerItems, [
     "Actualizado: 301 Parada cardiorrespiratoria",
     "Nuevo: codigo-19 Código 19",
-    "Main actualizado: abreviaturas.json",
   ]);
-  assert.equal(metadata.ticker.items.length, 3);
+  assert.equal(metadata.ticker.items.length, 2);
   assert.equal(metadata.runs.length, 1);
 });
 

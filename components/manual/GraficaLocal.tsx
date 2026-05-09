@@ -86,6 +86,7 @@ function buildGraph(current: ProcedureMeta, related: ProcedureMeta[], backlinks:
   ];
 
   const edges: Edge[] = [];
+  const edgeIds = new Set<string>();
   const ringRadius = 340;
 
   relatedNodes.forEach((item, index) => {
@@ -104,8 +105,11 @@ function buildGraph(current: ProcedureMeta, related: ProcedureMeta[], backlinks:
       style: createNodeStyle(color, false),
     });
 
+    const edgeId = `${item.relation}:${current.id}:${procedure.id}`;
+    if (edgeIds.has(edgeId)) return;
+    edgeIds.add(edgeId);
     edges.push({
-      id: `${item.relation}:${current.id}:${procedure.id}`,
+      id: edgeId,
       source: item.relation === "backlink" ? procedure.id : current.id,
       target: item.relation === "backlink" ? current.id : procedure.id,
       style: {
@@ -116,6 +120,26 @@ function buildGraph(current: ProcedureMeta, related: ProcedureMeta[], backlinks:
       animated: item.relation === "suggested",
     });
   });
+
+  const relatedById = new Map(relatedNodes.map((item) => [item.procedure.id, item.procedure]));
+  for (const procedure of relatedById.values()) {
+    for (const relatedId of procedure.related ?? []) {
+      if (!relatedById.has(relatedId)) continue;
+      const pairKey = [procedure.id, relatedId].sort().join("--");
+      const edgeId = `cluster:${pairKey}`;
+      if (edgeIds.has(edgeId)) continue;
+      edgeIds.add(edgeId);
+      edges.push({
+        id: edgeId,
+        source: procedure.id,
+        target: relatedId,
+        style: {
+          stroke: "rgba(99,102,241,0.34)",
+          strokeWidth: 1.2,
+        },
+      });
+    }
+  }
 
   return { nodes, edges };
 }
@@ -138,7 +162,7 @@ function GraphCanvas({ current, related, backlinks, suggested, expanded }: Props
         }}
         fitView
         fitViewOptions={{ padding: expanded ? 0.18 : 0.28 }}
-        nodesDraggable={false}
+        nodesDraggable
         nodesConnectable={false}
         elementsSelectable={false}
         panOnDrag
@@ -169,7 +193,7 @@ export function GraficaLocal({ current, related, backlinks = [], suggested = [] 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs text-muted-foreground">
-            Gris: enlaces salientes · Azul: backlinks · Ámbar: sugeridos
+            Gris: Enlaces Salientes · Azul: Backlinks · Ámbar: Sugeridos
           </p>
           <button
             onClick={() => setExpanded(true)}
@@ -184,7 +208,7 @@ export function GraficaLocal({ current, related, backlinks = [], suggested = [] 
 
       <Dialog open={expanded} onOpenChange={setExpanded}>
         <DialogHeader className="sr-only">
-          <DialogTitle>Gráfica local ampliada</DialogTitle>
+          <DialogTitle>Gráfica Local Ampliada</DialogTitle>
         </DialogHeader>
         <DialogContent className="w-[95vw] max-w-[1200px] p-3">
           <div className="mb-2 flex items-center justify-between gap-2">

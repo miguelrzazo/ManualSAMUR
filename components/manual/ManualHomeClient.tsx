@@ -17,6 +17,7 @@ import {
   Rows3,
 } from "lucide-react";
 import { GraficaGlobal } from "@/components/manual/GraficaGlobal";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
 import {
   FAVORITES_COOKIE,
@@ -26,6 +27,7 @@ import {
 } from "@/lib/manual-cookies";
 import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
 import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
+import { toCapitalCase } from "@/lib/title-case";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos", "General"];
 
@@ -131,7 +133,7 @@ function SectionPillBar({
             }`}
           >
             <div className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
-            {section.section}
+            {toCapitalCase(section.section)}
             <span className="tabular-nums opacity-60">{count}</span>
           </button>
         );
@@ -279,7 +281,7 @@ function ExplorerTree({
                 : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
               }
               <div className={`h-2 w-2 rounded-full flex-shrink-0 ${meta.dot}`} />
-              <span className="font-semibold text-sm flex-1">{section.section}</span>
+              <span className="font-semibold text-sm flex-1">{toCapitalCase(section.section)}</span>
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium tabular-nums ${meta.badge}`}>
                 {procedures.length}
               </span>
@@ -442,6 +444,7 @@ export function ManualHomeClient({
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [activeSectionFilter, setActiveSectionFilter] = useState<string | undefined>(initialSection);
   const [view, setView] = useState<"list" | "graph">("list");
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
     setFavoriteIds(readCollectionCookie(FAVORITES_COOKIE, validIdSet));
@@ -526,12 +529,12 @@ export function ManualHomeClient({
 
       <section id="historial-global" className="mb-6 rounded-2xl border border-border/60 bg-card/50 p-4 md:p-5">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <h2 className="text-sm md:text-base font-semibold">Cronograma de actualizaciones</h2>
+          <h2 className="text-sm md:text-base font-semibold">Cronograma De Actualizaciones</h2>
           <span className="text-xs text-muted-foreground">{sortedUpdateEvents.length} eventos</span>
         </div>
         {newThisWeekEvents.length > 0 && (
           <div className="mb-4 rounded-xl border border-red-200/70 bg-red-50/70 px-3 py-2 dark:border-red-900/40 dark:bg-red-950/20">
-            <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Novedades (últimos 7 días)</p>
+            <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Novedades (Últimos 7 Días)</p>
             <ul className="grid gap-1">
               {newThisWeekEvents.map((event) => (
                 <li key={`new-${event.eventId}`} className="text-xs text-red-700/90 dark:text-red-200/90">
@@ -549,29 +552,36 @@ export function ManualHomeClient({
             </ul>
           </div>
         )}
-        <details open className="group">
-          <summary className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
-            Ver historial global desplegable
-          </summary>
-          <div className="mt-3 max-h-80 overflow-auto pr-1">
-            <ul className="grid gap-2">
-              {sortedUpdateEvents.map((event) => (
-                <li key={event.eventId} className={`rounded-lg border px-3 py-2 ${event.isNewThisWeek ? "border-red-300/70 bg-red-50/50 dark:border-red-900/40 dark:bg-red-950/20" : "border-border/50 bg-background/60"}`}>
-                  <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="font-medium">{formatSyncDate(event.effectiveDate)}</span>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {event.origin}
-                    </span>
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-primary">
-                      {event.changeKind}
-                    </span>
-                  </div>
-                  <div className="mt-1 text-xs text-foreground/90">{event.summary}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </details>
+        <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
+          <DialogTrigger>
+            <button className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
+              Ver Historial Global
+            </button>
+          </DialogTrigger>
+          <DialogContent className="w-[95vw] max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Cronograma De Actualizaciones</DialogTitle>
+            </DialogHeader>
+            <div className="max-h-[70vh] overflow-auto pr-1">
+              <ul className="grid gap-2">
+                {sortedUpdateEvents.map((event) => (
+                  <li key={event.eventId} className={`rounded-lg border px-3 py-2 ${event.isNewThisWeek ? "border-red-300/70 bg-red-50/50 dark:border-red-900/40 dark:bg-red-950/20" : "border-border/50 bg-background/60"}`}>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="font-medium">{formatSyncDate(event.effectiveDate)}</span>
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                        {event.origin}
+                      </span>
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                        {event.changeKind}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-xs text-foreground/90">{event.summary}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </DialogContent>
+        </Dialog>
       </section>
 
       {/* Favorites + Recents */}
@@ -608,7 +618,7 @@ export function ManualHomeClient({
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {effectiveSection && (
             <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${SECTION_META[effectiveSection]?.badge ?? "bg-muted text-muted-foreground"}`}>
-              {effectiveSection}
+              {toCapitalCase(effectiveSection)}
             </span>
           )}
           {initialGroup && <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{initialGroup}</span>}

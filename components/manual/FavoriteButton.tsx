@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -21,11 +21,15 @@ interface Props {
 
 export function FavoriteButton({ procedureId, validIds, className, onToggle, isFavorited }: Props) {
   const validIdSet = useMemo(() => new Set(validIds ?? [procedureId]), [procedureId, validIds]);
-  const [isFavoriteLocal, setIsFavoriteLocal] = useState(() =>
-    readCollectionCookie(FAVORITES_COOKIE, validIdSet).includes(procedureId),
-  );
+  const [isFavoriteLocal, setIsFavoriteLocal] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const isFavorite = isFavorited !== undefined ? isFavorited : isFavoriteLocal;
+  useEffect(() => {
+    setIsHydrated(true);
+    setIsFavoriteLocal(readCollectionCookie(FAVORITES_COOKIE, validIdSet).includes(procedureId));
+  }, [procedureId, validIdSet]);
+
+  const isFavorite = isFavorited !== undefined ? isFavorited : (isHydrated && isFavoriteLocal);
 
   function handleToggle() {
     const current = readCollectionCookie(FAVORITES_COOKIE, validIdSet);

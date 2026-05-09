@@ -15,6 +15,7 @@ import {
   type ProcedureEditorialItem,
 } from "@/lib/manual-data";
 import type { ManualAttachment } from "@/lib/manual-sync";
+import { toCapitalCase } from "@/lib/title-case";
 
 interface Props {
   block: ProcedureEditorialBlock;
@@ -57,7 +58,7 @@ function sectionBadge(label: string | undefined) {
   if (!label) return null;
   return (
     <Badge variant="outline" className="text-[11px] font-medium">
-      {label}
+      {toCapitalCase(label)}
     </Badge>
   );
 }
@@ -80,7 +81,7 @@ function BlockShell({
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground">
             {icon}
           </span>
-          {title ? <p className="text-sm font-semibold text-foreground">{title}</p> : null}
+          {title ? <p className="text-sm font-semibold text-foreground">{toCapitalCase(title)}</p> : null}
           <div className="ml-auto">{sectionBadge(label)}</div>
         </div>
       )}

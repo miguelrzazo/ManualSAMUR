@@ -50,6 +50,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import type { ProcedureRelation } from "@/lib/manual-data";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
+import { toCapitalCase } from "@/lib/title-case";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -185,7 +186,7 @@ export default async function ProcedurePage({ params }: Props) {
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span className="font-mono text-sm text-muted-foreground">{procedure.id}</span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${SECTION_COLORS[procedure.section] ?? "bg-muted text-muted-foreground"}`}>
-              {procedure.section}
+              {toCapitalCase(procedure.section)}
             </span>
             {procedure.updated && (
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -227,7 +228,7 @@ export default async function ProcedurePage({ params }: Props) {
 
         {updateEvents.length > 0 && (
           <details id={`procedure-updates-${procedure.id}`} open className="mb-8 rounded-2xl border border-border/60 bg-card/40 p-4">
-            <summary className="cursor-pointer text-sm font-semibold">Histórico de actualizaciones del procedimiento</summary>
+            <summary className="cursor-pointer text-sm font-semibold">Histórico De Actualizaciones Del Procedimiento</summary>
             <div className="mt-3 grid gap-2">
               {updateEvents.map((event) => (
                 <div
@@ -368,14 +369,14 @@ export default async function ProcedurePage({ params }: Props) {
               icon={<Network className="h-3.5 w-3.5" />}
               procedures={suggested}
               relationsByProcedureId={relationsByProcedureId}
-              emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+              emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
           )}
           {hasGraphData && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Network className="h-4 w-4 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica de conexiones</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica De Conexiones</h3>
               </div>
               <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
             </div>
@@ -409,14 +410,14 @@ export default async function ProcedurePage({ params }: Props) {
               icon={<Network className="h-3.5 w-3.5" />}
               procedures={suggested}
               relationsByProcedureId={relationsByProcedureId}
-              emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+              emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
           )}
           {hasGraphData && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Network className="h-4 w-4 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica local</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica Local</h3>
               </div>
               <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
             </div>
