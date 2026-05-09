@@ -49,6 +49,7 @@ import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import type { ProcedureRelation } from "@/lib/manual-data";
+import { readManualUpdatesDataset } from "@/lib/manual-sync";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -128,6 +129,9 @@ export default async function ProcedurePage({ params }: Props) {
   const backlinks = getBacklinkProcedures(procedure);
   const suggested = getSuggestedProcedures(procedure);
   const allProcedures = getProcedureMeta();
+  const updateEvents = readManualUpdatesDataset().events
+    .filter((event) => event.procedureIds.includes(procedure.id))
+    .sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`));
   const { prev, next } = getAdjacentProcedures(procedure.id);
   const hasEditorialBlocks = procedure.editorialBlocks.length > 0;
   const procedureSections = hasEditorialBlocks ? splitProcedureContentSections(procedure.content) : [];
@@ -220,6 +224,37 @@ export default async function ProcedurePage({ params }: Props) {
           </div>
         </div>
 
+
+        {updateEvents.length > 0 && (
+          <details id={`procedure-updates-${procedure.id}`} open className="mb-8 rounded-2xl border border-border/60 bg-card/40 p-4">
+            <summary className="cursor-pointer text-sm font-semibold">Histórico de actualizaciones del procedimiento</summary>
+            <div className="mt-3 grid gap-2">
+              {updateEvents.map((event) => (
+                <div
+                  key={event.eventId}
+                  id={`update-${event.eventId}`}
+                  className={`rounded-lg border px-3 py-2 text-xs ${event.isNewThisWeek ? "border-red-300/70 bg-red-50/60 dark:border-red-900/40 dark:bg-red-950/20" : "border-border/50 bg-background/60"}`}
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{event.effectiveDate}</span>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">{event.changeKind}</span>
+                    {event.isNewThisWeek && (
+                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] uppercase tracking-wide text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                        Nuevo 7 días
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-foreground/90">{event.summary}</p>
+                  {event.officialUrl && (
+                    <a href={event.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex text-xs text-primary hover:underline">
+                      Ver referencia oficial
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </details>
+        )}
         {/* Mobile TOC — collapsible, below header */}
         <div className="lg:hidden mb-4" data-print-hide>
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />
