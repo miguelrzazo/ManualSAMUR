@@ -54,6 +54,7 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
         procedures: { discovered: 3, created: 1, updated: 1, unchanged: 1, failed: 0, skipped: 0 },
         vademecum: { created: 0, updated: 1, unchanged: 30, failed: 0, skipped: 0 },
         codigos: { created: 0, updated: 0, unchanged: 9, failed: 0, skipped: 0 },
+        main: { created: 0, updated: 1, unchanged: 2, failed: 0, skipped: 0 },
       },
       changes: {
         procedures: [
@@ -62,6 +63,7 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
         ],
         vademecum: [{ id: "urapidil", title: "Urapidil", changeType: "updated" }],
         codigos: [],
+        main: [{ id: "content/data/abreviaturas.json", title: "abreviaturas.json", changeType: "updated" }],
       },
       errors: [],
     },
@@ -74,6 +76,7 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
     "Actualizado: 301 Parada cardiorrespiratoria",
     "Nuevo: codigo-19 Código 19",
     "Vademécum actualizado: Urapidil",
+    "Main actualizado: abreviaturas.json",
   ]);
   assert.equal(metadata.runs.length, 1);
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useId } from "react";
-import { AlertCircle, AlertTriangle, CheckSquare, ChevronDown, Info, Lightbulb, Pill, Square } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckSquare, ChevronDown, Info, Lightbulb, Pill, Square, X, ZoomIn } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import mermaid from "mermaid";
@@ -214,5 +214,65 @@ export function DrugLink({ name }: { name: string }) {
       <Pill className="h-3 w-3 opacity-50 flex-shrink-0" />
       {name}
     </Link>
+  );
+}
+
+export function ImageWithLightbox({ src, alt }: { src: string; alt?: string }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="group relative block mx-auto my-6 cursor-zoom-in rounded-xl border border-border/60 shadow-sm overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label={alt ? `Ampliar: ${alt}` : "Ampliar imagen"}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt ?? ""}
+          className="block max-w-full h-auto mx-auto"
+        />
+        <span className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors duration-150">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white rounded-full p-1.5">
+            <ZoomIn className="h-4 w-4" />
+          </span>
+        </span>
+      </button>
+      {alt && (
+        <p className="text-center text-xs text-muted-foreground -mt-4 mb-6 italic">{alt}</p>
+      )}
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="absolute top-4 right-4 text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full p-2 transition-colors"
+            aria-label="Cerrar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={alt ?? ""}
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </>
   );
 }

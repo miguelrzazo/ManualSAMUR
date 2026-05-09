@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# AI/LLM crawlers — contenido disponible en formato AI-friendly
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Googlebot
+Allow: /llms.txt
+Allow: /llms-full.txt

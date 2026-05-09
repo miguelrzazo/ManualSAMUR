@@ -242,10 +242,25 @@ test("collectCitedDrugs and collectCitedTechniques derive reusable operational r
   ]);
 });
 
-test("getProcedureSidebarMeta derives nested manual groupings from section and procedure id", () => {
+test("getProcedureSidebarMeta keeps selected sections flat and preserves detailed grouping elsewhere", () => {
   assert.deepEqual(
     getProcedureSidebarMeta("Comunicaciones", "125_03", "Sospecha de Síndrome Coronario Agudo (SCA)"),
-    { group: "Recomendaciones específicas", subgroup: "Patologías tiempo-dependientes" },
+    { group: "Procedimientos", subgroup: "Listado" },
+  );
+
+  assert.deepEqual(
+    getProcedureSidebarMeta("Administrativos", "101", "Disponibilidad y activación de personal"),
+    { group: "Procedimientos", subgroup: "Listado" },
+  );
+
+  assert.deepEqual(
+    getProcedureSidebarMeta("DRP", "drp_01", "Procedimiento general de los DRP"),
+    { group: "Procedimientos", subgroup: "Listado" },
+  );
+
+  assert.deepEqual(
+    getProcedureSidebarMeta("Intervinientes", "115", "Apoyo psicológico a intervinientes"),
+    { group: "Procedimientos", subgroup: "Listado" },
   );
 
   assert.deepEqual(

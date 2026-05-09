@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { List } from "lucide-react";
+import { ChevronDown, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { filterTableOfContentsHeadings } from "@/lib/manual-data";
 
@@ -14,9 +14,10 @@ interface Heading {
 interface Props {
   articleId?: string;
   pageTitle?: string;
+  collapsible?: boolean;
 }
 
-export function TableOfContents({ articleId = "procedure-content", pageTitle }: Props) {
+export function TableOfContents({ articleId = "procedure-content", pageTitle, collapsible = false }: Props) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
@@ -52,32 +53,58 @@ export function TableOfContents({ articleId = "procedure-content", pageTitle }: 
 
   if (headings.length === 0) return null;
 
+  const nav = (
+    <nav>
+      <ul className="space-y-0.5">
+        {headings.map((h) => (
+          <li key={h.id}>
+            <a
+              href={`#${h.id}`}
+              className={cn(
+                "block py-1 text-sm leading-snug transition-colors no-underline",
+                h.level === 3 && "pl-4 text-xs",
+                activeId === h.id
+                  ? "text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+
+  if (collapsible) {
+    return (
+      <details className="rounded-xl border border-border/60 bg-card/50 group">
+        <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none select-none">
+          <div className="flex items-center gap-2">
+            <List className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm font-semibold text-muted-foreground">En esta página</span>
+            {activeId && (
+              <span className="text-xs text-muted-foreground/60 truncate max-w-32">
+                · {headings.find((h) => h.id === activeId)?.text}
+              </span>
+            )}
+          </div>
+          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-open:rotate-180 flex-shrink-0" />
+        </summary>
+        <div className="px-4 pb-3 pt-1">
+          {nav}
+        </div>
+      </details>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-border/60 bg-card/50 p-4">
       <div className="flex items-center gap-2 mb-3">
         <List className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         <span className="text-sm font-semibold text-muted-foreground">Contenido</span>
       </div>
-      <nav>
-        <ul className="space-y-0.5">
-          {headings.map((h) => (
-            <li key={h.id}>
-              <a
-                href={`#${h.id}`}
-                className={cn(
-                  "block py-1 text-sm leading-snug transition-colors no-underline",
-                  h.level === 3 && "pl-4 text-xs",
-                  activeId === h.id
-                    ? "text-primary font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {h.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {nav}
     </div>
   );
 }

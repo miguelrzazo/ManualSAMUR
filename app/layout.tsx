@@ -6,6 +6,7 @@ import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserv
 import { SuppressNextThemesWarning } from "@/components/shared/SuppressNextThemesWarning";
 import { Toaster } from "@/components/ui/toaster";
 import { getProcedureMeta } from "@/lib/content";
+import { readCollaboratorsData, readMainLinksData } from "@/lib/main-content";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
@@ -31,6 +32,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const procedures = getProcedureMeta();
+  const collaborators = readCollaboratorsData();
+  const mainLinks = readMainLinksData();
 
   return (
     <html lang="es" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -39,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ViewportHeightObserver />
           <SuppressNextThemesWarning />
           <div className="flex flex-col min-h-screen">
-            <NavBar procedures={procedures} />
+            <NavBar procedures={procedures} collaborators={collaborators} mainLinks={mainLinks} />
             <main className="min-h-0 flex-1 pb-16 md:pb-0">
               {children}
             </main>

@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { BookOpen, Code2, Map, FlaskConical } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { BookOpen, ChevronLeft, Code2, Map, FlaskConical, CaseSensitive } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { AppMenu } from "@/components/shared/AppMenu";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ProcedureMeta } from "@/lib/content";
+import type { CollaboratorsData, MainLinksData } from "@/lib/main-content";
 
 const navItems = [
   { href: "/manual", label: "Manual", icon: BookOpen },
@@ -19,11 +20,21 @@ const navItems = [
 
 interface Props {
   procedures: ProcedureMeta[];
+  collaborators: CollaboratorsData;
+  mainLinks: MainLinksData;
 }
 
-export function NavBar({ procedures }: Props) {
+export function NavBar({ procedures, collaborators, mainLinks }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const parts = pathname.split("/").filter(Boolean);
+  const isInProcedure = parts[0] === "manual" && parts.length > 1;
+  const procedureSlug = isInProcedure ? parts[1] : null;
+  const procedureId = procedureSlug
+    ? (procedures.find((p) => p.slug === procedureSlug)?.id ?? procedureSlug)
+    : null;
 
   return (
     <>
@@ -70,19 +81,37 @@ export function NavBar({ procedures }: Props) {
               ⌘K
             </kbd>
           </button>
-          <AppMenu />
+          <Link
+            href="/abreviaturas"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-2.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <CaseSensitive className="h-3.5 w-3.5" />
+            Abreviaturas
+          </Link>
+          <AppMenu collaborators={collaborators} mainLinks={mainLinks} />
           <ThemeToggle />
         </div>
       </header>
 
       {/* Mobile top bar (just logo + search + theme) */}
       <header className="flex md:hidden sticky top-0 z-50 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-4 justify-between pt-[env(safe-area-inset-top)] h-[calc(3rem+env(safe-area-inset-top))]">
-        <Link href="/manual" className="flex items-center gap-2">
-          <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
-            <span className="text-[9px] font-bold text-primary-foreground">S</span>
-          </div>
-          <span className="font-semibold text-sm">SAMUR Manual</span>
-        </Link>
+        {isInProcedure ? (
+          <button
+            onClick={() => router.push("/manual")}
+            className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span>Manual</span>
+            {procedureId && <span className="text-xs text-muted-foreground/70">· {procedureId}</span>}
+          </button>
+        ) : (
+          <Link href="/manual" className="flex items-center gap-2">
+            <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
+              <span className="text-[9px] font-bold text-primary-foreground">S</span>
+            </div>
+            <span className="font-semibold text-sm">SAMUR Manual</span>
+          </Link>
+        )}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSearchOpen(true)}
@@ -92,7 +121,14 @@ export function NavBar({ procedures }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
-          <AppMenu />
+          <Link
+            href="/abreviaturas"
+            className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
+            aria-label="Abreviaturas"
+          >
+            <CaseSensitive className="h-4 w-4" />
+          </Link>
+          <AppMenu collaborators={collaborators} mainLinks={mainLinks} />
           <ThemeToggle />
         </div>
       </header>
@@ -106,12 +142,15 @@ export function NavBar({ procedures }: Props) {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-colors min-w-[4rem]",
+                "flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-colors min-w-[4rem] relative",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <Icon className={cn("h-5 w-5", active && "stroke-[2.5]")} />
-              <span className="text-[10px] font-medium">{label}</span>
+              {active && (
+                <span className="absolute top-1 left-1/2 -translate-x-1/2 h-1 w-5 rounded-full bg-primary" />
+              )}
+              <Icon className={cn("h-5 w-5 mt-1", active && "stroke-[2.5]")} />
+              <span className={cn("text-[10px] font-medium", active && "font-semibold")}>{label}</span>
             </Link>
           );
         })}

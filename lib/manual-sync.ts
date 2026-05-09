@@ -5,7 +5,7 @@ import path from "node:path";
 export const DEFAULT_MANUAL_VERSION = "Abril 2026";
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 
-export type SyncDomain = "procedures" | "vademecum" | "codigos";
+export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
 export type ChangeType = "created" | "updated" | "unchanged";
 export type AttachmentKind = "image" | "pdf" | "other";
 
@@ -151,7 +151,12 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "parada cardiorrespiratoria": "301",
   "policia municipal dispositivo electrico de control dec": "217_01b",
   "posible enfermedad vascular cerebral aguda ictus": "410a",
-  "procedimiento de comunicaciones en un drp": "126a",
+  "procedimiento de comunicaciones en un drp": "126a",  // wiki DRP space → section DRP
+  "procedimiento general de los drp": "drp_01",
+  "procedimiento de despliege de un drp": "drp_02",
+  "procedimiento de despliegue de un drp": "drp_02",
+  "procedimiento de cecor en un dispositivo de riesgo previsible": "drp_03",
+  "procedimiento de \"cecor\" en un dispositivo de riesgo previsible": "drp_03",
   "procedimiento de incidentes complejos codigo pic": "217",
   "procedimiento de incidentes complejos": "217",
   "procedimiento en caso de accidente con unidades": "203b",
@@ -274,6 +279,9 @@ export function appendSyncRun(
     ...run.changes.codigos.map((change) =>
       `Códigos ${change.changeType === "created" ? "nuevo" : "actualizado"}: ${change.title}`,
     ),
+    ...run.changes.main.map((change) =>
+      `Main ${change.changeType === "created" ? "nuevo" : "actualizado"}: ${change.title}`,
+    ),
   ].slice(0, 12);
 
   return {
@@ -287,13 +295,15 @@ export function appendSyncRun(
 
 export function getSectionFromXWikiUrl(url: string): string {
   const decoded = decodeURIComponent(url);
+  if (/Dispositivos de Riesgo Previsible|DRP/i.test(decoded)) return "DRP";
   if (/Procedimientos SVA|SVA/i.test(decoded)) return "SVA";
   if (/Procedimientos SVB|SVB/i.test(decoded)) return "SVB";
   if (/Técnicas/i.test(decoded)) return "Técnicas";
   if (/Procedimientos Operativos/i.test(decoded)) return "Operativos";
   if (/Procedimientos Administrativos/i.test(decoded)) return "Administrativos";
   if (/Central de Comunicaciones|Comunicaciones/i.test(decoded)) return "Comunicaciones";
-  if (/Intervinientes|Psicol/i.test(decoded)) return "Psicológicos";
+  if (/\/Intervinientes\//i.test(decoded)) return "Intervinientes";
+  if (/Psicol/i.test(decoded)) return "Psicológicos";
   return "General";
 }
 

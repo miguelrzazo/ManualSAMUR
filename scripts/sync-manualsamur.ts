@@ -32,6 +32,12 @@ import {
   type SyncDomain,
   type SyncDomainSummary,
 } from "../lib/manual-sync.ts";
+import {
+  MAIN_CONTENT_PATHS,
+  parseAbbreviationsFromHtml,
+  parseCollaboratorsFromHtml,
+  parseMainLinksFromHtml,
+} from "../lib/main-content.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +47,9 @@ const REST_BASE = `${WIKI_BASE}/rest/wikis/xwiki`;
 const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
 const METADATA_PATH = path.join(ROOT_DIR, "content/data/manual-sync.json");
 const DELAY_MS = 650;
+const MAIN_PAGE_URL = `${WIKI_BASE}/bin/view/Main/`;
+const MAIN_ABBREVIATIONS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Abreviaturas/WebHome`;
+const MAIN_COLLABORATORS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Colaboradores/WebHome`;
 
 const HEADERS = {
   "User-Agent": "ManualSAMUR-sync/1.0 (personal use; contact: local developer)",
@@ -65,22 +74,30 @@ function parseArgs(argv: string[]): SyncOptions {
     requested.add("procedures");
     requested.add("vademecum");
     requested.add("codigos");
+    requested.add("main");
   }
   if (argv.includes("--procedures")) requested.add("procedures");
   if (argv.includes("--vademecum")) requested.add("vademecum");
   if (argv.includes("--codigos")) requested.add("codigos");
+  if (argv.includes("--main")) requested.add("main");
 
   return { dryRun, domains: requested };
 }
 
-async function fetchText(url: string, accept = "text/html,text/plain") {
-  const response = await fetch(url, { headers: { ...HEADERS, Accept: accept } });
+async function fetchText(url: string, accept = "text/html,text/plain", timeoutMs = 20000) {
+  const response = await fetch(url, {
+    headers: { ...HEADERS, Accept: accept },
+    signal: AbortSignal.timeout(timeoutMs),
+  });
   if (!response.ok) throw new Error(`HTTP ${response.status} fetching ${url}`);
   return response.text();
 }
 
 async function fetchBuffer(url: string) {
-  const response = await fetch(url, { headers: HEADERS });
+  const response = await fetch(url, {
+    headers: HEADERS,
+    signal: AbortSignal.timeout(30000),
+  });
   if (!response.ok) throw new Error(`HTTP ${response.status} downloading ${url}`);
   return Buffer.from(await response.arrayBuffer());
 }
@@ -250,7 +267,7 @@ function htmlToMarkdown(html: string): string {
 
 async function fetchHtmlMarkdown(url: string): Promise<{ markdown: string; sourceUpdated: string } | null> {
   try {
-    const res = await fetch(url, { headers: { ...HEADERS, Accept: "text/html" } });
+    const res = await fetch(url, { headers: { ...HEADERS, Accept: "text/html" }, signal: AbortSignal.timeout(20000) });
     if (!res.ok) return null;
     const rawHtml = await res.text();
 
@@ -299,7 +316,7 @@ function buildProcedureFile(snapshot: ProcedureSnapshot, section: string, slug: 
 
 async function discoverProcedureSpaces() {
   // Primary: REST spaces API (gets sub-spaces, i.e. nested documents)
-  const spacesXml = await fetchText(`${REST_BASE}/spaces`, "application/xml,text/xml");
+  const spacesXml = await fetchText(`${REST_BASE}/spaces`, "application/xml,text/xml", 30000);
   const fromSpaces = parseProcedureSpacesXml(spacesXml);
 
   // Supplement: AllDocs HTML page — lists every page in the wiki including
@@ -358,12 +375,22 @@ async function downloadAttachments(attachments: ManualAttachment[], dryRun: bool
 
   const failures: AttachmentDownloadFailure[] = [];
   for (const attachment of attachments) {
-    const destination = attachment.localPath.startsWith("/images/")
-      ? path.join(ROOT_DIR, "public", attachment.localPath)
-      : path.join(ROOT_DIR, attachment.localPath);
+    const relativeLocalPath = attachment.localPath.replace(/^\/+/, "");
+    const destination = (attachment.localPath.startsWith("/images/") || attachment.localPath.startsWith("/docs/"))
+      ? path.join(ROOT_DIR, "public", relativeLocalPath)
+      : path.join(ROOT_DIR, relativeLocalPath);
+    const legacyDocsDestination = relativeLocalPath.startsWith("docs/procedures/")
+      ? path.join(ROOT_DIR, relativeLocalPath)
+      : null;
+
     try {
+      const payload = await fetchBuffer(attachment.sourceUrl);
       fs.mkdirSync(path.dirname(destination), { recursive: true });
-      fs.writeFileSync(destination, await fetchBuffer(attachment.sourceUrl));
+      fs.writeFileSync(destination, payload);
+      if (legacyDocsDestination) {
+        fs.mkdirSync(path.dirname(legacyDocsDestination), { recursive: true });
+        fs.writeFileSync(legacyDocsDestination, payload);
+      }
     } catch (error) {
       failures.push({
         sourceUrl: attachment.sourceUrl,
@@ -525,6 +552,54 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
 }
 
+function writeJsonDataset(filePath: string, data: unknown) {
+  const fullPath = path.join(ROOT_DIR, filePath);
+  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+  fs.writeFileSync(fullPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+}
+
+async function syncMain(dryRun: boolean): Promise<DomainResult> {
+  const files = [
+    MAIN_CONTENT_PATHS.abbreviations,
+    MAIN_CONTENT_PATHS.collaborators,
+    MAIN_CONTENT_PATHS.mainLinks,
+  ];
+  const before = hashFiles(files);
+  const errors: string[] = [];
+
+  if (!dryRun) {
+    try {
+      const [mainHtml, abbreviationsHtml, collaboratorsHtml] = await Promise.all([
+        fetchText(MAIN_PAGE_URL),
+        fetchText(MAIN_ABBREVIATIONS_URL),
+        fetchText(MAIN_COLLABORATORS_URL),
+      ]);
+
+      const abbreviationSections = parseAbbreviationsFromHtml(abbreviationsHtml);
+      const collaborators = parseCollaboratorsFromHtml(collaboratorsHtml, MAIN_COLLABORATORS_URL);
+      const mainLinks = parseMainLinksFromHtml(mainHtml, MAIN_PAGE_URL);
+
+      writeJsonDataset(MAIN_CONTENT_PATHS.abbreviations, abbreviationSections);
+      writeJsonDataset(MAIN_CONTENT_PATHS.collaborators, collaborators);
+      writeJsonDataset(MAIN_CONTENT_PATHS.mainLinks, {
+        ...mainLinks,
+        abbreviationsUrl: mainLinks.abbreviationsUrl || MAIN_ABBREVIATIONS_URL,
+        collaboratorsUrl: mainLinks.collaboratorsUrl || MAIN_COLLABORATORS_URL,
+      });
+    } catch (error) {
+      errors.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  const after = hashFiles(files);
+  const changes = diffHashes(before, after);
+  return {
+    summary: summarizeChanges(changes, files.length),
+    changes,
+    errors,
+  };
+}
+
 function emptyDomainResult(): DomainResult {
   return {
     summary: { created: 0, updated: 0, unchanged: 0, failed: 0, skipped: 0 },
@@ -540,11 +615,13 @@ async function main() {
     procedures: emptyDomainResult(),
     vademecum: emptyDomainResult(),
     codigos: emptyDomainResult(),
+    main: emptyDomainResult(),
   };
 
   if (options.domains.has("procedures")) results.procedures = await syncProcedures(options.dryRun);
   if (options.domains.has("vademecum")) results.vademecum = await syncVademecum(options.dryRun);
   if (options.domains.has("codigos")) results.codigos = await syncCodigos(options.dryRun);
+  if (options.domains.has("main")) results.main = await syncMain(options.dryRun);
 
   const finishedAt = new Date().toISOString();
   const run: ManualSyncRun = {
@@ -556,13 +633,20 @@ async function main() {
       procedures: results.procedures.summary,
       vademecum: results.vademecum.summary,
       codigos: results.codigos.summary,
+      main: results.main.summary,
     },
     changes: {
       procedures: results.procedures.changes,
       vademecum: results.vademecum.changes,
       codigos: results.codigos.changes,
+      main: results.main.changes,
     },
-    errors: [...results.procedures.errors, ...results.vademecum.errors, ...results.codigos.errors],
+    errors: [
+      ...results.procedures.errors,
+      ...results.vademecum.errors,
+      ...results.codigos.errors,
+      ...results.main.errors,
+    ],
   };
 
   const currentMetadata = fs.existsSync(METADATA_PATH)

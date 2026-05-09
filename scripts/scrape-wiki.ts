@@ -34,13 +34,15 @@ const HEADERS = {
 
 function getSection(url: string): string {
   const u = decodeURIComponent(url);
+  if (/Dispositivos de Riesgo Previsible|DRP/i.test(u)) return "DRP";
   if (/Procedimientos SVA|SVA/i.test(u)) return "SVA";
   if (/Procedimientos SVB|SVB/i.test(u)) return "SVB";
   if (/Técnicas/i.test(u)) return "Técnicas";
   if (/Procedimientos Operativos/i.test(u)) return "Operativos";
   if (/Procedimientos Administrativos/i.test(u)) return "Administrativos";
   if (/Central de Comunicaciones|Comunicaciones/i.test(u)) return "Comunicaciones";
-  if (/Intervinientes|Psicol/i.test(u)) return "Psicológicos";
+  if (/\/Intervinientes\//i.test(u)) return "Intervinientes";
+  if (/Psicol/i.test(u)) return "Psicológicos";
   return "General";
 }
 

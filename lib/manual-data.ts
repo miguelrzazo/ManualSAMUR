@@ -2,13 +2,14 @@ import type { AttachmentKind, ManualAttachment } from "./manual-sync.ts";
 
 const MARKDOWN_LINK_RE = /\[[^\]]+\]\(([^)]+)\)/g;
 const PROCEDURE_LINK_RE = /(?:^|\/)([0-9][^./]*|[A-Z]{1,3}[^./]*)\.htm(?:$|[#?])/i;
+const BARE_PROCEDURE_LINK_RE = /(?:^|[\s(])(?:https?:\/\/[^\s)]+\/)?([0-9][A-Za-z0-9_]{1,12})\.htm(?:$|[#?\s)])/gim;
 const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
 const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(\.\.\/images\/[^)]+\)\s*$/gim;
 const STANDALONE_BANG_RE = /^!\s*$/gm;
 const IMAGE_IN_LINK_RE = /\[!\[[^\]]*\]\([^)]+\)\s*([^\]]*)\]\(([^)]+)\)/g;
 const FOOTER_RE = /^\s*Manual de Procedimientos SAMUR-Protección Civil.*$/gim;
 const VADEMECUM_PLACEHOLDER_LINK_RE = /\[([^\]]+)]\(#(?:\s+"[^"]*")?\)/g;
-const LOCAL_MARKDOWN_LINK_RE = /\[([^\]]+)]\(([^)\s]+\.htm)(?:\s+"[^"]*")?\)/gi;
+const LOCAL_MARKDOWN_LINK_RE = /\[([^\]]+)]\(([^)\s]+\.htm(?:[#?][^)\s]*)?)(?:\s+"[^"]*")?\)/gi;
 const START_PAGE_RE = /^\s*Inicio página>>doc:\s*$/gim;
 const FIGURE_ARROW_LINK_RE = /^\*([^*\n]+)>>((?:\/docs|\/images)[^*\n]+)\*\s*$/gm;
 const SIMPLE_ARROW_LINK_RE = /^([^\n\[]+?)>>((?:\/docs|\/images)[^\]\s)]+)(?:\]\([^)]+\))?/gm;
@@ -139,6 +140,13 @@ export function deriveRelatedIds(content: string, validIds: Set<string>): string
     const href = match[1];
     const idMatch = href.match(PROCEDURE_LINK_RE);
     const id = idMatch?.[1];
+    if (id && validIds.has(id)) {
+      related.add(id);
+    }
+  }
+
+  for (const match of content.matchAll(BARE_PROCEDURE_LINK_RE)) {
+    const id = match[1];
     if (id && validIds.has(id)) {
       related.add(id);
     }
@@ -601,16 +609,10 @@ export function getProcedureSidebarMeta(
 
   switch (section) {
     case "Administrativos":
-      return { group: "Procedimientos generales", subgroup: "Servicio y dotación" };
+      return { group: "Procedimientos", subgroup: "Listado" };
 
     case "Comunicaciones":
-      if (id.startsWith("125_")) {
-        if (id === "125_03" || id === "125_04") {
-          return { group: "Recomendaciones específicas", subgroup: "Patologías tiempo-dependientes" };
-        }
-        return { group: "Recomendaciones específicas", subgroup: "Soporte telefónico específico" };
-      }
-      return { group: "Procedimientos generales", subgroup: "Central de comunicaciones" };
+      return { group: "Procedimientos", subgroup: "Listado" };
 
     case "Operativos":
       if (/^217_/.test(id)) {
@@ -671,6 +673,12 @@ export function getProcedureSidebarMeta(
       if (num === 607 || num === 608) return { group: "Otras técnicas", subgroup: "Exploración y otras" };
       if (num === 609) return { group: "Obstetricia", subgroup: "Técnicas obstétricas" };
       return { group: "Técnicas asistenciales", subgroup: "Procedimientos" };
+
+    case "DRP":
+      return { group: "Procedimientos", subgroup: "Listado" };
+
+    case "Intervinientes":
+      return { group: "Procedimientos", subgroup: "Listado" };
 
     default:
       return { group: "General", subgroup: "Procedimientos" };

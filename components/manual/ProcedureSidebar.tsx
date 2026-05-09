@@ -12,6 +12,8 @@ interface Props {
 }
 
 const SECTION_COLORS: Record<string, { dot: string; accent: string }> = {
+  DRP:             { dot: "bg-orange-500", accent: "text-orange-600 dark:text-orange-400" },
+  Intervinientes:  { dot: "bg-teal-500",  accent: "text-teal-600 dark:text-teal-400" },
   Administrativos: { dot: "bg-slate-400", accent: "text-slate-500 dark:text-slate-400" },
   Comunicaciones:  { dot: "bg-violet-500", accent: "text-violet-600 dark:text-violet-400" },
   Operativos:      { dot: "bg-amber-500",  accent: "text-amber-600 dark:text-amber-400" },
@@ -22,6 +24,7 @@ const SECTION_COLORS: Record<string, { dot: string; accent: string }> = {
   General:         { dot: "bg-slate-400",  accent: "text-slate-500 dark:text-slate-400" },
 };
 const DEFAULT_COLORS = SECTION_COLORS.General;
+const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes"]);
 
 export function ProcedureSidebar({ sections }: Props) {
   const pathname = usePathname();
@@ -47,6 +50,12 @@ export function ProcedureSidebar({ sections }: Props) {
             sg.procedures.some((p) => pathname === `/manual/${p.slug}`),
           ),
         );
+        const isFlatSection = FLAT_SECTIONS.has(section.section);
+        const flatProcedures = isFlatSection
+          ? section.groups
+              .flatMap((group) => group.subgroups.flatMap((subgroup) => subgroup.procedures))
+              .sort((a, b) => a.id.localeCompare(b.id, "es", { numeric: true }))
+          : [];
 
         return (
           <div key={section.section}>
@@ -68,16 +77,34 @@ export function ProcedureSidebar({ sections }: Props) {
 
             {isOpen(sectionKey, hasActive) && (
               <div className="ml-3 mb-2 flex flex-col gap-0">
-                {section.groups.map((group) => {
+                {isFlatSection ? (
+                  <div className="ml-3 flex flex-col gap-0.5 pb-1">
+                    {flatProcedures.map((procedure) => {
+                      const active = pathname === `/manual/${procedure.slug}`;
+                      return (
+                        <Link
+                          key={procedure.id}
+                          href={`/manual/${procedure.slug}`}
+                          className={cn(
+                            "flex items-baseline gap-1.5 px-2 py-1.5 rounded-md text-sm transition-colors leading-snug",
+                            active
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "text-muted-foreground hover:text-foreground hover:bg-background/80",
+                          )}
+                        >
+                          <span className="text-[10px] text-muted-foreground/50 font-mono flex-shrink-0 tabular-nums">
+                            {procedure.id}
+                          </span>
+                          <span className="leading-tight">{procedure.title}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : section.groups.map((group) => {
                   const groupKey = `g:${section.section}:${group.name}`;
 
                   return (
                     <div key={groupKey}>
-                      {/* ── Group label (separator, not collapsible) ── */}
-                      <div className="mt-2 mb-1 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50 select-none">
-                        {group.name}
-                      </div>
-
                       {/* ── Subgroups (collapsible) ── */}
                       {group.subgroups.map((subgroup) => {
                         const subKey = `sg:${section.section}:${group.name}:${subgroup.name}`;

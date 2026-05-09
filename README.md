@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SAMUR Manual
 
-## Getting Started
+Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.
 
-First, run the development server:
+El contenido clínico pertenece a SAMUR-PC / Ayuntamiento de Madrid. Esta aplicación no tiene relación oficial con SAMUR.
+
+## Características
+
+- 226 procedimientos de emergencias prehospitalarias (SVA, SVB, Operativos, Técnicas, Comunicaciones, Psicológicos, Administrativos)
+- Vademécum de fármacos con dosis y vías de administración
+- Códigos radio y claves de comunicación
+- Mapa interactivo de hospitales y bases
+- Grafo de relaciones entre procedimientos
+- Modo oscuro, PWA, soporte para móvil
+
+## Desarrollo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev        # Servidor de desarrollo (http://localhost:3000)
+npm run build      # Build de producción (también genera llms.txt)
+npm run lint       # ESLint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Scripts de sincronización
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run sync:manualsamur   # Sincronizar procedimientos desde el wiki oficial
+npm run sync:vademecum     # Sincronizar vademécum
+npm run generate:llms      # Regenerar llms.txt y llms-full.txt
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Acceso para LLMs
 
-## Learn More
+El contenido está disponible en formato [llms.txt](https://llmstxt.org) para uso con LLMs y agentes de IA:
 
-To learn more about Next.js, take a look at the following resources:
+- `/llms.txt` — Índice de todos los procedimientos con URLs
+- `/llms-full.txt` — Contenido completo de todos los procedimientos en texto plano
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ejemplo de uso con Claude u otro LLM:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+Fetch https://manualsamur.es/llms.txt para obtener el índice de procedimientos.
+Fetch https://manualsamur.es/llms-full.txt para el contenido completo.
+O accede a un procedimiento individual: https://manualsamur.es/manual/301-parada-cardiorrespiratoria
+```
 
-## Deploy on Vercel
+## Arquitectura
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js 16** con App Router, React 19, TypeScript, Tailwind CSS
+- **Contenido**: Markdown en `content/procedures/`, datos JSON en `content/data/`
+- **Scraping**: Scripts en `scripts/` que sincronizan desde el wiki oficial XWiki
+- **Visualización**: D3-force para grafo local, React Flow para grafo global
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack técnico
+
+- Next.js 16, React 19, TypeScript
+- Tailwind CSS v4, Radix UI / shadcn
+- next-mdx-remote (rendering de procedimientos)
+- D3 (grafos de relaciones), MapLibre GL (mapa)
+- Capacitor (wrapper nativo iOS)

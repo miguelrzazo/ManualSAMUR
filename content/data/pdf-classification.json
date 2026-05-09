@@ -1,0 +1,1017 @@
+{
+  "generatedAt": "2026-05-09T13:31:33.404Z",
+  "total": 144,
+  "text": 138,
+  "image": 6,
+  "error": 0,
+  "pdfs": [
+    {
+      "path": "docs/procedures/121/121_codigos_Enfermeria.pdf",
+      "procedureId": "121",
+      "filename": "121_codigos_Enfermeria.pdf",
+      "kind": "text",
+      "charCount": 23536
+    },
+    {
+      "path": "docs/procedures/121/121_codigos_USVA.pdf",
+      "procedureId": "121",
+      "filename": "121_codigos_USVA.pdf",
+      "kind": "text",
+      "charCount": 23845
+    },
+    {
+      "path": "docs/procedures/121/121_codigos_USVB.pdf",
+      "procedureId": "121",
+      "filename": "121_codigos_USVB.pdf",
+      "kind": "text",
+      "charCount": 21531
+    },
+    {
+      "path": "docs/procedures/121/121_codigos_psicologia.pdf",
+      "procedureId": "121",
+      "filename": "121_codigos_psicologia.pdf",
+      "kind": "text",
+      "charCount": 7950
+    },
+    {
+      "path": "docs/procedures/122/122_ProtocoloActivacion.pdf",
+      "procedureId": "122",
+      "filename": "122_ProtocoloActivacion.pdf",
+      "kind": "text",
+      "charCount": 1031
+    },
+    {
+      "path": "docs/procedures/125_04/410a_EscalaRankin.pdf",
+      "procedureId": "125_04",
+      "filename": "410a_EscalaRankin.pdf",
+      "kind": "text",
+      "charCount": 872
+    },
+    {
+      "path": "docs/procedures/203/203_croquis.pdf",
+      "procedureId": "203",
+      "filename": "203_croquis.pdf",
+      "kind": "text",
+      "charCount": 1593
+    },
+    {
+      "path": "docs/procedures/203b/203b_AnexoAccidentes.pdf",
+      "procedureId": "203b",
+      "filename": "203b_AnexoAccidentes.pdf",
+      "kind": "text",
+      "charCount": 1113
+    },
+    {
+      "path": "docs/procedures/209/209_1_IndicadoresMaltratoFisico.pdf",
+      "procedureId": "209",
+      "filename": "209_1_IndicadoresMaltratoFisico.pdf",
+      "kind": "text",
+      "charCount": 2314
+    },
+    {
+      "path": "docs/procedures/209/209_2_IndicadoresAbusoSexual.pdf",
+      "procedureId": "209",
+      "filename": "209_2_IndicadoresAbusoSexual.pdf",
+      "kind": "text",
+      "charCount": 1394
+    },
+    {
+      "path": "docs/procedures/209/209_3_IndicadoresMaltratoEmocional.pdf",
+      "procedureId": "209",
+      "filename": "209_3_IndicadoresMaltratoEmocional.pdf",
+      "kind": "text",
+      "charCount": 1241
+    },
+    {
+      "path": "docs/procedures/209/209_4_IndicadoresNegligencia.pdf",
+      "procedureId": "209",
+      "filename": "209_4_IndicadoresNegligencia.pdf",
+      "kind": "text",
+      "charCount": 1689
+    },
+    {
+      "path": "docs/procedures/209/209_5_Responsables.pdf",
+      "procedureId": "209",
+      "filename": "209_5_Responsables.pdf",
+      "kind": "text",
+      "charCount": 1302
+    },
+    {
+      "path": "docs/procedures/209/209_6_Ambitos.pdf",
+      "procedureId": "209",
+      "filename": "209_6_Ambitos.pdf",
+      "kind": "text",
+      "charCount": 931
+    },
+    {
+      "path": "docs/procedures/209/209_7_Criterios.pdf",
+      "procedureId": "209",
+      "filename": "209_7_Criterios.pdf",
+      "kind": "text",
+      "charCount": 1246
+    },
+    {
+      "path": "docs/procedures/209/209_8_Derechos.pdf",
+      "procedureId": "209",
+      "filename": "209_8_Derechos.pdf",
+      "kind": "text",
+      "charCount": 2721
+    },
+    {
+      "path": "docs/procedures/209/209_FlujogramaNotificacion.pdf",
+      "procedureId": "209",
+      "filename": "209_FlujogramaNotificacion.pdf",
+      "kind": "text",
+      "charCount": 798
+    },
+    {
+      "path": "docs/procedures/209/209_HojaMaltratoInfantil.pdf",
+      "procedureId": "209",
+      "filename": "209_HojaMaltratoInfantil.pdf",
+      "kind": "text",
+      "charCount": 1696
+    },
+    {
+      "path": "docs/procedures/209/209_ModeloSospechaViolencia.pdf",
+      "procedureId": "209",
+      "filename": "209_ModeloSospechaViolencia.pdf",
+      "kind": "text",
+      "charCount": 1391
+    },
+    {
+      "path": "docs/procedures/209b/209b_PersonasMayores_Pfeiffer_Soledad_EASI.pdf",
+      "procedureId": "209b",
+      "filename": "209b_PersonasMayores_Pfeiffer_Soledad_EASI.pdf",
+      "kind": "text",
+      "charCount": 4678
+    },
+    {
+      "path": "docs/procedures/209b/209b_notificacionMayores.pdf",
+      "procedureId": "209b",
+      "filename": "209b_notificacionMayores.pdf",
+      "kind": "text",
+      "charCount": 640
+    },
+    {
+      "path": "docs/procedures/209c/509.1_Clasificacion.pdf",
+      "procedureId": "209c",
+      "filename": "509.1_Clasificacion.pdf",
+      "kind": "text",
+      "charCount": 3535
+    },
+    {
+      "path": "docs/procedures/209c/509.2_IndicadoresSospecha.pdf",
+      "procedureId": "209c",
+      "filename": "509.2_IndicadoresSospecha.pdf",
+      "kind": "text",
+      "charCount": 1943
+    },
+    {
+      "path": "docs/procedures/211/211_AnexoI.VISEM.pdf",
+      "procedureId": "211",
+      "filename": "211_AnexoI.VISEM.pdf",
+      "kind": "text",
+      "charCount": 770
+    },
+    {
+      "path": "docs/procedures/211/211_AnexoII.VISEM.pdf",
+      "procedureId": "211",
+      "filename": "211_AnexoII.VISEM.pdf",
+      "kind": "text",
+      "charCount": 2566
+    },
+    {
+      "path": "docs/procedures/211/211_cadenaCustodia.pdf",
+      "procedureId": "211",
+      "filename": "211_cadenaCustodia.pdf",
+      "kind": "text",
+      "charCount": 474
+    },
+    {
+      "path": "docs/procedures/214/306_02_EscalaNIHSS.pdf",
+      "procedureId": "214",
+      "filename": "306_02_EscalaNIHSS.pdf",
+      "kind": "text",
+      "charCount": 4709
+    },
+    {
+      "path": "docs/procedures/214h/211_cadenaCustodia.pdf",
+      "procedureId": "214h",
+      "filename": "211_cadenaCustodia.pdf",
+      "kind": "text",
+      "charCount": 474
+    },
+    {
+      "path": "docs/procedures/214h/211a_AnexoI.VISNNA.pdf",
+      "procedureId": "214h",
+      "filename": "211a_AnexoI.VISNNA.pdf",
+      "kind": "text",
+      "charCount": 1522
+    },
+    {
+      "path": "docs/procedures/214h/211a_AnexoII.VISNNA.pdf",
+      "procedureId": "214h",
+      "filename": "211a_AnexoII.VISNNA.pdf",
+      "kind": "text",
+      "charCount": 1713
+    },
+    {
+      "path": "docs/procedures/214h/211a_AnexoIII.VISNNA.pdf",
+      "procedureId": "214h",
+      "filename": "211a_AnexoIII.VISNNA.pdf",
+      "kind": "text",
+      "charCount": 602
+    },
+    {
+      "path": "docs/procedures/214h/211a_AnexoIV.VISNNA.pdf",
+      "procedureId": "214h",
+      "filename": "211a_AnexoIV.VISNNA.pdf",
+      "kind": "text",
+      "charCount": 645
+    },
+    {
+      "path": "docs/procedures/217/217_Anexo1_Criterios.pdf",
+      "procedureId": "217",
+      "filename": "217_Anexo1_Criterios.pdf",
+      "kind": "text",
+      "charCount": 4970
+    },
+    {
+      "path": "docs/procedures/217/217_Anexo2_InformePIC.pdf",
+      "procedureId": "217",
+      "filename": "217_Anexo2_InformePIC.pdf",
+      "kind": "text",
+      "charCount": 1688
+    },
+    {
+      "path": "docs/procedures/217/217_Anexo3_SITAC.pdf",
+      "procedureId": "217",
+      "filename": "217_Anexo3_SITAC.pdf",
+      "kind": "image",
+      "charCount": 77
+    },
+    {
+      "path": "docs/procedures/217/217_Anexo4_FlujogramaActivacion.pdf",
+      "procedureId": "217",
+      "filename": "217_Anexo4_FlujogramaActivacion.pdf",
+      "kind": "image",
+      "charCount": 0
+    },
+    {
+      "path": "docs/procedures/217_03/217_03_accionesoperativas.pdf",
+      "procedureId": "217_03",
+      "filename": "217_03_accionesoperativas.pdf",
+      "kind": "image",
+      "charCount": 164
+    },
+    {
+      "path": "docs/procedures/217_03/217_03_accionesoperativasNRBQ.pdf",
+      "procedureId": "217_03",
+      "filename": "217_03_accionesoperativasNRBQ.pdf",
+      "kind": "image",
+      "charCount": 169
+    },
+    {
+      "path": "docs/procedures/301/301_algoritmo_SVA.pdf",
+      "procedureId": "301",
+      "filename": "301_algoritmo_SVA.pdf",
+      "kind": "text",
+      "charCount": 2789
+    },
+    {
+      "path": "docs/procedures/301a/301a_algoritmo_CuidadosPostparocardiaco.pdf",
+      "procedureId": "301a",
+      "filename": "301a_algoritmo_CuidadosPostparocardiaco.pdf",
+      "kind": "text",
+      "charCount": 1379
+    },
+    {
+      "path": "docs/procedures/301b/301b_algoritmo_ERC.pdf",
+      "procedureId": "301b",
+      "filename": "301b_algoritmo_ERC.pdf",
+      "kind": "text",
+      "charCount": 1299
+    },
+    {
+      "path": "docs/procedures/302/302_evaluacionViaAerea.pdf",
+      "procedureId": "302",
+      "filename": "302_evaluacionViaAerea.pdf",
+      "kind": "text",
+      "charCount": 2631
+    },
+    {
+      "path": "docs/procedures/303/302_evaluacionViaAerea.pdf",
+      "procedureId": "303",
+      "filename": "302_evaluacionViaAerea.pdf",
+      "kind": "text",
+      "charCount": 2631
+    },
+    {
+      "path": "docs/procedures/304_01/304_01_EscalaGlasgow.pdf",
+      "procedureId": "304_01",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/304_02/304_01_EscalaGlasgow.pdf",
+      "procedureId": "304_02",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/304_02/304_02_RecomendacionesAltaTCE.pdf",
+      "procedureId": "304_02",
+      "filename": "304_02_RecomendacionesAltaTCE.pdf",
+      "kind": "text",
+      "charCount": 881
+    },
+    {
+      "path": "docs/procedures/305_01/305_01_alteracioneshemodinamicas.pdf",
+      "procedureId": "305_01",
+      "filename": "305_01_alteracioneshemodinamicas.pdf",
+      "kind": "text",
+      "charCount": 503
+    },
+    {
+      "path": "docs/procedures/306_01/304_01_EscalaGlasgow.pdf",
+      "procedureId": "306_01",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/306_01/306_01_PatronesComa.pdf",
+      "procedureId": "306_01",
+      "filename": "306_01_PatronesComa.pdf",
+      "kind": "text",
+      "charCount": 1122
+    },
+    {
+      "path": "docs/procedures/306_02/304_01_EscalaGlasgow.pdf",
+      "procedureId": "306_02",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/306_02/306_02_EscalaNIHSS.pdf",
+      "procedureId": "306_02",
+      "filename": "306_02_EscalaNIHSS.pdf",
+      "kind": "text",
+      "charCount": 4709
+    },
+    {
+      "path": "docs/procedures/308_01/308_01_diagnosticoDiferencial.pdf",
+      "procedureId": "308_01",
+      "filename": "308_01_diagnosticoDiferencial.pdf",
+      "kind": "text",
+      "charCount": 704
+    },
+    {
+      "path": "docs/procedures/308_01/308_01_edadGestacional.pdf",
+      "procedureId": "308_01",
+      "filename": "308_01_edadGestacional.pdf",
+      "kind": "text",
+      "charCount": 462
+    },
+    {
+      "path": "docs/procedures/308_02/308_01_edadGestacional.pdf",
+      "procedureId": "308_02",
+      "filename": "308_01_edadGestacional.pdf",
+      "kind": "text",
+      "charCount": 462
+    },
+    {
+      "path": "docs/procedures/309_02c/309_02c_EdemaAgudoPulmon_IC.pdf",
+      "procedureId": "309_02c",
+      "filename": "309_02c_EdemaAgudoPulmon_IC.pdf",
+      "kind": "text",
+      "charCount": 1078
+    },
+    {
+      "path": "docs/procedures/309_02c/309_02c_manejoIC.pdf",
+      "procedureId": "309_02c",
+      "filename": "309_02c_manejoIC.pdf",
+      "kind": "text",
+      "charCount": 821
+    },
+    {
+      "path": "docs/procedures/309_03/309_02c_EdemaAgudoPulmon_IC.pdf",
+      "procedureId": "309_03",
+      "filename": "309_02c_EdemaAgudoPulmon_IC.pdf",
+      "kind": "text",
+      "charCount": 1078
+    },
+    {
+      "path": "docs/procedures/311/214d_EscalaRiesgoSuicida.pdf",
+      "procedureId": "311",
+      "filename": "214d_EscalaRiesgoSuicida.pdf",
+      "kind": "text",
+      "charCount": 1657
+    },
+    {
+      "path": "docs/procedures/311/311_VolanteTrasladoForzoso.pdf",
+      "procedureId": "311",
+      "filename": "311_VolanteTrasladoForzoso.pdf",
+      "kind": "text",
+      "charCount": 796
+    },
+    {
+      "path": "docs/procedures/314_00/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_00",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_00/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_00",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_00/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_00",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_00/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_00",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_00/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_00",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_00/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_00",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_00/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_00",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_01/314_01_algoritmoSVAP.pdf",
+      "procedureId": "314_01",
+      "filename": "314_01_algoritmoSVAP.pdf",
+      "kind": "text",
+      "charCount": 3107
+    },
+    {
+      "path": "docs/procedures/314_01/314_01_tablaMedicacionPediatrica.pdf",
+      "procedureId": "314_01",
+      "filename": "314_01_tablaMedicacionPediatrica.pdf",
+      "kind": "text",
+      "charCount": 2614
+    },
+    {
+      "path": "docs/procedures/314_01/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_01",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_01/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_01",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_01/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_01",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_01/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_01",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_01/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_01",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_01/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_01",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_01/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_01",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_02/314_02_algoritmoNeonatal.pdf",
+      "procedureId": "314_02",
+      "filename": "314_02_algoritmoNeonatal.pdf",
+      "kind": "text",
+      "charCount": 1319
+    },
+    {
+      "path": "docs/procedures/314_02/314_02_tablaEdadPeso.pdf",
+      "procedureId": "314_02",
+      "filename": "314_02_tablaEdadPeso.pdf",
+      "kind": "text",
+      "charCount": 446
+    },
+    {
+      "path": "docs/procedures/314_02/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_02",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_02/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_02",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_02/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_02",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_02/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_02",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_02/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_02",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_02/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_02",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_02/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_02",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_03/304_01_EscalaGlasgow.pdf",
+      "procedureId": "314_03",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/314_03/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_03",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_03/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_03",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_03/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_03",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_03/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_03",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_03/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_03",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_03/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_03",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_03/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_03",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_04/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_04",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_04/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_04",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_04/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_04",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_04/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_04",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_04/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_04",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_04/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_04",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_04/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_04",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_05/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_05",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_05/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_05",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_05/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_05",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_05/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_05",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_05/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_05",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_05/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_05",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_06/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_06",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_06/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_06",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_06/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_06",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_06/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_06",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_06/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_06",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_06/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_06",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_06/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_06",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_07/304_01_EscalaGlasgow.pdf",
+      "procedureId": "314_07",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/314_07/314_07_EscalaPedNIHSS.pdf",
+      "procedureId": "314_07",
+      "filename": "314_07_EscalaPedNIHSS.pdf",
+      "kind": "text",
+      "charCount": 11153
+    },
+    {
+      "path": "docs/procedures/314_07/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_07",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_07/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_07",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_07/314_ParametrosPediatricosEmergencia.pdf",
+      "procedureId": "314_07",
+      "filename": "314_ParametrosPediatricosEmergencia.pdf",
+      "kind": "text",
+      "charCount": 1358
+    },
+    {
+      "path": "docs/procedures/314_07/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_07",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_07/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_07",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_07/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_07",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_07/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_07",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/314_08/314_FarmacosEmergenciasPediatricas.pdf",
+      "procedureId": "314_08",
+      "filename": "314_FarmacosEmergenciasPediatricas.pdf",
+      "kind": "text",
+      "charCount": 5404
+    },
+    {
+      "path": "docs/procedures/314_08/314_MedicacionIntranasal.pdf",
+      "procedureId": "314_08",
+      "filename": "314_MedicacionIntranasal.pdf",
+      "kind": "text",
+      "charCount": 1425
+    },
+    {
+      "path": "docs/procedures/314_08/314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "procedureId": "314_08",
+      "filename": "314_Tabla1_ParametrosMedicacion_3meses.pdf",
+      "kind": "text",
+      "charCount": 3742
+    },
+    {
+      "path": "docs/procedures/314_08/314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "procedureId": "314_08",
+      "filename": "314_Tabla2_ParametrosMedicacion_1ano.pdf",
+      "kind": "text",
+      "charCount": 3758
+    },
+    {
+      "path": "docs/procedures/314_08/314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "procedureId": "314_08",
+      "filename": "314_Tabla3_ParametrosMedicacion_5anos.pdf",
+      "kind": "text",
+      "charCount": 3765
+    },
+    {
+      "path": "docs/procedures/314_08/314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "procedureId": "314_08",
+      "filename": "314_Tabla4_ParametrosMedicacion_9anos.pdf",
+      "kind": "text",
+      "charCount": 3762
+    },
+    {
+      "path": "docs/procedures/315_01/315_01_DiuresisForzada.pdf",
+      "procedureId": "315_01",
+      "filename": "315_01_DiuresisForzada.pdf",
+      "kind": "text",
+      "charCount": 1474
+    },
+    {
+      "path": "docs/procedures/315_02/315_02_alarmasDeteccionGases.pdf",
+      "procedureId": "315_02",
+      "filename": "315_02_alarmasDeteccionGases.pdf",
+      "kind": "text",
+      "charCount": 1000
+    },
+    {
+      "path": "docs/procedures/315_03/315_01_DiuresisForzada.pdf",
+      "procedureId": "315_03",
+      "filename": "315_01_DiuresisForzada.pdf",
+      "kind": "text",
+      "charCount": 1474
+    },
+    {
+      "path": "docs/procedures/315_03/315_03_DosisToxicas.pdf",
+      "procedureId": "315_03",
+      "filename": "315_03_DosisToxicas.pdf",
+      "kind": "text",
+      "charCount": 1369
+    },
+    {
+      "path": "docs/procedures/401/AnexoHibridos.pdf",
+      "procedureId": "401",
+      "filename": "AnexoHibridos.pdf",
+      "kind": "text",
+      "charCount": 7789
+    },
+    {
+      "path": "docs/procedures/402/304_01_EscalaGlasgow.pdf",
+      "procedureId": "402",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/402/402_algoritmoSVB_ValoracionPaciente.pdf",
+      "procedureId": "402",
+      "filename": "402_algoritmoSVB_ValoracionPaciente.pdf",
+      "kind": "text",
+      "charCount": 1805
+    },
+    {
+      "path": "docs/procedures/410a/304_01_EscalaGlasgow.pdf",
+      "procedureId": "410a",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/410a/410a_EscalaRankin.pdf",
+      "procedureId": "410a",
+      "filename": "410a_EscalaRankin.pdf",
+      "kind": "text",
+      "charCount": 872
+    },
+    {
+      "path": "docs/procedures/412_00/304_01_EscalaGlasgow.pdf",
+      "procedureId": "412_00",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/413/311_VolanteTrasladoForzoso.pdf",
+      "procedureId": "413",
+      "filename": "311_VolanteTrasladoForzoso.pdf",
+      "kind": "text",
+      "charCount": 796
+    },
+    {
+      "path": "docs/procedures/414/304_01_EscalaGlasgow.pdf",
+      "procedureId": "414",
+      "filename": "304_01_EscalaGlasgow.pdf",
+      "kind": "text",
+      "charCount": 981
+    },
+    {
+      "path": "docs/procedures/603_09/8163938_101034-11-Rev-A-LUCAS-3-IFU-ES_lowres.pdf",
+      "procedureId": "603_09",
+      "filename": "8163938_101034-11-Rev-A-LUCAS-3-IFU-ES_lowres.pdf",
+      "kind": "text",
+      "charCount": 109479
+    },
+    {
+      "path": "docs/procedures/604_05b/604_05b_AnalgesiaIO.pdf",
+      "procedureId": "604_05b",
+      "filename": "604_05b_AnalgesiaIO.pdf",
+      "kind": "text",
+      "charCount": 655
+    },
+    {
+      "path": "docs/procedures/con-bomberos/217_03_accionesoperativas.pdf",
+      "procedureId": "con-bomberos",
+      "filename": "217_03_accionesoperativas.pdf",
+      "kind": "image",
+      "charCount": 164
+    },
+    {
+      "path": "docs/procedures/con-bomberos/217_03_accionesoperativasNRBQ.pdf",
+      "procedureId": "con-bomberos",
+      "filename": "217_03_accionesoperativasNRBQ.pdf",
+      "kind": "image",
+      "charCount": 169
+    },
+    {
+      "path": "docs/procedures/via-intraosea-sistema-ez-io/604_05b_AnalgesiaIO.pdf",
+      "procedureId": "via-intraosea-sistema-ez-io",
+      "filename": "604_05b_AnalgesiaIO.pdf",
+      "kind": "text",
+      "charCount": 655
+    }
+  ]
+}

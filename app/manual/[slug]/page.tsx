@@ -33,6 +33,7 @@ import {
   Collapsible,
   Diagram,
   DrugLink,
+  ImageWithLightbox,
   KeyPoints,
   MermaidDiagram,
   Note,
@@ -44,6 +45,7 @@ import { TableOfContents } from "@/components/manual/TableOfContents";
 import { Breadcrumbs } from "@/components/manual/Breadcrumbs";
 import { ProcedureNav } from "@/components/manual/ProcedureNav";
 import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
+import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import type { ProcedureRelation } from "@/lib/manual-data";
@@ -79,16 +81,15 @@ const mdxComponents = {
       </a>
     );
   },
-  img: ({ src, alt, ...props }: ComponentPropsWithoutRef<"img">) =>
+  img: ({ src, alt }: ComponentPropsWithoutRef<"img">) =>
     typeof src === "string" && src && !src.startsWith("../") ? (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={src}
-        alt={alt ?? ""}
-        className="rounded-xl border border-border/60 my-6 max-w-full h-auto mx-auto"
-        {...props}
-      />
+      <ImageWithLightbox src={src} alt={alt} />
     ) : null,
+  table: ({ children }: ComponentPropsWithoutRef<"table">) => (
+    <div className="my-6 overflow-x-auto rounded-xl border border-border/60">
+      <table className="w-full min-w-[560px]">{children}</table>
+    </div>
+  ),
   hr: () => <hr className="my-8 border-border/60" />,
   KeyPoints,
   Warning,
@@ -145,6 +146,8 @@ export default async function ProcedurePage({ params }: Props) {
   }
 
   const SECTION_COLORS: Record<string, string> = {
+    DRP: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+    Intervinientes: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300",
     Administrativos: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
     Comunicaciones: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
     Operativos: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
@@ -217,17 +220,21 @@ export default async function ProcedurePage({ params }: Props) {
           </div>
         </div>
 
+        {/* Mobile TOC — collapsible, below header */}
+        <div className="lg:hidden mb-4" data-print-hide>
+          <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />
+        </div>
+
         {/* MDX Content */}
         <div data-manual-body className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-5 py-5 md:px-8 md:py-7
           prose-headings:font-semibold prose-headings:tracking-tight
-          prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
-          prose-h3:text-[1.05rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/80
-          prose-p:leading-8 prose-p:text-foreground/90 prose-p:my-5
+          prose-h2:text-xl prose-h2:mt-9 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
+          prose-h3:text-[1.05rem] prose-h3:mt-7 prose-h3:mb-2 prose-h3:text-foreground/90
+          prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-4
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
           prose-img:mx-auto prose-img:block prose-img:rounded-xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm
           prose-figure:my-8
           prose-table:text-sm
-          prose-table:block prose-table:w-full prose-table:overflow-x-auto
           prose-thead:bg-muted/50
           prose-th:px-3 prose-th:py-2 prose-th:font-semibold prose-th:text-left
           prose-td:px-3 prose-td:py-2
@@ -294,14 +301,25 @@ export default async function ProcedurePage({ params }: Props) {
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <ExternalLink className="h-3 w-3" />
-              Ver fuente original en samurpc.net
+              Ver fuente oficial en servpub.madrid.es
             </a>
           </div>
         )}
 
+        {procedure.attachments.length > 0 ? <ProcedureAttachments attachments={procedure.attachments} /> : null}
+
         <ProcedureNav prev={prev} next={next} />
 
         <div className="mt-8 grid gap-4 lg:hidden" data-print-hide>
+          {backlinks.length > 0 && (
+            <ProcedureLinkCard
+              title="Enlazado desde"
+              icon={<GitBranch className="h-3.5 w-3.5" />}
+              procedures={backlinks}
+              relationsByProcedureId={relationsByProcedureId}
+              emptyLabel="Ningún otro artículo enlaza aquí"
+            />
+          )}
           <ProcedureLinkCard
             title="Enlaces salientes"
             icon={<Link2 className="h-3.5 w-3.5" />}
@@ -309,20 +327,15 @@ export default async function ProcedurePage({ params }: Props) {
             relationsByProcedureId={relationsByProcedureId}
             emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
           />
-          <ProcedureLinkCard
-            title="Enlaces entrantes"
-            icon={<GitBranch className="h-3.5 w-3.5" />}
-            procedures={backlinks}
-            relationsByProcedureId={relationsByProcedureId}
-            emptyLabel="Ningún otro artículo enlaza aquí"
-          />
-          <ProcedureLinkCard
-            title="Relacionados sugeridos"
-            icon={<Network className="h-3.5 w-3.5" />}
-            procedures={suggested}
-            relationsByProcedureId={relationsByProcedureId}
-            emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
-          />
+          {suggested.length > 0 && (
+            <ProcedureLinkCard
+              title="Relacionados sugeridos"
+              icon={<Network className="h-3.5 w-3.5" />}
+              procedures={suggested}
+              relationsByProcedureId={relationsByProcedureId}
+              emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+            />
+          )}
           {hasGraphData && (
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -337,29 +350,33 @@ export default async function ProcedurePage({ params }: Props) {
 
       {/* Right sidebar — desktop only */}
       <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
-        <div className="sticky top-6 flex flex-col gap-4">
+        <div className="sticky top-6 flex flex-col gap-4 max-h-[calc(100vh-3rem)] overflow-y-auto pb-4">
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} />
+          {backlinks.length > 0 && (
+            <ProcedureLinkCard
+              title="Enlazado desde"
+              icon={<GitBranch className="h-3.5 w-3.5" />}
+              procedures={backlinks}
+              relationsByProcedureId={relationsByProcedureId}
+              emptyLabel="Ningún otro artículo enlaza aquí"
+            />
+          )}
           <ProcedureLinkCard
-            title="Enlaces salientes"
+            title="Ver también"
             icon={<Link2 className="h-3.5 w-3.5" />}
             procedures={related}
             relationsByProcedureId={relationsByProcedureId}
             emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
           />
-          <ProcedureLinkCard
-            title="Enlaces entrantes"
-            icon={<GitBranch className="h-3.5 w-3.5" />}
-            procedures={backlinks}
-            relationsByProcedureId={relationsByProcedureId}
-            emptyLabel="Ningún otro artículo enlaza aquí"
-          />
-          <ProcedureLinkCard
-            title="Relacionados sugeridos"
-            icon={<Network className="h-3.5 w-3.5" />}
-            procedures={suggested}
-            relationsByProcedureId={relationsByProcedureId}
-            emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
-          />
+          {suggested.length > 0 && (
+            <ProcedureLinkCard
+              title="Sugeridos"
+              icon={<Network className="h-3.5 w-3.5" />}
+              procedures={suggested}
+              relationsByProcedureId={relationsByProcedureId}
+              emptyLabel="Sin sugerencias conservadoras para ampliar la red de esta nota"
+            />
+          )}
           {hasGraphData && (
             <div>
               <div className="flex items-center gap-2 mb-3">
