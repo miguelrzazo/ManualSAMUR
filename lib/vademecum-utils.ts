@@ -16,11 +16,13 @@ export interface VademecumDrugReference {
   synonyms?: string[];
 }
 
-export function normalizeForSearch(value: string): string {
-  return value
-    .toLowerCase()
+export function normalizeForSearch(value: unknown): string {
+  if (value == null) return "";
+  const str = String(value);
+  return str
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
 }

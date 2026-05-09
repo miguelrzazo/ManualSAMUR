@@ -1,9 +1,1256 @@
 {
   "manualVersion": "Abril 2026",
-  "lastSyncAt": "2026-05-05T19:49:05.189Z",
-  "tickerEnabled": false,
-  "tickerItems": [],
+  "lastSyncAt": "2026-05-09T12:16:57.544Z",
+  "tickerEnabled": true,
+  "tickerItems": [
+    "Actualizado: 122 Gestión de llamadas de emergencia",
+    "Actualizado: 126 Gestión de recursos",
+    "Actualizado: 121 Procedimiento radiotelefónico",
+    "Actualizado: 124 Recomendaciones generales",
+    "Actualizado: 125_06 Foco de hemorragia activa",
+    "Actualizado: 125_02 Obstrucción de la vía aérea OVACE",
+    "Actualizado: 125_08 Pacientes politraumatizados por accidente de tráfico",
+    "Actualizado: 125_05 Sospecha de Convulsiones",
+    "Actualizado: 125_04 Sospecha de Ictus",
+    "Actualizado: 125_07 Sospecha de parto en curso",
+    "Actualizado: 125_01 Sospecha de PCR y RCP transtelefónico",
+    "Actualizado: 125_03 Sospecha de Síndrome Coronario Agudo (SCA)"
+  ],
   "runs": [
+    {
+      "id": "2026-05-09T12:16:57.544Z",
+      "startedAt": "2026-05-09T12:12:57.672Z",
+      "finishedAt": "2026-05-09T12:16:57.544Z",
+      "dryRun": false,
+      "summary": {
+        "procedures": {
+          "discovered": 242,
+          "created": 0,
+          "updated": 202,
+          "unchanged": 17,
+          "failed": 0,
+          "skipped": 23
+        },
+        "vademecum": {
+          "discovered": 4,
+          "created": 0,
+          "updated": 1,
+          "unchanged": 3,
+          "failed": 0,
+          "skipped": 0
+        },
+        "codigos": {
+          "discovered": 9,
+          "created": 0,
+          "updated": 0,
+          "unchanged": 9,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "changes": {
+        "procedures": [
+          {
+            "id": "122",
+            "title": "Gestión de llamadas de emergencia",
+            "changeType": "updated"
+          },
+          {
+            "id": "126",
+            "title": "Gestión de recursos",
+            "changeType": "updated"
+          },
+          {
+            "id": "121",
+            "title": "Procedimiento radiotelefónico",
+            "changeType": "updated"
+          },
+          {
+            "id": "124",
+            "title": "Recomendaciones generales",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_06",
+            "title": "Foco de hemorragia activa",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_02",
+            "title": "Obstrucción de la vía aérea OVACE",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_08",
+            "title": "Pacientes politraumatizados por accidente de tráfico",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_05",
+            "title": "Sospecha de Convulsiones",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_04",
+            "title": "Sospecha de Ictus",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_07",
+            "title": "Sospecha de parto en curso",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_01",
+            "title": "Sospecha de PCR y RCP transtelefónico",
+            "changeType": "updated"
+          },
+          {
+            "id": "125_03",
+            "title": "Sospecha de Síndrome Coronario Agudo (SCA)",
+            "changeType": "updated"
+          },
+          {
+            "id": "123",
+            "title": "Técnicas de comunicación",
+            "changeType": "updated"
+          },
+          {
+            "id": "216",
+            "title": "Accidente laboral con riesgo biológico",
+            "changeType": "updated"
+          },
+          {
+            "id": "115",
+            "title": "Apoyo psicológico a intervinientes",
+            "changeType": "updated"
+          },
+          {
+            "id": "114",
+            "title": "Autoprotección en casos sospechos de viruela del mono",
+            "changeType": "updated"
+          },
+          {
+            "id": "216b",
+            "title": "Contacto con meningitis bacteriana",
+            "changeType": "updated"
+          },
+          {
+            "id": "103",
+            "title": "Funciones del personal de Guardia",
+            "changeType": "updated"
+          },
+          {
+            "id": "104",
+            "title": "UNIFORMIDAD y EPIs",
+            "changeType": "updated"
+          },
+          {
+            "id": "501",
+            "title": "Activación y actuación del psicólogo de guardia",
+            "changeType": "updated"
+          },
+          {
+            "id": "508",
+            "title": "Asistencia psicológica en agresión sexual",
+            "changeType": "updated"
+          },
+          {
+            "id": "507",
+            "title": "Asistencia psicológica en Código 9",
+            "changeType": "updated"
+          },
+          {
+            "id": "505",
+            "title": "Asistencia psicológica en conducta suicida",
+            "changeType": "updated"
+          },
+          {
+            "id": "509",
+            "title": "Asistencia psicológica en violencia de género",
+            "changeType": "updated"
+          },
+          {
+            "id": "503",
+            "title": "Comunicación de malas noticias, inicio y proceso de duelo",
+            "changeType": "updated"
+          },
+          {
+            "id": "504",
+            "title": "Crisis de ansiedad",
+            "changeType": "updated"
+          },
+          {
+            "id": "502",
+            "title": "Intervención psicosocial en situaciones de crisis",
+            "changeType": "updated"
+          },
+          {
+            "id": "506",
+            "title": "Situaciones de negociación",
+            "changeType": "updated"
+          },
+          {
+            "id": "303",
+            "title": "Analgesia y sedación",
+            "changeType": "updated"
+          },
+          {
+            "id": "301a",
+            "title": "Cuidados postparada",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "315_02",
+            "title": "Intoxicación por humo",
+            "changeType": "updated"
+          },
+          {
+            "id": "315_03",
+            "title": "Intoxicaciones más frecuentes",
+            "changeType": "updated"
+          },
+          {
+            "id": "315_01",
+            "title": "Manejo general del paciente intoxicado",
+            "changeType": "updated"
+          },
+          {
+            "id": "302",
+            "title": "Manejo avanzado de vía aérea",
+            "changeType": "updated"
+          },
+          {
+            "id": "302a",
+            "title": "Manejo de la vía aérea difícil",
+            "changeType": "updated"
+          },
+          {
+            "id": "301",
+            "title": "PARADA CARDIORRESPIRATORIA",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "301b",
+            "title": "PCR Traumática",
+            "changeType": "updated"
+          },
+          {
+            "id": "316",
+            "title": "Reacción alérgica",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_04",
+            "title": "Arritmias",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_05",
+            "title": "Crisis hipertensivas",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "309_03",
+            "title": "Edema agudo de pulmón",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "309_02c",
+            "title": "Insuficiencia cardiaca aguda  crónica agudizada",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "309_07",
+            "title": "Isquemia arterial aguda",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_01",
+            "title": "Shock",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_08",
+            "title": "Síncope",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_02",
+            "title": "Síndrome Coronario Agudo con elevación del ST SCACEST",
+            "changeType": "updated"
+          },
+          {
+            "id": "309_02b",
+            "title": "Síndrome Coronario Agudo sin elevación del SR (SCACEST)",
+            "changeType": "updated"
+          },
+          {
+            "id": "305_02",
+            "title": "Abdomen agudo",
+            "changeType": "updated"
+          },
+          {
+            "id": "305_01",
+            "title": "Hemorragia digestiva aguda",
+            "changeType": "updated"
+          },
+          {
+            "id": "312_01",
+            "title": "Complicaciones de la diabetes",
+            "changeType": "updated"
+          },
+          {
+            "id": "312_02",
+            "title": "Hiperglucemia por estrés",
+            "changeType": "updated"
+          },
+          {
+            "id": "312_04",
+            "title": "Hipocalcemia - Hipercalcemia",
+            "changeType": "updated"
+          },
+          {
+            "id": "312_02b",
+            "title": "Hiponatremia",
+            "changeType": "updated"
+          },
+          {
+            "id": "312_03",
+            "title": "Hipopotasemia - Hiperpotasemia",
+            "changeType": "updated"
+          },
+          {
+            "id": "307_01",
+            "title": "Cólico renoureteral (nefrítico)",
+            "changeType": "updated"
+          },
+          {
+            "id": "307_02",
+            "title": "Síndrome escrotal agudo",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_06",
+            "title": "Cefalea",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_01",
+            "title": "Coma",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_03",
+            "title": "Crisis  Estatus epiléptico",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_02",
+            "title": "Enfermedad vascular cerebral aguda",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_04",
+            "title": "Estado confusional agudo",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_07",
+            "title": "Síndrome discinético",
+            "changeType": "updated"
+          },
+          {
+            "id": "306_05",
+            "title": "Síndrome vertiginoso",
+            "changeType": "updated"
+          },
+          {
+            "id": "308_02",
+            "title": "Asistencia al parto",
+            "changeType": "updated"
+          },
+          {
+            "id": "308_01",
+            "title": "Urgencias obstétricas",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_02",
+            "title": "Asistencia al recién nacido",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_09",
+            "title": "Atención al menor bajo los efectos de alcohol o drogas",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_05",
+            "title": "Crisis convulsivas",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_04",
+            "title": "Dificultad respiratoria",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_07",
+            "title": "Manejo del ictus en la edad pediátrica",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_06",
+            "title": "Quemaduras",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_01",
+            "title": "RCP pediátrica",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "314_08",
+            "title": "Urticaria, angioedema y anafilaxia en pediatría",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_00",
+            "title": "Valoración del niño grave",
+            "changeType": "updated"
+          },
+          {
+            "id": "314_03",
+            "title": "Valoración del paciente pediátrico politraumatizado",
+            "changeType": "updated"
+          },
+          {
+            "id": "313_04",
+            "title": "Lesiones por electricidad. Electrocución",
+            "changeType": "updated"
+          },
+          {
+            "id": "313_03",
+            "title": "Paciente con hipotermia",
+            "changeType": "updated"
+          },
+          {
+            "id": "313_01",
+            "title": "Paciente quemado",
+            "changeType": "updated"
+          },
+          {
+            "id": "313_05",
+            "title": "Patologías por inmersión. Ahogamiento",
+            "changeType": "updated"
+          },
+          {
+            "id": "313_02",
+            "title": "Urgencias por calor",
+            "changeType": "updated"
+          },
+          {
+            "id": "311",
+            "title": "Urgencias psiquiátricas",
+            "changeType": "updated"
+          },
+          {
+            "id": "310_01",
+            "title": "Crisis asmática aguda",
+            "changeType": "updated"
+          },
+          {
+            "id": "310_02",
+            "title": "Exacerbaciones agudas del paciente con EPOC",
+            "changeType": "updated"
+          },
+          {
+            "id": "310_03",
+            "title": "Tromboembolismo pulmonar",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_01a",
+            "title": "Shock hemorrágico de origen traumático",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_07",
+            "title": "Síndrome de aplastamiento",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_02",
+            "title": "Traumatismo craneoencefálico",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_04",
+            "title": "Traumatismo de abdomen",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_03",
+            "title": "Traumatismo de tórax",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_08",
+            "title": "Traumatismo pélvico",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_06",
+            "title": "Traumatismos ortopédicos",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_05",
+            "title": "Traumatismos vertebro-medulares",
+            "changeType": "updated"
+          },
+          {
+            "id": "304_01",
+            "title": "Valoración inicial del paciente politraumatizado",
+            "changeType": "updated"
+          },
+          {
+            "id": "413",
+            "title": "Atención y traslado al paciente psiquiátrico",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "410",
+            "title": "Convulsiones",
+            "changeType": "updated"
+          },
+          {
+            "id": "406",
+            "title": "Desfibrilación externa automática",
+            "changeType": "updated"
+          },
+          {
+            "id": "403",
+            "title": "Instrumental adultos",
+            "changeType": "updated"
+          },
+          {
+            "id": "404",
+            "title": "Instrumental pediátrico",
+            "changeType": "updated"
+          },
+          {
+            "id": "405",
+            "title": "Obstrucción de la vía aérea por cuerpo extraño",
+            "changeType": "updated"
+          },
+          {
+            "id": "407",
+            "title": "Patologías de origen cardiovascular",
+            "changeType": "updated"
+          },
+          {
+            "id": "410a",
+            "title": "Posible enfermedad vascular cerebral aguda (ICTUS)",
+            "changeType": "updated"
+          },
+          {
+            "id": "409",
+            "title": "Posible intoxicación por drogas de abuso",
+            "changeType": "updated"
+          },
+          {
+            "id": "408",
+            "title": "Posible patología de origen respiratorio",
+            "changeType": "updated"
+          },
+          {
+            "id": "411",
+            "title": "Posible shock hipovolémico",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "414",
+            "title": "Solicitud de USVA",
+            "changeType": "updated"
+          },
+          {
+            "id": "412_04",
+            "title": "Abdominal",
+            "changeType": "updated"
+          },
+          {
+            "id": "412_02",
+            "title": "Columna vertebral",
+            "changeType": "updated"
+          },
+          {
+            "id": "412_01",
+            "title": "Craneoencefálico",
+            "changeType": "updated"
+          },
+          {
+            "id": "412_03",
+            "title": "Torácico",
+            "changeType": "updated"
+          },
+          {
+            "id": "412_00",
+            "title": "Valoración inicial del paciente politraumatizado",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "401",
+            "title": "Valoración de la escena",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "402b",
+            "title": "Valoración del niño grave",
+            "changeType": "updated"
+          },
+          {
+            "id": "402",
+            "title": "Valoración del paciente adulto",
+            "changeType": "updated"
+          },
+          {
+            "id": "126a",
+            "title": "Procedimiento de comunicaciones en un DRP",
+            "changeType": "updated"
+          },
+          {
+            "id": "201",
+            "title": "Actuación General",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "209c",
+            "title": "Actuación en casos de violencia de género",
+            "changeType": "updated"
+          },
+          {
+            "id": "217",
+            "title": "Actuaciones Conjuntas",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_03",
+            "title": "Con Bomberos",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_08",
+            "title": "Con Metro",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_01",
+            "title": "Con Policía Municipal",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_06",
+            "title": "Con Policía Nacional",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_07",
+            "title": "Con RENFE",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_05",
+            "title": "Con SAMUR Social",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_04",
+            "title": "Con SEAM",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_02",
+            "title": "Con UAPF",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_09",
+            "title": "Con Unidad de Medio Ambiente",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_01b",
+            "title": "Policía Municipal. Dispositivo Eléctrico de Control (DEC)",
+            "changeType": "updated"
+          },
+          {
+            "id": "211",
+            "title": "Código VISEM",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "214h",
+            "title": "Código VISNNA",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "209b",
+            "title": "Atención sociosanitaria a mayores",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "209",
+            "title": "Atención Sociosanitaria a menores",
+            "changeType": "updated"
+          },
+          {
+            "id": "206b",
+            "title": "Circulación de Unidades en Convoy",
+            "changeType": "updated"
+          },
+          {
+            "id": "212a",
+            "title": "Código 11",
+            "changeType": "updated"
+          },
+          {
+            "id": "214a",
+            "title": "Código 15",
+            "changeType": "updated"
+          },
+          {
+            "id": "214c",
+            "title": "Código 15.1",
+            "changeType": "updated"
+          },
+          {
+            "id": "213a",
+            "title": "Código 16",
+            "changeType": "updated"
+          },
+          {
+            "id": "214f",
+            "title": "Código 18: Código SEPSIS",
+            "changeType": "updated"
+          },
+          {
+            "id": "214e",
+            "title": "Código 19: Código TEP",
+            "changeType": "updated"
+          },
+          {
+            "id": "214b",
+            "title": "Código 33",
+            "changeType": "updated"
+          },
+          {
+            "id": "212",
+            "title": "Código 9: Donación en asistolia",
+            "changeType": "updated"
+          },
+          {
+            "id": "214g",
+            "title": "Código Crisis",
+            "changeType": "updated"
+          },
+          {
+            "id": "213",
+            "title": "Código Infarto",
+            "changeType": "updated"
+          },
+          {
+            "id": "214",
+            "title": "Códigos 1313.1: Reperfusión precoz en el ictus agudo",
+            "changeType": "updated"
+          },
+          {
+            "id": "203",
+            "title": "Conducción de vehículos sanitarios en emergencias",
+            "changeType": "updated"
+          },
+          {
+            "id": "205",
+            "title": "Cumplimentación de los informes de asistencia",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "215",
+            "title": "Diagnóstico de Muerte",
+            "changeType": "updated"
+          },
+          {
+            "id": "217_00",
+            "title": "Disturbios urbanos y Actos antisociales",
+            "changeType": "updated"
+          },
+          {
+            "id": "204",
+            "title": "Farmacia Móvil",
+            "changeType": "updated"
+          },
+          {
+            "id": "210",
+            "title": "Huelga de hambre",
+            "changeType": "updated"
+          },
+          {
+            "id": "207",
+            "title": "Incidentes con múltiples víctimas y Triaje (IMV)",
+            "changeType": "updated"
+          },
+          {
+            "id": "206",
+            "title": "Preaviso Hospitalario",
+            "changeType": "updated"
+          },
+          {
+            "id": "208",
+            "title": "Primera respuesta NRBQ",
+            "changeType": "updated"
+          },
+          {
+            "id": "217",
+            "title": "Procedimiento de Incidentes Complejos. Código PIC",
+            "changeType": "updated"
+          },
+          {
+            "id": "203b",
+            "title": "Procedimiento en caso de accidente con Unidades",
+            "changeType": "updated"
+          },
+          {
+            "id": "205b",
+            "title": "Transferencia de pacientes",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_03",
+            "title": "Cardioversión",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_02",
+            "title": "Desfibrilación",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_02b",
+            "title": "Desfibrilación de doble secuencia",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_09",
+            "title": "Dispositivo de compresiones torácicas automático LUCAS 3",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_01",
+            "title": "Electrodiagrama de 12 Derivaciones",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_08",
+            "title": "Hipotermia terapéutica en la parada cardiaca",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_04",
+            "title": "Marcapasos temporal no invasivo",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_05",
+            "title": "Masaje del seno carotídeo",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_06",
+            "title": "Pericardiocentesis",
+            "changeType": "updated"
+          },
+          {
+            "id": "603_07",
+            "title": "Toracotomía de reanimación",
+            "changeType": "updated"
+          },
+          {
+            "id": "607",
+            "title": "EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA",
+            "changeType": "updated"
+          },
+          {
+            "id": "609_01",
+            "title": "Cesárea postparada",
+            "changeType": "updated"
+          },
+          {
+            "id": "609_02",
+            "title": "Episotomía Mediolateral",
+            "changeType": "updated"
+          },
+          {
+            "id": "608_02",
+            "title": "Extracción de lentes de contacto (rígidas y blandas",
+            "changeType": "updated"
+          },
+          {
+            "id": "608_01",
+            "title": "Lavado Ocular",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_05",
+            "title": "Administración de comprimido bucodispersable",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_03b",
+            "title": "Medición de Temperatura central mediante sonda esofágica",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_01",
+            "title": "Relación con el paciente",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_03",
+            "title": "Signos Vitales",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_02",
+            "title": "Técnicas y medidas higiénicas",
+            "changeType": "updated"
+          },
+          {
+            "id": "601_06",
+            "title": "Test rápido de antígeno de SARS-CoV-2",
+            "changeType": "updated"
+          },
+          {
+            "id": "605_03",
+            "title": "Administración de carbón activado",
+            "changeType": "updated"
+          },
+          {
+            "id": "605_02",
+            "title": "Lavado gástrico",
+            "changeType": "updated"
+          },
+          {
+            "id": "605_01",
+            "title": "Sondaje gástrico",
+            "changeType": "updated"
+          },
+          {
+            "id": "605_04",
+            "title": "Sondaje vesical",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_02",
+            "title": "Control de hemorragias",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "606_07",
+            "title": "Inmovilización niño. SIPE®",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_03a",
+            "title": "Parche oclusivo torácico",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_04a",
+            "title": "Técnica de escarotomía",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_06",
+            "title": "Técnicas de inmovilización",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "606_05",
+            "title": "Técnicas de movilización de pacientes",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_01",
+            "title": "Tratamiento inicial de heridas",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_04",
+            "title": "Tratamiento inicial de las quemaduras",
+            "changeType": "updated"
+          },
+          {
+            "id": "606_03",
+            "title": "Vendajes",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_07",
+            "title": "Accesos vasculares en niños",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_05c",
+            "title": "Accesos vasculares especiales",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_03",
+            "title": "Administración de fármacos por vía intravenosa",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_09",
+            "title": "Analítica de sangre",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_04",
+            "title": "Canalización de vías venosas centrales",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_02",
+            "title": "Canalización de vías venosas periféricas",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_02b",
+            "title": "Canalización de vías venosas periféricas guiada por ecografía",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_06",
+            "title": "Cateterización de la vena umbilical",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_11",
+            "title": "Determinación de INR (MEDIDOR MISSION)",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_10",
+            "title": "Medición de la glucemia",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_08",
+            "title": "Obtención de sangre arterial",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_01",
+            "title": "Preparación y manipulación de material de acceso vascular",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_01a",
+            "title": "Priorización de la localización de accesos vasculares",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_12",
+            "title": "Test de troponina de alta sensibilidad (Analizador SIEMENS Healthineers)",
+            "changeType": "updated"
+          },
+          {
+            "id": "604_05b",
+            "title": "Vía Intraósea, sistema EZ-IO",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_14",
+            "title": "Administración de fármacos con cámara de inhalación",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_11",
+            "title": "Administración de fármacos por vía inhalatoria",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_12",
+            "title": "Administración endotraqueal de medicamentos",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_05",
+            "title": "AIRTRAQ® y MONITOR AIRTRAQ®",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_02",
+            "title": "Aspiración de secreciones",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_06",
+            "title": "CRICOTIROIDOTOMÍA",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_04",
+            "title": "INTRODUCTOR DE FROVA 14,0 Fr (adultos)",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_03",
+            "title": "Intubación Endotraqueal",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_09a",
+            "title": "Medición de COHb",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_10",
+            "title": "Medición de ETCO2",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_09",
+            "title": "Medición de satO2",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_01",
+            "title": "Permeabilización básica de la vía aérea",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_07",
+            "title": "TORACOCENTESIS",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_08",
+            "title": "TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®",
+            "changeType": "updated"
+          },
+          {
+            "id": "602_13",
+            "title": "Ventilación Mecánica No Invasiva",
+            "changeType": "updated"
+          }
+        ],
+        "vademecum": [
+          {
+            "id": "content/data/vademecum.json",
+            "title": "vademecum.json",
+            "changeType": "updated"
+          },
+          {
+            "id": "content/data/perfusiones.json",
+            "title": "perfusiones.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/fluidos.json",
+            "title": "fluidos.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/vademecum-comerciales.json",
+            "title": "vademecum-comerciales.json",
+            "changeType": "unchanged"
+          }
+        ],
+        "codigos": [
+          {
+            "id": "content/data/codigos-incidente.json",
+            "title": "codigos-incidente.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-indicativos.json",
+            "title": "codigos-indicativos.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-claves.json",
+            "title": "codigos-claves.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-sva.json",
+            "title": "codigos-sva.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-svb.json",
+            "title": "codigos-svb.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-upsi.json",
+            "title": "codigos-upsi.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-upsq.json",
+            "title": "codigos-upsq.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-icao.json",
+            "title": "codigos-icao.json",
+            "changeType": "unchanged"
+          },
+          {
+            "id": "content/data/codigos-cheatsheet.json",
+            "title": "codigos-cheatsheet.json",
+            "changeType": "unchanged"
+          }
+        ]
+      },
+      "errors": [
+        "Recomendaciones telefónicas específicas: content too short, no attachments",
+        "Procedimiento psicológico: content too short, no attachments",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.1_Clasificacion.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.1_Clasificacion.pdf)",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.2_IndicadoresSospecha.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.2_IndicadoresSospecha.pdf)",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.3_ValoracionRiesgo.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.3_ValoracionRiesgo.pdf)",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.4_EscalaRiesgoSuicida.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.4_EscalaRiesgoSuicida.pdf)",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.5_PlanSeguridad.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.5_PlanSeguridad.pdf)",
+        "Asistencia psicológica en violencia de género: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.6_Recursos.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimiento%20psicol%C3%B3gico/Asistencia%20psicol%C3%B3gica%20en%20violencia%20de%20g%C3%A9nero/WebHome/Procedimientos%20asistenciales.Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia.Tipos%20de%20asistencia%20psicol%C3%B3gica%3ETipos%20de%20asistencia.WebHome%40509.6_Recursos.pdf)",
+        "Intoxicaciones: content too short, no attachments",
+        "Urgencias cardiovasculares: content too short, no attachments",
+        "Urgencias digestivas: content too short, no attachments",
+        "Urgencias endocrino-metabólicas: content too short, no attachments",
+        "Urgencias nefrourológicas: content too short, no attachments",
+        "Urgencias neurológicas: content too short, no attachments",
+        "Urgencias obstétricas: content too short, no attachments",
+        "Urgencias pediátricas: content too short, no attachments",
+        "Crisis convulsivas: adjunto no descargado https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimientos%20SVA/Urgencias%20pedi%C3%A1tricas/Crisis%20convulsivas/WebHome/14_MedicacionIntranasal.pdf (HTTP 404 downloading https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Procedimientos%20SVA/Urgencias%20pedi%C3%A1tricas/Crisis%20convulsivas/WebHome/14_MedicacionIntranasal.pdf)",
+        "Urgencias por agentes físicos: content too short, no attachments",
+        "Urgencias respiratorias: content too short, no attachments",
+        "Urgencias traumatológicas: content too short, no attachments",
+        "Traumatismos: content too short, no attachments",
+        "Atención a víctimas de violencia sexual: content too short, no attachments",
+        "Códigos: content too short, no attachments",
+        "Huelga de hambre: adjunto no descargado https://servpub.madrid.es/manualsamur/images/deplecion.jpg (HTTP 404 downloading https://servpub.madrid.es/manualsamur/images/deplecion.jpg)",
+        "Cardiacos: content too short, no attachments",
+        "Obstetricia: content too short, no attachments",
+        "Relación con el paciente: content too short, no attachments",
+        "Sondajes: content too short, no attachments",
+        "Trauma: content too short, no attachments",
+        "Parche oclusivo torácico: adjunto no descargado https://servpub.madrid.es/manualsamur/images/603a_01.jpg (HTTP 404 downloading https://servpub.madrid.es/manualsamur/images/603a_01.jpg)",
+        "Vasculares: content too short, no attachments",
+        "Vía aérea y respiración: content too short, no attachments"
+      ]
+    },
     {
       "id": "2026-05-05T19:49:05.189Z",
       "startedAt": "2026-05-05T19:45:40.890Z",

@@ -28,7 +28,7 @@ export function NavBar({ procedures }: Props) {
   return (
     <>
       {/* Desktop top nav */}
-      <header className="hidden md:flex sticky top-0 z-50 h-14 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-6 gap-4">
+      <header className="hidden md:flex sticky top-0 z-50 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-6 gap-4 pt-[env(safe-area-inset-top)] h-[calc(3.5rem+env(safe-area-inset-top))]">
         <Link href="/manual" className="mr-6 flex items-center gap-2">
           <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
             <span className="text-[10px] font-bold text-primary-foreground">S</span>
@@ -76,7 +76,7 @@ export function NavBar({ procedures }: Props) {
       </header>
 
       {/* Mobile top bar (just logo + search + theme) */}
-      <header className="flex md:hidden sticky top-0 z-50 h-12 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-4 justify-between">
+      <header className="flex md:hidden sticky top-0 z-50 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-4 justify-between pt-[env(safe-area-inset-top)] h-[calc(3rem+env(safe-area-inset-top))]">
         <Link href="/manual" className="flex items-center gap-2">
           <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
             <span className="text-[9px] font-bold text-primary-foreground">S</span>
@@ -98,7 +98,7 @@ export function NavBar({ procedures }: Props) {
       </header>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border/60 bg-background/95 backdrop-blur-sm flex items-center justify-around px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur-sm flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)] h-[calc(4rem+env(safe-area-inset-bottom))]">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (

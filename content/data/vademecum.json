@@ -39,6 +39,20 @@
     "interacciones": "Potencia el efecto de los anticoagulantes orales. No administrar junto a fármacos potencialmente ulcerogénicos."
   },
   {
+    "id": "acido-acetil-salicilico",
+    "name": "Ácido Acetil salicílico",
+    "synonyms": [],
+    "category": "Pendiente de clasificar",
+    "subcategory": "Revisar manualmente",
+    "presentation": "comprimidos de 125 mg (infantil) y 500 mg (adultos).",
+    "funcion": "Antipirético, analgésico, antiinflamatorio y antiagregante plaquetario.",
+    "indication": "Dolor leve o moderado, cuadros febriles, profilaxis de trastornos tromboembólicos.",
+    "dose": "- Adultos:\n- Dosis habituales: hasta 650 mg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.\n- Profilaxis primaria del infarto agudo de miocardio: 150 - 250 mg / 24 h [1 - 2 aspirinas infantiles].\n- Niños:\n- Dosis habituales: hasta 10 mg / kg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.",
+    "route": [],
+    "contraindications": "úlcera gastroduodenal o molestias gástricas de repetición, alergia a salicilatos, historia de broncoespasmos en uso previo de otros antiinflamatorios, hemofilia, problemas de coagulación sanguínea, terapia con anticoagulantes, insuficiencia renal o hepática, embarazo. Precaución en niños con viriasis por el Sd. de Reye.",
+    "efectos_secundarios": "irritación gastrointestinal, erupciones cutáneas, dificultad respiratoria por broncoespasmo paroxístico, somnolencia, vértigo, sordera o tinnitus."
+  },
+  {
     "id": "aspirina",
     "name": "Ácido Acetilsalicílico",
     "synonyms": [
@@ -181,6 +195,19 @@
     "contraindications": "insuficiencia coronaria (excepto IAM con bradicardia severa y bajo gasto), taquiarrítmias, glaucoma. Precaución en pacientes prostáticos, IC, hipertiroidismo, en historial asmático o alérgico (contiene bisulfito).",
     "efectos_secundarios": "taquicardia, sequedad boca, midriasis, visión borrosa, estreñimiento, rash cutáneo, hipertermia, alteraciones del habla, ataxia, desorientación, alucinaciones, delirio.",
     "notes": "Dosis < 0,5 mg puede causar bradicardia paradójica. En PCR su uso rutinario no está recomendado por ERC 2021."
+  },
+  {
+    "id": "bicarbonato-sodico-8-4-1m",
+    "name": "Bicarbonato Sódico 8,4 % (1M)",
+    "synonyms": [],
+    "category": "Pendiente de clasificar",
+    "subcategory": "Revisar manualmente",
+    "presentation": "250 ml contienen 250 mEq de Bicarbonato sódico (21 g) (1 mEq/ ml: 1 ml del producto: 1 mmol de Na y 1 mmol de HCO3).",
+    "indication": "Acidosis metabólica, alcalinización en casos de intoxicación por barbitúricos y salicilatos. Diarreas profusas, coma diabético. PCR prolongada (> 10 min). Hiperpotasemia.",
+    "dose": "según los valores séricos y los requerimientos personales en goteo contínuo de un máximo de 1,1 ml/ kg / h (máximo 25 gotas/min). Evite la administración iv rápida y la mezcla con catecolaminas. Es necesario la realización de controles hidroelectrolíticos séricos y del equilibrio ácido-base.\n- Adultos, PCR:\n- según la fórmula de cálculo del déficit de bicarbonato:Déficit de CO3H = 0,3 x kg de peso x EB. El resultado son los ml de bicarbonato necesarios.Administre la mitad de la cantidad y reponga, posteriormente, en función de la analítica.\n- Déficit de CO3H = 0,3 x kg de peso x EB. El resultado son los ml de bicarbonato necesarios.\n- Administre la mitad de la cantidad y reponga, posteriormente, en función de la analítica.\n- o administre, empíricamente, 1 mEq/kg iv, no de forma rutinaria en:Hipercaliemia conocidaIntoxicación por antidepresivos tricíclicosIntoxicación con aspirina u otras drogas (diuresis alcalina)PCR prolongada (> 10 min), si el paciente ya está intubado y ventilado\n- Hipercaliemia conocida\n- Intoxicación por antidepresivos tricíclicos\n- Intoxicación con aspirina u otras drogas (diuresis alcalina)\n- PCR prolongada (> 10 min), si el paciente ya está intubado y ventilado\n- Niños, PCR:\n- según la fórmula de cálculo del déficit de bicarbonato:Déficit de CO3H = 0,3 x kg de peso x EB. El resultado son los ml de bicarbonato necesarios.Administre la mitad de la cantidad diluido a partes iguales con agua bidestilada o SSF, en al menos 2 min. Realice analítica de iones y EB, posteriormente, para continuar con la reposición, si procede\n- Déficit de CO3H = 0,3 x kg de peso x EB. El resultado son los ml de bicarbonato necesarios.\n- Administre la mitad de la cantidad diluido a partes iguales con agua bidestilada o SSF, en al menos 2 min. Realice analítica de iones y EB, posteriormente, para continuar con la reposición, si procede\n- si carece de ella, a los diez minutos de PCR, a dosis de:1 mEq /kg iv, valorando repetir a los diez minutos a 0,5 mEq/kg.1-2 mEq / kg iv, diluido a partes iguales con agua bidestilada o SSF, en al menos 2 min, valorando repetir a los diez minutos a 0,5 mEq/kg.\n- 1 mEq /kg iv, valorando repetir a los diez minutos a 0,5 mEq/kg.\n- 1-2 mEq / kg iv, diluido a partes iguales con agua bidestilada o SSF, en al menos 2 min, valorando repetir a los diez minutos a 0,5 mEq/kg.",
+    "route": [],
+    "contraindications": "Alcalosis metabólicas y respiratorias e hipernatremias. Estados edematosos (ICC, etc). Precaución en enfermedades que cursen con la retención de sodio e hipocalcemia, hipertensión, insuficiencia coronaria.",
+    "efectos_secundarios": "Alcalosis, si se realiza administración rápida; hipernatremia, aumento paradójico de la acidosis en SNC."
   },
   {
     "id": "bicarbonato",
@@ -855,6 +882,20 @@
     "interacciones": "No han sido descritas interacciones con otros antídotos o con otros tratamientos de intoxicaciones."
   },
   {
+    "id": "insulina-rapida",
+    "name": "Insulina rápida",
+    "synonyms": [],
+    "category": "Pendiente de clasificar",
+    "subcategory": "Revisar manualmente",
+    "presentation": "solución inyectable en viales de 10 ml con 1000 UI (100 UI/ml).",
+    "funcion": "agente antidiabético que regula del metabolismo de la glucosa, controlando la hiperglucemia.",
+    "indication": "tratamiento de la diabetes mellitus, cetoacidosis diabética, e hiperpotasemia.\n- Cetoacidosis diabética:Adultos > 20 años: 0,15 U/kg inicialmente, continuando con una perfusión en bomba de 0,1 U/kg/hora.Niños y adolescentes < 20 años: perfusión en bomba 0.1 U/kg/h hasta que mejore la acidosis, entonces disminuir a 0,05 U/kg/hora.\n- Adultos > 20 años: 0,15 U/kg inicialmente, continuando con una perfusión en bomba de 0,1 U/kg/hora.\n- Niños y adolescentes < 20 años: perfusión en bomba 0.1 U/kg/h hasta que mejore la acidosis, entonces disminuir a 0,05 U/kg/hora.\n- Hiperpotasemia: administrar dextrosa a 0,5-1 ml/kg y administrar 1 unidad de insulina cada 4-5 g de dextrosa.",
+    "dose": "",
+    "route": [],
+    "contraindications": "hipoglucemia, hipersensibilidad a insulina o a alguno de sus excipientes.",
+    "efectos_secundarios": "hipoglucemia severa, palpitaciones, taquicardia, cefalea, hipotermia, confusión, urticaria, sensación de hambre, nauseas, anafilaxia, diaforesis."
+  },
+  {
     "id": "insulina-regular",
     "name": "Insulina Regular",
     "synonyms": [
@@ -983,6 +1024,20 @@
     ],
     "contraindications": "",
     "efectos_secundarios": "Somnolencia, mareos, cefalea. Diplopía, anorexia, vértigo. Hostilidad, insomnio, nerviosismo."
+  },
+  {
+    "id": "lidocaina-clorhidrato",
+    "name": "Lidocaína Clorhidrato",
+    "synonyms": [],
+    "category": "Pendiente de clasificar",
+    "subcategory": "Revisar manualmente",
+    "presentation": "ampolla de 200 mg/10 ml (20 mg: 1 ml) 2%",
+    "funcion": "antiarrítmico Ib, anestésico local o regional.",
+    "indication": "arritmias ventriculares. FV/TVSP que no han respondido a choques y adrenalina tras 2º ciclo (Clase indeterminada). Tratamiento postreanimación de FV/TVSP que responden a este fármaco. Taquicardia estable con QRS ancho de origen incierto. Intoxicación por antidepresivos tricíclicos.\n- PCR:\n- Adultos: 1-1,5 mg/kg iv lento. Repetible a dosis de 0,5 mg/kg cada 5 min, hasta un máximo de 3 mg/kg.\n- Niños: 1 mg/kg iv lento repetible en un segundo bolo de 0,5-1 mg/kg si entre el primer bolo y el inicio de la infusión transcurren >15 minutos, o bien vía ioPrepare jeringa de 10 ml con 2 ml de Lidocaína 2% (40 mg) en 8 ml de SG 5%.Ponga 2,5 ml/10 kg/5 min.\n- Prepare jeringa de 10 ml con 2 ml de Lidocaína 2% (40 mg) en 8 ml de SG 5%.\n- Ponga 2,5 ml/10 kg/5 min.\n- Vía endotraqueal (et): 2-3 mg/kg/dosis.\n- Perfusión continua:\n- Adultos: 2-4 mg/min.Prepare 10 ml de Lidocaína 2% en 90 ml de SG 5%.Ponga 60-120 mcgotas/min. (60-120 ml/h)\n- Prepare 10 ml de Lidocaína 2% en 90 ml de SG 5%.\n- Ponga 60-120 mcgotas/min. (60-120 ml/h)\n- Niños: 20-50 mcg/kg/min.Prepare 2 ml de Lidocaína 2% (40 mg) en 98 ml de SG 5%.Ponga 30 mcgotas/10 kg/min para poner 20 mcg/kg/minMáximo: 30 mg/min\n- Prepare 2 ml de Lidocaína 2% (40 mg) en 98 ml de SG 5%.\n- Ponga 30 mcgotas/10 kg/min para poner 20 mcg/kg/min\n- Máximo: 30 mg/min\n- Intoxicaciones por antidepresivos tricíclicos: a dosis de 1 a 1,5 mg/kg en bolo iv. Considere repetir la dosis cada 3 a 5 min hasta un máximo de 3 mg/kg.\n- Analgesia intraósea:\n- Adultos (>80 kg): 2 ml (40 mg) por vía io lento en 2 min (en bolos de 0,2 ml), y esperar un min. Esperar 1 min. Lavar con bolo, 5-10 ml de SSF 0.9 % en 5 sg. Si precisa segundo bolo: 1ml (20 mg) lento en 1 min. Esperar 1 min antes de infundir medicación o fluidos, ya que aumenta la sensación dolorosa en ese momento.Para estos pesos:50 kg: 1,25 ml60 kg: 1,5 ml70 kg: 1,75 ml\n- 50 kg: 1,25 ml\n- 60 kg: 1,5 ml\n- 70 kg: 1,75 ml\n- Niños y lactantes: 0,5 mg/kg por vía io lento en 2 min (en bolos de 0,2 ml). Esperar 1 min. Lavar con bolo, 2-5 ml de SSF 0.9 % en 5 sg. Si precisa segundo bolo: mitad de dosis inicial lenta en 1 min. Esperar 1 min antes de infundir medicación o fluidos, ya que aumenta la sensación dolorosa en ese momento.Para estos pesos:10 kg: 0,25 ml20 kg: 0,5 ml30 kg: 0,75 ml40 kg: 1 ml\n- 10 kg: 0,25 ml\n- 20 kg: 0,5 ml\n- 30 kg: 0,75 ml\n- 40 kg: 1 ml",
+    "dose": "",
+    "route": [],
+    "contraindications": "sensibilidad a anestésicos tipo amida, bloque AV o sinoauricular de alto grado, epilepsia, insuficiencia cardíaca, FA y Sd. de WPW. Precaución en disminución del gasto cardiaco, hepatopatía o edad avanzada (reduzca la dosis).",
+    "efectos_secundarios": "(dosis-dependientes, más frecuentes en ancianos): puede causar depresión miocárdica y circulatoria, hipotensión, bradicardia, arritmias, somnolencia, desorientación, hipoacusia, vértigo, parestesias, calambres musculares, incluso convulsiones, reacciones de hipersensibilidad, asma, náuseas, vómitos."
   },
   {
     "id": "lidocaina-iv",

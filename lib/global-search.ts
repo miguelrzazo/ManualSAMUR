@@ -103,8 +103,10 @@ function buildHospitalsFuse(hospitals: Hospital[]): Fuse<Hospital> {
   return hospitalsFuse;
 }
 
-function normalizeForSearch(value: string): string {
-  return value
+function normalizeForSearch(value: unknown): string {
+  if (value == null) return "";
+  const str = String(value);
+  return str
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
