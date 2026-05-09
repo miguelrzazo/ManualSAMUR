@@ -13,10 +13,13 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "sync:manualsamur": "node --experimental-strip-types scripts/sync-manualsamur.ts --all",
+    "sync:manualsamur": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
     "sync:vademecum": "node --experimental-strip-types scripts/scrape-vademecum.ts",
     "migrate:subfolders": "node --experimental-strip-types scripts/migrate-to-subfolders.ts",
-    "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts"
+    "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts",
+    "sync:manualsamur:detect": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
+    "sync:manualsamur:apply": "node --experimental-strip-types scripts/sync-manualsamur.ts apply --all",
+    "sync:manualsamur:ingest-pdf": "node --experimental-strip-types scripts/sync-manualsamur.ts ingest-official-pdf"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

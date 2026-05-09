@@ -27,7 +27,7 @@
 }
 
 .manual-news-track {
-  animation: manual-news-scroll 45s ease-in-out infinite;
+  animation: manual-news-scroll 75s linear infinite;
 }
 
 .construction-banner {

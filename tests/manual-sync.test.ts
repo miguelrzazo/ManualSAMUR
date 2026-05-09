@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  applyNewThisWeek,
+  buildTickerFromEvents,
   DEFAULT_MANUAL_VERSION,
   appendSyncRun,
   classifyProcedureChange,
@@ -39,10 +41,16 @@ test("classifyProcedureChange detects new, unchanged and updated procedures", ()
 test("appendSyncRun keeps newest run first, derives ticker items and preserves manual version", () => {
   const metadata = appendSyncRun(
     {
+      manualVersionCurrent: DEFAULT_MANUAL_VERSION,
       manualVersion: DEFAULT_MANUAL_VERSION,
       lastSyncAt: "",
+      lastApprovedAt: "",
+      ticker: { enabledUntil: "", items: [] },
       tickerEnabled: false,
       tickerItems: [],
+      pendingChanges: [],
+      approvedChanges: [],
+      globalUpdateTimeline: [],
       runs: [],
     },
     {
@@ -70,15 +78,63 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
   );
 
   assert.equal(metadata.manualVersion, "Abril 2026");
+  assert.equal(metadata.manualVersionCurrent, "Abril 2026");
   assert.equal(metadata.lastSyncAt, "2026-05-05T10:02:00.000Z");
   assert.equal(metadata.tickerEnabled, true);
   assert.deepEqual(metadata.tickerItems, [
     "Actualizado: 301 Parada cardiorrespiratoria",
     "Nuevo: codigo-19 Código 19",
-    "Vademécum actualizado: Urapidil",
     "Main actualizado: abreviaturas.json",
   ]);
+  assert.equal(metadata.ticker.items.length, 3);
   assert.equal(metadata.runs.length, 1);
+});
+
+test("applyNewThisWeek marks only events approved within the last 7 days", () => {
+  const now = new Date("2026-05-09T12:00:00.000Z");
+  const events = applyNewThisWeek([
+    {
+      eventId: "a",
+      origin: "wiki",
+      procedureIds: ["301"],
+      changeKind: "actualizado",
+      summary: "A",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-08T10:00:00.000Z",
+      isNewThisWeek: false,
+    },
+    {
+      eventId: "b",
+      origin: "wiki",
+      procedureIds: ["302"],
+      changeKind: "actualizado",
+      summary: "B",
+      effectiveDate: "2026-05-01",
+      approvedAt: "2026-04-20T10:00:00.000Z",
+      isNewThisWeek: false,
+    },
+  ], now);
+
+  assert.equal(events[0].isNewThisWeek, true);
+  assert.equal(events[1].isNewThisWeek, false);
+});
+
+test("buildTickerFromEvents enables ribbon for seven days from latest approved event", () => {
+  const data = buildTickerFromEvents([
+    {
+      eventId: "a",
+      origin: "wiki",
+      procedureIds: ["301"],
+      changeKind: "actualizado",
+      summary: "Actualizado: 301",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-09T10:00:00.000Z",
+      isNewThisWeek: true,
+    },
+  ], new Date("2026-05-10T10:00:00.000Z"));
+
+  assert.equal(data.tickerEnabled, true);
+  assert.equal(data.ticker.items[0]?.href, "/manual?procedure=301#update-a");
 });
 
 test("parseProcedureSpacesXml filters XWiki containers and keeps procedure-like spaces", () => {

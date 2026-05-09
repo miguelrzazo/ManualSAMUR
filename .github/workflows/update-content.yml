@@ -1,13 +1,13 @@
-name: Update content from samurpc.net
+name: Detect official manual updates
 
 on:
   schedule:
-    # Every Monday at 4am UTC
-    - cron: "0 4 * * 1"
+    # Daily at 04:00 UTC
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 jobs:
-  scrape:
+  detect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,11 +20,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run scraper
-        run: npx ts-node --project tsconfig.json scripts/scrape.ts
+      - name: Detect official updates (no apply)
+        run: npm run sync:manualsamur:detect
 
-      - name: Commit updated content
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Upload update artifacts
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "chore: update procedures from samurpc.net"
-          file_pattern: "content/procedures/*.md"
+          name: manual-update-detection
+          path: |
+            content/data/manual-sync.json
+            content/data/manual-updates.json
+
+      - name: Print quick summary
+        run: |
+          node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync("content/data/manual-sync.json","utf8"));const run=data.runs?.[0];console.log(JSON.stringify({lastSyncAt:data.lastSyncAt,pendingChanges:data.pendingChanges?.length??0,runSummary:run?.summary??{}},null,2));'

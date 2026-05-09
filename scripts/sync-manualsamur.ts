@@ -7,22 +7,26 @@ import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
-// @ts-ignore — CJS default export, named export via destructure
+// @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { gfm } = gfmPkg as any;
+const { gfm } = gfmPkg as { gfm: unknown };
 import {
   appendSyncRun,
+  applyNewThisWeek,
+  approvePendingChanges,
+  buildTickerFromEvents,
   classifyProcedureChange,
-  createDefaultManualSyncMetadata,
   extractAttachmentLinks,
   getSectionFromXWikiUrl,
   parseProcedureSpacesXml,
   readManualSyncMetadata,
+  readManualUpdatesDataset,
   resolveStableProcedureIdForSource,
   rewriteAttachmentLinks,
   stableContentHash,
   summarizeChanges,
+  withPendingChanges,
+  writeManualUpdatesDataset,
   type ManualAttachment,
   type AttachmentDownloadFailure,
   type ManualSyncRun,
@@ -31,7 +35,13 @@ import {
   type SyncChange,
   type SyncDomain,
   type SyncDomainSummary,
+  type ManualUpdateEvent,
 } from "../lib/manual-sync.ts";
+import {
+  buildProcedureTitleIndex,
+  parseOfficialPdfUpdateText,
+  toOfficialPdfEvents,
+} from "../lib/manual-updates.ts";
 import {
   MAIN_CONTENT_PATHS,
   parseAbbreviationsFromHtml,
@@ -52,12 +62,16 @@ const MAIN_ABBREVIATIONS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/
 const MAIN_COLLABORATORS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Colaboradores/WebHome`;
 
 const HEADERS = {
-  "User-Agent": "ManualSAMUR-sync/1.0 (personal use; contact: local developer)",
+  "User-Agent": "ManualSAMUR-sync/2.0 (personal use; contact: local developer)",
 };
 
 interface SyncOptions {
+  command: "detect" | "apply" | "ingest-official-pdf";
   dryRun: boolean;
   domains: Set<SyncDomain>;
+  ids: Set<string>;
+  officialPdfUrl?: string;
+  officialPdfFile?: string;
 }
 
 interface DomainResult {
@@ -67,21 +81,38 @@ interface DomainResult {
 }
 
 function parseArgs(argv: string[]): SyncOptions {
-  const dryRun = argv.includes("--dry-run");
-  const requested = new Set<SyncDomain>();
+  const firstArg = argv[0] && !argv[0].startsWith("--") ? argv[0] : "detect";
+  const command = firstArg === "apply" || firstArg === "ingest-official-pdf" ? firstArg : "detect";
+  const args = firstArg === argv[0] ? argv.slice(1) : argv;
+  const dryRun = args.includes("--dry-run") || command === "detect";
 
-  if (argv.includes("--all") || argv.length === 0 || argv.every((arg) => arg === "--dry-run")) {
+  const idsFlag = args.find((arg) => arg.startsWith("--ids="));
+  const idsValue = idsFlag ? idsFlag.replace("--ids=", "") : "";
+  const ids = new Set(idsValue.split(",").map((item) => item.trim()).filter(Boolean));
+
+  const officialPdfUrl = args.find((arg) => arg.startsWith("--url="))?.replace("--url=", "");
+  const officialPdfFile = args.find((arg) => arg.startsWith("--file="))?.replace("--file=", "");
+
+  const requested = new Set<SyncDomain>();
+  if (args.includes("--all") || args.length === 0 || args.every((arg) => arg === "--dry-run")) {
     requested.add("procedures");
     requested.add("vademecum");
     requested.add("codigos");
     requested.add("main");
   }
-  if (argv.includes("--procedures")) requested.add("procedures");
-  if (argv.includes("--vademecum")) requested.add("vademecum");
-  if (argv.includes("--codigos")) requested.add("codigos");
-  if (argv.includes("--main")) requested.add("main");
+  if (args.includes("--procedures")) requested.add("procedures");
+  if (args.includes("--vademecum")) requested.add("vademecum");
+  if (args.includes("--codigos")) requested.add("codigos");
+  if (args.includes("--main")) requested.add("main");
 
-  return { dryRun, domains: requested };
+  return {
+    command,
+    dryRun,
+    domains: requested,
+    ids,
+    officialPdfUrl,
+    officialPdfFile,
+  };
 }
 
 async function fetchText(url: string, accept = "text/html,text/plain", timeoutMs = 20000) {
@@ -167,7 +198,6 @@ function resolveProcedureId(space: ProcedureSpace, existingTitleMap: Map<string,
 }
 
 function findProcedureFilePath(id: string): string | null {
-  // Check flat location first (legacy), then walk subdirs
   const flat = path.join(PROCEDURES_DIR, `${id}.md`);
   if (fs.existsSync(flat)) return flat;
   for (const filePath of walkProceduresDir()) {
@@ -193,6 +223,33 @@ function readExistingProcedureSnapshot(id: string): ProcedureSnapshot | null {
     contentHash: typeof data.contentHash === "string" ? data.contentHash : stableContentHash(parsed.content),
     attachments: Array.isArray(data.attachments) ? data.attachments as ManualAttachment[] : [],
   };
+}
+
+function readExistingProcedureMeta(id: string): { filePath: string; content: string; data: Record<string, unknown> } | null {
+  const filePath = findProcedureFilePath(id);
+  if (!filePath) return null;
+  const parsed = matter(fs.readFileSync(filePath, "utf8"));
+  return {
+    filePath,
+    content: parsed.content,
+    data: parsed.data as Record<string, unknown>,
+  };
+}
+
+function writeProcedureMetadataOnly(
+  existing: { filePath: string; content: string; data: Record<string, unknown> },
+  snapshot: ProcedureSnapshot,
+) {
+  const frontmatter = {
+    ...existing.data,
+    updated: snapshot.sourceUpdated,
+    sourceUpdated: snapshot.sourceUpdated,
+    source: snapshot.source,
+    contentHash: snapshot.contentHash,
+    attachments: snapshot.attachments,
+  };
+  const output = matter.stringify(`${existing.content.trim()}\n`, frontmatter);
+  fs.writeFileSync(existing.filePath, output, "utf8");
 }
 
 function extractRawFromPlainPage(html: string) {
@@ -290,7 +347,6 @@ async function fetchHtmlMarkdown(url: string): Promise<{ markdown: string; sourc
 
 function validateProcedure(title: string, markdown: string, attachments: ManualAttachment[]) {
   if (!title.trim()) return ["missing title"];
-  // Accept PDF-only pages (organigramas etc.) as long as they have title + attachment
   if (markdown.length < 50 && attachments.length === 0) return ["content too short, no attachments"];
   return [];
 }
@@ -309,21 +365,19 @@ function buildProcedureFile(snapshot: ProcedureSnapshot, section: string, slug: 
     source: snapshot.source,
     contentHash: snapshot.contentHash,
     attachments: snapshot.attachments,
+    editorialStatus: "source",
+    editorialLockedAt: "",
+    lastApprovedOfficialUpdateAt: "",
   };
 
   return matter.stringify(`${markdown.trim()}\n`, frontmatter);
 }
 
 async function discoverProcedureSpaces() {
-  // Primary: REST spaces API (gets sub-spaces, i.e. nested documents)
   const spacesXml = await fetchText(`${REST_BASE}/spaces`, "application/xml,text/xml", 30000);
   const fromSpaces = parseProcedureSpacesXml(spacesXml);
-
-  // Supplement: AllDocs HTML page — lists every page in the wiki including
-  // flat pages that are not their own sub-space (not visible via /spaces)
   const extraFromAllDocs = await discoverFromAllDocs();
 
-  // Merge, deduplicating by URL
   const seen = new Set(fromSpaces.map((s) => s.url));
   const merged = [...fromSpaces];
   for (const s of extraFromAllDocs) {
@@ -403,7 +457,7 @@ async function downloadAttachments(attachments: ManualAttachment[], dryRun: bool
   return failures;
 }
 
-async function syncProcedures(dryRun: boolean): Promise<DomainResult> {
+async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>): Promise<DomainResult> {
   fs.mkdirSync(PROCEDURES_DIR, { recursive: true });
 
   const spaces = await discoverProcedureSpaces();
@@ -418,16 +472,18 @@ async function syncProcedures(dryRun: boolean): Promise<DomainResult> {
 
     try {
       const id = resolveProcedureId(space, existingTitleMap);
+      if (allowedProcedureIds && !allowedProcedureIds.has(id)) {
+        skipped++;
+        continue;
+      }
 
-      // Primary: raw XWiki markup (faster, preserves drug links)
       const plainHtml = await fetchText(`${space.url.replace(/\/?$/, "/")}?xpage=plain&raw=1`);
       const rawMarkup = extractRawFromPlainPage(plainHtml);
       let sourceUpdated = extractSourceUpdated(rawMarkup);
-      let markdownWithRemoteAttachments = xwikiToMarkdown(rawMarkup);
+      const markdownWithRemoteAttachments = xwikiToMarkdown(rawMarkup);
       const attachments = extractAttachmentLinks(rawMarkup + "\n" + markdownWithRemoteAttachments, space.url, id);
       let markdown = rewriteAttachmentLinks(markdownWithRemoteAttachments, attachments);
 
-      // Fallback: HTML scraping for pages with thin raw content (includes, PDF-only, etc.)
       if (markdown.length < 200 && attachments.length === 0) {
         const htmlResult = await fetchHtmlMarkdown(space.url);
         if (htmlResult && htmlResult.markdown.length > markdown.length) {
@@ -437,7 +493,6 @@ async function syncProcedures(dryRun: boolean): Promise<DomainResult> {
       }
 
       const validationErrors = validateProcedure(space.title, markdown, attachments);
-
       if (validationErrors.length > 0) {
         skipped++;
         errors.push(`${space.title}: ${validationErrors.join(", ")}`);
@@ -452,14 +507,34 @@ async function syncProcedures(dryRun: boolean): Promise<DomainResult> {
         contentHash: stableContentHash(markdown),
         attachments,
       };
-      const changeType = classifyProcedureChange(readExistingProcedureSnapshot(id), snapshot);
-      changes.push({ id, title: space.title, changeType });
+      const existingSnapshot = readExistingProcedureSnapshot(id);
+      const existingMeta = readExistingProcedureMeta(id);
+      const editorialStatus = existingMeta?.data?.editorialStatus === "enhanced" ? "enhanced" : "source";
+      const rawChangeType = classifyProcedureChange(existingSnapshot, snapshot);
+      const blockedByEditorial = rawChangeType !== "unchanged" && editorialStatus === "enhanced";
+      const changeType = blockedByEditorial ? "blocked_by_editorial" : rawChangeType;
+
+      changes.push({
+        id,
+        title: space.title,
+        changeType,
+        blockedByEditorial,
+        procedurePath: existingMeta?.filePath,
+        sourceUpdated,
+        source: space.url,
+      });
 
       if (!dryRun && changeType !== "unchanged") {
+        if (blockedByEditorial && existingMeta) {
+          writeProcedureMetadataOnly(existingMeta, snapshot);
+          continue;
+        }
+
         const attachmentFailures = await downloadAttachments(attachments, false);
         for (const failure of attachmentFailures) {
           errors.push(`${space.title}: adjunto no descargado ${failure.sourceUrl} (${failure.error})`);
         }
+
         const slug = `${id}-${slugify(space.title)}`.slice(0, 90);
         const subfolder = sectionToSubfolder(space.section);
         const procedureDir = path.join(PROCEDURES_DIR, subfolder);
@@ -542,7 +617,7 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
       try {
         fs.writeFileSync(path.join(ROOT_DIR, "docs", decodeURIComponent(url.split("/").at(-1) ?? "codigos.pdf")), await fetchBuffer(url));
       } catch {
-        // These documents move occasionally; keep JSON datasets intact if download fails.
+        // ignore
       }
     }
   }
@@ -602,14 +677,103 @@ async function syncMain(dryRun: boolean): Promise<DomainResult> {
 
 function emptyDomainResult(): DomainResult {
   return {
-    summary: { created: 0, updated: 0, unchanged: 0, failed: 0, skipped: 0 },
+    summary: { created: 0, updated: 0, unchanged: 0, blocked: 0, failed: 0, skipped: 0 },
     changes: [],
     errors: [],
   };
 }
 
-async function main() {
-  const options = parseArgs(process.argv.slice(2));
+function mergeEvents(existing: ManualUpdateEvent[], incoming: ManualUpdateEvent[]) {
+  const byId = new Map(existing.map((event) => [event.eventId, event]));
+  for (const event of incoming) byId.set(event.eventId, event);
+  return [...byId.values()].sort((a, b) => {
+    const ak = `${a.effectiveDate}|${a.approvedAt ?? ""}`;
+    const bk = `${b.effectiveDate}|${b.approvedAt ?? ""}`;
+    return bk.localeCompare(ak);
+  });
+}
+
+function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpdateEvent[] {
+  const events: ManualUpdateEvent[] = [];
+
+  for (const [domain, domainChanges] of Object.entries(run.changes) as Array<[SyncDomain, SyncChange[]]>) {
+    for (const change of domainChanges) {
+      if (change.changeType === "unchanged") continue;
+      const summary = domain === "procedures"
+        ? `${change.changeType === "created" ? "Nuevo" : change.changeType === "blocked_by_editorial" ? "Bloqueado editorial" : "Actualizado"}: ${change.id} ${change.title}`
+        : `${domain} actualizado: ${change.title}`;
+
+      events.push({
+        eventId: `wiki:${run.id}:${domain}:${change.id}`,
+        origin: "wiki",
+        officialUrl: change.source,
+        procedureIds: domain === "procedures" ? [change.id] : [],
+        changeKind: change.changeType === "created" ? "nuevo" : "actualizado",
+        summary,
+        effectiveDate: change.sourceUpdated || run.finishedAt.slice(0, 10),
+        approvedAt,
+        isNewThisWeek: false,
+      });
+    }
+  }
+
+  return events;
+}
+
+function saveMetadata(metadata: ReturnType<typeof readManualSyncMetadata>) {
+  fs.writeFileSync(METADATA_PATH, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
+}
+
+function extractDateFromPath(filePath: string) {
+  const basename = path.basename(filePath);
+  const match = basename.match(/(20\d{2})[^0-9]?([01]?\d)?/);
+  if (!match) return new Date().toISOString().slice(0, 10);
+  const year = match[1];
+  const month = (match[2] || "01").padStart(2, "0");
+  return `${year}-${month}-01`;
+}
+
+function ingestOfficialPdf(options: SyncOptions) {
+  if (!options.officialPdfFile || !options.officialPdfUrl) {
+    throw new Error("ingest-official-pdf requiere --file=<ruta_local_pdf> y --url=<url_oficial>");
+  }
+
+  const rawText = execFileSync("pdftotext", ["-q", "-enc", "UTF-8", options.officialPdfFile, "-"], {
+    encoding: "utf8",
+    maxBuffer: 20 * 1024 * 1024,
+  });
+
+  const parsed = parseOfficialPdfUpdateText(rawText);
+  const approvedAt = new Date().toISOString();
+  const effectiveDate = extractDateFromPath(options.officialPdfFile);
+  const index = buildProcedureTitleIndex(ROOT_DIR);
+  const incomingEvents = toOfficialPdfEvents(parsed, options.officialPdfUrl, effectiveDate, approvedAt, index);
+
+  const dataset = readManualUpdatesDataset(ROOT_DIR);
+  const merged = mergeEvents(dataset.events, incomingEvents);
+  const normalized = applyNewThisWeek(merged, new Date());
+  writeManualUpdatesDataset({ generatedAt: approvedAt, events: normalized }, ROOT_DIR);
+
+  const metadata = readManualSyncMetadata(ROOT_DIR);
+  const ticker = buildTickerFromEvents(normalized, new Date());
+  const next = {
+    ...metadata,
+    manualVersionCurrent: parsed.manualVersionCurrent || metadata.manualVersionCurrent,
+    manualVersion: parsed.manualVersionCurrent || metadata.manualVersion,
+    lastApprovedAt: approvedAt,
+    globalUpdateTimeline: normalized.map((event) => event.eventId),
+    ...ticker,
+  };
+  saveMetadata(next);
+
+  console.log(JSON.stringify({
+    ingested: incomingEvents.length,
+    manualVersionCurrent: next.manualVersionCurrent,
+    approvedAt,
+  }, null, 2));
+}
+
+async function executeSync(options: SyncOptions) {
   const startedAt = new Date().toISOString();
   const results: Record<SyncDomain, DomainResult> = {
     procedures: emptyDomainResult(),
@@ -618,7 +782,15 @@ async function main() {
     main: emptyDomainResult(),
   };
 
-  if (options.domains.has("procedures")) results.procedures = await syncProcedures(options.dryRun);
+  const applyMode = options.command === "apply";
+  const metadataBefore = readManualSyncMetadata(ROOT_DIR);
+
+  let allowedProcedureIds: Set<string> | undefined;
+  if (applyMode && options.ids.size > 0) {
+    allowedProcedureIds = options.ids;
+  }
+
+  if (options.domains.has("procedures")) results.procedures = await syncProcedures(options.dryRun, allowedProcedureIds);
   if (options.domains.has("vademecum")) results.vademecum = await syncVademecum(options.dryRun);
   if (options.domains.has("codigos")) results.codigos = await syncCodigos(options.dryRun);
   if (options.domains.has("main")) results.main = await syncMain(options.dryRun);
@@ -649,16 +821,47 @@ async function main() {
     ],
   };
 
-  const currentMetadata = fs.existsSync(METADATA_PATH)
-    ? readManualSyncMetadata(ROOT_DIR)
-    : createDefaultManualSyncMetadata();
-  const nextMetadata = appendSyncRun(currentMetadata, run);
+  let metadata = appendSyncRun(metadataBefore, run);
+  metadata = withPendingChanges(metadata, run);
 
-  if (!options.dryRun) {
-    fs.writeFileSync(METADATA_PATH, `${JSON.stringify(nextMetadata, null, 2)}\n`, "utf8");
+  const approvedAt = applyMode ? finishedAt : undefined;
+  if (applyMode) {
+    metadata = approvePendingChanges(
+      metadata,
+      (change) => {
+        if (options.ids.size === 0) return true;
+        return options.ids.has(change.id);
+      },
+      finishedAt,
+      run.id,
+    );
   }
 
+  const updates = readManualUpdatesDataset(ROOT_DIR);
+  const events = runChangesToEvents(run, approvedAt);
+  const mergedEvents = applyNewThisWeek(mergeEvents(updates.events, events), new Date());
+  writeManualUpdatesDataset({ generatedAt: finishedAt, events: mergedEvents }, ROOT_DIR);
+
+  const tickerData = buildTickerFromEvents(mergedEvents, new Date());
+  metadata = {
+    ...metadata,
+    globalUpdateTimeline: mergedEvents.map((event) => event.eventId),
+    ...tickerData,
+  };
+
+  saveMetadata(metadata);
   console.log(JSON.stringify(run, null, 2));
+}
+
+async function main() {
+  const options = parseArgs(process.argv.slice(2));
+
+  if (options.command === "ingest-official-pdf") {
+    ingestOfficialPdf(options);
+    return;
+  }
+
+  await executeSync(options);
 }
 
 main().catch((error) => {

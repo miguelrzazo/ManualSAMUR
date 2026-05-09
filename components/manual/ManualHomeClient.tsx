@@ -25,7 +25,7 @@ import {
   writeCollectionCookie,
 } from "@/lib/manual-cookies";
 import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
-import type { ManualSyncMetadata } from "@/lib/manual-sync";
+import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos", "General"];
 
@@ -79,6 +79,7 @@ interface Props {
   sidebarSections: ProcedureSidebarSection[];
   allProcedures: ProcedureMeta[];
   syncMetadata: ManualSyncMetadata;
+  updateEvents: ManualUpdateEvent[];
 }
 
 function formatSyncDate(value: string) {
@@ -429,6 +430,7 @@ export function ManualHomeClient({
   sidebarSections,
   allProcedures,
   syncMetadata,
+  updateEvents,
 }: Props) {
   const searchParams = useSearchParams();
   const initialSection = searchParams.get("section") ?? undefined;
@@ -498,6 +500,14 @@ export function ManualHomeClient({
     () => allProcedures.reduce((acc, p) => acc + (p.related?.length ?? 0), 0),
     [allProcedures],
   );
+  const sortedUpdateEvents = useMemo(
+    () => [...updateEvents].sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`)),
+    [updateEvents],
+  );
+  const newThisWeekEvents = useMemo(
+    () => sortedUpdateEvents.filter((event) => event.isNewThisWeek).slice(0, 10),
+    [sortedUpdateEvents],
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-4 md:py-8">
@@ -509,10 +519,60 @@ export function ManualHomeClient({
           <h1 className="text-xl md:text-2xl font-bold tracking-tight leading-tight">Manual SAMUR-PC</h1>
           <p className="text-xs text-muted-foreground hidden md:block">
             {allProcedures.length} procedimientos · {sidebarSections.length} secciones
-            {syncMetadata.manualVersion && ` · ${syncMetadata.manualVersion}`}
+            {syncMetadata.manualVersionCurrent && ` · ${syncMetadata.manualVersionCurrent}`}
           </p>
         </div>
       </div>
+
+      <section id="historial-global" className="mb-6 rounded-2xl border border-border/60 bg-card/50 p-4 md:p-5">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <h2 className="text-sm md:text-base font-semibold">Cronograma de actualizaciones</h2>
+          <span className="text-xs text-muted-foreground">{sortedUpdateEvents.length} eventos</span>
+        </div>
+        {newThisWeekEvents.length > 0 && (
+          <div className="mb-4 rounded-xl border border-red-200/70 bg-red-50/70 px-3 py-2 dark:border-red-900/40 dark:bg-red-950/20">
+            <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Novedades (últimos 7 días)</p>
+            <ul className="grid gap-1">
+              {newThisWeekEvents.map((event) => (
+                <li key={`new-${event.eventId}`} className="text-xs text-red-700/90 dark:text-red-200/90">
+                  {event.procedureIds[0] ? (
+                    <Link href={`/manual?procedure=${encodeURIComponent(event.procedureIds[0])}#update-${event.eventId}`} className="underline decoration-red-300 underline-offset-2">
+                      {event.summary}
+                    </Link>
+                  ) : event.officialUrl ? (
+                    <a href={event.officialUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-red-300 underline-offset-2">
+                      {event.summary}
+                    </a>
+                  ) : event.summary}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <details open className="group">
+          <summary className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
+            Ver historial global desplegable
+          </summary>
+          <div className="mt-3 max-h-80 overflow-auto pr-1">
+            <ul className="grid gap-2">
+              {sortedUpdateEvents.map((event) => (
+                <li key={event.eventId} className={`rounded-lg border px-3 py-2 ${event.isNewThisWeek ? "border-red-300/70 bg-red-50/50 dark:border-red-900/40 dark:bg-red-950/20" : "border-border/50 bg-background/60"}`}>
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="font-medium">{formatSyncDate(event.effectiveDate)}</span>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      {event.origin}
+                    </span>
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                      {event.changeKind}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs text-foreground/90">{event.summary}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+      </section>
 
       {/* Favorites + Recents */}
       {(favorites.length > 0 || recents.length > 0) && (
@@ -600,6 +660,12 @@ export function ManualHomeClient({
           <LayoutGrid className="h-3.5 w-3.5" />
           <span><strong className="text-foreground">{allProcedures.length}</strong> procedimientos</span>
         </div>
+        {syncMetadata.manualVersionCurrent && (
+          <>
+            <span className="text-border">·</span>
+            <span>Versión: <strong className="text-foreground">{syncMetadata.manualVersionCurrent}</strong></span>
+          </>
+        )}
         {syncMetadata.lastSyncAt && (
           <>
             <span className="text-border">·</span>

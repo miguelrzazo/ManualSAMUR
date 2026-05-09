@@ -4,10 +4,14 @@ import path from "node:path";
 
 export const DEFAULT_MANUAL_VERSION = "Abril 2026";
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
+export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
-export type ChangeType = "created" | "updated" | "unchanged";
+export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial";
 export type AttachmentKind = "image" | "pdf" | "other";
+export type EditorialStatus = "source" | "enhanced";
+export type ManualUpdateOrigin = "wiki" | "official-pdf";
+export type ManualUpdateChangeKind = "nuevo" | "revisado" | "actualizado" | "sync";
 
 export interface ManualAttachment {
   sourceUrl: string;
@@ -34,6 +38,10 @@ export interface SyncChange {
   id: string;
   title: string;
   changeType: ChangeType;
+  blockedByEditorial?: boolean;
+  procedurePath?: string;
+  sourceUpdated?: string;
+  source?: string;
 }
 
 export interface SyncDomainSummary {
@@ -41,6 +49,7 @@ export interface SyncDomainSummary {
   created: number;
   updated: number;
   unchanged: number;
+  blocked?: number;
   failed: number;
   skipped: number;
 }
@@ -55,11 +64,63 @@ export interface ManualSyncRun {
   errors: string[];
 }
 
+export interface PendingChange {
+  key: string;
+  domain: SyncDomain;
+  id: string;
+  title: string;
+  changeType: ChangeType;
+  detectedAt: string;
+  sourceUpdated?: string;
+  source?: string;
+  blockedByEditorial?: boolean;
+}
+
+export interface ApprovedChange extends PendingChange {
+  approvedAt: string;
+  runId?: string;
+}
+
+export interface ManualUpdateEvent {
+  eventId: string;
+  origin: ManualUpdateOrigin;
+  officialUrl?: string;
+  procedureIds: string[];
+  changeKind: ManualUpdateChangeKind;
+  summary: string;
+  effectiveDate: string;
+  approvedAt?: string;
+  isNewThisWeek: boolean;
+}
+
+export interface ManualUpdatesDataset {
+  generatedAt: string;
+  events: ManualUpdateEvent[];
+}
+
+export interface ManualTickerItem {
+  label: string;
+  href: string;
+  eventId?: string;
+  procedureId?: string;
+}
+
+export interface ManualTickerState {
+  enabledUntil: string;
+  items: ManualTickerItem[];
+}
+
 export interface ManualSyncMetadata {
+  manualVersionCurrent: string;
   manualVersion: string;
   lastSyncAt: string;
+  lastApprovedAt: string;
+  ticker: ManualTickerState;
   tickerEnabled: boolean;
   tickerItems: string[];
+  pendingChanges: PendingChange[];
+  approvedChanges: ApprovedChange[];
+  globalUpdateTimeline: string[];
   runs: ManualSyncRun[];
 }
 
@@ -71,7 +132,6 @@ export interface ProcedureSpace {
 }
 
 const SYSTEM_SPACE_RE = /^(xwiki|main|blog|menu|authservice|panels|exportar|etiquetas|cabecera|cabeceraetiquetas|mapa|colaboradores|calendario|prueba|tipos de asistencia|tipos de asistencia psicológica>tipos de asistencia|abreviaturas|vademécum|vademecum|webhome|otros)$/i;
-// Only filter top-level structural containers, not procedure sub-categories
 const CATEGORY_SPACE_RE = /^(Procedimientos SVA|Procedimientos SVB|Procedimientos Administrativos|Procedimientos Operativos|Procedimientos asistenciales)$/i;
 
 const STABLE_PROCEDURE_IDS: Record<string, string> = {
@@ -151,7 +211,7 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "parada cardiorrespiratoria": "301",
   "policia municipal dispositivo electrico de control dec": "217_01b",
   "posible enfermedad vascular cerebral aguda ictus": "410a",
-  "procedimiento de comunicaciones en un drp": "126a",  // wiki DRP space → section DRP
+  "procedimiento de comunicaciones en un drp": "126a",
   "procedimiento general de los drp": "drp_01",
   "procedimiento de despliege de un drp": "drp_02",
   "procedimiento de despliegue de un drp": "drp_02",
@@ -183,11 +243,27 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
 
 export function createDefaultManualSyncMetadata(): ManualSyncMetadata {
   return {
+    manualVersionCurrent: DEFAULT_MANUAL_VERSION,
     manualVersion: DEFAULT_MANUAL_VERSION,
     lastSyncAt: "",
+    lastApprovedAt: "",
+    ticker: {
+      enabledUntil: "",
+      items: [],
+    },
     tickerEnabled: false,
     tickerItems: [],
+    pendingChanges: [],
+    approvedChanges: [],
+    globalUpdateTimeline: [],
     runs: [],
+  };
+}
+
+export function createDefaultManualUpdatesDataset(): ManualUpdatesDataset {
+  return {
+    generatedAt: "",
+    events: [],
   };
 }
 
@@ -197,16 +273,59 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
 
   try {
     const parsed = JSON.parse(fs.readFileSync(metadataPath, "utf8")) as Partial<ManualSyncMetadata>;
+    const manualVersionCurrent = parsed.manualVersionCurrent || parsed.manualVersion || DEFAULT_MANUAL_VERSION;
+    const legacyTickerItems = Array.isArray(parsed.tickerItems) ? parsed.tickerItems.filter(isString) : [];
+    const parsedTickerItems = Array.isArray(parsed.ticker?.items)
+      ? parsed.ticker.items.filter((item): item is ManualTickerItem => !!item && typeof item.label === "string" && typeof item.href === "string")
+      : [];
+    const tickerItems = parsedTickerItems.length > 0
+      ? parsedTickerItems
+      : legacyTickerItems.map((label, index) => ({
+        label,
+        href: `/manual?update=${index}`,
+      }));
+    const tickerEnabled = parsed.tickerEnabled ?? tickerItems.length > 0;
+
     return {
-      manualVersion: parsed.manualVersion || DEFAULT_MANUAL_VERSION,
+      manualVersionCurrent,
+      manualVersion: parsed.manualVersion || manualVersionCurrent,
       lastSyncAt: parsed.lastSyncAt || "",
-      tickerEnabled: parsed.tickerEnabled ?? false,
-      tickerItems: Array.isArray(parsed.tickerItems) ? parsed.tickerItems.filter(isString) : [],
+      lastApprovedAt: parsed.lastApprovedAt || "",
+      ticker: {
+        enabledUntil: parsed.ticker?.enabledUntil || "",
+        items: tickerItems,
+      },
+      tickerEnabled,
+      tickerItems: tickerItems.map((item) => item.label),
+      pendingChanges: Array.isArray(parsed.pendingChanges) ? parsed.pendingChanges as PendingChange[] : [],
+      approvedChanges: Array.isArray(parsed.approvedChanges) ? parsed.approvedChanges as ApprovedChange[] : [],
+      globalUpdateTimeline: Array.isArray(parsed.globalUpdateTimeline) ? parsed.globalUpdateTimeline.filter(isString) : [],
       runs: Array.isArray(parsed.runs) ? parsed.runs as ManualSyncRun[] : [],
     };
   } catch {
     return createDefaultManualSyncMetadata();
   }
+}
+
+export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesDataset {
+  const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
+  if (!fs.existsSync(filePath)) return createDefaultManualUpdatesDataset();
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<ManualUpdatesDataset>;
+    return {
+      generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : "",
+      events: Array.isArray(parsed.events) ? parsed.events as ManualUpdateEvent[] : [],
+    };
+  } catch {
+    return createDefaultManualUpdatesDataset();
+  }
+}
+
+export function writeManualUpdatesDataset(dataset: ManualUpdatesDataset, cwd = process.cwd()) {
+  const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify(dataset, null, 2)}\n`, "utf8");
 }
 
 export function stableContentHash(content: string): string {
@@ -253,11 +372,11 @@ export function classifyProcedureChange(
 ): ChangeType {
   if (!existing) return "created";
   if (
-    existing.title !== incoming.title ||
-    existing.source !== incoming.source ||
-    existing.sourceUpdated !== incoming.sourceUpdated ||
-    existing.contentHash !== incoming.contentHash ||
-    JSON.stringify(existing.attachments) !== JSON.stringify(incoming.attachments)
+    existing.title !== incoming.title
+    || existing.source !== incoming.source
+    || existing.sourceUpdated !== incoming.sourceUpdated
+    || existing.contentHash !== incoming.contentHash
+    || JSON.stringify(existing.attachments) !== JSON.stringify(incoming.attachments)
   ) {
     return "updated";
   }
@@ -269,28 +388,132 @@ export function appendSyncRun(
   run: ManualSyncRun,
   maxRuns = 25,
 ): ManualSyncMetadata {
-  const changes = [
-    ...run.changes.procedures.map((change) =>
-      `${change.changeType === "created" ? "Nuevo" : "Actualizado"}: ${change.id} ${change.title}`,
-    ),
-    ...run.changes.vademecum.map((change) =>
-      `Vademécum ${change.changeType === "created" ? "nuevo" : "actualizado"}: ${change.title}`,
-    ),
-    ...run.changes.codigos.map((change) =>
-      `Códigos ${change.changeType === "created" ? "nuevo" : "actualizado"}: ${change.title}`,
-    ),
-    ...run.changes.main.map((change) =>
-      `Main ${change.changeType === "created" ? "nuevo" : "actualizado"}: ${change.title}`,
-    ),
+  const tickerItems = [
+    ...run.changes.procedures
+      .filter((change) => change.changeType !== "unchanged")
+      .slice(0, 8)
+      .map((change) => ({
+        label: `${change.changeType === "created" ? "Nuevo" : change.changeType === "blocked_by_editorial" ? "Bloqueado editorial" : "Actualizado"}: ${change.id} ${change.title}`,
+        href: change.id ? `/manual?procedure=${encodeURIComponent(change.id)}` : "/manual",
+        procedureId: change.id,
+      })),
+    ...run.changes.main
+      .filter((change) => change.changeType !== "unchanged")
+      .slice(0, 4)
+      .map((change) => ({
+        label: `Main actualizado: ${change.title}`,
+        href: "/manual#historial-global",
+      })),
   ].slice(0, 12);
 
   return {
-    manualVersion: metadata.manualVersion || DEFAULT_MANUAL_VERSION,
+    ...metadata,
+    manualVersionCurrent: metadata.manualVersionCurrent || metadata.manualVersion || DEFAULT_MANUAL_VERSION,
+    manualVersion: metadata.manualVersion || metadata.manualVersionCurrent || DEFAULT_MANUAL_VERSION,
     lastSyncAt: run.finishedAt,
-    tickerEnabled: changes.length > 0,
-    tickerItems: changes,
+    tickerEnabled: tickerItems.length > 0,
+    tickerItems: tickerItems.map((item) => item.label),
+    ticker: {
+      enabledUntil: metadata.ticker?.enabledUntil ?? "",
+      items: tickerItems,
+    },
     runs: [run, ...metadata.runs].slice(0, maxRuns),
   };
+}
+
+export function withPendingChanges(metadata: ManualSyncMetadata, run: ManualSyncRun): ManualSyncMetadata {
+  const detectedAt = run.finishedAt;
+  const pendingByKey = new Map<string, PendingChange>(
+    metadata.pendingChanges.map((change) => [change.key, change]),
+  );
+
+  for (const domain of ["procedures", "vademecum", "codigos", "main"] as const) {
+    for (const change of run.changes[domain]) {
+      if (change.changeType === "unchanged") continue;
+      const key = `${domain}:${change.id}`;
+      pendingByKey.set(key, {
+        key,
+        domain,
+        id: change.id,
+        title: change.title,
+        changeType: change.changeType,
+        detectedAt,
+        sourceUpdated: change.sourceUpdated,
+        source: change.source,
+        blockedByEditorial: change.blockedByEditorial,
+      });
+    }
+  }
+
+  return {
+    ...metadata,
+    pendingChanges: [...pendingByKey.values()].sort((a, b) => b.detectedAt.localeCompare(a.detectedAt)),
+  };
+}
+
+export function approvePendingChanges(
+  metadata: ManualSyncMetadata,
+  predicate: (change: PendingChange) => boolean,
+  approvedAt: string,
+  runId?: string,
+): ManualSyncMetadata {
+  const approved: ApprovedChange[] = [];
+  const remaining: PendingChange[] = [];
+
+  for (const change of metadata.pendingChanges) {
+    if (predicate(change)) {
+      approved.push({ ...change, approvedAt, runId });
+    } else {
+      remaining.push(change);
+    }
+  }
+
+  return {
+    ...metadata,
+    lastApprovedAt: approved.length > 0 ? approvedAt : metadata.lastApprovedAt,
+    pendingChanges: remaining,
+    approvedChanges: [...approved, ...metadata.approvedChanges],
+  };
+}
+
+export function buildTickerFromEvents(events: ManualUpdateEvent[], referenceNow: Date) {
+  const approvedEvents = events
+    .filter((event) => event.approvedAt)
+    .sort((a, b) => (b.approvedAt ?? "").localeCompare(a.approvedAt ?? ""));
+
+  const items: ManualTickerItem[] = approvedEvents
+    .slice(0, 12)
+    .map((event) => ({
+      label: event.summary,
+      href: event.procedureIds[0] ? `/manual?procedure=${encodeURIComponent(event.procedureIds[0])}#update-${event.eventId}` : `/manual#historial-global`,
+      eventId: event.eventId,
+      procedureId: event.procedureIds[0],
+    }));
+
+  const newestApproved = approvedEvents[0]?.approvedAt ?? "";
+  const enabledUntil = newestApproved ? new Date(new Date(newestApproved).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() : "";
+  const tickerEnabled = !!enabledUntil && new Date(enabledUntil).getTime() > referenceNow.getTime() && items.length > 0;
+
+  return {
+    tickerEnabled,
+    ticker: {
+      enabledUntil,
+      items,
+    },
+    tickerItems: items.map((item) => item.label),
+  };
+}
+
+export function applyNewThisWeek(events: ManualUpdateEvent[], referenceNow = new Date()): ManualUpdateEvent[] {
+  return events.map((event) => {
+    if (!event.approvedAt) return { ...event, isNewThisWeek: false };
+    const approved = new Date(event.approvedAt).getTime();
+    const diff = referenceNow.getTime() - approved;
+    return {
+      ...event,
+      isNewThisWeek: diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000,
+    };
+  });
 }
 
 export function getSectionFromXWikiUrl(url: string): string {
@@ -402,6 +625,7 @@ export function summarizeChanges(changes: SyncChange[], discovered?: number): Sy
     created: changes.filter((change) => change.changeType === "created").length,
     updated: changes.filter((change) => change.changeType === "updated").length,
     unchanged: changes.filter((change) => change.changeType === "unchanged").length,
+    blocked: changes.filter((change) => change.changeType === "blocked_by_editorial").length,
     failed: 0,
     skipped: 0,
   };

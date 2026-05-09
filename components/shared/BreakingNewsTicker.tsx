@@ -5,9 +5,11 @@ interface Props {
 }
 
 export function BreakingNewsTicker({ metadata }: Props) {
-  if (!metadata.tickerEnabled || metadata.tickerItems.length === 0) return null;
+  if (!metadata.tickerEnabled) return null;
 
-  const items = metadata.tickerItems.map((item) => item.trim()).filter(Boolean);
+  const items = (metadata.ticker?.items ?? [])
+    .map((item) => ({ label: item.label.trim(), href: item.href }))
+    .filter((item) => item.label);
   if (items.length === 0) return null;
 
   return (
@@ -19,8 +21,10 @@ export function BreakingNewsTicker({ metadata }: Props) {
         <div className="manual-news-mask min-w-0 flex-1 overflow-hidden">
           <div className="manual-news-track flex w-max items-center gap-8 whitespace-nowrap px-4 text-sm font-semibold">
             {[...items, ...items].map((item, index) => (
-              <span key={`${item}-${index}`} className="inline-flex items-center gap-8">
-                <span>{item}</span>
+              <span key={`${item.label}-${index}`} className="inline-flex items-center gap-8">
+                <a href={item.href} className="underline decoration-red-200/70 underline-offset-2 hover:text-red-100">
+                  {item.label}
+                </a>
                 <span aria-hidden="true" className="text-red-200">/</span>
               </span>
             ))}
