@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
@@ -72,7 +73,6 @@ interface Props {
   perfusiones: Perfusion[];
   fluidos: FluidRow[];
   comerciales: CommercialRow[];
-  highlightedDrugId?: string | null;
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -443,8 +443,9 @@ export function VademecumView({
   perfusiones,
   fluidos,
   comerciales,
-  highlightedDrugId = null,
 }: Props) {
+  const searchParams = useSearchParams();
+  const highlightedDrugId = searchParams.get("farmaco");
   const [tab, setTab] = useState<Tab>("farmacos");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);

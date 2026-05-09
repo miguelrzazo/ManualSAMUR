@@ -1,20 +1,15 @@
 import { readFileSync } from "fs";
 import path from "path";
 import { VademecumView } from "@/components/vademecum/VademecumView";
-import { resolveVademecumRouteState } from "@/lib/vademecum-utils";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Vademécum — SAMUR Manual",
   description: "Guía rápida de fármacos de emergencia SAMUR-Protección Civil",
 };
 
-interface PageProps {
-  searchParams: Promise<{ q?: string | string[]; farmaco?: string | string[] }>;
-}
-
-export default async function VademecumPage({ searchParams }: PageProps) {
+export default async function VademecumPage() {
   const drugs = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"));
-  const routeState = resolveVademecumRouteState(await searchParams, drugs);
   const perfusiones = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/perfusiones.json"), "utf8"));
   const fluidos = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/fluidos.json"), "utf8"));
   const comerciales = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/vademecum-comerciales.json"), "utf8"));
@@ -27,14 +22,14 @@ export default async function VademecumPage({ searchParams }: PageProps) {
           <span className="construction-banner-item">&gt;&gt;&gt;&gt; EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL &lt;&lt;&lt;&lt;</span>
         </div>
       </div>
-      <VademecumView
-        key={routeState.highlightedDrugId ?? "base"}
-        drugs={drugs}
-        perfusiones={perfusiones}
-        fluidos={fluidos}
-        comerciales={comerciales}
-        highlightedDrugId={routeState.highlightedDrugId}
-      />
+      <Suspense fallback={<div>Cargando vademécum...</div>}>
+        <VademecumView
+          drugs={drugs}
+          perfusiones={perfusiones}
+          fluidos={fluidos}
+          comerciales={comerciales}
+        />
+      </Suspense>
     </div>
   );
 }

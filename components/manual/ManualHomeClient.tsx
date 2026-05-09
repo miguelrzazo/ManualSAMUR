@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import {
   ArrowRight,
@@ -73,9 +74,6 @@ interface Props {
   sidebarSections: ProcedureSidebarSection[];
   allProcedures: ProcedureMeta[];
   syncMetadata: ManualSyncMetadata;
-  initialSection?: string;
-  initialGroup?: string;
-  initialSubgroup?: string;
 }
 
 function formatSyncDate(value: string) {
@@ -305,10 +303,11 @@ export function ManualHomeClient({
   sidebarSections,
   allProcedures,
   syncMetadata,
-  initialSection,
-  initialGroup,
-  initialSubgroup,
 }: Props) {
+  const searchParams = useSearchParams();
+  const initialSection = searchParams.get("section") ?? undefined;
+  const initialGroup = searchParams.get("group") ?? undefined;
+  const initialSubgroup = searchParams.get("subgroup") ?? undefined;
   const validIds = useMemo(() => allProcedures.map((p) => p.id), [allProcedures]);
   const validIdSet = useMemo(() => new Set(validIds), [validIds]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
