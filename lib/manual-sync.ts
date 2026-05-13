@@ -267,6 +267,33 @@ export function createDefaultManualUpdatesDataset(): ManualUpdatesDataset {
   };
 }
 
+export function filterUserFacingTickerItems(items: ManualTickerItem[]): ManualTickerItem[] {
+  return items.filter((item) => {
+    if (item.procedureId) return true;
+    if (item.href.startsWith("/manual/")) return true;
+    if (item.href.startsWith("/codigos")) return true;
+    if (item.href.startsWith("/vademecum")) return true;
+
+    const label = normalizeProcedureLookupKey(item.label);
+    if (label.includes("llms")) return false;
+    if (label.includes("colaboradores")) return false;
+    if (label.includes("main links")) return false;
+    if (label.includes("abreviaturas")) return false;
+    if (label.includes("mobile assets")) return false;
+    if (label.includes("attachment") || label.includes("adjunto")) return false;
+    if (label.includes("main actualizado")) return false;
+
+    return (
+      label.includes("manual") ||
+      label.includes("procedimiento") ||
+      label.includes("codigo") ||
+      label.includes("codigos") ||
+      label.includes("vademecum") ||
+      label.includes("farmaco")
+    );
+  });
+}
+
 export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata {
   const metadataPath = path.join(cwd, DEFAULT_MANUAL_METADATA_PATH);
   if (!fs.existsSync(metadataPath)) return createDefaultManualSyncMetadata();
@@ -278,12 +305,13 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
     const parsedTickerItems = Array.isArray(parsed.ticker?.items)
       ? parsed.ticker.items.filter((item): item is ManualTickerItem => !!item && typeof item.label === "string" && typeof item.href === "string")
       : [];
-    const tickerItems = parsedTickerItems.length > 0
+    const tickerItemsRaw = parsedTickerItems.length > 0
       ? parsedTickerItems
       : legacyTickerItems.map((label, index) => ({
         label,
         href: `/manual?update=${index}`,
       }));
+    const tickerItems = filterUserFacingTickerItems(tickerItemsRaw);
     const tickerEnabled = parsed.tickerEnabled ?? tickerItems.length > 0;
 
     return {

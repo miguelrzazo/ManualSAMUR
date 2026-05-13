@@ -1,16 +1,12 @@
 import { getProcedureSidebarSections } from "@/lib/content";
 import { ProcedureSidebar } from "@/components/manual/ProcedureSidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { BreakingNewsTicker } from "@/components/shared/BreakingNewsTicker";
-import { readManualSyncMetadata } from "@/lib/manual-sync";
 
 export default function ManualLayout({ children }: { children: React.ReactNode }) {
   const sidebarSections = getProcedureSidebarSections();
-  const manualSyncMetadata = readManualSyncMetadata();
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-[calc(100vh-3.5rem)]">
-      <BreakingNewsTicker metadata={manualSyncMetadata} />
       <div className="construction-banner border-b border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
         <div className="construction-banner-track">
           <span className="construction-banner-item">&gt;&gt;&gt;&gt; EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL &lt;&lt;&lt;&lt;</span>
