@@ -38,6 +38,7 @@ export interface SyncChange {
   id: string;
   title: string;
   changeType: ChangeType;
+  changeKind?: ManualUpdateChangeKind;
   blockedByEditorial?: boolean;
   procedurePath?: string;
   sourceUpdated?: string;
@@ -278,12 +279,13 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
     const parsedTickerItems = Array.isArray(parsed.ticker?.items)
       ? parsed.ticker.items.filter((item): item is ManualTickerItem => !!item && typeof item.label === "string" && typeof item.href === "string")
       : [];
-    const tickerItems = parsedTickerItems.length > 0
+    const tickerItemsRaw = parsedTickerItems.length > 0
       ? parsedTickerItems
       : legacyTickerItems.map((label, index) => ({
         label,
         href: `/manual?update=${index}`,
       }));
+    const tickerItems = filterUserFacingTickerItems(tickerItemsRaw);
     const tickerEnabled = parsed.tickerEnabled ?? tickerItems.length > 0;
 
     return {
@@ -305,6 +307,26 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
   } catch {
     return createDefaultManualSyncMetadata();
   }
+}
+
+export function filterUserFacingTickerItems(items: ManualTickerItem[]): ManualTickerItem[] {
+  return items.filter((item) => {
+    if (item.procedureId) return true;
+    if (item.href.startsWith("/manual/")) return true;
+    if (item.href.startsWith("/codigos")) return true;
+
+    const label = normalizeProcedureLookupKey(item.label);
+    if (label.includes("vademecum")) return false;
+    if (label.includes("main actualizado")) return false;
+    if (label.includes("llms")) return false;
+    if (label.includes("colaboradores")) return false;
+    if (label.includes("main links")) return false;
+    if (label.includes("abreviaturas")) return false;
+    if (label.includes("mobile assets")) return false;
+    if (label.includes("attachment") || label.includes("adjunto")) return false;
+
+    return label.includes("manual") || label.includes("procedimiento") || label.includes("codigo") || label.includes("codigos");
+  });
 }
 
 export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesDataset {
@@ -383,6 +405,20 @@ export function classifyProcedureChange(
   return "unchanged";
 }
 
+export function classifyProcedureUpdateKind(
+  existing: ProcedureSnapshot | null,
+  incoming: ProcedureSnapshot,
+  changeType: ChangeType,
+): ManualUpdateChangeKind {
+  if (changeType === "created") return "nuevo";
+  if (changeType === "unchanged") return "sync";
+  if (changeType === "blocked_by_editorial") return "revisado";
+  if (existing && existing.contentHash === incoming.contentHash && existing.sourceUpdated !== incoming.sourceUpdated) {
+    return "revisado";
+  }
+  return "actualizado";
+}
+
 export function appendSyncRun(
   metadata: ManualSyncMetadata,
   run: ManualSyncRun,
@@ -393,7 +429,7 @@ export function appendSyncRun(
       .filter((change) => change.changeType !== "unchanged")
       .slice(0, 8)
       .map((change) => ({
-        label: `${change.changeType === "created" ? "Nuevo" : change.changeType === "blocked_by_editorial" ? "Bloqueado editorial" : "Actualizado"}: ${change.id} ${change.title}`,
+        label: `${change.changeKind === "nuevo" || change.changeType === "created" ? "Nuevo" : change.changeKind === "revisado" ? "Revisado" : change.changeType === "blocked_by_editorial" ? "Bloqueado editorial" : "Actualizado"}: ${change.id} ${change.title}`,
         href: change.id ? `/manual?procedure=${encodeURIComponent(change.id)}` : "/manual",
         procedureId: change.id,
       })),
@@ -470,7 +506,7 @@ export function approvePendingChanges(
 }
 
 export function buildTickerFromEvents(events: ManualUpdateEvent[], referenceNow: Date) {
-  const approvedEvents = events
+  const approvedEvents = filterUserFacingTickerEvents(events)
     .filter((event) => event.approvedAt)
     .sort((a, b) => (b.approvedAt ?? "").localeCompare(a.approvedAt ?? ""));
 
@@ -495,6 +531,24 @@ export function buildTickerFromEvents(events: ManualUpdateEvent[], referenceNow:
     },
     tickerItems: items.map((item) => item.label),
   };
+}
+
+export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): ManualUpdateEvent[] {
+  return events.filter((event) => {
+    if (event.procedureIds.length > 0) return true;
+
+    const summary = normalizeProcedureLookupKey(event.summary);
+    if (summary.includes("vademecum")) return false;
+    if (summary.includes("main actualizado")) return false;
+    if (summary.includes("llms")) return false;
+    if (summary.includes("colaboradores")) return false;
+    if (summary.includes("main links")) return false;
+    if (summary.includes("abreviaturas")) return false;
+    if (summary.includes("mobile assets")) return false;
+    if (summary.includes("attachment") || summary.includes("adjunto")) return false;
+
+    return summary.includes("codigos") || summary.includes("manual") || summary.includes("procedimiento");
+  });
 }
 
 export function applyNewThisWeek(events: ManualUpdateEvent[], referenceNow = new Date()): ManualUpdateEvent[] {

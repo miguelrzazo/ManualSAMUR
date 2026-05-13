@@ -107,7 +107,7 @@ function SectionPillBar({
   });
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 mb-4 no-scrollbar" style={{ scrollbarWidth: "none" }}>
+    <div className="sticky top-0 z-20 -mx-4 mb-4 flex gap-2 overflow-x-auto border-b border-border/40 bg-background/95 px-4 py-2 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none no-scrollbar" style={{ scrollbarWidth: "none" }}>
       <button
         onClick={() => onSelect(undefined)}
         className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
@@ -192,7 +192,7 @@ function CollectionSection({
   if (!procedures.length) return null;
 
   return (
-    <section className="rounded-2xl border border-border/60 bg-card/60 p-4 md:p-5">
+    <section className="rounded-lg border border-border/60 bg-card/60 p-4 md:p-5">
       <div className="flex items-center gap-2 mb-3">
         {icon}
         <h2 className="text-sm font-semibold">{title}</h2>
@@ -236,6 +236,7 @@ function ExplorerTree({
 
   useEffect(() => {
     if (effectiveSection) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL-selected sections should open their containing group after hydration.
       setOpenKeys(new Set([sKey(effectiveSection)]));
     }
   }, [effectiveSection]);
@@ -254,14 +255,14 @@ function ExplorerTree({
 
   if (!sections.length) {
     return (
-      <div className="rounded-2xl border border-border/60 bg-card/40 px-6 py-10 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-border/60 bg-card/40 px-6 py-10 text-center text-sm text-muted-foreground">
         No hay procedimientos que coincidan con el filtro.
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card/40 overflow-hidden">
+    <div className="rounded-lg border border-border/60 bg-card/40 overflow-hidden">
       {sections.map((section) => {
         const meta = SECTION_META[section.section] ?? FALLBACK;
         const procedures = section.groups
@@ -395,7 +396,7 @@ function GraphCard({ procedureCount, linkCount, onOpen }: {
   return (
     <button
       onClick={onOpen}
-      className="hidden md:flex w-full items-center gap-5 rounded-2xl border border-border/60 bg-card/40 hover:bg-card/70 transition-colors px-5 py-4 mb-4 text-left group"
+      className="hidden md:flex w-full items-center gap-5 rounded-lg border border-border/60 bg-card/40 hover:bg-card/70 transition-colors px-5 py-4 mb-4 text-left group"
     >
       <div className="flex-shrink-0 rounded-xl border border-border/40 bg-muted/30 overflow-hidden w-[140px] h-[76px]">
         <svg width="140" height="76" viewBox="0 0 300 130" className="opacity-60 group-hover:opacity-85 transition-opacity">
@@ -447,6 +448,7 @@ export function ManualHomeClient({
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- favorites are stored in client cookies and must hydrate after mount.
     setFavoriteIds(readCollectionCookie(FAVORITES_COOKIE, validIdSet));
     setRecentIds(readCollectionCookie(RECENT_COOKIE, validIdSet));
   }, [validIdSet]);
@@ -513,28 +515,48 @@ export function ManualHomeClient({
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-4 md:py-8">
+    <div className="mx-auto max-w-7xl px-4 py-3 md:py-6">
 
       {/* Header */}
-      <div className="flex items-center gap-2.5 mb-4 md:mb-6">
-        <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight leading-tight">Manual SAMUR-PC</h1>
-          <p className="text-xs text-muted-foreground hidden md:block">
-            {allProcedures.length} procedimientos · {sidebarSections.length} secciones
-            {syncMetadata.manualVersionCurrent && ` · ${syncMetadata.manualVersionCurrent}`}
-          </p>
+      <div className="mb-4 rounded-lg border border-border/60 bg-background/80 p-4 md:mb-5 md:p-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
+              <BookOpen className="h-4 w-4 flex-shrink-0" />
+              Manual SAMUR-PC
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight leading-tight md:text-3xl">
+              Procedimientos de consulta rápida
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Navegación offline-first por secciones, relaciones clínicas y cronograma de cambios revisables.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 md:min-w-80">
+            <div className="rounded-md border border-border/50 bg-muted/25 px-3 py-2">
+              <div className="text-lg font-bold tabular-nums">{allProcedures.length}</div>
+              <div className="text-[11px] text-muted-foreground">procedimientos</div>
+            </div>
+            <div className="rounded-md border border-border/50 bg-muted/25 px-3 py-2">
+              <div className="text-lg font-bold tabular-nums">{sidebarSections.length}</div>
+              <div className="text-[11px] text-muted-foreground">secciones</div>
+            </div>
+            <div className="rounded-md border border-border/50 bg-muted/25 px-3 py-2">
+              <div className="truncate text-lg font-bold">{syncMetadata.manualVersionCurrent || "N/D"}</div>
+              <div className="text-[11px] text-muted-foreground">versión</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <section id="historial-global" className="mb-6 rounded-2xl border border-border/60 bg-card/50 p-4 md:p-5">
+      <section id="historial-global" className="mb-5 rounded-lg border border-border/60 bg-card/50 p-4 md:p-5">
         <div className="flex items-center justify-between gap-2 mb-3">
           <h2 className="text-sm md:text-base font-semibold">Cronograma De Actualizaciones</h2>
           <span className="text-xs text-muted-foreground">{sortedUpdateEvents.length} eventos</span>
         </div>
         {newThisWeekEvents.length > 0 && (
           <div className="mb-4 rounded-xl border border-red-200/70 bg-red-50/70 px-3 py-2 dark:border-red-900/40 dark:bg-red-950/20">
-            <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Novedades (Últimos 7 Días)</p>
+            <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Novedades recientes</p>
             <ul className="grid gap-1">
               {newThisWeekEvents.map((event) => (
                 <li key={`new-${event.eventId}`} className="text-xs text-red-700/90 dark:text-red-200/90">
@@ -553,10 +575,8 @@ export function ManualHomeClient({
           </div>
         )}
         <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
-          <DialogTrigger>
-            <button className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
-              Ver Historial Global
-            </button>
+          <DialogTrigger className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
+            Ver Historial Global
           </DialogTrigger>
           <DialogContent className="w-[95vw] max-w-3xl">
             <DialogHeader>

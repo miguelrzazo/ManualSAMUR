@@ -25,6 +25,7 @@ export function FavoriteButton({ procedureId, validIds, className, onToggle, isF
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- favorite cookies are client-only, so hydration happens after mount.
     setIsHydrated(true);
     setIsFavoriteLocal(readCollectionCookie(FAVORITES_COOKIE, validIdSet).includes(procedureId));
   }, [procedureId, validIdSet]);

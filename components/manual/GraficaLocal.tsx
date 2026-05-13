@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Maximize2, Minimize2 } from "lucide-react";
 import {
   Background,
@@ -187,6 +188,11 @@ function GraphCanvas({ current, related, backlinks, suggested, expanded }: Props
 
 export function GraficaLocal({ current, related, backlinks = [], suggested = [] }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const fallbackItems = [
+    ...related.map((procedure) => ({ procedure, label: "saliente" })),
+    ...backlinks.map((procedure) => ({ procedure, label: "backlink" })),
+    ...suggested.map((procedure) => ({ procedure, label: "sugerido" })),
+  ];
 
   return (
     <>
@@ -204,6 +210,28 @@ export function GraficaLocal({ current, related, backlinks = [], suggested = [] 
           </button>
         </div>
         <GraphCanvas current={current} related={related} backlinks={backlinks} suggested={suggested} />
+        {fallbackItems.length > 0 && (
+          <details className="rounded-lg border border-border/50 bg-card/40 px-3 py-2">
+            <summary className="cursor-pointer text-xs font-semibold text-muted-foreground">
+              Lista accesible de conexiones ({fallbackItems.length})
+            </summary>
+            <div className="mt-2 grid gap-1">
+              {fallbackItems.map(({ procedure, label }) => (
+                <Link
+                  key={`${label}-${procedure.id}`}
+                  href={`/manual/${procedure.slug}`}
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-muted/50"
+                >
+                  <span className="w-14 font-mono text-muted-foreground">{procedure.id}</span>
+                  <span className="min-w-0 flex-1 truncate">{procedure.title}</span>
+                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </details>
+        )}
       </div>
 
       <Dialog open={expanded} onOpenChange={setExpanded}>

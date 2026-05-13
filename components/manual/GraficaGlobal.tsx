@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { ZoomIn, ZoomOut, Maximize2, RefreshCw } from "lucide-react";
 import {
@@ -324,10 +325,21 @@ export function GraficaGlobal({ procedures }: Props) {
     }));
   }, []);
 
+  const accessibleConnections = procedures
+    .flatMap((procedure) =>
+      (procedure.related ?? []).map((targetId) => ({
+        source: procedure,
+        target: procedures.find((candidate) => candidate.id === targetId),
+      })),
+    )
+    .filter((item): item is { source: ProcedureMeta; target: ProcedureMeta } => Boolean(item.target))
+    .slice(0, 80);
+
   return (
+    <>
     <div
       className="relative w-full rounded-xl overflow-hidden border"
-      style={{ background: palette.background, borderColor: palette.border, height: "560px" }}
+      style={{ background: palette.background, borderColor: palette.border, height: "min(62vh, 560px)", minHeight: 420 }}
     >
       <svg
         ref={svgRef}
@@ -485,5 +497,26 @@ export function GraficaGlobal({ procedures }: Props) {
         </div>
       )}
     </div>
+    {accessibleConnections.length > 0 && (
+      <details className="mt-3 rounded-lg border border-border/60 bg-card/40 px-3 py-2">
+        <summary className="cursor-pointer text-sm font-semibold text-muted-foreground">
+          Lista accesible de conexiones ({accessibleConnections.length})
+        </summary>
+        <div className="mt-2 grid gap-1 md:grid-cols-2">
+          {accessibleConnections.map(({ source, target }) => (
+            <div key={`${source.id}-${target.id}`} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs">
+              <Link href={`/manual/${source.slug}`} className="min-w-0 flex-1 truncate font-medium hover:text-primary">
+                {source.id} · {source.title}
+              </Link>
+              <span className="text-muted-foreground">→</span>
+              <Link href={`/manual/${target.slug}`} className="min-w-0 flex-1 truncate font-medium hover:text-primary">
+                {target.id} · {target.title}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </details>
+    )}
+    </>
   );
 }

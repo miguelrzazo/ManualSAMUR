@@ -4,9 +4,12 @@ import assert from "node:assert/strict";
 import {
   applyNewThisWeek,
   buildTickerFromEvents,
+  filterUserFacingTickerItems,
+  filterUserFacingTickerEvents,
   DEFAULT_MANUAL_VERSION,
   appendSyncRun,
   classifyProcedureChange,
+  classifyProcedureUpdateKind,
   extractAttachmentLinks,
   parseProcedureSpacesXml,
   rewriteAttachmentLinks,
@@ -36,6 +39,21 @@ test("classifyProcedureChange detects new, unchanged and updated procedures", ()
   assert.equal(classifyProcedureChange({ ...incoming }, incoming), "unchanged");
   assert.equal(classifyProcedureChange({ ...incoming, contentHash: "hash-old" }, incoming), "updated");
   assert.equal(classifyProcedureChange({ ...incoming, sourceUpdated: "2026-03-01" }, incoming), "updated");
+});
+
+test("classifyProcedureUpdateKind maps source-only changes to revisado", () => {
+  const incoming = {
+    id: "301",
+    title: "Parada cardiorrespiratoria",
+    source: "https://servpub.madrid.es/manualsamur/bin/view/SVA/301/WebHome",
+    sourceUpdated: "2026-04-01",
+    contentHash: "hash-a",
+    attachments: [],
+  };
+
+  assert.equal(classifyProcedureUpdateKind(null, incoming, "created"), "nuevo");
+  assert.equal(classifyProcedureUpdateKind({ ...incoming, sourceUpdated: "2026-03-01" }, incoming, "updated"), "revisado");
+  assert.equal(classifyProcedureUpdateKind({ ...incoming, contentHash: "hash-old" }, incoming, "updated"), "actualizado");
 });
 
 test("appendSyncRun keeps newest run first, derives ticker items and preserves manual version", () => {
@@ -134,6 +152,67 @@ test("buildTickerFromEvents enables ribbon for seven days from latest approved e
 
   assert.equal(data.tickerEnabled, true);
   assert.equal(data.ticker.items[0]?.href, "/manual?procedure=301#update-a");
+});
+
+test("filterUserFacingTickerEvents excludes internal file and vademecum-only changes", () => {
+  const events = filterUserFacingTickerEvents([
+    {
+      eventId: "procedure",
+      origin: "wiki",
+      procedureIds: ["301"],
+      changeKind: "actualizado",
+      summary: "Actualizado: 301",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-09T10:00:00.000Z",
+      isNewThisWeek: true,
+    },
+    {
+      eventId: "main",
+      origin: "wiki",
+      procedureIds: [],
+      changeKind: "actualizado",
+      summary: "main actualizado: main-links.json",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-09T10:00:00.000Z",
+      isNewThisWeek: true,
+    },
+    {
+      eventId: "vademecum",
+      origin: "wiki",
+      procedureIds: [],
+      changeKind: "actualizado",
+      summary: "vademecum actualizado: Adrenalina",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-09T10:00:00.000Z",
+      isNewThisWeek: true,
+    },
+    {
+      eventId: "codigos",
+      origin: "wiki",
+      procedureIds: [],
+      changeKind: "actualizado",
+      summary: "codigos actualizado: Código 19",
+      effectiveDate: "2026-05-09",
+      approvedAt: "2026-05-09T10:00:00.000Z",
+      isNewThisWeek: true,
+    },
+  ]);
+
+  assert.deepEqual(events.map((event) => event.eventId), ["procedure", "codigos"]);
+});
+
+test("filterUserFacingTickerItems excludes legacy internal metadata ticker rows", () => {
+  const items = filterUserFacingTickerItems([
+    { label: "Main actualizado: main-links.json", href: "/manual?update=0" },
+    { label: "Main actualizado: colaboradores.json", href: "/manual?update=1" },
+    { label: "Actualizado: 301 Parada cardiorrespiratoria", href: "/manual?procedure=301", procedureId: "301" },
+    { label: "codigos actualizado: Código 19", href: "/codigos?tab=incidente&code=19" },
+  ]);
+
+  assert.deepEqual(
+    items.map((item) => item.label),
+    ["Actualizado: 301 Parada cardiorrespiratoria", "codigos actualizado: Código 19"],
+  );
 });
 
 test("parseProcedureSpacesXml filters XWiki containers and keeps procedure-like spaces", () => {

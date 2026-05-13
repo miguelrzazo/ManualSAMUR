@@ -11,6 +11,7 @@ import codigosLima from "@/content/data/codigos-lima.json";
 import bases from "@/content/data/bases.json";
 import hospitals from "@/content/data/hospitals.json";
 import status4 from "@/content/data/status4.json";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Códigos — SAMUR Manual",
@@ -18,19 +19,21 @@ export const metadata = {
 
 export default function CodigosPage() {
   return (
-    <CodigosView
-      incidente={codigosIncidente}
-      sva={codigosSva}
-      svb={codigosSvb}
-      upsi={codigosUpsi}
-      upsq={codigosUpsq}
-      icao={codigosIcao}
-      indicativos={codigosIndicativos}
-      claves={codigosClaves}
-      bases={bases}
-      hospitals={hospitals}
-      status4={status4}
-      lima={codigosLima}
-    />
+    <Suspense fallback={<div>Cargando códigos...</div>}>
+      <CodigosView
+        incidente={codigosIncidente}
+        sva={codigosSva}
+        svb={codigosSvb}
+        upsi={codigosUpsi}
+        upsq={codigosUpsq}
+        icao={codigosIcao}
+        indicativos={codigosIndicativos}
+        claves={codigosClaves}
+        bases={bases}
+        hospitals={hospitals}
+        status4={status4}
+        lima={codigosLima}
+      />
+    </Suspense>
   );
 }

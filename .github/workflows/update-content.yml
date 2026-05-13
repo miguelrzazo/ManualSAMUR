@@ -6,8 +6,12 @@ on:
     - cron: "0 4 1 * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  detect:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,8 +24,49 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Detect official updates (no apply)
-        run: npm run sync:manualsamur:detect
+      - name: Apply official updates into review branch
+        run: npm run sync:manualsamur:apply
+
+      - name: Generate update report
+        run: |
+          node <<'NODE' > /tmp/manual-update-report.md
+          const fs = require("fs");
+          const sync = JSON.parse(fs.readFileSync("content/data/manual-sync.json", "utf8"));
+          const updates = fs.existsSync("content/data/manual-updates.json")
+            ? JSON.parse(fs.readFileSync("content/data/manual-updates.json", "utf8"))
+            : { events: [] };
+          const run = sync.runs?.[0];
+          console.log("# ManualSAMUR monthly update report\n");
+          console.log(`Generated: ${new Date().toISOString()}`);
+          console.log(`Manual version: ${sync.manualVersionCurrent || sync.manualVersion || "unknown"}\n`);
+          if (run) {
+            console.log("## Domain summary\n");
+            for (const [domain, summary] of Object.entries(run.summary || {})) {
+              console.log(`- ${domain}: created ${summary.created || 0}, updated ${summary.updated || 0}, unchanged ${summary.unchanged || 0}, skipped ${summary.skipped || 0}, failed ${summary.failed || 0}`);
+            }
+            console.log("\n## Changes\n");
+            for (const [domain, changes] of Object.entries(run.changes || {})) {
+              const relevant = (changes || []).filter((change) => change.changeType !== "unchanged");
+              if (relevant.length === 0) continue;
+              console.log(`### ${domain}`);
+              for (const change of relevant) {
+                console.log(`- ${change.changeType}: ${change.id} ${change.title || ""}`);
+              }
+              console.log("");
+            }
+            if (run.errors?.length) {
+              console.log("## Errors\n");
+              for (const error of run.errors) console.log(`- ${error}`);
+            }
+          }
+          const recent = (updates.events || []).slice(0, 20);
+          if (recent.length) {
+            console.log("\n## Recent history events\n");
+            for (const event of recent) {
+              console.log(`- ${event.changeKind}: ${event.summary} (${event.effectiveDate})`);
+            }
+          }
+          NODE
 
       - name: Upload update artifacts
         uses: actions/upload-artifact@v4
@@ -30,7 +75,20 @@ jobs:
           path: |
             content/data/manual-sync.json
             content/data/manual-updates.json
+            /tmp/manual-update-report.md
 
       - name: Print quick summary
         run: |
           node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync("content/data/manual-sync.json","utf8"));const run=data.runs?.[0];console.log(JSON.stringify({lastSyncAt:data.lastSyncAt,pendingChanges:data.pendingChanges?.length??0,runSummary:run?.summary??{}},null,2));'
+
+      - name: Create review pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: codex/monthly-manual-update
+          delete-branch: true
+          title: "chore: monthly ManualSAMUR content update"
+          body-path: /tmp/manual-update-report.md
+          commit-message: "chore: update ManualSAMUR content snapshot"
+          labels: |
+            content
+            automated

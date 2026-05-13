@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { FileX, MapPin, Navigation, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
@@ -59,6 +60,7 @@ interface Props {
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 type TopTabKey = "incidente" | "svb" | "sva" | "upsi" | "upsq" | "otros";
+const TOP_TAB_KEYS = new Set<TopTabKey>(["incidente", "svb", "sva", "upsi", "upsq", "otros"]);
 
 const TOP_TABS: Array<{ key: TopTabKey; label: string; color: string; pill: string; text: string; placeholder?: boolean }> = [
   { key: "incidente", label: "Incidente", color: "#d97706", pill: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", text: "text-amber-700 dark:text-amber-400" },
@@ -70,6 +72,7 @@ const TOP_TABS: Array<{ key: TopTabKey; label: string; color: string; pill: stri
 ];
 
 type OtrosTabKey = "icao" | "indicativos" | "claves" | "bases" | "hospitales" | "comunicaciones" | "distritos" | "lima";
+const OTROS_TAB_KEYS = new Set<OtrosTabKey>(["icao", "indicativos", "claves", "bases", "hospitales", "comunicaciones", "distritos", "lima"]);
 
 const OTROS_TABS: Array<{ key: OtrosTabKey; label: string }> = [
   { key: "icao",          label: "ICAO" },
@@ -210,8 +213,18 @@ function getFamilyOrderIndex(tabKey: TopTabKey, family: string) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos, claves, bases, hospitals, status4, lima }: Props) {
-  const [activeTab, setActiveTab] = useState<TopTabKey>("incidente");
-  const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>("icao");
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const requestedSubtab = searchParams.get("subtab");
+  const highlightedCode = searchParams.get("code");
+  const initialTab = requestedTab && TOP_TAB_KEYS.has(requestedTab as TopTabKey)
+    ? requestedTab as TopTabKey
+    : "incidente";
+  const initialSubtab = requestedSubtab && OTROS_TAB_KEYS.has(requestedSubtab as OtrosTabKey)
+    ? requestedSubtab as OtrosTabKey
+    : "icao";
+  const [activeTab, setActiveTab] = useState<TopTabKey>(initialTab);
+  const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>(initialSubtab);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -233,6 +246,8 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
     const elRect = el.getBoundingClientRect();
     container.scrollBy({ top: elRect.top - containerRect.top, behavior: "smooth" });
   }, []);
+
+  const codeAnchor = useCallback((code: string) => code.replace(/[^a-z0-9_-]/gi, "_"), []);
 
   const codeDataMap = useMemo<Record<string, Code[]>>(
     () => ({ incidente, sva, svb, upsi, upsq }),
@@ -295,6 +310,32 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
     setActiveTab(key);
     setActiveCategory(null);
   };
+
+  useEffect(() => {
+    if (requestedTab && TOP_TAB_KEYS.has(requestedTab as TopTabKey)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- keep deep-linked code tabs in sync after client-side navigation.
+      setActiveTab(requestedTab as TopTabKey);
+      setActiveCategory(null);
+    }
+    if (requestedSubtab && OTROS_TAB_KEYS.has(requestedSubtab as OtrosTabKey)) {
+      setActiveOtrosTab(requestedSubtab as OtrosTabKey);
+    }
+  }, [requestedSubtab, requestedTab]);
+
+  useEffect(() => {
+    if (!highlightedCode) return;
+    const frame = window.requestAnimationFrame(() => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const target = container.querySelector<HTMLElement>(`[data-code-anchor="${codeAnchor(highlightedCode)}"]`);
+      if (!target) return;
+      const containerRect = container.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      container.scrollBy({ top: targetRect.top - containerRect.top - 96, behavior: "smooth" });
+      target.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [codeAnchor, highlightedCode, activeTab, activeOtrosTab]);
 
   // Hospitales: status4 joined with hospitals, plus HGU
   const hospitalesData = useMemo(() => {
@@ -412,7 +453,15 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
         ) : localFiltered.length === 0 ? (
           <Empty />
         ) : (
-          <CodeList codes={localFiltered} tabKey={activeTab} defaultPill={tabInfo.pill} perFamilyColor={perFamilyColor} groupByCategory={groupByCategory} perCategoryColor={perCategoryColor} />
+          <CodeList
+            codes={localFiltered}
+            tabKey={activeTab}
+            defaultPill={tabInfo.pill}
+            perFamilyColor={perFamilyColor}
+            groupByCategory={groupByCategory}
+            perCategoryColor={perCategoryColor}
+            highlightedCode={highlightedCode}
+          />
         )}
       </div>
 
@@ -433,7 +482,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
 // ─── Code List ────────────────────────────────────────────────────────────────
 
 function CodeList({
-  codes, tabKey, defaultPill, perFamilyColor, groupByCategory, perCategoryColor = false,
+  codes, tabKey, defaultPill, perFamilyColor, groupByCategory, perCategoryColor = false, highlightedCode,
 }: {
   codes: (Code & { tabKey?: string; tabPill?: string })[];
   tabKey: TopTabKey;
@@ -441,6 +490,7 @@ function CodeList({
   perFamilyColor: boolean;
   groupByCategory: boolean;
   perCategoryColor?: boolean;
+  highlightedCode?: string | null;
 }) {
   const grouped = useMemo(() => {
     const acc: Record<string, { label: string; items: typeof codes; familyColor?: typeof FAMILY_COLORS[string]; categoryColor?: typeof CATEGORY_COLORS[string] }> = {};
@@ -541,12 +591,17 @@ function CodeList({
                   : perCategoryColor && item.category
                     ? (CATEGORY_COLORS[item.category]?.pill ?? defaultPill)
                     : (item.tabPill ?? defaultPill);
+                const highlighted = highlightedCode?.toLowerCase() === item.code.toLowerCase();
+                const anchor = item.code.replace(/[^a-z0-9_-]/gi, "_");
 
                 return (
                   <div
                     key={`${tabKey}-${key}-${item.code}-${i}`}
+                    tabIndex={highlighted ? 0 : -1}
+                    data-code-anchor={anchor}
                     className={cn(
-                      "py-3 transition-colors hover:bg-muted/20",
+                      "py-3 transition-colors hover:bg-muted/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                      highlighted && "bg-primary/8 ring-1 ring-primary/30",
                       row.isGrouped ? "pl-10 pr-4 md:pl-12 md:pr-6" : "px-4 md:px-6",
                     )}
                   >

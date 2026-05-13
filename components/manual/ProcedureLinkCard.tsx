@@ -21,6 +21,7 @@ interface Props {
   procedures: ProcedureMeta[];
   emptyLabel?: string;
   relationsByProcedureId?: Record<string, ProcedureRelation[]>;
+  previewByProcedureId?: Record<string, string>;
 }
 
 const RELATION_LABELS: Record<ProcedureRelation["kind"], string> = {
@@ -36,6 +37,7 @@ export function ProcedureLinkCard({
   procedures,
   emptyLabel = "Sin referencias",
   relationsByProcedureId,
+  previewByProcedureId,
 }: Props) {
   return (
     <Card className="border-border/60">
@@ -54,36 +56,44 @@ export function ProcedureLinkCard({
               const relationLabels = [...new Set(
                 (relationsByProcedureId?.[procedure.id] ?? []).map((relation) => RELATION_LABELS[relation.kind]),
               )];
+              const preview = previewByProcedureId?.[procedure.id];
 
               return (
-                <Link
-                  key={procedure.id}
-                  href={`/manual/${procedure.slug}`}
-                  className="flex items-start gap-2 px-2 py-2 rounded-md hover:bg-muted transition-colors group"
-                >
-                  <span className="text-xs font-mono text-muted-foreground/60 pt-0.5 w-12 flex-shrink-0">
-                    {procedure.id}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium leading-snug group-hover:text-primary transition-colors">
-                      {procedure.title}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                      <div className={`text-xs ${SECTION_COLORS[procedure.section] ?? "text-muted-foreground"}`}>
-                        {procedure.section}
+                <div key={procedure.id} className="group/preview relative">
+                  <Link
+                    href={`/manual/${procedure.slug}`}
+                    className="group/link flex items-start gap-2 rounded-md px-2 py-2 transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <span className="text-xs font-mono text-muted-foreground/60 pt-0.5 w-12 flex-shrink-0">
+                      {procedure.id}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium leading-snug transition-colors group-hover/link:text-primary">
+                        {procedure.title}
                       </div>
-                      {relationLabels.map((label) => (
-                        <span
-                          key={`${procedure.id}-${label}`}
-                          className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                        >
-                          {label}
-                        </span>
-                      ))}
+                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        <div className={`text-xs ${SECTION_COLORS[procedure.section] ?? "text-muted-foreground"}`}>
+                          {procedure.section}
+                        </div>
+                        {relationLabels.map((label) => (
+                          <span
+                            key={`${procedure.id}-${label}`}
+                            className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary mt-1 flex-shrink-0 transition-colors" />
-                </Link>
+                    <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover/link:text-primary mt-1 flex-shrink-0 transition-colors" />
+                  </Link>
+                  {preview && (
+                    <div className="pointer-events-none absolute left-2 right-2 top-full z-30 mt-1 hidden rounded-lg border border-border/70 bg-popover p-3 text-xs leading-relaxed text-popover-foreground shadow-lg group-hover/preview:block group-focus-within/preview:block">
+                      <div className="mb-1 font-semibold text-foreground">{procedure.title}</div>
+                      <p className="line-clamp-5 text-muted-foreground">{preview}</p>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

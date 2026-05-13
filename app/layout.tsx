@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
@@ -49,9 +50,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <Toaster />
         </ThemeProvider>
-        {/* <Script id="sw-registration" strategy="afterInteractive">
-          {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }`}
-        </Script> */}
+        <Script id="sw-registration" strategy="afterInteractive">
+          {`if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).catch(function () {});
+  });
+}`}
+        </Script>
       </body>
     </html>
   );

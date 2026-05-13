@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
@@ -12,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { VADEMECUM_TABS, type VademecumTabKey } from "@/lib/vademecum-config";
 import { buildAlphabetSections } from "@/lib/vademecum-utils";
+import type { ManualReverseMention } from "@/lib/manual-relations-index";
 
 interface Drug {
   id: string;
@@ -73,6 +75,7 @@ interface Props {
   perfusiones: Perfusion[];
   fluidos: FluidRow[];
   comerciales: CommercialRow[];
+  drugMentions?: Record<string, ManualReverseMention[]>;
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -177,7 +180,15 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DrugCard({ drug, isHighlighted }: { drug: Drug; isHighlighted: boolean }) {
+function DrugCard({
+  drug,
+  isHighlighted,
+  mentions = [],
+}: {
+  drug: Drug;
+  isHighlighted: boolean;
+  mentions?: ManualReverseMention[];
+}) {
   const [open, setOpen] = useState(isHighlighted);
   const color = getColor(drug.category);
 
@@ -247,6 +258,26 @@ function DrugCard({ drug, isHighlighted }: { drug: Drug; isHighlighted: boolean 
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Notas</p>
               <div className="text-muted-foreground">
                 <RichText text={drug.notes} />
+              </div>
+            </div>
+          )}
+          {mentions.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+                Mencionado en procedimientos
+              </p>
+              <div className="grid gap-1.5">
+                {mentions.slice(0, 6).map((mention) => (
+                  <Link
+                    key={mention.procedureId}
+                    href={`/manual/${mention.slug}`}
+                    className="rounded-lg border border-border/50 bg-background px-3 py-2 text-xs transition-colors hover:border-primary/40 hover:bg-muted/30"
+                  >
+                    <span className="font-mono text-muted-foreground">{mention.procedureId}</span>
+                    <span className="ml-2 font-semibold text-foreground">{mention.title}</span>
+                    <span className="mt-1 line-clamp-2 block text-muted-foreground">{mention.preview}</span>
+                  </Link>
+                ))}
               </div>
             </div>
           )}
@@ -443,6 +474,7 @@ export function VademecumView({
   perfusiones,
   fluidos,
   comerciales,
+  drugMentions = {},
 }: Props) {
   const searchParams = useSearchParams();
   const highlightedDrugId = searchParams.get("farmaco");
@@ -726,6 +758,7 @@ export function VademecumView({
                         key={`${drug.id}-${highlightedDrugId === drug.id ? "highlighted" : "plain"}`}
                         drug={drug}
                         isHighlighted={highlightedDrugId === drug.id}
+                        mentions={drugMentions[drug.id] ?? []}
                       />
                     ))}
                   </div>

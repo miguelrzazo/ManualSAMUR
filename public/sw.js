@@ -1,9 +1,9 @@
 // SAMUR Manual — Service Worker
 // Simple caching strategy: network-first for pages, cache-first for assets and map tiles.
 
-const CACHE_NAME = "samur-v2";
-const MAP_CACHE = "samur-map-v2";
-const STATIC_ASSETS = ["/", "/manual", "/codigos", "/vademecum", "/mapa", "/manifest.json"];
+const CACHE_NAME = "samur-v3";
+const MAP_CACHE = "samur-map-v3";
+const STATIC_ASSETS = ["/", "/manual", "/codigos", "/vademecum", "/mapa", "/manifest.json", "/llms.txt"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

@@ -16,6 +16,7 @@ import {
   approvePendingChanges,
   buildTickerFromEvents,
   classifyProcedureChange,
+  classifyProcedureUpdateKind,
   extractAttachmentLinks,
   getSectionFromXWikiUrl,
   parseProcedureSpacesXml,
@@ -513,11 +514,13 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
       const rawChangeType = classifyProcedureChange(existingSnapshot, snapshot);
       const blockedByEditorial = rawChangeType !== "unchanged" && editorialStatus === "enhanced";
       const changeType = blockedByEditorial ? "blocked_by_editorial" : rawChangeType;
+      const changeKind = classifyProcedureUpdateKind(existingSnapshot, snapshot, changeType);
 
       changes.push({
         id,
         title: space.title,
         changeType,
+        changeKind,
         blockedByEditorial,
         procedurePath: existingMeta?.filePath,
         sourceUpdated,
@@ -699,8 +702,15 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
   for (const [domain, domainChanges] of Object.entries(run.changes) as Array<[SyncDomain, SyncChange[]]>) {
     for (const change of domainChanges) {
       if (change.changeType === "unchanged") continue;
+      const label = change.changeKind === "nuevo"
+        ? "Nuevo"
+        : change.changeKind === "revisado"
+          ? "Revisado"
+          : change.changeType === "blocked_by_editorial"
+            ? "Bloqueado editorial"
+            : "Actualizado";
       const summary = domain === "procedures"
-        ? `${change.changeType === "created" ? "Nuevo" : change.changeType === "blocked_by_editorial" ? "Bloqueado editorial" : "Actualizado"}: ${change.id} ${change.title}`
+        ? `${label}: ${change.id} ${change.title}`
         : `${domain} actualizado: ${change.title}`;
 
       events.push({
@@ -708,7 +718,7 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         origin: "wiki",
         officialUrl: change.source,
         procedureIds: domain === "procedures" ? [change.id] : [],
-        changeKind: change.changeType === "created" ? "nuevo" : "actualizado",
+        changeKind: change.changeKind ?? (change.changeType === "created" ? "nuevo" : "actualizado"),
         summary,
         effectiveDate: change.sourceUpdated || run.finishedAt.slice(0, 10),
         approvedAt,

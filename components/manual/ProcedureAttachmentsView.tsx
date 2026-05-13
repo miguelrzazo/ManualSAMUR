@@ -89,6 +89,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- attachment previews depend on client-only media/PDF handling.
     setIsClient(true);
   }, []);
 
