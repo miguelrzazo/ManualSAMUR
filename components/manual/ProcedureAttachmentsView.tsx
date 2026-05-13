@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ChevronDown, ExternalLink, FileText, Image as ImageIcon, Paperclip } from "lucide-react";
 import type { ManualAttachment } from "@/lib/manual-sync";
+import { ImageWithLightbox } from "@/components/manual/mdx-extras";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -140,18 +141,32 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
               {isExpanded ? (
                 <div className="px-4 pb-4 pt-2">
                   {isImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={attachment.localPath}
-                      alt={filename}
-                      className="h-auto w-full rounded-lg border border-border/40"
-                    />
+                    <div className="flex justify-center">
+                      <ImageWithLightbox src={attachment.localPath} alt={filename} />
+                    </div>
                   ) : isPdf ? (
-                    isClient ? <PdfInlineViewer src={attachment.localPath} title={filename} /> : (
-                      <div className="rounded-lg border border-border/40 bg-muted/20 p-4 text-sm text-muted-foreground">
-                        Preparando visor de PDF...
+                    <div className="space-y-3 rounded-xl border border-border/40 bg-muted/20 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{filename}</p>
+                          <p className="text-xs text-muted-foreground">Abre el PDF en nueva pestaña o revisa la previsualización.</p>
+                        </div>
+                        <a
+                          href={attachment.localPath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Abrir PDF
+                        </a>
                       </div>
-                    )
+                      {isClient ? <PdfInlineViewer src={attachment.localPath} title={filename} /> : (
+                        <div className="rounded-lg border border-border/40 bg-background/80 p-4 text-sm text-muted-foreground">
+                          Preparando visor de PDF...
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <a
                       href={attachment.localPath}

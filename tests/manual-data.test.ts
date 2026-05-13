@@ -115,6 +115,18 @@ Inicio página>>doc:
   assert.ok(normalized.includes("*Figure 1: RCP extracorpórea*"));
 });
 
+test("normalizeProcedureContent rewrites legacy standalone image lines instead of dropping non-decorative assets", () => {
+  const normalized = normalizeProcedureContent(`
+![](../images/procedures/301/descarga.jpeg)
+![](../images/trans.gif)
+![](../images/logo.gif)
+  `);
+
+  assert.ok(normalized.includes("![](/images/procedures/301/descarga.jpeg)"));
+  assert.ok(!normalized.includes("trans.gif"));
+  assert.ok(!normalized.includes("logo.gif"));
+});
+
 test("normalizeProcedureContent links only safe plain code mentions and preserves explicit manual links", () => {
   const normalized = normalizeProcedureContent(
     `

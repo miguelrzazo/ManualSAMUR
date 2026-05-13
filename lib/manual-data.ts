@@ -4,7 +4,7 @@ const MARKDOWN_LINK_RE = /\[[^\]]+\]\(([^)]+)\)/g;
 const PROCEDURE_LINK_RE = /(?:^|\/)([0-9][^./]*|[A-Z]{1,3}[^./]*)\.htm(?:$|[#?])/i;
 const BARE_PROCEDURE_LINK_RE = /(?:^|[\s(])(?:https?:\/\/[^\s)]+\/)?([0-9][A-Za-z0-9_]{1,12})\.htm(?:$|[#?\s)])/gim;
 const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
-const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(\.\.\/images\/[^)]+\)\s*$/gim;
+const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(((?:\.\.\/|\.\/)?images\/[^)]+)\)\s*$/gim;
 const STANDALONE_BANG_RE = /^!\s*$/gm;
 const IMAGE_IN_LINK_RE = /\[!\[[^\]]*\]\([^)]+\)\s*([^\]]*)\]\(([^)]+)\)/g;
 const FOOTER_RE = /^\s*Manual de Procedimientos SAMUR-Protección Civil.*$/gim;
@@ -447,7 +447,14 @@ export function normalizeProcedureContent(
     .replace(/\(\(\(/g, "")
     .replace(/\)\)\)/g, "")
     .replace(LEGACY_PRINT_BUTTON_RE, "")
-    .replace(LEGACY_IMAGE_LINE_RE, "")
+    .replace(LEGACY_IMAGE_LINE_RE, (_match, imagePath: string) => {
+      const resolvedPath = resolveRelativeUrl(imagePath, sourceUrl);
+      if (/\/(?:print|trans|logo)\.gif$/i.test(resolvedPath)) return "";
+      if (resolvedPath.startsWith("../") || resolvedPath.startsWith("./")) {
+        return `![](/${resolvedPath.replace(/^(?:\.\.\/|\.\/)+/, "")})`;
+      }
+      return `![](${resolvedPath})`;
+    })
     .replace(STANDALONE_BANG_RE, "")
     .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {
       const cleanLabel = label.trim();
