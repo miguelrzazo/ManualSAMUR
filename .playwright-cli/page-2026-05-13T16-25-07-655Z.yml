@@ -1,0 +1,203 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "S SAMUR Manual" [ref=e4] [cursor=pointer]:
+        - /url: /manual
+        - generic [ref=e6]: S
+        - generic [ref=e7]: SAMUR Manual
+      - navigation [ref=e8]:
+        - link "Manual" [ref=e9] [cursor=pointer]:
+          - /url: /manual
+          - img [ref=e10]
+          - text: Manual
+        - link "Códigos" [ref=e12] [cursor=pointer]:
+          - /url: /codigos
+          - img [ref=e13]
+          - text: Códigos
+        - link "Vademécum" [ref=e17] [cursor=pointer]:
+          - /url: /vademecum
+          - img [ref=e18]
+          - text: Vademécum
+        - link "Mapa" [ref=e20] [cursor=pointer]:
+          - /url: /mapa
+          - img [ref=e21]
+          - text: Mapa
+      - generic [ref=e23]:
+        - button "Buscar... ⌘K" [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: Buscar...
+          - generic [ref=e28]: ⌘K
+        - link "Abreviaturas" [ref=e29] [cursor=pointer]:
+          - /url: /abreviaturas
+          - img [ref=e30]
+        - button "Menú" [ref=e33]:
+          - img [ref=e34]
+        - heading "Acerca de SAMUR Manual" [level=2] [ref=e39]
+        - button "Cambiar tema" [ref=e40]:
+          - img [ref=e41]
+          - generic [ref=e47]: Cambiar tema
+    - generic [ref=e48]:
+      - heading "Command Palette" [level=2] [ref=e49]
+      - paragraph [ref=e50]: Search for a command to run...
+    - main [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e54]:
+          - generic [ref=e55]: ">>>> EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL <<<<"
+          - generic [ref=e56]: ">>>> EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL <<<<"
+        - generic [ref=e57]:
+          - complementary [ref=e58]:
+            - navigation [ref=e60]:
+              - button "Administrativos 4" [ref=e62]:
+                - generic [ref=e64]: Administrativos
+                - generic [ref=e65]: "4"
+                - img [ref=e66]
+              - button "Comunicaciones 13" [ref=e69]:
+                - generic [ref=e71]: Comunicaciones
+                - generic [ref=e72]: "13"
+                - img [ref=e73]
+              - button "Operativos 44" [ref=e76]:
+                - generic [ref=e78]: Operativos
+                - generic [ref=e79]: "44"
+                - img [ref=e80]
+              - button "DRP 4" [ref=e83]:
+                - generic [ref=e85]: DRP
+                - generic [ref=e86]: "4"
+                - img [ref=e87]
+              - button "Intervinientes 4" [ref=e90]:
+                - generic [ref=e92]: Intervinientes
+                - generic [ref=e93]: "4"
+                - img [ref=e94]
+              - button "SVA 67" [ref=e97]:
+                - generic [ref=e99]: SVA
+                - generic [ref=e100]: "67"
+                - img [ref=e101]
+              - button "SVB 19" [ref=e104]:
+                - generic [ref=e106]: SVB
+                - generic [ref=e107]: "19"
+                - img [ref=e108]
+              - button "Psicológicos 9" [ref=e111]:
+                - generic [ref=e113]: Psicológicos
+                - generic [ref=e114]: "9"
+                - img [ref=e115]
+              - button "Técnicas 66" [ref=e118]:
+                - generic [ref=e120]: Técnicas
+                - generic [ref=e121]: "66"
+                - img [ref=e122]
+          - generic [ref=e125]:
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - img [ref=e130]
+                  - text: Manual SAMUR-PC
+                - heading "Procedimientos de consulta rápida" [level=1] [ref=e132]
+                - paragraph [ref=e133]: Navegación offline-first por secciones, relaciones clínicas y cronograma de cambios revisables.
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - generic [ref=e136]: "230"
+                  - generic [ref=e137]: procedimientos
+                - generic [ref=e138]:
+                  - generic [ref=e139]: "9"
+                  - generic [ref=e140]: secciones
+                - generic [ref=e141]:
+                  - generic [ref=e142]: Abril 2026
+                  - generic [ref=e143]: versión
+            - generic [ref=e144]:
+              - generic [ref=e145]:
+                - heading "Cronograma De Actualizaciones" [level=2] [ref=e146]
+                - generic [ref=e147]: 0 eventos
+              - button "Ver Historial Global" [ref=e148] [cursor=pointer]
+            - generic [ref=e149]:
+              - button "Todas" [ref=e150]
+              - button "Sva 67" [ref=e151]:
+                - text: Sva
+                - generic [ref=e153]: "67"
+              - button "Svb 19" [ref=e154]:
+                - text: Svb
+                - generic [ref=e156]: "19"
+              - button "Operativos 44" [ref=e157]:
+                - text: Operativos
+                - generic [ref=e159]: "44"
+              - button "Drp 4" [ref=e160]:
+                - text: Drp
+                - generic [ref=e162]: "4"
+              - button "Intervinientes 4" [ref=e163]:
+                - text: Intervinientes
+                - generic [ref=e165]: "4"
+              - button "Técnicas 66" [ref=e166]:
+                - text: Técnicas
+                - generic [ref=e168]: "66"
+              - button "Comunicaciones 13" [ref=e169]:
+                - text: Comunicaciones
+                - generic [ref=e171]: "13"
+              - button "Psicológicos 9" [ref=e172]:
+                - text: Psicológicos
+                - generic [ref=e174]: "9"
+              - button "Administrativos 4" [ref=e175]:
+                - text: Administrativos
+                - generic [ref=e177]: "4"
+            - button "Gráfica de procedimientos 230 nodos · 51 conexiones — mapa de relaciones entre procedimientos Ver gráfica" [ref=e178]:
+              - img [ref=e180]
+              - generic [ref=e200]:
+                - generic [ref=e201]:
+                  - img [ref=e202]
+                  - generic [ref=e207]: Gráfica de procedimientos
+                - paragraph [ref=e208]: 230 nodos · 51 conexiones — mapa de relaciones entre procedimientos
+              - generic [ref=e209]:
+                - text: Ver gráfica
+                - img [ref=e210]
+            - generic [ref=e212]:
+              - button "Sva 67" [ref=e214]:
+                - img [ref=e215]
+                - generic [ref=e218]: Sva
+                - generic [ref=e219]: "67"
+              - button "Svb 19" [ref=e221]:
+                - img [ref=e222]
+                - generic [ref=e225]: Svb
+                - generic [ref=e226]: "19"
+              - button "Operativos 44" [ref=e228]:
+                - img [ref=e229]
+                - generic [ref=e232]: Operativos
+                - generic [ref=e233]: "44"
+              - button "Drp 4" [ref=e235]:
+                - img [ref=e236]
+                - generic [ref=e239]: Drp
+                - generic [ref=e240]: "4"
+              - button "Intervinientes 4" [ref=e242]:
+                - img [ref=e243]
+                - generic [ref=e246]: Intervinientes
+                - generic [ref=e247]: "4"
+              - button "Técnicas 66" [ref=e249]:
+                - img [ref=e250]
+                - generic [ref=e253]: Técnicas
+                - generic [ref=e254]: "66"
+              - button "Comunicaciones 13" [ref=e256]:
+                - img [ref=e257]
+                - generic [ref=e260]: Comunicaciones
+                - generic [ref=e261]: "13"
+              - button "Psicológicos 9" [ref=e263]:
+                - img [ref=e264]
+                - generic [ref=e267]: Psicológicos
+                - generic [ref=e268]: "9"
+              - button "Administrativos 4" [ref=e270]:
+                - img [ref=e271]
+                - generic [ref=e274]: Administrativos
+                - generic [ref=e275]: "4"
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - img [ref=e278]
+                - generic [ref=e283]:
+                  - strong [ref=e284]: "230"
+                  - text: procedimientos
+              - generic [ref=e285]: ·
+              - generic [ref=e286]:
+                - text: "Versión:"
+                - strong [ref=e287]: Abril 2026
+              - generic [ref=e288]: ·
+              - generic [ref=e289]:
+                - text: "Última sync:"
+                - strong [ref=e290]: 9 may 2026
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e296] [cursor=pointer]:
+    - img [ref=e297]
+  - alert [ref=e300]

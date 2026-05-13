@@ -1,0 +1,66 @@
+[    1733ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1797ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1949ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    2106ms] [LOG] [Fast Refresh] done in 257ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    2954ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <button> button 
+
+  ...
+    <SegmentViewNode type="page" pagePath="manual/pag...">
+      <SegmentTrieNode>
+      <ManualPage>
+        <Suspense fallback={<div>}>
+          <ManualHomeClient sidebarSections={[...]} allProcedures={[...]} syncMetadata={{...}} updateEvents={[...]}>
+            <div className="mx-auto ma...">
+              <div>
+              <section id="historial-..." className="mb-5 round...">
+                <div>
+                <Dialog open={false} onOpenChange={function bound dispatchSetState}>
+                  <DialogRoot data-slot="dialog" open={false} onOpenChange={function bound dispatchSetState}>
+                    <DialogTrigger>
+                      <DialogTrigger data-slot="dialog-tri...">
+>                       <button
+>                         type="button"
+>                         onClick={function}
+>                         onMouseDown={function}
+>                         onKeyDown={function}
+>                         onKeyUp={function}
+>                         onPointerDown={function}
+>                         tabIndex={0}
+>                         disabled={false}
+>                         data-base-ui-click-trigger=""
+>                         id="base-ui-_R_f59bnaitpplb_"
+>                         data-slot="dialog-trigger"
+>                         ref={function}
+>                       >
+>                         <button
+>                           className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground"
+>                         >
+                    ...
+              ...
+    ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[    2954ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. button <button> @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[    3041ms] Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at throwOnHydrationMismatch (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:3318:56)
+    at beginWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6758:918)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at performUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9555:97)
+    at workLoopConcurrentByScheduler (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9551:58)
+    at renderRootConcurrent (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9534:71)
+    at performWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:150)
+    at performWorkOnRootViaSchedulerTask (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10255:9)
+    at MessagePort.performWorkUntilDeadline (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:2647:64)
+[    3095ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    3340ms] [LOG] [Fast Refresh] done in 346ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
