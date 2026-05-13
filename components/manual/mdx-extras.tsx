@@ -7,6 +7,14 @@ import { useTheme } from "next-themes";
 import mermaid from "mermaid";
 import { buildVademecumHref } from "@/lib/vademecum-utils";
 
+function normalizeManualAssetSrc(src: string): string {
+  if (!src) return src;
+  if (/^(?:https?:)?\/\//i.test(src) || src.startsWith("/")) return src;
+
+  const stripped = src.replace(/^(?:\.\.\/|\.\/)+/, "").replace(/^\/?/, "");
+  return `/${stripped}`;
+}
+
 export function KeyPoints({ children }: { children: React.ReactNode }) {
   return (
     <div className="my-6 rounded-xl border border-emerald-200 bg-emerald-50 dark:border-emerald-800/50 dark:bg-emerald-950/30 px-5 py-4 not-prose">
@@ -125,11 +133,13 @@ export function Checklist({ items = [] }: { items?: string[] }) {
 }
 
 export function Diagram({ src, alt, caption }: { src: string; alt?: string; caption?: string }) {
+  const normalizedSrc = normalizeManualAssetSrc(src);
+
   return (
     <figure className="my-8 not-prose">
       <div className="rounded-xl border border-border/60 bg-muted/20 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt ?? "Diagrama"} className="w-full h-auto block" />
+        <img src={normalizedSrc} alt={alt ?? "Diagrama"} className="w-full h-auto block mx-auto" />
       </div>
       {caption && (
         <figcaption className="mt-2 text-center text-xs text-muted-foreground italic">
@@ -219,6 +229,7 @@ export function DrugLink({ name }: { name: string }) {
 
 export function ImageWithLightbox({ src, alt }: { src: string; alt?: string }) {
   const [open, setOpen] = useState(false);
+  const normalizedSrc = normalizeManualAssetSrc(src);
 
   useEffect(() => {
     if (!open) return;
@@ -237,7 +248,7 @@ export function ImageWithLightbox({ src, alt }: { src: string; alt?: string }) {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={src}
+          src={normalizedSrc}
           alt={alt ?? ""}
           className="block max-w-full h-auto mx-auto"
         />
@@ -266,7 +277,7 @@ export function ImageWithLightbox({ src, alt }: { src: string; alt?: string }) {
           </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={src}
+            src={normalizedSrc}
             alt={alt ?? ""}
             className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}

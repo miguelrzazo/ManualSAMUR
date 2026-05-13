@@ -88,9 +88,7 @@ const mdxComponents = {
     );
   },
   img: ({ src, alt }: ComponentPropsWithoutRef<"img">) =>
-    typeof src === "string" && src && !src.startsWith("../") ? (
-      <ImageWithLightbox src={src} alt={alt} />
-    ) : null,
+    typeof src === "string" && src ? <ImageWithLightbox src={src} alt={alt} /> : null,
   table: ({ children }: ComponentPropsWithoutRef<"table">) => (
     <div className="my-6 overflow-x-auto rounded-xl border border-border/60">
       <table className="w-full min-w-[560px]">{children}</table>
@@ -221,7 +219,7 @@ export default async function ProcedurePage({ params }: Props) {
           </div>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight mb-3">{procedure.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight mb-3">{procedure.title}</h1>
               {procedure.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {procedure.tags.map((tag) => (
@@ -285,15 +283,15 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
 
         {/* MDX Content */}
-        <div data-manual-body className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-lg border border-border/60 bg-background/70 px-4 py-5 md:px-7 md:py-6
-          prose-headings:font-semibold prose-headings:tracking-tight
-          prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2
-          prose-h3:text-[1.05rem] prose-h3:mt-7 prose-h3:mb-2 prose-h3:text-foreground/90
-          prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-3
+        <div data-manual-body className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
+          prose-headings:font-semibold prose-headings:tracking-tight prose-headings:scroll-mt-24
+          prose-h2:text-2xl md:prose-h2:text-[1.7rem] prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-3
+          prose-h3:text-lg md:prose-h3:text-[1.15rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/90
+          prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-4
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
           prose-img:mx-auto prose-img:block prose-img:rounded-xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm
-          prose-figure:my-8
-          prose-table:text-sm
+          prose-figure:my-10
+          prose-table:text-sm prose-table:my-8 prose-table:overflow-hidden prose-table:rounded-xl
           prose-thead:bg-muted/50
           prose-th:px-3 prose-th:py-2 prose-th:font-semibold prose-th:text-left
           prose-td:px-3 prose-td:py-2
@@ -301,7 +299,7 @@ export default async function ProcedurePage({ params }: Props) {
           prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
           prose-pre:bg-muted prose-pre:border prose-pre:border-border/60
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:px-4 prose-blockquote:py-2
-          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-5 prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-5 prose-li:leading-7 prose-li:my-2 prose-li:marker:text-muted-foreground
+          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6 prose-li:leading-7 prose-li:my-2 prose-li:marker:text-muted-foreground
         ">
           {groupedEditorialBlocks ? (
             <>
