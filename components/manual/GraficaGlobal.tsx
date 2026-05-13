@@ -315,13 +315,20 @@ export function GraficaGlobal({ procedures }: Props) {
     [router],
   );
 
-  const onWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const factor = e.deltaY > 0 ? 0.88 : 1.14;
-    setVb((v) => ({
-      ...v,
-      scale: Math.max(0.12, Math.min(8, v.scale * factor)),
-    }));
+  // Attach wheel listener imperatively with passive:false so preventDefault works in React 19
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 0.88 : 1.14;
+      setVb((v) => ({
+        ...v,
+        scale: Math.max(0.12, Math.min(8, v.scale * factor)),
+      }));
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
   }, []);
 
   return (
@@ -340,7 +347,6 @@ export function GraficaGlobal({ procedures }: Props) {
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
-        onWheel={onWheel}
       >
         <defs>
           <pattern id="ggg-dots" width="24" height="24" patternUnits="userSpaceOnUse">

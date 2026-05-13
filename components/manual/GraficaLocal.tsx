@@ -9,6 +9,7 @@ import {
   Controls,
   MiniMap,
   ReactFlow,
+  ReactFlowProvider,
   type Edge,
   type Node,
 } from "@xyflow/react";
@@ -16,7 +17,6 @@ import "@xyflow/react/dist/style.css";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { ProcedureMeta } from "@/lib/content";
@@ -162,7 +162,7 @@ function GraphCanvas({ current, related, backlinks, suggested, expanded }: Props
         }}
         fitView
         fitViewOptions={{ padding: expanded ? 0.18 : 0.28 }}
-        nodesDraggable
+        nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
         panOnDrag
@@ -207,10 +207,8 @@ export function GraficaLocal({ current, related, backlinks = [], suggested = [] 
       </div>
 
       <Dialog open={expanded} onOpenChange={setExpanded}>
-        <DialogHeader className="sr-only">
-          <DialogTitle>Gráfica Local Ampliada</DialogTitle>
-        </DialogHeader>
         <DialogContent className="w-[95vw] max-w-[1200px] p-3">
+          <DialogTitle className="sr-only">Gráfica Local Ampliada</DialogTitle>
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-sm font-medium">{current.id} · {current.title}</p>
             <button
@@ -221,7 +219,9 @@ export function GraficaLocal({ current, related, backlinks = [], suggested = [] 
               Cerrar
             </button>
           </div>
-          <GraphCanvas current={current} related={related} backlinks={backlinks} suggested={suggested} expanded />
+          <ReactFlowProvider>
+            <GraphCanvas current={current} related={related} backlinks={backlinks} suggested={suggested} expanded />
+          </ReactFlowProvider>
         </DialogContent>
       </Dialog>
     </>
