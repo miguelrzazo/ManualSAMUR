@@ -218,6 +218,105 @@
   }
 }
 
+/* Clinical tables inside MDX procedure content */
+[data-manual-body] table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+[data-manual-body] table thead tr {
+  background-color: hsl(var(--primary) / 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+[data-manual-body] table th {
+  padding: 0.45rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: hsl(var(--foreground) / 0.75);
+  border-bottom: 1px solid var(--border);
+}
+
+[data-manual-body] table td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+[data-manual-body] table tbody tr:nth-child(even) {
+  background-color: hsl(var(--muted) / 0.35);
+}
+
+[data-manual-body] table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Protocol step lists: numbered circles on ol > li inside MDX body */
+[data-manual-body] ol {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: protocol-step;
+  margin: 0.75rem 0;
+}
+
+[data-manual-body] ol > li {
+  counter-increment: protocol-step;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid hsl(var(--border) / 0.35);
+}
+
+[data-manual-body] ol > li:last-child {
+  border-bottom: none;
+}
+
+[data-manual-body] ol > li::before {
+  content: counter(protocol-step);
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+/* Nested ol inside protocol steps: revert to decimal */
+[data-manual-body] ol > li ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+[data-manual-body] ol > li ol > li {
+  display: list-item;
+  border-bottom: none;
+  padding: 0.1rem 0;
+  counter-increment: none;
+}
+
+[data-manual-body] ol > li ol > li::before {
+  display: none;
+}
+
 /* Prose-like styling inside MDX alert/note components (not-prose zones) */
 .component-prose {
   & ul {

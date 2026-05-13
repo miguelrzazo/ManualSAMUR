@@ -9,8 +9,8 @@ import { buildVademecumHref } from "@/lib/vademecum-utils";
 
 export function KeyPoints({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-6 rounded-xl border border-emerald-200 bg-emerald-50 dark:border-emerald-800/50 dark:bg-emerald-950/30 px-5 py-4 not-prose">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="my-5 rounded-r-xl border border-emerald-200 border-l-4 border-l-emerald-500 bg-emerald-50/80 dark:border-emerald-800/50 dark:border-l-emerald-500 dark:bg-emerald-950/30 px-4 py-3.5 not-prose shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
         <Lightbulb className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Puntos clave</span>
       </div>
@@ -23,8 +23,8 @@ export function KeyPoints({ children }: { children: React.ReactNode }) {
 
 export function Warning({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-6 rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-800/50 dark:bg-amber-950/30 px-5 py-4 not-prose">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="my-5 rounded-r-xl border border-amber-200 border-l-4 border-l-amber-500 bg-amber-50/80 dark:border-amber-800/50 dark:border-l-amber-500 dark:bg-amber-950/30 px-4 py-3.5 not-prose shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
         <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">Advertencia</span>
       </div>
@@ -37,8 +37,8 @@ export function Warning({ children }: { children: React.ReactNode }) {
 
 export function Caution({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-6 rounded-xl border border-red-200 bg-red-50 dark:border-red-800/50 dark:bg-red-950/30 px-5 py-4 not-prose">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="my-5 rounded-r-xl border border-red-200 border-l-4 border-l-red-500 bg-red-50/80 dark:border-red-800/50 dark:border-l-red-500 dark:bg-red-950/30 px-4 py-3.5 not-prose shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
         <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-red-700 dark:text-red-300">Precaución</span>
       </div>
@@ -51,8 +51,8 @@ export function Caution({ children }: { children: React.ReactNode }) {
 
 export function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-6 rounded-xl border border-blue-200 bg-blue-50 dark:border-blue-800/50 dark:bg-blue-950/30 px-5 py-4 not-prose">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="my-5 rounded-r-xl border border-blue-200 border-l-4 border-l-blue-500 bg-blue-50/80 dark:border-blue-800/50 dark:border-l-blue-500 dark:bg-blue-950/30 px-4 py-3.5 not-prose shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
         <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">Nota</span>
       </div>
