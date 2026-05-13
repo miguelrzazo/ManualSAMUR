@@ -1,119 +1,674 @@
 [
-  { "code": "1.1", "name": "Accidente no especificado", "category": "Accidentes", "description": "Accidente de tráfico u otro tipo, no especificado" },
-  { "code": "1.2", "name": "Accidente con menos de 3 víctimas", "category": "Accidentes", "description": "Accidente con menos de 3 víctimas" },
-  { "code": "1.3", "name": "Accidente con más de 3 víctimas confirmadas", "category": "Accidentes", "description": "Accidente con más de 3 víctimas confirmadas" },
-  { "code": "1.4", "name": "Atropello", "category": "Accidentes", "description": "Atropello por vehículo de motor" },
-  { "code": "1.5", "name": "Accidente de motocicleta", "category": "Accidentes", "description": "Accidente de motocicleta o ciclomotor" },
-  { "code": "1.6", "name": "Accidente de bicicleta", "category": "Accidentes", "description": "Accidente de bicicleta" },
-  { "code": "1.6.1", "name": "Accidente de patinete / VMP / VMU", "category": "Accidentes", "description": "Accidente de vehículo de movilidad personal, vehículo de movilidad urbana" },
-  { "code": "1.7", "name": "Accidente de autobús", "category": "Accidentes", "description": "Accidente en el que está implicado un autobús" },
-  { "code": "1.8", "name": "Accidente de vehículo pesado", "category": "Accidentes", "description": "Accidente de camión u otro vehículo pesado" },
-
-  { "code": "2.1", "name": "Heridas", "category": "Traumáticos", "description": "Herida de origen traumático no especificada" },
-  { "code": "2.2", "name": "Atrapamiento/enterramiento", "category": "Traumáticos", "description": "Persona atrapada o aprisionada" },
-  { "code": "2.3", "name": "Caída casual", "category": "Traumáticos", "description": "Caída desde altura o al mismo nivel" },
-  { "code": "2.4", "name": "Agresión física", "category": "Traumáticos", "description": "Agresión sin armas o con puños/patadas" },
-  { "code": "2.5", "name": "Arma blanca", "category": "Traumáticos", "description": "Herida por arma blanca o punzante" },
-  { "code": "2.6", "name": "Arma de fuego", "category": "Traumáticos", "description": "Herida por proyectil de arma de fuego" },
-  { "code": "2.7", "name": "Precipitado", "category": "Traumáticos", "description": "Persona que ha caído desde una altura" },
-  { "code": "2.8", "name": "Autólisis traumática", "category": "Traumáticos", "description": "Autolisis o suicidio" },
-  { "code": "2.9", "name": "Arrollamiento por metro o tren", "category": "Traumáticos", "description": "Arrollamiento por metro o tren" },
-  { "code": "2.10", "name": "Quemado", "category": "Traumáticos", "description": "Persona quemada por exposición a fuego o calor extremo" },
-  { "code": "2.11", "name": "Electrocución", "category": "Traumáticos", "description": "Lesión por descarga eléctrica" },
-  { "code": "2.12", "name": "Ahogamiento", "category": "Traumáticos", "description": "Persona ahogada o en riesgo de ahogamiento" },
-      { "code": "2.12.1", "name": "OVACE", "category": "Traumáticos", "description": "Obstrucción de vías respiratorias" },
-  { "code": "2.13", "name": "Agresión sexual", "category": "Traumáticos", "description": "Agresión de naturaleza sexual" },
-    { "code": "2.13.1", "name": "Agresion sexual facilitada por drogas", "category": "Traumáticos", "description": "Agresión sexual facilitada por drogas" },
-  { "code": "2.14", "name": "Dispositivo Eléctrico de control policial (DEC / TASER)", "category": "Traumáticos", "description": "Dispositivo eléctrico de control policial" },
-
-  { "code": "3.1", "name": "Parada cardiorrespiratoria", "category": "Enfermedad", "description": "PCR — parada cardiorrespiratoria" },
-  { "code": "3.2", "name": "Inconsciente de causa desconocida", "category": "Enfermedad", "description": "Paciente inconsciente, causa no determinada" },
-  { "code": "3.3", "name": "IAM / patología coronaria", "category": "Enfermedad", "description": "Infarto agudo de miocardio u otra patología coronaria" },
-  { "code": "3.4", "name": "Convulsión", "category": "Enfermedad", "description": "Crisis convulsiva o epiléptica" },
-  { "code": "3.5", "name": "Intoxicación por drogas de abuso", "category": "Enfermedad", "description": "Intoxicación aguda por drogas de abuso" },
-  { "code": "3.6", "name": "Intoxicación farmacológica / tóxica", "category": "Enfermedad", "description": "Intoxicación por fármacos u otras sustancias tóxicas" },
-  { "code": "3.7", "name": "Intento de suicidio no traumático", "category": "Enfermedad", "description": "Intento autolítico por medios no traumáticos" },
-  { "code": "3.8", "name": "Urgencia endocrino-metabólica", "category": "Enfermedad", "description": "Crisis diabética, hipoglucemia u otra urgencia metabólica" },
-  { "code": "3.9", "name": "Intoxicación etílica aguda", "category": "Enfermedad", "description": "Intoxicación aguda por alcohol etílico" },
-  { "code": "3.11", "name": "Patología respiratoria aguda", "category": "Enfermedad", "description": "Dificultad respiratoria aguda de origen médico" },
-  { "code": "3.12", "name": "Patología cardiovascular", "category": "Enfermedad", "description": "Urgencia cardiovascular distinta de IAM o PCR" },
-  { "code": "3.13", "name": "Patología neurológica aguda", "category": "Enfermedad", "description": "Urgencia neurológica: ictus, AIT, etc." },
-  { "code": "3.14", "name": "Patología digestiva aguda", "category": "Enfermedad", "description": "Urgencia digestiva aguda" },
-  { "code": "3.15", "name": "Patología obstétrica", "category": "Enfermedad", "description": "Parto inminente u otra urgencia obstétrica" },
-  { "code": "3.16", "name": "Patología ginecológica", "category": "Enfermedad", "description": "Urgencia ginecológica aguda" },
-  { "code": "3.17", "name": "Patología urológica", "category": "Enfermedad", "description": "Urgencia urológica aguda" },
-  { "code": "3.18", "name": "Patología infecciosa", "category": "Enfermedad", "description": "Sospecha de proceso infeccioso grave" },
-  { "code": "3.19", "name": "Patología psicosomática", "category": "Enfermedad", "description": "Crisis de ansiedad, crisis conversiva u otra patología psicosomática" },
-  { "code": "3.20", "name": "Reacción anafiláctica", "category": "Enfermedad", "description": "Anafilaxia o reacción alérgica grave" },
-  { "code": "3.21", "name": "Patologia por agentes fisicos (frio/calor)", "category": "Enfermedad", "description": "Alteración térmica grave: hipotermia o golpe de calor" },
-
-  { "code": "4.1", "name": "Incendio", "category": "Bomberos", "description": "Incendio con víctimas o explosión" },
-  { "code": "4.2", "name": "Explosión", "category": "Bomberos", "description": "Derrumbe o colapso de estructura" },
-  { "code": "4.3", "name": "Apertura de Puerta", "category": "Bomberos", "description": "Riesgo nuclear, radiológico, biológico o químico" },
-  { "code": "4.4", "name": "Derrumbamientos", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.5", "name": "Servicios Especiales", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.6", "name": "Preventivos", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.7", "name": "Riesgo Químico", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.8", "name": "Riesgo Nuclear", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.9", "name": "Riesgo Biológico", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.10", "name": "Incendio con víctimas confirmadas", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-  { "code": "4.11", "name": "Peticion de apoyo por parte de bomberos", "category": "Bomberos", "description": "Solicitud de apoyo sanitario específico a Bomberos" },
-
-  { "code": "5.1", "name": "Orden judicial", "category": "Psiquiátricos", "description": "Traslado por orden judicial o médica" },
-  { "code": "5.2", "name": "Orden médica", "category": "Psiquiátricos", "description": "Traslado por orden judicial o médica" },
-  { "code": "5.3", "name": "Orden médica urgente / paciente muy agresivo", "category": "Psiquiátricos", "description": "Traslado por orden judicial o médica" },
-  { "code": "5.4", "name": "Certificación psiquiátrica", "category": "Psiquiátricos", "description": "Evaluación para certificación psiquiátrica" },
-  { "code": "5.5", "name": "Problema social", "category": "Psiquiátricos", "description": "Servicio de contenido principalmente social" },
-  { "code": "5.6", "name": "Huelga de hambre", "category": "Psiquiátricos", "description": "Servicio de contenido principalmente social" },
-  { "code": "5.7", "name": "Violencia de género", "category": "Psiquiátricos", "description": "Víctima de violencia de género" },
-  { "code": "5.8", "name": "Maltrato infantil", "category": "Psiquiátricos", "description": "Sospecha o confirmación de maltrato a menor" },
-  { "code": "5.9", "name": "Maltrato a persona mayor", "category": "Psiquiátricos", "description": "Sospecha o confirmación de maltrato a persona mayor" },
-  { "code": "5.10", "name": "Desamparo sobrevenido persona dependiente", "category": "Psiquiátricos", "description": "Situación de desamparo sobrevenido en persona dependiente" },
-
-  { "code": "6.1", "name": "Domicilio", "category": "Cadáver", "description": "El servicio se presta en domicilio particular" },
-  { "code": "6.2", "name": "Vía pública", "category": "Cadáver", "description": "El servicio se presta en vía pública" },
-  { "code": "6.3", "name": "Local público (incluye centro sanitario)", "category": "Cadáver", "description": "El servicio se presta en local público, incluyendo hospitales" },
-  { "code": "6.4", "name": "Persona sin hogar (independiente de lugar)", "category": "Cadáver", "description": "Paciente sin domicilio fijo (sin techo)" },
-
-  { "code": "7.1", "name": "Amenaza de bomba", "category": "Eventos especiales", "description": "Aviso por amenaza de artefacto explosivo" },
-  { "code": "7.2", "name": "Atentado explosivo", "category": "Eventos especiales", "description": "Explosión confirmada con víctimas potenciales" },
-  { "code": "7.3", "name": "Otro tipo de atentado", "category": "Eventos especiales", "description": "Accidente de tren o metro" },
-  { "code": "7.4", "name": "Accidente de tren", "category": "Eventos especiales", "description": "Accidente de aeronave" },
-  { "code": "7.5", "name": "Accidente de avión", "category": "Eventos especiales", "description": "Accidente que implica mercancías peligrosas" },
-  { "code": "7.6", "name": "Accidente de mercancías peligrosas", "category": "Eventos especiales", "description": "Accidente que implica mercancías peligrosas" },
-
-  { "code": "8.1", "name": "1 unidad, sin SVA ni PSA", "category": "Servicio Programado", "description": "Se solicita 1 unidad" },
-  { "code": "8.2", "name": "2-3 unidades, sin SVA ni PSA", "category": "Servicio Programado", "description": "Se solicitan 2 o 3 unidades" },
-  { "code": "8.3", "name": "Más de 3 unidades, sin SVA ni PSA", "category": "Servicio Programado", "description": "Se solicitan más de 3 unidades" },
-  { "code": "8.4", "name": "Presencia de SVA", "category": "Servicio Programado", "description": "Se requiere presencia de unidad de Soporte Vital Avanzado" },
-  { "code": "8.5", "name": "Despliegue de PSA", "category": "Servicio Programado", "description": "Activación de Puesto Sanitario Avanzado" },
-  { "code": "8.6", "name": "Presencia de todos los recursos", "category": "Servicio Programado", "description": "Despliegue de la totalidad de los recursos disponibles" },
-  { "code": "8.7", "name": "Preventivo desde el operativo ordinario", "category": "Servicio Programado", "description": "Servicio de carácter preventivo" },
-  { "code": "8.8", "name": "Necesidad inmediata de refuerzo", "category": "Servicio Programado", "description": "Solicitud de refuerzo inmediato de recursos" },
-  { "code": "8.12", "name": "Servicio de análisis de riesgos", "category": "Servicio Programado", "description": "Solicitud de refuerzo inmediato de recursos" },
-  { "code": "8.13", "name": "Servicio de seguimiento de riesgos", "category": "Servicio Programado", "description": "Solicitud de refuerzo inmediato de recursos" },
-  { "code": "8.14", "name": "Servicio de formación/divulgación externa", "category": "Servicio Programado", "description": "Solicitud de refuerzo inmediato de recursos" },
-  { "code": "8.15", "name": "Servicio de logística y otros", "category": "Servicio Programado", "description": "Solicitud de refuerzo inmediato de recursos" },
-
-  { "code": "9", "name": "Donante en asistolia", "category": "Donante", "description": "Potencial donante de órganos en asistolia" },
-
-  { "code": "10.1", "name": "SAMUR-PC", "category": "Componente Herido", "description": "La institución responsable del servicio es SAMUR-Protección Civil" },
-  { "code": "10.2", "name": "Policía Municipal", "category": "Componente Herido", "description": "La institución responsable es la Policía Municipal" },
-  { "code": "10.3", "name": "Bomberos de Madrid", "category": "Componente Herido", "description": "La institución responsable son los Bomberos de Madrid" },
-  { "code": "10.4", "name": "Policía Nacional", "category": "Componente Herido", "description": "La institución responsable es la Policía Nacional" },
-  { "code": "10.5", "name": "Otra institución", "category": "Componente Herido", "description": "Otra institución asume la responsabilidad del servicio" },
-
-  { "code": "INFARTO", "name": "Reperfusión en SCACEST", "category": "Especificos", "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR" },
-  { "code": "11", "name": "Asistencia integral Post-PCR", "category": "Especificos", "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR" },
-  { "code": "13", "name": "Ictus agudo", "category": "Especificos", "description": "Activación de código ictus para reperfusión precoz" },
-  { "code": "15", "name": "Politraumatismo confirmado", "category": "Especificos", "description": "Código 15: politraumatismo grave confirmado" },
-    { "code": "15.1", "name": "Politraumatismo potencial", "category": "Especificos", "description": "Código 15.1: mecanismo lesional de alto riesgo" },
-  { "code": "16", "name": "SCASEST", "category": "Especificos", "description": "Síndrome coronario agudo sin elevación del ST" },
-  { "code": "18", "name": "Sospecha de sepsis", "category": "Especificos", "description": "Activación de protocolo de sepsis" },
-  { "code": "19", "name": "Tromboembolismo Pulmonar (TEP)", "category": "Especificos", "description": "Tromboembolismo pulmonar" },
-  { "code": "33", "name": "Síncope o presincope post esfuerzo", "category": "Especificos", "description": "Síncope o presíncope tras esfuerzo" },
-  { "code": "90", "name": "Escolta preavisos con Policía Municipal ", "category": "Especificos", "description": "Síncope o presíncope tras esfuerzo" },
-  { "code": "Crisis", "name": "Crisis epiléptica grave/urgente ", "category": "Especificos", "description": "Síncope o presíncope tras esfuerzo" },
-  { "code": "VISEM", "name": "Violencia sexual mujer adulta", "category": "Especificos", "description": "Asistencia a víctima de violencia sexual (mujer adulta)" },
-  { "code": "VISNNA", "name": "Violencia sexual Niños, Niñas y Adolescentes", "category": "Especificos", "description": "Asistencia a víctima de violencia sexual (menor)" }
+  {
+    "code": "1.1",
+    "name": "Accidente no especificado",
+    "category": "Accidentes",
+    "description": "Accidente de tráfico u otro tipo, no especificado"
+  },
+  {
+    "code": "1.2",
+    "name": "Accidente con menos de 3 víctimas",
+    "category": "Accidentes",
+    "description": "Accidente con menos de 3 víctimas"
+  },
+  {
+    "code": "1.3",
+    "name": "Accidente con más de 3 víctimas confirmadas",
+    "category": "Accidentes",
+    "description": "Accidente con más de 3 víctimas confirmadas"
+  },
+  {
+    "code": "1.4",
+    "name": "Atropello",
+    "category": "Accidentes",
+    "description": "Atropello por vehículo de motor"
+  },
+  {
+    "code": "1.5",
+    "name": "Accidente de motocicleta",
+    "category": "Accidentes",
+    "description": "Accidente de motocicleta o ciclomotor"
+  },
+  {
+    "code": "1.6",
+    "name": "Accidente de bicicleta",
+    "category": "Accidentes",
+    "description": "Accidente de bicicleta"
+  },
+  {
+    "code": "1.6.1",
+    "name": "Accidente de patinete / VMP / VMU",
+    "category": "Accidentes",
+    "description": "Accidente de vehículo de movilidad personal, vehículo de movilidad urbana"
+  },
+  {
+    "code": "1.7",
+    "name": "Accidente de autobús",
+    "category": "Accidentes",
+    "description": "Accidente en el que está implicado un autobús"
+  },
+  {
+    "code": "1.8",
+    "name": "Accidente de vehículo pesado",
+    "category": "Accidentes",
+    "description": "Accidente de camión u otro vehículo pesado"
+  },
+  {
+    "code": "2.1",
+    "name": "Heridas",
+    "category": "Traumáticos",
+    "description": "Herida de origen traumático no especificada"
+  },
+  {
+    "code": "2.2",
+    "name": "Atrapamiento/enterramiento",
+    "category": "Traumáticos",
+    "description": "Persona atrapada o aprisionada"
+  },
+  {
+    "code": "2.3",
+    "name": "Caída casual",
+    "category": "Traumáticos",
+    "description": "Caída desde altura o al mismo nivel"
+  },
+  {
+    "code": "2.4",
+    "name": "Agresión física",
+    "category": "Traumáticos",
+    "description": "Agresión sin armas o con puños/patadas"
+  },
+  {
+    "code": "2.5",
+    "name": "Arma blanca",
+    "category": "Traumáticos",
+    "description": "Herida por arma blanca o punzante"
+  },
+  {
+    "code": "2.6",
+    "name": "Arma de fuego",
+    "category": "Traumáticos",
+    "description": "Herida por proyectil de arma de fuego"
+  },
+  {
+    "code": "2.7",
+    "name": "Precipitado",
+    "category": "Traumáticos",
+    "description": "Persona que ha caído desde una altura"
+  },
+  {
+    "code": "2.8",
+    "name": "Autólisis traumática",
+    "category": "Traumáticos",
+    "description": "Autolisis o suicidio"
+  },
+  {
+    "code": "2.9",
+    "name": "Arrollamiento por metro o tren",
+    "category": "Traumáticos",
+    "description": "Arrollamiento por metro o tren"
+  },
+  {
+    "code": "2.10",
+    "name": "Quemado",
+    "category": "Traumáticos",
+    "description": "Persona quemada por exposición a fuego o calor extremo"
+  },
+  {
+    "code": "2.11",
+    "name": "Electrocución",
+    "category": "Traumáticos",
+    "description": "Lesión por descarga eléctrica"
+  },
+  {
+    "code": "2.12",
+    "name": "Ahogamiento",
+    "category": "Traumáticos",
+    "description": "Persona ahogada o en riesgo de ahogamiento"
+  },
+  {
+    "code": "2.12.1",
+    "name": "OVACE",
+    "category": "Traumáticos",
+    "description": "Obstrucción de vías respiratorias"
+  },
+  {
+    "code": "2.13",
+    "name": "Agresión sexual",
+    "category": "Traumáticos",
+    "description": "Agresión de naturaleza sexual"
+  },
+  {
+    "code": "2.13.1",
+    "name": "Agresion sexual facilitada por drogas",
+    "category": "Traumáticos",
+    "description": "Agresión sexual facilitada por drogas"
+  },
+  {
+    "code": "2.14",
+    "name": "Dispositivo Eléctrico de control policial (DEC / TASER)",
+    "category": "Traumáticos",
+    "description": "Dispositivo eléctrico de control policial"
+  },
+  {
+    "code": "3.1",
+    "name": "Parada cardiorrespiratoria",
+    "category": "Enfermedad",
+    "description": "PCR — parada cardiorrespiratoria"
+  },
+  {
+    "code": "3.2",
+    "name": "Inconsciente de causa desconocida",
+    "category": "Enfermedad",
+    "description": "Paciente inconsciente, causa no determinada"
+  },
+  {
+    "code": "3.3",
+    "name": "IAM / patología coronaria",
+    "category": "Enfermedad",
+    "description": "Infarto agudo de miocardio u otra patología coronaria"
+  },
+  {
+    "code": "3.4",
+    "name": "Convulsión",
+    "category": "Enfermedad",
+    "description": "Crisis convulsiva o epiléptica"
+  },
+  {
+    "code": "3.5",
+    "name": "Intoxicación por drogas de abuso",
+    "category": "Enfermedad",
+    "description": "Intoxicación aguda por drogas de abuso"
+  },
+  {
+    "code": "3.6",
+    "name": "Intoxicación farmacológica / tóxica",
+    "category": "Enfermedad",
+    "description": "Intoxicación por fármacos u otras sustancias tóxicas"
+  },
+  {
+    "code": "3.7",
+    "name": "Intento de suicidio no traumático",
+    "category": "Enfermedad",
+    "description": "Intento autolítico por medios no traumáticos"
+  },
+  {
+    "code": "3.8",
+    "name": "Urgencia endocrino-metabólica",
+    "category": "Enfermedad",
+    "description": "Crisis diabética, hipoglucemia u otra urgencia metabólica"
+  },
+  {
+    "code": "3.9",
+    "name": "Intoxicación etílica aguda",
+    "category": "Enfermedad",
+    "description": "Intoxicación aguda por alcohol etílico"
+  },
+  {
+    "code": "3.11",
+    "name": "Patología respiratoria aguda",
+    "category": "Enfermedad",
+    "description": "Dificultad respiratoria aguda de origen médico"
+  },
+  {
+    "code": "3.12",
+    "name": "Patología cardiovascular",
+    "category": "Enfermedad",
+    "description": "Urgencia cardiovascular distinta de IAM o PCR"
+  },
+  {
+    "code": "3.13",
+    "name": "Patología neurológica aguda",
+    "category": "Enfermedad",
+    "description": "Urgencia neurológica: ictus, AIT, etc."
+  },
+  {
+    "code": "3.14",
+    "name": "Patología digestiva aguda",
+    "category": "Enfermedad",
+    "description": "Urgencia digestiva aguda"
+  },
+  {
+    "code": "3.15",
+    "name": "Patología obstétrica",
+    "category": "Enfermedad",
+    "description": "Parto inminente u otra urgencia obstétrica"
+  },
+  {
+    "code": "3.16",
+    "name": "Patología ginecológica",
+    "category": "Enfermedad",
+    "description": "Urgencia ginecológica aguda"
+  },
+  {
+    "code": "3.17",
+    "name": "Patología urológica",
+    "category": "Enfermedad",
+    "description": "Urgencia urológica aguda"
+  },
+  {
+    "code": "3.18",
+    "name": "Patología infecciosa",
+    "category": "Enfermedad",
+    "description": "Sospecha de proceso infeccioso grave"
+  },
+  {
+    "code": "3.19",
+    "name": "Patología psicosomática",
+    "category": "Enfermedad",
+    "description": "Crisis de ansiedad, crisis conversiva u otra patología psicosomática"
+  },
+  {
+    "code": "3.20",
+    "name": "Reacción anafiláctica",
+    "category": "Enfermedad",
+    "description": "Anafilaxia o reacción alérgica grave"
+  },
+  {
+    "code": "3.21",
+    "name": "Patologia por agentes fisicos (frio/calor)",
+    "category": "Enfermedad",
+    "description": "Alteración térmica grave: hipotermia o golpe de calor"
+  },
+  {
+    "code": "4.1",
+    "name": "Incendio",
+    "category": "Bomberos",
+    "description": "Incendio con víctimas o explosión"
+  },
+  {
+    "code": "4.2",
+    "name": "Explosión",
+    "category": "Bomberos",
+    "description": "Derrumbe o colapso de estructura"
+  },
+  {
+    "code": "4.3",
+    "name": "Apertura de Puerta",
+    "category": "Bomberos",
+    "description": "Riesgo nuclear, radiológico, biológico o químico"
+  },
+  {
+    "code": "4.4",
+    "name": "Derrumbamientos",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.5",
+    "name": "Servicios Especiales",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.6",
+    "name": "Preventivos",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.7",
+    "name": "Riesgo Químico",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.8",
+    "name": "Riesgo Nuclear",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.9",
+    "name": "Riesgo Biológico",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.10",
+    "name": "Incendio con víctimas confirmadas",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "4.11",
+    "name": "Peticion de apoyo por parte de bomberos",
+    "category": "Bomberos",
+    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+  },
+  {
+    "code": "5.1",
+    "name": "Orden judicial",
+    "category": "Psiquiátricos",
+    "description": "Traslado por orden judicial o médica"
+  },
+  {
+    "code": "5.2",
+    "name": "Orden médica",
+    "category": "Psiquiátricos",
+    "description": "Traslado por orden judicial o médica"
+  },
+  {
+    "code": "5.3",
+    "name": "Orden médica urgente / paciente muy agresivo",
+    "category": "Psiquiátricos",
+    "description": "Traslado por orden judicial o médica"
+  },
+  {
+    "code": "5.4",
+    "name": "Certificación psiquiátrica",
+    "category": "Psiquiátricos",
+    "description": "Evaluación para certificación psiquiátrica"
+  },
+  {
+    "code": "5.5",
+    "name": "Problema social",
+    "category": "Psiquiátricos",
+    "description": "Servicio de contenido principalmente social"
+  },
+  {
+    "code": "5.6",
+    "name": "Huelga de hambre",
+    "category": "Psiquiátricos",
+    "description": "Servicio de contenido principalmente social"
+  },
+  {
+    "code": "5.7",
+    "name": "Violencia de género",
+    "category": "Psiquiátricos",
+    "description": "Víctima de violencia de género"
+  },
+  {
+    "code": "5.8",
+    "name": "Maltrato infantil",
+    "category": "Psiquiátricos",
+    "description": "Sospecha o confirmación de maltrato a menor"
+  },
+  {
+    "code": "5.9",
+    "name": "Maltrato a persona mayor",
+    "category": "Psiquiátricos",
+    "description": "Sospecha o confirmación de maltrato a persona mayor"
+  },
+  {
+    "code": "5.10",
+    "name": "Desamparo sobrevenido persona dependiente",
+    "category": "Psiquiátricos",
+    "description": "Situación de desamparo sobrevenido en persona dependiente"
+  },
+  {
+    "code": "6.1",
+    "name": "Domicilio",
+    "category": "Cadáver",
+    "description": "El servicio se presta en domicilio particular"
+  },
+  {
+    "code": "6.2",
+    "name": "Vía pública",
+    "category": "Cadáver",
+    "description": "El servicio se presta en vía pública"
+  },
+  {
+    "code": "6.3",
+    "name": "Local público (incluye centro sanitario)",
+    "category": "Cadáver",
+    "description": "El servicio se presta en local público, incluyendo hospitales"
+  },
+  {
+    "code": "6.4",
+    "name": "Persona sin hogar (independiente de lugar)",
+    "category": "Cadáver",
+    "description": "Paciente sin domicilio fijo (sin techo)"
+  },
+  {
+    "code": "7.1",
+    "name": "Amenaza de bomba",
+    "category": "Eventos especiales",
+    "description": "Aviso por amenaza de artefacto explosivo"
+  },
+  {
+    "code": "7.2",
+    "name": "Atentado explosivo",
+    "category": "Eventos especiales",
+    "description": "Explosión confirmada con víctimas potenciales"
+  },
+  {
+    "code": "7.3",
+    "name": "Otro tipo de atentado",
+    "category": "Eventos especiales",
+    "description": "Accidente de tren o metro"
+  },
+  {
+    "code": "7.4",
+    "name": "Accidente de tren",
+    "category": "Eventos especiales",
+    "description": "Accidente de aeronave"
+  },
+  {
+    "code": "7.5",
+    "name": "Accidente de avión",
+    "category": "Eventos especiales",
+    "description": "Accidente que implica mercancías peligrosas"
+  },
+  {
+    "code": "7.6",
+    "name": "Accidente de mercancías peligrosas",
+    "category": "Eventos especiales",
+    "description": "Accidente que implica mercancías peligrosas"
+  },
+  {
+    "code": "8.1",
+    "name": "1 unidad, sin SVA ni PSA",
+    "category": "Servicio Programado",
+    "description": "Se solicita 1 unidad"
+  },
+  {
+    "code": "8.2",
+    "name": "2-3 unidades, sin SVA ni PSA",
+    "category": "Servicio Programado",
+    "description": "Se solicitan 2 o 3 unidades"
+  },
+  {
+    "code": "8.3",
+    "name": "Más de 3 unidades, sin SVA ni PSA",
+    "category": "Servicio Programado",
+    "description": "Se solicitan más de 3 unidades"
+  },
+  {
+    "code": "8.4",
+    "name": "Presencia de SVA",
+    "category": "Servicio Programado",
+    "description": "Se requiere presencia de unidad de Soporte Vital Avanzado"
+  },
+  {
+    "code": "8.4.1",
+    "name": "Presencia de SVA con más de 3 recursos (sin PSA)",
+    "category": "Servicio Programado",
+    "description": "Presencia de una o más unidades SVA, sin PSA, sumando más de 3 recursos en total."
+  },
+  {
+    "code": "8.5",
+    "name": "Despliegue de PSA",
+    "category": "Servicio Programado",
+    "description": "Activación de Puesto Sanitario Avanzado"
+  },
+  {
+    "code": "8.5.1",
+    "name": "Despliegue de PSA con más de 3 recursos",
+    "category": "Servicio Programado",
+    "description": "Despliegue de PSA, con otros recursos (más de 3 recursos en total)."
+  },
+  {
+    "code": "8.6",
+    "name": "Presencia de todos los recursos",
+    "category": "Servicio Programado",
+    "description": "Despliegue de la totalidad de los recursos disponibles"
+  },
+  {
+    "code": "8.7",
+    "name": "Preventivo desde el operativo ordinario",
+    "category": "Servicio Programado",
+    "description": "Servicio de carácter preventivo"
+  },
+  {
+    "code": "8.8",
+    "name": "Necesidad inmediata de refuerzo",
+    "category": "Servicio Programado",
+    "description": "Solicitud de refuerzo inmediato de recursos"
+  },
+  {
+    "code": "8.9",
+    "name": "Refuerzo programado por concentración de personas",
+    "category": "Servicio Programado",
+    "description": "Necesidad programada de refuerzo para el operativo por concentración de personas."
+  },
+  {
+    "code": "8.10",
+    "name": "CECOR externo en dispositivo de riesgo previsible",
+    "category": "Servicio Programado",
+    "description": "Puesto de mando externo en dispositivo de riesgo previsible."
+  },
+  {
+    "code": "8.11",
+    "name": "CECOR interno en dispositivo de riesgo previsible",
+    "category": "Servicio Programado",
+    "description": "Puesto de mando interno en dispositivo de riesgo previsible."
+  },
+  {
+    "code": "8.12",
+    "name": "Servicio de análisis de riesgos",
+    "category": "Servicio Programado",
+    "description": "Solicitud de refuerzo inmediato de recursos"
+  },
+  {
+    "code": "8.13",
+    "name": "Servicio de seguimiento de riesgos",
+    "category": "Servicio Programado",
+    "description": "Solicitud de refuerzo inmediato de recursos"
+  },
+  {
+    "code": "8.14",
+    "name": "Servicio de formación/divulgación externa",
+    "category": "Servicio Programado",
+    "description": "Solicitud de refuerzo inmediato de recursos"
+  },
+  {
+    "code": "8.15",
+    "name": "Servicio de logística y otros",
+    "category": "Servicio Programado",
+    "description": "Solicitud de refuerzo inmediato de recursos"
+  },
+  {
+    "code": "9",
+    "name": "Donante en asistolia",
+    "category": "Donante",
+    "description": "Potencial donante de órganos en asistolia"
+  },
+  {
+    "code": "10.1",
+    "name": "SAMUR-PC",
+    "category": "Componente Herido",
+    "description": "La institución responsable del servicio es SAMUR-Protección Civil"
+  },
+  {
+    "code": "10.2",
+    "name": "Policía Municipal",
+    "category": "Componente Herido",
+    "description": "La institución responsable es la Policía Municipal"
+  },
+  {
+    "code": "10.3",
+    "name": "Bomberos de Madrid",
+    "category": "Componente Herido",
+    "description": "La institución responsable son los Bomberos de Madrid"
+  },
+  {
+    "code": "10.4",
+    "name": "Policía Nacional",
+    "category": "Componente Herido",
+    "description": "La institución responsable es la Policía Nacional"
+  },
+  {
+    "code": "10.5",
+    "name": "Otra institución",
+    "category": "Componente Herido",
+    "description": "Otra institución asume la responsabilidad del servicio"
+  },
+  {
+    "code": "INFARTO",
+    "name": "Reperfusión en SCACEST",
+    "category": "Especificos",
+    "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR"
+  },
+  {
+    "code": "11",
+    "name": "Asistencia integral Post-PCR",
+    "category": "Especificos",
+    "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR"
+  },
+  {
+    "code": "13",
+    "name": "Ictus agudo",
+    "category": "Especificos",
+    "description": "Activación de código ictus para reperfusión precoz"
+  },
+  {
+    "code": "15",
+    "name": "Politraumatismo confirmado",
+    "category": "Especificos",
+    "description": "Código 15: politraumatismo grave confirmado"
+  },
+  {
+    "code": "15.1",
+    "name": "Politraumatismo potencial",
+    "category": "Especificos",
+    "description": "Código 15.1: mecanismo lesional de alto riesgo"
+  },
+  {
+    "code": "16",
+    "name": "SCASEST",
+    "category": "Especificos",
+    "description": "Síndrome coronario agudo sin elevación del ST"
+  },
+  {
+    "code": "18",
+    "name": "Sospecha de sepsis",
+    "category": "Especificos",
+    "description": "Activación de protocolo de sepsis"
+  },
+  {
+    "code": "19",
+    "name": "Tromboembolismo Pulmonar (TEP)",
+    "category": "Especificos",
+    "description": "Tromboembolismo pulmonar"
+  },
+  {
+    "code": "33",
+    "name": "Síncope o presincope post esfuerzo",
+    "category": "Especificos",
+    "description": "Síncope o presíncope tras esfuerzo"
+  },
+  {
+    "code": "90",
+    "name": "Escolta preavisos con Policía Municipal ",
+    "category": "Especificos",
+    "description": "Síncope o presíncope tras esfuerzo"
+  },
+  {
+    "code": "Crisis",
+    "name": "Crisis epiléptica grave/urgente ",
+    "category": "Especificos",
+    "description": "Síncope o presíncope tras esfuerzo"
+  },
+  {
+    "code": "VISEM",
+    "name": "Violencia sexual mujer adulta",
+    "category": "Especificos",
+    "description": "Asistencia a víctima de violencia sexual (mujer adulta)"
+  },
+  {
+    "code": "VISNNA",
+    "name": "Violencia sexual Niños, Niñas y Adolescentes",
+    "category": "Especificos",
+    "description": "Asistencia a víctima de violencia sexual (menor)"
+  }
 ]

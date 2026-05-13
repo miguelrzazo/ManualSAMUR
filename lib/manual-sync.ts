@@ -98,6 +98,23 @@ export interface ManualUpdatesDataset {
   events: ManualUpdateEvent[];
 }
 
+export interface ManualHistoryEntry {
+  id: string;
+  procedureId: string;
+  procedureTitle: string;
+  section: string;
+  slug: string;
+  changeKind: ManualUpdateChangeKind;
+  changedAt: string;
+  summary: string;
+  diff?: string;
+}
+
+export interface ManualHistoryDataset {
+  generatedAt: string;
+  entries: ManualHistoryEntry[];
+}
+
 export interface ManualTickerItem {
   label: string;
   href: string;
@@ -326,6 +343,37 @@ export function writeManualUpdatesDataset(dataset: ManualUpdatesDataset, cwd = p
   const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, `${JSON.stringify(dataset, null, 2)}\n`, "utf8");
+}
+
+export const DEFAULT_MANUAL_HISTORY_PATH = "content/data/manual-history.json";
+
+export function readManualHistoryDataset(cwd = process.cwd()): ManualHistoryDataset {
+  const filePath = path.join(cwd, DEFAULT_MANUAL_HISTORY_PATH);
+  if (!fs.existsSync(filePath)) return { generatedAt: "", entries: [] };
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<ManualHistoryDataset>;
+    return {
+      generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : "",
+      entries: Array.isArray(parsed.entries) ? parsed.entries as ManualHistoryEntry[] : [],
+    };
+  } catch {
+    return { generatedAt: "", entries: [] };
+  }
+}
+
+export function appendToManualHistory(
+  newEntries: ManualHistoryEntry[],
+  maxEntries = 500,
+  cwd = process.cwd(),
+): void {
+  if (newEntries.length === 0) return;
+  const dataset = readManualHistoryDataset(cwd);
+  const merged = [...newEntries, ...dataset.entries]
+    .filter((entry, index, arr) => arr.findIndex((e) => e.id === entry.id) === index)
+    .slice(0, maxEntries);
+  const filePath = path.join(cwd, DEFAULT_MANUAL_HISTORY_PATH);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify({ generatedAt: new Date().toISOString(), entries: merged }, null, 2)}\n`, "utf8");
 }
 
 export function stableContentHash(content: string): string {
