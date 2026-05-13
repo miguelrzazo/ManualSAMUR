@@ -27,7 +27,6 @@ import {
 } from "@/lib/manual-cookies";
 import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
 import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
-import { toCapitalCase } from "@/lib/title-case";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos", "General"];
 
@@ -91,6 +90,7 @@ function formatSyncDate(value: string) {
   return new Intl.DateTimeFormat("es", { dateStyle: "medium" }).format(date);
 }
 
+/** Desktop pill bar — shown on md+ */
 function SectionPillBar({
   sections,
   activeSection,
@@ -107,7 +107,7 @@ function SectionPillBar({
   });
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 mb-4 no-scrollbar" style={{ scrollbarWidth: "none" }}>
+    <div className="hidden md:flex gap-2 overflow-x-auto pb-1 mb-4 no-scrollbar" style={{ scrollbarWidth: "none" }}>
       <button
         onClick={() => onSelect(undefined)}
         className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
@@ -116,7 +116,7 @@ function SectionPillBar({
             : "bg-muted/50 text-muted-foreground border-border/50 hover:text-foreground"
         }`}
       >
-        Todas
+        TODAS
       </button>
       {sorted.map((section) => {
         const meta = SECTION_META[section.section] ?? FALLBACK;
@@ -133,8 +133,54 @@ function SectionPillBar({
             }`}
           >
             <div className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
-            {toCapitalCase(section.section)}
+            {section.section.toUpperCase()}
             <span className="tabular-nums opacity-60">{count}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Mobile section card grid — shown on < md */
+function SectionCardGrid({
+  sections,
+  activeSection,
+  onSelect,
+}: {
+  sections: ProcedureSidebarSection[];
+  activeSection?: string;
+  onSelect: (section: string | undefined) => void;
+}) {
+  const sorted = [...sections].sort((a, b) => {
+    const ai = SECTIONS_PRIORITY.indexOf(a.section);
+    const bi = SECTIONS_PRIORITY.indexOf(b.section);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  return (
+    <div className="md:hidden grid grid-cols-2 gap-2 mb-4">
+      {sorted.map((section) => {
+        const meta = SECTION_META[section.section] ?? FALLBACK;
+        const count = section.groups.flatMap((g) => g.subgroups.flatMap((s) => s.procedures)).length;
+        const active = activeSection === section.section;
+        return (
+          <button
+            key={section.section}
+            onClick={() => onSelect(active ? undefined : section.section)}
+            className={`flex items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors ${
+              active
+                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                : "bg-card/60 border-border/50 hover:bg-card/80"
+            }`}
+          >
+            <div className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${meta.dot}`} />
+            <div className="min-w-0">
+              <div className={`text-xs font-semibold truncate ${active ? "text-primary" : "text-foreground"}`}>
+                {section.section.toUpperCase()}
+              </div>
+              <div className="text-[10px] tabular-nums text-muted-foreground mt-0.5">{count} proc</div>
+            </div>
           </button>
         );
       })}
@@ -260,6 +306,13 @@ function ExplorerTree({
     );
   }
 
+  /**
+   * When a section filter is active on desktop (md+), we skip the outer section-level
+   * accordion and render the groups directly. The section header is shown as a static
+   * label instead of a collapsible button.
+   */
+  const skipSectionAccordion = Boolean(effectiveSection) && sections.length === 1;
+
   return (
     <div className="rounded-2xl border border-border/60 bg-card/40 overflow-hidden">
       {sections.map((section) => {
@@ -267,25 +320,36 @@ function ExplorerTree({
         const procedures = section.groups
           .flatMap((g) => g.subgroups.flatMap((sg) => sg.procedures))
           .sort((a, b) => a.id.localeCompare(b.id, "es", { numeric: true }));
-        const isSectionOpen = openKeys.has(sKey(section.section));
+        const isSectionOpen = skipSectionAccordion || openKeys.has(sKey(section.section));
         const isFlatSection = FLAT_SECTIONS.has(section.section);
 
         return (
           <div key={section.section} className="border-b border-border/40 last:border-b-0">
-            <button
-              onClick={() => toggle(sKey(section.section))}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left"
-            >
-              {isSectionOpen
-                ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
-                : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
-              }
-              <div className={`h-2 w-2 rounded-full flex-shrink-0 ${meta.dot}`} />
-              <span className="font-semibold text-sm flex-1">{toCapitalCase(section.section)}</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium tabular-nums ${meta.badge}`}>
-                {procedures.length}
-              </span>
-            </button>
+            {/* Section header — static label when accordion is skipped (filtered desktop view) */}
+            {skipSectionAccordion ? (
+              <div className="hidden md:flex w-full items-center gap-3 px-4 py-3 border-b border-border/30 bg-muted/20">
+                <div className={`h-2 w-2 rounded-full flex-shrink-0 ${meta.dot}`} />
+                <span className="font-semibold text-sm flex-1 uppercase tracking-wide">{section.section.toUpperCase()}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium tabular-nums ${meta.badge}`}>
+                  {procedures.length}
+                </span>
+              </div>
+            ) : (
+              <button
+                onClick={() => toggle(sKey(section.section))}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left"
+              >
+                {isSectionOpen
+                  ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
+                  : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
+                }
+                <div className={`h-2 w-2 rounded-full flex-shrink-0 ${meta.dot}`} />
+                <span className="font-semibold text-sm flex-1 uppercase">{section.section.toUpperCase()}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium tabular-nums ${meta.badge}`}>
+                  {procedures.length}
+                </span>
+              </button>
+            )}
 
             {isSectionOpen && (
               <div className="pb-1">
@@ -309,13 +373,15 @@ function ExplorerTree({
                     <div key={group.name}>
                       <button
                         onClick={() => toggle(gKey(section.section, group.name))}
-                        className="w-full flex items-center gap-2.5 pl-9 pr-4 py-2 hover:bg-muted/20 transition-colors text-left"
+                        className={`w-full flex items-center gap-2.5 pl-9 pr-4 py-2 hover:bg-muted/20 transition-colors text-left ${
+                          skipSectionAccordion ? "sticky top-0 bg-background/95 z-10" : ""
+                        }`}
                       >
                         {isGroupOpen
                           ? <ChevronDown className="h-3 w-3 text-muted-foreground/50 flex-shrink-0" />
                           : <ChevronRight className="h-3 w-3 text-muted-foreground/50 flex-shrink-0" />
                         }
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex-1">
+                        <span className="text-sm font-semibold text-foreground/80 tracking-wide uppercase border-l-2 border-border/40 pl-2 flex-1">
                           {group.name}
                         </span>
                         <span className="text-[10px] tabular-nums text-muted-foreground/60">{groupProcedures.length}</span>
@@ -337,7 +403,7 @@ function ExplorerTree({
                                     : <ChevronRight className="h-2.5 w-2.5 text-muted-foreground/40 flex-shrink-0" />
                                   }
                                   <Rows3 className="h-3 w-3 text-muted-foreground/40 flex-shrink-0" />
-                                  <span className="text-xs text-foreground/80 flex-1">{subgroup.name}</span>
+                                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex-1">{subgroup.name}</span>
                                   <span className="text-[10px] tabular-nums text-muted-foreground/50">{subgroup.procedures.length}</span>
                                 </button>
 
@@ -365,6 +431,54 @@ function ExplorerTree({
               </div>
             )}
           </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Desktop horizontal section tabs shown inside the explorer area */
+function DesktopSectionTabs({
+  sections,
+  activeSection,
+  onSelect,
+}: {
+  sections: ProcedureSidebarSection[];
+  activeSection?: string;
+  onSelect: (section: string | undefined) => void;
+}) {
+  const sorted = [...sections].sort((a, b) => {
+    const ai = SECTIONS_PRIORITY.indexOf(a.section);
+    const bi = SECTIONS_PRIORITY.indexOf(b.section);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  return (
+    <div className="hidden md:flex gap-1 mb-3 border-b border-border/40 pb-0 overflow-x-auto no-scrollbar">
+      <button
+        onClick={() => onSelect(undefined)}
+        className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors -mb-px ${
+          !activeSection
+            ? "border-primary text-primary"
+            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+        }`}
+      >
+        TODAS
+      </button>
+      {sorted.map((section) => {
+        const active = activeSection === section.section;
+        return (
+          <button
+            key={section.section}
+            onClick={() => onSelect(active ? undefined : section.section)}
+            className={`flex-shrink-0 px-3 py-2 text-xs font-semibold border-b-2 transition-colors -mb-px ${
+              active
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+            }`}
+          >
+            {section.section.toUpperCase()}
+          </button>
         );
       })}
     </div>
@@ -606,7 +720,14 @@ export function ManualHomeClient({
         </div>
       )}
 
-      {/* Section pill filter bar */}
+      {/* Mobile: 2-column section card grid */}
+      <SectionCardGrid
+        sections={sortedSections}
+        activeSection={activeSectionFilter}
+        onSelect={setActiveSectionFilter}
+      />
+
+      {/* Desktop: pill bar (md+) */}
       <SectionPillBar
         sections={sortedSections}
         activeSection={activeSectionFilter}
@@ -618,7 +739,7 @@ export function ManualHomeClient({
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {effectiveSection && (
             <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${SECTION_META[effectiveSection]?.badge ?? "bg-muted text-muted-foreground"}`}>
-              {toCapitalCase(effectiveSection)}
+              {effectiveSection.toUpperCase()}
             </span>
           )}
           {initialGroup && <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{initialGroup}</span>}
@@ -653,6 +774,12 @@ export function ManualHomeClient({
             procedureCount={allProcedures.length}
             linkCount={totalLinks}
             onOpen={() => setView("graph")}
+          />
+          {/* Desktop section tabs above the explorer */}
+          <DesktopSectionTabs
+            sections={sortedSections}
+            activeSection={activeSectionFilter}
+            onSelect={setActiveSectionFilter}
           />
           <ExplorerTree
             sections={visibleSections}
