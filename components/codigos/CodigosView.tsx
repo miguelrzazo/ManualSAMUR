@@ -115,7 +115,11 @@ const CATEGORY_COLORS: Record<string, { pill: string; text: string; dot: string 
   "Enfermedad": { pill: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", text: "text-blue-700 dark:text-blue-400", dot: "#2563eb" },
   "Bomberos": { pill: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", text: "text-amber-700 dark:text-amber-400", dot: "#d97706" },
   "Psiquiátricos": { pill: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", text: "text-purple-700 dark:text-purple-400", dot: "#9333ea" },
+  "Sociosanitario": { pill: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", text: "text-purple-700 dark:text-purple-400", dot: "#9333ea" },
   "Cadáver": { pill: "bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400", text: "text-slate-600 dark:text-slate-400", dot: "#64748b" },
+  "Psicológicos": { pill: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300", text: "text-teal-700 dark:text-teal-400", dot: "#0d9488" },
+  "URO": { pill: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300", text: "text-yellow-700 dark:text-yellow-400", dot: "#ca8a04" },
+  "FOXTROT": { pill: "bg-lime-100 text-lime-800 dark:bg-lime-900/30 dark:text-lime-300", text: "text-lime-700 dark:text-lime-400", dot: "#65a30d" },
   "Eventos especiales": { pill: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300", text: "text-indigo-700 dark:text-indigo-400", dot: "#4338ca" },
   "Recursos solicitados": { pill: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300", text: "text-emerald-700 dark:text-emerald-400", dot: "#059669" },
   "Donante": { pill: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300", text: "text-pink-700 dark:text-pink-400", dot: "#db2777" },
@@ -126,10 +130,10 @@ const CATEGORY_COLORS: Record<string, { pill: string; text: string; dot: string 
 const FAMILY_LABELS: Partial<Record<TopTabKey, Record<string, string>>> = {
   incidente: {
     "1": "Accidentes de tráfico", "2": "Traumáticos", "3": "Enfermedad / Patología",
-    "4": "Bomberos / especiales", "5": "Judicial / social", "6": "Ubicación",
+    "4": "Bomberos / especiales", "5": "Sociosanitario", "6": "Cadáver",
     "7": "Especial / masivos", "8": "Programados", "9": "Donante",
     "10": "Componente Herido", "11": "Código infarto", "13": "Código 13",
-    "15": "Politrauma", "16": "SCASEST", "18": "Sepsis", "19": "TEP",
+    "15": "Psicológicos", "16": "URO", "17": "FOXTROT", "18": "Sepsis", "19": "TEP",
     "33": "Síncope post esfuerzo",
   },
   sva: {
