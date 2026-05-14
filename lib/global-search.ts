@@ -181,7 +181,7 @@ function mapCodeResult(query: string, result: FuseResult<Code>): SearchResult {
   const matches = result.matches ?? [];
   return {
     type: "code",
-    id: result.item.code,
+    id: result.item._source ? `${result.item.code}:${result.item._source}` : result.item.code,
     title: result.item.name,
     subtitle: result.item.group,
     badge: result.item.code,
@@ -243,7 +243,21 @@ export async function globalSearch(
     }));
 
   const drugResults = sortResults(buildDrugsFuse(drugs).search(query).slice(0, 5).map((result) => mapDrugResult(query, result)));
-  const codeResults = sortResults(buildCodesFuse(codes).search(query).slice(0, 5).map((result) => mapCodeResult(query, result)));
+
+  const seenCodes = new Set<string>();
+  const codeResults = sortResults(
+    buildCodesFuse(codes)
+      .search(query)
+      .slice(0, 20)
+      .map((result) => mapCodeResult(query, result))
+      .filter((r) => {
+        const key = `${r.id}:${r.source ?? ""}`;
+        if (seenCodes.has(key)) return false;
+        seenCodes.add(key);
+        return true;
+      })
+  ).slice(0, 5);
+
   const hospitalResults = sortResults(buildHospitalsFuse(hospitals).search(query).slice(0, 5).map((result) => mapHospitalResult(query, result)));
 
   return flattenGroups([
