@@ -207,25 +207,30 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
       commandProps={{ shouldFilter: false }}
       className="sm:max-w-lg"
     >
-      <div className="flex items-center border-b border-border/50">
-        {filter && (
-          <span className={`ml-3 flex-shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+      <CommandInput
+        placeholder="Buscar... (:p proc · :c códigos · :v medicamentos)"
+        value={query}
+        onValueChange={setQuery}
+      />
+      {filter && (
+        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/40 bg-muted/30">
+          <span className="text-[11px] text-muted-foreground">Filtrando:</span>
+          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
             filter === "procedure" ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
             : filter === "code" ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300"
             : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
           }`}>
             {filter === "procedure" ? "Procedimientos" : filter === "code" ? "Códigos" : "Medicamentos"}
           </span>
-        )}
-        <CommandInput
-          placeholder={filter
-            ? `Buscar en ${filter === "procedure" ? "procedimientos" : filter === "code" ? "códigos" : "medicamentos"}...`
-            : "Buscar... (:p proc · :c códigos · :v medicamentos)"}
-          value={query}
-          onValueChange={setQuery}
-          className="border-0 focus:ring-0"
-        />
-      </div>
+          <button
+            type="button"
+            onClick={() => setQuery(term)}
+            className="ml-auto text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ✕ quitar filtro
+          </button>
+        </div>
+      )}
       <CommandList>
         {isLoading && (
           <div className="p-4 text-center text-sm text-muted-foreground">Buscando...</div>
@@ -236,7 +241,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
         {!isLoading && term.length < 2 && !results.length && (
           <div className="px-4 py-6 text-center text-sm text-muted-foreground">
             <p>Escribe para buscar en procedimientos, medicamentos y códigos.</p>
-            <p className="mt-2 text-xs opacity-70">Filtra con: <code className="bg-muted px-1 rounded">:p</code> proc · <code className="bg-muted px-1 rounded">:c</code> códigos · <code className="bg-muted px-1 rounded">:v</code> medicamentos</p>
+            <p className="mt-2 text-xs opacity-70">Filtra con: <code className="bg-muted px-1 rounded">:p</code> proc · <code className="bg-muted px-1 rounded">:c</code> códigos · <code className="bg-muted px-1 rounded">:v</code> meds</p>
           </div>
         )}
         {Object.entries(grouped).map(([type, items]) => (
