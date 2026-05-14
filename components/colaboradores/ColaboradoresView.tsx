@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { GitBranch, Mail, Search } from "lucide-react";
 import { normalizeForSearch } from "@/lib/vademecum-utils";
 import type { CollaboratorsData } from "@/lib/main-content";
 
@@ -39,6 +39,35 @@ export function ColaboradoresView({ collaborators }: Props) {
         <p className="text-sm text-muted-foreground mt-2">
           {filteredList.length} de {collaborators.list.length} colaboradores
         </p>
+      </div>
+
+      {/* Author card */}
+      <div className="mb-6 rounded-xl border border-border/60 bg-card/60 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary select-none">
+          MR
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground">Miguel Rosa Zazo</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Desarrollo de la aplicación — versión digital del Manual SAMUR-PC</p>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <a
+            href="https://github.com/miguelrzazo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            <GitBranch className="h-3.5 w-3.5" />
+            GitHub
+          </a>
+          <a
+            href="mailto:mrosaz00@estudiantes.unileon.es"
+            className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Contacto
+          </a>
+        </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-3 mb-6">

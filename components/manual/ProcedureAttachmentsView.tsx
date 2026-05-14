@@ -1,98 +1,55 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useState } from "react";
 import { ChevronDown, ExternalLink, FileText, Image as ImageIcon, Paperclip } from "lucide-react";
 import type { ManualAttachment } from "@/lib/manual-sync";
 import { ImageWithLightbox } from "@/components/manual/mdx-extras";
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url,
-).toString();
-
-function PdfInlineViewer({ src, title }: { src: string; title: string }) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [numPages, setNumPages] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const node = containerRef.current;
-    if (!node) return;
-
-    const updateWidth = () => {
-      const nextWidth = Math.floor(node.clientWidth);
-      if (nextWidth > 0) setContainerWidth(nextWidth);
-    };
-
-    updateWidth();
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const pageWidth = Math.max(320, containerWidth - 16);
-
-  return (
-    <div className="space-y-3">
-      <div ref={containerRef} className="w-full min-h-[240px] rounded-lg border border-border/40 bg-muted/20 p-2">
-        <Document
-          file={src}
-          loading={<p className="px-2 py-6 text-sm text-muted-foreground">Cargando PDF...</p>}
-          error={<p className="px-2 py-6 text-sm text-destructive">No se pudo cargar el PDF.</p>}
-          onLoadSuccess={(pdf) => {
-            setNumPages(pdf.numPages);
-            setError(null);
-          }}
-          onLoadError={(loadError) => {
-            setError(loadError instanceof Error ? loadError.message : "Error al cargar PDF");
-          }}
-        >
-          {numPages > 0
-            ? Array.from({ length: numPages }, (_unused, index) => (
-              <div key={`${src}-page-${index + 1}`} className="mb-4 last:mb-0">
-                <Page
-                  pageNumber={index + 1}
-                  width={pageWidth}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                  className="mx-auto overflow-hidden rounded-md border border-border/50 bg-white shadow-sm"
-                />
-                <p className="mt-1 text-center text-xs text-muted-foreground">
-                  Página {index + 1} / {numPages}
-                </p>
-              </div>
-            ))
-            : null}
-        </Document>
-      </div>
-      <a
-        href={src}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ExternalLink className="h-3 w-3" />
-        Abrir {title} en nueva pestaña
-      </a>
-      {error ? <p className="text-xs text-destructive break-all">{error}</p> : null}
-    </div>
-  );
-}
 
 function filenameFromPath(pathname: string) {
   return pathname.split("/").pop() ?? pathname;
 }
 
+function PdfCard({ src, title }: { src: string; title: string }) {
+  const [showPreview, setShowPreview] = useState(false);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">Abre el PDF en el navegador o activa la previsualización.</p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowPreview((v) => !v)}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+          >
+            {showPreview ? "Ocultar vista previa" : "Vista previa"}
+          </button>
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Abrir PDF
+          </a>
+        </div>
+      </div>
+
+      {showPreview && (
+        <iframe
+          src={`${src}#toolbar=1&navpanes=0`}
+          title={title}
+          className="w-full rounded-lg border border-border/50 bg-muted/20"
+          style={{ height: "60vh", minHeight: 320 }}
+        />
+      )}
+    </div>
+  );
+}
+
 export function ProcedureAttachmentsView({ attachments }: { attachments: ManualAttachment[] }) {
   const [expandedByPath, setExpandedByPath] = useState<Record<string, boolean>>({});
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- attachment previews depend on client-only media/PDF handling.
-    setIsClient(true);
-  }, []);
 
   const toggle = (localPath: string) => {
     setExpandedByPath((prev) => ({ ...prev, [localPath]: !prev[localPath] }));
@@ -145,28 +102,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
                       <ImageWithLightbox src={attachment.localPath} alt={filename} />
                     </div>
                   ) : isPdf ? (
-                    <div className="space-y-3 rounded-xl border border-border/40 bg-muted/20 p-4">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{filename}</p>
-                          <p className="text-xs text-muted-foreground">Abre el PDF en nueva pestaña o revisa la previsualización.</p>
-                        </div>
-                        <a
-                          href={attachment.localPath}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                          Abrir PDF
-                        </a>
-                      </div>
-                      {isClient ? <PdfInlineViewer src={attachment.localPath} title={filename} /> : (
-                        <div className="rounded-lg border border-border/40 bg-background/80 p-4 text-sm text-muted-foreground">
-                          Preparando visor de PDF...
-                        </div>
-                      )}
-                    </div>
+                    <PdfCard src={attachment.localPath} title={filename} />
                   ) : (
                     <a
                       href={attachment.localPath}

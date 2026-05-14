@@ -275,6 +275,27 @@ export default async function ProcedurePage({ params }: Props) {
           </details>
         )}
 
+        {/* Incomplete content warning — when body is very short */}
+        {procedure.content.trim().length < 350 && (
+          <div className="mb-4 rounded-lg border border-amber-200/70 bg-amber-50/60 dark:border-amber-800/40 dark:bg-amber-950/20 px-4 py-3 flex flex-wrap items-start gap-3" data-print-hide>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Contenido pendiente de sincronización</p>
+              <p className="text-xs text-amber-700/80 dark:text-amber-400/80 mt-0.5">El cuerpo de este procedimiento no se importó correctamente desde el wiki oficial. Los anexos PDF están disponibles abajo.</p>
+            </div>
+            {procedure.source && (
+              <a
+                href={procedure.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200/80 dark:border-amber-700/40 px-3 py-1.5 text-xs font-medium text-amber-800 dark:text-amber-300 hover:bg-amber-200/60 transition-colors"
+              >
+                <ExternalLink className="h-3 w-3" />
+                Ver en wiki oficial
+              </a>
+            )}
+          </div>
+        )}
+
         {/* Recent update badge — only when event < 30 days */}
         {(() => {
           const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
