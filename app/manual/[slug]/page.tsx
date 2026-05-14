@@ -48,7 +48,6 @@ import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEd
 import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import { ProcedureReferences } from "@/components/manual/ProcedureReferences";
 import { ContentDiff } from "@/components/manual/ContentDiff";
-import { MobileScrollIndicator, MobileStickyHeading } from "@/components/manual/MobileScrollNav";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -193,10 +192,6 @@ export default async function ProcedurePage({ params }: Props) {
         procedureId={procedure.id}
         validIds={allProcedures.map((item) => item.id)}
       />
-      {/* Mobile: left indicator bars + sticky heading — client components */}
-      <MobileScrollIndicator articleId="procedure-content" />
-      <MobileStickyHeading articleId="procedure-content" />
-
       {/* Main content */}
       <article id="procedure-content" className="min-w-0 flex-1 max-w-4xl">
         <Breadcrumbs
