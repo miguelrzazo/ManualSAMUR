@@ -353,26 +353,6 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
   }
 }
 
-export function filterUserFacingTickerItems(items: ManualTickerItem[]): ManualTickerItem[] {
-  return items.filter((item) => {
-    if (item.procedureId) return true;
-    if (item.href.startsWith("/manual/")) return true;
-    if (item.href.startsWith("/codigos")) return true;
-
-    const label = normalizeProcedureLookupKey(item.label);
-    if (label.includes("vademecum")) return false;
-    if (label.includes("main actualizado")) return false;
-    if (label.includes("llms")) return false;
-    if (label.includes("colaboradores")) return false;
-    if (label.includes("main links")) return false;
-    if (label.includes("abreviaturas")) return false;
-    if (label.includes("mobile assets")) return false;
-    if (label.includes("attachment") || label.includes("adjunto")) return false;
-
-    return label.includes("manual") || label.includes("procedimiento") || label.includes("codigo") || label.includes("codigos");
-  });
-}
-
 export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesDataset {
   const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
   if (!fs.existsSync(filePath)) return createDefaultManualUpdatesDataset();

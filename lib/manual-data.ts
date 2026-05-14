@@ -11,6 +11,9 @@ const FOOTER_RE = /^\s*Manual de Procedimientos SAMUR-Protección Civil.*$/gim;
 const VADEMECUM_PLACEHOLDER_LINK_RE = /\[([^\]]+)]\(#(?:\s+"[^"]*")?\)/g;
 const LOCAL_MARKDOWN_LINK_RE = /\[([^\]]+)]\(([^)\s]+\.htm(?:[#?][^)\s]*)?)(?:\s+"[^"]*")?\)/gi;
 const START_PAGE_RE = /^\s*Inicio página>>doc:\s*$/gim;
+const XWIKI_EXTERNAL_LINK_RE = /\[\[([^\]]*?)>>(?:url:)?(https?:\/\/[^\]]+)\]\]/gi;
+const XWIKI_TILDE_ESCAPE_RE = /~\[~\[[\s\S]*?~\]~\]/g;
+const XWIKI_BACKSLASH_LINE_RE = /^\\~/gm;
 const FIGURE_ARROW_LINK_RE = /^\*([^*\n]+)>>((?:\/docs|\/images)[^*\n]+)\*\s*$/gm;
 const SIMPLE_ARROW_LINK_RE = /^([^\n\[]+?)>>((?:\/docs|\/images)[^\]\s)]+)(?:\]\([^)]+\))?/gm;
 const DRUG_LINK_RE = /<DrugLink\s+name="([^"]+)"\s*\/>/g;
@@ -454,6 +457,12 @@ export function normalizeProcedureContent(
         return `![](/${resolvedPath.replace(/^(?:\.\.\/|\.\/)+/, "")})`;
       }
       return `![](${resolvedPath})`;
+    })
+    .replace(XWIKI_TILDE_ESCAPE_RE, "")
+    .replace(XWIKI_BACKSLASH_LINE_RE, "")
+    .replace(XWIKI_EXTERNAL_LINK_RE, (_match, label: string, url: string) => {
+      const cleanLabel = label.replace(/!\[[^\]]*\]\([^)]+\)/g, "").replace(/~\[[^\]]*~\]/g, "").trim();
+      return cleanLabel ? `[${cleanLabel}](${url})` : url;
     })
     .replace(STANDALONE_BANG_RE, "")
     .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {

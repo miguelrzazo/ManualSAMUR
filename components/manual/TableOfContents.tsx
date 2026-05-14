@@ -25,7 +25,7 @@ export function TableOfContents({ articleId = "procedure-content", pageTitle, co
     const article = document.getElementById(articleId);
     if (!article) return;
 
-    const elements = Array.from(article.querySelectorAll("[data-manual-body] h2, [data-manual-body] h3")) as HTMLElement[];
+    const elements = Array.from(article.querySelectorAll("h2, h3")) as HTMLElement[];
     const parsed = elements
       .filter((el) => el.id)
       .map((el) => ({

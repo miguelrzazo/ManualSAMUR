@@ -47,8 +47,10 @@ import { ProcedureNav } from "@/components/manual/ProcedureNav";
 import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
 import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import { ProcedureReferences } from "@/components/manual/ProcedureReferences";
+import { ContentDiff } from "@/components/manual/ContentDiff";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 import type { ProcedureRelation } from "@/lib/manual-data";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
@@ -273,6 +275,20 @@ export default async function ProcedurePage({ params }: Props) {
           </details>
         )}
 
+        {/* Recent update badge — only when event < 30 days */}
+        {(() => {
+          const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+          const recent = updateEvents.find((e) => e.effectiveDate >= cutoff);
+          if (!recent) return null;
+          return (
+            <ContentDiff
+              changeKind={recent.changeKind as "nuevo" | "revisado" | "actualizado" | "sync"}
+              changedAt={recent.effectiveDate}
+              summary={recent.summary}
+            />
+          );
+        })()}
+
         <ProcedureReferences
           drugs={citedDrugs}
           codes={procedureReferenceEntry?.codeRefs ?? []}
@@ -283,23 +299,28 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
 
         {/* MDX Content */}
-        <div data-manual-body className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
-          prose-headings:font-semibold prose-headings:tracking-tight prose-headings:scroll-mt-24
-          prose-h2:text-2xl md:prose-h2:text-[1.7rem] prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-3
-          prose-h3:text-lg md:prose-h3:text-[1.15rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/90
+        <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
+          prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-24
+          prose-h2:text-[1.5rem] md:prose-h2:text-[1.85rem] prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-border/70 prose-h2:pb-3 prose-h2:leading-snug
+          prose-h3:text-[1.15rem] md:prose-h3:text-[1.25rem] prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-foreground/90 prose-h3:font-semibold
+          prose-h4:text-base prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-semibold prose-h4:text-foreground/80
           prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-4
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-          prose-img:mx-auto prose-img:block prose-img:rounded-xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm
+          prose-img:mx-auto prose-img:block prose-img:rounded-xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm prose-img:my-6
           prose-figure:my-10
-          prose-table:text-sm prose-table:my-8 prose-table:overflow-hidden prose-table:rounded-xl
-          prose-thead:bg-muted/50
-          prose-th:px-3 prose-th:py-2 prose-th:font-semibold prose-th:text-left
-          prose-td:px-3 prose-td:py-2
-          prose-tr:border-b prose-tr:border-border/40
-          prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
-          prose-pre:bg-muted prose-pre:border prose-pre:border-border/60
-          prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-md prose-blockquote:px-4 prose-blockquote:py-2
-          prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6 prose-li:leading-7 prose-li:my-2 prose-li:marker:text-muted-foreground
+          [&_table]:text-sm [&_table]:my-8 [&_table]:w-full [&_table]:border [&_table]:border-border/50 [&_table]:rounded-xl [&_table]:overflow-hidden
+          [&_thead]:bg-muted/60
+          [&_th]:px-3 [&_th]:py-2.5 [&_th]:font-semibold [&_th]:text-left [&_th]:border-b [&_th]:border-border/60
+          [&_td]:px-3 [&_td]:py-2
+          [&_tr]:border-b [&_tr]:border-border/30 [&_tbody_tr:last-child]:border-0
+          [&_tbody_tr:nth-child(even)]:bg-muted/20
+          prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono
+          prose-pre:bg-muted prose-pre:border prose-pre:border-border/60 prose-pre:rounded-xl
+          prose-blockquote:border-l-4 prose-blockquote:border-primary/40 prose-blockquote:bg-muted/40 prose-blockquote:rounded-r-xl prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:not-italic
+          [&_ul]:my-5 [&_ul]:list-disc [&_ul]:pl-7 [&_ol]:my-5 [&_ol]:list-decimal [&_ol]:pl-7
+          [&_li]:leading-7 [&_li]:my-1.5 [&_li]:text-foreground/90
+          [&_li>ul]:mt-1.5 [&_li>ol]:mt-1.5
+          [&_hr]:my-8 [&_hr]:border-border/50
         ">
           {groupedEditorialBlocks ? (
             <>
@@ -317,7 +338,7 @@ export default async function ProcedurePage({ params }: Props) {
                     <MDXRemote
                       source={section.content}
                       components={mdxComponents}
-                      options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+                      options={{ mdxOptions: { remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug] } }}
                     />
                   ) : null}
                   {groupedEditorialBlocks.bySection[section.key]?.after.map((block) => (
@@ -343,7 +364,7 @@ export default async function ProcedurePage({ params }: Props) {
             <MDXRemote
               source={procedure.content}
               components={mdxComponents}
-              options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+              options={{ mdxOptions: { remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug] } }}
             />
           )}
         </div>
