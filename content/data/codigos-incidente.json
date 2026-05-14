@@ -78,6 +78,12 @@
     "description": "Agresión sin armas o con puños/patadas"
   },
   {
+    "code": "2.4.1",
+    "name": "Agresión por spray de autodefensa",
+    "category": "Traumáticos",
+    "description": "Agresión mediante spray de autodefensa"
+  },
+  {
     "code": "2.5",
     "name": "Arma blanca",
     "category": "Traumáticos",
@@ -675,5 +681,65 @@
     "name": "Violencia sexual Niños, Niñas y Adolescentes",
     "category": "Especificos",
     "description": "Asistencia a víctima de violencia sexual (menor)"
+  },
+  {
+    "code": "15.1",
+    "name": "Atención psicológica a la víctima primaria",
+    "category": "Psicológicos",
+    "description": "Intervención psicológica con la víctima directa del incidente"
+  },
+  {
+    "code": "15.2",
+    "name": "Atención psicológica a familiares y allegados",
+    "category": "Psicológicos",
+    "description": "Intervención psicológica con familiares y personas allegadas a la víctima"
+  },
+  {
+    "code": "15.3",
+    "name": "Atención psicológica a implicados",
+    "category": "Psicológicos",
+    "description": "Intervención psicológica con personas implicadas en el incidente"
+  },
+  {
+    "code": "15.4",
+    "name": "Atención psicológica a testigos",
+    "category": "Psicológicos",
+    "description": "Intervención psicológica con testigos del incidente"
+  },
+  {
+    "code": "15.5",
+    "name": "Atención psicológica a intervinientes de SAMUR-Protección Civil",
+    "category": "Psicológicos",
+    "description": "Apoyo psicológico a personal de SAMUR-Protección Civil"
+  },
+  {
+    "code": "15.6",
+    "name": "Atención psicológica a intervinientes de Cuerpos y Fuerzas de Seguridad",
+    "category": "Psicológicos",
+    "description": "Apoyo psicológico a personal de Cuerpos y Fuerzas de Seguridad"
+  },
+  {
+    "code": "15.7",
+    "name": "Atención psicológica a intervinientes de Bomberos",
+    "category": "Psicológicos",
+    "description": "Apoyo psicológico a personal de Bomberos"
+  },
+  {
+    "code": "15.8",
+    "name": "Programa de Sensibilización y Reeducación vial",
+    "category": "Psicológicos",
+    "description": "Participación en programa de sensibilización y reeducación vial"
+  },
+  {
+    "code": "15.9",
+    "name": "Colaboración del Romeo en el suceso sin paciente «in situ»",
+    "category": "Psicológicos",
+    "description": "Colaboración del psicólogo de guardia en el suceso sin presencia física"
+  },
+  {
+    "code": "15.10",
+    "name": "Activación/Presencia del Romeo en situación de preventivo",
+    "category": "Psicológicos",
+    "description": "Activación o presencia del psicólogo de guardia en servicio preventivo"
   }
 ]
