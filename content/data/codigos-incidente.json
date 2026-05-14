@@ -741,5 +741,17 @@
     "name": "Activación/Presencia del Romeo en situación de preventivo",
     "category": "Psicológicos",
     "description": "Activación o presencia del psicólogo de guardia en servicio preventivo"
+  },
+  {
+    "code": "16.1",
+    "name": "Colaboración de URO en una actuación",
+    "category": "Colaboraciones",
+    "description": "Intervención del vehículo de mantenimiento (URO) en una actuación"
+  },
+  {
+    "code": "17.1",
+    "name": "Colaboración de Foxtrot en una actuación",
+    "category": "Colaboraciones",
+    "description": "Intervención de la farmacia móvil (Foxtrot) en una actuación"
   }
 ]
