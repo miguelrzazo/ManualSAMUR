@@ -68,11 +68,24 @@ function renderHighlightedSnippet(result: SearchResult): ReactNode {
   return parts;
 }
 
+const FILTER_PREFIXES: Record<string, string> = { ":p": "procedure", ":c": "code", ":v": "drug" };
+const FILTER_LABELS: Record<string, string> = { ":p": "Procedimientos", ":c": "Códigos", ":v": "Medicamentos" };
+
+function parseQuery(raw: string): { term: string; filter: string | null } {
+  for (const [prefix, type] of Object.entries(FILTER_PREFIXES)) {
+    if (raw.startsWith(prefix + " ") || raw === prefix) {
+      return { term: raw.slice(prefix.length).trimStart(), filter: type };
+    }
+  }
+  return { term: raw, filter: null };
+}
+
 export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { term, filter } = parseQuery(query);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<{ drugs: any[]; codes: any[]; hospitals: any[] } | null>(null);
@@ -136,14 +149,14 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
 
   useEffect(() => {
     const performSearch = async () => {
-      if (!query.trim() || !data) {
+      if (!term.trim() || !data) {
         setResults([]);
         return;
       }
       setIsLoading(true);
       try {
-        const searchResults = await globalSearch(query, procedures, data.drugs, data.codes, data.hospitals);
-        setResults(searchResults);
+        const searchResults = await globalSearch(term, procedures, data.drugs, data.codes, data.hospitals);
+        setResults(filter ? searchResults.filter((r) => r.type === filter) : searchResults);
       } catch (error) {
         console.error("Search failed:", error);
         setResults([]);
@@ -154,7 +167,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
 
     const id = setTimeout(performSearch, 150);
     return () => clearTimeout(id);
-  }, [query, data, procedures]);
+  }, [term, filter, data, procedures]);
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, result) => {
     if (!acc[result.type]) acc[result.type] = [];
@@ -194,21 +207,36 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
       commandProps={{ shouldFilter: false }}
       className="sm:max-w-lg"
     >
-      <CommandInput
-        placeholder="Buscar procedimientos, medicamentos, códigos..."
-        value={query}
-        onValueChange={setQuery}
-      />
+      <div className="flex items-center border-b border-border/50">
+        {filter && (
+          <span className={`ml-3 flex-shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+            filter === "procedure" ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
+            : filter === "code" ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300"
+            : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+          }`}>
+            {filter === "procedure" ? "Procedimientos" : filter === "code" ? "Códigos" : "Medicamentos"}
+          </span>
+        )}
+        <CommandInput
+          placeholder={filter
+            ? `Buscar en ${filter === "procedure" ? "procedimientos" : filter === "code" ? "códigos" : "medicamentos"}...`
+            : "Buscar... (:p proc · :c códigos · :v medicamentos)"}
+          value={query}
+          onValueChange={setQuery}
+          className="border-0 focus:ring-0"
+        />
+      </div>
       <CommandList>
         {isLoading && (
           <div className="p-4 text-center text-sm text-muted-foreground">Buscando...</div>
         )}
-        {!isLoading && query.length >= 2 && results.length === 0 && (
-          <CommandEmpty>Sin resultados para &quot;{query}&quot;</CommandEmpty>
+        {!isLoading && term.length >= 2 && results.length === 0 && (
+          <CommandEmpty>Sin resultados para &quot;{term}&quot;</CommandEmpty>
         )}
-        {!isLoading && query.length < 2 && !results.length && (
-          <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-            Escribe para buscar en procedimientos, medicamentos y códigos
+        {!isLoading && term.length < 2 && !results.length && (
+          <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+            <p>Escribe para buscar en procedimientos, medicamentos y códigos.</p>
+            <p className="mt-2 text-xs opacity-70">Filtra con: <code className="bg-muted px-1 rounded">:p</code> proc · <code className="bg-muted px-1 rounded">:c</code> códigos · <code className="bg-muted px-1 rounded">:v</code> medicamentos</p>
           </div>
         )}
         {Object.entries(grouped).map(([type, items]) => (

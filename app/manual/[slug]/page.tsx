@@ -310,10 +310,6 @@ export default async function ProcedurePage({ params }: Props) {
           );
         })()}
 
-        <ProcedureReferences
-          drugs={citedDrugs}
-          codes={procedureReferenceEntry?.codeRefs ?? []}
-        />
         {/* Mobile TOC — collapsible, below header */}
         <div className="lg:hidden mb-4" data-print-hide>
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />

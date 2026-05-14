@@ -3,7 +3,7 @@
 > Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
-Generado: 2026-05-14T11:22:41.871Z
+Generado: 2026-05-14T11:31:34.157Z
 Total procedimientos: 230
 
 ---

@@ -216,13 +216,17 @@ export function MermaidDiagram({ chart, title }: { chart: string; title?: string
 }
 
 export function DrugLink({ name }: { name: string }) {
+  // Reinsert spaces lost when camelCase IDs are used as display names
+  const displayName = name
+    .replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, "$1 $2")
+    .replace(/([0-9])([A-ZÁÉÍÓÚÜÑ])/g, "$1 $2");
   return (
     <Link
       href={buildVademecumHref(name)}
       className="inline-flex items-center gap-0.5 text-primary font-medium hover:underline underline-offset-2"
     >
       <Pill className="h-3 w-3 opacity-50 flex-shrink-0" />
-      {name}
+      {displayName}
     </Link>
   );
 }

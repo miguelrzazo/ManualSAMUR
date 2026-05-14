@@ -466,6 +466,7 @@ export function normalizeProcedureContent(
     })
     .replace(STANDALONE_BANG_RE, "")
     .replace(/^[*\-]\s*$/gm, "")
+    .replace(/\*\*([^*\n]+:)\*\*([^\s*\n])/g, "**$1** $2")
     .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {
       const cleanLabel = label.trim();
       const resolvedHref = resolveRelativeUrl(href, sourceUrl);
