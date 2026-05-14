@@ -344,61 +344,61 @@
   {
     "code": "5.1",
     "name": "Orden judicial",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Traslado por orden judicial o médica"
   },
   {
     "code": "5.2",
     "name": "Orden médica",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Traslado por orden judicial o médica"
   },
   {
     "code": "5.3",
     "name": "Orden médica urgente / paciente muy agresivo",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Traslado por orden judicial o médica"
   },
   {
     "code": "5.4",
     "name": "Certificación psiquiátrica",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Evaluación para certificación psiquiátrica"
   },
   {
     "code": "5.5",
     "name": "Problema social",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Servicio de contenido principalmente social"
   },
   {
     "code": "5.6",
     "name": "Huelga de hambre",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Servicio de contenido principalmente social"
   },
   {
     "code": "5.7",
     "name": "Violencia de género",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Víctima de violencia de género"
   },
   {
     "code": "5.8",
     "name": "Maltrato infantil",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Sospecha o confirmación de maltrato a menor"
   },
   {
     "code": "5.9",
     "name": "Maltrato a persona mayor",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Sospecha o confirmación de maltrato a persona mayor"
   },
   {
     "code": "5.10",
     "name": "Desamparo sobrevenido persona dependiente",
-    "category": "Psiquiátricos",
+    "category": "Sociosanitario",
     "description": "Situación de desamparo sobrevenido en persona dependiente"
   },
   {
@@ -745,13 +745,13 @@
   {
     "code": "16.1",
     "name": "Colaboración de URO en una actuación",
-    "category": "Colaboraciones",
+    "category": "URO",
     "description": "Intervención del vehículo de mantenimiento (URO) en una actuación"
   },
   {
     "code": "17.1",
     "name": "Colaboración de Foxtrot en una actuación",
-    "category": "Colaboraciones",
+    "category": "FOXTROT",
     "description": "Intervención de la farmacia móvil (Foxtrot) en una actuación"
   }
 ]
