@@ -18,6 +18,7 @@ interface Code {
   group: string;
   category?: string;
   description?: string;
+  _source?: string;
 }
 
 interface Hospital {
@@ -34,6 +35,7 @@ export interface SearchResult {
   title: string;
   subtitle?: string;
   badge?: string;
+  source?: string;
   href: string;
   searchText: string;
   score: number;
@@ -183,6 +185,7 @@ function mapCodeResult(query: string, result: FuseResult<Code>): SearchResult {
     title: result.item.name,
     subtitle: result.item.group,
     badge: result.item.code,
+    source: result.item._source,
     href: "/codigos",
     searchText: `${result.item.code} ${result.item.name} ${result.item.group}`,
     score: computeCommonScore(

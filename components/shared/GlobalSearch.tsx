@@ -132,8 +132,8 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           ...pc.default,
           ...icao.default,
           ...lima.default,
-          ...sva.default,
-          ...svb.default,
+          ...sva.default.map((c: Record<string, unknown>) => ({ ...c, _source: "SVA" })),
+          ...svb.default.map((c: Record<string, unknown>) => ({ ...c, _source: "SVB" })),
           ...upsi.default,
           ...upsq.default,
         ];
@@ -269,6 +269,11 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
                       </div>
                     )}
                   </div>
+                  {result.source && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide flex-shrink-0 ${result.source === "SVA" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"}`}>
+                      {result.source}
+                    </span>
+                  )}
                   {result.badge && (
                     <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex-shrink-0 font-mono">
                       {result.badge}
