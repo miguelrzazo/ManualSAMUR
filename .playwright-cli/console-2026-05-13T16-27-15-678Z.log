@@ -1,0 +1,11 @@
+[    3646ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    3727ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    3847ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    3967ms] [LOG] [Fast Refresh] done in 223ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    4490ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    4585ms] [LOG] [Fast Refresh] done in 195ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[   46624ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=3S85dUO9ITG4qFp5qWbPO' failed:  @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299
+[   47627ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=3S85dUO9ITG4qFp5qWbPO' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299
+[   48630ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=3S85dUO9ITG4qFp5qWbPO' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299
+[   49633ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=3S85dUO9ITG4qFp5qWbPO' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299
+[   50634ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=3S85dUO9ITG4qFp5qWbPO' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299

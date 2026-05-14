@@ -76,10 +76,18 @@ jobs:
             content/data/manual-sync.json
             content/data/manual-updates.json
             /tmp/manual-update-report.md
+            content/data/manual-history.json
 
       - name: Print quick summary
         run: |
+          echo "=== Sync summary ==="
           node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync("content/data/manual-sync.json","utf8"));const run=data.runs?.[0];console.log(JSON.stringify({lastSyncAt:data.lastSyncAt,pendingChanges:data.pendingChanges?.length??0,runSummary:run?.summary??{}},null,2));'
+          echo ""
+          echo "=== History entries ==="
+          node -e 'const fs=require("fs");try{const h=JSON.parse(fs.readFileSync("content/data/manual-history.json","utf8"));console.log(`${h.entries?.length??0} history entries, generated: ${h.generatedAt}`);}catch{console.log("No history file yet");}'
+          echo ""
+          echo "=== Missing codes check (8.x) ==="
+          node -e 'const fs=require("fs");const codes=JSON.parse(fs.readFileSync("content/data/codigos-incidente.json","utf8"));const eights=codes.filter(c=>String(c.code).startsWith("8"));console.log("8.x codes:",eights.map(c=>c.code).join(", "));'
 
       - name: Create review pull request
         uses: peter-evans/create-pull-request@v6

@@ -1,0 +1,635 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "S SAMUR Manual" [ref=e4] [cursor=pointer]:
+        - /url: /manual
+        - generic [ref=e6]: S
+        - generic [ref=e7]: SAMUR Manual
+      - navigation [ref=e8]:
+        - link "Manual" [ref=e9] [cursor=pointer]:
+          - /url: /manual
+          - img [ref=e10]
+          - text: Manual
+        - link "Códigos" [ref=e12] [cursor=pointer]:
+          - /url: /codigos
+          - img [ref=e13]
+          - text: Códigos
+        - link "Vademécum" [ref=e17] [cursor=pointer]:
+          - /url: /vademecum
+          - img [ref=e18]
+          - text: Vademécum
+        - link "Mapa" [ref=e20] [cursor=pointer]:
+          - /url: /mapa
+          - img [ref=e21]
+          - text: Mapa
+      - generic [ref=e23]:
+        - button "Buscar... ⌘K" [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: Buscar...
+          - generic [ref=e28]: ⌘K
+        - link "Abreviaturas" [ref=e29] [cursor=pointer]:
+          - /url: /abreviaturas
+          - img [ref=e30]
+        - button "Menú" [ref=e33]:
+          - img [ref=e34]
+        - heading "Acerca de SAMUR Manual" [level=2] [ref=e39]
+        - button "Cambiar tema" [ref=e40]:
+          - img [ref=e41]
+          - generic [ref=e47]: Cambiar tema
+    - generic [ref=e48]:
+      - heading "Command Palette" [level=2] [ref=e49]
+      - paragraph [ref=e50]: Search for a command to run...
+    - main [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e54]:
+          - generic [ref=e55]: ">>>> EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL <<<<"
+          - generic [ref=e56]: ">>>> EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL <<<<"
+        - generic [ref=e57]:
+          - complementary [ref=e58]:
+            - navigation [ref=e60]:
+              - button "Administrativos 4" [ref=e62]:
+                - generic [ref=e64]: Administrativos
+                - generic [ref=e65]: "4"
+                - img [ref=e66]
+              - button "Comunicaciones 13" [ref=e69]:
+                - generic [ref=e71]: Comunicaciones
+                - generic [ref=e72]: "13"
+                - img [ref=e73]
+              - button "Operativos 44" [ref=e76]:
+                - generic [ref=e78]: Operativos
+                - generic [ref=e79]: "44"
+                - img [ref=e80]
+              - button "DRP 4" [ref=e83]:
+                - generic [ref=e85]: DRP
+                - generic [ref=e86]: "4"
+                - img [ref=e87]
+              - button "Intervinientes 4" [ref=e90]:
+                - generic [ref=e92]: Intervinientes
+                - generic [ref=e93]: "4"
+                - img [ref=e94]
+              - generic [ref=e96]:
+                - button "SVA 67" [ref=e97]:
+                  - generic [ref=e99]: SVA
+                  - generic [ref=e100]: "67"
+                  - img [ref=e101]
+                - generic [ref=e103]:
+                  - generic [ref=e105]:
+                    - button "Reanimación y vía aérea 7" [ref=e106]:
+                      - img [ref=e107]
+                      - generic [ref=e109]: Reanimación y vía aérea
+                      - generic [ref=e110]: "7"
+                    - generic [ref=e111]:
+                      - link "301 PARADA CARDIORRESPIRATORIA" [ref=e112] [cursor=pointer]:
+                        - /url: /manual/301-parada-cardiorrespiratoria
+                        - generic [ref=e113]: "301"
+                        - generic [ref=e114]: PARADA CARDIORRESPIRATORIA
+                      - link "301a Cuidados postparada" [ref=e115] [cursor=pointer]:
+                        - /url: /manual/301a-cuidados-postparada
+                        - generic [ref=e116]: 301a
+                        - generic [ref=e117]: Cuidados postparada
+                      - link "301b PCR Traumática" [ref=e118] [cursor=pointer]:
+                        - /url: /manual/301b-pcr-traumatica
+                        - generic [ref=e119]: 301b
+                        - generic [ref=e120]: PCR Traumática
+                      - link "302 Manejo avanzado de vía aérea" [ref=e121] [cursor=pointer]:
+                        - /url: /manual/302-manejo-avanzado-de-via-aerea
+                        - generic [ref=e122]: "302"
+                        - generic [ref=e123]: Manejo avanzado de vía aérea
+                      - link "302a Manejo de la vía aérea difícil" [ref=e124] [cursor=pointer]:
+                        - /url: /manual/302a-manejo-de-la-via-aerea-dificil
+                        - generic [ref=e125]: 302a
+                        - generic [ref=e126]: Manejo de la vía aérea difícil
+                      - link "303 Analgesia y sedación" [ref=e127] [cursor=pointer]:
+                        - /url: /manual/303-analgesia-y-sedacion
+                        - generic [ref=e128]: "303"
+                        - generic [ref=e129]: Analgesia y sedación
+                      - link "316 Reacción alérgica" [ref=e130] [cursor=pointer]:
+                        - /url: /manual/316-reaccion-alergica
+                        - generic [ref=e131]: "316"
+                        - generic [ref=e132]: Reacción alérgica
+                  - generic [ref=e133]:
+                    - button "Urgencias traumatológicas 9" [ref=e135]:
+                      - img [ref=e136]
+                      - generic [ref=e138]: Urgencias traumatológicas
+                      - generic [ref=e139]: "9"
+                    - button "Urgencias digestivas 2" [ref=e141]:
+                      - img [ref=e142]
+                      - generic [ref=e144]: Urgencias digestivas
+                      - generic [ref=e145]: "2"
+                    - button "Urgencias neurológicas 7" [ref=e147]:
+                      - img [ref=e148]
+                      - generic [ref=e150]: Urgencias neurológicas
+                      - generic [ref=e151]: "7"
+                    - button "Urgencias nefrourológicas 2" [ref=e153]:
+                      - img [ref=e154]
+                      - generic [ref=e156]: Urgencias nefrourológicas
+                      - generic [ref=e157]: "2"
+                    - button "Urgencias obstétricas 2" [ref=e159]:
+                      - img [ref=e160]
+                      - generic [ref=e162]: Urgencias obstétricas
+                      - generic [ref=e163]: "2"
+                    - button "Urgencias cardiovasculares 10" [ref=e165]:
+                      - img [ref=e166]
+                      - generic [ref=e168]: Urgencias cardiovasculares
+                      - generic [ref=e169]: "10"
+                    - button "Urgencias respiratorias 3" [ref=e171]:
+                      - img [ref=e172]
+                      - generic [ref=e174]: Urgencias respiratorias
+                      - generic [ref=e175]: "3"
+                    - button "Urgencias psiquiátricas 1" [ref=e177]:
+                      - img [ref=e178]
+                      - generic [ref=e180]: Urgencias psiquiátricas
+                      - generic [ref=e181]: "1"
+                    - button "Urgencias endocrino-metabólicas 5" [ref=e183]:
+                      - img [ref=e184]
+                      - generic [ref=e186]: Urgencias endocrino-metabólicas
+                      - generic [ref=e187]: "5"
+                    - button "Urgencias por agentes físicos 5" [ref=e189]:
+                      - img [ref=e190]
+                      - generic [ref=e192]: Urgencias por agentes físicos
+                      - generic [ref=e193]: "5"
+                    - button "Urgencias pediátricas 10" [ref=e195]:
+                      - img [ref=e196]
+                      - generic [ref=e198]: Urgencias pediátricas
+                      - generic [ref=e199]: "10"
+                    - button "Intoxicaciones 3" [ref=e201]:
+                      - img [ref=e202]
+                      - generic [ref=e204]: Intoxicaciones
+                      - generic [ref=e205]: "3"
+                    - button "Otras urgencias 1" [ref=e207]:
+                      - img [ref=e208]
+                      - generic [ref=e210]: Otras urgencias
+                      - generic [ref=e211]: "1"
+              - button "SVB 19" [ref=e213]:
+                - generic [ref=e215]: SVB
+                - generic [ref=e216]: "19"
+                - img [ref=e217]
+              - button "Psicológicos 9" [ref=e220]:
+                - generic [ref=e222]: Psicológicos
+                - generic [ref=e223]: "9"
+                - img [ref=e224]
+              - button "Técnicas 66" [ref=e227]:
+                - generic [ref=e229]: Técnicas
+                - generic [ref=e230]: "66"
+                - img [ref=e231]
+          - generic [ref=e234]:
+            - article [ref=e235]:
+              - navigation "Breadcrumb" [ref=e236]:
+                - link "Manual" [ref=e238] [cursor=pointer]:
+                  - /url: /manual
+                - generic [ref=e239]:
+                  - img [ref=e240]
+                  - link "SVA" [ref=e242] [cursor=pointer]:
+                    - /url: /manual?section=SVA
+                - generic [ref=e243]:
+                  - img [ref=e244]
+                  - link "Soporte vital y vía aérea" [ref=e246] [cursor=pointer]:
+                    - /url: /manual?section=SVA&group=Soporte%20vital%20y%20v%C3%ADa%20a%C3%A9rea
+                - generic [ref=e247]:
+                  - img [ref=e248]
+                  - link "Reanimación y vía aérea" [ref=e250] [cursor=pointer]:
+                    - /url: /manual?section=SVA&group=Soporte%20vital%20y%20v%C3%ADa%20a%C3%A9rea&subgroup=Reanimaci%C3%B3n%20y%20v%C3%ADa%20a%C3%A9rea
+              - generic [ref=e251]:
+                - generic [ref=e252]:
+                  - generic [ref=e253]: "301"
+                  - generic [ref=e254]: Sva
+                  - generic [ref=e255]:
+                    - img [ref=e256]
+                    - text: Rev. 2026-04-27
+                  - generic [ref=e258]:
+                    - img [ref=e259]
+                    - text: Sync 2026-04-27
+                - generic [ref=e261]:
+                  - generic [ref=e262]:
+                    - heading "PARADA CARDIORRESPIRATORIA" [level=1] [ref=e263]
+                    - generic [ref=e264]:
+                      - generic [ref=e265]: SVA
+                      - generic [ref=e266]: PCR
+                      - generic [ref=e267]: Intubación
+                  - generic [ref=e268]:
+                    - button "Imprimir" [ref=e269]:
+                      - img [ref=e270]
+                      - text: Imprimir
+                    - button "Añadir a favoritos" [ref=e274]:
+                      - img [ref=e275]
+              - generic [ref=e277]:
+                - generic [ref=e278]:
+                  - heading "Referencias operativas" [level=2] [ref=e279]
+                  - generic [ref=e280]: "7"
+                - generic [ref=e281]:
+                  - link "Adrenalina" [ref=e282] [cursor=pointer]:
+                    - /url: /vademecum?farmaco=adrenalina
+                    - img [ref=e283]
+                    - text: Adrenalina
+                  - link "Cloruro potásico" [ref=e286] [cursor=pointer]:
+                    - /url: /vademecum?farmaco=cloruro-potasico
+                    - img [ref=e287]
+                    - text: Cloruro potásico
+                  - link "Gluconato Cálcico" [ref=e290] [cursor=pointer]:
+                    - /url: /vademecum?farmaco=gluconato-calcico
+                    - img [ref=e291]
+                    - text: Gluconato Cálcico
+                  - link "Código 9" [ref=e294] [cursor=pointer]:
+                    - /url: /codigos?tab=incidente&code=9
+                    - img [ref=e295]
+                    - text: Código 9
+                  - link "Código 9" [ref=e298] [cursor=pointer]:
+                    - /url: /codigos?tab=upsi&code=AP.4.0
+                    - img [ref=e299]
+                    - text: Código 9
+                  - link "Código 9" [ref=e302] [cursor=pointer]:
+                    - /url: /codigos?tab=otros&subtab=icao&code=9
+                    - img [ref=e303]
+                    - text: Código 9
+                  - link "Código 9" [ref=e306] [cursor=pointer]:
+                    - /url: /codigos?tab=otros&subtab=claves&code=9
+                    - img [ref=e307]
+                    - text: Código 9
+              - generic [ref=e310]:
+                - generic [ref=e311]:
+                  - generic [ref=e312]:
+                    - generic [ref=e313]:
+                      - img [ref=e315]
+                      - paragraph [ref=e318]: Resumen Operativo
+                      - generic [ref=e320]: Material Operativo Añadido
+                    - generic [ref=e321]:
+                      - generic [ref=e322]: Iniciar RCP de alta calidad en ciclos de 2 minutos y confirmar el ritmo sin demoras evitables.
+                      - generic [ref=e323]: Asegurar vía aérea, ventilación y monitorización con foco en ETCO2, SatO2 y ECG.
+                      - generic [ref=e324]: Canalizar acceso vascular precoz y usar vía intraósea si la periférica no está disponible.
+                      - generic [ref=e325]: Tratar causas reversibles durante la reanimación y sostener la reevaluación clínica y metabólica.
+                      - generic [ref=e326]: La decisión de continuar o parar la reanimación se basa en oportunidad y beneficio, no solo en tiempo.
+                  - paragraph [ref=e327]:
+                    - strong [ref=e328]: Última modificación el 27/04/2026
+                  - paragraph [ref=e329]:
+                    - link "Ver Anexo - Algoritmo SVA Adulto" [ref=e330] [cursor=pointer]:
+                      - /url: /docs/procedures/301/301_algoritmo_SVA.pdf
+                      - text: Ver Anexo - Algoritmo SVA Adulto
+                      - img [ref=e331]
+                    - text: ). Véase procedimiento de PCR en hipotermia accidental.
+                  - list [ref=e335]:
+                    - listitem [ref=e336]:
+                      - text: "Ausencia de contraindicaciones evidentes:"
+                      - list [ref=e337]:
+                        - listitem [ref=e338]: Conocida enfermedad concomitante que compromete su pronóstico a corto plazo.
+                        - listitem [ref=e339]: Deseo conocido de no RCP.
+                    - listitem [ref=e340]: PCR presenciada por testigos.
+                    - listitem [ref=e341]: Haber recibido maniobras de reanimación básica tras la parada, por testigos o por las unidades de SAMUR -Protección Civil, en un tiempo no superior a los 5 minutos desde que se produjo la parada cardiaca.
+                    - listitem [ref=e342]: pH inicial en la primera muestra sanguínea de > 7,10.
+                    - listitem [ref=e343]: Tiempo estimado desde el inicio de la PCR hasta la llegada al Laboratorio de Hemodinámica < 45 minutos (Objetivo PCR-inicio ECMO en <60 min).
+                    - listitem [ref=e344]: ETCO2 por encima de 10 mm Hg en el momento de la inclusión.
+                  - paragraph [ref=e345]: Se cumplimentará la HCE (historia clínica electrónica) con el apartado de ECMO correspondiente y utilizando el código patológico C.0.2 (PCR ECMO).
+                  - generic [ref=e346]:
+                    - generic [ref=e347]:
+                      - img [ref=e349]
+                      - paragraph [ref=e352]: Lectura Editorial
+                      - generic [ref=e354]: Material Operativo Añadido
+                    - paragraph [ref=e356]: Esta página conserva el texto original del manual como fuente canónica y mezcla objetos operativos junto a los apartados donde aportan contexto. Los anexos originales se muestran como objetos navegables y el índice lateral sigue reflejando únicamente la estructura del documento fuente.
+                  - generic [ref=e357]:
+                    - generic [ref=e358]:
+                      - img [ref=e360]
+                      - paragraph [ref=e362]: Adjuntos Originales
+                      - generic [ref=e364]: Adjuntos Originales
+                    - link "Algoritmo SVA adulto PDF oficial asociado al procedimiento. PDF" [ref=e366] [cursor=pointer]:
+                      - /url: /docs/procedures/301/301_algoritmo_SVA.pdf
+                      - generic [ref=e367]:
+                        - paragraph [ref=e368]: Algoritmo SVA adulto
+                        - paragraph [ref=e369]: PDF oficial asociado al procedimiento.
+                      - generic [ref=e370]:
+                        - generic [ref=e371]: PDF
+                        - img [ref=e372]
+                - generic [ref=e375]:
+                  - generic [ref=e376]:
+                    - generic [ref=e377]:
+                      - img [ref=e379]
+                      - paragraph [ref=e384]: Cheatsheet De Secuencia
+                      - generic [ref=e386]: Material Operativo Añadido
+                    - generic [ref=e387]:
+                      - generic [ref=e388]: RCP 2 min o 5 ciclos 30:2 antes de la nueva comprobación de ritmo.
+                      - generic [ref=e389]: Pulso solo si aparece ritmo organizado y siempre en menos de 10 segundos.
+                      - generic [ref=e390]: ETCO2 para confirmar TET y para reevaluar la calidad de la reanimación.
+                      - generic [ref=e391]: "Analítica inicial: pH, EB, K+ y glucemia entre otras determinaciones."
+                      - generic [ref=e392]: Adrenalina 1 mg iv/io cada 3 a 5 min con bolo posterior de suero.
+                  - heading "Ritmos no desfibrilables" [level=2] [ref=e393]:
+                    - strong [ref=e394]: Ritmos no desfibrilables
+                  - generic [ref=e396]:
+                    - img [ref=e398]
+                    - paragraph [ref=e403]: Lectura Rápida Del Flujo
+                    - generic [ref=e405]: Material Operativo Añadido
+                - generic [ref=e408]:
+                  - generic [ref=e409]:
+                    - generic [ref=e410]:
+                      - img [ref=e412]
+                      - paragraph [ref=e416]: Checklist De Intervención
+                      - generic [ref=e418]: Material Operativo Añadido
+                    - generic [ref=e419]:
+                      - generic [ref=e420]:
+                        - img [ref=e421]
+                        - generic [ref=e424]: Lista de verificación
+                        - generic [ref=e425]: 0/6
+                      - list [ref=e426]:
+                        - listitem [ref=e427] [cursor=pointer]:
+                          - img [ref=e428]
+                          - generic [ref=e430]: Compresiones torácicas según estándar de RCP.
+                        - listitem [ref=e431] [cursor=pointer]:
+                          - img [ref=e432]
+                          - generic [ref=e434]: Ventilación con reservorio y oxígeno a alto flujo.
+                        - listitem [ref=e435] [cursor=pointer]:
+                          - img [ref=e436]
+                          - generic [ref=e438]: Confirmación del TET con ETCO2 si se intuba.
+                        - listitem [ref=e439] [cursor=pointer]:
+                          - img [ref=e440]
+                          - generic [ref=e442]: Acceso vascular periférico o intraóseo.
+                        - listitem [ref=e443] [cursor=pointer]:
+                          - img [ref=e444]
+                          - generic [ref=e446]: Monitorización ECG, SatO2 y ETCO2.
+                        - listitem [ref=e447] [cursor=pointer]:
+                          - img [ref=e448]
+                          - generic [ref=e450]: Analítica inicial y reevaluación de causas reversibles.
+                  - heading "Actividad eléctrica sin pulso (AESP) o asistolia." [level=3] [ref=e451]:
+                    - strong [ref=e452]: Actividad eléctrica sin pulso (AESP) o asistolia.
+                  - list:
+                    - listitem
+                  - paragraph [ref=e453]:
+                    - text: Inicie compresiones torácicas conforme a estándares de
+                    - strong [ref=e454]: RCP durante 2 minutos o
+                    - text: 5 ciclos de 30:2.
+                  - list [ref=e455]:
+                    - listitem [ref=e456]:
+                      - paragraph [ref=e457]: Si aparece un ritmo organizado tras el ciclo de 2 minutos, compruebe la presencia de pulso (sin emplear más de 10 sg).
+                    - listitem [ref=e458]:
+                      - paragraph [ref=e459]: Abra la vía aérea y ventile con balón de reanimación conectado a reservorio con O2 (oxigenoterapia a alto flujo con 10-12 l/min).
+                    - listitem [ref=e460]:
+                      - paragraph [ref=e461]: Realice intubación endotraqueal conforme a procedimiento.
+                      - list [ref=e462]:
+                        - listitem [ref=e463]: Utilice la ETCO2 para comprobar la adecuada colocación del TET.
+                        - listitem [ref=e464]: De no ser posible la intubación (mediante laringoscopia, Frova o videolaringoscopia) mantenga ventilación con balón de reanimación.
+                    - listitem [ref=e465]:
+                      - paragraph [ref=e466]: Si el paciente ha sido intubado, ventile con respirador en modo CCSV o bien en IPPV a una frecuencia de 10-12 rpm, volumen corriente 6-8 ml/kg, PEEP 0-5 mbar y Pmax 50-70 mbar. Solo si no fuera posible utilizar el respirador, continúe con la ventilación ya iniciada mediante balón de reanimación con reservorio conectado a fuente de oxígeno 10-12 l/min (alto flujo).
+                    - listitem [ref=e467]:
+                      - paragraph [ref=e468]: "Monitorice: ECG, SatO2 y ETCO2."
+                    - listitem [ref=e469]:
+                      - paragraph [ref=e470]: Canalice una vía venosa, preferentemente periférica de grueso calibre.
+                      - list [ref=e471]:
+                        - listitem [ref=e472]: Realice analítica venosa para determinación de pH, EB, iones (K+) y glucemia entre otras.
+                        - listitem [ref=e473]: Si no es posible vía periférica, canalice preferentemente vía intraósea.
+                    - listitem [ref=e474]:
+                      - paragraph [ref=e475]:
+                        - text: Administre
+                        - link "Adrenalina" [ref=e476] [cursor=pointer]:
+                          - /url: /vademecum?farmaco=Adrenalina
+                          - img [ref=e477]
+                          - text: Adrenalina
+                        - text: 1 mg en bolo iv cada 3 a 5 min. Tras cada dosis de Adrenalina, eleve el brazo y administre un bolo de 20 ml de suero. Si no se ha conseguido canalización venosa, utilice vía intraósea si está disponible.
+                    - listitem [ref=e480]:
+                      - paragraph [ref=e481]:
+                        - text: Si no se consigue RCE
+                        - strong [ref=e482]: continúe con RCP inmediata
+                        - text: con compresiones torácicas y ventilación conforme a a estándares de
+                        - strong [ref=e483]: RCP durante 2 minutos
+                        - text: o 5 ciclos de 30:2, al menos, a 100 cpm (entre 100 y 120), durante 2 minutos. Compruebe el ritmo.
+                    - listitem [ref=e484]:
+                      - paragraph [ref=e485]: Si se identifica FV en el monitor en medio de un ciclo de 2 minutos de RCP, complete el ciclo de RCP antes de la correspondiente comprobación de ritmo y administración de descarga.
+                    - listitem [ref=e486]:
+                      - paragraph [ref=e487]:
+                        - text: Valore las causas reversibles de PCR (
+                        - strong [ref=e488]: 5 'H' y 5 'T'
+                        - text: ") y trate en función de éstas:"
+                      - list [ref=e489]:
+                        - listitem [ref=e490]: Realice exploración ecográfica para descartar causas reversibles (taponamiento cardíaco, TEP, neumotórax a tensión, sangrado interno abdominal, etc)
+                        - listitem [ref=e491]: Reevalúe las maniobras de RCP mediante SatO2 y ETCO2, para evitar hipoxia.
+                        - listitem [ref=e492]:
+                          - text: Ante sospecha de
+                          - strong [ref=e493]: hipovolemia
+                          - text: (causa más frecuente), expanda volumen de forma agresiva e inmediata según la posible causa de las pérdidas (ver procedimiento de shock).
+                        - listitem [ref=e494]: Si existe hiperpotasemia, actúe como en procedimiento de hiperpotasemia grave.
+                        - listitem [ref=e495]:
+                          - text: Si existe hipopotasemia confirmada (< 3,5 mEq/L), administre
+                          - link "Cloruropotasico" [ref=e496] [cursor=pointer]:
+                            - /url: /vademecum?farmaco=Cloruropotasico
+                            - img [ref=e497]
+                            - text: Cloruropotasico
+                          - text: iv (Cloruro potásico, 10 mEq/10 ml ampolla) a dosis de 10 mEq en 5 -10 min (velocidad máxima de 2 mEq/min).
+                        - listitem [ref=e500]:
+                          - text: Si existe hipocalcemia, administre
+                          - link "GluconatoCalcico" [ref=e501] [cursor=pointer]:
+                            - /url: /vademecum?farmaco=GluconatoCalcico
+                            - img [ref=e502]
+                            - text: GluconatoCalcico
+                          - text: iv
+                        - listitem [ref=e505]: Si existe hipoglucemia trátela.
+                        - listitem [ref=e506]: Si existe hipotermia actuar según procedimiento.
+                        - listitem [ref=e507]:
+                          - text: Si existe
+                          - strong [ref=e508]: neumotórax a tensión
+                          - text: ", realice drenaje. (ver toracocentesis. Técnicas)."
+                        - listitem [ref=e509]:
+                          - text: Si existe
+                          - strong [ref=e510]: taponamiento cardíaco
+                          - text: (objetivado por exploración ecográfica), realice pericardiocentesis mientras prepara toracotomía de reanimación.
+                        - listitem [ref=e511]:
+                          - text: Ante
+                          - strong [ref=e512]: intoxicación con fármacos
+                          - text: ", (ver procedimiento de intoxicaciones)."
+                        - listitem [ref=e513]: "Si se sospecha TEP como causa de la PCR, proceda como en el procedimiento específico (Ver TEP: fibrinolisis)"
+                    - listitem [ref=e514]:
+                      - paragraph [ref=e515]: Realice determinación de temperatura.
+                    - listitem [ref=e516]:
+                      - paragraph [ref=e517]: Canalice otra vía de calibre grueso, según posibilidades.
+                    - listitem [ref=e518]:
+                      - paragraph [ref=e519]:
+                        - text: Administre
+                        - link "BicarbonatoSodico" [ref=e520] [cursor=pointer]:
+                          - /url: /vademecum?farmaco=BicarbonatoSodico
+                          - img [ref=e521]
+                          - text: BicarbonatoSodico
+                        - text: "1 M 8,4% iv según la fórmula de cálculo del déficit de bicarbonato solo si pH < 7,10 y CO3H < 15 mmol/l:"
+                        - strong [ref=e524]: Déficit de CO3H = 0,3 x kg de peso x EB.
+                        - text: El resultado obtenido son los ml de bicarbonato necesarios.
+                    - listitem [ref=e525]:
+                      - paragraph [ref=e526]: Administre la mitad de la cantidad calculada y realice analítica de iones y EB.
+                    - listitem [ref=e527]:
+                      - paragraph [ref=e528]: "Administre, empíricamente, 1 mEq/kg iv, no de forma rutinaria sólo si:"
+                      - list [ref=e529]:
+                        - listitem [ref=e530]: Hipercaliemia conocida.
+                        - listitem [ref=e531]: Intoxicación por antidepresivos tricíclicos.
+                        - listitem [ref=e532]: Intoxicación por aspirina u otras drogas (que precisen diuresis alcalina) y PCR prolongada (>10 min) si el paciente ya está intubado y ventilado
+                    - listitem [ref=e533]:
+                      - paragraph [ref=e534]: Posteriormente, en función de la analítica, continúe infusión de Bicarbonato sódico 1 M, si el pH < 7,1, o si pH > 7,10 y está asociado a hiperpotasemia o intoxicación por antidepresivos tricíclicos
+                  - generic [ref=e535]:
+                    - generic [ref=e536]:
+                      - img [ref=e538]
+                      - paragraph [ref=e541]: Fármacos Citados
+                      - generic [ref=e543]: Derivado Automáticamente
+                    - generic [ref=e544]:
+                      - link "Adrenalina" [ref=e545] [cursor=pointer]:
+                        - /url: /vademecum?q=Adrenalina
+                      - link "Cloruropotasico" [ref=e546] [cursor=pointer]:
+                        - /url: /vademecum?q=Cloruropotasico
+                      - link "GluconatoCalcico" [ref=e547] [cursor=pointer]:
+                        - /url: /vademecum?q=GluconatoCalcico
+                      - link "BicarbonatoSodico" [ref=e548] [cursor=pointer]:
+                        - /url: /vademecum?q=BicarbonatoSodico
+                  - generic [ref=e549]:
+                    - generic [ref=e550]:
+                      - img [ref=e552]
+                      - paragraph [ref=e556]: Técnicas Citadas
+                      - generic [ref=e558]: Derivado Automáticamente
+                    - generic [ref=e559]:
+                      - generic [ref=e560]: Intubación endotraqueal
+                      - generic [ref=e561]: Vía intraósea
+                      - generic [ref=e562]: Exploración ecográfica
+                      - generic [ref=e563]: Toracocentesis
+                      - generic [ref=e564]: Pericardiocentesis
+                      - generic [ref=e565]: Toracotomía de reanimación
+                - generic [ref=e566]:
+                  - generic [ref=e567]:
+                    - generic [ref=e568]:
+                      - img [ref=e570]
+                      - paragraph [ref=e572]: Decisiones Críticas
+                      - generic [ref=e574]: Material Operativo Añadido
+                    - list [ref=e576]:
+                      - listitem [ref=e577]: La cronología aislada no debe ser el único criterio para finalizar la reanimación.
+                      - listitem [ref=e578]: Revisar periodo no-flow, primeros respondientes, causa probable, ritmo inicial y analítica de forma conjunta.
+                      - listitem [ref=e579]: En asistolia sin causa tratable identificable, puede considerarse parar tras 20 minutos de SVA si el resto del contexto no favorece continuar.
+                  - heading "PCR no recuperada" [level=3] [ref=e580]:
+                    - strong [ref=e581]: PCR no recuperada
+                  - list:
+                    - listitem
+                  - paragraph [ref=e582]: "En ausencia de respuesta del paciente, en el sentido de recuperación de pulso, la decisión de parar o continuar la reanimación se realizará en base a criterios de máxima oportunidad y beneficio para el paciente y no solo en criterios cronológicos. Los factores a tener en cuenta a la hora de tomar esta decisión serán, al menos, los siguientes:"
+                  - list [ref=e583]:
+                    - listitem [ref=e584]:
+                      - paragraph [ref=e585]: Tiempo estimado sin reanimación (“periodo no-flow”) desde que ocurre la parada cardiaca.
+                    - listitem [ref=e586]:
+                      - paragraph [ref=e587]: Existencia de primeros respondientes.
+                    - listitem [ref=e588]:
+                      - paragraph [ref=e589]: Antecedentes patológicos.
+                    - listitem [ref=e590]:
+                      - paragraph [ref=e591]: Causa probable de la parada. Recuerde que especialmente en hipotermia, intoxicación por drogas, ahogamiento, electrocución y TEP que se fibrinolisa la duración de las maniobras de RCP debe ser más prolongada.
+                    - listitem [ref=e592]:
+                      - paragraph [ref=e593]: Ritmo inicial de parada.
+                    - listitem [ref=e594]:
+                      - paragraph [ref=e595]: "Estado metabólico inicial del paciente, valorado a través de la primera muestra analítica. Se valorarán fundamentalmente los valores de: pH, EB, K+, PCO2 y lactato."
+                    - listitem [ref=e596]:
+                      - paragraph [ref=e597]: Estado metabólico durante la reanimación. Se recomienda valorar el estado metabólico antes de tomar la decisión.
+                    - listitem [ref=e598]:
+                      - paragraph [ref=e599]: En caso de un posible ritmo de actividad eléctrica sin pulso, chequeo de la contractilidad mediante ecografía.
+                    - listitem [ref=e600]:
+                      - paragraph [ref=e601]: Tiempo de reanimación y edad del paciente, que en ningún caso serán criterios absolutos para finalizar la reanimación.
+                    - listitem [ref=e602]:
+                      - paragraph [ref=e603]: En el caso de las PCR en asistolia, si no se identifica ninguna causa tratable y ninguno de los factores anteriores sugiere continuar con la RCP, se puede considerar parar la reanimación tras 20 minutos de soporte vital avanzado.
+                    - listitem [ref=e604]:
+                      - paragraph [ref=e605]: Compruebe la ausencia de dinámica cardiaca con el Ecógrafo.
+                    - listitem [ref=e606]:
+                      - paragraph [ref=e607]: Considere la posibilidad de 'Código 9'.
+                    - listitem [ref=e608]:
+                      - paragraph [ref=e609]: Tras descartar código 9, aplique el procedimiento de defunción (ver diagnóstico de muerte).
+                  - paragraph [ref=e610]:
+                    - button "Ampliar imagen" [ref=e611]:
+                      - img [ref=e614]
+                    - emphasis [ref=e617]: "Figure 1: RCP extracorpórea"
+                  - generic [ref=e618]:
+                    - generic [ref=e619]:
+                      - img [ref=e621]
+                      - paragraph [ref=e626]: Procedimientos Útiles A Continuación
+                      - generic [ref=e628]: Material Operativo Añadido
+                    - generic [ref=e629]:
+                      - link "301aCuidados postparada" [ref=e630] [cursor=pointer]:
+                        - /url: /manual/301a-cuidados-postparada
+                        - generic [ref=e631]: 301aCuidados postparada
+                        - img [ref=e632]
+                      - link "302Manejo avanzado de vía aérea" [ref=e635] [cursor=pointer]:
+                        - /url: /manual/302-manejo-avanzado-de-via-aerea
+                        - generic [ref=e636]: 302Manejo avanzado de vía aérea
+                        - img [ref=e637]
+                      - 'link "212Código 9: Donación en asistolia" [ref=e640] [cursor=pointer]':
+                        - /url: /manual/212-codigo-9-donacion-en-asistolia
+                        - generic [ref=e641]: "212Código 9: Donación en asistolia"
+                        - img [ref=e642]
+                  - generic [ref=e645]:
+                    - generic [ref=e646]:
+                      - img [ref=e648]
+                      - paragraph [ref=e650]: Imagen Original Del Procedimiento
+                      - generic [ref=e652]: Adjuntos Originales
+                    - figure "RCP extracorpórea" [ref=e654]:
+                      - img "RCP extracorpórea" [ref=e655]
+                      - generic [ref=e656]: RCP extracorpórea
+              - link "Ver fuente oficial en servpub.madrid.es" [ref=e658] [cursor=pointer]:
+                - /url: https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVA/PARADA%20CARDIORRESPIRATORIA/
+                - img [ref=e659]
+                - text: Ver fuente oficial en servpub.madrid.es
+              - generic [ref=e663]: Cargando anexos...
+              - navigation "Navegación entre procedimientos" [ref=e664]:
+                - link "Anterior Contacto con meningitis bacteriana 216b" [ref=e666] [cursor=pointer]:
+                  - /url: /manual/216b-contacto-con-meningitis-bacteriana
+                  - generic [ref=e667]:
+                    - img [ref=e668]
+                    - text: Anterior
+                  - generic [ref=e670]: Contacto con meningitis bacteriana
+                  - generic [ref=e671]: 216b
+                - link "Siguiente Cuidados postparada 301a" [ref=e673] [cursor=pointer]:
+                  - /url: /manual/301a-cuidados-postparada
+                  - generic [ref=e674]:
+                    - text: Siguiente
+                    - img [ref=e675]
+                  - generic [ref=e677]: Cuidados postparada
+                  - generic [ref=e678]: 301a
+            - complementary [ref=e679]:
+              - generic [ref=e680]:
+                - generic [ref=e681]:
+                  - generic [ref=e683]:
+                    - img [ref=e684]
+                    - text: Ver también
+                  - paragraph [ref=e688]: Este artículo todavía no enlaza de forma explícita a otros procedimientos
+                - generic [ref=e689]:
+                  - generic [ref=e691]:
+                    - img [ref=e692]
+                    - text: Sugeridos
+                  - generic [ref=e698]:
+                    - link "301a Cuidados postparada SVA sugerido" [ref=e700] [cursor=pointer]:
+                      - /url: /manual/301a-cuidados-postparada
+                      - generic [ref=e701]: 301a
+                      - generic [ref=e702]:
+                        - generic [ref=e703]: Cuidados postparada
+                        - generic [ref=e704]:
+                          - generic [ref=e705]: SVA
+                          - generic [ref=e706]: sugerido
+                      - img [ref=e707]
+                    - link "301b PCR Traumática SVA sugerido" [ref=e710] [cursor=pointer]:
+                      - /url: /manual/301b-pcr-traumatica
+                      - generic [ref=e711]: 301b
+                      - generic [ref=e712]:
+                        - generic [ref=e713]: PCR Traumática
+                        - generic [ref=e714]:
+                          - generic [ref=e715]: SVA
+                          - generic [ref=e716]: sugerido
+                      - img [ref=e717]
+                - generic [ref=e719]:
+                  - generic [ref=e720]:
+                    - img [ref=e721]
+                    - heading "Gráfica Local" [level=3] [ref=e726]
+                  - generic [ref=e727]:
+                    - generic [ref=e728]:
+                      - paragraph [ref=e729]: "Gris: Enlaces Salientes · Azul: Backlinks · Ámbar: Sugeridos"
+                      - button "Ampliar" [ref=e730]:
+                        - img [ref=e731]
+                        - text: Ampliar
+                    - application [ref=e737]:
+                      - img
+                      - generic "Control Panel" [ref=e740]:
+                        - button "Zoom In" [ref=e741] [cursor=pointer]:
+                          - img [ref=e742]
+                        - button "Zoom Out" [ref=e744] [cursor=pointer]:
+                          - img [ref=e745]
+                        - button "Fit View" [ref=e747] [cursor=pointer]:
+                          - img [ref=e748]
+                      - img "Mini Map" [ref=e751]
+                      - link "React Flow attribution" [ref=e753] [cursor=pointer]:
+                        - /url: https://reactflow.dev
+                        - text: React Flow
+                    - group [ref=e755]:
+                      - generic "Lista accesible de conexiones (2)" [ref=e756] [cursor=pointer]
+                  - heading "Gráfica Local Ampliada" [level=2] [ref=e758]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e764] [cursor=pointer]:
+    - img [ref=e765]
