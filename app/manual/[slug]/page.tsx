@@ -28,6 +28,7 @@ import { ProcedureVisitTracker } from "@/components/manual/ProcedureVisitTracker
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
 import { PrintButton } from "@/components/manual/PrintButton";
 import {
+  AlgoritmoLabel,
   Caution,
   Checklist,
   Collapsible,
@@ -97,6 +98,7 @@ const mdxComponents = {
     </div>
   ),
   hr: () => <hr className="my-8 border-border/60" />,
+  AlgoritmoLabel,
   KeyPoints,
   Warning,
   Caution,
@@ -418,14 +420,15 @@ export default async function ProcedurePage({ params }: Props) {
               emptyLabel="Ningún otro artículo enlaza aquí"
             />
           )}
-          <ProcedureLinkCard
-            title="Enlaces salientes"
-            icon={<Link2 className="h-3.5 w-3.5" />}
-            procedures={related}
-            relationsByProcedureId={relationsByProcedureId}
-            previewByProcedureId={previewByProcedureId}
-            emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
-          />
+          {related.length > 0 && (
+            <ProcedureLinkCard
+              title="Enlaces salientes"
+              icon={<Link2 className="h-3.5 w-3.5" />}
+              procedures={related}
+              relationsByProcedureId={relationsByProcedureId}
+              previewByProcedureId={previewByProcedureId}
+            />
+          )}
           {suggested.length > 0 && (
             <ProcedureLinkCard
               title="Relacionados sugeridos"
@@ -462,14 +465,15 @@ export default async function ProcedurePage({ params }: Props) {
               emptyLabel="Ningún otro artículo enlaza aquí"
             />
           )}
-          <ProcedureLinkCard
-            title="Ver también"
-            icon={<Link2 className="h-3.5 w-3.5" />}
-            procedures={related}
-            relationsByProcedureId={relationsByProcedureId}
-            previewByProcedureId={previewByProcedureId}
-            emptyLabel="Este artículo todavía no enlaza de forma explícita a otros procedimientos"
-          />
+          {related.length > 0 && (
+            <ProcedureLinkCard
+              title="Ver también"
+              icon={<Link2 className="h-3.5 w-3.5" />}
+              procedures={related}
+              relationsByProcedureId={relationsByProcedureId}
+              previewByProcedureId={previewByProcedureId}
+            />
+          )}
           {suggested.length > 0 && (
             <ProcedureLinkCard
               title="Sugeridos"

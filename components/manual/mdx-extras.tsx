@@ -291,3 +291,15 @@ export function ImageWithLightbox({ src, alt }: { src: string; alt?: string }) {
     </>
   );
 }
+
+export function AlgoritmoLabel() {
+  return (
+    <div className="not-prose my-6 flex items-center gap-3">
+      <div className="h-px flex-1 bg-border/60" />
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/8 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary">
+        Algoritmo
+      </span>
+      <div className="h-px flex-1 bg-border/60" />
+    </div>
+  );
+}

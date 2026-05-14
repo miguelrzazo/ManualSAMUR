@@ -88,7 +88,7 @@ export function ProcedureLinkCard({
                     <ArrowRight className="h-3 w-3 text-muted-foreground/40 group-hover/link:text-primary mt-1 flex-shrink-0 transition-colors" />
                   </Link>
                   {preview && (
-                    <div className="pointer-events-none absolute left-2 right-2 top-full z-30 mt-1 hidden rounded-lg border border-border/70 bg-popover p-3 text-xs leading-relaxed text-popover-foreground shadow-lg group-hover/preview:block group-focus-within/preview:block">
+                    <div className="pointer-events-none absolute left-2 right-2 bottom-full z-30 mb-1 hidden rounded-lg border border-border/70 bg-popover p-3 text-xs leading-relaxed text-popover-foreground shadow-lg group-hover/preview:block group-focus-within/preview:block">
                       <div className="mb-1 font-semibold text-foreground">{procedure.title}</div>
                       <p className="line-clamp-5 text-muted-foreground">{preview}</p>
                     </div>

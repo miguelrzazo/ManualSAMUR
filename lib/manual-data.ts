@@ -201,7 +201,7 @@ function normalizeXWikiTables(text: string): string {
     while (firstData < parsed.length && parsed[firstData].length === 1) firstData++;
 
     for (let j = 0; j < firstData; j++) {
-      const t = parsed[j][0];
+      const t = parsed[j][0].replace(/\*\*\s+/g, "**").replace(/\s+\*\*/g, "**");
       out.push(t.startsWith("**") ? t : `**${t}**`, "");
     }
 
@@ -310,6 +310,49 @@ const SAFE_CODE_LINKS: Array<{ pattern: RegExp; procedureId: string }> = [
   { pattern: /(^|[^\[])(C[oó]digo\s+infarto)\b/gi, procedureId: "213" },
   { pattern: /(^|[^\[])(C[oó]digo\s+TEP)\b/gi, procedureId: "214e" },
 ];
+
+const PROCEDURE_KEYWORD_LINKS: Array<{ patterns: RegExp[]; id: string; anchor?: string }> = [
+  { patterns: [/\bvías? venosas? periféricas?\b/gi, /\bvías? periféricas?\b/gi], id: "604_02" },
+  { patterns: [/\bvías? venosas? centrales?\b/gi, /\bvías? centrales?\b/gi], id: "604_04" },
+  { patterns: [/\bvías? intraóseas?\b/gi], id: "604_05b" },
+  { patterns: [/\banalítica venosa\b/gi, /\banalítica sanguínea\b/gi, /\banalítica arterial\b/gi], id: "604_09" },
+  { patterns: [/\bmedición de (?:la )?glucemia\b/gi, /\bglucemia capilar\b/gi], id: "604_10" },
+  { patterns: [/\bintubación endotraqueal\b/gi, /\bintubacion endotraqueal\b/gi], id: "602_03" },
+  { patterns: [/\bdesfibrilación\b/gi, /\bdesfibrilar\b/gi], id: "603_02" },
+  { patterns: [/\bECG de 12 derivaciones\b/g, /\belectrocardiograma de 12 derivaciones\b/gi], id: "603_01" },
+  { patterns: [/\bvía intravenosa\b/gi], id: "604_03" },
+  { patterns: [/\bpulsioximetría\b/gi], id: "602_09" },
+  { patterns: [/\bEscala de Wells\b/g], id: "214e", anchor: "escala-de-wells" },
+  { patterns: [/\bEscala de Glasgow\b/gi], id: "301a", anchor: "escala-de-glasgow" },
+];
+
+function linkProcedureKeywords(
+  content: string,
+  idToSlug: Map<string, string>,
+  currentProcedureId?: string,
+): string {
+  let result = content;
+
+  for (const { patterns, id, anchor } of PROCEDURE_KEYWORD_LINKS) {
+    if (id === currentProcedureId) continue;
+    const slug = idToSlug.get(id);
+    if (!slug) continue;
+
+    const href = anchor ? `/manual/${slug}#${anchor}` : `/manual/${slug}`;
+    let linked = false;
+
+    for (const pattern of patterns) {
+      if (linked) break;
+      result = result.replace(pattern, (match) => {
+        if (linked) return match;
+        linked = true;
+        return `[${match}](${href})`;
+      });
+    }
+  }
+
+  return result;
+}
 
 function rewriteLegacyDrugLinks(
   content: string,
@@ -557,6 +600,10 @@ export function normalizeProcedureContent(
     .replace(STANDALONE_BANG_RE, "")
     .replace(/^[*\-]\s*$/gm, "")
     .replace(/\*\*([^*\n]+:)\*\*([^\s*\n])/g, "**$1** $2")
+    .replace(/\*\*\s+([^\s*])/g, "**$1")
+    .replace(/([^\s*])\s+\*\*([^*]|$)/gm, "$1**$2")
+    .replace(/^\*\*~\s*ALGORITMO\s*\*\*$/gim, "<AlgoritmoLabel />")
+    .replace(/\*\*~\s*/g, "**")
     .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {
       const cleanLabel = label.trim();
       const resolvedHref = resolveRelativeUrl(href, sourceUrl);
@@ -578,8 +625,9 @@ export function normalizeProcedureContent(
 
   const { protectedContent, links } = protectMarkdownLinks(rewrittenLinks);
   const linkedCodes = linkSafeCodeMentions(protectedContent, idToSlug, options.currentProcedureId);
+  const linkedKeywords = linkProcedureKeywords(linkedCodes, idToSlug, options.currentProcedureId);
 
-  return restoreMarkdownLinks(linkedCodes, links)
+  return restoreMarkdownLinks(linkedKeywords, links)
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
