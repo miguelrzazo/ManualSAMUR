@@ -186,7 +186,7 @@ function mapCodeResult(query: string, result: FuseResult<Code>): SearchResult {
     subtitle: result.item.group,
     badge: result.item.code,
     source: result.item._source,
-    href: "/codigos",
+    href: result.item._source ? `/codigos?tab=${result.item._source.toLowerCase()}&code=${encodeURIComponent(result.item.code)}` : "/codigos",
     searchText: `${result.item.code} ${result.item.name} ${result.item.group}`,
     score: computeCommonScore(
       query,

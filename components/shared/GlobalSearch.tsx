@@ -270,7 +270,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
                     )}
                   </div>
                   {result.source && (
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide flex-shrink-0 ${result.source === "SVA" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"}`}>
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide flex-shrink-0 ${result.source === "SVA" ? "bg-red-500 text-white" : "bg-blue-500 text-white"}`}>
                       {result.source}
                     </span>
                   )}
