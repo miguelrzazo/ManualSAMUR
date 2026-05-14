@@ -10,6 +10,7 @@ import {
   Bot,
   Users,
   TriangleAlert,
+  GitBranch,
 } from "lucide-react";
 import {
   Dialog,
@@ -173,6 +174,38 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
                 >
                   <Bot className="h-3 w-3" />
                   llms-full.txt
+                </button>
+              </div>
+            </section>
+
+            <div className="h-px bg-border/60" />
+
+            <section className="space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <GitBranch className="h-3.5 w-3.5 text-muted-foreground" />
+                Autor de la aplicación
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">MR</div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-foreground">Miguel Rosa Zazo</p>
+                  <p className="text-[11px] text-muted-foreground">Versión digital del Manual SAMUR-PC</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => openExternal("https://github.com/miguelrzazo")}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                >
+                  <GitBranch className="h-3 w-3" />
+                  GitHub
+                </button>
+                <button
+                  onClick={() => openExternal("mailto:mrosaz00@estudiantes.unileon.es")}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                >
+                  <Mail className="h-3 w-3" />
+                  Contacto
                 </button>
               </div>
             </section>
