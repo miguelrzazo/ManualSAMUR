@@ -136,6 +136,96 @@ export interface TableOfContentsHeading {
   level: number;
 }
 
+function xwikiCellDepth(line: string): number {
+  return (line.match(/\(\(\(/g)?.length ?? 0) - (line.match(/\)\)\)/g)?.length ?? 0);
+}
+
+function normalizeXWikiTables(text: string): string {
+  const lines = text.split("\n");
+  const out: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    if (!lines[i].startsWith("|")) {
+      out.push(lines[i++]);
+      continue;
+    }
+
+    const rows: string[] = [];
+
+    while (i < lines.length && lines[i].startsWith("|")) {
+      let row = lines[i++];
+      let depth = xwikiCellDepth(row);
+      let contCount = 0;
+
+      while (i < lines.length) {
+        if (contCount >= 14) break;
+
+        const next = lines[i];
+        const trimmed = next.trim();
+
+        // New table row with no open depth ends continuation
+        if (next.startsWith("|") && depth === 0) break;
+
+        // Blank line ends simple (non-((()) continuations
+        if (trimmed.length === 0 && depth === 0) break;
+
+        // Row is already syntactically complete (ends with |) and depth = 0
+        if (depth === 0 && row.trimEnd().endsWith("|")) break;
+
+        i++;
+        contCount++;
+
+        const opens = (trimmed.match(/\(\(\(/g)?.length ?? 0);
+        const closes = (trimmed.match(/\)\)\)/g)?.length ?? 0);
+        depth += opens - closes;
+
+        const clean = trimmed.replace(/\(\(\(/g, "").replace(/\)\)\)/g, "").trim();
+        if (clean) row = row.trimEnd() + (clean === "|" ? clean : " " + clean);
+      }
+
+      row = row.replace(/\(\(\(/g, "").replace(/\)\)\)/g, "").trim();
+      if (row) rows.push(row);
+    }
+
+    if (rows.length === 0) continue;
+
+    const parsed = rows.map(row => {
+      let r = row.startsWith("|") ? row.slice(1) : row;
+      if (r.endsWith("|")) r = r.slice(0, -1);
+      return r.split("|").map(c => c.trim());
+    });
+
+    // Title rows: single-cell rows at the start
+    let firstData = 0;
+    while (firstData < parsed.length && parsed[firstData].length === 1) firstData++;
+
+    for (let j = 0; j < firstData; j++) {
+      const t = parsed[j][0];
+      out.push(t.startsWith("**") ? t : `**${t}**`, "");
+    }
+
+    const dataRows = parsed.slice(firstData);
+    if (dataRows.length === 0) continue;
+
+    const colCount = Math.max(...dataRows.map(r => r.length), 1);
+    const pad = (row: string[]) => {
+      const r = [...row];
+      while (r.length < colCount) r.push("");
+      return r;
+    };
+
+    out.push("| " + pad(dataRows[0]).join(" | ") + " |");
+    out.push("| " + Array(colCount).fill("---").join(" | ") + " |");
+    for (const row of dataRows.slice(1)) {
+      out.push("| " + pad(row).join(" | ") + " |");
+    }
+    out.push("");
+  }
+
+  return out.join("\n");
+}
+
 export function deriveRelatedIds(content: string, validIds: Set<string>): string[] {
   const related = new Set<string>();
 
@@ -441,8 +531,7 @@ export function normalizeProcedureContent(
   sourceUrl?: string,
   options: ProcedureContentNormalizationOptions = {},
 ): string {
-  const normalized = content
-    .replace(/\r\n/g, "\n")
+  const normalized = normalizeXWikiTables(content.replace(/\r\n/g, "\n"))
     .replace(/\{\{box[\s\S]*?\}\}/g, "")
     .replace(/^(=+)\s+(.+?)\s+=*\s*$/gm, (_m, eq: string, text: string) => "#".repeat(Math.min(eq.length + 1, 6)) + " " + text.trim())
     .replace(/^# /gm, "## ")
@@ -460,6 +549,7 @@ export function normalizeProcedureContent(
     })
     .replace(XWIKI_TILDE_ESCAPE_RE, "")
     .replace(XWIKI_BACKSLASH_LINE_RE, "")
+    .replace(/~([><=|()\[\]{}*_])/g, "$1")
     .replace(XWIKI_EXTERNAL_LINK_RE, (_match, label: string, url: string) => {
       const cleanLabel = label.replace(/!\[[^\]]*\]\([^)]+\)/g, "").replace(/~\[[^\]]*~\]/g, "").trim();
       return cleanLabel ? `[${cleanLabel}](${url})` : url;
