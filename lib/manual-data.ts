@@ -600,8 +600,6 @@ export function normalizeProcedureContent(
     .replace(STANDALONE_BANG_RE, "")
     .replace(/^[*\-]\s*$/gm, "")
     .replace(/\*\*([^*\n]+:)\*\*([^\s*\n])/g, "**$1** $2")
-    .replace(/\*\*[ \t]+([^ \t*])/g, "**$1")
-    .replace(/([^ \t*#])[ \t]+\*\*([^*]|$)/gm, "$1**$2")
     .replace(/^\*\*~\s*ALGORITMO\s*\*\*$/gim, "<AlgoritmoLabel />")
     .replace(/\*\*~\s*/g, "**")
     .replace(IMAGE_IN_LINK_RE, (_, label: string, href: string) => {
