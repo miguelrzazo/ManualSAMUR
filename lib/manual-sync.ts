@@ -92,6 +92,7 @@ export interface ManualUpdateEvent {
   effectiveDate: string;
   approvedAt?: string;
   isNewThisWeek: boolean;
+  diff?: string;
 }
 
 export interface ManualUpdatesDataset {

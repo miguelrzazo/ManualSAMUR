@@ -483,7 +483,8 @@
     "code": "8.4.1",
     "name": "Presencia de SVA con más de 3 recursos (sin PSA)",
     "category": "Servicio Programado",
-    "description": "Presencia de una o más unidades SVA, sin PSA, sumando más de 3 recursos en total."
+    "description": "Presencia de una o más unidades SVA, sin PSA, sumando más de 3 recursos en total.",
+    "isNew": true
   },
   {
     "code": "8.5",
@@ -495,7 +496,8 @@
     "code": "8.5.1",
     "name": "Despliegue de PSA con más de 3 recursos",
     "category": "Servicio Programado",
-    "description": "Despliegue de PSA, con otros recursos (más de 3 recursos en total)."
+    "description": "Despliegue de PSA, con otros recursos (más de 3 recursos en total).",
+    "isNew": true
   },
   {
     "code": "8.6",
@@ -519,19 +521,22 @@
     "code": "8.9",
     "name": "Refuerzo programado por concentración de personas",
     "category": "Servicio Programado",
-    "description": "Necesidad programada de refuerzo para el operativo por concentración de personas."
+    "description": "Necesidad programada de refuerzo para el operativo por concentración de personas.",
+    "isNew": true
   },
   {
     "code": "8.10",
     "name": "CECOR externo en dispositivo de riesgo previsible",
     "category": "Servicio Programado",
-    "description": "Puesto de mando externo en dispositivo de riesgo previsible."
+    "description": "Puesto de mando externo en dispositivo de riesgo previsible.",
+    "isNew": true
   },
   {
     "code": "8.11",
     "name": "CECOR interno en dispositivo de riesgo previsible",
     "category": "Servicio Programado",
-    "description": "Puesto de mando interno en dispositivo de riesgo previsible."
+    "description": "Puesto de mando interno en dispositivo de riesgo previsible.",
+    "isNew": true
   },
   {
     "code": "8.12",

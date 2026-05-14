@@ -613,6 +613,11 @@ function CodeList({
                         <FileX className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" aria-label="Sin informe asistencial" />
                       )}
                       <span className="text-sm font-medium leading-snug">{item.name}</span>
+                      {(item as unknown as Record<string, unknown>).isNew === true && (
+                        <span className="flex-shrink-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                          Nuevo
+                        </span>
+                      )}
                     </div>
                   </div>
                 );

@@ -306,6 +306,7 @@ export default async function ProcedurePage({ params }: Props) {
               changeKind={recent.changeKind as "nuevo" | "revisado" | "actualizado" | "sync"}
               changedAt={recent.effectiveDate}
               summary={recent.summary}
+              diff={recent.diff}
             />
           );
         })()}
@@ -449,7 +450,7 @@ export default async function ProcedurePage({ params }: Props) {
 
       {/* Right sidebar — desktop only */}
       <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
-        <div className="sticky top-6 flex flex-col gap-4 max-h-[calc(100vh-3rem)] overflow-y-auto pb-4">
+        <div className="sticky top-6 flex flex-col gap-4 pb-4">
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} />
           {backlinks.length > 0 && (
             <ProcedureLinkCard
