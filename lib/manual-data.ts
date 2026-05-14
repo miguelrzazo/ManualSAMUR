@@ -444,8 +444,8 @@ export function normalizeProcedureContent(
   const normalized = content
     .replace(/\r\n/g, "\n")
     .replace(/\{\{box[\s\S]*?\}\}/g, "")
-    .replace(/^\s*=\s+/gm, "## ")
-    .replace(/\s*=\s*$/gm, "")
+    .replace(/^(=+)\s+(.+?)\s+=*\s*$/gm, (_m, eq: string, text: string) => "#".repeat(Math.min(eq.length + 1, 6)) + " " + text.trim())
+    .replace(/^# /gm, "## ")
     .replace(/<(?=\s*\d)/g, "&lt;")
     .replace(/\(\(\(/g, "")
     .replace(/\)\)\)/g, "")

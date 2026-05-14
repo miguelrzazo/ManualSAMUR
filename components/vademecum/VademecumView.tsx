@@ -482,6 +482,8 @@ export function VademecumView({
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeLetter, setActiveLetter] = useState<string | null>(null);
+  const [tabsVisible, setTabsVisible] = useState(true);
+  const lastScrollTopRef = useRef(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const drugCategories = useMemo(() => [...new Set(drugs.map((drug) => drug.category))], [drugs]);
@@ -596,6 +598,13 @@ export function VademecumView({
     const container = scrollContainerRef.current;
     if (!container) return;
 
+    const currentTop = container.scrollTop;
+    const delta = currentTop - lastScrollTopRef.current;
+    if (Math.abs(delta) > 8) {
+      setTabsVisible(delta < 0 || currentTop < 60);
+      lastScrollTopRef.current = currentTop;
+    }
+
     setShowBackToTop(container.scrollTop > 200);
 
     if (!showAlphabetNav) return;
@@ -647,8 +656,11 @@ export function VademecumView({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="border-b border-border/60 px-4 md:px-6 pt-5 pb-0">
-        <div className="flex gap-0 overflow-x-auto -mb-px scrollbar-none">
+      <div
+        className="border-b border-border/60 px-4 md:px-6 overflow-hidden transition-[max-height,padding,opacity] duration-200 ease-in-out"
+        style={{ maxHeight: tabsVisible ? "64px" : "0", paddingTop: tabsVisible ? undefined : "0", paddingBottom: tabsVisible ? undefined : "0", opacity: tabsVisible ? 1 : 0 }}
+      >
+        <div className="flex gap-0 overflow-x-auto -mb-px scrollbar-none pt-5">
           {VADEMECUM_TABS.map((tabConfig) => {
             const item = {
               key: tabConfig.key,

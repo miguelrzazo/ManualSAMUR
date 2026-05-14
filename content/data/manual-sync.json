@@ -5051,5 +5051,19 @@
         }
       }
     }
-  ]
+  ],
+  "ticker": {
+    "items": [
+      {
+        "label": "📻 Nuevos códigos de servicio programado: 8.4.1, 8.5.1, 8.9-8.11",
+        "href": "/codigos?tab=incidente",
+        "eventId": "codes-8x-may2026"
+      },
+      {
+        "label": "📋 Proc. 121 — tabla de códigos de comunicaciones actualizada",
+        "href": "/manual/121-procedimiento-de-comunicaciones-radiotelefono",
+        "procedureId": "121"
+      }
+    ]
+  }
 }

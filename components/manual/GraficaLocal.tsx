@@ -1,25 +1,9 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Maximize2, Minimize2 } from "lucide-react";
-import {
-  Background,
-  BackgroundVariant,
-  Controls,
-  MiniMap,
-  ReactFlow,
-  ReactFlowProvider,
-  type Edge,
-  type Node,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { ProcedureMeta } from "@/lib/content";
 
 const SECTION_COLORS: Record<string, string> = {
@@ -35,7 +19,146 @@ const SECTION_COLORS: Record<string, string> = {
   General: "#94a3b8",
 };
 
-type RelationType = "related" | "backlink" | "suggested";
+const EDGE_STYLE: Record<string, { stroke: string; dash?: string; opacity: number }> = {
+  related:  { stroke: "#94a3b8", opacity: 0.55 },
+  backlink: { stroke: "#3b82f6", opacity: 0.65 },
+  suggested:{ stroke: "#f59e0b", dash: "4 3", opacity: 0.55 },
+};
+
+type RelType = "related" | "backlink" | "suggested";
+interface NodeEntry { proc: ProcedureMeta; type: RelType; angle: number }
+interface ViewBox { x: number; y: number; w: number; h: number }
+
+function sectionColor(section: string) { return SECTION_COLORS[section] ?? SECTION_COLORS.General; }
+function truncate(s: string, max: number) { return s.length > max ? s.slice(0, max - 1) + "…" : s; }
+
+interface GraphProps {
+  current: ProcedureMeta;
+  related: ProcedureMeta[];
+  backlinks: ProcedureMeta[];
+  suggested: ProcedureMeta[];
+  ringRadius?: number;
+  centerR?: number;
+  nodeR?: number;
+}
+
+function SVGGraph({ current, related, backlinks, suggested, ringRadius = 200, centerR = 55, nodeR = 42 }: GraphProps) {
+  const router = useRouter();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const BASE_W = (ringRadius + nodeR + 24) * 2;
+  const BASE_H = (ringRadius + nodeR + 24) * 2;
+  const [vb, setVb] = useState<ViewBox>({ x: -BASE_W / 2, y: -BASE_H / 2, w: BASE_W, h: BASE_H });
+
+  const nodes: NodeEntry[] = [];
+  const seen = new Set([current.id]);
+  const addNodes = (procs: ProcedureMeta[], type: RelType) => {
+    for (const p of procs) if (!seen.has(p.id)) { seen.add(p.id); nodes.push({ proc: p, type, angle: 0 }); }
+  };
+  addNodes(related, "related");
+  addNodes(backlinks, "backlink");
+  addNodes(suggested, "suggested");
+  const n = nodes.length;
+  nodes.forEach((node, i) => { node.angle = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(n, 1); });
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 1.18 : 1 / 1.18;
+      setVb((v) => ({
+        x: v.x + v.w * (factor - 1) / 2,
+        y: v.y + v.h * (factor - 1) / 2,
+        w: Math.min(BASE_W * 4, Math.max(BASE_W * 0.25, v.w * factor)),
+        h: Math.min(BASE_H * 4, Math.max(BASE_H * 0.25, v.h * factor)),
+      }));
+    };
+    svg.addEventListener("wheel", onWheel, { passive: false });
+    return () => svg.removeEventListener("wheel", onWheel);
+  }, [BASE_W, BASE_H]);
+
+  const dragging = useRef(false);
+  const dragOrigin = useRef({ cx: 0, cy: 0, vx: 0, vy: 0 });
+  const dragDelta = useRef({ dx: 0, dy: 0 });
+
+  const onPointerDown = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    if (e.button !== 0) return;
+    dragging.current = true;
+    dragDelta.current = { dx: 0, dy: 0 };
+    dragOrigin.current = { cx: e.clientX, cy: e.clientY, vx: vb.x, vy: vb.y };
+    (e.currentTarget as SVGSVGElement).setPointerCapture(e.pointerId);
+  }, [vb.x, vb.y]);
+
+  const onPointerMove = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    if (!dragging.current) return;
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const scaleX = vb.w / rect.width;
+    const scaleY = vb.h / rect.height;
+    const dx = e.clientX - dragOrigin.current.cx;
+    const dy = e.clientY - dragOrigin.current.cy;
+    dragDelta.current = { dx, dy };
+    setVb((v) => ({ ...v, x: dragOrigin.current.vx - dx * scaleX, y: dragOrigin.current.vy - dy * scaleY }));
+  }, [vb.w, vb.h]);
+
+  const onPointerUp = useCallback(() => { dragging.current = false; }, []);
+
+  const handleNodeClick = useCallback((slug: string) => {
+    const { dx, dy } = dragDelta.current;
+    if (Math.abs(dx) < 6 && Math.abs(dy) < 6) router.push(`/manual/${slug}`);
+  }, [router]);
+
+  const centerColor = sectionColor(current.section);
+
+  return (
+    <svg ref={svgRef} viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} width="100%" height="100%"
+      className="cursor-grab active:cursor-grabbing touch-none select-none"
+      onPointerDown={onPointerDown} onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp} onPointerLeave={onPointerUp}
+    >
+      {nodes.map((node) => {
+        const x = Math.cos(node.angle) * ringRadius;
+        const y = Math.sin(node.angle) * ringRadius;
+        const e = EDGE_STYLE[node.type];
+        return <line key={`e-${node.proc.id}`} x1={0} y1={0} x2={x} y2={y} stroke={e.stroke} strokeWidth={1.5} strokeDasharray={e.dash} opacity={e.opacity} />;
+      })}
+      {nodes.map((node) => {
+        const x = Math.cos(node.angle) * ringRadius;
+        const y = Math.sin(node.angle) * ringRadius;
+        const color = sectionColor(node.proc.section);
+        const e = EDGE_STYLE[node.type];
+        return (
+          <g key={node.proc.id} transform={`translate(${x},${y})`} onClick={() => handleNodeClick(node.proc.slug)} style={{ cursor: "pointer" }}>
+            <circle r={nodeR} fill={`${color}1a`} stroke={e.stroke} strokeWidth={node.type === "related" ? 1.5 : 2} strokeDasharray={node.type === "suggested" ? "4 3" : undefined} />
+            <text textAnchor="middle" dy="-5" fontSize={10} fontWeight="700" fill={color}>{node.proc.id}</text>
+            <text textAnchor="middle" dy="9" fontSize={8.5} fill="currentColor" opacity={0.75}>{truncate(node.proc.title, 20)}</text>
+          </g>
+        );
+      })}
+      <g>
+        <circle r={centerR} fill={centerColor} opacity={0.9} />
+        <text textAnchor="middle" dy="-10" fontSize={11} fontWeight="800" fill="white">{current.id}</text>
+        <text textAnchor="middle" dy="6" fontSize={8.5} fill="white" opacity={0.9}>{truncate(current.title, 22)}</text>
+        <text textAnchor="middle" dy="18" fontSize={8} fill="white" opacity={0.6}>{current.section}</text>
+      </g>
+      {n > 0 && (
+        <g transform={`translate(${vb.x + 10},${vb.y + 12})`}>
+          {(["related","backlink","suggested"] as RelType[]).map((type, i) => {
+            const e = EDGE_STYLE[type];
+            const labels: Record<RelType,string> = { related: "Relacionado", backlink: "Cita este", suggested: "Sugerido" };
+            return (
+              <g key={type} transform={`translate(0,${i * 14})`}>
+                <line x1={0} y1={5} x2={14} y2={5} stroke={e.stroke} strokeWidth={1.5} strokeDasharray={e.dash} opacity={0.8} />
+                <text x={18} y={9} fontSize={9} fill="currentColor" opacity={0.6}>{labels[type]}</text>
+              </g>
+            );
+          })}
+        </g>
+      )}
+    </svg>
+  );
+}
 
 interface Props {
   current: ProcedureMeta;
@@ -44,212 +167,36 @@ interface Props {
   suggested?: ProcedureMeta[];
 }
 
-function createNodeStyle(color: string, isCurrent: boolean): CSSProperties {
-  return {
-    background: `${color}${isCurrent ? "ff" : "20"}`,
-    color: "var(--foreground)",
-    border: `1.5px solid ${isCurrent ? color : `${color}66`}`,
-    borderRadius: 10,
-    padding: "8px 10px",
-    width: isCurrent ? 240 : 200,
-    fontSize: isCurrent ? 13 : 12,
-    fontWeight: isCurrent ? 700 : 500,
-    lineHeight: 1.3,
-    textAlign: "left",
-    boxShadow: isCurrent ? `0 0 0 2px ${color}40` : "none",
-  };
-}
-
-function relationStroke(relation: RelationType): string {
-  if (relation === "related") return "rgba(100,116,139,0.58)";
-  if (relation === "backlink") return "rgba(14,165,233,0.6)";
-  return "rgba(245,158,11,0.58)";
-}
-
-function buildGraph(current: ProcedureMeta, related: ProcedureMeta[], backlinks: ProcedureMeta[], suggested: ProcedureMeta[]) {
-  const relationById = new Map<string, { procedure: ProcedureMeta; relation: RelationType }>();
-
-  for (const procedure of suggested) relationById.set(procedure.id, { procedure, relation: "suggested" });
-  for (const procedure of backlinks) relationById.set(procedure.id, { procedure, relation: "backlink" });
-  for (const procedure of related) relationById.set(procedure.id, { procedure, relation: "related" });
-
-  const relatedNodes = [...relationById.values()].filter((item) => item.procedure.id !== current.id);
-  const count = Math.max(relatedNodes.length, 1);
-
-  const nodes: Node[] = [
-    {
-      id: current.id,
-      data: { label: `${current.id} · ${current.title}`, slug: current.slug, section: current.section },
-      position: { x: 0, y: 0 },
-      draggable: false,
-      style: createNodeStyle(SECTION_COLORS[current.section] ?? SECTION_COLORS.General, true),
-    },
-  ];
-
-  const edges: Edge[] = [];
-  const edgeIds = new Set<string>();
-  const ringRadius = 340;
-
-  relatedNodes.forEach((item, index) => {
-    const angle = (2 * Math.PI * index) / count - Math.PI / 2;
-    const procedure = item.procedure;
-    const color = SECTION_COLORS[procedure.section] ?? SECTION_COLORS.General;
-
-    nodes.push({
-      id: procedure.id,
-      data: { label: `${procedure.id} · ${procedure.title}`, slug: procedure.slug, section: procedure.section },
-      position: {
-        x: Math.cos(angle) * ringRadius,
-        y: Math.sin(angle) * ringRadius,
-      },
-      draggable: false,
-      style: createNodeStyle(color, false),
-    });
-
-    const edgeId = `${item.relation}:${current.id}:${procedure.id}`;
-    if (edgeIds.has(edgeId)) return;
-    edgeIds.add(edgeId);
-    edges.push({
-      id: edgeId,
-      source: item.relation === "backlink" ? procedure.id : current.id,
-      target: item.relation === "backlink" ? current.id : procedure.id,
-      style: {
-        stroke: relationStroke(item.relation),
-        strokeWidth: item.relation === "related" ? 2 : 1.6,
-        strokeDasharray: item.relation === "suggested" ? "5 4" : undefined,
-      },
-      animated: item.relation === "suggested",
-    });
-  });
-
-  const relatedById = new Map(relatedNodes.map((item) => [item.procedure.id, item.procedure]));
-  for (const procedure of relatedById.values()) {
-    for (const relatedId of procedure.related ?? []) {
-      if (!relatedById.has(relatedId)) continue;
-      const pairKey = [procedure.id, relatedId].sort().join("--");
-      const edgeId = `cluster:${pairKey}`;
-      if (edgeIds.has(edgeId)) continue;
-      edgeIds.add(edgeId);
-      edges.push({
-        id: edgeId,
-        source: procedure.id,
-        target: relatedId,
-        style: {
-          stroke: "rgba(99,102,241,0.34)",
-          strokeWidth: 1.2,
-        },
-      });
-    }
-  }
-
-  return { nodes, edges };
-}
-
-function GraphCanvas({ current, related, backlinks, suggested, expanded }: Props & { expanded?: boolean }) {
-  const router = useRouter();
-  const { nodes, edges } = useMemo(
-    () => buildGraph(current, related, backlinks ?? [], suggested ?? []),
-    [current, related, backlinks, suggested],
-  );
-
-  return (
-    <div className={`w-full rounded-xl border border-border/60 overflow-hidden bg-muted/10 ${expanded ? "h-[78vh]" : "h-[360px]"}`}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodeClick={(_, node) => {
-          const slug = node.data?.slug as string | undefined;
-          if (slug && slug !== current.slug) router.push(`/manual/${slug}`);
-        }}
-        fitView
-        fitViewOptions={{ padding: expanded ? 0.18 : 0.28 }}
-        nodesDraggable={false}
-        nodesConnectable={false}
-        elementsSelectable={false}
-        panOnDrag
-        panOnScroll
-        minZoom={0.15}
-        maxZoom={2.5}
-      >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="var(--border)" />
-        <Controls showInteractive={false} />
-        <MiniMap
-          pannable
-          zoomable
-          nodeColor={(node) => {
-            const section = node.data?.section as string | undefined;
-            return SECTION_COLORS[section ?? "General"] ?? SECTION_COLORS.General;
-          }}
-        />
-      </ReactFlow>
-    </div>
-  );
-}
-
 export function GraficaLocal({ current, related, backlinks = [], suggested = [] }: Props) {
-  const [expanded, setExpanded] = useState(false);
-  const fallbackItems = [
-    ...related.map((procedure) => ({ procedure, label: "saliente" })),
-    ...backlinks.map((procedure) => ({ procedure, label: "backlink" })),
-    ...suggested.map((procedure) => ({ procedure, label: "sugerido" })),
-  ];
+  const [modalOpen, setModalOpen] = useState(false);
+  const all = related.length + backlinks.length + suggested.length;
+
+  if (all === 0) {
+    return <p className="text-xs text-muted-foreground text-center py-6">Sin conexiones registradas.</p>;
+  }
 
   return (
     <>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-xs text-muted-foreground">
-            Gris: Enlaces Salientes · Azul: Backlinks · Ámbar: Sugeridos
-          </p>
-          <button
-            onClick={() => setExpanded(true)}
-            className="inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-          >
-            <Maximize2 className="h-3.5 w-3.5" />
-            Ampliar
-          </button>
-        </div>
-        <GraphCanvas current={current} related={related} backlinks={backlinks} suggested={suggested} />
-        {fallbackItems.length > 0 && (
-          <details className="rounded-lg border border-border/50 bg-card/40 px-3 py-2">
-            <summary className="cursor-pointer text-xs font-semibold text-muted-foreground">
-              Lista accesible de conexiones ({fallbackItems.length})
-            </summary>
-            <div className="mt-2 grid gap-1">
-              {fallbackItems.map(({ procedure, label }) => (
-                <Link
-                  key={`${label}-${procedure.id}`}
-                  href={`/manual/${procedure.slug}`}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-muted/50"
-                >
-                  <span className="w-14 font-mono text-muted-foreground">{procedure.id}</span>
-                  <span className="min-w-0 flex-1 truncate">{procedure.title}</span>
-                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    {label}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </details>
-        )}
+      <div className="relative rounded-xl border border-border/60 bg-muted/10 overflow-hidden" style={{ height: 340 }}>
+        <SVGGraph current={current} related={related} backlinks={backlinks} suggested={suggested} ringRadius={155} centerR={48} nodeR={38} />
+        <button type="button" onClick={() => setModalOpen(true)}
+          className="absolute top-2 right-2 rounded-lg border border-border/50 bg-background/80 backdrop-blur-sm p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+          title="Expandir gráfica"
+        >
+          <Maximize2 className="h-3.5 w-3.5" />
+        </button>
       </div>
 
-      <Dialog open={expanded} onOpenChange={setExpanded}>
-        <DialogContent className="w-[95vw] max-w-[1200px] p-3">
-          <DialogTitle className="sr-only">Gráfica Local Ampliada</DialogTitle>
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="text-sm font-medium">{current.id} · {current.title}</p>
-            <button
-              onClick={() => setExpanded(false)}
-              className="inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            >
-              <Minimize2 className="h-3.5 w-3.5" />
-              Cerrar
-            </button>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="w-[95vw] max-w-4xl p-0 gap-0 overflow-hidden" style={{ height: "82vh" }}>
+          <DialogTitle className="sr-only">Gráfica de conexiones — {current.title}</DialogTitle>
+          <div className="px-4 pt-4 pb-2 border-b border-border/40">
+            <p className="text-sm font-semibold">{current.id} — {truncate(current.title, 50)}</p>
+            <p className="text-xs text-muted-foreground">{all} conexiones · arrastra · rueda=zoom · clic=navegar</p>
           </div>
-          <ReactFlowProvider>
-            <GraphCanvas current={current} related={related} backlinks={backlinks} suggested={suggested} expanded />
-          </ReactFlowProvider>
+          <div style={{ height: "calc(82vh - 56px)" }}>
+            <SVGGraph current={current} related={related} backlinks={backlinks} suggested={suggested} ringRadius={220} centerR={58} nodeR={50} />
+          </div>
         </DialogContent>
       </Dialog>
     </>

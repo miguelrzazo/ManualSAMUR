@@ -1,4 +1,15 @@
 {
-  "generatedAt": "",
-  "events": []
+  "generatedAt": "2026-05-14T10:00:00.000Z",
+  "events": [
+    {
+      "eventId": "evt-codes-8x-may2026",
+      "origin": "manual",
+      "procedureIds": ["121"],
+      "changeKind": "actualizado",
+      "summary": "Nuevos códigos de incidente: 8.4.1 (SVA +3 recursos), 8.5.1 (PSA +3 recursos), 8.9 (refuerzo por concentración), 8.10 y 8.11 (CECOR externo/interno)",
+      "effectiveDate": "2026-05-09",
+      "isNewThisWeek": true,
+      "approvedAt": "2026-05-14T10:00:00.000Z"
+    }
+  ]
 }
