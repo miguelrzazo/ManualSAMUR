@@ -32,9 +32,9 @@ export function NavBar({ procedures, collaborators, mainLinks }: Props) {
   const parts = pathname.split("/").filter(Boolean);
   const isInProcedure = parts[0] === "manual" && parts.length > 1;
   const procedureSlug = isInProcedure ? parts[1] : null;
-  const procedureId = procedureSlug
-    ? (procedures.find((p) => p.slug === procedureSlug)?.id ?? procedureSlug)
-    : null;
+  const currentProcedure = procedureSlug ? procedures.find((p) => p.slug === procedureSlug) : null;
+  const procedureId = currentProcedure?.id ?? procedureSlug;
+  const procedureTitle = currentProcedure?.title ?? null;
 
   return (
     <>
@@ -97,14 +97,27 @@ export function NavBar({ procedures, collaborators, mainLinks }: Props) {
       {/* Mobile top bar (just logo + search + theme) */}
       <header className="flex md:hidden sticky top-0 z-50 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-4 justify-between pt-[env(safe-area-inset-top)] h-[calc(3rem+env(safe-area-inset-top))]">
         {isInProcedure ? (
-          <button
-            onClick={() => router.push("/manual")}
-            className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span>Manual</span>
-            {procedureId && <span className="text-xs text-muted-foreground/70">· {procedureId}</span>}
-          </button>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <button
+              onClick={() => router.push("/manual")}
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden xs:inline">Manual</span>
+            </button>
+            {procedureId && (
+              <span className="flex-shrink-0 font-mono text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">{procedureId}</span>
+            )}
+            {procedureTitle && (
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <p className="text-sm font-medium text-foreground truncate animate-[marquee_12s_linear_infinite_paused] hover:[animation-play-state:running]"
+                  style={{ animationPlayState: procedureTitle.length > 22 ? "running" : "paused" }}
+                >
+                  {procedureTitle}
+                </p>
+              </div>
+            )}
+          </div>
         ) : (
           <Link href="/manual" className="flex items-center gap-2">
             <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">

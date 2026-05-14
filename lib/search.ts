@@ -40,7 +40,7 @@ const FIELD_PENALTY: Record<ProcedureSearchField, number> = {
   tags: 0.045,
   backlinks: 0.07,
   section: 0.09,
-  searchText: 0.18,
+  searchText: 0.06, // reduced: content matches should surface for acronyms/abbreviations
 };
 
 let fuseInstance: Fuse<ProcedureMeta> | null = null;
@@ -54,7 +54,7 @@ export function buildSearchIndex(procedures: ProcedureMeta[]): Fuse<ProcedureMet
       { name: "tags", weight: 1.45 },
       { name: "backlinks", weight: 0.55 },
       { name: "section", weight: 0.35 },
-      { name: "searchText", weight: 0.5 },
+      { name: "searchText", weight: 1.1 },
     ],
     threshold: 0.32,
     includeScore: true,
