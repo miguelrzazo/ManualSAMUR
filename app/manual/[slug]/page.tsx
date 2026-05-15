@@ -15,7 +15,6 @@ import {
 } from "@/lib/manual-data";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { GraficaLocal } from "@/components/manual/GraficaLocal";
-import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
   ExternalLink,
@@ -52,7 +51,6 @@ import { ContentDiff } from "@/components/manual/ContentDiff";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import type { ProcedureRelation } from "@/lib/manual-data";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
 import { buildManualRelationsIndex } from "@/lib/manual-relations-index";
@@ -176,11 +174,6 @@ export default async function ProcedurePage({ params }: Props) {
     "Psicológicos": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
     Técnicas: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
   };
-  const relationsByProcedureId = procedure.relations.reduce<Record<string, ProcedureRelation[]>>((acc, relation) => {
-    acc[relation.id] ??= [];
-    acc[relation.id].push(relation);
-    return acc;
-  }, {});
   const previewByProcedureId = allProcedures.reduce<Record<string, string>>((acc, item) => {
     const text = item.searchText.replace(/\s+/g, " ").trim();
     acc[item.id] = text.length > 260 ? `${text.slice(0, 257).trim()}...` : text;
@@ -203,38 +196,20 @@ export default async function ProcedurePage({ params }: Props) {
         />
         {/* Header */}
         <div className="mb-5 rounded-lg border border-border/60 bg-card/50 p-4 md:p-5">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="font-mono text-sm text-muted-foreground">{procedure.id}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${SECTION_COLORS[procedure.section] ?? "bg-muted text-muted-foreground"}`}>
-              {toCapitalCase(procedure.section)}
-            </span>
-            {procedure.updated && (
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                Rev. {procedure.updated}
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-sm text-muted-foreground">{procedure.id}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${SECTION_COLORS[procedure.section] ?? "bg-muted text-muted-foreground"}`}>
+                {toCapitalCase(procedure.section)}
               </span>
-            )}
-            {procedure.sourceUpdated && (
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                Sync {procedure.sourceUpdated}
-              </span>
-            )}
-          </div>
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight mb-3">{procedure.title}</h1>
-              {procedure.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {procedure.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs font-normal">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
+              {procedure.updated && (
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="h-3 w-3" />
+                  Rev. {procedure.updated}
+                </span>
               )}
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0">
               <PrintButton />
               <FavoriteButton
                 procedureId={procedure.id}
@@ -243,6 +218,7 @@ export default async function ProcedurePage({ params }: Props) {
               />
             </div>
           </div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">{procedure.title}</h1>
         </div>
 
 
@@ -415,7 +391,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Enlazado desde"
               icon={<GitBranch className="h-3.5 w-3.5" />}
               procedures={backlinks}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
               emptyLabel="Ningún otro artículo enlaza aquí"
             />
@@ -425,7 +400,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Enlaces salientes"
               icon={<Link2 className="h-3.5 w-3.5" />}
               procedures={related}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
             />
           )}
@@ -434,7 +408,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Relacionados sugeridos"
               icon={<Network className="h-3.5 w-3.5" />}
               procedures={suggested}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
               emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
@@ -460,7 +433,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Enlazado desde"
               icon={<GitBranch className="h-3.5 w-3.5" />}
               procedures={backlinks}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
               emptyLabel="Ningún otro artículo enlaza aquí"
             />
@@ -470,7 +442,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Ver también"
               icon={<Link2 className="h-3.5 w-3.5" />}
               procedures={related}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
             />
           )}
@@ -479,7 +450,6 @@ export default async function ProcedurePage({ params }: Props) {
               title="Sugeridos"
               icon={<Network className="h-3.5 w-3.5" />}
               procedures={suggested}
-              relationsByProcedureId={relationsByProcedureId}
               previewByProcedureId={previewByProcedureId}
               emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
