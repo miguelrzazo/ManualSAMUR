@@ -617,6 +617,18 @@
     "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR"
   },
   {
+    "code": "12",
+    "name": "Angioplastia Primaria",
+    "category": "Especificos",
+    "description": "SCACEST — Para Angioplastia Primaria"
+  },
+  {
+    "code": "14",
+    "name": "Fibrinolisis",
+    "category": "Especificos",
+    "description": "SCACEST — Con Fibrinolisis"
+  },
+  {
     "code": "13",
     "name": "Ictus agudo",
     "category": "Especificos",
