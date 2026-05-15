@@ -62,6 +62,14 @@ const MAIN_PAGE_URL = `${WIKI_BASE}/bin/view/Main/`;
 const MAIN_ABBREVIATIONS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Abreviaturas/WebHome`;
 const MAIN_COLLABORATORS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Colaboradores/WebHome`;
 
+// Pages that are not discovered automatically (e.g. nested under generic namespaces)
+const EXTRA_PROCEDURE_URLS: Array<{ url: string; title: string }> = [
+  {
+    url: `${WIKI_BASE}/bin/view/Procedimientos%20asistenciales/Activaci%C3%B3n%20y%20actuaci%C3%B3n%20del%20psic%C3%B3logo%20de%20Guardia`,
+    title: "Activación y actuación del psicólogo de Guardia",
+  },
+];
+
 const HEADERS = {
   "User-Agent": "ManualSAMUR-sync/2.0 (personal use; contact: local developer)",
 };
@@ -385,6 +393,18 @@ async function discoverProcedureSpaces() {
     if (!seen.has(s.url)) {
       seen.add(s.url);
       merged.push(s);
+    }
+  }
+  // Always include explicitly listed pages not auto-discovered
+  for (const extra of EXTRA_PROCEDURE_URLS) {
+    if (!seen.has(extra.url)) {
+      seen.add(extra.url);
+      merged.push({
+        title: extra.title,
+        url: extra.url,
+        section: getSectionFromXWikiUrl(extra.url),
+        depth: 2,
+      });
     }
   }
   return merged;
