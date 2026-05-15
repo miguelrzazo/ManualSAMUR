@@ -328,17 +328,21 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
 
   useEffect(() => {
     if (!highlightedCode) return;
-    const frame = window.requestAnimationFrame(() => {
-      const container = scrollContainerRef.current;
-      if (!container) return;
-      const target = container.querySelector<HTMLElement>(`[data-code-anchor="${codeAnchor(highlightedCode)}"]`);
-      if (!target) return;
-      const containerRect = container.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      container.scrollBy({ top: targetRect.top - containerRect.top - 96, behavior: "smooth" });
-      target.focus({ preventScroll: true });
-    });
-    return () => window.cancelAnimationFrame(frame);
+    const anchor = codeAnchor(highlightedCode);
+    const tryScroll = (delay: number) =>
+      setTimeout(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+        const target = container.querySelector<HTMLElement>(`[data-code-anchor="${anchor}"]`);
+        if (!target) return;
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        container.scrollBy({ top: targetRect.top - containerRect.top - 96, behavior: "smooth" });
+        target.focus({ preventScroll: true });
+      }, delay);
+    const t1 = tryScroll(80);
+    const t2 = tryScroll(280);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [codeAnchor, highlightedCode, activeTab, activeOtrosTab]);
 
   // Hospitales: status4 joined with hospitals, plus HGU
