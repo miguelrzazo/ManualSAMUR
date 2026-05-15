@@ -160,6 +160,7 @@ export function getAllProcedures(): Procedure[] {
   const baseProcedures = procedures.map((procedure: Procedure) => {
     const content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
       currentProcedureId: procedure.id,
+      procedureTitle: procedure.title,
       resolveDrugHref(reference) {
         const drugId = resolveDrugIdReference(reference, VADEMECUM_DRUGS);
         return drugId ? buildVademecumHref(drugId) : null;

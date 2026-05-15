@@ -13,7 +13,6 @@ source: >-
 contentHash: 8d91138e73a7dc142a70cc2813eafbdc9387f1b13bc01a3dbb7e31e5d9a0ef03
 attachments: []
 ---
-**Última modificación el 05/05/2026**
 
 **Objetivos de este procedimiento:**
 

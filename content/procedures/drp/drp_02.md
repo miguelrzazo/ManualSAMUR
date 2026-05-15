@@ -13,7 +13,6 @@ source: >-
 contentHash: 106f46d2b7f40d8d58a634d290662e1841445c7716c2bf1cf2f3ff54c9734f91
 attachments: []
 ---
-🖨 Imprimir esta página
 
 ## **Objeto**.
 Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).

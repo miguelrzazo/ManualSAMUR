@@ -13,7 +13,6 @@ source: >-
 contentHash: 9bcebbdd20471f9fd2fecfa45badf713e48c58d5581e9d755f4df4137d78dfc6
 attachments: []
 ---
-🖨 Imprimir esta página
 
 ## Definición y objeto.
 Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.

@@ -6,6 +6,9 @@ const BARE_PROCEDURE_LINK_RE = /(?:^|[\s(])(?:https?:\/\/[^\s)]+\/)?([0-9][A-Za-
 const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
 const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(((?:\.\.\/|\.\/)?images\/[^)]+)\)\s*$/gim;
 const STANDALONE_BANG_RE = /^!\s*$/gm;
+const ÚLTIMA_MODIFICACIÓN_RE = /^\*\*Última modificación[^\n*]*\*\*\s*\.?\s*$/gim;
+const PRINT_EMOJI_RE = /^🖨️?\s*Imprimir\s+esta\s+página\s*$/gim;
+const CONTENIDO_STANDALONE_RE = /^Contenido\s*$/gm;
 const IMAGE_IN_LINK_RE = /\[!\[[^\]]*\]\([^)]+\)\s*([^\]]*)\]\(([^)]+)\)/g;
 const FOOTER_RE = /^\s*Manual de Procedimientos SAMUR-Protección Civil.*$/gim;
 const VADEMECUM_PLACEHOLDER_LINK_RE = /\[([^\]]+)]\(#(?:\s+"[^"]*")?\)/g;
@@ -93,6 +96,7 @@ export interface GroupedProcedureEditorialBlocks {
 
 export interface ProcedureContentNormalizationOptions {
   currentProcedureId?: string;
+  procedureTitle?: string;
   resolveDrugHref?: (reference: string) => string | null;
 }
 
@@ -608,7 +612,10 @@ export function normalizeProcedureContent(
       return cleanLabel ? `[${cleanLabel}](${resolvedHref})` : "";
     })
     .replace(FOOTER_RE, "")
-    .replace(START_PAGE_RE, "");
+    .replace(START_PAGE_RE, "")
+    .replace(ÚLTIMA_MODIFICACIÓN_RE, "")
+    .replace(PRINT_EMOJI_RE, "")
+    .replace(CONTENIDO_STANDALONE_RE, "");
 
   const rewrittenLinks = rewriteLegacyDrugLinks(rewriteLegacyArrowLinks(normalized), options)
     .replace(LOCAL_MARKDOWN_LINK_RE, (_, label: string, href: string) => {
@@ -625,9 +632,22 @@ export function normalizeProcedureContent(
   const linkedCodes = linkSafeCodeMentions(protectedContent, idToSlug, options.currentProcedureId);
   const linkedKeywords = linkProcedureKeywords(linkedCodes, idToSlug, options.currentProcedureId);
 
-  return restoreMarkdownLinks(linkedKeywords, links)
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  const restored = restoreMarkdownLinks(linkedKeywords, links).replace(/\n{3,}/g, "\n\n");
+
+  if (options.procedureTitle) {
+    const normalizedTitle = normalizePlainText(options.procedureTitle);
+    const lines = restored.split("\n");
+    for (let i = 0; i < Math.min(lines.length, 8); i++) {
+      const trimmed = lines[i].trim();
+      if (!trimmed) continue;
+      const isAllCaps = trimmed === trimmed.toUpperCase() && /^[A-ZÁÉÍÓÚÑÜ]/.test(trimmed) && trimmed.length >= 3;
+      if (isAllCaps && normalizePlainText(trimmed) === normalizedTitle) lines.splice(i, 1);
+      break;
+    }
+    return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+
+  return restored.trim();
 }
 
 export function splitProcedureContentSections(content: string): ProcedureContentSection[] {

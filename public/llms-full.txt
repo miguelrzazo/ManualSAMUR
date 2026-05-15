@@ -3,7 +3,7 @@
 > Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
-Generado: 2026-05-15T09:03:24.268Z
+Generado: 2026-05-15T09:15:15.055Z
 Total procedimientos: 230
 
 ---
@@ -148,8 +148,6 @@ La Sección de Logística, se encargará
 Sección: DRP
 URL: https://manualsamur.es/manual/drp_01-procedimiento-general-de-los-drp
 Actualizado: 2026-05-09
-🖨 Imprimir esta página
-
 Definición y objeto.
 Los Dispositivos de Riesgo Previsible (DRP) son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
 
@@ -165,15 +163,13 @@ Servicios preventivos no asistenciales con funciones de enlace o coordinación. 
 Responsable del DRP.
 Cada servicio tendrá un responsable que será acorde al nivel de complejidad del dispositivo:
 Servicios convencionales y de refuerzo. Esta función recaerá en el Lima de guardia, salvo nombramiento expreso de otro responsable. Esta función la ejercerá por delegación el componente de mayor categoría o antigüedad de las unidades desplegadas, que no se identificará con ningún indicativo específico y reportará al Lima de guardia cuantas circunstancias y decisiones sea necesario tomar.
-Servicios complejos que así lo requieran. La figura de responsable recaerá, en función
+Servicios complejos que así lo requieran. La figura de responsable recaerá, en función de la complejidad del mi
 [...contenido truncado, ver URL completa]
 ---
 # [drp_02] Procedimiento de despliege de un DRP
 Sección: DRP
 URL: https://manualsamur.es/manual/drp_02-procedimiento-de-despliege-de-un-drp
 Actualizado: 2026-05-09
-🖨 Imprimir esta página
-
 Objeto.
 Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).
 
@@ -192,15 +188,14 @@ A la hora de cita general podrá realizarse una reunión previa informativa (bri
 Características del servicio preventivo y horarios relevantes.
 Organización geográfica.
 Canales de comunicación.
-Asignación de vehícul
+Asignación de vehículos.
+Tipo de operatividad 
 [...contenido truncado, ver URL completa]
 ---
 # [drp_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible
 Sección: DRP
 URL: https://manualsamur.es/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
 Actualizado: 2026-05-05
-Última modificación el 05/05/2026
-
 Objetivos de este procedimiento:
 Establecerá la definición de CECOR y sus diferentes tipos.
 Describir las obligaciones del Responsable del CECOR.
@@ -225,7 +220,8 @@ Solicitará al Lima de Guardia o al Encargado de la Central de Comunicaciones:
 Orden de servicio de cada DRP. Tiene obligación de conocerla.
 Relación de unidades.
 Números de tetra portátil asignados a cada unidad.
-Número de los móviles asignado
+Número de los móviles asignados a cada unidad.
+En los DRP en los 
 [...contenido truncado, ver URL completa]
 ---
 # [101] Organigrama Operativo
@@ -289,8 +285,6 @@ En la siguiente tabla se exponen las condiciones de uso, mantenimiento o limpiez
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/121-procedimiento-radiotelefonico
 Actualizado: 2026-05-08
-Última modificación el 08/05/2026 
-
 Conceptos.
 Utilizar un lenguaje radiotelefónico uniforme es garantía de eficacia, seguridad e inteligibilidad.
 El lenguaje debe ser claro, conciso, concreto y, sobre todo, uniforme.
@@ -318,7 +312,8 @@ Solicitud de enlaces entre operativos.
 Transmisión de información complementaria a las claves de operatividad 3 y 4.
 Solicitud de información por parte de la jefatura o Central.
 Solicitud de apoyo de recurso.
-Preferente: cuando la información que se quiere dar tiene mayor importancia que la que se está realizando. Su uso implica prioridad en el establecimiento de la comunicación con la Central de Comunicaciones, debiendo ésta cortar cualquier comunicación en curso, excepto las de carácter urgente. Se consideran subsidiarios de este tipo de comunicación, las comunicaciones d
+Preferente: cuando la información que se quiere dar tiene mayor importancia que la que se está realizando. Su uso implica prioridad en el establecimiento de la comunicación con la Central de Comunicaciones, debiendo ésta cortar cualquier comunicación en curso, excepto las de carácter urgente. Se consideran subsidiarios de este tipo de comunicación, las comunicaciones de gestión sobre las de información:
+
 [...contenido truncado, ver URL completa]
 ---
 # [122] Gestión de llamadas de emergencia
@@ -695,10 +690,6 @@ Aquellas situaciones que generen un tiempo de limpieza/reposición mayor de 45 m
 Sección: Operativos
 URL: https://manualsamur.es/manual/201-actuacion-general
 Actualizado: 2026-04-24
-Última modificación el 24/04/2026
-
-Contenido
-
 ACTUACIÓN GENERAL
 
 NORMAS GENERALES OPERATIVAS
@@ -728,7 +719,8 @@ Inoperatividad de la unidad, por causa justificada
 Accidente de la unidad
 Finalización de un servicio de cobertura
 Se puede exceder la jornada laboral por necesidades del servicio, en cuyo caso se deberá poner en conocimiento de la jefatura a través del Jefe de División de Guardia, quien lo reflejará en su informe diario y lo validará con su firma en el correspondiente documento, quedando una copia del mismo en poder del trabajador y la otra tendrá como destino la Sección de Logística y Medios Técnicos, en el formulario deberá constar la hora de finalización y el número de informe que generó el exceso de jornada o en su defecto la causa de la misma si no existiera número de informe.
-Se considera exceso de jornada a cualquier período de tiempo en que una unidad esté de servicio, excediendo su jornada de trabajo habitual establecida en los diferentes convenios y normativas legales. Este exceso de jornada traerá como consecuencia la correspondiente compensación conforme a lo que establezca la normativa vig
+Se considera exceso de jornada a cualquier período de tiempo en que una unidad esté de servicio, excediendo su jornada de trabajo habitual establecida en los diferentes convenios y normativas legales. Este exceso de jornada traerá como consecuencia la correspondiente compensación conforme a lo que establezca la normativa vigente.
+Cuando el exceso de jornada se deba a la
 [...contenido truncado, ver URL completa]
 ---
 # [203] Conducción de vehículos sanitarios en emergencias
@@ -856,8 +848,6 @@ En el caso específico de que se precise reponer material en la Central de Comun
 Sección: Operativos
 URL: https://manualsamur.es/manual/205-cumplimentacion-de-los-informes-de-asistencia
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Se entiende por informe de asistencia de transporte sanitario, el documento elaborado en papel impreso o en soporte informático realizado por la dotación de un equipo sobre la actuación que efectúa ante una demanda de carácter sanitario.
 
 Los informes de asistencia de transporte sanitario son los documentos que el Servicio, y sus profesionales, tienen para garantizar la continuidad del proceso asistencial, realizar evaluación y mejora de la calidad asistencial, justificar legalmente las actuaciones, realizar formación e Investigación y responder a las posibles reclamaciones que realicen los usuarios del servicio. Se trata pues de documentación legal a la que tienen derecho los pacientes y cuya realización supone una obligación para los profesionales encargados de su atención. La cesión o acceso del informe asistencial a otros profesionales responde al interés del paciente en mantener una continuidad del proceso asistencial (otros profesionales sanitarios: hospitales, atención primaria, etc.) o procesos judiciales (juzgados, policía judicial, etc.) según se contempla en el reglamento de protección de datos.
@@ -866,7 +856,7 @@ También se debe cumplimentar el informe en los casos de intervención sobreveni
 En el caso de IMV, abra un informe por cada paciente asignándole el mismo número de intervención seguido de un punto y una numeración correlativa desde el 1 hasta completar el total de asistidos.
 Cumplimente el informe de manera legible, ordenada y completa. La información escrita tiene que ser comprensible para cada paciente.
 En cumplimiento de la Ley General de Sanidad (14/86 de 25 de abril, artículo 10), y la Ley básica reguladora de la autonomía del paciente y de derechos y obligaciones en materia de información y documentación clínica (41/2002, de 14 de noviembre, artículo 14) los pacientes tienen derecho a conocer la identidad de los profesionales que realizan su asistencia directa, salvo que razones legales exijan lo contrario. Por ello, los profesionales responsables del área asistencial (médico, enfermero/a, y TATS en el caso del SVA y TATS en el caso del SVB), deben identificarse, firmando el documento cada uno de los intervinientes en el proceso cuando proceda.
-La correcta cumpli
+La correcta cumplimentación de los diversos informes 
 [...contenido truncado, ver URL completa]
 ---
 # [205b] Transferencia de pacientes
@@ -1106,8 +1096,6 @@ Ver anexo 1 - Indicadores más frecuentes en el maltrato físico infantil>>/docs
 Sección: Operativos
 URL: https://manualsamur.es/manual/209b-atencion-sociosanitaria-a-mayores
 Actualizado: 2026-04-30
-Última modificación el 30/04/2026
-
 Procedimiento de actuación para la atención sociosanitaria a personas mayores en riesgo social o con sospecha de maltrato código 5.9
 Contenido
 
@@ -1168,8 +1156,6 @@ orientación diagnóstica (“Huelga de Ha
 Sección: Operativos
 URL: https://manualsamur.es/manual/211-codigo-visem
 Actualizado: 2026-04-24
-Última modificación el 24/04/2026 
-
 Asistencia a mujeres víctimas de violencia sexual. Código VISEM.
 
 Objetivo General: Regular operativa y asistencialmente aquellas situaciones con posibles víctimas de violencia sexual durante cualquier demanda de asistencia de pacientes en SAMUR-Protección Civil.
@@ -1531,8 +1517,6 @@ E
 Sección: Operativos
 URL: https://manualsamur.es/manual/214d-codigo-100
 Actualizado: 2026-05-03
-Procedimientos operativos: Código 100)
-
 PROCEDIMIENTO DE ACTUACIÓN COORDINADA PARA LA PREVENCIÓN DEL SUICIDIO. CODIGO 100  
 SAMUR-PROTECCIÓN CIVIL - FUNDACIÓN JIMENEZ DIAZ
 
@@ -1567,7 +1551,7 @@ Datos de filiación
 Debe incluir antecedentes médicos, antecedentes psicológicos/psiquiátricos (incluidos intentos previos) y tratamiento actual.
 En la medida de lo posible se intentará obtener un teléfono u otro medio de contacto con los familiares más cercanos o las personas más próximas al paciente (importante para corroborar la información e investigar el soporte social disponible).
 Exploración médica
-Fundamentalmente dirigida a despistar la ca
+Fundamentalmente dirigida a despistar la causa/afectación orgánica (ver procedimien
 [...contenido truncado, ver URL completa]
 ---
 # [214e] Código 19: Código TEP
@@ -1743,8 +1727,6 @@ En menores de 1 mes, dada la alta prevalencia de eventos paroxísticos no epilé
 Sección: Operativos
 URL: https://manualsamur.es/manual/214h-codigo-visnna
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Asistencia Sanitaria Urgente a Niños, Niñas y Adolescentes víctimas de violencia sexual. Código VISNNA.
 
 Objetivo General: garantizar una atención sanitaria integral, efectiva y eficiente en el medio extrahospitalario a los niños, niñas y adolescentes (NNA) que hayan sufrido agresión sexual con contacto físico, aunque no haya lesiones físicas objetivables.
@@ -1778,7 +1760,7 @@ Comunicación del hecho por parte de personas de su entorno.
 Comunicación realizada por profesionales de otros ámbitos que están en contacto con el NNA (educación, servicios sociales, centros de atención temprana, centros de salud, programas deportivos, ocio y tiempo libre, agentes de las fuerzas y cuerpos de seguridad, profesionales que intervienen en las situaciones de violencia de género, etc.).
 
 En este sentido, se valorarán como indicadores de violencia sexual en NNA con mayor evidencia, los reflejados en los siguientes anexos:
-Anexo II (Indicador
+Anexo II (Indicadores comportamentales y psicológicos 
 [...contenido truncado, ver URL completa]
 ---
 # [215] Diagnóstico de Muerte
@@ -1818,8 +1800,6 @@ En el caso de desnudar a la víctima, se separará la ropa en una bolsa para su 
 Sección: Operativos
 URL: https://manualsamur.es/manual/216c-asistencia-a-paciente-con-posible-infeccion-de-ebo
 Actualizado: 2026-05-01
-Procedimientos operativos: Riesgo biológico: Asistencia a paciente con posible infección de ébola)
-
 PACIENTE CON POSIBLE INFECCIÓN DE ÉBOLA
 
 El siguiente procedimiento regula la operativa a seguir en el caso de una solicitud de asistencia para un paciente con una posible infección por virus de ébola y supone una adaptación a la operativa de SAMUR-Protección Civil de los procedimientos establecidos desde el Ministerio de Sanidad y la Consejería de la Comunidad de Madrid.
@@ -1862,15 +1842,13 @@ Una vez confirmado por el médico de la Unidad de SVA la inclusión del paciente
   
 
 Funciones a realizar por el Recurso QUEBEC:
-Si no encuentra en su dotación con más de dos especialistas, solicitará al LIMA (o VICTOR en horario nocturno) la activación de la segunda respu
+Si no encuentra en su dotación con más de dos especialistas, solicitará al LIMA (o VICTOR en horario nocturno) la activación de la segunda respuesta. Dichos recursos de la segunda respuesta se incorporarán a Base 0 y serán distribuidos por una 
 [...contenido truncado, ver URL completa]
 ---
 # [216d] Solicitud de traslado de paciente con ébola
 Sección: Operativos
 URL: https://manualsamur.es/manual/216d-solicitud-de-traslado-de-paciente-con-ebola
 Actualizado: 2026-05-01
-Procedimientos operativos: Riesgo biológico: Solicitud de traslado de paciente con ébola)
-
 SOLICITUD DE TRASLADO DE PACIENTE CON ÉBOLA
 
 El siguiente procedimiento regula la operativa a seguir en el caso de una solicitud de traslado de un paciente con una posible infección de virus Ébola desde uno de los aeropuertos de Madrid (Barajas Adolfo Suárez o Torrejón).
@@ -1896,7 +1874,8 @@ Blanco: retirando el traje y posteriormente, con retirada del uniforme en otra d
 Una vez finalizada la descontaminación de la dotación, el Quebec será descontaminado por especialistas de su dotación o de la segunda respuesta, dotada de traje nivel II (tipo 2, 3) con elemento autofiltrante FFP-2 ó 3. Se realizará el mismo procedimiento que con la dotación.
 
 Funciones a realizar por la Unidad Asistencial:
-Se equipará con traje buzo nivel II (tipo 2, 3), con máscara con filtro polivalente, botas de protección NRBQ y guantes. La máscara estará sellada con cinta americana, según las indicaciones del QUEBEC, excepto el técnico del vehículo que deberá permanecer en lo posible, sin contacto con el afectado y que se equipará con traje antisalpicaduras nivel I (tipo 5, 6), guantes, calzas y elemento au
+Se equipará con traje buzo nivel II (tipo 2, 3), con máscara con filtro polivalente, botas de protección NRBQ y guantes. La máscara estará sellada con cinta americana, según las indicaciones del QUEBEC, excepto el técnico del vehículo que deberá permanecer en lo posible, sin contacto con el afectado y que se equipará con traje antisalpicaduras nivel I (tipo 5, 6), guantes, calzas y elemento autofiltrante FFP-3.
+Realizará una valoración del paciente con anterioridad a su inclusión en
 [...contenido truncado, ver URL completa]
 ---
 # [217] Procedimiento de Incidentes Complejos. Código PIC
@@ -2240,8 +2219,6 @@ Datos personales, lo más completos posible (edad, sexo
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_06-con-policia-nacional
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026 
-
 Objetivos generales
 
 El presente documento tiene por objeto regular el procedimiento de actuación operativa conjunta entre la Policía Nacional y el SAMUR-Protección Civil en aquellas situaciones acaecidas en el término municipal de Madrid en las que la presencia de ambos Cuerpos resulte necesaria.
@@ -2268,7 +2245,7 @@ En el lugar de la asistencia, los responsables de las unidades o indicativos int
 
 Actuación en servicios especiales y programados.
 (((
-Cuando la magnitud del servicio, a criterio de las direcciones respectivas (
+Cuando la magnitud del servicio, a criterio de las direcciones respectivas (JSP Madrid-SG SAMUR-Protección Civil
 [...contenido truncado, ver URL completa]
 ---
 # [217_07] Con RENFE
@@ -2322,8 +2299,6 @@ Número de
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_08-con-metro
 Actualizado: 2026-04-28
-Última modificación el 28/04/2026 
-
 Procedimiento en proceso de actualización. Hasta la entrada en vigor del procedimiento nuevo, este documento tendrá validez como tal.
 
 Este procedimiento contempla la actuación conjunta coordinada entre el personal de Metro de Madrid y SAMUR-Protección Civil, ante la existencia de pacientes, ya sea por accidente o enfermedad común en las instalaciones de la Red de Metro de Madrid. 
@@ -2350,7 +2325,7 @@ De no estar presente el personal de Metro o vigilantes, se les puede localizar a
 
 Paciente arrollado o en las vías
 (((
-El personal de estación habitualmente se encontrará en el lugar del suceso, de no estar presente, se le puede localizar a través de los interfonos amarillos situados en los vestíbulos y andenes. Habitualmente, en sucesos complejos acudirán responsable
+El personal de estación habitualmente se encontrará en el lugar del suceso, de no estar presente, se le puede localizar a través de los interfonos amarillos situados en los vestíbulos y andenes. Habitualmente, en sucesos complejos acudirán responsables de Seguridad y de circulación de M
 [...contenido truncado, ver URL completa]
 ---
 # [217_09] Con Unidad de Medio Ambiente
@@ -2386,8 +2361,6 @@ Los efectivos de la Unidad de Medio Ambiente de la Policía Municipal, acompaña
 Sección: Operativos
 URL: https://manualsamur.es/manual/218-actuacion-preventiva-en-disturbios-urbanos-y-actos
 Actualizado: 2026-05-03
-Procedimientos operativos: Actuación preventiva en Disturbios urbanos y Actos antisociales)
-
 Actuación preventiva en Disturbios urbanos y Actos antisociales
 
 El presente procedimiento tiene como objetivo primario la organización de la respuesta del Servicio SAMUR Protección Civil en los diferentes disturbios urbanos ya sean programados o sobrevenidos para los que el Servicio es reclamado.
@@ -2420,15 +2393,14 @@ Una vez activado el procedimiento, el Supervisor:
 Indicará a la Central las unidades asistenciales a desplazar al área de asistencia sanitaria, que lo transmitirá al Jefe de Guardia Oeste.
 Zonificará la intervención informando a la Central del área de riesgo (área de socorro y evacuación), para evitar la circulación de unidades.
 Desplazará al Jefe de Equipo de Apoyo Logístico (VICTOR) al área de socorro y evacuación, para valorar la situación y hacerse cargo de las intervenciones en el área de socorro y evacuación. En su defecto, podría ser activado para esas funciones el vehículo de procedimientos especiales (QUÉBEC).
-Indicará al Jefe de Equipo de actividad voluntaria (LIMA) la activ
+Indicará al Jefe de Equipo de actividad voluntaria (LIMA) la activación del Equipo DEPA.
+Si fuera preciso, y conforme a los procedimientos del Servicio, se act
 [...contenido truncado, ver URL completa]
 ---
 # [301] PARADA CARDIORRESPIRATORIA
 Sección: SVA
 URL: https://manualsamur.es/manual/301-parada-cardiorrespiratoria
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Ver Anexo - Algoritmo SVA Adulto>>/docs/procedures/301/301_algoritmo_SVA.pdf](https://www.hypothermiascore.org/)). Véase procedimiento de PCR en hipotermia accidental.
 Ausencia de contraindicaciones evidentes:
 Conocida enfermedad concomitante que compromete su pronóstico a corto plazo.
@@ -2459,15 +2431,14 @@ Administre  1 mg en bolo iv cada 3 a 5 min. Tras cada dosis de Adrenalina, ele
 Si no se ha conseguido canalización venosa, utilice vía intraósea si está disponible.
 Si no se consigue RCE continúe con RCP inmediata con compresiones torácicas y ventilación conforme a a estándares de RCP durante 2 minutos o 5 ciclos de 30:2, al menos, a 100 cpm (entre 100 y 120), durante 2 minutos. Compruebe el ritmo.
 Si se identifica FV en el monitor en medio de un ciclo de 2 minutos de RCP, complete el ciclo de RCP antes de la correspondiente comprobación de ritmo y administración de descarga.
-Valore las causas reversibles de PCR (5 'H' y 5 'T') y tr
+Valore las causas reversibles de PCR (5 'H' y 5 'T') y trate en función de éstas:
+Realice ex
 [...contenido truncado, ver URL completa]
 ---
 # [301a] Cuidados postparada
 Sección: SVA
 URL: https://manualsamur.es/manual/301a-cuidados-postparada
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Ver anexo - Algoritmo Cuidados Postparto cardíaco>>/docs/procedures/301a/301a_algoritmo_CuidadosPostparocardiaco.pdf
 ---
 # [301b] PCR Traumática
@@ -3380,7 +3351,6 @@ Comience con una carga rápid
 Sección: SVA
 URL: https://manualsamur.es/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
 Actualizado: 2026-05-09
-Última modificación 15/04/2026
 Valoración Inicial: ABCD, reseñe la hora del inicio del dolor y la hora del primer contacto médico con el paciente (clave 3). Tenga preparado el desfibrilador y evite el movimiento activo del paciente.
 Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 (si aislamiento de vía aérea) y glucemia. Monitorice, de forma continua, el ritmo cardiaco, anotando cualquier cambio y el tiempo en el que ocurre.
 Ante la sospecha clínica de IAM. Active, lo más precozmente posible, al Jefe de Guardia (ver Código infarto).
@@ -3413,7 +3383,7 @@ A) Si se va a realizar fibrinolisis, administre:
 ≤ 75 años: dosis de carga de 300 mg.
 > 75 años: 75 mg (1 comprimido) sin dosis de carga.
 )))Adminístrelo de forma exclusiva si el paciente es alérgico a AAS como única antiagregación si se realiza fibrinolisis.
- iv (40 mg/ 4000 UI, ampolla 0,4 ml) 30 mg junto con 1 mg/kg de  subcutánea (100 mg/10000 UI en 1 ml, jeringa precargada) a los 1
+ iv (40 mg/ 4000 UI, ampolla 0,4 ml) 30 mg junto con 1 mg/kg de  subcutánea (100 mg/10000 UI en 1 ml, jeringa precargada) a los 15 minutos. No exceder dosis máx
 [...contenido truncado, ver URL completa]
 ---
 # [309_02b] Síndrome Coronario Agudo sin elevación del SR (SCACEST)
@@ -3459,8 +3429,6 @@ Valores por debajo de 5 ng/l sugieren con gran fiabilidad la negatividad para SC
 Sección: SVA
 URL: https://manualsamur.es/manual/309_02c-insuficiencia-cardiaca-aguda-cronica-agudizada
 Actualizado: 2026-04-15
-Última modificación el 15/04/2026
-
 La clínica de la IC varía dependiendo de la edad, la severidad y la rapidez de instauración del cuadro, así como del ventrículo inicialmente afectado.
 Los síntomas característicos de la IC izquierda son disnea progresiva de esfuerzo, ortopnea y disnea paroxística nocturna; la tos nocturna en decúbito es un equivalente de disnea (asma cardial).
 En la IC derecha, aparece un síndrome de congestión sistémica que se manifiesta como edemas, dolor en hipocondrio derecho (congestión hepática) y aumento del perímetro abdominal (ascitis). La nicturia es uno de los síntomas más precoces de IC.
@@ -3474,7 +3442,6 @@ Ver anexo - Edema agudo de pulmón-IC>>/docs/procedures/309_02c/309_02c_EdemaAgu
 Sección: SVA
 URL: https://manualsamur.es/manual/309_03-edema-agudo-de-pulmon
 Actualizado: 2026-04-15
-Última modificación el 15/04/2026.
 Situación clínica de un paciente con antecedentes cardiovasculares habitualmente, que presenta de forma más o menos súbita, disnea, acompañada de ortopnea y/o disnea paroxística nocturna o tos nocturna (asma cardial). En la exploración se encuentra taquipneico, con apenas capacidad para hablar, diaforético y cianótico. Auscultación pulmonar con crepitantes simétricos, de predominio en bases y variabilidad en la altura, con o sin sibilancias. Puede presentar elevación de la presión venosa yugular (PVY), edemas y ascitis si se asocia a IC derecha.
 La insuficiencia cardiaca se puede clasificar en función de la gravedad y situación clínica, siendo de interés tanto para el tratamiento como para conocer su pronóstico a corto y largo plazo.(((
 Ver anexo - Edema agudo de pulmón-IC>>/docs/procedures/309_03/309_02c_EdemaAgudoPulmon_IC.pdf
@@ -3530,8 +3497,6 @@ o calcule mediante la fórmula: 6 x kg del paciente = mg de dopamina a introduci
 Sección: SVA
 URL: https://manualsamur.es/manual/309_05-crisis-hipertensivas
 Actualizado: 2026-04-15
-Última modificación el 15/04/2026
-
 Se define crisis hipertensiva como el aumento brusco de la TA que puede llegar a producir alteraciones estructurales y/o funcionales en diferentes órganos diana. Puesto que en la mayoría de las situaciones se desconoce la velocidad de instauración del aumento de la cifras de TA, se establecen habitualmente, como cifras límite orientativas de la crisis hipertensiva:
 
 TAS ≥ 180 mmHg y/o TAD ≥ 120 mmHg
@@ -3560,15 +3525,13 @@ Valoración Inicial: ABCD
 Realice toma de TA en sedestación si es posible y en ambos brazos, tras el reposo y en al menos dos ocasiones separadas por 5 minutos.
 Realice la anamnesis recogiendo AP, cifras de TA habituales, factores de riesgo cardiovascular, afectación previa de órganos diana, tratamiento actual (antihipertensivos, anticonceptivos orales, gluco y mineralocorticoides, AINE, vasoconstrictores nasales), consumo de tóxicos, alergias, síntomas, transgresiones dietéticas, etc.
 Monitorice: TA, FC, FR, ECG (tira de ritmo), SatO2, ETCO2 y temperatura.
-Realice exploración física con especial atención a la búsqueda de signos de afectación orgánica: soplos y latidos abdominales, dolor precordial, insuficiencia cardiaca (disnea, edemas periféricos, síncope, palpitaciones), ausencia y asimetría de pulsos periféricos, alteraciones en examen neurológico (cefalea, vértigo, náuseas, vómitos, alteraciones visuales, sensitiva
+Realice exploración física con especial atención a la búsqueda de signos de afectación orgánica: soplos y latidos abdominales, dolor precordial, insuficiencia cardiaca (disnea, edemas periféricos, síncope, palpitaciones), ausencia y asimetría de pulsos periféricos, alteraciones en examen neurológico (cefalea, vértigo, náuseas, vómitos, alteraciones visuales, sensitivas, motoras o del nivel de concienci
 [...contenido truncado, ver URL completa]
 ---
 # [309_06] Insuficiencia cardiaca aguda / crónica agudizada
 Sección: SVA
 URL: https://manualsamur.es/manual/309_06-insuficiencia-cardiaca-aguda-cronica-agudizada
 Actualizado: 2026-05-03
-Procedimientos Asistenciales, SVA: Urgencias cardiovasculares: Insuficiencia cardiaca aguda / crónica agudizada)
-
 INSUFICIENCIA CARDIACA AGUDA / CRÓNICA AGUDIZADA
 
 La clínica de la IC varía dependiendo de la edad, la severidad y la rapidez de instauración del cuadro, así como del ventrículo inicialmente afectado.
@@ -3592,7 +3555,7 @@ Si KILLIP I (no evidencia de IC):
 Revise el tratamiento crónico y de consejos generales (comer sin sal, evitar alcohol y tabaco, control del peso diario, no abandonar tratamiento).
     
     !Ver anexo - Esquema práctico de manejo de la IC crónica
-Explique signos de alarma: ganancia de peso rápida (1 kg en
+Explique signos de alarma: ganancia de peso rápida (1 kg en 1 día o 3 kg en 1 semana), edema en pies, tobillos o piernas, disminución de diuresis, necesidad de aumentar almo
 [...contenido truncado, ver URL completa]
 ---
 # [309_07] Isquemia arterial aguda
@@ -4266,8 +4229,6 @@ Postura en trípode. El cuerpo intenta alin
 Sección: SVA
 URL: https://manualsamur.es/manual/314_01-rcp-pediatrica
 Actualizado: 2026-04-28
-Última modificación el 28/04/2026
-
 Ver anexo - Algoritmo SVA Pediátrico>>/docs/procedures/314_01/314_01_algoritmoSVAP.pdf
 ---
 # [314_02] Asistencia al recién nacido
@@ -4727,7 +4688,6 @@ Con focalidad neurológica, solicite siempr
 Sección: SVB
 URL: https://manualsamur.es/manual/401-valoracion-de-la-escena
 Actualizado: 2026-04-30
-Última modificación el 30/04/2026
 Realice un primer reconocimiento visual, e identifique los posibles riesgos en el lugar de la actuación. No intervenga en aquellas situaciones en las que la seguridad del equipo no este garantizada, en especial:
 Vehículos inestables o con riesgo de incendio.
 Vehículos eléctricos e híbridos (ver anexo)>>/docs/procedures/401/AnexoHibridos.pdf
@@ -4785,7 +4745,9 @@ Traumatismos en MMSS e II homolateral
 |(((
 Alcance
 
-Valorar la altura del reposacabezas, cinturón (uso y pirotecnia), airbag, compromiso del habitá
+Valorar la altura del reposacabezas, cinturón (uso y pirotecnia), airbag, compromiso del habitáculo.
+)))|- Lesión cervical
+|Proye
 [...contenido truncado, ver URL completa]
 ---
 # [402] Valoración del paciente adulto
@@ -5343,8 +5305,6 @@ En todos los casos, i
 Sección: SVB
 URL: https://manualsamur.es/manual/411-posible-shock-hipovolemico
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Valoración de la escena
 (((
 Presuma su presencia en:
@@ -5369,15 +5329,13 @@ Si no se hubiera realizado con anterioridad, proporcione oxígeno mediante masca
 Coloque la piernas del paciente ligeramente elevadas (15-30º) y protéjale de pérdidas de calor, mediante la utilización de una manta o traslado a un lugar más cálido.
 Si existen hemorragias externas, intente controlarlas con presión directa sostenida, combinada con elevación del miembro afecto. Utilice un vendaje compresivo con gasas, compresas abundantes y venda de crepé, ejerciendo presión sobre la herida (ver procedimiento técnico de trauma 'Control de hemorragias').
 Coloque la faja pélvica ante cualquier sospecha de traumatismo de pelvis en paciente hemodinámicamente inestable (TAS &lt; 90 mmHg, y signos del estado circulatorio alterado). Para ello debe retirar previamente la ropa del paciente. 
-Exponga al paciente. Realice la valoración de hemorragias no observadas en partes cubiertas, prestando especial atención a signos de traumatism
+Exponga al paciente. Realice la valoración de hemorragias no observadas en partes cubiertas, prestando especial atención a signos de traumatismo toracoabdominal y/o huesos largos
 [...contenido truncado, ver URL completa]
 ---
 # [412_00] Valoración inicial del paciente politraumatizado
 Sección: SVB
 URL: https://manualsamur.es/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 La asistencia inicial del paciente traumatizado grave, se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de riesgo vital (vida, órgano, función), posibilidad técnica, y accesibilidad.
 
 Actúe según el siguiente esquema:
@@ -5562,8 +5520,6 @@ Valore el estado circulatorio del paciente, buscando posibles signos de shock,
 Sección: SVB
 URL: https://manualsamur.es/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026 
-
 PAUTAS GENERALES DE ACTUACIÓN
 La Central de Comunicaciones aportará toda la información posible sobre el estado del paciente, circunstancias, edad, sexo y antecedentes de violencia.
 Aproxímese al lugar evitando el uso de sirenas y rotativos en las inmediaciones del mismo, con el fin de no alterar al paciente, siempre que su seguridad lo permita.
@@ -5597,7 +5553,8 @@ Inicio página>>doc:
 REQUISITOS LEGALES PARA TRASLADO INVOLUNTARIO
 Orden judicial, debe contener:
 Filiación completa.
-Fechas en v
+Fechas en vigencia de la orden.
+Firma y sellos 
 [...contenido truncado, ver URL completa]
 ---
 # [501] Activación y actuación del psicólogo de guardia
@@ -6112,8 +6069,6 @@ Inicio página>>doc:
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_04-cumplimentacion-del-informe-electronico-usvb
 Actualizado: 2026-05-01
-Procedimientos Asistenciales, Técnicas: Procedimientos Básicos: Cumplimentación del informe electrónico USVB)
-
 CUMPLIMENTACION DEL INFORME ELECTRÓNICO USVB
 
 Pasos para la cumplimentación del informe de USVB
@@ -6150,15 +6105,14 @@ En el menú _histórico_ aparecerá una entrada con el envío realizado, indican
   
 
 Para rellenar el informe se seguirán las siguientes indicaciones:
-Es necesario escribir el informe durante el tra
+Es necesario escribir el informe durante el transcurso de la intervención y enviarlo antes del cierre de la misma.
+No se pueden rellenar dos informes simultán
 [...contenido truncado, ver URL completa]
 ---
 # [601_05] Administración de comprimido bucodispersable
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_05-administracion-de-comprimido-bucodispersable
 Actualizado: 2026-05-09
-🖨️ Imprimir esta página
-
 Son comprimidos no recubiertos destinados a ser colocados en la boca, donde se dispersan rápidamente antes de ser tragados.
 La formulación es muy higroscópica (capaz de absorber muy rápidamente la humedad del ambiente que lo rodea) para facilitar su disgregación en la boca.
 El acondicionamiento debe ser hermético a la humedad y por tanto más resistente.
@@ -7315,8 +7269,6 @@ Deslice el catetér a través de la aguja. Una vez introducido, desplace la aguj
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_05-via-intraosea
 Actualizado: 2026-05-01
-Procedimientos Asistenciales, Técnicas: Vasculares: Vía intraósea)
-
 VIA INTRAÓSEA
 
 Consideraciones previas:
@@ -7354,7 +7306,8 @@ Medial a la tuberosidad tibial: 1,0 a 1,5 cm
 Medial por encima del maleolo. 0,75 a 1,0 cm
 Proceda a la limpieza de la zona aplicando solución antiséptica.
 Extraiga la pinza de seguridad aproximando ambas zonas rayadas y traccionando.
-Coja y sujete el dispositivo a modo de jeringuilla apoyada en la palma de la mano con la zona estriada distal (una flecha le indica el sentido en el que se disparará la aguj
+Coja y sujete el dispositivo a modo de jeringuilla apoyada en la palma de la mano con la zona estriada distal (una flecha le indica el sentido en el que se disparará la aguja).
+Fije la extremidad del paciente para que no se mueva durante la 
 [...contenido truncado, ver URL completa]
 ---
 # [604_05b] Vía Intraósea, sistema EZ-IO
@@ -7608,8 +7561,6 @@ La pda le solicita el ID del paciente; introduzca el número de informe como ID 
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_10-medicion-de-la-glucemia
 Actualizado: 2026-04-28
-Última modificación el 28/04/2026 
-
 Consideraciones previas
 
 Indicaciones: coma de cualquier etiología, pérdida transitoria de conocimiento, sospecha de hipoglucemia, paciente diabético, cualquier paciente sometido a gran estrés.
@@ -7731,8 +7682,6 @@ Inicio página>>doc:
 Sección: Técnicas
 URL: https://manualsamur.es/manual/605_02-lavado-gastrico
 Actualizado: 2026-05-09
-🖨️ Imprimir esta página
-
 Consideraciones previas:
 Se realizará vaciamiento gástrico mediante lavado, en pacientes que hayan ingerido un tóxico potencialmente grave, considerando:
 El tiempo transcurrido desde la ingestión.
@@ -7766,7 +7715,8 @@ Coloque al paciente en decúbito lateral izquierdo, con la cabeza de 10 a 15º e
 Coloque un paño o sábana sobre el paciente, junto con una batea.
 Lubrique abundantemente la sonda. Pida al paciente que apoye la barbilla sobre el pecho, posición que facilitará la introducción de la sonda en el esófago. Ante la aparición de tos, estridor o cianosis, retire la sonda de inmediato y reintente la introducción esofágica.
 Verifique la colocación de la sonda, bien aspirando contenido gástrico, o bien introduciendo unos 30 ml de aire con la jeringa mientras escucha con el fonendoscopio su entrada en el estómago.
-Antes de iniciar el lavado gástrico, extraiga el mayor contenido gástrico posible, procediendo a la recolocación repetida de la punta
+Antes de iniciar el lavado gástrico, extraiga el mayor contenido gástrico posible, procediendo a la recolocación repetida de la punta de la sonda.
+Una vez fina
 [...contenido truncado, ver URL completa]
 ---
 # [605_03] Administración de carbón activado
@@ -7898,8 +7848,6 @@ Tejido desvitalizado extenso (estrellado, aplastamien
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_02-control-de-hemorragias
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026
-
 Introducción
 Las hemorragias, especialmente cuando son exanguinantes, representan la mayor proporción de muertes por traumatismos en el ámbito extrahospitalario. Un rápido y adecuado manejo por parte del interviniente supone una menor pérdida de sangre en el paciente, lo cual se traduce en un mejor pronóstico del mismo.
 
@@ -7930,7 +7878,8 @@ Material: vendaje israelí (se encuentra en el kit de hemorragias), guantes, tij
 
 Este tipo de vendajes están indicados para:
 Cobertura de heridas sangrantes en miembros, cráneo, cara, cuello, tórax y abdomen.
-Vendaje compresivo de lesiones con trauma vascular tras aplicac
+Vendaje compresivo de lesiones con trauma vascular tras aplicación de agentes hemostáticos.
+Cobert
 [...contenido truncado, ver URL completa]
 ---
 # [606_03] Vendajes
@@ -8125,8 +8074,6 @@ Para la colocación del paciente sobre el dispositivo definitivo (camilla de cu
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_06-tecnicas-de-inmovilizacion
 Actualizado: 2026-04-27
-Última modificación el 27/04/2026  
-
 Técnicas de inmovilización en pacientes traumatizados
 Consideraciones previas:
 Las técnicas de inmovilización tienen como objetivo disminuir la lesión primaria y evitar el progreso o aparición de la lesión secundaria. Algunos de los dispositivos expuesto permiten también una adecuada movilización del paciente al utilizarse conjuntamente con los dispositivos de movilización.
@@ -8153,15 +8100,13 @@ Fije el collarín con las sujeciones intentando no comprimir en exceso el cuello
 Inicio página>>doc:
 
 Inmovilizador de cabeza
-Dispositivo complementario al collarín cervical que se usa de manera conjunta con la camilla de cuchara o el tablero espinal para la completa inmovilización cervical (movimientos laterales de la cabeza) en pacientes politraumatizados, con sospecha de trauma cervical y/o traumatismo craneoencefá
+Dispositivo complementario al collarín cervical que se usa de manera conjunta con la camilla de cuchara o el tablero espinal para la completa inmovilización cervical (movimientos laterales de la cabeza) en pacientes politraumatizados, con sospecha de trauma cervical y/o traumatismo craneoencefálico, durante su movilización y trasl
 [...contenido truncado, ver URL completa]
 ---
 # [606_07] Inmovilización niño. SIPE®
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_07-inmovilizacion-nino-sipe
 Actualizado: 2026-05-09
-🖨️ Imprimir esta página
-
 SIPE® INMOVILIZACIÓN Y EXTRICACIÓN DEL NIÑO TRAUMATICO EN SU SRI
 
 Consideraciones previas:
@@ -8190,7 +8135,7 @@ Fuente: sipebabyrescuer.es/sipe/
 Colocación del dispositivo
 Ejecute la técnica con al menos dos sanitarios, uno realiza control cervical manual y otro ubica los útiles del sistema.
 Previo a la colocación del dispositivo, asegúrese de que la silla puede ser extraída del vehículo, es decir, cerciórese de que se pueden cortar o desabrochar el cinturón, el sistema Top tether y/o el Isofix; en caso contrario no podrá extraer la silla y tendrá que buscar otro método.
-Una vez decidida la u
+Una vez decidida la utilización del SIPE®, en p
 [...contenido truncado, ver URL completa]
 ---
 # [607] EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA
