@@ -15,13 +15,15 @@
     "code": "1.3",
     "name": "Accidente con más de 3 víctimas confirmadas",
     "category": "Accidentes",
-    "description": "Accidente con más de 3 víctimas confirmadas"
+    "description": "Accidente con más de 3 víctimas confirmadas",
+    "tetra": true
   },
   {
     "code": "1.4",
     "name": "Atropello",
     "category": "Accidentes",
-    "description": "Atropello por vehículo de motor"
+    "description": "Atropello por vehículo de motor",
+    "tetra": true
   },
   {
     "code": "1.5",
@@ -45,13 +47,15 @@
     "code": "1.7",
     "name": "Accidente de autobús",
     "category": "Accidentes",
-    "description": "Accidente en el que está implicado un autobús"
+    "description": "Accidente en el que está implicado un autobús",
+    "tetra": true
   },
   {
     "code": "1.8",
     "name": "Accidente de vehículo pesado",
     "category": "Accidentes",
-    "description": "Accidente de camión u otro vehículo pesado"
+    "description": "Accidente de camión u otro vehículo pesado",
+    "tetra": true
   },
   {
     "code": "2.1",
@@ -63,7 +67,8 @@
     "code": "2.2",
     "name": "Atrapamiento/enterramiento",
     "category": "Traumáticos",
-    "description": "Persona atrapada o aprisionada"
+    "description": "Persona atrapada o aprisionada",
+    "tetra": true
   },
   {
     "code": "2.3",
@@ -87,19 +92,22 @@
     "code": "2.5",
     "name": "Arma blanca",
     "category": "Traumáticos",
-    "description": "Herida por arma blanca o punzante"
+    "description": "Herida por arma blanca o punzante",
+    "tetra": true
   },
   {
     "code": "2.6",
     "name": "Arma de fuego",
     "category": "Traumáticos",
-    "description": "Herida por proyectil de arma de fuego"
+    "description": "Herida por proyectil de arma de fuego",
+    "tetra": true
   },
   {
     "code": "2.7",
     "name": "Precipitado",
     "category": "Traumáticos",
-    "description": "Persona que ha caído desde una altura"
+    "description": "Persona que ha caído desde una altura",
+    "tetra": true
   },
   {
     "code": "2.8",
@@ -111,43 +119,50 @@
     "code": "2.9",
     "name": "Arrollamiento por metro o tren",
     "category": "Traumáticos",
-    "description": "Arrollamiento por metro o tren"
+    "description": "Arrollamiento por metro o tren",
+    "tetra": true
   },
   {
     "code": "2.10",
     "name": "Quemado",
     "category": "Traumáticos",
-    "description": "Persona quemada por exposición a fuego o calor extremo"
+    "description": "Persona quemada por exposición a fuego o calor extremo",
+    "tetra": true
   },
   {
     "code": "2.11",
     "name": "Electrocución",
     "category": "Traumáticos",
-    "description": "Lesión por descarga eléctrica"
+    "description": "Lesión por descarga eléctrica",
+    "tetra": true
   },
   {
     "code": "2.12",
     "name": "Ahogamiento",
     "category": "Traumáticos",
-    "description": "Persona ahogada o en riesgo de ahogamiento"
+    "description": "Persona ahogada o en riesgo de ahogamiento",
+    "tetra": true
   },
   {
     "code": "2.12.1",
     "name": "OVACE",
     "category": "Traumáticos",
-    "description": "Obstrucción de vías respiratorias"
+    "description": "Obstrucción de vías respiratorias",
+    "tetra": true
   },
   {
     "code": "2.13",
     "name": "Agresión sexual",
     "category": "Traumáticos",
-    "description": "Agresión de naturaleza sexual"
+    "description": "Agresión de naturaleza sexual",
+    "tetra": true
   },
   {
     "code": "2.13.1",
     "name": "Agresion sexual facilitada por drogas",
     "category": "Traumáticos",
-    "description": "Agresión sexual facilitada por drogas"
+    "description": "Agresión sexual facilitada por drogas",
+    "tetra": true
   },
   {
     "code": "2.14",
@@ -159,19 +174,22 @@
     "code": "3.1",
     "name": "Parada cardiorrespiratoria",
     "category": "Enfermedad",
-    "description": "PCR — parada cardiorrespiratoria"
+    "description": "PCR — parada cardiorrespiratoria",
+    "tetra": true
   },
   {
     "code": "3.2",
     "name": "Inconsciente de causa desconocida",
     "category": "Enfermedad",
-    "description": "Paciente inconsciente, causa no determinada"
+    "description": "Paciente inconsciente, causa no determinada",
+    "tetra": true
   },
   {
     "code": "3.3",
     "name": "IAM / patología coronaria",
     "category": "Enfermedad",
-    "description": "Infarto agudo de miocardio u otra patología coronaria"
+    "description": "Infarto agudo de miocardio u otra patología coronaria",
+    "tetra": true
   },
   {
     "code": "3.4",
@@ -225,7 +243,8 @@
     "code": "3.13",
     "name": "Patología neurológica aguda",
     "category": "Enfermedad",
-    "description": "Urgencia neurológica: ictus, AIT, etc."
+    "description": "Urgencia neurológica: ictus, AIT, etc.",
+    "tetra": true
   },
   {
     "code": "3.14",
@@ -237,7 +256,8 @@
     "code": "3.15",
     "name": "Patología obstétrica",
     "category": "Enfermedad",
-    "description": "Parto inminente u otra urgencia obstétrica"
+    "description": "Parto inminente u otra urgencia obstétrica",
+    "tetra": true
   },
   {
     "code": "3.16",
@@ -285,7 +305,8 @@
     "code": "4.2",
     "name": "Explosión",
     "category": "Bomberos",
-    "description": "Derrumbe o colapso de estructura"
+    "description": "Derrumbe o colapso de estructura",
+    "tetra": true
   },
   {
     "code": "4.3",
@@ -297,7 +318,8 @@
     "code": "4.4",
     "name": "Derrumbamientos",
     "category": "Bomberos",
-    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    "description": "Solicitud de apoyo sanitario específico a Bomberos",
+    "tetra": true
   },
   {
     "code": "4.5",
@@ -315,25 +337,29 @@
     "code": "4.7",
     "name": "Riesgo Químico",
     "category": "Bomberos",
-    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    "description": "Solicitud de apoyo sanitario específico a Bomberos",
+    "tetra": true
   },
   {
     "code": "4.8",
     "name": "Riesgo Nuclear",
     "category": "Bomberos",
-    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    "description": "Solicitud de apoyo sanitario específico a Bomberos",
+    "tetra": true
   },
   {
     "code": "4.9",
     "name": "Riesgo Biológico",
     "category": "Bomberos",
-    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    "description": "Solicitud de apoyo sanitario específico a Bomberos",
+    "tetra": true
   },
   {
     "code": "4.10",
     "name": "Incendio con víctimas confirmadas",
     "category": "Bomberos",
-    "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    "description": "Solicitud de apoyo sanitario específico a Bomberos",
+    "tetra": true
   },
   {
     "code": "4.11",
@@ -357,7 +383,8 @@
     "code": "5.3",
     "name": "Orden médica urgente / paciente muy agresivo",
     "category": "Sociosanitario",
-    "description": "Traslado por orden judicial o médica"
+    "description": "Traslado por orden judicial o médica",
+    "tetra": true
   },
   {
     "code": "5.4",
@@ -429,37 +456,43 @@
     "code": "7.1",
     "name": "Amenaza de bomba",
     "category": "Eventos especiales",
-    "description": "Aviso por amenaza de artefacto explosivo"
+    "description": "Aviso por amenaza de artefacto explosivo",
+    "tetra": true
   },
   {
     "code": "7.2",
     "name": "Atentado explosivo",
     "category": "Eventos especiales",
-    "description": "Explosión confirmada con víctimas potenciales"
+    "description": "Explosión confirmada con víctimas potenciales",
+    "tetra": true
   },
   {
     "code": "7.3",
     "name": "Otro tipo de atentado",
     "category": "Eventos especiales",
-    "description": "Accidente de tren o metro"
+    "description": "Accidente de tren o metro",
+    "tetra": true
   },
   {
     "code": "7.4",
     "name": "Accidente de tren",
     "category": "Eventos especiales",
-    "description": "Accidente de aeronave"
+    "description": "Accidente de aeronave",
+    "tetra": true
   },
   {
     "code": "7.5",
     "name": "Accidente de avión",
     "category": "Eventos especiales",
-    "description": "Accidente que implica mercancías peligrosas"
+    "description": "Accidente que implica mercancías peligrosas",
+    "tetra": true
   },
   {
     "code": "7.6",
     "name": "Accidente de mercancías peligrosas",
     "category": "Eventos especiales",
-    "description": "Accidente que implica mercancías peligrosas"
+    "description": "Accidente que implica mercancías peligrosas",
+    "tetra": true
   },
   {
     "code": "8.1",
@@ -578,7 +611,8 @@
     "code": "10.1",
     "name": "SAMUR-PC",
     "category": "Componente Herido",
-    "description": "La institución responsable del servicio es SAMUR-Protección Civil"
+    "description": "La institución responsable del servicio es SAMUR-Protección Civil",
+    "tetra": true
   },
   {
     "code": "10.2",

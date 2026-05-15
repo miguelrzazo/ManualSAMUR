@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { FileX, MapPin, Navigation, ChevronUp } from "lucide-react";
+import { FileX, MapPin, Navigation, ChevronUp, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
 
@@ -15,6 +15,7 @@ interface Code {
   group?: string;
   description?: string;
   noReport?: boolean;
+  tetra?: boolean;
 }
 
 interface Indicativo {
@@ -341,14 +342,26 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
     return () => window.cancelAnimationFrame(frame);
   }, [codeAnchor, highlightedCode, activeTab, activeOtrosTab]);
 
-  // Hospitales: status4 joined with hospitals, plus HGU
+  // Hospitales: All public hospitals enriched with status4 info, sorted by type and name
   const hospitalesData = useMemo(() => {
-    const byId = Object.fromEntries(hospitals.map((h) => [h.id, h]));
-    const rows = status4
-      .filter((s) => s.hospitalId)
-      .map((s) => ({ ...byId[s.hospitalId!], status4: s.status }))
-      .filter(Boolean);
-    return [...rows, HGU_EXTRA];
+    const byId = Object.fromEntries(status4.map((s) => [s.hospitalId, s.status]));
+    // Show all public hospitals and all private hospitals, enriched with status4 if available
+    const publicHospitals = hospitals.filter((h) => h.type === "public");
+    const privateHospitals = hospitals.filter((h) => h.type === "private");
+    const allRelevantHospitals = [...publicHospitals, ...privateHospitals];
+    
+    return allRelevantHospitals
+      .map((h) => ({
+        ...h,
+        status4: byId[h.id] ?? null,
+      }))
+      .sort((a, b) => {
+        // Sort: public first, then private; then by name
+        if (a.type !== b.type) {
+          return a.type === "public" ? -1 : 1;
+        }
+        return (a.shortName || a.name).localeCompare(b.shortName || b.name);
+      });
   }, [hospitals, status4]);
 
   return (
@@ -409,6 +422,13 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
           <div className="px-4 md:px-6 py-2 flex items-center gap-2 text-xs text-muted-foreground border-b border-border/30 bg-muted/5">
             <FileX className="h-3.5 w-3.5 flex-shrink-0" />
             <span>Los códigos marcados con este icono <strong>no generan informe asistencial</strong></span>
+          </div>
+        )}
+        {/* ── TETRA legend (Incidente only) ── */}
+        {activeTab === "incidente" && (
+          <div className="px-4 md:px-6 py-2 flex items-center gap-2 text-xs text-muted-foreground border-b border-border/30 bg-muted/5">
+            <Radio className="h-3.5 w-3.5 flex-shrink-0 text-sky-500" />
+            <span>Transmitir por <strong>TETRA y llamada de voz</strong>, salvo levedad contrastada</span>
           </div>
         )}
         {/* ── Section jump nav (scrolls with content) ── */}
@@ -616,6 +636,9 @@ function CodeList({
                       {item.noReport && (
                         <FileX className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" aria-label="Sin informe asistencial" />
                       )}
+                      {item.tetra && (
+                        <Radio className="h-3.5 w-3.5 flex-shrink-0 text-sky-500" aria-label="Transmitir por TETRA y llamada de voz" />
+                      )}
                       <span className="text-sm font-medium leading-snug">{item.name}</span>
                       {(item as unknown as Record<string, unknown>).isNew === true && (
                         <span className="flex-shrink-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
@@ -653,6 +676,8 @@ function OtrosContent({
   hospitales: Hospital[];
   lima: Code[];
 }) {
+  const [showPrivateHospitals, setShowPrivateHospitals] = useState(false);
+
   const filteredIcao = useMemo(() => {
     return icao;
   }, [icao]);
@@ -666,8 +691,11 @@ function OtrosContent({
   }, [claves]);
 
   const filteredHospitales = useMemo(() => {
-    return hospitales;
-  }, [hospitales]);
+    if (showPrivateHospitals) {
+      return hospitales.filter((h) => (h as any).type === "private");
+    }
+    return hospitales.filter((h) => (h as any).type === "public");
+  }, [hospitales, showPrivateHospitals]);
 
   const filteredLima = useMemo(() => {
     return lima;
@@ -680,7 +708,14 @@ function OtrosContent({
         {tab === "indicativos" && <IndicativosList items={filteredIndicativos} />}
         {tab === "claves" && <ClavesList items={filteredClaves} />}
         {tab === "bases" && <BasesList bases={bases} />}
-        {tab === "hospitales" && <HospitalesList hospitales={filteredHospitales} />}
+        {tab === "hospitales" && (
+          <HospitalesList
+            allHospitales={hospitales}
+            hospitales={filteredHospitales}
+            showPrivate={showPrivateHospitals}
+            onShowPrivateChange={setShowPrivateHospitals}
+          />
+        )}
         {tab === "comunicaciones" && <ComunicacionesContent />}
         {tab === "distritos" && <DistritosContent bases={bases} />}
         {tab === "lima" && <LimaList items={filteredLima} />}
@@ -814,32 +849,109 @@ function BasesList({ bases }: { bases: Base[] }) {
 
 // ─── Hospitales List ──────────────────────────────────────────────────────────
 
-function HospitalesList({ hospitales }: { hospitales: Hospital[] }) {
+function HospitalesList({
+  allHospitales,
+  hospitales,
+  showPrivate,
+  onShowPrivateChange,
+}: {
+  allHospitales: Hospital[];
+  hospitales: Hospital[];
+  showPrivate: boolean;
+  onShowPrivateChange: (show: boolean) => void;
+}) {
+  const publicCount = allHospitales.filter((h) => !(h as any).type || (h as any).type === "public").length;
+  const privateCount = allHospitales.filter((h) => (h as any).type === "private").length;
+
   return (
-    <div className="divide-y divide-border/20">
-      {hospitales.map((h) => {
-        const accessAddr = HOSPITAL_ACCESS[h.id] ?? h.address;
-        return (
-          <div key={h.id} className="flex items-center gap-4 px-4 md:px-6 py-3.5 hover:bg-muted/20 transition-colors">
-            <div className="flex-shrink-0 flex flex-col items-center gap-1 w-14">
-              <span className="font-mono font-bold text-xs bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300 rounded px-1.5 py-0.5">
-                {h.id}
-              </span>
-              {h.status4 != null ? (
-                <span className="text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded px-1.5 py-0.5 tabular-nums">
-                  4+{h.status4}
-                </span>
-              ) : (
-                <span className="text-[10px] text-muted-foreground/50">—</span>
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold leading-snug truncate">{h.name ?? h.shortName}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">{accessAddr}</div>
-            </div>
+    <div className="flex flex-col h-full">
+      {/* Filter buttons */}
+      <div className="sticky top-0 z-10 border-b border-border/40 bg-background/95 px-4 md:px-6 py-2.5 backdrop-blur-md flex gap-2">
+        <button
+          onClick={() => onShowPrivateChange(false)}
+          className={cn(
+            "px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors",
+            !showPrivate
+              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+          )}
+        >
+          Públicos ({publicCount})
+        </button>
+        <button
+          onClick={() => onShowPrivateChange(true)}
+          className={cn(
+            "px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors",
+            showPrivate
+              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+          )}
+        >
+          Privados ({privateCount})
+        </button>
+      </div>
+
+      {/* List */}
+      <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-border/20">
+        {hospitales.length === 0 ? (
+          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+            Sin hospitales
           </div>
-        );
-      })}
+        ) : (
+          hospitales.map((h) => {
+            const accessAddr = HOSPITAL_ACCESS[h.id] ?? h.address;
+            const mapsUrl = `https://www.google.com/maps?q=${(h as any).lat},${(h as any).lng}`;
+            const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${(h as any).lat},${(h as any).lng}`;
+            const isPrivate = (h as any).type === "private";
+            const badgeBg = isPrivate
+              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+              : "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300";
+
+            return (
+              <div key={h.id} className="flex items-start gap-4 px-4 md:px-6 py-3.5 hover:bg-muted/20 transition-colors">
+                <div className="flex-shrink-0 flex flex-col items-center gap-1 w-14">
+                  <span className={cn("font-mono font-bold text-xs rounded px-1.5 py-0.5", badgeBg)}>
+                    {h.id}
+                  </span>
+                  {h.status4 != null ? (
+                    <span className="text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded px-1.5 py-0.5 tabular-nums">
+                      4+{h.status4}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground/50">—</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold leading-snug truncate">{h.name ?? h.shortName}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{accessAddr}</div>
+                </div>
+                {(h as any).lat && (h as any).lng && (
+                  <div className="flex gap-1.5 flex-shrink-0">
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+                      title="Ver en mapa"
+                    >
+                      <MapPin className="h-3 w-3" />
+                    </a>
+                    <a
+                      href={navUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+                      title="Navegar"
+                    >
+                      <Navigation className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }
