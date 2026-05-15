@@ -1,16 +1,21 @@
 "use client";
 
 import { Printer } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function PrintButton() {
+export function PrintButton({ className }: { className?: string }) {
   return (
     <button
+      type="button"
       onClick={() => window.print()}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60 transition-colors print:hidden"
+      className={cn(
+        "inline-flex items-center justify-center rounded-md border border-border/60 bg-background px-2 py-1.5 text-muted-foreground transition-colors hover:text-foreground hover:bg-muted print:hidden",
+        className,
+      )}
       title="Imprimir / Guardar como PDF"
+      aria-label="Imprimir / Guardar como PDF"
     >
-      <Printer className="h-3.5 w-3.5" />
-      Imprimir
+      <Printer className="h-4 w-4" />
     </button>
   );
 }
