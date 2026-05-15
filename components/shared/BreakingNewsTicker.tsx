@@ -1,7 +1,12 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { ManualSyncMetadata } from "@/lib/manual-sync";
+import { readSeenEventIds } from "@/lib/manual-cookies";
 
 interface Props {
   metadata: ManualSyncMetadata;
+  newThisWeekEventIds: string[];
 }
 
 function domainIcon(href: string): string {
@@ -10,8 +15,18 @@ function domainIcon(href: string): string {
   return "📋";
 }
 
-export function BreakingNewsTicker({ metadata }: Props) {
-  if (!metadata.tickerEnabled) return null;
+export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    if (newThisWeekEventIds.length === 0) return;
+    const seen = readSeenEventIds();
+    if (newThisWeekEventIds.every((id) => seen.includes(id))) {
+      setHidden(true);
+    }
+  }, [newThisWeekEventIds]);
+
+  if (!metadata.tickerEnabled || hidden) return null;
 
   const items = (metadata.ticker?.items ?? [])
     .map((item) => ({ label: item.label.trim(), href: item.href }))

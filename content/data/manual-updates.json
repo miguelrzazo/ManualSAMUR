@@ -10,6 +10,7 @@
       "effectiveDate": "2026-05-09",
       "isNewThisWeek": true,
       "approvedAt": "2026-05-14T10:00:00.000Z",
+      "category": "codigo",
       "diff": "@@ Tabla de códigos de servicio programado (sección 8.x) @@\n 8.1  1 unidad, sin SVA ni PSA\n 8.2  2-3 unidades, sin SVA ni PSA\n 8.3  Más de 3 unidades, sin SVA ni PSA\n 8.4  Presencia de SVA\n+8.4.1  Presencia de SVA con más de 3 recursos (sin PSA)\n 8.5  Despliegue de PSA\n+8.5.1  Despliegue de PSA con más de 3 recursos\n 8.6  Presencia de todos los recursos\n 8.7  Preventivo desde el operativo ordinario\n 8.8  Necesidad inmediata de refuerzo\n+8.9  Refuerzo programado por concentración de personas\n+8.10  CECOR externo en dispositivo de riesgo previsible\n+8.11  CECOR interno en dispositivo de riesgo previsible\n 8.12  Servicio de análisis de riesgos"
     }
   ]

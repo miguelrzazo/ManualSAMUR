@@ -11,9 +11,13 @@ export default async function ManualPage() {
   const syncMetadata = readManualSyncMetadata();
   const updatesDataset = readManualUpdatesDataset();
 
+  const newThisWeekEventIds = updatesDataset.events
+    .filter((e) => e.isNewThisWeek)
+    .map((e) => e.eventId);
+
   return (
     <>
-      <BreakingNewsTicker metadata={syncMetadata} />
+      <BreakingNewsTicker metadata={syncMetadata} newThisWeekEventIds={newThisWeekEventIds} />
       <Suspense fallback={<div>Cargando manual...</div>}>
         <ManualHomeClient
           sidebarSections={sidebarSections}

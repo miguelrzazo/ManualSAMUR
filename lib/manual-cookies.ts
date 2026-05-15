@@ -4,6 +4,7 @@ import { normalizeCookieIds } from "@/lib/manual-data";
 
 export const FAVORITES_COOKIE = "samur_favorites";
 export const RECENT_COOKIE = "samur_recent";
+export const SEEN_EVENTS_COOKIE = "samur_seen_events";
 export const COOKIE_LIMIT = 12;
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
@@ -41,4 +42,24 @@ export function toggleFavoriteId(currentIds: string[], id: string, limit = COOKI
 
 export function pushRecentId(currentIds: string[], id: string, limit = COOKIE_LIMIT): string[] {
   return [id, ...currentIds.filter((currentId) => currentId !== id)].slice(0, limit);
+}
+
+export function readSeenEventIds(): string[] {
+  const raw = readRawCookie(SEEN_EVENTS_COOKIE);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeSeenEventIds(ids: string[]) {
+  writeRawCookie(SEEN_EVENTS_COOKIE, JSON.stringify(ids));
+}
+
+export function addSeenEventId(seenIds: string[], eventId: string): string[] {
+  if (seenIds.includes(eventId)) return seenIds;
+  return [...seenIds, eventId];
 }

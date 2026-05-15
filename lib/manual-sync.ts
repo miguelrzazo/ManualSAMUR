@@ -82,6 +82,8 @@ export interface ApprovedChange extends PendingChange {
   runId?: string;
 }
 
+export type ManualUpdateCategory = "procedure" | "codigo" | "vademecum";
+
 export interface ManualUpdateEvent {
   eventId: string;
   origin: ManualUpdateOrigin;
@@ -93,6 +95,7 @@ export interface ManualUpdateEvent {
   approvedAt?: string;
   isNewThisWeek: boolean;
   diff?: string;
+  category?: ManualUpdateCategory;
 }
 
 export interface ManualUpdatesDataset {

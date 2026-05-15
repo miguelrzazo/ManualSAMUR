@@ -40,6 +40,7 @@ interface Hospital {
   shortName: string;
   address: string;
   district: string;
+  type?: string;
   status4?: number | null;
 }
 
@@ -574,7 +575,8 @@ function CodeList({
             lastSubgroup = null;
           }
 
-          rows.push({ type: "code", item, isGrouped: Boolean(subgroup) });
+          const isThreePart = tabKey === "incidente" && item.code.split(".").length > 2;
+          rows.push({ type: "code", item, isGrouped: Boolean(subgroup) || isThreePart });
         }
 
         return (

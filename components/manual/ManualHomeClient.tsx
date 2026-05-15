@@ -24,11 +24,35 @@ import {
   RECENT_COOKIE,
   readCollectionCookie,
   writeCollectionCookie,
+  readSeenEventIds,
+  writeSeenEventIds,
+  addSeenEventId,
 } from "@/lib/manual-cookies";
 import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
 import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos", "General"];
+
+const CATEGORY_LABEL: Record<string, string> = {
+  procedure: "Procedimientos",
+  codigo: "Códigos",
+  vademecum: "Vademécum",
+};
+
+const CATEGORY_ICON: Record<string, string> = {
+  procedure: "📋",
+  codigo: "📻",
+  vademecum: "💊",
+};
+
+const CATEGORY_ORDER = ["procedure", "codigo", "vademecum"];
+
+const KIND_BADGE: Record<string, string> = {
+  nuevo: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+  actualizado: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  revisado: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  sync: "bg-muted text-muted-foreground",
+};
 
 const SECTION_META: Record<string, { dot: string; badge: string; card: string }> = {
   DRP: {
@@ -478,13 +502,16 @@ export function ManualHomeClient({
   const validIdSet = useMemo(() => new Set(validIds), [validIds]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [seenEventIds, setSeenEventIds] = useState<string[]>([]);
   const [activeSectionFilter, setActiveSectionFilter] = useState<string | undefined>(initialSection);
   const [view, setView] = useState<"list" | "graph">("list");
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [expandedDiffs, setExpandedDiffs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setFavoriteIds(readCollectionCookie(FAVORITES_COOKIE, validIdSet));
     setRecentIds(readCollectionCookie(RECENT_COOKIE, validIdSet));
+    setSeenEventIds(readSeenEventIds());
   }, [validIdSet]);
 
   function refreshCollections() {
@@ -538,6 +565,60 @@ export function ManualHomeClient({
     [updateEvents],
   );
   const newThisWeekEvents = sortedUpdateEvents.filter((e) => e.isNewThisWeek);
+  const unseenNewCount = newThisWeekEvents.filter((e) => !seenEventIds.includes(e.eventId)).length;
+
+  const syncGroups = useMemo(() => {
+    const groupMap = new Map<string, ManualUpdateEvent[]>();
+    for (const event of sortedUpdateEvents) {
+      const dateKey = (event.approvedAt ?? event.effectiveDate).slice(0, 10);
+      const group = groupMap.get(dateKey) ?? [];
+      group.push(event);
+      groupMap.set(dateKey, group);
+    }
+    return [...groupMap.entries()]
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([date, events]) => {
+        const catMap = new Map<string, ManualUpdateEvent[]>();
+        for (const event of events) {
+          const cat = event.category ?? "procedure";
+          const catEvents = catMap.get(cat) ?? [];
+          catEvents.push(event);
+          catMap.set(cat, catEvents);
+        }
+        const categoryGroups = CATEGORY_ORDER
+          .filter((cat) => catMap.has(cat))
+          .map((cat) => ({ category: cat, events: catMap.get(cat)! }));
+        return { date, categoryGroups };
+      });
+  }, [sortedUpdateEvents]);
+
+  function handleExpandDiff(eventId: string, isNew: boolean) {
+    setExpandedDiffs((prev) => {
+      const next = new Set(prev);
+      if (next.has(eventId)) next.delete(eventId);
+      else next.add(eventId);
+      return next;
+    });
+    if (isNew) {
+      const next = addSeenEventId(seenEventIds, eventId);
+      if (next !== seenEventIds) {
+        writeSeenEventIds(next);
+        setSeenEventIds(next);
+      }
+    }
+  }
+
+  function openHistoryModal() {
+    setHistoryModalOpen(true);
+    let updatedSeen = seenEventIds;
+    for (const event of newThisWeekEvents) {
+      if (!event.diff) updatedSeen = addSeenEventId(updatedSeen, event.eventId);
+    }
+    if (updatedSeen !== seenEventIds) {
+      writeSeenEventIds(updatedSeen);
+      setSeenEventIds(updatedSeen);
+    }
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-4 md:py-6">
@@ -558,54 +639,117 @@ export function ManualHomeClient({
         <div className="flex items-center gap-2">
           {sortedUpdateEvents.length > 0 && (
             <button
-              onClick={() => setHistoryModalOpen(true)}
+              onClick={openHistoryModal}
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors border ${
-                newThisWeekEvents.length > 0
+                unseenNewCount > 0
                   ? "bg-red-50 border-red-200/70 text-red-700 dark:bg-red-950/20 dark:border-red-900/40 dark:text-red-300"
                   : "bg-muted/50 border-border/40 text-muted-foreground hover:text-foreground"
               }`}
             >
               <Clock className="h-3 w-3" />
-              {newThisWeekEvents.length > 0
-                ? `${newThisWeekEvents.length} nuevo${newThisWeekEvents.length > 1 ? "s" : ""}`
-                : `${sortedUpdateEvents.length} actualizaciones`}
+              {unseenNewCount > 0
+                ? `${unseenNewCount} nuevo${unseenNewCount > 1 ? "s" : ""}`
+                : "Historial"}
             </button>
           )}
         </div>
       </div>
 
-      {/* ── History modal ── */}
+      {/* ── Timeline history modal ── */}
       <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
         <DialogContent className="w-[95vw] max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Historial de actualizaciones</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              Historial de actualizaciones
+            </DialogTitle>
           </DialogHeader>
           <div className="max-h-[68vh] overflow-auto pr-1 -mr-1">
-            <ul className="grid gap-1.5">
-              {sortedUpdateEvents.map((event) => (
-                <li
-                  key={event.eventId}
-                  className={`rounded-lg border px-3 py-2 ${
-                    event.isNewThisWeek
-                      ? "border-red-200/70 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/20"
-                      : "border-border/40 bg-background/50"
-                  }`}
-                >
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] mb-0.5">
-                    <span className="font-semibold text-foreground/80">{formatSyncDate(event.effectiveDate)}</span>
-                    <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-primary font-medium uppercase tracking-wide">
-                      {event.changeKind}
-                    </span>
-                    {event.isNewThisWeek && (
-                      <span className="rounded-full bg-red-100 dark:bg-red-900/30 px-1.5 py-0.5 text-red-700 dark:text-red-300 font-medium uppercase tracking-wide">
-                        nuevo
+            <div className="relative pl-6">
+              {/* vertical timeline line */}
+              <div className="absolute left-2 top-2 bottom-2 w-px bg-border/50" />
+
+              <div className="grid gap-6">
+                {syncGroups.map((group) => (
+                  <div key={group.date}>
+                    {/* Sync node */}
+                    <div className="flex items-center gap-2 mb-3 -ml-6">
+                      <div className="h-4 w-4 rounded-full border-2 border-primary bg-background flex-shrink-0 z-10" />
+                      <span className="text-xs font-semibold text-foreground/70">
+                        Sync — {formatSyncDate(group.date)}
                       </span>
-                    )}
+                    </div>
+
+                    {/* Category sub-groups */}
+                    <div className="grid gap-3">
+                      {group.categoryGroups.map((catGroup) => (
+                        <div key={catGroup.category}>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1.5 flex items-center gap-1.5">
+                            <span>{CATEGORY_ICON[catGroup.category]}</span>
+                            {CATEGORY_LABEL[catGroup.category]}
+                          </div>
+                          <div className="grid gap-1.5 pl-1">
+                            {catGroup.events.map((event) => {
+                              const isUnseen = event.isNewThisWeek && !seenEventIds.includes(event.eventId);
+                              const isExpanded = expandedDiffs.has(event.eventId);
+                              return (
+                                <div
+                                  key={event.eventId}
+                                  className={`rounded-lg border overflow-hidden ${
+                                    isUnseen
+                                      ? "border-red-200/70 bg-red-50/30 dark:border-red-900/40 dark:bg-red-950/10"
+                                      : "border-border/40 bg-background/40"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 px-3 py-2">
+                                    {isUnseen && (
+                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                                    )}
+                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide flex-shrink-0 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
+                                      {event.changeKind.toUpperCase()}
+                                    </span>
+                                    <span className="text-xs flex-1 text-foreground/80 min-w-0">{event.summary}</span>
+                                    {event.diff && (
+                                      <button
+                                        onClick={() => handleExpandDiff(event.eventId, event.isNewThisWeek)}
+                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                      >
+                                        Ver diff
+                                        <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                                      </button>
+                                    )}
+                                  </div>
+                                  {event.diff && isExpanded && (
+                                    <div className="border-t border-border/60 bg-muted/20 px-3 py-2 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-48 overflow-y-auto">
+                                      {event.diff.split("\n").map((line, i) => (
+                                        <div
+                                          key={i}
+                                          className={
+                                            line.startsWith("+") && !line.startsWith("+++")
+                                              ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
+                                              : line.startsWith("-") && !line.startsWith("---")
+                                              ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
+                                              : line.startsWith("@@")
+                                              ? "text-blue-600 dark:text-blue-400"
+                                              : "text-muted-foreground"
+                                          }
+                                        >
+                                          {line || " "}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="text-xs text-foreground/80">{event.summary}</div>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
