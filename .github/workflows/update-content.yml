@@ -5,6 +5,11 @@ on:
     # Monthly (day 1) at 04:00 UTC
     - cron: "0 4 1 * *"
   workflow_dispatch:
+    inputs:
+      procedure_ids:
+        description: "Comma-separated procedure IDs to sync (leave empty for all)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -24,8 +29,51 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply official updates into review branch
-        run: npm run sync:manualsamur:apply
+      - name: Apply official updates
+        run: |
+          if [ -n "${{ github.event.inputs.procedure_ids }}" ]; then
+            npm run sync:manualsamur:apply -- --ids=${{ github.event.inputs.procedure_ids }}
+          else
+            npm run sync:manualsamur:apply
+          fi
+
+      - name: Update history from latest sync run
+        run: |
+          node --input-type=module << 'EOF'
+          import fs from "node:fs";
+          import path from "node:path";
+
+          const ROOT = process.cwd();
+          const UPDATES_PATH = path.join(ROOT, "content/data/manual-updates.json");
+          const HISTORY_PATH = path.join(ROOT, "content/data/manual-history.json");
+
+          if (!fs.existsSync(UPDATES_PATH)) process.exit(0);
+          const updates = JSON.parse(fs.readFileSync(UPDATES_PATH, "utf8"));
+          const existing = fs.existsSync(HISTORY_PATH)
+            ? JSON.parse(fs.readFileSync(HISTORY_PATH, "utf8"))
+            : { generatedAt: new Date().toISOString(), entries: [] };
+
+          const existingIds = new Set(existing.entries.map((e) => e.id));
+          const newEntries = updates.events
+            .filter((e) => !existingIds.has(e.eventId))
+            .map((e) => ({
+              id: e.eventId,
+              procedureId: e.procedureIds?.[0] ?? "",
+              procedureTitle: e.summary,
+              section: "",
+              slug: "",
+              changeKind: e.changeKind,
+              changedAt: e.approvedAt || e.effectiveDate,
+              summary: e.summary,
+              diff: e.diff,
+            }));
+
+          existing.entries = [...newEntries, ...existing.entries].slice(0, 500);
+          existing.generatedAt = new Date().toISOString();
+          fs.mkdirSync(path.dirname(HISTORY_PATH), { recursive: true });
+          fs.writeFileSync(HISTORY_PATH, JSON.stringify(existing, null, 2) + "\n", "utf8");
+          console.log(`Added ${newEntries.length} history entries. Total: ${existing.entries.length}`);
+          EOF
 
       - name: Generate update report
         run: |

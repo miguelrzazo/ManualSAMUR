@@ -6,13 +6,17 @@ slug: drp_02-procedimiento-de-despliege-de-un-drp
 tags: []
 synonyms: []
 related: []
-updated: '2026-05-09'
-sourceUpdated: '2026-05-09'
+updated: '2026-05-15'
+sourceUpdated: '2026-05-15'
 source: >-
   https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29./Procedimiento%20de%20despliege%20de%20un%20DRP/
 contentHash: 106f46d2b7f40d8d58a634d290662e1841445c7716c2bf1cf2f3ff54c9734f91
 attachments: []
+editorialStatus: source
+editorialLockedAt: ''
+lastApprovedOfficialUpdateAt: ''
 ---
+🖨 Imprimir esta página
 
 ## **Objeto**.
 Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).

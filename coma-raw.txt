@@ -1,0 +1,50 @@
+{{html clean="false"}}
+<style>
+  @media print {
+    a[href]:after {
+      content: none !important;
+    }
+  }
+</style>
+ 
+<div style="text-align: right;">
+<button onclick="window.print()">🖨️ Imprimir esta página</button>
+</div>
+{{/html}}
+
+* Valoración Inicial: ABCD. Obtenga historia clínica orientada (inicio del cuadro, síntomas previos; aparición aguda, gradual o transitoria; tratamientos habituales y trasgresiones terapéuticas). Exploración física y neurológica (nivel de conciencia, respuestas motoras a estímulos, reflejos del tronco cerebral, pupilas, movimientos oculares, existencia de convulsiones), cuantifique la profundidad del coma ([[Escala de coma de Glasgow>>attach:304_01_EscalaGlasgow.pdf||target="_blank"]]), descarte focalidad neurológica y **filie la hora** de comienzo.
+* Monitorice: TA, FC, FR, ECG, [[SatO,,2,,>>doc:Técnicas.Vía aérea y respiración.Medición de satO2.WebHome]] y obtenga la [[glucemia>>doc:Técnicas.Vasculares.Medición de la glucemia.WebHome]].
+* Administre **oxigenoterapia** suplementaria, garantizando [[SatO,,2,,>>doc:Técnicas.Vía aérea y respiración.Medición de satO2.WebHome]] > 92%.(((
+Mantenga permeables las vías respiratorias, para una buena ventilación pulmonar y evite la posibilidad de broncoaspiración.
+)))
+* Canalice [[vía venosa>>doc:Técnicas.Vasculares.Canalización de vías venosas periféricas.WebHome]] periférica y perfunda SSF de mantenimiento.
+* Realice [[medición de glucemia>>doc:Técnicas.Vasculares.Medición de la glucemia.WebHome]]. Si existe [[hipoglucemia>>doc:Procedimientos asistenciales.Procedimientos SVA.Urgencias endocrino-metabólicas.Complicaciones de la diabetes.WebHome]] actúe según procedimiento.
+* Valore realizar [[analítica venosa>>doc:Técnicas.Vasculares.Analítica de sangre.WebHome]] para descartar alteraciones hidroelectrolíticas, y [[arterial>>doc:Técnicas.Vasculares.Obtención de sangre arterial.WebHome]] para descartar alteraciones ácido-base y orientarle en las posibles causas.(((
+[[Ver anexo: Patrones ventilatorios y de gases en el coma>>attach:306_01_PatronesComa.pdf||target="_blank"]]
+ 
+)))
+* En coma no filiado, administre:
+** {{popoverV titulo="Vademécum" anchorId="Tiamina" linkId="Tiamina"}}{{/popoverV}} iv a dosis de 100 mg iv lenta, en especial si se trata de un paciente desnutrido o con impresión de alcohólico crónico y se va a administrar glucosa.
+** {{popoverV titulo="Vademécum" anchorId="Glucosamonohidrato" linkId="Glucosa monohidrato"}}{{/popoverV}} iv (Concentrado para solución para perfusión, 10 g/20 ml, es decir 500 mg/ml) administración de 50 ml diluido en vena grande, según glucemia. Se puede repetir la dosis en función de la respuesta.
+* Si se sospecha intoxicación por drogas, administre:
+** {{popoverV titulo="Vademécum" anchorId="Naloxona" linkId="Naloxona"}}{{/popoverV}} iv a dosis de 0,8 mg iv.
+** {{popoverV titulo="Vademécum" anchorId="Flumazenilo" linkId="Flumazenilo"}}{{/popoverV}} iv en dosis creciente de 0,3 mg iv a intervalos de 3 min hasta dosis acumulada de 3 mg. Evite la administración si sospecha intoxicación mixta con ADT y en antecedentes de epilepsia.
+* Reevalúe la respuesta del paciente tras administración de fármacos.
+* Realice [[intubación endotraqueal>>doc:Técnicas.Vía aérea y respiración.Intubación Endotraqueal.WebHome]] si persiste el coma y monitorice la [[ETCO,,2,,>>doc:Técnicas.Vía aérea y respiración.Medición de ETCO2.WebHome]].
+* Realice el tratamiento específico de la causa del coma.
+* Si sospecha HTIC con evidencia de herniación (pupilas, movimientos anormales):
+** Posicione al paciente en antiTrendelemburg 30º con cabeza recta.
+** Garantice la correcta sedorrelajación del paciente.
+** Administre, salvo contraindicación, {{popoverV titulo="Vademécum" anchorId="Manitol" linkId="Manitol"}}{{/popoverV}} iv a dosis de 0,5 - 1 g/kg en 20 min (aproximadamente 175 a 350 ml). Precisa control de la diuresis por sondaje vesical.
+** En ventilación asistida, realice hiperventilación moderada controlada por parámetros capnométricos y gasométricos.
+* Descarte la [[hipotermia>>doc:Procedimientos asistenciales.Procedimientos SVA.Urgencias por agentes físicos.Paciente con hipotermia.WebHome]] y evítela, manteniendo al paciente normotérmico.
+* Si el paciente presenta [[convulsiones>>doc:Procedimientos asistenciales.Procedimientos SVA.Urgencias neurológicas.Crisis  Estatus epiléptico.WebHome]], trátelas.
+* Valore la colocación de [[SNG>>doc:Técnicas.Sondajes.Sondaje gástrico.WebHome]] (garantizando la protección de la vía aérea) y [[sondaje vesical>>doc:Técnicas.Sondajes.Sondaje vesical.WebHome]].
+* Humedezca los ojos del paciente y manténgalos cerrados. Atención a las zonas de apoyo (compresiones nerviosas).
+* Traslade en USVA, intentando reducir los estímulos estresantes innecesarios.
+* Preaviso hospitalario con paciente intubado y/o inestable.
+
+[[Inicio página>>doc:]]
+
+
+{{versionPagina version="2016 1.3"}}{{/versionPagina}}

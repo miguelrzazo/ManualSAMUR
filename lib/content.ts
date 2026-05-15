@@ -114,7 +114,6 @@ const SECTIONS_ORDER = [
   "SVB",
   "Psicológicos",
   "Técnicas",
-  "General",
 ];
 
 export function getAllProcedures(): Procedure[] {

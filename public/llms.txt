@@ -4,7 +4,7 @@
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
 Última actualización: 2026-05-15
-Total procedimientos: 230
+Total procedimientos: 231
 
 ## Recursos principales
 
@@ -188,8 +188,9 @@ Total procedimientos: 230
 - [508] Asistencia psicológica en agresión sexual: https://manualsamur.es/manual/508-asistencia-psicologica-en-agresion-sexual
 - [509] Asistencia psicológica en violencia de género: https://manualsamur.es/manual/509-asistencia-psicologica-en-violencia-de-genero
 
-## Técnicas (66 procedimientos)
+## Técnicas (67 procedimientos)
 
+- [123] Técnicas de comunicación: https://manualsamur.es/manual/123-tecnicas-de-comunicacion
 - [601_01] Relación con el paciente: https://manualsamur.es/manual/601_01-relacion-con-el-paciente
 - [601_02] Técnicas y medidas higiénicas: https://manualsamur.es/manual/601_02-tecnicas-y-medidas-higienicas
 - [601_03] Signos Vitales: https://manualsamur.es/manual/601_03-signos-vitales

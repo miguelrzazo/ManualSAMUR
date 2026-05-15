@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { FileX, MapPin, Navigation, ChevronUp, Radio } from "lucide-react";
+import { FileX, Hospital, MapPin, Navigation, Radio } from "lucide-react";
+import { BackToTop } from "@/components/shared/BackToTop";
 import { cn } from "@/lib/utils";
 import { extractCodeFamily } from "@/lib/manual-data";
 
@@ -232,16 +233,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
   const [activeTab, setActiveTab] = useState<TopTabKey>(initialTab);
   const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>(initialSubtab);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const handleScroll = useCallback(() => {
-    setShowBackToTop((scrollContainerRef.current?.scrollTop ?? 0) > 200);
-  }, []);
-
-  const scrollToTop = useCallback(() => {
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   const jumpToSection = useCallback((key: string) => {
     const container = scrollContainerRef.current;
@@ -421,7 +413,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
 
 
       {/* ── Content ── */}
-      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 min-h-0 overflow-y-auto relative">
+      <div id="codigos-scroll" ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto relative">
         {/* ── No-report legend (SVA/SVB only) ── */}
         {perFamilyColor && hasNoReport && (
           <div className="px-4 md:px-6 py-2 flex items-center gap-2 text-xs text-muted-foreground border-b border-border/30 bg-muted/5">
@@ -495,15 +487,7 @@ export function CodigosView({ incidente, sva, svb, upsi, upsq, icao, indicativos
       </div>
 
       {/* ── Back to top ── */}
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-background border border-border/60 shadow-md text-muted-foreground hover:text-foreground hover:border-border transition-colors"
-          aria-label="Volver al inicio"
-        >
-          <ChevronUp className="h-4 w-4" />
-        </button>
-      )}
+      <BackToTop scrollContainerId="codigos-scroll" />
     </div>
   );
 }
@@ -631,7 +615,7 @@ function CodeList({
                     data-code-anchor={anchor}
                     className={cn(
                       "py-3 transition-colors hover:bg-muted/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                      highlighted && "bg-primary/8 ring-1 ring-primary/30",
+                      highlighted && "animate-[highlight-fade_3s_ease-out]",
                       row.isGrouped ? "pl-10 pr-4 md:pl-12 md:pr-6" : "px-4 md:px-6",
                     )}
                   >

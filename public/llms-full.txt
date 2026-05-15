@@ -3,14 +3,14 @@
 > Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
-Generado: 2026-05-15T09:15:15.055Z
-Total procedimientos: 230
+Generado: 2026-05-15T10:26:48.716Z
+Total procedimientos: 231
 
 ---
 # [114] Autoprotección en casos sospechos de viruela del mono
 Sección: Intervinientes
 URL: https://manualsamur.es/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actuación ante posibles casos de pacientes infectados por Viruela del Mono
 
 Este procedimiento tiene como objetivo las indicaciones del manejo de los casos con sospecha o confirmación de viruela del mono en el escenario actual.
@@ -39,7 +39,7 @@ Se está dentro de un habitáculo cerrado a menos de 1,80 metros de un paciente 
 # [115] Apoyo psicológico a intervinientes
 Sección: Intervinientes
 URL: https://manualsamur.es/manual/115-apoyo-psicologico-a-intervinientes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Procedimiento de apoyo psicológico inmediato a intervinientes tras incidentes críticos
 Este procedimiento regula la activación del Psicólogo de Guardia (indicativo Romeo) ante sucesos estresantes que produzcan o sean susceptibles de producir un impacto emocional negativo y significativo en el interviniente debido a sus características, causas y/o consecuencias.
 
@@ -70,7 +70,7 @@ La Central de Comunicaciones asignará un número de informe al P
 # [126a] Procedimiento de comunicaciones en un DRP
 Sección: DRP
 URL: https://manualsamur.es/manual/126a-procedimiento-de-comunicaciones-en-un-drp
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El Centro Coordinador de Emergencias de SAMUR-Protección Civil (CCES) es el responsable de las comunicaciones durante los dispositivos de riesgo previsible.
 Atendiendo a criterios de ocupación, carga de trabajo y facilitación de las comunicaciones, el Encargado del CCES podrá delegar el control de las Comunicaciones de el/los canal/es asignados a los servicios preventivos en las siguientes figuras:
 CECOR interno: planificado en “Orden de Servicio” o sobrevenido.
@@ -92,7 +92,7 @@ Las unidades operativas cumplirán con el procedimiento radiotelefónico, despla
 # [216] Accidente laboral con riesgo biológico
 Sección: Intervinientes
 URL: https://manualsamur.es/manual/216-accidente-laboral-con-riesgo-biologico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, señalando las recomendaciones necesarias para el manejo de exposiciones accidentales a fluidos biológicos que contengan Virus Hepatitis B, Virus Hepatitis C y VIH, según la evidencia científica internacional actual.
 
 Ante accidentes de estas características con contaminación por fluidos corporales (sangre, LCR, líquido sinovial, pericárdico, amniótico, semen o fluidos vaginales) en el desarrollo de la actividad laboral, se debe:
@@ -122,7 +122,7 @@ Facilitará un impreso oficial al trabajador en el que c
 # [216b] Contacto con meningitis bacteriana
 Sección: Intervinientes
 URL: https://manualsamur.es/manual/216b-contacto-con-meningitis-bacteriana
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, por contacto con pacientes con posible Meningitis bacteriana.
 
 Sospecharemos paciente con posible meningitis bacteriana, cuando presente fiebre, cefalea y rigidez de nuca.
@@ -147,7 +147,9 @@ La Sección de Logística, se encargará
 # [drp_01] Procedimiento General de los DRP
 Sección: DRP
 URL: https://manualsamur.es/manual/drp_01-procedimiento-general-de-los-drp
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+🖨 Imprimir esta página
+
 Definición y objeto.
 Los Dispositivos de Riesgo Previsible (DRP) son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
 
@@ -163,13 +165,15 @@ Servicios preventivos no asistenciales con funciones de enlace o coordinación. 
 Responsable del DRP.
 Cada servicio tendrá un responsable que será acorde al nivel de complejidad del dispositivo:
 Servicios convencionales y de refuerzo. Esta función recaerá en el Lima de guardia, salvo nombramiento expreso de otro responsable. Esta función la ejercerá por delegación el componente de mayor categoría o antigüedad de las unidades desplegadas, que no se identificará con ningún indicativo específico y reportará al Lima de guardia cuantas circunstancias y decisiones sea necesario tomar.
-Servicios complejos que así lo requieran. La figura de responsable recaerá, en función de la complejidad del mi
+Servicios complejos que así lo requieran. La figura de responsable recaerá, en función
 [...contenido truncado, ver URL completa]
 ---
 # [drp_02] Procedimiento de despliege de un DRP
 Sección: DRP
 URL: https://manualsamur.es/manual/drp_02-procedimiento-de-despliege-de-un-drp
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+🖨 Imprimir esta página
+
 Objeto.
 Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).
 
@@ -188,8 +192,7 @@ A la hora de cita general podrá realizarse una reunión previa informativa (bri
 Características del servicio preventivo y horarios relevantes.
 Organización geográfica.
 Canales de comunicación.
-Asignación de vehículos.
-Tipo de operatividad 
+Asignación de vehícul
 [...contenido truncado, ver URL completa]
 ---
 # [drp_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible
@@ -237,10 +240,9 @@ Actualizado: 2026-05-09
 # [103] Funciones del personal de Guardia
 Sección: Administrativos
 URL: https://manualsamur.es/manual/103-funciones-del-personal-de-guardia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 1. El personal del operativo debe vestir, de forma obligatoria, la ropa de trabajo del Servicio, cuyas características estarán predefinidas en atención a la seguridad personal de los actuantes, y que quedan contempladas en el apartado de uniformidad y EPIs. También queda contemplado en este procedimiento la amortización y reposición de dichas prendas.
-1. Para el mejor ejercicio de su trabajo, el personal del operativo recibirá material portátil de apoyo (equipos portátiles de radiocomunicaciones, equipos de iluminación, material para la asistencia, etc.) de los que se responsabilizará personalmente en su incorporación a la ambulancia y durante su prestación 
-
+1. Para el mejor ejercicio de su trabajo, el personal del operativo recibirá material portátil de apoyo (equipos portátiles de radiocomunicaciones, equipos de iluminación, material para la asistencia, etc.) de los que se responsabilizará personalmente en su incorporación a la ambulancia y durante su prestación de Servicio, dando cuenta en caso de extravío o deterioro no justificado.
 1. Debe responsabilizarse del cuidado del material a su disposición, manteniendo un trato adecuado con los medios e instalaciones de las bases o dependencias en que esté destinado, dando cuenta de las incidencias correspondientes a su inmediato superior o por los medios habilitados por el Servicio.
 1. Debe responsabilizarse de la seguridad del personal u operativo a su cargo.
 1. Propondrá cuantas mejoras estime convenientes para el Servicio.
@@ -251,14 +253,13 @@ Actualizado: 2026-05-09
 11. Participar y colaborar eficazmente, en el nivel que corresponda en función de su categoría profesional, en la consecución de los objetivos cuantitativos y cualitativos del Servicio.
 11. Tener un trato exquisito, correcto y educado con los/las pacientes respetando la dignidad e intimidad personal de estos, su libre elección y el resto de los derechos que les reconocen las disposiciones aplicables, así como a no realizar discriminación alguna. Este trato exquisito, correcto y educado es extensible a su relación con todos/as los/las intervinientes en la actuación.
 11. Mantener la debida reserva y confidencialidad de la información y documentación relativa a la asistencia a la que tenga acceso, en el ejercicio de sus funciones.
-11. En virtud del Real Decreto 192/88, debe abstenerse de fumar en los distintos vehículos de transporte y de asistencia del Servicio, así como siempre que el personal esté de Servicio y en lugar público. Tampoco podrá ingerir bebidas alcohólicas o estar bajo los efectos de drogas de consumo mientras esté de Servicio o portando los distintivos y uniformidad reglamentaria del Servicio.
-11. Está obligado/a conocer y a
+11. En virtud del Real Decreto 192/88, debe abstenerse de fumar en los distintos vehículos de transporte y de asistencia del Servicio, así como siempre que el personal esté de Servicio y en lugar público. Tampoco podrá ingerir bebidas alcohólicas o estar bajo los efectos de drogas de consumo mientras esté de Servicio o portando los distintivos y
 [...contenido truncado, ver URL completa]
 ---
 # [104] UNIFORMIDAD y EPIs
 Sección: Administrativos
 URL: https://manualsamur.es/manual/104-uniformidad-y-epis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Uso, mantenimiento o limpieza y eliminación del uniforme corporativo y los Equipos de protección individual
 La aplicación de este procedimiento será de obligado cumplimiento para todo el personal de los equipos operativos de la Subdirección General de SAMUR-Protección Civil durante los periodos de guardia y según las características de cada servicio o aviso.
 Para su aplicación práctica en el uso, mantenimiento o limpieza (en su caso) y para su eliminación, diferenciamos entre las prendas que forman parte del uniforme corporativo o ropa de trabajo corriente, respecto de las que se consideran equipo de protección individual o EPI (equipo destinado a ser llevado por el trabajador para que le proteja de los riesgos que puedan amenazar su seguridad o su salud, así como cualquier complemento o elemento destinado a tal fin).
@@ -285,6 +286,8 @@ En la siguiente tabla se exponen las condiciones de uso, mantenimiento o limpiez
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/121-procedimiento-radiotelefonico
 Actualizado: 2026-05-08
+Última modificación el 08/05/2026 
+
 Conceptos.
 Utilizar un lenguaje radiotelefónico uniforme es garantía de eficacia, seguridad e inteligibilidad.
 El lenguaje debe ser claro, conciso, concreto y, sobre todo, uniforme.
@@ -312,15 +315,102 @@ Solicitud de enlaces entre operativos.
 Transmisión de información complementaria a las claves de operatividad 3 y 4.
 Solicitud de información por parte de la jefatura o Central.
 Solicitud de apoyo de recurso.
-Preferente: cuando la información que se quiere dar tiene mayor importancia que la que se está realizando. Su uso implica prioridad en el establecimiento de la comunicación con la Central de Comunicaciones, debiendo ésta cortar cualquier comunicación en curso, excepto las de carácter urgente. Se consideran subsidiarios de este tipo de comunicación, las comunicaciones de gestión sobre las de información:
-
+Preferente: cuando la información que se quiere dar tiene mayor importancia que la que se está realizando. Su uso implica prioridad en el establecimiento de la comunicación con la Central de Comunicaciones, debiendo ésta cortar cualquier comunicación en curso, excepto las de carácter urgente. Se consideran subsidiarios de este tipo de comunicación, las comunicaciones d
 [...contenido truncado, ver URL completa]
 ---
 # [122] Gestión de llamadas de emergencia
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/122-gestion-de-llamadas-de-emergencia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Ver Protocolo de Activación en caso de Emergencia>>/docs/procedures/122/122_ProtocoloActivacion.pdf
+
+Análisis de llamada
+(((
+Responda con la siguiente fórmula: //Buenos días / tardes / noches, SAMUR. ¿Dígame?//
+Obtenga y/o confirme la ubicación exacta (¿Dónde está pasando?) y los mejores accesos , prestando especial atención a datos relativos a:
+Edificios significativos.
+Elementos urbanos singulares.
+Elementos rurales singulares.
+Cursos de agua.
+Carriles de circulación.
+Sentidos de circulación.
+Puentes.
+Nombre / actividad del comercio del suceso.
+Túneles.
+Cruces de calles / viales.
+Detección de dirección errónea en su caso y su corrección.
+Informe sobre el envío de la ambulancia una vez que el recurso haya sido asignado y esté en camino hacia la ubicación del demandante.
+Identifique el motivo de la demanda ¿qué está pasando?. Detecte signos de prioridad:
+Alteraciones del nivel de conciencia.
+Dificultad respiratoria.
+Sangrados importantes.
+Dolor torácico.
+Identifique el número de pacientes aproximado, prestando especial atención a datos relativos a:
+Vehículos de alta ocupación.
+Número de vehículos implicados.
+Grandes aglomeraciones de personas.
+Posibilidad de IMV.Obtenga y registre la información.
+Identifique la relación del alertante con la víctima.
+Si no dispone del número de teléfono, pídalo.
+Preste especial atención a las llamadas realizadas desde cabinas telefónicas pues estas no permiten la rellamada de soporte.
+
+En situaciones de enfermedad
+(((
+Detecte signos de prioridad:
+Alteraciones del nivel de conciencia.
+Dificultad respiratoria.
+Sangrados importantes.
+Dolor torácico.
+Trate de identificar inmediatamente situaciones de compromiso vital que requieran la prestación de recomendaciones telefónicas. Tales como:
+Parada cardiorrespiratoria.
+Obstrucción de vía aérea.
+Sangrados importantes.
+Identifique antecedentes personales. Consiga en la medida de lo posible información sobre:
+Enfermedades previas.
+Tratamientos y alergias.
+Identifique edad y sexo.
+Valore la existencia de:
+Bajo nivel de conciencia.
+Dolor torácico.
+Dolor abdominal.
+Ictus.
+Síncope.
+Problemas cardiacos.
+Reacciones alérgicas.
+Intoxicaciones por alcohol o drogas de abuso.
+Intoxicaciones por inhalación.
+Sobredosis.
+Problemas diabéticos.
+Convulsiones.
+
+En situaciones de accidente
+(((
+Detecte signos de prioridad:
+Alteraciones del nivel de conciencia.
+Dificultad respiratoria.
+Sangrados importantes.
+Dolor torácico.
+Identifique el tipo y las características del accidente y mecanismo lesional.:
+Atrapamientos/enterramientos.
+Incendios.
+Explosiones.
+Materiales peligrosos.
+Accidente industrial.
+En accidentes de tráfico obtenga tipo y características:
+Colisión.
+Alcance.
+Salida de vía.
+Vuelco.
+Atropello.
+Motorista.
+Número de víctimas.
+Víctimas atrapadas o proyectadas.
+Vehículos de alta ocupación.
+Vehiculos pesados.
+Número de vehículos implicados
+Identifique inmediatamente situaciones de compromiso vital que requieran la prestación de recomendaciones telefónicas. Tales como:
+Parada cardiorrespi
+[...contenido truncado, ver URL completa]
 ---
 # [123] Técnicas de comunicación
 Sección: Comunicaciones
@@ -347,7 +437,7 @@ En situaciones donde es necesario aplicar soporte vital transtelefónico (por ej
 # [124] Recomendaciones generales
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/124-recomendaciones-generales
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Recomendaciones telefónicas
 
 Recomendaciones generales comunes a todas las llamadas de emergencia
@@ -384,7 +474,7 @@ A continuación, indique al llamante que compruebe si el paciente respira (obser
 # [125_01] Sospecha de PCR y RCP transtelefónico
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_01-sospecha-de-pcr-y-rcp-transtelefonico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 En caso de recibir una llamada cuyo demandante indique la posibilidad de que el paciente se encuentre en PCR el operador realizará las siguientes acciones:
 Confirme con el demandante el punto exacto y mejor acceso al suceso.
 Informe a su compañero del puesto de radio para que asigne, inmediatamente, los recursos necesarios, con preferencia en el envío de las unidades adecuadas teniendo en cuenta la proximidad de éstas.
@@ -412,7 +502,7 @@ Posición: con el pecho desnudo
 # [125_02] Obstrucción de la vía aérea OVACE
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_02-obstruccion-de-la-via-aerea-ovace
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Procedimiento en adultos
 Valore la severidad de la obstrucción, si hay tos efectiva (obstrucción leve de vía aérea):
 Indique al llamante que "anime a toser a la víctima".
@@ -457,7 +547,7 @@ Siéntese o arrodíllese para poder sujetar al lactante de manera segura. Apoye
 # [125_03] Sospecha de Síndrome Coronario Agudo (SCA)
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_03-sospecha-de-sindrome-coronario-agudo-sca
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actúe según procedimiento general de Gestión de llamadas de emergencia
 
 Sospeche síndrome coronario agudo cuando refieran los siguientes signos y síntomas:
@@ -487,7 +577,7 @@ En el caso de que el paciente en el transcurso de la conversación pierda el con
 # [125_04] Sospecha de Ictus
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_04-sospecha-de-ictus
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Recomendaciones telefónicas
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -531,11 +621,19 @@ Confírme la edad del paciente.
 ¿Padece de alguna enfermedad?.
 Indique al llamante que si el paciente es diabético y dispone de glucómetro (aparato para medir el azúcar en sangre) y sabe utilizarlo, haga una determinación e indique resultados.
 Indague sobre el tipo de vida que hace el paciente: ¿Es independiente para las actividades de la vida diaria? Use la Escala de Rankin>>/docs/procedures/125_04/410a_EscalaRankin.pdf
+
+Recomendaciones
+Recomiende colocar al paciente en posición de semisentado, con la zona superior del cuerpo elevada a 45º.
+Indique que mantenga la cabeza centrada y controlada si el paciente está consciente inicie recomendaciones de RCP transtelefónica>>Central de Comunicaciones.Recomendaciones telefónicas específicas.Sospecha de PCR y RCP transtelefónico.WebHome.
+Si comienza a convulsionar aplique procedimiento de recomendaciones ante convulsiones>>Central de Comunicaciones.Recomendaciones telefónicas específicas.Sospecha de Convulsiones.WebHome.
+Confirme si los síntomas que motivaron la llamada han desaparecido, se aminoran, o se mantienen en el tiempo.
+
+Inicio página>>doc:
 ---
 # [125_05] Sospecha de Convulsiones
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_05-sospecha-de-convulsiones
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actúe según procedimiento general de Gestión de llamadas de emergencia
 
 En el caso de fase convulsiva activa:
@@ -555,7 +653,7 @@ Indague sobre posibles causas desencadenantes: enfermedad previa (epilepsia, dia
 # [125_06] Foco de hemorragia activa
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_06-foco-de-hemorragia-activa
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actúe según procedimiento general de Gestión de llamadas de emergencia
 Indague sobre:
 Mecanismo de producción (espontánea / traumática)
@@ -575,7 +673,7 @@ Arteria femoral en el miembro inferior.
 # [125_07] Sospecha de parto en curso
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_07-sospecha-de-parto-en-curso
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actúe según procedimiento general de Gestión de llamadas de emergencia
 
 Indague sobre:
@@ -612,7 +710,7 @@ No debe existir prisa por cortarlo, solo se hará cuando deje de latir y se
 # [125_08] Pacientes politraumatizados por accidente de tráfico
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Recomendaciones telefónicas
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -654,7 +752,7 @@ Inicio página>>doc:
 # [126] Gestión de recursos
 Sección: Comunicaciones
 URL: https://manualsamur.es/manual/126-gestion-de-recursos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Definición de prioridades
 El objeto de este procedimiento es el de garantizar el máximo nivel de operatividad posible para las unidades de USVA.
 
@@ -690,7 +788,11 @@ Aquellas situaciones que generen un tiempo de limpieza/reposición mayor de 45 m
 Sección: Operativos
 URL: https://manualsamur.es/manual/201-actuacion-general
 Actualizado: 2026-04-24
-ACTUACIÓN GENERAL
+Última modificación el 24/04/2026
+
+Contenido
+
+🖨️ Imprimir esta página
 
 NORMAS GENERALES OPERATIVAS
 {{box cssClass="floatinginfobox" title="Índice
@@ -719,14 +821,13 @@ Inoperatividad de la unidad, por causa justificada
 Accidente de la unidad
 Finalización de un servicio de cobertura
 Se puede exceder la jornada laboral por necesidades del servicio, en cuyo caso se deberá poner en conocimiento de la jefatura a través del Jefe de División de Guardia, quien lo reflejará en su informe diario y lo validará con su firma en el correspondiente documento, quedando una copia del mismo en poder del trabajador y la otra tendrá como destino la Sección de Logística y Medios Técnicos, en el formulario deberá constar la hora de finalización y el número de informe que generó el exceso de jornada o en su defecto la causa de la misma si no existiera número de informe.
-Se considera exceso de jornada a cualquier período de tiempo en que una unidad esté de servicio, excediendo su jornada de trabajo habitual establecida en los diferentes convenios y normativas legales. Este exceso de jornada traerá como consecuencia la correspondiente compensación conforme a lo que establezca la normativa vigente.
-Cuando el exceso de jornada se deba a la
+Se considera exceso de jornada a cualquier período de tiempo en que una unidad esté de servicio, excediendo su jornada de trabajo habitual establecida en los diferentes convenios y normativas legales. Este exceso de jornada traerá como consecuencia la correspondiente compensación conforme a lo que establezca la normat
 [...contenido truncado, ver URL completa]
 ---
 # [203] Conducción de vehículos sanitarios en emergencias
 Sección: Operativos
 URL: https://manualsamur.es/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 RECOMENDACIONES PARA LA CONDUCCIÓN DE VEHÍCULOS SANITARIOS EN SERVICIO DE URGENCIA
 
 CINTURÓN DE SEGURIDAD
@@ -774,7 +875,7 @@ A efectos de funcionamiento en nuestro Servicio, se consideran dos tipos de sire
 # [203b] Procedimiento en caso de accidente con Unidades
 Sección: Operativos
 URL: https://manualsamur.es/manual/203b-procedimiento-en-caso-de-accidente-con-unidades
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento tiene como fin definir las actuaciones a llevar a cabo tras un accidente de tráfico en el que se encuentre implicado un vehículo del Servicio relativas a comunicación del accidente, necesidades de recursos de apoyo en el punto, cumplimentación de partes de asistencia y documentación para tramitación del accidente por la aseguradora y resolución de la asistencia a lesionados.
 
 MEDIDAS DE SEGURIDAD EN LA ESCENA
@@ -811,7 +912,7 @@ Actuar según el Procedimiento de actuación con paciente con patología traumá
 # [204] Farmacia Móvil
 Sección: Operativos
 URL: https://manualsamur.es/manual/204-farmacia-movil
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE FARMACIA MÓVIL (INDICATIVO FOXTROT)
 
 El siguiente procedimiento operativo tiene como objetivo principal la regulación de todas aquellas actuaciones administrativas y operativas que se generen en el curso de la activación de este recurso de apoyo al operativo.
@@ -862,7 +963,7 @@ La correcta cumplimentación de los diversos informes
 # [205b] Transferencia de pacientes
 Sección: Operativos
 URL: https://manualsamur.es/manual/205b-transferencia-de-pacientes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TRANSFERENCIA DE PACIENTES* ENTRE PROFESIONALES SANITARIOS
 
 *("handover", "handoff" o "sign-out" en la literatura anglosajona).
@@ -915,7 +1016,7 @@ Inicio página>>doc:
 # [206] Preaviso Hospitalario
 Sección: Operativos
 URL: https://manualsamur.es/manual/206-preaviso-hospitalario
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento tiene por objeto:
 Facilitar la transferencia hospitalaria de aquellos pacientes que por su patología requieran una información más detallada al hospital receptor, alertando al personal de urgencias con el fin de mejorar y acelerar el tratamiento de este paciente crítico.
 Proporcionar a la Subdirección General un parámetro de control de calidad asistencial, definido por la supervivencia de pacientes críticos en el seguimiento de su evolución hospitalaria.
@@ -976,7 +1077,7 @@ El preaviso hospitalario con
 # [206b] Circulación de Unidades en Convoy
 Sección: Operativos
 URL: https://manualsamur.es/manual/206b-circulacion-de-unidades-en-convoy
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El siguiente procedimiento tiene por objeto definir las distintas actuaciones a desarrollar en aquellas situaciones en las que varios vehículos del Servicio circulen juntos, realizando traslado o acompañamiento en el traslado de pacientes a un centro hospitalario. Será de aplicación en traslados convencionales, preavisos hospitalarios o traslados de pacientes en Código 9.
 
 En el caso de activación del código 90 la responsabilidad en la circulación del convoy será de policía municipal.
@@ -1002,7 +1103,7 @@ El inicio del traslado s
 # [207] Incidentes con múltiples víctimas y Triaje (IMV)
 Sección: Operativos
 URL: https://manualsamur.es/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El Incidente con Múltiples Víctimas se caracteriza por presentar en sus inicios una desproporción entre recursos y necesidades, y por lo tanto exige una respuesta extraordinaria, con el fin de optimizar los recursos existentes, preservando una capacidad de respuesta para el resto de acontecimientos.
 
 Debe activarse cuando en el curso de un solo incidente se precisen más de un tercio de los recursos operativos del Servicio o por situación de alarma especial.
@@ -1038,7 +1139,7 @@ A. El lugar de la intervención. La tarea fundamental es la gestión de la zona
 # [208] Primera respuesta NRBQ
 Sección: Operativos
 URL: https://manualsamur.es/manual/208-primera-respuesta-nrbq
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE PRIMERA RESPUESTA ANTE INCIDENTES NRBQ
 
 De entre las intervenciones que nuestro Servicios realiza se encuentran las relacionadas con riesgo Nuclear, Radiológico, Biológico y Químico.
@@ -1070,7 +1171,7 @@ Elementos filtrant
 # [209] Atención Sociosanitaria a menores
 Sección: Operativos
 URL: https://manualsamur.es/manual/209-atencion-sociosanitaria-a-menores
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ATENCIÓN SOCIOSANITARIA A MENORES DE EDAD (niños, niñas y adolescentes- NNA) EN RIESGO SOCIAL O CON SOSPECHA DE SITUACIÓN DE VIOLENCIA
 
 La finalidad del presente procedimiento es la atención y asistencia a niños/as y adolescentes, respecto a la detección y notificación del riesgo social o la sospecha de situaciones de violencia sobre el menor (NNA) como primeras medidas para su protección.
@@ -1091,11 +1192,26 @@ Tipología de la situación de riesgo o violencia contra NNA
 Cualquier acción no accidental por parte de los padres o responsables legales que provoque daño físico o enfermedad en el menor o le coloque en grave riesgo de padecerlo.
 
 Ver anexo 1 - Indicadores más frecuentes en el maltrato físico infantil>>/docs/procedures/209/209_1_IndicadoresMaltratoFisico.pdf
+
+2. Abuso sexual
+
+Es un tipo de violencia sexual que incluye cualquier clase de contacto e interacción sexual entre un adulto y un menor de edad, en la que el adulto que por definición posee una posición de poder o autoridad sobre el menor, usa a éste para su propia estimulación sexual, la del menor o la de otra persona.  El abuso sexual también puede ser cometido por una persona menor de 18 años, cuando ésta es significativamente mayor que el menor-víctima o cuando está en una posición de poder o control sobre el menor.
+
+Puede tratarse de abuso sexual intrafamiliar o extrafamiliar, con o sin contacto físico.
+
+Ver anexo 2 - Indicadores más frecuentes en el abuso sexual infantil y características del abusador>>/docs/procedures/209/209_2_IndicadoresAbusoSexual.pdf
+
+3. Maltrato emocional
+
+Hostilidad verbal frecuente en forma de insulto, desprecio, crítica o amenaza de abandono; constante bloqueo de las iniciativas de interacción infantiles (desde la evitación hasta el encierro o confinamiento) y privación de oportunidades de interac
+[...contenido truncado, ver URL completa]
 ---
 # [209b] Atención sociosanitaria a mayores
 Sección: Operativos
 URL: https://manualsamur.es/manual/209b-atencion-sociosanitaria-a-mayores
 Actualizado: 2026-04-30
+Última modificación el 30/04/2026
+
 Procedimiento de actuación para la atención sociosanitaria a personas mayores en riesgo social o con sospecha de maltrato código 5.9
 Contenido
 
@@ -1108,11 +1224,23 @@ Adulto mayor en situación de grave riesgo, con Autorización Judicial de Intern
 
 Para ello se facilita información acerca de los principales indicadores de riesgo social y de maltrato,un test de valoración cognitiva (Cuestionario de Pfeiffer), un cuestionario de soledad propuesto por la Dirección General de Mayores del Área de Gobierno de Familias, Igualdad y Bienestar Social y el test Elder Abuse Suspicion Index (EASI) de riesgo socio-sanitario para adultos mayores.
 Ver anexo: Cuestionario de Pfeiffer. Cuestionario de Soledad. EASI.>>/docs/procedures/209b/209b_PersonasMayores_Pfeiffer_Soledad_EASI.pdf
+
+Ver anexo: Notificación persona mayor en riesgo social>>/docs/procedures/209b/209b_notificacionMayores.pdf
+
+Maltrato a personas mayores
+Cualquier acto u omisión que tenga como resultado un daño, intencionado o no, practicado sobre personas de 65 años o más, que ocurra en el medio familiar, comunitario o institucional, que vulnere o ponga en peligro su integridad física o psíquica, así como el principio de autonomía o el resto de los derechos fundamentales del individuo, constatable objetivamente o percibido subjetivamente.
+
+El perfil de las víctimas suele ser el de una persona incapacitada para solicitar ayuda, que presenta sentimientos de culpabilidad frente a su situación o que teme a las posibles represalias del cuidador, al que frecuentemente le unen lazos de gran dependencia.
+
+Factores e indicadores de riesgo de maltrato:
+Factores de riesgo de la víctima: edad muy avanzada, dependencia física, falta de autonomía para las actividades básicas de la vida diaria, demencia, presencia de conductas difíciles que producen estrés del cuidador (agitación nocturna, conducta agresiva, irritabilidad, comportamiento repetitivo o demandante, conducta impulsiva, incontinencia, deambulación errante, etc.), dependencia económica del cuidador, aislamiento.
+Factores de riesgo del agresor: historia de violencia familiar, acontecimientos estresantes recientes, nivel cultural escaso, nivel socio-económico bajo, patología psiquiátrica en el cuidador, historia de comportamiento violento, abuso de alcohol u otras substancias. Familias dep
+[...contenido truncado, ver URL completa]
 ---
 # [209c] Actuación en casos de violencia de género
 Sección: Operativos
 URL: https://manualsamur.es/manual/209c-actuacion-en-casos-de-violencia-de-genero
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO OPERATIVO DE ACTUACIÓN EN CASOS DE VIOLENCIA DE GÉNERO
 
 El presente procedimiento regula la actuación operativa relativa a la atención y asistencia en el ámbito prehospitalario a las mujeres víctimas de violencia de género. Esto incluye los actos de violencia por parte de su pareja o expareja, entendiendo como tal los siguientes tipos:
@@ -1123,11 +1251,32 @@ Violencia económica: control por parte de la pareja de los recursos económicos
 Violencia ambiental: cualquier acto, no accidental, que provoque o pueda producir daño en el entorno para intimidar a la mujer (Golpes a las puertas, rotura de objetos, daños a mascotas, etc.)
 
 Ver anexo 1: Clasificación de los distintos tipos de violencia>>/docs/procedures/209c/509.1_Clasificacion.pdf
+
+El objetivo principal es la asistencia integral de la víctima, tanto en el aspecto sanitario como en el psicológico.
+
+Gestión de la llamada en la Central
+Será codificado como 5.7.
+
+Llamada recibida desde el 112
+Si la llamada procede de un ciudadano, institución, etc., la Central de comunicaciones gestionará la presencia en el punto tanto de Policía Nacional como Policía Municipal (UAPMMM), siendo suficiente la activación a través de CISEM de 092 quien, en caso de ser el único indicativo policial presente en el punto iniciará los trámites de la denuncia remiténdolos con posterioridad a Policía Nacional para la tramitación de las diligencias.
+
+Se activará asimismo una unidad de SAMUR-PC (Romeo, Yankee, SVA o SVB), según procedimiento operativo de activación que se describe en el siguiente apartado.
+
+Llamada procedente de CISEM
+La central de Comunicaciones gestionará con CISEM la presencia en el punto de un indicativo de 092 (UAPMMM) y procederá a la activación de una unidad de SAMUR-PC (Romeo, Yankee, SVA o SVB), según procedimiento operativo.
+
+Llamada procedente de una unidad de SAMUR-PC
+Si durante la asistencia realizada por una unidad de SAMUR-PC que ha sido activada por otra causa los miembros de la dotación de dicha unidad detectaran en el transcurso de la intervención algún indicio de violencia contra la mujer de cualquiera de los tipos antes descritos, lo comunicará a la Central de Comunicaciones, quien gestionará a través de CISEM la presencia en el punto de un indicativo de Policia Municipal (UAPMMM), iniciándose el procedimiento de atención a la mujer víctima de violencia  de género.
+
+Ver anexo 2: Indicadores de sospecha de violencia>>/docs/procedures/209c/509.2_IndicadoresSospecha.pdf
+
+Activación de recursos ante el códi
+[...contenido truncado, ver URL completa]
 ---
 # [210] Huelga de hambre
 Sección: Operativos
 URL: https://manualsamur.es/manual/210-huelga-de-hambre
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ATENCIÓN A PACIENTES DECLARADOS EN HUELGA DE HAMBRE
 
 Ante una solicitud de prestar asistencia a un paciente o grupo de pacientes en huelga de hambre, se realizan las siguientes actuaciones:
@@ -1156,6 +1305,8 @@ orientación diagnóstica (“Huelga de Ha
 Sección: Operativos
 URL: https://manualsamur.es/manual/211-codigo-visem
 Actualizado: 2026-04-24
+Última modificación el 24/04/2026 
+
 Asistencia a mujeres víctimas de violencia sexual. Código VISEM.
 
 Objetivo General: Regular operativa y asistencialmente aquellas situaciones con posibles víctimas de violencia sexual durante cualquier demanda de asistencia de pacientes en SAMUR-Protección Civil.
@@ -1179,11 +1330,30 @@ Código 2.13.1 (Agresión sexual facilitada por drogas, ASFD): Cuando cumplan 
 
 En este sentido, se valorarán como indicadores de violencia sexual con mayor evidencia, los reflejados en los siguientes anexos:
 Ver Anexo I (Indicadores de sospecha de agresión sexual o abuso sexual)>>/docs/procedures/211/211_AnexoI.VISEM.pdf
+Ver Anexo II (Indicadores de sospecha de agresión sexual facilitada por drogas)>>/docs/procedures/211/211_AnexoII.VISEM.pdf
+
+Procedimiento operativo
+
+~1. Criterios de Activación de Código VISEM:
+
+|Criterios de Activación de Código VISEM
+| Mujeres ≥ 16 años
+| Que haya sufrido una agresión sexual en la que se pueda tomar muestras forenses *
+|Tiempo trascurrido desde que aconteció el episodio|≤ 10 días / 240 h en los casos de existencia de penetración vaginal.
+≤ 2 días / 48 h en agresiones sexuales con solo penetración bucal.
+≤ 3 días / 72 h en los casos de penetración ano-rectal y para la toma de muestras en superficie corporal~~
+|Que haya inicialmente consentimiento para la activación del código.
+
+/~~* Ver comentarios a los “Criterios de inclusión de este código” al final del procedimiento.
+
+2. Actuación General de la Central de Comunicaciones:
+Garantice preferentemente la presencia de Policía Municipal en el punto a través de CISEM, acorde a los siguientes criterios de hora y edad del paciente atendido.
+[...contenido truncado, ver URL completa]
 ---
 # [212] Código 9: Donación en asistolia
 Sección: Operativos
 URL: https://manualsamur.es/manual/212-codigo-9-donacion-en-asistolia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento regula las actuaciones conjuntas realizadas por la Unidad de Coordinación de Trasplantes del Hospital Clínico San Carlos y el Servicio SAMUR-Protección Civil, con el objetivo de recuperar donantes de órganos en asistolia no controlada, en el medio extrahospitalario, para trasplante.
 Se incluyen en este procedimiento las PCR en las que no se consigue la recuperación hemodinámica del paciente (RCE) tras las preceptivas maniobras de RCP, con los siguientes criterios de inclusión, y por indicación de los médicos actuantes:
 Edad aproximada del paciente entre 16 y 60 años
@@ -1218,7 +1388,7 @@ Realizar preaviso de Código 9 al Hospital Clínico. Si no es posible en el Hosp
 # [212a] Código 11
 Sección: Operativos
 URL: https://manualsamur.es/manual/212a-codigo-11
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO OPERATIVO DE ACTUACIÓN ANTE LA PARADA CARDIACA DE ORIGEN NO TRAUMÁTICO
                                          CÓDIGO 11
 
@@ -1260,7 +1430,7 @@ Cua
 # [213] Código Infarto
 Sección: Operativos
 URL: https://manualsamur.es/manual/213-codigo-infarto
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El objetivo del procedimiento consiste en regular la actuación operativa de coordinación con el hospital a seguir, en todos aquellas situaciones donde por parte de los facultativos de Samur - Protección Civil se constate la existencia de un paciente con signos y síntomas compatibles con un Síndrome coronario agudo con elevación del ST que cumpla los criterios de inclusión.
 
 Este procedimiento se integra dentro del Código Infarto Madrid, código que se extiende a todo el área territorial de la Comunidad de Madrid. Un Código que tiene como objetivo general Implementar un proceso asistencial integral, multidisciplinario y común para la atención del paciente con IAMEST en la Comunidad de Madrid desde el primer contacto con el sistema sanitario., y su proceso de mejora continua.
@@ -1298,7 +1468,7 @@ En términos generales
 # [213a] Código 16
 Sección: Operativos
 URL: https://manualsamur.es/manual/213a-codigo-16
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA PARA LA ASISTENCIA INTEGRAL AL PACIENTE CON SCASEST:
                                                      CÓDIGO 16
 
@@ -1343,7 +1513,7 @@ Derivación de pacientes con Código 16
 # [214] Códigos 1313.1: Reperfusión precoz en el ictus agudo
 Sección: Operativos
 URL: https://manualsamur.es/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El objetivo del procedimiento consiste en regular la actuación operativa a seguir en pacientes con cuadro clínico compatible con ictus agudo que, cumpliendo los criterios de inclusión, puedan beneficiarse, en el menor tiempo posible, de una terapia de reperfusión (trombolisis intravenosa o tratamiento intervencionista endovascular), así como de los cuidados neurológicos especializados de una Unidad o de un Centro de Ictus.
 
 Son objetivos específicos de este procedimiento:
@@ -1384,7 +1554,7 @@ Edad >16 años. En aquellos pacientes menores de esa edad, se aplicará el proce
 # [214a] Código 15
 Sección: Operativos
 URL: https://manualsamur.es/manual/214a-codigo-15
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA PARA LA ASISTENCIA INTEGRAL AL PACIENTE POLITRAUMATIZADO.                                    
 
 SAMUR-Protección Civil - Hospital Universitario Gregorio Marañón, Hospital Universitario La Paz, Hospital Universitario 12 de Octubre, Hospital Universitario Clínico San Carlos y Hospital Infantil Universitario Niño Jesús.
@@ -1436,7 +1606,7 @@ Edad niños: Niños ≤ 16 años con trasl
 # [214b] Código 33
 Sección: Operativos
 URL: https://manualsamur.es/manual/214b-codigo-33
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ACTUACIÓN ANTE EL PACIENTE CON SÍNCOPE O PRESÍNCOPE POST ESFUERZO
 
 El objetivo del procedimiento es regular la actuación operativa de coordinación con el Hospital Clínico San Carlos (Servicios de Urgencias y Cardiología) para todas aquellas situaciones donde, por parte de las unidades de USVB o USVA de SAMUR - Protección Civil, se constate la existencia de pacientes que, cumpliendo los criterios de inclusión abajo referidos, presente una situación clínica compatible con un síncope o presíncope durante el ejercicio o esfuerzo, y hasta 30 minutos de cesado éste.
@@ -1471,7 +1641,7 @@ H
 # [214c] Código 15.1
 Sección: Operativos
 URL: https://manualsamur.es/manual/214c-codigo-151
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA PARA LA ASISTENCIA INTEGRAL AL PACIENTE TRAUMÁTICO POTENCIALMENTE GRAVE
                                                    CÓDIGO 15.1
 
@@ -1557,7 +1727,7 @@ Fundamentalmente dirigida a despistar la causa/afectación orgánica (ver proced
 # [214e] Código 19: Código TEP
 Sección: Operativos
 URL: https://manualsamur.es/manual/214e-codigo-19-codigo-tep
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Procedimiento de actuación conjunta para la asistencia integral al paciente con un posible Tromboembolismo Pulmonar
 
 El objetivo del procedimiento consiste en regular la actuación operativa de coordinación con la Fundación Jiménez Díaz en todas aquellas situaciones donde por parte de los facultativos de SAMUR- Protección Civil se sospeche la existencia de un paciente con signos y síntomas compatibles con un Tromboembolismo pulmonar (TEP) que cumpla los criterios de inclusión a continuación descritos.
@@ -1621,7 +1791,7 @@ No se in
 # [214f] Código 18: Código SEPSIS
 Sección: Operativos
 URL: https://manualsamur.es/manual/214f-codigo-18-codigo-sepsis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Procedimiento de actuación ante la sospecha de un paciente con Sepsis
 
 El siguiente procedimiento tiene como fin último la disminución de la morbimortalidad en los pacientes con sepsis atendidos por SAMUR Protección Civil.
@@ -1684,7 +1854,7 @@ Nivel de conciencia
 # [214g] Código Crisis
 Sección: Operativos
 URL: https://manualsamur.es/manual/214g-codigo-crisis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El objetivo del procedimiento consiste en regular la actuación operativa a seguir, en todas aquellas situaciones donde por parte de los facultativos de Samur Protección Civil se constate la existencia de un paciente con signos y síntomas compatibles con crisis epiléptica grave que cumpla los criterios de inclusión.
 
 Este procedimiento se integra dentro del proceso asistencial de la crisis epiléptica urgente en la Comunidad de Madrid (Código Crisis), código que se extiende a toda el área territorial de la Comunidad de Madrid.
@@ -1727,6 +1897,8 @@ En menores de 1 mes, dada la alta prevalencia de eventos paroxísticos no epilé
 Sección: Operativos
 URL: https://manualsamur.es/manual/214h-codigo-visnna
 Actualizado: 2026-04-27
+Última modificación el 27/04/2026
+
 Asistencia Sanitaria Urgente a Niños, Niñas y Adolescentes víctimas de violencia sexual. Código VISNNA.
 
 Objetivo General: garantizar una atención sanitaria integral, efectiva y eficiente en el medio extrahospitalario a los niños, niñas y adolescentes (NNA) que hayan sufrido agresión sexual con contacto físico, aunque no haya lesiones físicas objetivables.
@@ -1760,13 +1932,13 @@ Comunicación del hecho por parte de personas de su entorno.
 Comunicación realizada por profesionales de otros ámbitos que están en contacto con el NNA (educación, servicios sociales, centros de atención temprana, centros de salud, programas deportivos, ocio y tiempo libre, agentes de las fuerzas y cuerpos de seguridad, profesionales que intervienen en las situaciones de violencia de género, etc.).
 
 En este sentido, se valorarán como indicadores de violencia sexual en NNA con mayor evidencia, los reflejados en los siguientes anexos:
-Anexo II (Indicadores comportamentales y psicológicos 
+Anexo II (Indicador
 [...contenido truncado, ver URL completa]
 ---
 # [215] Diagnóstico de Muerte
 Sección: Operativos
 URL: https://manualsamur.es/manual/215-diagnostico-de-muerte
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Se declara fallecido:
 A todo paciente con lesiones incompatibles con la vida o signos biológicos evidentes de muerte clínica.
 A aquel paciente en el que no se hayan iniciado maniobras de RCP en los primeros 15 min. de PCR. Se exceptúan las situaciones de intoxicación o sobredosis de drogas, ahogamiento e hipotermia, y en los niños en las que el margen se ampliará.
@@ -1881,7 +2053,7 @@ Realizará una valoración del paciente con anterioridad a su inclusión en
 # [217] Procedimiento de Incidentes Complejos. Código PIC
 Sección: Operativos
 URL: https://manualsamur.es/manual/217-procedimiento-de-incidentes-complejos-codigo-pic
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Objeto
 Establece un marco de actuación en siniestros complejos en el ámbito municipal de la Ciudad de Madrid en los que sea necesaria la actuación coordinada de al menos tres servicios municipales entre: POLICÍA MUNICIPAL, BOMBEROS, SAMUR-PC y SAMUR SOCIAL.
 
@@ -1931,7 +2103,7 @@ Zona definida en el Puesto de Mando Avanzado, si fuera precisa su existencia. Es
 # [217_00] Disturbios urbanos y Actos antisociales
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_00-disturbios-urbanos-y-actos-antisociales
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Actuación preventiva en Disturbios urbanos y Actos antisociales
 
 El presente procedimiento tiene como objetivo primario la organización de la respuesta del Servicio SAMUR Protección Civil en los diferentes disturbios urbanos ya sean programados o sobrevenidos para los que el Servicio es reclamado.
@@ -1969,7 +2141,7 @@ Si fuera preciso, y conforme a los procedimientos del Servicio, se activarí
 # [217_01] Con Policía Municipal
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_01-con-policia-municipal
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA SAMUR-PROTECCIÓN CIVIL Y POLICÍA MUNICIPAL
 
 El siguiente procedimiento está destinado a regular la sistemática de actuación operativa en aquellas actuaciones en las que la presencia de ambos cuerpos sea necesaria.
@@ -2026,7 +2198,7 @@ A
 # [217_01b] Policía Municipal. Dispositivo Eléctrico de Control (DEC)
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_01b-policia-municipal-dispositivo-electrico-de-control-dec
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Apoyo a las unidades de Policía Municipal en relación a la utilización del Dispositivo Electrónico de Control (DEC)
 
 El procedimiento a continuación descrito tiene como objetivo la cobertura asistencial en aquellas situaciones en las que las Unidades de Policía Municipal lleven a cabo el Procedimiento policial de uso del Dispositivo Electrónico de Control (DEC).
@@ -2063,7 +2235,7 @@ Tras la valoración y asistencia, el responsable de la dotación de SAMUR comuni
 # [217_02] Con UAPF
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_02-con-uapf
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA: SAMUR-PROTECCIÓN CIVIL Y UNIDAD DE ATENCIÓN Y PROTECCIÓN A LA FAMILIA (SECCIÓN DE ATENCIÓN A LA VIOLENCIA DOMÉSTICA)
 
 La Unidad de Atención y Protección a la Familia de la Policía Municipal constituida por la Sección de Atención a la Violencia Doméstica y la Sección de Menores, canaliza todas las intervenciones en materia de violencia doméstica. Tiene como objetivos fundamentales la actuación contra la violencia dentro del hogar familiar, mediante una serie de recursos legales, sociales y de investigación, basándose en principios de prevención, educación y sensibilización para su desarrollo.
@@ -2088,7 +2260,7 @@ Será codificado como 5.7 y, de
 # [217_03] Con Bomberos
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_03-con-bomberos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA BOMBEROS Y SAMUR-PROTECCIÓN CIVIL
 
 Este procedimiento está destinado a establecer y regular la sistemática de actuación operativa en aquello casos en los que se precise la actuación conjunta de los diferentes servicios implicados.
@@ -2129,7 +2301,7 @@ El mando de Bomberos y el responsable de SAMUR-Protección Civil, debidamente co
 # [217_04] Con SEAM
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_04-con-seam
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA: SAMUR-PROTECCIÓN CIVIL Y SEAM (SERVICIO DE EMERGENCIAS ALIMENTARIAS MUNICIPAL)
 
 Este procedimiento está destinado a regular la sistemática de actuación operativa en aquellos casos en los que se detecte por parte de SAMUR-Protección Civil un posible brote de origen alimentario.
@@ -2167,7 +2339,7 @@ Una vez puestos en co
 # [217_05] Con SAMUR Social
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_05-con-samur-social
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA: SAMUR-PROTECCIÓN CIVIL Y SAMUR SOCIAL
 
 El procedimiento expuesto a continuación esta destinado a establecer y regular la sistemática de actuación operativa en aquellos casos en los que sea precisa la actuación conjunta de SAMUR-Protección Civil y Samur Social. El objetivo principal es la regulación de aquellas asistencias en las que se precisa de la contribución del servicio no solicitado en primera instancia.
@@ -2251,7 +2423,7 @@ Cuando la magnitud del servicio, a criterio de las direcciones respectivas (JSP 
 # [217_07] Con RENFE
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_07-con-renfe
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA: SAMUR-PROTECCIÓN CIVIL Y ADIF (RENFE)
 
 (Procedimiento en proceso de actualización. Hasta la entrada en vigor del procedimiento nuevo, este documento tendrá validez como tal).
@@ -2331,7 +2503,7 @@ El personal de estación habitualmente se encontrará en el lugar del suceso, de
 # [217_09] Con Unidad de Medio Ambiente
 Sección: Operativos
 URL: https://manualsamur.es/manual/217_09-con-unidad-de-medio-ambiente
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO DE ACTUACIÓN CONJUNTA SAMUR-PROTECCIÓN CIVIL Y UNIDAD DE MEDIO AMBIENTE DE POLICÍA MUNICIPAL DE MADRID (CASA DE CAMPO)
 
 El siguiente procedimiento está destinado a regular la sistemática de actuación operativa en aquellas demandas de asistencia realizadas a SAMUR Protección Civil en el interior de la Casa de Campo. El objetivo es agilizar la llegada al punto de asistencia mediante la coordinación con la Unidad de Medio Ambiente de la Policía Municipal de Madrid, que es la encargada de la vigilancia de dicho parque.
@@ -2401,56 +2573,119 @@ Si fuera preciso, y conforme a los procedimientos del Servicio, se act
 Sección: SVA
 URL: https://manualsamur.es/manual/301-parada-cardiorrespiratoria
 Actualizado: 2026-04-27
-Ver Anexo - Algoritmo SVA Adulto>>/docs/procedures/301/301_algoritmo_SVA.pdf](https://www.hypothermiascore.org/)). Véase procedimiento de PCR en hipotermia accidental.
-Ausencia de contraindicaciones evidentes:
-Conocida enfermedad concomitante que compromete su pronóstico a corto plazo.
-Deseo conocido de no RCP.
-PCR presenciada por testigos.
-Haber recibido maniobras de reanimación básica tras la parada, por testigos o por las unidades de SAMUR -Protección Civil, en un tiempo no superior a los 5 minutos desde que se produjo la parada cardiaca.
-pH inicial en la primera muestra sanguínea de > 7,10.
-Tiempo estimado desde el inicio de la PCR hasta la llegada al Laboratorio de Hemodinámica &lt; 45 minutos (Objetivo PCR-inicio ECMO en &lt;60 min).
-ETCO2 por encima de 10 mm Hg en el momento de la inclusión.
+Última modificación el 27/04/2026
 
-Se cumplimentará la HCE (historia clínica electrónica) con el apartado de ECMO correspondiente y utilizando el código patológico C.0.2 (PCR ECMO).
+Ver Anexo - Algoritmo SVA Adulto>>/docs/procedures/301/301_algoritmo_SVA.pdf
 
-Ritmos no desfibrilables
-Actividad eléctrica sin pulso (AESP) o asistolia.
+Medidas generales
 (((
-Inicie compresiones torácicas conforme a estándares de RCP durante 2 minutos o 5 ciclos de 30:2.
-Si aparece un ritmo organizado tras el ciclo de 2 minutos, compruebe la presencia de pulso (sin emplear más de 10 sg).
+Valore el nivel de conciencia, si existe respiración y signos de circulación (incluido pulso); no retrasar el inicio de las compresiones torácicas por comprobación de la actividad respiratoria o duda de la existencia de pulso.
+El técnico responsable dirá: "parada". Determine la hora de inicio.
+Realice un RCP de alta calidad e ininterrumpidamente, comenzando con compresiones torácicas. Mantenga las compresiones torácicas manuales siempre que pueda salvo que no se den las circunstancias óptimas para realizarlas o Código 9 (ver cardiocompresor mecánico).
+Valore el ritmo cardiaco mediante monitorización de emergencia (palas, electrodos). En función del ritmo, proceda según los siguientes procedimientos.
+Desfibrile, si está indicado, tan pronto como sea posible, realizando mientras se prepara compresiones y ventilaciones.
+
+Ritmos desfibrilables
+Fibrilación ventricular (FV) o taquicardia ventricular sin pulso (TVSP)
+En PCR presenciada con ritmo de FV/TV sin pulso, está indicado hasta 3 descargas sucesivas viendo ritmo tras cada una y comprobando presencia de pulso en caso de ritmo compatible con el mismo o signos de RCE. Tras la tercera descarga si no revierte, comience con las compresiones/ventilaciones.
+Si confirma FV / TV sin pulso no presenciada, cargue el desfibrilador y de un primer choque de 150-200 J.
+El ejecutor de la descarga debe alertar a las personas próximas al paciente antes de realizarla. Si el paciente tiene marcapasos implantado, si es posible evite desfibrilar sobre él y separado al menos 8 cm. Si se desfibrila con palas y éstas se disponen con el eje largo cráneo-caudal se minimiza la impedancia. La pala izquierda debe estar situada en la línea anterior axilar izquierda a la altura del 5º espacio intercostal. La pala derecha se situará bajo la clavícula derecha. Dentro de lo posible es preferible desfibrilar antes con electrodos que con palas, si no la retrasa. Intente no interrumpir las compresiones torácicas más de 5 segundos para desfibrilar.
+Inicie compresiones torácicas inmediatamente conforme a estándares de RCP durante 2 minutos o 5 ciclos de 30:2, al menos, a 100 cpm (no más de 120), durante 2 minutos y con una profundidad de al menos 5 cm y no más de 6 cm en adultos y permitiendo la completa reexpansión del tórax tras cada compresión. Si tras los 2 minutos de RCP aparece un ritmo organizado, compruebe la presencia de pulso (sin emplear más de 10 sg), la ecografía puede acortar el tiempo de esta comprobación de forma importante.
 Abra la vía aérea y ventile con balón de reanimación conectado a reservorio con O2 (oxigenoterapia a alto flujo con 10-12 l/min).
-Realice intubación endotraqueal conforme a procedimiento.
-Utilice la ETCO2 para comprobar la adecuada colocación del TET.
-De no ser posible la intubación (mediante laringoscopia, Frova o videolaringoscopia) mantenga ventilación con balón de reanimación.
-Si el paciente ha sido intubado, ventile con respirador en modo CCSV o bien en IPPV a una frecuencia de 10-12 rpm, volumen corriente 6-8 ml/kg, PEEP 0-5 mbar y Pmax 50-70 mbar. Solo si no fuera posible utilizar el respirador, continúe con la ventilación ya iniciada mediante balón de reanimación con reservorio conectado a fuente de oxígeno 10-12 l/min (alto flujo).
-Monitorice: ECG, SatO2 y ETCO2.
-Canalice una vía venosa, preferentemente periférica de grueso calibre.
-Realice analítica venosa para determinación de pH, EB, iones (K+) y glucemia entre otras.
-Si no es posible vía periférica, canalice preferentemente vía intraósea.
-Administre  1 mg en bolo iv cada 3 a 5 min. Tras cada dosis de Adrenalina, eleve el brazo y administre un bolo de 20 ml de suero.(((
-Si no se ha conseguido canalización venosa, utilice vía intraósea si está disponible.
-Si no se consigue RCE continúe con RCP inmediata con compresiones torácicas y ventilación conforme a a estándares de RCP durante 2 minutos o 5 ciclos de 30:2, al menos, a 100 cpm (entre 100 y 120), durante 2 minutos. Compruebe el ritmo.
-Si se identifica FV en el monitor en medio de un ciclo de 2 minutos de RCP, complete el ciclo de RCP antes de la correspondiente comprobación de ritmo y administración de descarga.
-Valore las causas reversibles de PCR (5 'H' y 5 'T') y trate en función de éstas:
-Realice ex
+Realice intubación endotraqueal conforme a procedimiento, interrumpiendo lo menos posible las compresiones torácicas en general (no más de 5 segundos y sin retrasar las desfibrilaciones).
+Utilice la ETCO2 para comprobar la adecuada colocaci
 [...contenido truncado, ver URL completa]
 ---
 # [301a] Cuidados postparada
 Sección: SVA
 URL: https://manualsamur.es/manual/301a-cuidados-postparada
 Actualizado: 2026-04-27
+Última modificación el 27/04/2026
+
 Ver anexo - Algoritmo Cuidados Postparto cardíaco>>/docs/procedures/301a/301a_algoritmo_CuidadosPostparocardiaco.pdf
+
+Tras recuperación de la situación de PCR (recuperación de la circulación espontánea, RCE) se deben perseguir los siguientes objetivos:
+ETCO2: 35-40 mmHg y PaCO2: 40-45 mmHg
+SatO2: 94-98%
+Glucemia: 80-180 mg/dl
+FC: 50-100 lpm
+Individualizar el objetivo de TAS concreto, pero en general procurar TAS > 100 mmHg, evitando en cualquier caso TAS &lt; 90 mmHg y TAM &lt; 65 mmHg (TAM=TAS + (2xTAD) /3).
+SCA, ICC y Shock cardiogénico preferiblemente TAM próximas a 80 mmHg
+HTA previa mal controlada preferiblemente más cerca de 100 mmHg
+Temperatura: entre 32 y 36ºC (disminuir hasta 34ºC si se realiza procedimiento de hipotermia)
+Realice intubación endotraqueal conforme a procedimiento (si no la ha realizado previamente) si el paciente no se recupera con un nivel de conciencia adecuado.
+Ventile con balón de reanimación conectado a reservorio con O2 (oxigenoterapia a alto flujo con 10-12 l/min) o con respirador a una frecuencia de 10-12 rpm con un VT 6-8 ml/Kg
+Garantice una sedo-relajación correcta si es necesaria.
+Valore la colocación de una SNG.
+Realice procedimiento técnico de hipotermia terapeútica en la Parada Cardiaca recuperada teniendo en cuenta los criterios de inclusión y exclusión del Código 11 (Hipotermia en PCR recuperada) con el objetivo de manejar la temperatura entre 34-36 ºC. Para ello:
+Controle la temperatura central de forma continua y su variación con la hipotermia, mediante la colocación de una sonda de temperatura en localización nasogástrica. El objetivo es conseguir una temperatura central de 34ºC en el medio extrahospitalario como mínimo.
+Recoja la hora de inicio del enfriamiento, la temperatura central inicial y registro temporal de su progresión.
+Garantice una adecuada sedo-relajación para evitar los escalofríos por la hipotermia.
+Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2
+Realice exploración ecográfica si no se ha realizado antes que orientará sobre:
+Existencia de taponamiento cardiaco.
+Disfunción ventricular.
+Neumotórax.
+
+Evite y corrija:
+Hipovolemia y Tromboembolismo pulmonar.
+Hipotensión con los objetivos previamente marcados, para ello:
+Si sospecha causa cardiogénica sobre todo con afectación de ventrículo derecho, perfunda 250 a 500 ml (cristaloides) en 5-10 min y observe la respuesta clínica.
+Si TAS entre 70 y 90 mmHg, administre primeramente  iv
+En perfusión iv: a dosis de 15 mcg/kg/min hasta 20 mcg/kg/min.
+Prepare 1 ampolla de 200 mg en 95 ml de SG 5%, comenzando por 30 mcgotas/min (en un paciente de 70-80 kg)
+Si TAS &lt; 70 mmHg, administre  a dosis de 7-35 mcg/min
+En perfusión iv: a dosis de 0,1 - 0,5 mcg/kg/min
+Prepare 2 ampollas de 10 mg en 80 ml de SG 5% (1 ml = 200 mcg, 1 gota = 10 mcg) comenzando por 4 mcgotas/min hasta 25 mcgotas/min (en un paciente de 70-80 kg).
+Si sospecha causa traumática
+Repita administración de volumen hasta dosis de 20-25 ml/kg en 15-20 minutos,
+[...contenido truncado, ver URL completa]
 ---
 # [301b] PCR Traumática
 Sección: SVA
 URL: https://manualsamur.es/manual/301b-pcr-traumatica
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Ver Anexo - Algoritmo ERC 2015>>/docs/procedures/301b/301b_algoritmo_ERC.pdf
+
+Introducción
+La parada cardiaca traumática constituye un proceso diferente al de la parada cardiaca originada por causa médica. Así fue reconocido en 2015 por las guías internacionales (ILCOR).
+
+De forma resumida, esas diferencias marcadas por las guías se concretan en los objetivos a conseguir prioritariamente en cada proceso.
+
+Los objetivos del tratamiento de la PCR de origen traumático, se centran en abordar la hemorragia masiva y aliviar las causas obstructivas del shock.
+
+Recuerde que una PCR en el contexto de un accidente podría no ser traumática. Valore esta posibilidad especialmente en traumatismos menores o accidentes que puedan ser debidos a desvanecimiento previo. (Procedimientos SVA: Procedimiento de Parada Cardiorespiratoria).
+
+Puntos clave en el manejo de la PCR Traumática
+De cara a desarrollar el procedimiento, es importante tener en cuenta 4 puntos clave en el manejo de la PCR Traumática.
+
+1. Es poco probable que las compresiones torácicas sean eficaces de forma aislada en un paro cardíaco traumático, por lo que debemos dirigir nuestros esfuerzos a abordar y tratar las causas de la parada cardiaca traumática.
+1. En todos los pacientes se deben considerar medidas de control de la hemorragia tales como la compresión manual o instrumental de las hemorragias, el uso de un torniquete, la aplicación del inmovilizador pélvico o agentes procoagulantes y hemostáticos si fuera accesible la hemorragia.
+1. La descompresión torácica bilateral empírica debe realizarse en todas las paradas cardíacas traumáticas donde no se ha localizado la causa y se aplica el algoritmo general, preferiblemente mediante toracostomía con tubo de tórax.
+1. Se debe considerar la toracotomía de reanimación para todos los pacientes con parada cardíaca traumática con signos de vida o evidencia de contractilidad cardíaca mediante ecografía en el lugar, especialmente en traumatismos penetrantes torácicos.
+
+Factores pronósticos favorables en el manejo de la PCR Traumática
+Se consideran como tales, los siguientes:
+Mecanismo penetrante de lesión, particularmente torácica.
+Constantes vitales en cualquier momento en la escena.
+Presencia de signos vitales (cualquier movimiento espontáneo, esfuerzos respiratorios, actividad eléctrica organizada en electrocardiograma, pupilas reactivas) en cualquier momento desde nuestra llegada.
+Breve duración de la parada cardiaca (&lt;10 minutos).
+Contractilidad cardíaca en la ecografía en la escena.
+Tiempo breve entre hora de PCR e inicio de medidas de soporte vital.
+
+Desarrollo del procedimiento
+1- Valoración de la escena
+Ver procedimiento Valoración de la escena.
+Aproxímese al lugar manteniendo en todo momento las medidas necesarias de seguridad.
+Para su equipo:
+No intervenga en aquellas situaciones en las que la integridad del equipo no esté garantizada.
+Utilice material de protección que preste seguridad activa (ser consciente del peligro y esperar a los equip
+[...contenido truncado, ver URL completa]
 ---
 # [302] Manejo avanzado de vía aérea
 Sección: SVA
 URL: https://manualsamur.es/manual/302-manejo-avanzado-de-via-aerea
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Maniobras
 Coloque al paciente en decúbito supino con alineación con control cervical.
 Valoración inicial: ABC
@@ -2487,11 +2722,35 @@ Líquidos claros (zumos, agua): 2 horas
 Valore la existencia de situaciones que retrasan el vaciado gástrico y prolongan estos tiempos como la alteración del sistema autónomo en la diabetes, embarazo, obstrucciones intestinales, etc). En pacientes con "estómago lleno" evite en lo posible ventilar con presión positiva y realice secuencia de intubación rápida.
 Si fuera posible, realice exploración física orientada a valorar una posible intubación y/o ventilación difícil y en caso afirmativo, actúe conforme al procedimiento Manejo de la vía aérea difícil.
 Ver anexo: Evaluación de la vía aérea>>/docs/procedures/302/302_evaluacionViaAerea.pdf
+Curse preaviso hospitalario indicando los datos y estado del paciente, según procedimiento correspondiente.
+
+SECUENCIA DE INTUBACIÓN RÁPIDA (SIR)
+Preoxigene con mascarilla facial (incluso en apnea).
+Apoye la ventilación si fuera necesario:
+Ventile con balón de reanimación conectado a reservorio con O2 (oxigenoterapia a alto flujo con 10-12 l/min) si el paciente está en apnea.
+Evite la ventilación si el paciente respira espontáneamente y mantiene SatO2 > 90 %.
+
+Premedique (no en PCR):
+
+Valore el uso de 
+
+ iv en frecuencias bajas a dosis de 0,5 mg.
+Sede y relaje utilizando una de estas dos “Secuencias de intubación rápida”:
+A)
+ iv a dosis de 0,2 - 0,3 mg/kg (hasta 0,6 mg/kg en casos resistentes)
+ iv, primera dosis: 1 a 1,5 mg/kg (7 a 10 ml para 70 kg)
+Tiempo de inicio de acción: 60 sg.
+Duración del efecto clínico: 30-60 min.
+Evitar esta secuencia en pacientes inestables.
+
+B)
+ iv a dosis de 0,2 - 0,4 mg/kg
+[...contenido truncado, ver URL completa]
 ---
 # [302a] Manejo de la vía aérea difícil
 Sección: SVA
 URL: https://manualsamur.es/manual/302a-manejo-de-la-via-aerea-dificil
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Se considera vía aérea difícil aquella que condiciona una situación en la que el médico tiene dificultad en la ventilación con máscara facial y balón de reanimación, dificultad con la intubación endotraqueal o con ambas.
 
 Se considera ventilación difícil cuando existe dificultad para mantener una SatO2 > 90%, ventilando a presión positiva intermitente con FiO2 de 1.0 con mascarilla facial y balón de reanimación, en un paciente cuya saturación basal es mayor de 90% (previamente a la enfermedad o accidente).
@@ -2536,7 +2795,7 @@ Realice intubación por vide
 # [303] Analgesia y sedación
 Sección: SVA
 URL: https://manualsamur.es/manual/303-analgesia-y-sedacion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 CONCEPTOS DE INTERÉS
 
 Sedoanalgesia ideal: Estado que permite tolerar al paciente dolor o procedimientos dolorosos manteniendo de forma adecuada la función cardiorrespiratoria y la capacidad de respuesta a estímulos verbales o táctiles.
@@ -2572,11 +2831,23 @@ Leche materna: 4 horas
 Tenga en cuenta que existen situaciones que retrasan el vaciado gástrico y prolongan estos tiempos, como la alteración del sistema autonómico en la diabetes, embarazo, obstrucciones intestinales, etc). En pacientes con "estómago lleno", valore cuidadosamente la dosis de sedantes, evitando ventilar con presión positiva.
 Exploración física: Oriéntela a valorar una posible intubación y/o ventilación difícil (ver Manejo avanzado de vía aérea).(((
 Ver Anexo: Evaluación de la vía aérea>>/docs/procedures/303/302_evaluacionViaAerea.pdf
+Determine, en lo posible, el perfil del dolor (evolución, naturaleza, localización e intensidad) considerando:
+La información subjetiva, por parte del paciente, a través de manifestaciones verbales.
+La observación de la conducta del paciente (agitación, intranquilidad, nerviosismo, gestos). En caso de paciente intubado valore la existencia de estos signos que indican dolor grave a intenso:
+Tensión, ceño fruncido, dientes y ojos apretados.
+Movimientos de inquietud frecuentes.
+Tono muscular aumentado (flexión de dedos de manos y pies).
+Lucha con el respirador.
+La respuesta autonómica monitorizada por la TA, FC, FR y ECG.
+La presencia de otros signos o síntomas asociados (náusea, disnea, diaforesis, lagrimeo).
+Realice una escala de valoración numérica del dolor, pidiéndole al paciente que de una puntuación al dolor que siente de 0 (nada de dolor) a 10 (máximo dolor que haya sentido).
+Mo
+[...contenido truncado, ver URL completa]
 ---
 # [304_01] Valoración inicial del paciente politraumatizado
 Sección: SVA
 URL: https://manualsamur.es/manual/304_01-valoracion-inicial-del-paciente-politraumatizado
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 La asistencia inicial del paciente traumatizado grave, se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de riesgo vital (vida, órgano, función), posibilidad técnica, y accesibilidad.
 
 Actúe según el siguiente esquema:
@@ -2618,7 +2889,7 @@ Valore el rell
 # [304_01a] Shock hemorrágico de origen traumático
 Sección: SVA
 URL: https://manualsamur.es/manual/304_01a-shock-hemorragico-de-origen-traumatico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial. ABCD, intentando descubrir precozmente signos y síntomas propios de la reducción de la perfusión en los tejidos y del aporte de oxígeno.
 Situación de preshock: De forma precoz y progresivamente el paciente puede presentar ansiedad, taquipnea, palidez, retraso del relleno capilar (> 2 sg), y diaforesis en las primeras fases de shock (estado reversible).
 Shock establecido: Con signos sospechosos como taquicardia, hipotensión, extremidades frías, pulsos periféricos débiles, estrechamiento de presión del pulso, alteración del estado mental, oliguria y acidosis metabólica (estado irreversible).
@@ -2656,7 +2927,7 @@ Lactato > 4 mmol/l. Indica disminución de la perfusión tisular siendo un buen 
 # [304_02] Traumatismo craneoencefálico
 Sección: SVA
 URL: https://manualsamur.es/manual/304_02-traumatismo-craneoencefalico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración primaria>>Procedimientos asistenciales.Procedimientos SVA.Urgencias traumatológicas.Valoración inicial del paciente politraumatizado: ABCDE
 Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 y glucemia
 Examine la escena del suceso para evaluar el mecanismo lesional.
@@ -2674,11 +2945,55 @@ No pérdida de conocimiento previa o inferior a 5 minutos.
 Procedimiento general:
 Valoración inicial del paciente:
 Evaluación del nivel de conciencia según la Escala de coma de Glasgow>>/docs/procedures/304_02/304_01_EscalaGlasgow.pdf
+Evaluación de la existencia de la amnesia postraumática (considerando intensidad y duración).
+Evaluación de la perdida de conocimiento (duración y progresión).
+Existencia de déficits focales neurológicos o asimetrías en la exploración neurológica.
+La anamnesis deberá incluir los cofactores de morbilidad para un traumatismo craneal: edad (mayor de 60 años), coagulopatias (tto con antiagregantes o con anticoagulantes...), neurocirugía previa, epilepsia e historia de abuso de alcohol y drogas.
+Valore signos y síntomas en el paciente con traumatismo craneoencefálico no grave.(((
+Relevantes: Cefalea holocraneal. Vómitos. Pérdida de conciencia. Amnesia postraumática
+
+Menos relevantes: Dolor en la zona del impacto, Vértigo, Scalp.
+
+Valoración del riesgo e indicaciones de hospitalización
+
+| |Alto riesgo|Riesgo Medio|Bajo riesgo|Mínimo riesgo
+|Glasgow|14-15
+Y uno de los criterios:|14-15 
+Y uno de los criterios:|14 ó 15
+Y uno de los criterios:|15
+|Edad| |>65| | 
+|Patología previa|(((
+Enferm. de la coagulación
+Shunt de derivación por hidrocefalia
+)))| | | 
+|Signos y síntomas|(((
+Convulsiones postraumáticas
+Déficit neurológicos
+Sospecha de Fx craneal
+)))| |(((
+Pérdida de conciencia
+≥ 2 episodios de vómitos
+)))| 
+|Medicación|Anticoagulación|Antiagregantes| | 
+|ACTITUD|Traslado SVA|Traslado SVB|Traslado SVB|Alta con recomendaciones
+Traslade a Hospital utilizando como referencia el cuadro anterior de las Guías Escandinavas.
+Traslade, además, a todos los pacientes con un TCE leve y sospecha de maltrato infantil, ancianos en situación de riesgo y violencia de género.
+Traslade así mismo, siempre que no sea posible que el paciente sea observado durante 24-48 horas.
+Si el paciente queda en el lugar, proporciónele información verbal y escrita de recomendaciones ante posible evolución.(((
+Ver anexo: Recomendaciones al alta>>/docs/procedures/304_02/304_02_RecomendacionesAltaTCE.pdf
+
+TCE MODERADO
+Se caracteriza por:
+GCS entre 9 y 13 puntos.
+Pérdida de conocimiento de más de 5 minutos.
+Focalidad neurológica.
+Sospecha de fractura de base de cráneo, rinorrea, otorrea, hemot
+[...contenido truncado, ver URL completa]
 ---
 # [304_03] Traumatismo de tórax
 Sección: SVA
 URL: https://manualsamur.es/manual/304_03-traumatismo-de-torax
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración primaria>>Procedimientos asistenciales.Procedimientos SVA.Urgencias traumatológicas.Valoración inicial del paciente politraumatizado: ABCDE
 Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2.
 Examine la escena del suceso para evaluar el mecanismo lesional. Reséñelo en el informe de asistencia.
@@ -2716,7 +3031,7 @@ Aplique medidas para reducir la pérdida
 # [304_04] Traumatismo de abdomen
 Sección: SVA
 URL: https://manualsamur.es/manual/304_04-traumatismo-de-abdomen
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Dada la dificultad diagnostica que tiene el trauma abdominal es de especial importancia considerar algunos aspectos:
 Mecanismo lesional
 Minuciosidad a la hora de evaluar de forma extensa todos los signos clínicos del abdomen
@@ -2746,7 +3061,7 @@ Realice una “resucitación hipotensiva” buscando unos objetivos de tratamien
 # [304_05] Traumatismos vertebro-medulares
 Sección: SVA
 URL: https://manualsamur.es/manual/304_05-traumatismos-vertebro-medulares
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Considere una posible afectación vertebral en aquellos pacientes con múltiples lesiones traumáticas, especialmente en los pacientes con un trauma craneal, en los cuales hasta el 5% tiene una lesión vertebral.
 
 Es importante en el manejo de estas lesiones:
@@ -2792,7 +3107,7 @@ Mantenga valores de presión
 # [304_06] Traumatismos ortopédicos
 Sección: SVA
 URL: https://manualsamur.es/manual/304_06-traumatismos-ortopedicos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 FRACTURAS CERRADAS
 (((
 Valoración primaria>>Procedimientos asistenciales.Procedimientos SVA.Urgencias traumatológicas.Valoración inicial del paciente politraumatizado: ABCDE
@@ -2832,7 +3147,7 @@ Realice control de la hemorragia, bien aplicando torniquete en heridas exanguin
 # [304_07] Síndrome de aplastamiento
 Sección: SVA
 URL: https://manualsamur.es/manual/304_07-sindrome-de-aplastamiento
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El Síndrome de Aplastamiento es una lesión por reperfusión que aparece tras la liberación de un miembro atrapado, con periodo isquémico de 4-6 horas. La hipoxia tisular implica una isquemia y metabolismo anaerobio que conlleva la consiguiente acumulación de ácido láctico y muerte muscular (rabdomiólisis) con liberación de productos químicos tóxicos (mioglobina, potasio y fósforo). El cuadro evoluciona a un shock hipovolémico debido a la creación de un tercer espacio a nivel muscular con atrapamiento de fluidos y hacia una insuficiencia renal aguda por necrosis tubular.
 
 El tratamiento debe ser lo más precoz posible y realizarse de una manera activa y agresiva.
@@ -2867,7 +3182,7 @@ Prepare 1 ampolla en 90 ml de SG 5% iv lenta en 10-20 min. Repita las dosis cada
 # [304_08] Traumatismo pélvico
 Sección: SVA
 URL: https://manualsamur.es/manual/304_08-traumatismo-pelvico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 La fractura pélvica se asocia a una importante morbilidad y mortalidad. La importante hemorragia que asocia habitualmente exige de un diagnóstico precoz.
 - A veces, una hipotensión no explicada puede ser el único parámetro que nos indique la posibilidad de una fractura pélvica en el contexto de un traumatismo.
 - Se debe asumirse que existe una fractura inestable del anillo pélvico en pacientes que tienen fracturas pélvicas con hipotensión y sin otra localización de pérdida de sangre.
@@ -2894,14 +3209,33 @@ Realice una “resucitación hipotensiva” buscando unos objetivos de tratamien
 # [305_01] Hemorragia digestiva aguda
 Sección: SVA
 URL: https://manualsamur.es/manual/305_01-hemorragia-digestiva-aguda
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial: ABC. Compruebe pulso periférico y alteraciones hemodinámicas (consultar anexo) con el ortostatismo (pérdidas sanguíneas de > 15 % suponen una disminución de la TAS de más de 20 mm Hg o aumento de la FC en más de 20 lpm al pasar a bipedestación; pérdidas de > 40% tienen marcada hipotensión en supino), intentando descartar situaciones que evolucionen a shock, así como angina asociada.(((
 Ver anexo: Alteraciones hemodinámicas>>/docs/procedures/305_01/305_01_alteracioneshemodinamicas.pdf
+Confirme la existencia de restos por hematemesis y/o melenas.
+Haga una anamnesis (localización del dolor, disfagia asociada, tos asociada, pérdida de peso, antecedentes, ingesta de AINEs, anticoagulantes, hepatopatía, etc) y exploración somera (descartar signos de irritación peritoneal) sin olvidar un tacto rectal.
+Coloque al paciente en decúbito supino con ligero Trendelemburg o en decúbito lateral izquierdo, en caso de hematemesis o lavado gástrico.
+Monitorice: TA, FC, FR, ECG,SatO2 y ETCO2.
+Administre oxigenoterapia a alto flujo (Venturi) o de bajo flujo (mascarilla con reservorio) según VC del paciente, a 10-12 l/min, para mantener SatO2 > 92% evitando hipoxemia, excepto en EPOC, donde se valorará el uso de mascarilla Venturi con FiO2 de 24-28% (3-4 l/minuto) para objetivos de SatO2 entre 88 a 92%.
+Canalice dos vías venosas periféricas del mayor calibre posible.
+Perfunda fluidos cristaloides (SSF) en función del estado hemodinámico y realice reevaluación constante con el objetivo de mantener la TAS > 100 mmHg.
+Si hay alteración del nivel de conciencia o riesgo de aspiración, proceda a la intubación orotraqueal.
+Realice analítica sanguínea, valorando estado hidroelectrolítico, hematocrito y hemoglobina. Busque criterios de shock (EB, lactato) y respuesta a la reposición volumétrica.
+Valore la realización de INR
+Valore la administración de sedación si no hay repercusión hemodinámica con:
+ iv a dosis de 10-20 mg; o
+ iv a dosis de 2 mg para un adulto. Prepare 15 mg en 7 ml de SSF. Ponga 1 ml cada 2-3 min, hasta sedación deseada.
+Administre  iv a dosis de 80 mg diluidos en 100 ml de SSF perfundidos en 20-30 min.
+Monitorice constantes de modo reiterado.
+Valore el sondaje vesical para el control de diuresis.
+Traslade a todos los pacientes en USVA, con preaviso hospitalario en caso de afectación hemodinámica o cifras de hemoglobina &lt; 10 g/dl.
+
+Inicio página>>doc:
 ---
 # [305_02] Abdomen agudo
 Sección: SVA
 URL: https://manualsamur.es/manual/305_02-abdomen-agudo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial: ABC con especial atención al estado hemodinámico del paciente.
 Realice Historia clínica meticulosa haciendo hincapié en:
 Las características del dolor: origen, forma de instauración, cronología, intensidad, naturaleza, topografía e irradiación, factores desencadenantes y de alivio, respuesta a tratamientos previos y síntomas acompañantes.
@@ -2948,13 +3282,42 @@ Administre oxigenoterapia a alto flujo (Venturi) o de bajo flujo (mascarilla con
 # [306_01] Coma
 Sección: SVA
 URL: https://manualsamur.es/manual/306_01-coma
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABCD. Obtenga historia clínica orientada (inicio del cuadro, síntomas previos; aparición aguda, gradual o transitoria; tratamientos habituales y trasgresiones terapéuticas). Exploración física y neurológica (nivel de conciencia, respuestas motoras a estímulos, reflejos del tronco cerebral, pupilas, movimientos oculares, existencia de convulsiones), cuantifique la profundidad del coma (Escala de coma de Glasgow>>/docs/procedures/306_01/304_01_EscalaGlasgow.pdf
+Monitorice: TA, FC, FR, ECG, SatO2 y obtenga la glucemia.
+Administre oxigenoterapia suplementaria, garantizando SatO2 > 92%.(((
+Mantenga permeables las vías respiratorias, para una buena ventilación pulmonar y evite la posibilidad de broncoaspiración.
+Canalice vía venosa periférica y perfunda SSF de mantenimiento.
+Realice medición de glucemia. Si existe hipoglucemia actúe según procedimiento.
+Valore realizar analítica venosa para descartar alteraciones hidroelectrolíticas, y arterial para descartar alteraciones ácido-base y orientarle en las posibles causas.(((
+Ver anexo: Patrones ventilatorios y de gases en el coma>>/docs/procedures/306_01/306_01_PatronesComa.pdf
+En coma no filiado, administre:
+ iv a dosis de 100 mg iv lenta, en especial si se trata de un paciente desnutrido o con impresión de alcohólico crónico y se va a administrar glucosa.
+ iv (Concentrado para solución para perfusión, 10 g/20 ml, es decir 500 mg/ml) administración de 50 ml diluido en vena grande, según glucemia. Se puede repetir la dosis en función de la respuesta.
+Si se sospecha intoxicación por drogas, administre:
+ iv a dosis de 0,8 mg iv.
+ iv en dosis creciente de 0,3 mg iv a intervalos de 3 min hasta dosis acumulada de 3 mg. Evite la administración si sospecha intoxicación mixta con ADT y en antecedentes de epilepsia.
+Reevalúe la respuesta del paciente tras administración de fármacos.
+Realice intubación endotraqueal si persiste el coma y monitorice la ETCO2.
+Realice el tratamiento específico de la causa del coma.
+Si sospecha HTIC con evidencia de herniación (pupilas, movimientos anormales):
+Posicione al paciente en antiTrendelemburg 30º con cabeza recta.
+Garantice la correcta sedorrelajación del paciente.
+Administre, salvo contraindicación,  iv a dosis de 0,5 - 1 g/kg en 20 min (aproximadamente 175 a 350 ml). Precisa control de la diuresis por sondaje vesical.
+En ventilación asistida, realice hiperventilación moderada controlada por parámetros capnométricos y gasométricos.
+Descarte la hipotermia y evítela, manteniendo al paciente normotérmico.
+Si el paciente presenta convulsiones, trátelas.
+Valore la colocación de SNG (garantizando la protección de la vía aérea) y sondaje vesical.
+Humedezca los ojos del paciente y manténgalos cerrados. Atención a las zonas de apoyo (compresiones nerviosas).
+Traslade en USVA, intentando reducir los estímulos estresantes innecesarios.
+Preaviso hospitalario con paciente intubado y/o inestable.
+
+Inicio página>>doc:
 ---
 # [306_02] Enfermedad vascular cerebral aguda
 Sección: SVA
 URL: https://manualsamur.es/manual/306_02-enfermedad-vascular-cerebral-aguda
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PROCEDIMIENTO TERAPÉUTICO EN ICTUS
 Valoración Inicial: ABCD
 Obtenga historia clínica orientada. Interrogue sobre el episodio (velocidad de instauración, hora de inicio de los síntomas, factores precipitantes -Valsalva en embólicos-, trauma cervical -en disección arterial-) y sobre antecedentes (particularmente ictus previo, HTA, DM, FA, epilepsia, migraña, tabaquismo, alcoholismo, fármacos -antiagregantes, anticoagulantes, corticoides, anticonceptivos orales-).
@@ -2963,11 +3326,27 @@ Exploración neurológica completa así como síntomas acompañantes (cefalea, v
 Considere diagnóstico diferencial con otras entidades, en particular hipoglucemia, tóxicos (cocaína, anfetaminas), parálisis de Todd y aura migrañosa.
 Aplique las escalas neurológicas de GCS y NIHSS, seriándolas como orientación de gravedad y pronóstico.(((
 Ver anexo: Escala de coma de Glasgow>>/docs/procedures/306_02/304_01_EscalaGlasgow.pdf
+Ver anexo: Escala NIHSS>>/docs/procedures/306_02/306_02_EscalaNIHSS.pdf
+Valore los criterios de inclusión del paciente en el procedimiento operativo Reperfusión precoz en el Ictus agudo: Código 13 y Código 13.1 e informe lo antes posible.
+Posicione al paciente semiincoporado (excepto contraindicación como hipotensión arterial) con cabeza elevada 45º (Fowler) y garantice reposo absoluto.
+Garantice la permeabilidad de vía aérea y sea prudente en la movilización del cuello.
+Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 (si paciente intubado) y glucemia. Obtenga ECG de 12 derivaciones.
+Administre oxigenoterapia suplementaria, garantizando SatO2 > 92%.
+Canalice vía venosa periférica y perfunda SSF evitando la sobreexpansión. Si aprecia deshidratación, administre 10 ml/kg de SSF.
+En caso de necesidad imperiosa de vía central, utilice la vía femoral.
+Monitorice la glucemia capilar, garantizando cifras ≥ 50 mg/dl (2,8 mmol/l) y &lt; 155 mg/dl (8,6 mmol/l) (nivel de evidencia 2a; recomendación de grado B).
+Administre  de acción rápida iv con cifras ≥ 155 mg/dl, a dosis inicial de 40 ml/h de la perfusión 25 UI en 500 ml SSF.
+Realice analítica sanguínea: Controle los signos de ventilación insuficiente (pO2 &lt; 60 mmHg o pCO2 > 50 mmHg) y alteraciones electrolíticas (en especial potasio) y poliglobulia (Hto). En caso de tratamiento anticoagulante, obtenga INR.
+Valore la tensión arterial mediante dos tomas separadas no menos de cinco minutos. Considere su relación con el dolor o la hipertensión arterial previa antes de tratar:
+Si hay hipotensión arterial:
+Considere la posibilidad de hipovolemia, infarto de miocardio, embolia pulmonar, infarto cerebral extenso, presencia de insuficiencia cardiaca, sepsis, disección de aorta o hemorragia digestiva.
+Administre 10 ml/kg de SSF. Puede ser apropiado un nuevo
+[...contenido truncado, ver URL completa]
 ---
 # [306_03] Crisis  Estatus epiléptico
 Sección: SVA
 URL: https://manualsamur.es/manual/306_03-crisis-estatus-epileptico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Crisis Epiléptica
 Valoración Inicial: ABCD. Obtenga historia clínica orientada del paciente, si es posible, o de testigos.
 Registre posibles desencadenantes, y antecedentes.
@@ -3007,7 +3386,7 @@ Crisis convulsiva tónico clónica comuna duración superior a 5 minutos (lo que
 # [306_04] Estado confusional agudo
 Sección: SVA
 URL: https://manualsamur.es/manual/306_04-estado-confusional-agudo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABCD. Obtenga historia clínica orientada y filie la hora de comienzo, la progresión en tiempo y el curso (comienzo agudo con fluctuación y empeoramiento nocturno). Describa las posibles alteraciones en el nivel de conciencia y atención y de las funciones cognitivas (memoria sobre todo reciente, orientación, percepción con alucinaciones, razonamiento), así como los cambios emocionales (ansiedad, agresividad, hipomanía), cambios autonómicos (sudoración, frialdad) y conductuales acompañantes.
 Preste especial atención a factores predisponentes: Demencia, enfermedad grave (cáncer en estadios terminales, infección...), edad, factores de riesgo vascular, déficit nutricional / alteraciones metabólicas, deshidratación, alcoholismo, déficit sensoriales, depresión, antecedentes de delirium, polifarmacia, abstinencias, inmovilizados y sondajes.
 Realice diagnóstico diferencial con los cuadros de demencia, psicosis aguda funcional y depresión.
@@ -3039,7 +3418,7 @@ Evite benzodiacepinas en ancianos, especialmente a altas dosis ya que pue
 # [306_05] Síndrome vertiginoso
 Sección: SVA
 URL: https://manualsamur.es/manual/306_05-sindrome-vertiginoso
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABCD. Obtenga la historia clínica orientada a descartar vértigo falso (agorafobia, cinetosis...) o verdadero (periférico/central)
 Obtenga la historia clínica orientada a descartar vértigo falso (agorafobia, cinetosis...) o verdadero (periférico/central). Investigue episodios previos similares o diferentes.
 Prestar especial atención a la existencia de nistagmo (vertical/horizontal-horizontorrotatorio) y otros movimientos oculares (seguimiento, sacadas, divergencia y giro cefálico).
@@ -3082,7 +3461,7 @@ En casos graves que no respondan al tratamiento se pued
 # [306_06] Cefalea
 Sección: SVA
 URL: https://manualsamur.es/manual/306_06-cefalea
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABC
 Obtenga Historia clínica detallada y pregunte antecedentes orientados a esta patología, características de la misma (aguda o crónica; recurrente, progresiva o súbita).
 Realice una exploración (signos focales, signos meníngeos, etc) orientada a saber si se trata de cefalea primaria (migraña, cefalea tipo tensional, cefalea en racimo, hemicraneana paroxística o idiopática), o bien una cefalea reciente secundaría a un proceso orgánico (TCE, hemorragia cerebral, meningitis, etc).
@@ -3134,7 +3513,7 @@ Ante empeoramiento progresivo o coma y signos de focalidad neurológica, adminis
 # [306_07] Síndrome discinético
 Sección: SVA
 URL: https://manualsamur.es/manual/306_07-sindrome-discinetico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABC.
 Obtenga historia y exploración clínica orientada, en especial a determinar el tipo de movimiento anormal (corea, distonía, etc.) y los antecedentes de administración de fármacos neurolépticos, antieméticos, antivertiginosos, etc., y filie la hora de comienzo.
 Posicione al paciente en decúbito lateral, retirándole objetos que puedan lesionarle.
@@ -3161,7 +3540,7 @@ Inicio página>>doc:
 # [307_01] Cólico renoureteral (nefrítico)
 Sección: SVA
 URL: https://manualsamur.es/manual/307_01-colico-renoureteral-nefritico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial: ABC. Realizar una anamnesis exhaustiva. Reflejar en historia clínica antecedentes familiares y personales de episodios similares, antecedentes de cirugías inguinales o escrotales, existencia de fiebre, hematuria o anuria, malformaciones renales, riñón único funcional o anatómico.
 Clínica: el dolor del cólico nefrítico típicamente es de inicio brusco, con picos de gran intensidad localizado a nivel de fosa renal que puede irradiar a ingle o genitales, el dolor no se modifica con la postura. Otros síntomas menos frecuentes son náuseas, vómitos, disuria, polaquiuria o tenesmo vesical.
 Monitorice: TA, FC, FR, ECG, SatO2 y temperatura.
@@ -3204,7 +3583,7 @@ Valore la realización de ecografía para ver la existencia o no de dilatació
 # [307_02] Síndrome escrotal agudo
 Sección: SVA
 URL: https://manualsamur.es/manual/307_02-sindrome-escrotal-agudo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Síndrome caracterizado por dolor escrotal agudo e intenso. Las causas más frecuentes (95%) son intra-escrotales son: Torsión del cordón espermático y la Orquiepididimitis aguda. El objetivo es identificar qué casos precisan de una intervención médica o quirúrgica urgente.
 
 TORSIÓN TESTICULAR
@@ -3244,7 +3623,7 @@ Vía oral, según peso corpo
 # [308_01] Urgencias obstétricas
 Sección: SVA
 URL: https://manualsamur.es/manual/308_01-urgencias-obstetricas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 VALORACIÓN GENERAL DE LA EMBARAZADA
 Valoración inicial. ABC
 Considere, además:
@@ -3287,26 +3666,33 @@ En embarazos avanzados (más de 20 semanas con fondo uterino
 # [308_02] Asistencia al parto
 Sección: SVA
 URL: https://manualsamur.es/manual/308_02-asistencia-al-parto
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial. Obtenga y documente antecedentes e historia obstétrica actual (GPAC: embarazos, partos, abortos previos y cesáreas; FUR; FPP, edad gestacional; presencia o no de contracciones (intensidad y duración, número y frecuencia de 2- 3 cada 10 minutos), evidencia de sangrado vaginal; rotura de bolsa, color y cantidad de líquido amniótico; tacto vaginal, si lo considera estrictamente necesario).
-Ver anexo: Cálculo de Fecha probable de parto (FPP)>>/docs/procedures/308_02/308_01_edadGestacional.pdf] con dosis suplementarias cada 5 a 10 min de 25 mcg (0,5 ml) si es necesario.
+Ver anexo: Cálculo de Fecha probable de parto (FPP)>>/docs/procedures/308_02/308_01_edadGestacional.pdf
+Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2 y glucemia.
+Realice la asistencia con las máximas condiciones de asepsia.
+Ponga la madre en un lugar confortable y cálido (32-36°C), en la posición que le sea más cómoda. Preserve la intimidad y realice un apoyo emocional junto con técnicas de masaje y contacto físico tranquilizador como un método de alivio del dolor.
+Canalice vía venosa periférica.
+Realice exploración obstétrica para estimar dilatación, presentación, posición e integridad de la bolsa de líquido amniótico.
+Valore si el parto es inminente (presentación en IV plano) y va a realizarlo en el lugar, o procede al traslado, considerando:
+Distancia en tiempo al hospital materno-infantil más próximo (se considera normal un expulsivo de 50 minutos a 2 horas en nulíparas y de 20 minutos a 1 hora en multíparas)
+Cualquier otra presentación que no sea cefálica (en posiciones transversas y posteriores es probable que se prolongue el expulsivo) y presentación de un miembro.
+Parto prematuro (más de 20 semanas y menos de 34-36 semanas)
+Realice el vaciado vesical si se constata la existencia de globo vesical (no es preciso ni cómodo dejar la sonda permanente). (ver procedimiento de 'Sondaje vesical'. Técnicas)
+No realice episiotomía de rutina salvo parto instrumental o sospecha de compromiso fetal. No es necesaria la realización de rasurado de forma sistemática.
+De ser necesaria episiotomía medio-lateral realícela cuando la cabeza fetal sea visible en el introito vulvar, en un diámetro de 3-4 cm. Infiltre previamente la zona con anestésico local.
+Realice la desinfección del periné (Técnicas y medidas higiénicas para la prevención de infecciones) con antiséptico tópico ( Digluconato 2% Alcohólica).
+Cree un campo estéril mediante la colocación de paños y compresas estériles.
+Compruebe de nuevo: dilatación, presentación, posición e integridad de la bolsa de líquido amniótico.
+Valore la analgesia en función de la inminencia del parto, y administre:  iv lenta a dosis de 0,5 - 1 mcg/kg [1 ml a ½ ampolla] con dosis suplementarias cada 5 a 10 min de 25 mcg (0,5 ml) si es necesario.
 De instrucciones a la mujer para usar correctamente la prensa abdominal. Sólo se debe dejar empujar a la paciente cuando la dilatación es completa, y coincidiendo con la contracción uterina. Se recomienda el pujo espontáneo frente al dirigido ya que siendo igualmente eficaz, es más corto y evita hipoxia fetal.
-Se recomienda la protección activa del periné mediante la técnica de deflexión controlada de la cabeza fetal. Para ello:
-Evite la salida brusca de la cabeza, con una mano sobre el vértice para controlar el movimiento hacia adelante y otra sobre el periné posterior, buscando el mentón del feto. Mediante una presión sobre el mentón a la vez que deja deslizar el periné, haga salir la cabeza lentamente.
-Pida a la mujer que no empuje.
-Tras la salida de la cabeza fetal y durante la rotación externa de la cabeza, valore la presencia de vueltas de cordón alrededor del cuello. Si existen intente retirarlas si están flojas. Si no puede quitarlas, coloque una pinza de cordón en un lugar accesible y otra pinza a una distancia entre uno y dos centímetros, corte con bisturí estéril entre ambas.
-Ayude a la salida de los hombros traccionando suave y continuamente, con ambas manos, de la cabeza fetal hacia abajo, hasta que salga el hombro anterior bajo la sínfisis del pubis. Luego traccione suavemente hacia arriba para librar el hombro posterior. Esta maniobra suele facilitarse si la paciente tiene las caderas ligeramente elevadas.
-Tras la expulsión completa del feto se recomienda que el recién nacido sea colocado en contacto directo con la madre en lo que se conoce como el "contacto piel con piel", inmediatamente después del nacimiento permitiendo el contacto con la mama de la madre. Para ello seque al recién nacido y tápelo sobre la madre, permitiendo el contacto directo con ella.
-Si no lo ha hecho previamente, pince el cordón no antes del segundo minuto de la salida del feto o tras el cese del latido del cordón umbilical. Coloque una pinza a 3-4 cm del bebé y una segunda a 2 cm de la primera. Corte en el punto medio con bisturí estéril / tijeras estériles.
-Previamente actúe según procedimiento de asistencia a neonatos.
-Tras la salida del feto, compruebe que no exista una hemorragia abundante, y si la hay, compruebe vasos en la episiotomía o desgarros que justifiquen dicha hemorragia. Cohíba la hemorragia por compresión.
-Valore el traslado sin esperar al alumbramiento (no es
+Se recomienda la protección activa del periné mediante la técnica de defl
 [...contenido truncado, ver URL completa]
 ---
 # [309_01] Shock
 Sección: SVA
 URL: https://manualsamur.es/manual/309_01-shock
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial ABCD, intentando descubrir precozmente signos y síntomas propios de la reducción de la perfusión en los tejidos y del aporte de oxígeno.
 Signos precoces sutiles: palidez, relleno capilar alargado (> 2 sg), diaforesis y taquipnea.
 Signos detectables obvios e inmediatos: taquicardia (o bradicardia en shock neurogénico y en otros tipos de shock como respuesta paradójica), hipotensión (TAS &lt; 90 mmHg o disminución > 40 mmHg de TAS basal), extremidades frías (piel caliente en shock séptico), pulsos periféricos débiles, estrechamiento de presión del pulso, alteración del estado mental (agitación, delirio, obnubilación, coma).
@@ -3350,7 +3736,8 @@ Comience con una carga rápid
 # [309_02] Síndrome Coronario Agudo con elevación del ST SCACEST
 Sección: SVA
 URL: https://manualsamur.es/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+Última modificación 15/04/2026
 Valoración Inicial: ABCD, reseñe la hora del inicio del dolor y la hora del primer contacto médico con el paciente (clave 3). Tenga preparado el desfibrilador y evite el movimiento activo del paciente.
 Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 (si aislamiento de vía aérea) y glucemia. Monitorice, de forma continua, el ritmo cardiaco, anotando cualquier cambio y el tiempo en el que ocurre.
 Ante la sospecha clínica de IAM. Active, lo más precozmente posible, al Jefe de Guardia (ver Código infarto).
@@ -3383,13 +3770,13 @@ A) Si se va a realizar fibrinolisis, administre:
 ≤ 75 años: dosis de carga de 300 mg.
 > 75 años: 75 mg (1 comprimido) sin dosis de carga.
 )))Adminístrelo de forma exclusiva si el paciente es alérgico a AAS como única antiagregación si se realiza fibrinolisis.
- iv (40 mg/ 4000 UI, ampolla 0,4 ml) 30 mg junto con 1 mg/kg de  subcutánea (100 mg/10000 UI en 1 ml, jeringa precargada) a los 15 minutos. No exceder dosis máx
+ iv (40 mg/ 4000 UI, ampolla 0,4 ml) 30 mg junto con 1 mg/kg de  subcutánea (100 mg/10000 UI en 1 ml, jeringa precargada) a los 1
 [...contenido truncado, ver URL completa]
 ---
 # [309_02b] Síndrome Coronario Agudo sin elevación del SR (SCACEST)
 Sección: SVA
 URL: https://manualsamur.es/manual/309_02b-sindrome-coronario-agudo-sin-elevacion-del-sr-scacest
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Esta entidad incluye: Angina inestable (AI) e Infarto de miocardio sin elevación persistente del segmento ST (IAMSEST), cuya distinción radica en la severidad y el tiempo de la isquemia miocárdica y, por tanto, en la capacidad de producir necrosis miocárdica con elevación de los marcadores de daño miocárdico (principalmente troponina).
 
 Recuerde que es un síndrome más frecuente en personas > 75 años, sexo femenino, con antecedentes de diabetes mellitus, insuficiencia renal crónica o demencia
@@ -3429,6 +3816,8 @@ Valores por debajo de 5 ng/l sugieren con gran fiabilidad la negatividad para SC
 Sección: SVA
 URL: https://manualsamur.es/manual/309_02c-insuficiencia-cardiaca-aguda-cronica-agudizada
 Actualizado: 2026-04-15
+Última modificación el 15/04/2026
+
 La clínica de la IC varía dependiendo de la edad, la severidad y la rapidez de instauración del cuadro, así como del ventrículo inicialmente afectado.
 Los síntomas característicos de la IC izquierda son disnea progresiva de esfuerzo, ortopnea y disnea paroxística nocturna; la tos nocturna en decúbito es un equivalente de disnea (asma cardial).
 En la IC derecha, aparece un síndrome de congestión sistémica que se manifiesta como edemas, dolor en hipocondrio derecho (congestión hepática) y aumento del perímetro abdominal (ascitis). La nicturia es uno de los síntomas más precoces de IC.
@@ -3437,19 +3826,53 @@ También puede aparecer fatiga debido a la hipoperfusión de la musculatura peri
 Ante cualquier paciente con IC, es imprescindible valorar la capacidad funcional, desde un punto de vista clínico (NYHA) y desde punto de vista terapéutico y de pronóstico (Killip).
 
 Ver anexo - Edema agudo de pulmón-IC>>/docs/procedures/309_02c/309_02c_EdemaAgudoPulmon_IC.pdf
+Realice valoración primaria: ABCD, con especial atención a la historia clínica (empeoramiento de la sintomatología basal: disnea progresiva, tos, expectoración, aumento de edemas, aumento del perímetro abdominal, etc.), antecedentes previos (tabaquismo, HTA, DM, episodios previos similares, enfermedad coronaria, arritmia, tratamiento habitual, clase NYHA, etc), factores de riesgo añadidos (ancianos, comorbilidad pulmonar) y probable causa desencadenante: HTA y enfermedad coronaria (las más frecuentes en los países desarrollados), menos frecuentes: miocardiopatías, valvulopatías, arritmias, tóxicos y fármacos, enfermedades del pericardio, causas de alto gasto cardiaco, enfermedades intercurrentes, etc.
+Coloque al paciente en sedestación.
+Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 y glucemia. Preste especial atención a la perfusión sistémica, la presión venosa yugular, la taquipnea y a la auscultación cardiopulmonar.
+Realice ECG de 12 derivaciones (un ECG normal es raro en una IC). Las alteraciones más frecuentes son: Hipertrofia de cavidades, isquemia o necrosis miocárdica, bloqueos, alteraciones del ritmo o clara arritmia como la fibrilación auricular, alteraciones en la repolarización).
+Calcule el Killip (Ver anexo de Edema agudo de pulmón-IC).
+Canalice vía venosa con SSF o SG al 5% de mantenimiento.
+Realice Test de Troponina de alta sensibilidad.
+Valore como susceptibles de positividad los valores por encima de 23 ng/l (27 ng/l para los hombres y 17ng/l para las mujeres).
+Valores por debajo de 5 ng/l sugieren con gran fiabilidad la negatividad para SCACEST (VPN 99,7%).
+Valore la realización de analítica (iones e INR) y realice gasometría arterial, previa a oxigenoterapia, si la situación clínica lo permite.
+Administre oxigenoterapia con flujo necesario para mantener SatO2 > 90% (Nivel de evidencia IC) evitando hipoxemia.
+
+Si KILLIP I (no evidencia de IC):
+(((
+Revise el tratamiento crónico y de consejos g
+[...contenido truncado, ver URL completa]
 ---
 # [309_03] Edema agudo de pulmón
 Sección: SVA
 URL: https://manualsamur.es/manual/309_03-edema-agudo-de-pulmon
 Actualizado: 2026-04-15
+Última modificación el 15/04/2026.
 Situación clínica de un paciente con antecedentes cardiovasculares habitualmente, que presenta de forma más o menos súbita, disnea, acompañada de ortopnea y/o disnea paroxística nocturna o tos nocturna (asma cardial). En la exploración se encuentra taquipneico, con apenas capacidad para hablar, diaforético y cianótico. Auscultación pulmonar con crepitantes simétricos, de predominio en bases y variabilidad en la altura, con o sin sibilancias. Puede presentar elevación de la presión venosa yugular (PVY), edemas y ascitis si se asocia a IC derecha.
 La insuficiencia cardiaca se puede clasificar en función de la gravedad y situación clínica, siendo de interés tanto para el tratamiento como para conocer su pronóstico a corto y largo plazo.(((
 Ver anexo - Edema agudo de pulmón-IC>>/docs/procedures/309_03/309_02c_EdemaAgudoPulmon_IC.pdf
+Valoración inicial. ABCD, con especial atención a la anamnesis y exploración física encaminada a descubrir la causa y el mecanismo desencadenante (arritmia, taponamiento cardíaco, IAM, miocardiopatía hipertrófica, estenosis aórtica grave, TEP, infecciones, tóxicos y fármacos como AINEs o calcioantagonistas, etc).
+Coloque al paciente en sedestación, con las piernas colgando para disminuir el retorno venoso.
+Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2. Monitorice, de forma continua, el ritmo cardiaco y la TA.
+Calcule el Killip inicial y clase funcional de la NYHA (Ver anexo de Edema agudo de pulmón-IC).
+Canalice vía venosa con SSF o SG al 5% de mantenimiento.
+Realice ECG de 12 derivaciones. Un ECG normal nos hace dudar del diagnóstico de EAP. Las alteraciones más frecuentes que se pueden encontrar: Hipertrofia de aurículas y/o ventrículos, isquemia o necrosis miocárdica, bloqueos, alteraciones del ritmo o clara arritmia como la fibrilación auricular, alteraciones en la repolarización con prolongación del intervalo QT, etc.
+Realice Test de Troponina de alta sensibilidad.
+Valore como susceptibles de positividad los valores por encima de 23 ng/l (27 ng/l para los hombres y 17ng/l para las mujeres).
+Valores por debajo de 5 ng/l sugieren con gran fiabilidad la negatividad para SCACEST (VPN 99,7%).
+Realice de gasometría arterial, previa a oxigenoterapia si la situación clínica lo permite.
+Administre oxigenoterapia a alto flujo, para mantener SatO2 > 90% o PaO2 > 60 mmHg (Nivel de evidencia IC) evitando hipoxemia.
+Si a pesar de estas medidas el paciente presenta desaturación o deterioro del nivel de conciencia, plantee de inmediato el tratamiento sintomático intensivo y replantee posteriormente la necesidad de ventilación mecánica.
+
+Si el paciente está NORMOTENSO:
+Administre  iv: a dosis mínima de 40 mg (0,5 - 1 mg/kg). Se puede repetir a los 20 min una dosis adicional de 20-40 mg.
+Administre  iv (Nivel de evidencia IIa C) a dosis de 3-5 mg, repitiendo 1-2 mg cada 5-10 min, controlando el riesgo de hipotensión, no rebasando los 20 mg. Precaución en el EPOC, hipotensión o bradicardia, riesgo de dep
+[...contenido truncado, ver URL completa]
 ---
 # [309_04] Arritmias
 Sección: SVA
 URL: https://manualsamur.es/manual/309_04-arritmias
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 BRADICARDIA
 
 (FC &lt; 60 lpm y situación clínica comprometida)
@@ -3561,7 +3984,7 @@ Explique signos de alarma: ganancia de peso rápida (1 kg en 1 día o 3 kg en 1 
 # [309_07] Isquemia arterial aguda
 Sección: SVA
 URL: https://manualsamur.es/manual/309_07-isquemia-arterial-aguda
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Es el resultado de una brusca interrupción del aporte sanguíneo a las extremidades.
 Valoración inicial (ABCD) descartando la existencia de situaciones de riesgo vital asociadas a las causas de la isquemia arterial.
 Obtenga historia clínica con el fin de orientar las posibles causas de la isquemia, los factores de riesgo cardiovascular y el tiempo de inicio de la obstrucción (comienzo de inicio de los síntomas):
@@ -3597,7 +4020,7 @@ Inicio página>>doc:
 # [309_08] Síncope
 Sección: SVA
 URL: https://manualsamur.es/manual/309_08-sincope
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Síncope: Pérdida transitoria del conocimiento debida a una hipoperfusión cerebral global transitoria caracterizada por ser de inicio rápido, duración corta y recuperación espontánea completa.
 
 El término presíncope se usa para describir un estado que se parece al pródromo del síncope, pero que no se sigue de pérdida del conocimiento.
@@ -3655,7 +4078,7 @@ Bl
 # [310_01] Crisis asmática aguda
 Sección: SVA
 URL: https://manualsamur.es/manual/310_01-crisis-asmatica-aguda
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración inicial: ABC.
 Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2.
 Realice una anamnesis orientada a obtener antecedentes previos, inicio de los síntomas actuales, circunstancias  y desencadenantes (alimentos, contacto con animales, exposición a irritantes, ejercicio físico, estrés emocional, toma de AINES, antagonistas beta-adrenérgicos, infección de vías respiratorias, no toma de medicación habitual para el cuadro), tratamiento habitual y control del cuadro con el tratamiento y necesidad de ingreso previo en UCI (IOT o corticoides intravenosos).
@@ -3699,7 +4122,7 @@ Administre  inhalado a dosis 200-400 mcg (2-4 inhalaciones) cada 20 minutos, bie
 # [310_02] Exacerbaciones agudas del paciente con EPOC
 Sección: SVA
 URL: https://manualsamur.es/manual/310_02-exacerbaciones-agudas-del-paciente-con-epoc
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración primaria: ABC.
 Monitorice: TA, FC, FR, ECG y SatO2
 Realice una anamnesis orientada con especial atención a la historia clínica (empeoramiento de la disnea,  de la tos, incremento del volumen y/o cambios en el color del esputo), antecedentes previos (tabaquismo, episodios previos similares, tratamiento habitual y en las crisis, oxigenoterapia en domicilio, valores previos de pO2 basales sin oxígeno, etc), factores de riesgo añadidos (ancianos, comorbilidad de origen cardiovascular, renal o hepática, hospitalización previa por esta causa, historia previa de excerbaciones) y posible causa de la exacerbación (70% causa infecciosa).
@@ -3748,7 +4171,7 @@ Administre  inhalado a dosis de 200-400 mcg (2-4 inhalaciones) cada 20 minutos
 # [310_03] Tromboembolismo pulmonar
 Sección: SVA
 URL: https://manualsamur.es/manual/310_03-tromboembolismo-pulmonar
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Debe sospecharse un TEP en pacientes con disnea brusca o empeoramiento de una disnea previa inexplicable.
 
 Investigue posibles factores de riesgo para TEP:
@@ -3800,7 +4223,7 @@ Prepare 2 ampollas de 10 mg en 80 ml de SG 5% (1 ml = 200 mcg, 1 gota = 10 mcg) 
 # [311] Urgencias psiquiátricas
 Sección: SVA
 URL: https://manualsamur.es/manual/311-urgencias-psiquiatricas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Aproxímese al lugar, valorando el uso de sirenas y rotativos según información aportada por la Central.
 Realice un análisis de la situación y recabe información del entorno, considerando:
 Seguridad del lugar de actuación para personal y paciente.
@@ -3836,11 +4259,19 @@ Recoja información sobre el desencadenante.
 Valore los siguientes aspectos: Presentación del cuadro, nivel de conciencia, aspecto, conducta, atención, estado anímico y afectivo, lenguaje hablado, sensopercepción, orientación y memoria, forma y contenido del pensamiento y otros: apetito, sueño, grado de autonomía, inteligencia, motivación.
 Valore tentativas autolíticas anteriores, factores de riesgo y la gravedad/letalidad del intento suicida.(((
 Ver anexo: Escala de Detección de Riesgo Suicida>>/docs/procedures/311/214d_EscalaRiesgoSuicida.pdf
+Monitorice constantes, si es posible, y valore analítica.
+Indique traslado psiquiátrico si:
+Estado de deterioro mental severo.
+Necesidad de valoración psiquiátrica.
+Peligrosidad para el mismo y para otros (suicidio, trastornos de conducta). Traslade siempre que en la Escala de Detección de Riesgo Suicida en el apartado de MINI subescala suicidio (Riesgo de Suicidio Actual), al menos una de las respuestas es codificada como SI.
+Riesgo de deterioro de su estado.
+Aparente i
+[...contenido truncado, ver URL completa]
 ---
 # [312_01] Complicaciones de la diabetes
 Sección: SVA
 URL: https://manualsamur.es/manual/312_01-complicaciones-de-la-diabetes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Contenido
 
 Hiperglucemia simple
@@ -3885,7 +4316,7 @@ Si es
 # [312_02] Hiperglucemia por estrés
 Sección: SVA
 URL: https://manualsamur.es/manual/312_02-hiperglucemia-por-estres
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Hiperglucemia que se asocia a la enfermedad aguda crítica, tanto en paciente diabético como en paciente no diabético. El control glucémico, mejora la supervivencia de estos pacientes.
 Valoración inicial: ABC.
 Monitorice: TA, FC, FR, Temperatura, ECG, SatO2, así como ETCO2 en pacientes con aislamiento de vía aérea.
@@ -3906,7 +4337,7 @@ Si hay hipoglucemia, administre  iv (Concentrado para solución para perfusió
 # [312_02b] Hiponatremia
 Sección: SVA
 URL: https://manualsamur.es/manual/312_02b-hiponatremia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Se considera hiponatremia una concentración sérica de sodio &lt;135 mmol/L con la siguiente clasificación según la gravedad bioquímica:
 Leve: Na+: 130-134 mmol/L.
 Moderada: Na+: 125-129 mmol/L.
@@ -3942,7 +4373,7 @@ Se puede estimar la concentración sérica de sodio corregida con la siguiente t
 # [312_03] Hipopotasemia - Hiperpotasemia
 Sección: SVA
 URL: https://manualsamur.es/manual/312_03-hipopotasemia-hiperpotasemia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ALTERACIONES DEL POTASIO:
 
 Hipopotasemia
@@ -3979,7 +4410,7 @@ En caso de necesid
 # [312_04] Hipocalcemia - Hipercalcemia
 Sección: SVA
 URL: https://manualsamur.es/manual/312_04-hipocalcemia-hipercalcemia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ALTERACIONES DEL CALCIO
 
 Hipocalcemia
@@ -4008,7 +4439,7 @@ Obtenga historia clínica orientada con antecedentes personales (neoplasias mali
 # [313_01] Paciente quemado
 Sección: SVA
 URL: https://manualsamur.es/manual/313_01-paciente-quemado
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Evalúe la escena y aplique las medidas de seguridad necesarias, priorizando la seguridad del personal asistencial (ver procedimiento con actuación con Bomberos, Actuación en situaciones NRBQ y Paciente intoxicado por humo).
 Seleccione un espacio asistencial óptimo, sin exposición a riesgos.
 Valore inicialmente al paciente quemado como un paciente traumatizado por agente térmico, siendo el gran quemado equiparable al paciente politraumatizado. Así, sólo tras estabilización del ABCD se procederá a la valoración de las quemaduras y su tratamiento.
@@ -4035,7 +4466,7 @@ Regla del 10: calcule redondeando el % de SCQ a la decena más alta y multipliqu
 # [313_02] Urgencias por calor
 Sección: SVA
 URL: https://manualsamur.es/manual/313_02-urgencias-por-calor
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Las patologías por calor aparecen cuando fracasan los mecanismos de termorregulación. Existen 3 formas clínicas: calambres por calor, agotamiento o colapso por calor y golpe de calor.
 
 MEDIDAS GENERALES
@@ -4077,7 +4508,7 @@ Presencia de temperatura central superi
 # [313_03] Paciente con hipotermia
 Sección: SVA
 URL: https://manualsamur.es/manual/313_03-paciente-con-hipotermia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Se considera hipotermia una temperatura basal inferior a 35º C con los siguientes grados:
 Hipotermia leve: de 32º a 35º C
 Hipotermia moderada: de 28º a 32º C (a partir de esta temperatura disminuye la capacidad de generar calor).
@@ -4112,7 +4543,7 @@ Aplique calor externo a través del dispositivo (m
 # [313_04] Lesiones por electricidad. Electrocución
 Sección: SVA
 URL: https://manualsamur.es/manual/313_04-lesiones-por-electricidad-electrocucion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Las lesiones por electricidad están producidas por el efecto directo de la corriente eléctrica sobre los tejidos y su conversión en energía térmica.
 
 Distinguimos tres tipos de corriente según su origen: corriente doméstica (alterna, de bajo voltaje), corriente industrial (continua de alto voltaje) y el rayo.
@@ -4145,7 +4576,7 @@ Administre 10 - 20 ml/kg de SSF(c
 # [313_05] Patologías por inmersión. Ahogamiento
 Sección: SVA
 URL: https://manualsamur.es/manual/313_05-patologias-por-inmersion-ahogamiento
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Recabe información y clasifique el cuadro en función de las circunstancias en las que tuvo lugar el accidente.
 AHOGAMIENTO: muerte por asfixia tras la inmersión en un líquido.
 Ahogamiento seco: asfixia producida por el espasmo laríngeo desencadenado por el contacto con el agua.
@@ -4180,7 +4611,7 @@ Déficit de CO3H = 0,3 x kg de peso
 # [314_00] Valoración del niño grave
 Sección: SVA
 URL: https://manualsamur.es/manual/314_00-valoracion-del-nino-grave
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El procedimiento tiene como objetivo principal la identificación precoz de aquellos pacientes con potencial riesgo vital de cara a iniciar de forma urgente las medidas específicas de estabilización, las cuales serán nuestra prioridad, incluso por encima del diagnóstico.
 
 Proceda en tres etapas:
@@ -4228,19 +4659,98 @@ Postura en trípode. El cuerpo intenta alin
 # [314_01] RCP pediátrica
 Sección: SVA
 URL: https://manualsamur.es/manual/314_01-rcp-pediatrica
-Actualizado: 2026-04-28
+Actualizado: 2026-05-15
+Última modificación el 15/05/2026
+
 Ver anexo - Algoritmo SVA Pediátrico>>/docs/procedures/314_01/314_01_algoritmoSVAP.pdf
+Ver anexo - Tabla de medicación pediátrica>>/docs/procedures/314_01/314_01_tablaMedicacionPediatrica.pdf
+
+Medidas generales
+(((
+Valore el nivel de conciencia, si existe respiración y signos de circulación (incluido pulso) durante no más de 10 seg para ambos.
+El técnico responsable dirá: "parada". Determine la hora de inicio.
+Realice una RCP de alta calidad e ininterrumpidamente.
+Priorice la realización de desfibrilación precoz en cuanto sea posible.
+Valore el ritmo cardiaco mediante monitorización de emergencia (palas, electrodos). En función del ritmo, proceda según los siguientes procedimientos.
+
+A - Análisis de la situación. Vía aérea.
+(((
+A efectos de RCP se considera:
+Recién nacido, únicamente, al que se encuentra en paritorio.
+Lactante, a partir de ese momento hasta el año de vida.
+Niño pequeño, desde 1 año a los 8 años.
+Niño mayor al mayor de 8 años.
+
+El algoritmo general de RCP excluye a los recién nacidos, salvo en el apartado dedicado expresamente a ellos.
+Consiga y vele por la seguridad del niño y el reanimador en la escena.
+Compruebe el nivel de conciencia.
+Coloque al niño en posición de RCP: decúbito supino, con los brazos a lo largo del cuerpo, sobre superficie lisa y dura (si el niño es pequeño puede servir la palma de la mano o un antebrazo).
+Realice maniobras de apertura de vía aérea: frente-mentón o tracción de mandíbula, según la existencia de riesgo cervical. En el lactante, sólo debe alinear la cabeza con el resto del cuerpo y, en el niño mayor, debe realizar una ligera extensión.
+Aspire la boca, fosas nasales, faringe y tráquea, si precisa.
+Valore la colocación de una cánula orofaríngea de Guedel. En los lactantes, introdúzcala con la convexidad hacia arriba. En los niños mayores, introdúzcala como en los adultos.
+Si sospecha una obstrucción de vía aérea por cuerpo extraño, mientras prepara el material necesario para la desobstrucción instrumental, proceda según el procedimiento de desobstrucción de la vía aérea de SVB (primero golpes en la espalda si consciente; si no funciona, compresiones torácicas en menores de 1 año y compresiones abdominales con cuidado en la ejecución en mayores de 1 año. Si inconsciencia, RCP comenzando por la extracción manual con dedo si es alcanzable y 5 intentos de ventilación).
+Si no consigue desobstruir la vía aérea:
+Intente localizar y extraer el cuerpo extraño con laringoscopio y pinzas de Magill.
+Si no lo consigue: considere proceder a intubación, empujando el cuerpo extraño a una zona más baja o realizar punción cricotiroidea, si cree que ésta puede salvar el obstáculo.
+
+B - Ventilación
+(((
+Compruebe la ausencia de respiración espontánea.
+Mientras prepara la intubación endotraqueal, ventile con balón de reanimación conectado a reservorio, O2 a 10-12 l/min y una frecuencia de ventilación, según edad:(((
+
+|Recién nacido:|30-40 rpm
+|Lactantes:|Aproximadamente 20 rpm
+|Niños 
+[...contenido truncado, ver URL completa]
 ---
 # [314_02] Asistencia al recién nacido
 Sección: SVA
 URL: https://manualsamur.es/manual/314_02-asistencia-al-recien-nacido
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Ver anexo - tabla Edad-Peso>>/docs/procedures/314_02/314_02_tablaEdadPeso.pdf
+
+Ver anexo - Algoritmo Reanimación neonatal>>/docs/procedures/314_02/314_02_algoritmoNeonatal.pdf
+
+CONSTANTES VITALES EN EL RN
+(((
+La FR normal se encuentra entre 30 y 50 rpm.
+La FC normal es de 120 - 160 lpm.
+La temperatura debe mantenerse entre 36,5 y 37,5 ªC
+La TA promedio en las primeras 12 horas de vida varía según el peso:
+
+| |TAS mmHg|TAD mmHg|TAM mmHg
+|1 - 2 kg|51|29|38
+|2 - 3 kg|60|34|43
+|> 3 kg|67|41.5|51
+
+REANIMACIÓN DEL RN NORMAL
+Considere el lugar de reanimación y prepare el material necesario para la reanimación:
+Reanime en el lugar más cálido posible: prepare previamente la calefacción de la ambulancia si prevé el parto. A los RN prematuros, con edad gestacional inferior a 28 semanas se les debe cubrir hasta el cuello con una bolsa o sábana de plástico, sin secarles, inmediatamente después del nacimiento. La cobertura se ha de mantener hasta la comprobación de la temperatura tras el ingreso.
+Paños preferiblemente calientes (o un empapador y la manta térmica). Puede utilizar sueros calientes para calentar el material.
+Fuente de oxígeno: Los neonatos nacidos sanos parten de una saturación de oxihemoglobina arterial inferior al 60% y pueden tardar más de 10 min en alcanzar saturación mayor al 90%. Recuerde utilizar siempre concentraciones bajas por riesgo de retinopatía (en a término 21%, en prematuros del 21% al 30%, salvo en caso de precisar masaje cardiaco en cuyo caso se usara 100%).
+Pulsioximetría: sondas pediátricas.
+Aspiración con presión negativa de 20 cm de agua, con sondas de aspiración faríngea del nº 8 Fr en prematuros y nº 10 Fr en RN a término.
+Pinzas de cordón.
+Tijeras quirúrgicas estériles / bisturí estéril.
+Laringoscopio de pala recta.
+Bolsa autoinflable con mascarillas pediátricas.
+Tubos endotraqueales (nº 2,5 al 4) y fiador.
+Catéter umbilical.
+Jeringas y agujas.
+Medicación: Adrenalina: diluida al 1:10.000, Bicarbonato 1M diluido al medio, Naloxona, SSF 0,9%, SG 5%.
+
+EVALUACIÓN
+(((
+Según la valoración inicial, el recién nacido se incluirá en uno de los siguientes grupos:
+Respiración vigorosa o llanto, buen tono muscular,frecuencia cardiaca mayor que 100lpm: no es necesario pinzar de inmediato el cordón umbilical. El niño sólo precisa ser secado, envuelto en una toalla templada y si es apropiado, ponerlo en brazos de su madre.
+Respiración inadecuada o apnea, tono muscular normal o disminuido, frecuencia cardiaca menor de 100 lpm: secar y envolver al bebe. El recién nacido habitualmente mejorara con insuflación pulmonar con mascarilla, pero si con esta medida no aumenta la frecuencia cardiaca de forma adecuada, puede requerir también ventilaciones.
+Respiración inadecuada o apnea, hipotonía muscular, frecuencia cardiaca baja o indetectable, a menudo palidez sugestiva de mala perfusión periférica: secar y envolver al bebe. Este niño requeriría de inmediato medidas de control de la vía aérea, insuflación pulmonar y ventilación. Una vez que esto 
+[...contenido truncado, ver URL completa]
 ---
 # [314_03] Valoración del paciente pediátrico politraumatizado
 Sección: SVA
 URL: https://manualsamur.es/manual/314_03-valoracion-del-paciente-pediatrico-politraumatizado
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 La asistencia inicial del paciente pediátrico traumatizado grave se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de riesgo vital (vida, órgano, función), posibilidad técnica y accesibilidad.
 Valoración de la escena.
 Estimación inicial de gravedad.
@@ -4282,7 +4792,7 @@ El médico se situará, preferente
 # [314_04] Dificultad respiratoria
 Sección: SVA
 URL: https://manualsamur.es/manual/314_04-dificultad-respiratoria
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 DIFICULTAD RESPIRATORIA ALTA
 Laringitis
 Clínica: triada de estridor inspiratorio, tos perruna y voz ronca.
@@ -4319,7 +4829,7 @@ Traslade en SVA con preaviso hospi
 # [314_05] Crisis convulsivas
 Sección: SVA
 URL: https://manualsamur.es/manual/314_05-crisis-convulsivas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración Inicial: ABCDE. Filie la hora de comienzo y cese, si se ha producido.
 Retire al paciente de objetos que puedan lesionarle. Afloje la ropa que pueda oprimirle y evite autolesiones.
 Monitorice: TA, FC, FR, ECG, SatO2, glucemia capilar y temperatura.
@@ -4358,7 +4868,7 @@ Dosificación por edad (en caso de no peso fiable):
 # [314_06] Quemaduras
 Sección: SVA
 URL: https://manualsamur.es/manual/314_06-quemaduras
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración de la superficie quemada
 Distinta en niño y en adulto, considerando que las edades intermedias tienen valores intermedios.(((
 |Niño| 
@@ -4409,7 +4919,7 @@ Quemaduras de 2º o 3
 # [314_07] Manejo del ictus en la edad pediátrica
 Sección: SVA
 URL: https://manualsamur.es/manual/314_07-manejo-del-ictus-en-la-edad-pediatrica
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento tiene como objetivo la identificación precoz del accidente cerebro vascular agudo (ACVA) en niños menores de 16 años, y la posible inclusión en el Código ictus pediátrico (Reperfusión precoz en el Ictus agudo: Código 13 y Código 13.1).
 
 Valoración ABCDE del niño:
@@ -4424,31 +4934,23 @@ Primera crisis focal en niño sano con postcrítico prolongado.
 Considerar diagnóstico diferencial con otras entidades (migrañas, hemiparesia postictal, encefalitis…).
 Garantice la vía aérea (ver Valoración del niño grave, urgencias pediátricas)
 Aplicar las escalas neurológicas. Glasgow y NIHSS ambas en su versión pediátrica si lo precisa, seriándolas con orientación de la gravedad y pronóstico del episodio.(((
-Escala de coma de Glasgow>>/docs/procedures/314_07/304_01_EscalaGlasgow.pdf]. Intranasal a dosis 1,5 a 2 µg/kg (máx. 75 µg/dosis se puede repetir a los 10 min).
-Controle la agitación del paciente si fuera necesario: , a dosis de 0,1-0,2 mg/kg iv. Repetible / 15 min en función de la respuesta o ir a dosis de 0,3-0,5 mg/kg en 5-10 ml de agua de 20-30 min antes del procedimiento terapéutico o diagnóstico. O intranasal a dosis de 0,4-0,5 mg/kg. Ojo: ardor en mucosa nasal en esta administración.
-Si el paciente presenta signos de hipertensión endocraneal (alteración del nivel de conciencia, midriasis ipsilateral, pérdida progresiva de reflejos del tronco).
-Garantice la correcta sedo-relajación del paciente. Valore intubación endotraqueal.
-Posiciones al paciente en anti-Tremdelemburg 30º con la cabeza recta (si procede).
-Evite agitación, dolor, tos, vómitos.
-Administre, salvo contraindicación,  iv a dosis de 0,25-0,5 g/kg (1,25-2,5 ml/kg) en 20 min. Considere control de la diuresis por sondaje vesical.
-Se recomienda la hiperventilación moderada, manteniendo una pCO2 entre 30 y 35 mmHg.
-Valore la administración de  para el control de los vómitos. Empleando la vía oral o intravenosa en función del nivel de conciencia del paciente y su tolerancia a la vía oral.(((
-Vía oral, según peso corporal, en dosis única:
-Niños de 8 a 15 Kg: 2 mg
-Niños de 15 a 30 Kg: 4 mg
-Niños de 30 a 50 Kg: 6 mg
-Niños > 50 kg: 8 mg
-Vía iv en inyección lenta, no menos de 30 sg.:
-Niños ≥ 2 años y &lt; 40 kg: 0,1 mg/kg iv. Máximo 4 mg.
-Niños > 40 kg: 4 mg/dosis.
-Evite el sondaje vesical salvo retención urinaria o necesidad de monitorización de la diuresis.
-Reevalúe al paciente cada 10 min anotando las variaciones temporales del déficit neurológico. Serie la escala
+Escala de coma de Glasgow>>/docs/procedures/314_07/304_01_EscalaGlasgow.pdf
+Escala PedNIHSS>>/docs/procedures/314_07/314_07_EscalaPedNIHSS.pdf
+Valore los criterios de inclusión del paciente en el procedimiento operativo Reperfusión precoz en el Ictus agudo: Código 13 y Código 13.1 e informe lo antes posible, añadiendo la palabra “pediátrico” a cualquiera de los dos códigos.
+Monitorice: TA, FC, FR, ECG, SatO2, ETCO2 (si paciente intubado) y glucemia. Obtenga ECG de 12 derivaciones.
+Canalice vía venosa periférica y perfunda SSF evitando la sobreexpansión. Si aprecia deshidratación, administre 10 ml/kg de SSF.
+Mostrar especial atención a la determinación de la glucemia capilar, fundamental en el despistaje del ACVA en paciente con clínica neurológica.
+Glucemia &lt; 45 mg/dl. Esta circunstancia es poco frecuente salvo en el recién nacido, lactantes y diabéticos. Administre 0,4-0,8 ml/kg de  al 50% iv, por la vía más gruesa posible. Considere mayor dilución en lactantes. Si persiste la clínica neurológica pese a la corrección de la glucemia consideramos sospecha de ACVA.
+Glucemia > 45 mg/dl. Asociado a clínica neurológica consideramos sospecha de ACVA.
+Glucemia > 155 mg/dl. La hiperglucemia sobre todo la mantenida, empeora el pronóstico y mortalidad de la enfermedad. Corregir la hiperglucemia con la Administración de  de acción rápida a dosis de 0.1 UI/kg/hora si la glucemia es superior a 250 mg/dl. Si es inferior a 250 mg/dl, la dosis será de 0,05 UI/kg/hora.
+Posicione al paciente en decúbito supino o cabecero elevado a 30º. Siempre y cuando el paciente no esté en hipotensión arterial.
+Si es necesario, administre oxigenoterapia suplementaria a bajo flujo (mascarilla con reservorio) para mantener saturación por encima del 95% (Pa
 [...contenido truncado, ver URL completa]
 ---
 # [314_08] Urticaria, angioedema y anafilaxia en pediatría
 Sección: SVA
 URL: https://manualsamur.es/manual/314_08-urticaria-angioedema-y-anafilaxia-en-pediatria
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 En general realice una valoración inicial: ABC. Realice valoración del niño grave, urgencias pediátricas, incluyendo el triángulo de evaluación pediátrica.
 Monitorice: TA, FC, FR, ECG, SatO2 y ETCO2.
 Evite la causa si es conocida y desencadenantes: irritantes, estrés, sudoración, rascado...
@@ -4482,7 +4984,7 @@ También se puede utilizar la siguiente pauta:
 # [314_09] Atención al menor bajo los efectos de alcohol o drogas
 Sección: SVA
 URL: https://manualsamur.es/manual/314_09-atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Atienda según el procedimiento específico de intoxicaciones.
 
 A este respecto, se considera menor a toda persona que aún no ha cumplido los 18 años.
@@ -4520,7 +5022,7 @@ Inicio página>>doc:
 # [315_01] Manejo general del paciente intoxicado
 Sección: SVA
 URL: https://manualsamur.es/manual/315_01-manejo-general-del-paciente-intoxicado
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración de la escena. Aplique medidas de autoprotección, evitando contaminarse y extraiga al paciente del entorno tóxico según procedimiento de valoración de la escena.
 Valoración inicial. ABCD
 Monitorice: TA, FC, FR, ECG, SatO2, ETCO2, temperatura (riesgo de hipo e hipertermia) y glucemia.
@@ -4555,15 +5057,36 @@ Obtenga datos acerca del tóxico (nombre y cantidad administrada, tiempo transcu
 # [315_02] Intoxicación por humo
 Sección: SVA
 URL: https://manualsamur.es/manual/315_02-intoxicacion-por-humo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Evalúe la situación (ver el procedimiento operativo de actuación con Bomberos).
 Priorice la seguridad del personal del servicio sobre la asistencia sanitaria: Establezca las distancias de seguridad tras consultar las cifras detectadas de tóxicos en la zona de atención.(((
 Ver anexo: Alarmas de detección de gases>>/docs/procedures/315_02/315_02_alarmasDeteccionGases.pdf
+Seleccione un espacio asistencial óptimo, sin exposición a riesgos.
+Informe a la Central de Comunicaciones.
+Consiga información sobre:
+Las sustancias a las que el paciente ha podido estar expuesto y sus diversos efectos (detección de gases por Fénix). El humo de un incendio está compuesto por distintos componentes, que varían en su concentración según el material en combustión y que afectan de forma diferente a la víctima:
+Asfixiantes simples (CO2)
+Gases irritantes (cloro, amoniaco)
+Inhalantes con efectos sistémicos (óxidos nitrosos y derivados del flúor)
+Partículas
+Vapor de agua
+Sustancias que interfieren en el trasporte o la utilización de oxígeno (ácido cianhídrico y monóxido de carbono)
+Por lo general la víctima siempre va a estar expuesta a vapor de agua y a productos/partículas irritantes.
+Tiempo y circunstancias de la exposición (lugares cerrados o abiertos, aireación de la zona, inconsciencia de la víctima, temperatura alcanzada, proximidad a la fuente, etc). Información recabada de las personas que han realizado el rescate.
+Niveles de tóxicos en aire del lugar donde ha estado la víctima o productos que se encuentran en el humo aportados por las determinaciones de Fénix.
+Factores del paciente que agravan la exposición: con especial atención a los niños y embarazadas. En estas últimas, los niveles de COHb > 10% condicionan el traslado y la administración de oxígeno hiperbárico (feto con 10-15% más que la madre).
+Valoración inicial ABCD: con especial atención a signos de quemadura inhalatoria, y a signos y síntomas de insuficiencia respiratoria debida a hipoxia tisular (relacionados con la inhalación de aire pobre en oxígeno), inhalación de gases con toxicidad sistémica (CO y cianhídrico (CN)) o gases irritantes de la vía aérea.
+Observe la aparición de taquipnea, taquicardia acompañada de cefalea, mareo, náuseas, vómitos, y posteriormente, arritmias, estupor, coma y convulsiones relacionados con la intoxicación de CN. Otra sintomatología como desorientación, alteraciones visuales y de conducta, alteraciones ECG, impotencia funcional, están relacionados con otros componentes del humo, así como la irritación ocular, rinorrea, tos, dolor de garganta, estridor laríngeo (laringoespasmo) y el broncoespasmo.
+Monitorice signos vitales: TA, FC, FR, ECG, SatO2 y ETCO2
+La pulsioximetría da niveles falsamente elevados de saturación de oxígeno. Sin embargo, es útil para valorar trastornos de la oxigenación, siendo indicativas las tendencias.
+Determine los niveles de Carboxihemoglobina del paciente (COHb) mediante el Cooxímetro.
+Administre oxigenoterapia a alto flujo (Venturi) o de bajo fl
+[...contenido truncado, ver URL completa]
 ---
 # [315_03] Intoxicaciones más frecuentes
 Sección: SVA
 URL: https://manualsamur.es/manual/315_03-intoxicaciones-mas-frecuentes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 INTOXICACIÓN POR OPIÁCEOS
 Valoración inicial. ABCD
 Con especial atención a la función respiratoria, nivel de conciencia y pupilas (es característica la miosis, depresión respiratoria y estupor o coma)
@@ -4604,7 +5127,7 @@ Con estabilidad hemodinámica, valore el uso
 # [316] Reacción alérgica
 Sección: SVA
 URL: https://manualsamur.es/manual/316-reaccion-alergica
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Retire al paciente del contacto con el agente causante si se conoce (suspensión de la administración de fármacos, extracción rápida de aguijón, retirada de restos alimentarios de la boca, etc).
 Valoración inicial: ABCDE. Valore prioritariamente la vía aérea, la gravedad de la reacción y la rapidez de la evolución:
 Comienzo brusco y rápida progresión de los síntomas (5-60 min del desencadenante).
@@ -4638,7 +5161,7 @@ Coloque al paciente en decúbito s
 # [414] Solicitud de USVA
 Sección: SVA
 URL: https://manualsamur.es/manual/414-solicitud-de-usva
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 SOLICITUD DE USVA POR PARTE DE USVB (CLAVE 16 DE USVA)
 
 La solicitud de Clave 16 será realizada a criterio técnico de los TATS de la USVB y en base a lo establecido en cada uno de los procedimientos asistenciales de SVB.
@@ -4753,7 +5276,7 @@ Valorar la altura del reposacabezas, cinturón (uso y pirotecnia), airbag, compr
 # [402] Valoración del paciente adulto
 Sección: SVB
 URL: https://manualsamur.es/manual/402-valoracion-del-paciente-adulto
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 [[~[~[~|~|alt="https://servpub.madrid.es/manualsamur/images/i_graf.gif" height="16" width="17"~]~]Ver anexo - Algoritmo SVB Valoración del paciente>>/docs/procedures/402/402_algoritmoSVB_ValoracionPaciente.pdf]]
 
 VALORACIÓN INICIAL
@@ -4815,7 +5338,7 @@ Si el paciente tiene signos de respiración, valore los siguientes puntos:
 # [402b] Valoración del niño grave
 Sección: SVB
 URL: https://manualsamur.es/manual/402b-valoracion-del-nino-grave
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El procedimiento tiene como objetivo principal la identificación precoz de aquellos pacientes con potencial riesgo vital de cara a iniciar de forma urgente las medidas específicas de estabilización, las cuales serán nuestra prioridad, incluso por encima de la valoración.
 
 Proceda en tres etapas:
@@ -4861,7 +5384,7 @@ Balanceo cefálico o cabeceo. Consiste en la extensión del cuello al inspirar, 
 # [403] Instrumental adultos
 Sección: SVB
 URL: https://manualsamur.es/manual/403-instrumental-adultos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 SOPORTE VITAL BÁSICO. INSTRUMENTAL EN ADULTOS 
 
 (El presente procedimiento se debe aplicar también a jóvenes más allá de la pubertad)
@@ -4908,7 +5431,7 @@ Coloque la mascarilla del balón de reanimación con el canto estrecho hacia la 
 # [404] Instrumental pediátrico
 Sección: SVB
 URL: https://manualsamur.es/manual/404-instrumental-pediatrico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 SOPORTE VITAL BÁSICO. INSTRUMENTAL PEDIÁTRICO 
 
 Este procedimiento es de aplicación  una vez superado el momento del nacimiento (que tiene su propio algoritmo de reanimación) y hasta el comienzo de la pubertad (aparición de caracteres sexuales secundarios: desarrollo de mamas en niñas y vello facial y axilar en niños).
@@ -4947,7 +5470,7 @@ Si no hay sospecha de trauma, utilice la maniobra de frente-mentón: coloque la 
 # [405] Obstrucción de la vía aérea por cuerpo extraño
 Sección: SVB
 URL: https://manualsamur.es/manual/405-obstruccion-de-la-via-aerea-por-cuerpo-extrano
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 OBSTRUCCIÓN DE LA VÍA AÉREA POR CUERPO EXTRAÑO (OVACE)
 
 Procedimiento OVACE en adulto
@@ -5001,7 +5524,7 @@ Signos: el paciente puede estar consciente o inconsciente, dificul
 # [406] Desfibrilación externa automática
 Sección: SVB
 URL: https://manualsamur.es/manual/406-desfibrilacion-externa-automatica
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 DESFIBRILACIÓN EXTERNA AUTOMÁTICA. (APLICADA POR USVB)
 
 Secuencia de uso
@@ -5041,7 +5564,7 @@ Cuando un dispositivo médico implantable (marcapasos interno o desfibrilador in
 # [407] Patologías de origen cardiovascular
 Sección: SVB
 URL: https://manualsamur.es/manual/407-patologias-de-origen-cardiovascular
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas
 
 A efectos de este procedimiento se valorarán las siguientes patologías urgentes de origen cardiovascular:
@@ -5096,7 +5619,7 @@ Si tras reposo de 10-15 minutos persiste la hipotensió
 # [408] Posible patología de origen respiratorio
 Sección: SVB
 URL: https://manualsamur.es/manual/408-posible-patologia-de-origen-respiratorio
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 VALORACIÓN DE LA ESCENA
 Obtenga datos de familiares o testigos sobre:
 Existencia de antecedentes de patologías respiratorias: asma, EPOC, neumonías, etc., y tratamientos. Recoja otros antecedentes y alergias.
@@ -5145,7 +5668,7 @@ Si la respiración está ausente o exi
 # [409] Posible intoxicación por drogas de abuso
 Sección: SVB
 URL: https://manualsamur.es/manual/409-posible-intoxicacion-por-drogas-de-abuso
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 VALORACIÓN DE LA ESCENA
 Identifique la zona en la que se encuentra el paciente, y valore la seguridad para los componentes de la dotación. Solicite apoyo policial en caso contrario.
 Observe el entorno del paciente en busca de posibles indicios sobre el uso de sustancias tóxicas (jeringuillas, agujas, medicaciones, presencia de vómitos, etc.), y evite el contacto con ellos.
@@ -5186,7 +5709,7 @@ Si el paciente presenta du
 # [410] Convulsiones
 Sección: SVB
 URL: https://manualsamur.es/manual/410-convulsiones
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Valoración de la escena
 
 Recabe información, de forma rápida, de familiares o testigos sobre:
@@ -5238,7 +5761,7 @@ Realice una exploraci
 # [410a] Posible enfermedad vascular cerebral aguda (ICTUS)
 Sección: SVB
 URL: https://manualsamur.es/manual/410a-posible-enfermedad-vascular-cerebral-aguda-ictus
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Introducción
 Las enfermedades cerebrovasculares están causados por un trastorno circulatorio cerebral que altera transitoria o definitivamente el funcionamiento de una o varias partes del encéfalo.
 
@@ -5336,6 +5859,8 @@ Exponga al paciente. Realice la valoración de hemorragias no observadas en part
 Sección: SVB
 URL: https://manualsamur.es/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
 Actualizado: 2026-04-27
+Última modificación el 27/04/2026
+
 La asistencia inicial del paciente traumatizado grave, se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de riesgo vital (vida, órgano, función), posibilidad técnica, y accesibilidad.
 
 Actúe según el siguiente esquema:
@@ -5369,11 +5894,13 @@ Pulso femoral presente: > 70 mmHg
 Pulso carotídeo presente: > 60 mmHg
 valore el relleno capilar y perfusión tisular (palidez, sudoración, frialdad...)
 Calcule la escala AVDN (Alerta, reacción al estímulo Verbal, al Dolor o No respuesta) o, en su defecto, mida el componente motor de la Escala de coma de Glasgow>>/docs/procedures/412_00/304_01_EscalaGlasgow.pdf
+Al final de esta estimación inicial, se debe de
+[...contenido truncado, ver URL completa]
 ---
 # [412_01] Craneoencefálico
 Sección: SVB
 URL: https://manualsamur.es/manual/412_01-craneoencefalico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TRAUMATISMO CRANEOENCEFÁLICO
 
 VALORACIÓN DE LA ESCENA
@@ -5410,7 +5937,7 @@ Recuerde que la presencia de hipotension en estos pacientes raramente está prov
 # [412_02] Columna vertebral
 Sección: SVB
 URL: https://manualsamur.es/manual/412_02-columna-vertebral
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TRAUMATISMO DE COLUMNA VERTEBRAL 
 
 El objetivo de la valoración en un traumatismo de columna será: identificar daño medular, evitar daño medular 2º e identificar shock neurogénico. Ante tal sospecha se activará USVA.
@@ -5447,7 +5974,7 @@ C) T
 # [412_03] Torácico
 Sección: SVB
 URL: https://manualsamur.es/manual/412_03-toracico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TRAUMATISMO TORÁCICO 
 
 VALORACIÓN DE LA ESCENA
@@ -5481,7 +6008,7 @@ ASi el paciente ventila espontáneamente, administre oxigenoterapia a alto flujo
 # [412_04] Abdominal
 Sección: SVB
 URL: https://manualsamur.es/manual/412_04-abdominal
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TRAUMATISMO ABDOMINAL 
 
 Objetivo: la identificación temprana de posible shock hemorrágico tras un traumatismo abdomino-pélvico.
@@ -5560,7 +6087,7 @@ Firma y sellos
 # [501] Activación y actuación del psicólogo de guardia
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 FASE DE ACTIVACIÓN DEL PSICÓLOGO DE GUARDIA
 El Psicólogo de Guardia (indicativo ROMEO) se activará en clave 1 como recurso operativo imprescindible en la escena, en todos los códigos 2.13, 5.8, 5.9 y código 9, supeditado a la información de las unidades actuantes, para lo cual solicitará nº de informe asistencial a la Central de Comunicaciones.
 Además se activará en clave 1 a los siguientes incidentes:
@@ -5592,7 +6119,7 @@ Una vez finalizada la intervención se cumplimentará el informe de asistencia y
 # [502] Intervención psicosocial en situaciones de crisis
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/502-intervencion-psicosocial-en-situaciones-de-crisis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 INTERVENCIÓN PSICOSOCIAL EN SITUACIONES DE CRISIS
 El objetivo de este procedimiento es proporcionar los primeros auxilios psicológicos ante situaciones de crisis con la finalidad de favorecer el afrontamiento adecuado y prevenir la aparición de componentes psicopatológicos.
 Se activa al psicólogo siguiendo el Procedimiento General de activación del Psicólogo de Guardia de SAMUR - Protección Civil.
@@ -5633,7 +6160,7 @@ Efectúe seguimiento telefónico de los pacientes atendidos, según criterios y 
 # [503] Comunicación de malas noticias, inicio y proceso de duelo
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/503-comunicacion-de-malas-noticias-inicio-y-proceso-de-duelo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 COMUNICACIÓN DE MALAS NOTICIAS, INICIO Y PROCESO DE DUELO
 El objetivo de este procedimiento es amortiguar el impacto psicológico en la comunicación de malas noticias y el posterior inicio del proceso de duelo, con la finalidad de prevenir la aparición de duelo complicado o patológico tras una muerte inesperada y traumática.
 Se activa al psicólogo siguiendo el Procedimiento General de Activación del psicólogo de Guardia de SAMUR-Protección Civil.
@@ -5670,7 +6197,7 @@ Identifique y cubra (si es posibl
 # [504] Crisis de ansiedad
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/504-crisis-de-ansiedad
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ASISTENCIA PSICOLÓGICA EN CRISIS DE ANSIEDAD
 
 Este procedimiento marca la intervención del psicólogo en crisis de ansiedad de etiología psicológica o como respuesta a un estresor psicosocial.
@@ -5700,7 +6227,7 @@ Realice seguimiento telefónico de los pacientes atendidos, si es necesario, seg
 # [505] Asistencia psicológica en conducta suicida
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/505-asistencia-psicologica-en-conducta-suicida
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 = **ASISTENCIA EN CONDUCTA SUICIDA
 (ideación, autolesiones, suicidio en curso y suicidio consumado)** =
 
@@ -5741,7 +6268,7 @@ Facilite el inicio del proceso de duelo e identifique factores de riesgo de du
 # [506] Situaciones de negociación
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/506-situaciones-de-negociacion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El objetivo principal de este procedimiento es establecer las pautas de afrontamiento en las diferentes situaciones de negociación que se pueden presentar. En la negociación uno se enfrenta con problemas, no con personas y hay que tratar de encontrar una solución equitativa que tenga en cuenta los puntos de vista e intereses de todos los implicados.
 
 La negociación es la relación que se establece entre dos o más personas respecto a un asunto determinado con vista a acercar posiciones las cuales son diferentes, eliminar diferencias y poder llegar a un acuerdo que sea beneficioso para todos ellos.
@@ -5782,7 +6309,7 @@ Establezca un medio de comunicación (teléfono, emisora, empleo de teléf
 # [507] Asistencia psicológica en Código 9
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/507-asistencia-psicologica-en-codigo-9
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Este procedimiento marca la intervención del psicólogo con familiares de pacientes susceptibles de ser donantes de órganos (ver Código 9: Donación en asistolia).
 
 El objetivo fundamental será ofrecer apoyo psicológico en el afrontamiento de la situación crítica.
@@ -5833,7 +6360,7 @@ Permanezca en la
 # [508] Asistencia psicológica en agresión sexual
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/508-asistencia-psicologica-en-agresion-sexual
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 El presente Procedimiento marca como objetivo principal dar respuesta desde un punto de vista psicológico a aquellas víctimas que se encuentran en fase de impacto tras haber vivido una supuesta agresión sexual.
 
 Se activa al psicólogo siguiendo el Procedimiento General de Activación del Psicólogo de Guardia de SAMUR-Protección Civil.
@@ -5861,7 +6388,7 @@ Realice seguimiento telefónico de los pacientes atendidos según el Procedimien
 # [509] Asistencia psicológica en violencia de género
 Sección: Psicológicos
 URL: https://manualsamur.es/manual/509-asistencia-psicologica-en-violencia-de-genero
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 (El modelo adoptado en este procedimiento es el de Lenore Walker del ciclo de violencia).
 
 Objetivo general del procedimiento
@@ -5894,10 +6421,31 @@ Ayudar a identificar pensamientos, percepciones o creencias que tiene sobre la v
 Informar a la mujer del ri
 [...contenido truncado, ver URL completa]
 ---
+# [123] Técnicas de comunicación
+Sección: Técnicas
+URL: https://manualsamur.es/manual/123-tecnicas-de-comunicacion
+Actualizado: 2026-05-15
+Consideraciones generales en el manejo de llamadas de emergencia:
+(((
+Conteste al teléfono con rapidez, a ser posible antes del tercer tono, indicando al demandante que está hablando con el SAMUR. Al descolgar, utilice preferentemente la fórmula de cortesía //“Buenos días / tardes / noches, SAMUR, ¿dígame?”//.
+Priorice siempre la seguridad del llamante.
+Transmita serenidad. Hable con seguridad de un modo correcto, respetuoso y a un volumen adecuado. Como norma general será obligatorio el tratamiento de "usted", excepto en aquellas situaciones en las que otro tipo de tratamiento sea aconsejable para facilitar la comunicación.
+Tenga presente en todo momento que, la mayor parte de los conflictos a través del teléfono se deben a la situación estresante que está atravesando el llamante. Mantenga una actitud profesional. Recuerde que la actitud del operador es fundamental para recabar información e implicar al llamante en el proceso asistencial. No realice juicios de valor, ni recrimine al llamante. Tampoco emplee un tono aleccionador.
+No entre en conflicto, ni discuta con el demandante. Si el llamante no colabora y no es posible garantizar los objetivos de la comunicación, intente cambiar de interlocutor. Si no fuera posible alcanzar una solución, finalice la llamada educadamente avisando de antemano.
+
+Recomendaciones generales para la obtención de información durante la anamnesis telefónica y la prestación de asistencia sanitaria transtelefónica:
+Mantenga en todo momento una actitud de escucha activa. No interrumpa y asegúrese de que el llamante percibe que usted está escuchando, haciendo uso de comentarios de seguimiento del tipo: “comprendo”, “ya veo”, “de acuerdo”, o similar.
+Haga uso de preguntas abiertas (por ejemplo: ¿cuál es el motivo de su llamada?, ¿en qué podemos ayudarle?) cuando quiera que el llamante amplíe información y/o preguntas cerradas (por ejemplo: ¿es usted hipertenso?, ¿en qué hospital le tratan a usted?) cuando quiera obtener datos concretos o confirmar información.
+Implique al alertante en el proceso asistencial utilizando, si procede, un tono de voz cercano capaz de crear complicidad. Manifiéstele lo importante de su colaboración (por ejemplo: "yo le voy a indicar y vamos a hacerlo juntos para ayudar a este señor", “necesito que me ayude a cuidar a esta señora hasta la llegada de la ambulancia”).
+Tranquilice al demandante con respecto a su nivel de responsabilidad si sigue sus instrucciones (por ejemplo: “usted está actuando bajo mis indicaciones”, “esta llamada se está grabando y yo asumo toda la responsabilidad”).
+Explíquese con claridad. Ofrezca instrucciones concretas, de forma sencilla y ordenada, evitando el empleo de tecnicismos y/o términos incomprensibles para el llamante. Utilice en todo momento un lenguaje adecuado a su interlocutor.
+En situaciones donde es necesario aplicar soporte vital transtelefónico (por ejemplo, una RCP-Telefónica), haga uso de frases motivadoras para evitar que el llamante acabe desentendién
+[...contenido truncado, ver URL completa]
+---
 # [601_01] Relación con el paciente
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_01-relacion-con-el-paciente
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Los pacientes tienen una serie de derechos y deberes recogidos en el artículo 10 de la la Ley General de Sanidad 14/86 de 25 de abril, a los que estará sujeta toda asistencia realizada por personal de Samur-Protección Civil:
 
 El paciente tiene derecho a:
@@ -5927,7 +6475,7 @@ Ante los pacientes y ciudadanos, usted representa la imagen del Servicio y del A
 # [601_02] Técnicas y medidas higiénicas
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_02-tecnicas-y-medidas-higienicas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TÉCNICAS Y MEDIDAS HIGIÉNICAS PARA LA PREVENCIÓN DE INFECCIONES
 
 El objetivo de este procedimiento es la prevención de enfermedades transmitidas por sangre y líquidos corporales en el ejercicio de la actividad profesional desempeñada en SAMUR-Protección Civil, siguiendo las normas internacionales establecidas al respecto.
@@ -5978,7 +6526,7 @@ Entre dos procedimientos de un mismo paciente si hay sospecha de c
 # [601_03] Signos Vitales
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_03-signos-vitales
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideramos signos vitales la respiración, el pulso, el relleno capilar, la presión arterial y la temperatura. Consideraciones pediátricas: valores (ver procedimiento de urgencias pediátricas)
 
 Valoración de la respiración
@@ -6033,7 +6581,7 @@ Coloque las yemas de los dedos 2º y 3º de su mano sobre la cara interna del br
 # [601_03b] Medición de Temperatura central mediante sonda esofágica
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_03b-medicion-de-temperatura-central-mediante-sonda-esofagica
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 (((
 La monitorización de la temperatura central es una medida imprescindible ante la aplicación de hipotermia terapéutica (ver Paciente con hipotermia, procedimiento técnico de hipotermia en la parada y el procedimiento de Código 11). Aunque varias partes del cuerpo, incluyendo el esófago, el recto, la vejiga y el tímpano, se pueden utilizar para la medición de la temperatura central, la evidencia actual indica que la localización precisa de una sonda de temperatura en el tercio distal del esófago es de elección, debido a su exactitud y estabilidad.
@@ -6112,7 +6660,9 @@ No se pueden rellenar dos informes simultán
 # [601_05] Administración de comprimido bucodispersable
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_05-administracion-de-comprimido-bucodispersable
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+🖨️ Imprimir esta página
+
 Son comprimidos no recubiertos destinados a ser colocados en la boca, donde se dispersan rápidamente antes de ser tragados.
 La formulación es muy higroscópica (capaz de absorber muy rápidamente la humedad del ambiente que lo rodea) para facilitar su disgregación en la boca.
 El acondicionamiento debe ser hermético a la humedad y por tanto más resistente.
@@ -6127,7 +6677,7 @@ Saque el comprimido bucodispersable con las manos secas y póngaselo en la lengu
 # [601_06] Test rápido de antígeno de SARS-CoV-2
 Sección: Técnicas
 URL: https://manualsamur.es/manual/601_06-test-rapido-de-antigeno-de-sars-cov-2
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Instrucciones uso test rápido de antígeno de SARS-CoV-2
 
 El kit está listo para usar y contiene todo el material necesario para realizar una prueba:
@@ -6156,7 +6706,7 @@ Inicio página>>doc:
 # [602_01] Permeabilización básica de la vía aérea
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_01-permeabilizacion-basica-de-la-via-aerea
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Obstrucción de la vía aérea:
 (((
@@ -6205,7 +6755,7 @@ Compruebe que la
 # [602_02] Aspiración de secreciones
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_02-aspiracion-de-secreciones
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: guantes, aspirador, sondas de aspiración estériles de distintos tamaños (en T o con orificio lateral).
 
 Técnica:
@@ -6230,7 +6780,7 @@ Vigile posibles alteraciones del ritmo cardiaco.
 # [602_03] Intubación Endotraqueal
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_03-intubacion-endotraqueal
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 La intubación endotraqueal es la técnica definitiva de permeabilización y aislamiento de la vía aérea, permitiendo:
 la administración de oxígeno a alta concentración y de un volumen corriente suficiente para mantener una insuflación pulmonar adecuada.
 la aspiración de la tráquea.
@@ -6262,7 +6812,7 @@ Vierta un poco de lu
 # [602_04] INTRODUCTOR DE FROVA 14,0 Fr (adultos)
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_04-introductor-de-frova-140-fr-adultos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 INTRODUCTOR DE FROVA 14,0 FR (ADULTOS) 
 
 Consideraciones previas
@@ -6289,7 +6839,7 @@ Infle el neumotaponamiento del TET, conecte el TET a un balón de reanimación, 
 # [602_05] AIRTRAQ® y MONITOR AIRTRAQ®
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_05-airtraq-y-monitor-airtraq
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 AIRTRAQ® y MONITOR AIRTRAQ®
 
 El Airtraq® es un laringoscopio óptico de un solo uso que no requiere hiperextensión del cuello para poder intubar. Se recomienda su preparación en todas aquellas intubaciones previsiblemente complicadas, y como tercera opción cuando no es posible la intubación convencional tras el uso de la FROVA.
@@ -6320,7 +6870,7 @@ Debe fijar el TET y c
 # [602_06] CRICOTIROIDOTOMÍA
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_06-cricotiroidotomia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 La cricotiroidotomía es la técnica con la que se efectúa una apertura en la membrana cricotiroidea para establecer una vía respiratoria permeable; ésta puede ser mediante una punción insertando un catéter sobre aguja o quirúrgicamente realizando una incisión e insertando un tubo traqueal del tamaño adecuado.
 La cricotiroidotomía de urgencia permite la oxigenación y evita la hipoxemia y sus complicaciones, como encefalopatía anóxica y muerte.
@@ -6354,7 +6904,7 @@ Inicio página>>doc:
 # [602_07] TORACOCENTESIS
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_07-toracocentesis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Toracocentesis con catéter en adultos:
 Consideraciones previas:
 La toracocentesis con catéter se realiza ante la sospecha de neumotórax a tensión.
@@ -6383,7 +6933,7 @@ La técnica de toracocentesis con catéter en niños varía poco respecto a la d
 # [602_08] TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_08-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ~ TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®
 
 Consideraciones previas:
@@ -6411,7 +6961,7 @@ U
 # [602_09] Medición de satO2
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_09-medicion-de-sato2
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 MEDICIÓN DE LA SATURACIÓN DE OXÍGENO (PULSIOXIMETRÍA) 
 
 Consideraciones previas:
@@ -6461,7 +7011,7 @@ Inicio página>>doc:
 # [602_09a] Medición de COHb
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_09a-medicion-de-cohb
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 MEDICIÓN DE LA SATURACIÓN DE MONÓXIDO DE CARBONO - COOXIMETRÍA
 
 Consideraciones previas:
@@ -6501,7 +7051,7 @@ Inicio página>>doc:
 # [602_10] Medición de ETCO2
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_10-medicion-de-etco2
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 MEDICIÓN DE LA CONCENTRACIÓN DE CO2 ESPIRADO (CAPNÓGRAFO-OXÍMETRO CAPNOCHECK II-SIMS BCI)
 
 Consideraciones previas:
@@ -6539,7 +7089,7 @@ Falsos positivos
 # [602_11] Administración de fármacos por vía inhalatoria
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_11-administracion-de-farmacos-por-via-inhalatoria
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ADMINISTRACIÓN DE FÁRMACOS POR VÍA INHALATORIA. ATOMIZADOR NASAL (MAD)
 
 Características
@@ -6582,7 +7132,7 @@ Inicio página>>doc:
 # [602_12] Administración endotraqueal de medicamentos
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_12-administracion-endotraqueal-de-medicamentos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ADMINISTRACIÓN DE MEDICAMENTOS VÍA ENDOTRAQUEAL
 
 Consideraciones previas:
@@ -6604,7 +7154,7 @@ Inicio página>>doc:
 # [602_13] Ventilación Mecánica No Invasiva
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_13-ventilacion-mecanica-no-invasiva
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Ventilación Mecánica No Invasiva (VMNI)
 
 Consideraciones previas
@@ -6651,7 +7201,7 @@ Seleccione el tamaño
 # [602_14] Administración de fármacos con cámara de inhalación
 Sección: Técnicas
 URL: https://manualsamur.es/manual/602_14-administracion-de-farmacos-con-camara-de-inhalacion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Descripción
 
 Es una cámara de inhalación con adaptador universal para la administración de fármaco inhalador de dosis media con principio activo (MDI), destinada a realizar tratamientos del sistema respiratorio y su uso está recomendado en adultos y niños en pacientes en los que es complejo el uso de inhaladores de forma directa. Consta de un cilindro transparente ligeramente cónico con dos extremos, en uno de ellos hay un adaptador universal fabricado en silicona flexible grado médico donde se inserta el MDI, en el otro extremo dispone de una boquilla transparente para inhalar por la boca o colocar mascarilla flexible. En el interior se encuentra una válvula muy fina de silicona en forma de V con doble función, evitar que el aire exhalado penetre de nuevo en la cámara y dar respuesta a los bajos flujos inspiratorios.
@@ -6695,7 +7245,7 @@ Si es necesario administre una 2ª dosis, espere un
 # [603_01] Electrodiagrama de 12 Derivaciones
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_01-electrodiagrama-de-12-derivaciones
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Un EKG con 12 derivaciones permite visualizar la actividad eléctrica del corazón desde las siguientes perspectivas:
 Plano frontal:
@@ -6723,7 +7273,7 @@ Si el paciente tiene una extremidad amputada, sitúe el electrodo correspondient
 # [603_02] Desfibrilación
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_02-desfibrilacion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 Aplicación de corriente eléctrica directa sobre el tórax o directamente a través del ventrículo con el fin de convertir una Fibrilación Ventricular o una Taquicardia Ventricular sin pulso en un ritmo alternativo, preferentemente supraventricular, que genere un gasto cardiaco efectivo.
@@ -6759,7 +7309,7 @@ Las palas normales para adultos pueden utilizarse en niños a partir de los 10 k
 # [603_02b] Desfibrilación de doble secuencia
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_02b-desfibrilacion-de-doble-secuencia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 Esta técnica sólo se realizará en situaciones de PCR en ritmo desfibrilable desde el inicio (FV o TV sin pulso) y que dicho ritmo desfibrilable siga presente (persistente) después de 3 análisis consecutivos de ritmo y sus correspondientes desfibrilaciones en modo estándar (con los electrodos en posición anterolateral -fig.1-) separadas por intervalos de 2 minutos de resucitación cardiopulmonar.
@@ -6793,7 +7343,7 @@ El electrodo con el dibujo “bajo la clavícula derecha”, se situará en posi
 # [603_03] Cardioversión
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_03-cardioversion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 Aplicación de corriente eléctrica directa sobre el tórax o directamente a través del ventrículo, sincronizada con el complejo QRS, con el fin de normalizar el patrón de conducción de un corazón taquicárdico.
@@ -6827,7 +7377,7 @@ Inicio página>>doc:
 # [603_04] Marcapasos temporal no invasivo
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_04-marcapasos-temporal-no-invasivo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Indicación:
 Tratamiento de bradiarritmias hemodinámicamente inestables o que no responden al tratamiento farmacológico.
 
@@ -6860,7 +7410,7 @@ Cuando están activados, el ECG y el Sumario de sucesos registran los
 # [603_05] Masaje del seno carotídeo
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_05-masaje-del-seno-carotideo
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 Técnica que consiste en ejercer presión digital sobre la bifurcación de la arteria carotídea, estructura abundantemente inervada que responde a la presión y a los estímulos pulsátiles, estimulando la actividad vagal de manera refleja e inhibiendo los impulsos simpáticos. Tiene indicaciones diagnósticas (Síndrome del Seno Carotídeo, toxicidad a la Digoxina, diagnóstico diferencial de arrítmias) y terapéuticas (Taquicardias Supraventriculares).
@@ -6892,7 +7442,7 @@ Entre las complicaciones cardiacas se incluyen asistolia, taquicardia ventricula
 # [603_06] Pericardiocentesis
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_06-pericardiocentesis
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: guantes, gasas, monitor-desfibrilador, solución antiséptica, catéter nº 14 G largo, jeringa de 10 ml ó 20 ml, llave de tres pasos.
 
 Técnica:
@@ -6919,7 +7469,7 @@ Inicio página>>doc:
 # [603_07] Toracotomía de reanimación
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_07-toracotomia-de-reanimacion
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Esta técnica se realizará de inmediato en pacientes con traumatismos torácicos penetrantes en situación de PCR. En situación agónica (cuando los signos vitales sugieren que el paro cardiaco es inminente a pesar del control de la vía respiratoria y del inicio de la reposición de volumen), el equipo actuante realizará las medidas de soporte adecuadas anticipando la necesidad de realizar esta técnica.
 La técnica alcanzará mayor efectividad cuando existan “signos de vida” tales como pupilas reactivas, o evidencia de contractilidad cardíaca mediante ecografía en el lugar.
@@ -6948,7 +7498,7 @@ inserte una hoja de las tijeras y seccione los músculos intercostales con las m
 # [603_08] Hipotermia terapéutica en la parada cardiaca
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_08-hipotermia-terapeutica-en-la-parada-cardiaca
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 El procedimiento técnico es de aplicación en las paradas cardiacas recuperadas que cumplan los criterios de inclusión que se contemplan en el procedimiento operativo denominado Código 11.
 La técnica de enfriamiento superficial tiene como objetivo técnico la consecución de una temperatura en el paciente entre 34 y 36º, medida de forma central a través de una sonda de temperatura de inserción nasogástrica.
@@ -6986,7 +7536,7 @@ Inicio página>>doc:
 # [603_09] Dispositivo de compresiones torácicas automático LUCAS 3
 Sección: Técnicas
 URL: https://manualsamur.es/manual/603_09-dispositivo-de-compresiones-toracicas-automatico-lucas-3
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 DISPOSITIVO DE COMPRESIONES TORÁCICAS AUTOMÁTICO LUCAS 3
 
 El dispositivo a continuación referido es utilizado como alternativa a las compresiones cardiacas manuales en las siguientes circunstancias:
@@ -7015,7 +7565,7 @@ Compruebe que el tórax del paciente esté libre de gel. E
 # [604_01] Preparación y manipulación de material de acceso vascular
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_01-preparacion-y-manipulacion-de-material-de-acceso-vascular
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 PREPARACIÓN Y MANIPULACIÓN DE MATERIAL DE ACCESO VASCULAR
 
 Material para la canalización venosa
@@ -7048,7 +7598,7 @@ Respecto al manejo del formato de unidosis de solución antiséptica, nunca guar
 # [604_01a] Priorización de la localización de accesos vasculares
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_01a-priorizacion-de-la-localizacion-de-accesos-vasculares
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 El procedimiento a continuación descrito tiene como objetivo facilitar la toma de decisiones relacionada con la priorización de los accesos vasculares en el paciente crítico. Un paciente que requiere de un acceso vascular inmediato que posibilite la administración de fluidos y medicación de una forma rápida y eficaz. Se trata pues, de un proceso tiempo-dependiente que requiere de una ejecución ágil, dado que existe un riesgo vital inmediato.
@@ -7076,7 +7626,7 @@ Inicio página>>doc:
 # [604_02] Canalización de vías venosas periféricas
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_02-canalizacion-de-vias-venosas-perifericas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 Técnica consistente en la punción transcutanea de la vena con una aguja rígida, tipo angiocateter, mariposa o aguja conectada a una jeringuilla. Los objetivos son:
@@ -7125,7 +7675,7 @@ Inicio página>>doc:
 # [604_02b] Canalización de vías venosas periféricas guiada por ecografía
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_02b-canalizacion-de-vias-venosas-perifericas-guiada-por-ecografia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 CANALIZACIÓN DE VÍAS VENOSAS PERIFÉRICAS GUIADA POR ECOGRAFÍA
 
 Consideraciones previas
@@ -7167,7 +7717,7 @@ Es preferible utilizar la orientación transversal cuando se tiene menos experie
 # [604_03] Administración de fármacos por vía intravenosa
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_03-administracion-de-farmacos-por-via-intravenosa
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Administración de fármacos en bolo
 Se refiere al conjunto de actividades encaminadas a suministrar fármacos intravenosos sin diluir o poco diluidos en el torrente sanguíneo.
 
@@ -7226,7 +7776,7 @@ Inicio página>>doc:
 # [604_04] Canalización de vías venosas centrales
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_04-canalizacion-de-vias-venosas-centrales
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Nunca de primera elección
 Vías a canalizar
@@ -7313,7 +7863,7 @@ Fije la extremidad del paciente para que no se mueva durante la
 # [604_05b] Vía Intraósea, sistema EZ-IO
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_05b-via-intraosea-sistema-ez-io
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Indicaciones
 La vía intraósea (IO) está indicada en pacientes adultos y pediátricos en situaciones de emergencia o urgencia en las que no sea posible conseguir un acceso vascular en los primeros momentos, bien por la situación clínica del paciente, bien por dificultades ambientales (escasez de luz, espacio confinado, paciente atrapado en lugar de difícil acceso, riesgo NBQ, etc.) especialmente en:
 Reanimación Cardiopulmonar (RCP)
@@ -7382,7 +7932,7 @@ La marca negra de 5 mm debe quedar visible por fuera de la
 # [604_05c] Accesos vasculares especiales
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_05c-accesos-vasculares-especiales
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 USO DE ACCESOS VENOSOS ESPECIALES EN SITUACIONES DE EMERGENCIA: CATÉTERES VENOSOS CENTRALES DE LARGA DURACIÓN Y FÍSTULAS ARTERIOVENOSAS
 
 El presente procedimiento regula el uso de catéteres centrales de larga duración que frecuentemente portan pacientes crónicos (oncológicos, nefrópatas, etc.). Los dispositivos y vías alternativas que se tratan en este documento son:
@@ -7428,7 +7978,7 @@ Con los guantes limpios, localice el reservorio, pálpelo para calcular la longi
 # [604_06] Cateterización de la vena umbilical
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_06-cateterizacion-de-la-vena-umbilical
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: Catéter umbilical (3,5 Fr para lactantes pretérmino y 5,0 Fr para lactantes a término), bisturí, llave de tres pasos, pinza hemostática, jeringuilla, suero salino, guantes estériles, gasas estériles, povidona yodada, hilo de sutura, esparadrapo y paño estéril.
 
 Técnica
@@ -7462,7 +8012,7 @@ Inicio página>>doc:
 # [604_07] Accesos vasculares en niños
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_07-accesos-vasculares-en-ninos
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Antes de iniciar cualquier procedimiento doloroso en un niño, explíqueselo a los padres y al niño, si éste tiene capacidad de comprensión, y siempre que sea posible. Transmita una información veraz y sencilla en un lenguaje adecuado, evitando frases engañosas, como 'esto no dolerá'.
 Siempre que sea posible se permitirá la presencia de un progenitor.
@@ -7512,7 +8062,7 @@ Inicio página>>doc:
 # [604_08] Obtención de sangre arterial
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_08-obtencion-de-sangre-arterial
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: guantes, gasas, solución antiséptica, alcohol, esparadrapo, jeringa (2-5 ml.), agujas (25x9, 40x8).
 
 Técnica
@@ -7542,7 +8092,7 @@ Inicio página>>doc:
 # [604_09] Analítica de sangre
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_09-analitica-de-sangre
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 ANALÍTICA DE SANGRE (AUTOANALIZADOR EPOC)
 
 Material: Analizador EPOC con tarjetas de análisis, jeringas (2 ml - 5 ml) con sangre total, guantes.
@@ -7591,7 +8141,7 @@ Inicio página>>doc:
 # [604_11] Determinación de INR (MEDIDOR MISSION)
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_11-determinacion-de-inr-medidor-mission
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 DETERMINACIÓN DE INR (MEDIDOR MISSION®)
 
 Material: Guantes, gasas, tiras reactivas, aparato medidor Mission®, material necesario para la obtención de la muestra sanguínea.
@@ -7613,7 +8163,7 @@ La muestra debe aplicarse en un plazo de dos minutos para impedir el apagado a
 # [604_12] Test de troponina de alta sensibilidad (Analizador SIEMENS Healthineers)
 Sección: Técnicas
 URL: https://manualsamur.es/manual/604_12-test-de-troponina-de-alta-sensibilidad-analizador-siemens-healthineers
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TEST DE TROPONINA DE ALTA SENSIBILIDAD (Analizador SIEMENS Healthineers) 
 
 Indicaciones: SCACEST, SCASEST, insuficiencia cardiaca, EAP cardiogénico.
@@ -7643,7 +8193,7 @@ Inicio página>>doc:
 # [605_01] Sondaje gástrico
 Sección: Técnicas
 URL: https://manualsamur.es/manual/605_01-sondaje-gastrico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: guantes, gasas, sonda gástrica de tipo Levin (una sola luz) o Salem (dos luces), lubricante hidrosoluble, jeringa de cono ancho que se adapte a la sonda, recipiente o bolsa colectora, esparadrapo, fonendoscopio, equipo de aspiración, solución salina.
 
 Técnica:
@@ -7681,7 +8231,9 @@ Inicio página>>doc:
 # [605_02] Lavado gástrico
 Sección: Técnicas
 URL: https://manualsamur.es/manual/605_02-lavado-gastrico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+🖨️ Imprimir esta página
+
 Consideraciones previas:
 Se realizará vaciamiento gástrico mediante lavado, en pacientes que hayan ingerido un tóxico potencialmente grave, considerando:
 El tiempo transcurrido desde la ingestión.
@@ -7715,14 +8267,13 @@ Coloque al paciente en decúbito lateral izquierdo, con la cabeza de 10 a 15º e
 Coloque un paño o sábana sobre el paciente, junto con una batea.
 Lubrique abundantemente la sonda. Pida al paciente que apoye la barbilla sobre el pecho, posición que facilitará la introducción de la sonda en el esófago. Ante la aparición de tos, estridor o cianosis, retire la sonda de inmediato y reintente la introducción esofágica.
 Verifique la colocación de la sonda, bien aspirando contenido gástrico, o bien introduciendo unos 30 ml de aire con la jeringa mientras escucha con el fonendoscopio su entrada en el estómago.
-Antes de iniciar el lavado gástrico, extraiga el mayor contenido gástrico posible, procediendo a la recolocación repetida de la punta de la sonda.
-Una vez fina
+Antes de iniciar el lavado gástrico, extraiga el mayor contenido gástrico posible, procediendo a la recolocación repetida de la punta
 [...contenido truncado, ver URL completa]
 ---
 # [605_03] Administración de carbón activado
 Sección: Técnicas
 URL: https://manualsamur.es/manual/605_03-administracion-de-carbon-activado
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 El carbón activado es un producto pirolizado y en polvo del carbón ordinario, capaz de absorber gran variedad de sustancias. 
@@ -7760,7 +8311,7 @@ Vigile la aparición de efectos secundarios: vómito (si se administra
 # [605_04] Sondaje vesical
 Sección: Técnicas
 URL: https://manualsamur.es/manual/605_04-sondaje-vesical
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Material: guantes estériles y no estériles, sondas vesicales tipo Foley de los nº 12, 18 ó 22, paño estéril, gasas estériles, empapador, jeringa de 10 ml, ampolla con 10 ml de suero fisiológico o agua bidestilada, solución antiséptica, bolsa colectora, lubricante hidrosoluble.
 
 Técnica:
@@ -7804,7 +8355,7 @@ Inicio página>>doc:
 # [606_01] Tratamiento inicial de heridas
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_01-tratamiento-inicial-de-heridas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Este procedimiento hace referencia a aquellas heridas que afecten a tejidos blandos o aquellas localizadas en partes distales de extremidades y que no afectan a cavidades abdominales o torácicos.
 Los objetivos fundamentales en el cuidado inicial de heridas son: limpieza, preservación del tejido viable, restitución de la continuidad del tejido y la función del mismo, procurar las condiciones óptimas para que la herida cicatrice adecuadamente.
@@ -7885,7 +8436,7 @@ Cobert
 # [606_03] Vendajes
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_03-vendajes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Técnica
 Retire la ropa, anillos, pulseras de la zona a vendar.
 Coloque el miembro en posición funcional.
@@ -7929,7 +8480,7 @@ Haga un doble
 # [606_03a] Parche oclusivo torácico
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_03a-parche-oclusivo-toracico
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 En el servicio disponemos de un parche torácico tipo Asherman preparado y listo para su uso en las USVA y USVB.
 
 Se trata de un parche de gran adherencia, generalmente transparente para poder observar la zona a tratar, estéril y que dispone de una válvula unidireccional para permitir la salida de aire y dificultar su entrada en la cavidad torácica. Su utilización está indicada en todos aquellos traumatismos abiertos en la zona torácica como prevención del neumotórax a tensión.
@@ -7970,7 +8521,7 @@ Prosiga con la
 # [606_04] Tratamiento inicial de las quemaduras
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_04-tratamiento-inicial-de-las-quemaduras
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 La clasificación de las quemaduras se basa en tres criterios: profundidad de la lesión cutánea, porcentaje de superficie corporal afectada y fuente de la lesión (térmica, química, eléctrica, radiación).
@@ -8001,7 +8552,7 @@ Si hay dedos quem
 # [606_04a] Técnica de escarotomía
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_04a-tecnica-de-escarotomia
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 TÉCNICA DE ESCAROTOMÍA TORACOABDOMINAL
 
 Objetivo:
@@ -8035,7 +8586,7 @@ Desde el punto de vista hemodinámico, no hay que olvidar que las escarotom
 # [606_05] Técnicas de movilización de pacientes
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_05-tecnicas-de-movilizacion-de-pacientes
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 MOVILIZACIÓN DE PACIENTES EN DECÚBITO
 Maniobras encaminadas a la colocación de una víctima en posición de resucitación o posición anatómica desde la situación en la que es encontrado.
 Si el paciente ya está en esta posición anatómica y en decúbito supino, alinee los miembros a lo largo del eje, si no presenta fracturas o luxaciones; asegure la inmovilización del cuello mediante collarín cervical y las manos del sanitario.
@@ -8106,7 +8657,9 @@ Dispositivo complementario al collarín cervical que se usa de manera conjunta c
 # [606_07] Inmovilización niño. SIPE®
 Sección: Técnicas
 URL: https://manualsamur.es/manual/606_07-inmovilizacion-nino-sipe
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
+🖨️ Imprimir esta página
+
 SIPE® INMOVILIZACIÓN Y EXTRICACIÓN DEL NIÑO TRAUMATICO EN SU SRI
 
 Consideraciones previas:
@@ -8135,13 +8688,13 @@ Fuente: sipebabyrescuer.es/sipe/
 Colocación del dispositivo
 Ejecute la técnica con al menos dos sanitarios, uno realiza control cervical manual y otro ubica los útiles del sistema.
 Previo a la colocación del dispositivo, asegúrese de que la silla puede ser extraída del vehículo, es decir, cerciórese de que se pueden cortar o desabrochar el cinturón, el sistema Top tether y/o el Isofix; en caso contrario no podrá extraer la silla y tendrá que buscar otro método.
-Una vez decidida la utilización del SIPE®, en p
+Una vez decidida la u
 [...contenido truncado, ver URL completa]
 ---
 # [607] EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA
 Sección: Técnicas
 URL: https://manualsamur.es/manual/607-exploracion-ecografica-extrahospitalaria
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Procedimiento de exploración ecográfica urgente en el trauma: Técnica de E-FAST
 Este procedimiento es de especial importancia en la valoración del paciente politraumatizado como medio diagnóstico rápido (unos 3 a 5 minutos), a realizar simultáneamente al resto de la exploración secundaria.
 
@@ -8165,7 +8718,7 @@ Protocolo RUSH (para
 # [608_01] Lavado Ocular
 Sección: Técnicas
 URL: https://manualsamur.es/manual/608_01-lavado-ocular
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 (((
 Identifique la causa de la lesión.
@@ -8190,7 +8743,7 @@ Repita el proceso si procede.
 # [608_02] Extracción de lentes de contacto (rígidas y blandas
 Sección: Técnicas
 URL: https://manualsamur.es/manual/608_02-extraccion-de-lentes-de-contacto-rigidas-y-blandas
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 EXTRACCIÓN DE LENTES DE CONTACTO (RÍGIDAS Y BLANDAS) 
 
 Consideraciones previas:
@@ -8225,7 +8778,7 @@ Haga entrega en el Hospital de las lentes, consignando la persona que lo recibe 
 # [609_01] Cesárea postparada
 Sección: Técnicas
 URL: https://manualsamur.es/manual/609_01-cesarea-postparada
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 Una vez indicada la cesárea (PCR de causa irreversible), mantenga las mejores condiciones de asepsia.
 Prepare la asistencia por un número suficiente de sanitarios para:
@@ -8280,7 +8833,7 @@ No se suturará el peritoneo visceral ni parietal, ni la pared abdominal, para r
 # [609_02] Episotomía Mediolateral
 Sección: Técnicas
 URL: https://manualsamur.es/manual/609_02-episotomia-mediolateral
-Actualizado: 2026-05-09
+Actualizado: 2026-05-15
 Consideraciones previas:
 
 La necesidad de la realización de esta técnica depende de cada caso individualmente y de la decisión del médico que esté atendiendo el parto.

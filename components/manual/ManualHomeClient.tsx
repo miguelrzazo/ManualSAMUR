@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   BookMarked,
   BookOpen,
@@ -13,10 +12,8 @@ import {
   FilterX,
   History,
   LayoutGrid,
-  Network,
   Clock,
 } from "lucide-react";
-import { GraficaGlobal } from "@/components/manual/GraficaGlobal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
 import {
@@ -31,7 +28,7 @@ import {
 import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
 import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
 
-const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos", "General"];
+const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos"];
 
 const CATEGORY_LABEL: Record<string, string> = {
   procedure: "Procedimientos",
@@ -51,6 +48,7 @@ const KIND_BADGE: Record<string, string> = {
   nuevo: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
   actualizado: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
   revisado: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  eliminado: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
   sync: "bg-muted text-muted-foreground",
 };
 
@@ -440,53 +438,6 @@ function ExplorerTree({
   );
 }
 
-// ─── Graph preview card (desktop only) ───────────────────────────────────────
-const PREVIEW_NODES = [
-  { cx: 50,  cy: 50,  r: 8, fill: "#ef4444" },
-  { cx: 120, cy: 28,  r: 5, fill: "#3b82f6" },
-  { cx: 200, cy: 55,  r: 6, fill: "#f59e0b" },
-  { cx: 80,  cy: 92,  r: 4, fill: "#06b6d4" },
-  { cx: 155, cy: 88,  r: 5, fill: "#10b981" },
-  { cx: 240, cy: 30,  r: 4, fill: "#8b5cf6" },
-];
-const PREVIEW_EDGES = [[0, 1], [0, 3], [1, 2], [1, 4], [2, 5], [3, 4]];
-
-function GraphCard({ procedureCount, linkCount, onOpen }: {
-  procedureCount: number;
-  linkCount: number;
-  onOpen: () => void;
-}) {
-  return (
-    <button
-      onClick={onOpen}
-      className="hidden md:flex w-full items-center gap-4 rounded-xl border border-border/60 bg-card/40 hover:bg-card/70 transition-colors px-4 py-3 mb-4 text-left group"
-    >
-      <div className="flex-shrink-0 rounded-lg border border-border/40 bg-muted/30 overflow-hidden w-[100px] h-[56px]">
-        <svg width="100" height="56" viewBox="0 0 270 120" className="opacity-60 group-hover:opacity-85 transition-opacity">
-          {PREVIEW_EDGES.map(([from, to], i) => {
-            const a = PREVIEW_NODES[from];
-            const b = PREVIEW_NODES[to];
-            return <line key={i} x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy} stroke="currentColor" strokeOpacity={0.25} strokeWidth={1.2} />;
-          })}
-          {PREVIEW_NODES.map((node, i) => (
-            <circle key={i} cx={node.cx} cy={node.cy} r={node.r} fill={node.fill} opacity={0.85} />
-          ))}
-        </svg>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <Network className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-          <span className="text-xs font-semibold">Gráfica de relaciones</span>
-        </div>
-        <p className="text-[11px] text-muted-foreground">{procedureCount} nodos · {linkCount} conexiones</p>
-      </div>
-      <div className="flex-shrink-0 flex items-center gap-1 text-xs text-primary group-hover:gap-1.5 transition-all">
-        Ver <ArrowRight className="h-3 w-3" />
-      </div>
-    </button>
-  );
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 export function ManualHomeClient({
   sidebarSections,
@@ -494,17 +445,19 @@ export function ManualHomeClient({
   syncMetadata,
   updateEvents,
 }: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialSection = searchParams.get("section") ?? undefined;
   const initialGroup = searchParams.get("group") ?? undefined;
   const initialSubgroup = searchParams.get("subgroup") ?? undefined;
   const validIds = useMemo(() => allProcedures.map((p) => p.id), [allProcedures]);
   const validIdSet = useMemo(() => new Set(validIds), [validIds]);
+  const idToSlug = useMemo(() => new Map(allProcedures.map((p) => [p.id, p.slug])), [allProcedures]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [seenEventIds, setSeenEventIds] = useState<string[]>([]);
   const [activeSectionFilter, setActiveSectionFilter] = useState<string | undefined>(initialSection);
-  const [view, setView] = useState<"list" | "graph">("list");
+
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [expandedDiffs, setExpandedDiffs] = useState<Set<string>>(new Set());
 
@@ -555,10 +508,7 @@ export function ManualHomeClient({
     section.groups.flatMap((group) => group.subgroups.flatMap((subgroup) => subgroup.procedures)),
   );
 
-  const totalLinks = useMemo(
-    () => allProcedures.reduce((acc, p) => acc + (p.related?.length ?? 0), 0),
-    [allProcedures],
-  );
+
 
   const sortedUpdateEvents = useMemo(
     () => [...updateEvents].sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`)),
@@ -569,7 +519,7 @@ export function ManualHomeClient({
 
   const syncGroups = useMemo(() => {
     const groupMap = new Map<string, ManualUpdateEvent[]>();
-    for (const event of sortedUpdateEvents) {
+    for (const event of sortedUpdateEvents.filter((e) => e.isNewThisWeek)) {
       const dateKey = (event.approvedAt ?? event.effectiveDate).slice(0, 10);
       const group = groupMap.get(dateKey) ?? [];
       group.push(event);
@@ -628,7 +578,10 @@ export function ManualHomeClient({
         <div className="flex items-center gap-2.5">
           <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
           <div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight leading-tight">Manual SAMUR-PC</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight leading-tight">Manual Procedimientos</h1>
+            <p className="text-[11px] font-medium text-muted-foreground/80 mt-1 uppercase tracking-wider">
+              SAMUR - Protección Civil <span className="text-red-500 font-bold opacity-80">(Versión NO Oficial)</span>
+            </p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {allProcedures.length} procedimientos · {sidebarSections.length} secciones
             </p>
@@ -657,14 +610,14 @@ export function ManualHomeClient({
 
       {/* ── Timeline history modal ── */}
       <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
-        <DialogContent className="w-[95vw] max-w-2xl">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <History className="h-4 w-4" />
               Historial de actualizaciones
             </DialogTitle>
           </DialogHeader>
-          <div className="max-h-[68vh] overflow-auto pr-1 -mr-1">
+          <div className="flex-1 overflow-auto pr-1 -mr-1">
             <div className="relative pl-6">
               {/* vertical timeline line */}
               <div className="absolute left-2 top-2 bottom-2 w-px bg-border/50" />
@@ -708,7 +661,27 @@ export function ManualHomeClient({
                                     <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide flex-shrink-0 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
                                       {event.changeKind.toUpperCase()}
                                     </span>
-                                    <span className="text-xs flex-1 text-foreground/80 min-w-0">{event.summary}</span>
+                                    {(() => {
+                                      const cat = event.category ?? "procedure";
+                                      const pid = event.procedureIds[0];
+                                      const href = cat === "codigo"
+                                        ? "/codigos"
+                                        : cat === "vademecum"
+                                          ? "/vademecum"
+                                          : pid && idToSlug.has(pid)
+                                            ? `/manual/${idToSlug.get(pid)}`
+                                            : null;
+                                      return href ? (
+                                        <button
+                                          onClick={() => { router.push(href); setHistoryModalOpen(false); }}
+                                          className="text-xs flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors truncate"
+                                        >
+                                          {event.summary}
+                                        </button>
+                                      ) : (
+                                        <span className="text-xs flex-1 text-foreground/80 min-w-0 truncate">{event.summary}</span>
+                                      );
+                                    })()}
                                     {event.diff && (
                                       <button
                                         onClick={() => handleExpandDiff(event.eventId, event.isNewThisWeek)}
@@ -777,90 +750,68 @@ export function ManualHomeClient({
       )}
 
       {/* ── Main explorer ── */}
-      {view === "graph" ? (
-        <div>
-          <button
-            onClick={() => setView("list")}
-            className="flex items-center gap-1.5 mb-4 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver a la lista
-          </button>
-          <GraficaGlobal procedures={allProcedures} />
-        </div>
-      ) : (
-        <>
-          {/* Graph card — desktop only, above explorer */}
-          <GraphCard
-            procedureCount={allProcedures.length}
-            linkCount={totalLinks}
-            onOpen={() => setView("graph")}
-          />
+      {/* MOBILE: section card grid */}
+      <div className="md:hidden">
+        <SectionCardGrid
+          sections={sortedSections}
+          activeSection={activeSectionFilter}
+          onSelect={setActiveSectionFilter}
+        />
+      </div>
 
-          {/* MOBILE: section card grid — hidden when graph view or no sections */}
-          <div className="md:hidden">
-            <SectionCardGrid
-              sections={sortedSections}
-              activeSection={activeSectionFilter}
-              onSelect={setActiveSectionFilter}
-            />
-          </div>
+      {/* DESKTOP: underline section tabs */}
+      <div className="hidden md:block">
+        <SectionTabs
+          sections={sortedSections}
+          activeSection={activeSectionFilter}
+          onSelect={setActiveSectionFilter}
+        />
+      </div>
 
-          {/* DESKTOP: underline section tabs */}
-          <div className="hidden md:block">
-            <SectionTabs
-              sections={sortedSections}
-              activeSection={activeSectionFilter}
-              onSelect={setActiveSectionFilter}
-            />
-          </div>
-
-          {/* Filter breadcrumb + clear */}
-          {(effectiveSection || initialGroup || initialSubgroup) && (
-            <div className="flex flex-wrap items-center gap-1.5 mt-3 mb-2">
-              {effectiveSection && (
-                <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${SECTION_META[effectiveSection]?.badge ?? "bg-muted text-muted-foreground"}`}>
-                  {effectiveSection.toUpperCase()}
-                </span>
-              )}
-              {initialGroup && (
-                <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">{initialGroup}</span>
-              )}
-              <span className="text-[11px] text-muted-foreground tabular-nums">{visibleProcedures.length} resultados</span>
-              <Link
-                href="/manual"
-                onClick={() => setActiveSectionFilter(undefined)}
-                className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors ml-auto"
-              >
-                <FilterX className="h-3 w-3" />
-                Limpiar
-              </Link>
-            </div>
+      {/* Filter breadcrumb + clear */}
+      {(effectiveSection || initialGroup || initialSubgroup) && (
+        <div className="flex flex-wrap items-center gap-1.5 mt-3 mb-2">
+          {effectiveSection && (
+            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${SECTION_META[effectiveSection]?.badge ?? "bg-muted text-muted-foreground"}`}>
+              {effectiveSection.toUpperCase()}
+            </span>
           )}
-
-          {/* Explorer tree — groups only, no section accordion */}
-          <div className={effectiveSection ? "mt-3" : "mt-3 md:mt-0"}>
-            {/* On mobile: only show tree when a section is selected */}
-            <div className={`md:hidden ${effectiveSection ? "" : "hidden"}`}>
-              <ExplorerTree
-                sections={visibleSections}
-                validIds={validIds}
-                favoriteIds={favoriteIds}
-                onFavoritesChange={refreshCollections}
-              />
-            </div>
-            {/* On desktop: always show tree */}
-            <div className="hidden md:block">
-              <ExplorerTree
-                sections={visibleSections}
-                validIds={validIds}
-                favoriteIds={favoriteIds}
-                onFavoritesChange={refreshCollections}
-              />
-            </div>
-          </div>
-        </>
+          {initialGroup && (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">{initialGroup}</span>
+          )}
+          <span className="text-[11px] text-muted-foreground tabular-nums">{visibleProcedures.length} resultados</span>
+          <Link
+            href="/manual"
+            onClick={() => setActiveSectionFilter(undefined)}
+            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors ml-auto"
+          >
+            <FilterX className="h-3 w-3" />
+            Limpiar
+          </Link>
+        </div>
       )}
+
+      {/* Explorer tree — groups only, no section accordion */}
+      <div className={effectiveSection ? "mt-3" : "mt-3 md:mt-0"}>
+        {/* On mobile: only show tree when a section is selected */}
+        <div className={`md:hidden ${effectiveSection ? "" : "hidden"}`}>
+          <ExplorerTree
+            sections={visibleSections}
+            validIds={validIds}
+            favoriteIds={favoriteIds}
+            onFavoritesChange={refreshCollections}
+          />
+        </div>
+        {/* On desktop: always show tree */}
+        <div className="hidden md:block">
+          <ExplorerTree
+            sections={visibleSections}
+            validIds={validIds}
+            favoriteIds={favoriteIds}
+            onFavoritesChange={refreshCollections}
+          />
+        </div>
+      </div>
 
       {/* ── Footer stats ── */}
       <div className="mt-6 flex flex-wrap gap-3 text-[11px] text-muted-foreground border-t border-border/40 pt-3">
@@ -876,17 +827,7 @@ export function ManualHomeClient({
         )}
       </div>
 
-      {/* ── Mobile FAB for graph ── */}
-      {view === "list" && (
-        <button
-          onClick={() => setView("graph")}
-          aria-label="Ver gráfica global"
-          className="md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+0.75rem)] right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-primary-foreground shadow-lg text-xs font-semibold"
-        >
-          <Network className="h-4 w-4" />
-          Gráfica
-        </button>
-      )}
+
     </div>
   );
 }

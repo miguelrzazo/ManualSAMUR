@@ -8,6 +8,7 @@ import { NavigationSheet } from "@/components/mapa/NavigationSheet";
 import { cn } from "@/lib/utils";
 import { Building2, MapPin, ChevronRight } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
+import type MapLibreGL from "maplibre-gl";
 
 interface Hospital {
   id: string;
@@ -61,25 +62,34 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
   const [showStatus4, setShowStatus4] = useState(false);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const [map, setMap] = useState<MapLibreGL.Map | null>(null);
 
   const publicHospitals = hospitals.filter((h) => h.type === "public");
   const privateHospitals = hospitals.filter((h) => h.type === "private");
 
-  // Auto-select hospital from URL parameter
+  // Auto-select hospital or base from URL parameter
   useEffect(() => {
     const hospitalId = searchParams.get('hospital');
+    const baseId = searchParams.get('base');
     if (hospitalId) {
       const hospital = hospitals.find(h => h.id === hospitalId);
       if (hospital) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelected({ kind: "hospital", data: hospital });
-        toast({
-          title: "Hospital seleccionado",
-          description: hospital.shortName,
-        });
+        if (hospital.type === "private") setShowPrivate(true);
+        if (map) {
+          map.flyTo({ center: [hospital.lng, hospital.lat], zoom: 15, duration: 1500 });
+        }
+      }
+    } else if (baseId) {
+      const base = bases.find(b => b.id === baseId);
+      if (base) {
+        setSelected({ kind: "base", data: base });
+        if (map) {
+          map.flyTo({ center: [base.lng, base.lat], zoom: 15, duration: 1500 });
+        }
       }
     }
-  }, [searchParams, hospitals, toast]);
+  }, [searchParams, hospitals, bases, map]);
 
   const findNearestHospital = (userCoords: { longitude: number; latitude: number }) => {
     let nearestHospital: Hospital | null = null;
@@ -101,12 +111,13 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
         title: "Hospital más cercano",
         description: `${nearestHospital.shortName} - ${nearestHospital.name}`,
       });
-      // Optionally fly to the hospital
-      // map?.flyTo({
-      //   center: [nearestHospital.lng, nearestHospital.lat],
-      //   zoom: 14,
-      //   duration: 1500,
-      // });
+      if (map) {
+        map.flyTo({
+          center: [nearestHospital.lng, nearestHospital.lat],
+          zoom: 14,
+          duration: 1500,
+        });
+      }
     }
   };
 
@@ -114,6 +125,7 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
     <div className="map-route-shell relative flex h-[calc(100dvh-4rem)] md:h-[calc(100dvh-3.5rem)]">
       <div className="relative min-h-0 flex-1">
         <Map
+          ref={setMap}
           center={[-3.703, 40.416]}
           zoom={11}
           minZoom={9.8}
@@ -165,12 +177,12 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
                 <div className="relative cursor-pointer group">
                   <div className="flex flex-col items-center">
                     <div
-                      className="h-7 w-7 rotate-45 border-2 border-white shadow-lg flex items-center justify-center bg-violet-600 hover:scale-110 transition-transform"
-                      style={{ boxShadow: "0 2px 8px rgba(124,58,237,0.5)" }}
+                      className="h-7 w-7 rotate-45 border-2 border-white shadow-lg flex items-center justify-center bg-green-600 hover:scale-110 transition-transform"
+                      style={{ boxShadow: "0 2px 8px rgba(22,163,74,0.5)" }}
                     >
                       <span className="-rotate-45 text-[10px] font-bold text-white leading-none">H</span>
                     </div>
-                    <span className="text-[9px] font-bold text-white bg-violet-700/80 backdrop-blur-sm px-1 py-0.5 rounded mt-1.5 whitespace-nowrap shadow">
+                    <span className="text-[9px] font-bold text-white bg-green-700/80 backdrop-blur-sm px-1 py-0.5 rounded mt-1.5 whitespace-nowrap shadow">
                       {h.shortName.length > 12 ? h.shortName.slice(0, 11) + "…" : h.shortName}
                     </span>
                   </div>
@@ -220,7 +232,7 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
               toggle: () => setShowPrivate((v) => !v),
               icon: Building2,
               label: `Privados (${privateHospitals.length})`,
-              activeClass: "bg-violet-600 text-white border-violet-700",
+              activeClass: "bg-green-600 text-white border-green-700",
             },
             {
               active: showBases,

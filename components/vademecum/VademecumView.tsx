@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { VADEMECUM_TABS, type VademecumTabKey } from "@/lib/vademecum-config";
 import { buildAlphabetSections } from "@/lib/vademecum-utils";
 import type { ManualReverseMention } from "@/lib/manual-relations-index";
+import { BackToTop } from "@/components/shared/BackToTop";
 
 interface Drug {
   id: string;
@@ -480,7 +481,6 @@ export function VademecumView({
   const highlightedDrugId = searchParams.get("farmaco");
   const [tab, setTab] = useState<Tab>("farmacos");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeLetter, setActiveLetter] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -573,9 +573,6 @@ export function VademecumView({
           ? fluidos.length
           : normalizedCommercials.length;
 
-  const scrollToTop = useCallback(() => {
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   const jumpToLetter = useCallback((letter: string) => {
     const container = scrollContainerRef.current;
@@ -595,8 +592,6 @@ export function VademecumView({
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-
-    setShowBackToTop(container.scrollTop > 200);
 
     if (!showAlphabetNav) return;
 
@@ -650,6 +645,7 @@ export function VademecumView({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
+        id="vademecum-scroll"
         className="flex-1 min-h-0 overflow-y-auto relative"
       >
       <div className="border-b border-border/60 px-4 md:px-6">
@@ -799,15 +795,7 @@ export function VademecumView({
         </div>
       </div>
 
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-background border border-border/60 shadow-md text-muted-foreground hover:text-foreground hover:border-border transition-colors"
-          aria-label="Volver al inicio"
-        >
-          <ChevronUp className="h-4 w-4" />
-        </button>
-      )}
+      <BackToTop scrollContainerId="vademecum-scroll" />
 
       <div className="px-4 py-2.5 text-xs text-muted-foreground border-t border-border/30 bg-muted/10 sticky bottom-0">
         {resultCount} de {totalCount}{" "}

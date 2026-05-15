@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
+import { createPatch } from "diff";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -536,6 +537,16 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
       const changeType = blockedByEditorial ? "blocked_by_editorial" : rawChangeType;
       const changeKind = classifyProcedureUpdateKind(existingSnapshot, snapshot, changeType);
 
+      let contentDiff: string | undefined;
+      if (changeType === "updated" && !blockedByEditorial && existingMeta?.content) {
+        const oldBody = existingMeta.content.trim();
+        const newBody = markdown.trim();
+        if (oldBody !== newBody) {
+          const patch: string = createPatch(id, oldBody, newBody, "", "", { context: 3 });
+          contentDiff = patch.split("\n").slice(0, 150).join("\n");
+        }
+      }
+
       changes.push({
         id,
         title: space.title,
@@ -545,6 +556,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         procedurePath: existingMeta?.filePath,
         sourceUpdated,
         source: space.url,
+        diff: contentDiff,
       });
 
       if (!dryRun && changeType !== "unchanged") {
@@ -567,6 +579,22 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     } catch (error) {
       failed++;
       errors.push(`${space.title}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  // Detect procedures that existed locally but were not discovered in this sync run
+  if (!allowedProcedureIds) {
+    const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)));
+    for (const [existingId, existingTitle] of Object.entries(loadExistingTitleMap())) {
+      if (!discoveredIds.has(existingId)) {
+        changes.push({
+          id: existingId,
+          title: existingTitle,
+          changeType: "deleted",
+          changeKind: "eliminado",
+          sourceUpdated: new Date().toISOString().slice(0, 10),
+        });
+      }
     }
   }
 
@@ -726,9 +754,11 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         ? "Nuevo"
         : change.changeKind === "revisado"
           ? "Revisado"
-          : change.changeType === "blocked_by_editorial"
-            ? "Bloqueado editorial"
-            : "Actualizado";
+          : change.changeKind === "eliminado" || change.changeType === "deleted"
+            ? "Eliminado"
+            : change.changeType === "blocked_by_editorial"
+              ? "Bloqueado editorial"
+              : "Actualizado";
       const summary = domain === "procedures"
         ? `${label}: ${change.id} ${change.title}`
         : `${domain} actualizado: ${change.title}`;
@@ -738,11 +768,12 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         origin: "wiki",
         officialUrl: change.source,
         procedureIds: domain === "procedures" ? [change.id] : [],
-        changeKind: change.changeKind ?? (change.changeType === "created" ? "nuevo" : "actualizado"),
+        changeKind: change.changeKind ?? (change.changeType === "created" ? "nuevo" : change.changeType === "deleted" ? "eliminado" : "actualizado"),
         summary,
         effectiveDate: change.sourceUpdated || run.finishedAt.slice(0, 10),
         approvedAt,
         isNewThisWeek: false,
+        diff: change.diff,
       });
     }
   }

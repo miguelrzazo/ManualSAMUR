@@ -27,6 +27,17 @@
   }
 }
 
+@keyframes highlight-fade {
+  0% {
+    background-color: hsl(var(--primary) / 0.15);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
 .manual-news-mask {
   mask-image: linear-gradient(90deg, transparent, black 3rem, black calc(100% - 3rem), transparent);
 }

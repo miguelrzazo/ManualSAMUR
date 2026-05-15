@@ -14,10 +14,11 @@ const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SAMUR Manual",
-  description: "Manual de procedimientos SAMUR-Protección Civil",
+  title: "Manual Procedimientos SAMUR-PC",
+  description: "Manual de procedimientos SAMUR-Protección Civil (Versión NO Oficial)",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "SAMUR Manual" },
+  icons: { icon: "/favicon.png", apple: "/favicon.png" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Manual SAMUR" },
 };
 
 export const viewport: Viewport = {

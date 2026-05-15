@@ -14,7 +14,6 @@ import {
   splitProcedureContentSections,
 } from "@/lib/manual-data";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { GraficaLocal } from "@/components/manual/GraficaLocal";
 import {
   Calendar,
   ExternalLink,
@@ -222,26 +221,6 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
 
 
-        {/* Incomplete content warning — when body is very short */}
-        {procedure.content.trim().length < 350 && (
-          <div className="mb-4 rounded-lg border border-amber-200/70 bg-amber-50/60 dark:border-amber-800/40 dark:bg-amber-950/20 px-4 py-3 flex flex-wrap items-start gap-3" data-print-hide>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Contenido pendiente de sincronización</p>
-              <p className="text-xs text-amber-700/80 dark:text-amber-400/80 mt-0.5">El cuerpo de este procedimiento no se importó correctamente desde el wiki oficial. Los anexos PDF están disponibles abajo.</p>
-            </div>
-            {procedure.source && (
-              <a
-                href={procedure.source}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200/80 dark:border-amber-700/40 px-3 py-1.5 text-xs font-medium text-amber-800 dark:text-amber-300 hover:bg-amber-200/60 transition-colors"
-              >
-                <ExternalLink className="h-3 w-3" />
-                Ver en wiki oficial
-              </a>
-            )}
-          </div>
-        )}
 
         {/* Recent update badge — only when event < 30 days */}
         {(() => {
@@ -250,7 +229,7 @@ export default async function ProcedurePage({ params }: Props) {
           if (!recent) return null;
           return (
             <ContentDiff
-              changeKind={recent.changeKind as "nuevo" | "revisado" | "actualizado" | "sync"}
+              changeKind={recent.changeKind as "nuevo" | "revisado" | "actualizado" | "eliminado" | "sync"}
               changedAt={recent.effectiveDate}
               summary={recent.summary}
               diff={recent.diff}
@@ -381,15 +360,6 @@ export default async function ProcedurePage({ params }: Props) {
               emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
           )}
-          {hasGraphData && (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Network className="h-4 w-4 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica De Conexiones</h3>
-              </div>
-              <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
-            </div>
-          )}
         </div>
       </article>
 
@@ -422,15 +392,6 @@ export default async function ProcedurePage({ params }: Props) {
               previewByProcedureId={previewByProcedureId}
               emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
             />
-          )}
-          {hasGraphData && (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Network className="h-4 w-4 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-muted-foreground">Gráfica Local</h3>
-              </div>
-              <GraficaLocal current={procedure} related={related} backlinks={backlinks} suggested={suggested} />
-            </div>
           )}
         </div>
       </aside>

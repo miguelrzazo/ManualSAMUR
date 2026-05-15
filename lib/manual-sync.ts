@@ -7,11 +7,11 @@ export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
-export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial";
+export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial" | "deleted";
 export type AttachmentKind = "image" | "pdf" | "other";
 export type EditorialStatus = "source" | "enhanced";
 export type ManualUpdateOrigin = "wiki" | "official-pdf";
-export type ManualUpdateChangeKind = "nuevo" | "revisado" | "actualizado" | "sync";
+export type ManualUpdateChangeKind = "nuevo" | "revisado" | "actualizado" | "eliminado" | "sync";
 
 export interface ManualAttachment {
   sourceUrl: string;
@@ -43,6 +43,7 @@ export interface SyncChange {
   procedurePath?: string;
   sourceUpdated?: string;
   source?: string;
+  diff?: string;
 }
 
 export interface SyncDomainSummary {
@@ -717,7 +718,7 @@ export function rewriteAttachmentLinks(content: string, attachments: ManualAttac
     const escapedFilename = escapeRegExp(decodeURIComponent(attachment.sourceUrl.split("/").at(-1)?.split("?")[0] ?? ""));
 
     return nextContent
-      .replace(new RegExp(`attach:${escapedFilename}(?:\\|\\|[^\\]]+)?`, "g"), attachment.localPath)
+      .replace(new RegExp(`attach:${escapedFilename}(?:\\|\\|[^\\n\\]]+)?`, "g"), attachment.localPath)
       .replace(new RegExp(`attach:${escapedFilename}(?=\\]\\])`, "g"), attachment.localPath)
       .replace(new RegExp(`attach:${escapedFilename}`, "g"), attachment.localPath)
       .replace(new RegExp(`image:${escapedFilename}(?:\\|\\|[^\\n]+)?`, "g"), `![](${attachment.localPath})`)

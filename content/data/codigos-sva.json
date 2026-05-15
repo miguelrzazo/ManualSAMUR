@@ -2166,55 +2166,64 @@
     "code": "W.1.0",
     "name": "Otros",
     "category": "Cierre",
-    "description": "Servicio originado por llamada de Policía Nacional (091)"
+    "description": "Servicio originado por llamada de Policía Nacional (091)",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.1",
     "name": "Por 091",
     "category": "Cierre",
-    "description": "Servicio originado por llamada de Policía Municipal (092)"
+    "description": "Servicio originado por llamada de Policía Municipal (092)",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.2",
     "name": "Por 092",
     "category": "Cierre",
-    "description": "Servicio originado por coordinación con 112"
+    "description": "Servicio originado por coordinación con 112",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.3",
     "name": "Por 112",
     "category": "Cierre",
-    "description": "Servicio originado por coordinación con SUMMA112"
+    "description": "Servicio originado por coordinación con SUMMA112",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.4",
     "name": "Por SUMMA112",
     "category": "Cierre",
-    "description": "Servicio originado por Bomberos (080)"
+    "description": "Servicio originado por Bomberos (080)",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.5",
     "name": "Por 080",
     "category": "Cierre",
-    "description": "por 080"
+    "description": "por 080",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.6",
     "name": "Tras rellamada",
     "category": "Cierre",
-    "description": "tras rellamada"
+    "description": "tras rellamada",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.7",
     "name": "Por demandante",
     "category": "Cierre",
-    "description": "por demandante"
+    "description": "por demandante",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.8",
     "name": "Por recurso más cercano",
     "category": "Cierre",
-    "description": "por recurso más cercano"
+    "description": "por recurso más cercano",
+    "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.2.0",

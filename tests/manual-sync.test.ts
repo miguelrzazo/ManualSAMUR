@@ -95,8 +95,8 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
     },
   );
 
-  assert.equal(metadata.manualVersion, "Abril 2026");
-  assert.equal(metadata.manualVersionCurrent, "Abril 2026");
+  assert.equal(metadata.manualVersion, "V 1.1 Mayo 2026);
+  assert.equal(metadata.manualVersionCurrent, "V 1.1 Mayo 2026");
   assert.equal(metadata.lastSyncAt, "2026-05-05T10:02:00.000Z");
   assert.equal(metadata.tickerEnabled, true);
   assert.deepEqual(metadata.tickerItems, [

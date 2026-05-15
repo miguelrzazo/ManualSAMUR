@@ -26,6 +26,7 @@ const RESULT_ICONS = {
   drug: Pill,
   code: Code,
   hospital: MapPin,
+  base: MapPin,
 };
 
 const RESULT_TYPES = {
@@ -33,6 +34,7 @@ const RESULT_TYPES = {
   drug: "Medicamento",
   code: "Código",
   hospital: "Hospital",
+  base: "Base",
 };
 
 function renderHighlightedSnippet(result: SearchResult): ReactNode {
@@ -88,7 +90,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
   const { term, filter } = parseQuery(query);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<{ drugs: any[]; codes: any[]; hospitals: any[] } | null>(null);
+  const [data, setData] = useState<{ drugs: any[]; codes: any[]; hospitals: any[]; bases: any[] } | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -107,6 +109,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           upsi,
           upsq,
           hospitals,
+          bases,
         ] = await Promise.all([
           import("@/content/data/vademecum.json"),
           import("@/content/data/codigos-indicativos.json"),
@@ -120,6 +123,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           import("@/content/data/codigos-upsi.json"),
           import("@/content/data/codigos-upsq.json"),
           import("@/content/data/hospitals.json"),
+          import("@/content/data/bases.json"),
         ]);
 
         if (!mounted) return;
@@ -138,7 +142,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           ...upsq.default,
         ];
 
-        setData({ drugs, codes, hospitals: hospitals.default });
+        setData({ drugs, codes, hospitals: hospitals.default, bases: bases.default });
       } catch (error) {
         console.error("Failed to load search data:", error);
       }
@@ -155,7 +159,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
       }
       setIsLoading(true);
       try {
-        const searchResults = await globalSearch(term, procedures, data.drugs, data.codes, data.hospitals);
+        const searchResults = await globalSearch(term, procedures, data.drugs, data.codes, data.hospitals, data.bases);
         setResults(filter ? searchResults.filter((r) => r.type === filter) : searchResults);
       } catch (error) {
         console.error("Search failed:", error);

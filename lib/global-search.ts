@@ -29,8 +29,16 @@ interface Hospital {
   district: string;
 }
 
+interface Base {
+  id: string;
+  number: number;
+  name: string;
+  district: string;
+  address: string;
+}
+
 export interface SearchResult {
-  type: "procedure" | "drug" | "code" | "hospital";
+  type: "procedure" | "drug" | "code" | "hospital" | "base";
   id: string;
   title: string;
   subtitle?: string;
@@ -46,6 +54,7 @@ export interface SearchResult {
 let drugsFuse: Fuse<Drug> | null = null;
 let codesFuse: Fuse<Code> | null = null;
 let hospitalsFuse: Fuse<Hospital> | null = null;
+let basesFuse: Fuse<Base> | null = null;
 
 function buildDrugsFuse(drugs: Drug[]): Fuse<Drug> {
   drugsFuse = new Fuse(drugs, {
@@ -103,6 +112,25 @@ function buildHospitalsFuse(hospitals: Hospital[]): Fuse<Hospital> {
     minMatchCharLength: 2,
   });
   return hospitalsFuse;
+}
+
+function buildBasesFuse(bases: Base[]): Fuse<Base> {
+  basesFuse = new Fuse(bases, {
+    keys: [
+      { name: "id", weight: 2.0 },
+      { name: "number", weight: 2.0 },
+      { name: "name", weight: 1.8 },
+      { name: "district", weight: 0.8 },
+      { name: "address", weight: 0.7 },
+    ],
+    threshold: 0.35,
+    includeScore: true,
+    includeMatches: true,
+    ignoreLocation: true,
+    ignoreDiacritics: true,
+    minMatchCharLength: 1,
+  });
+  return basesFuse;
 }
 
 function normalizeForSearch(value: unknown): string {
@@ -218,12 +246,33 @@ function mapHospitalResult(query: string, result: FuseResult<Hospital>): SearchR
   };
 }
 
+function mapBaseResult(query: string, result: FuseResult<Base>): SearchResult {
+  const matches = result.matches ?? [];
+  return {
+    type: "base",
+    id: result.item.id,
+    title: `Base ${result.item.number} — ${result.item.name}`,
+    subtitle: `${result.item.district} • ${result.item.address}`,
+    badge: `B${result.item.number}`,
+    href: `/mapa?base=${result.item.id}`,
+    searchText: `base ${result.item.number} ${result.item.id} ${result.item.name} ${result.item.district} ${result.item.address}`,
+    score: computeCommonScore(
+      query,
+      result.score,
+      matches,
+      [result.item.id, String(result.item.number), result.item.name, result.item.district, result.item.address]
+    ),
+    matchedField: resolveMatchedField(matches),
+  };
+}
+
 export async function globalSearch(
   query: string,
   procedures: ProcedureMeta[],
   drugs: Drug[],
   codes: Code[],
-  hospitals: Hospital[]
+  hospitals: Hospital[],
+  bases: Base[]
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
@@ -260,10 +309,13 @@ export async function globalSearch(
 
   const hospitalResults = sortResults(buildHospitalsFuse(hospitals).search(query).slice(0, 5).map((result) => mapHospitalResult(query, result)));
 
+  const baseResults = sortResults(buildBasesFuse(bases).search(query).slice(0, 5).map((result) => mapBaseResult(query, result)));
+
   return flattenGroups([
     procedureResults,
     drugResults,
     codeResults,
     hospitalResults,
+    baseResults,
   ]);
 }

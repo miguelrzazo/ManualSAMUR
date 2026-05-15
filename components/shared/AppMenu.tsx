@@ -59,7 +59,7 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogHeader className="sr-only">
-          <DialogTitle>Acerca de SAMUR Manual</DialogTitle>
+          <DialogTitle>Acerca de Manual Procedimientos</DialogTitle>
         </DialogHeader>
         <DialogContent className="sm:max-w-xs p-0 overflow-hidden gap-0 flex flex-col" style={{ maxHeight: "min(90vh, 640px)" }}>
           <div className="flex items-center gap-3 px-5 py-4 border-b border-border/50 flex-shrink-0">
@@ -67,7 +67,7 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
               <span className="text-sm font-bold text-primary-foreground">S</span>
             </div>
             <div>
-              <p className="text-sm font-semibold leading-tight">SAMUR Manual</p>
+              <p className="text-sm font-semibold leading-tight">Manual Procedimientos</p>
               <p className="text-xs text-muted-foreground">v{APP_VERSION}</p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
                 Aviso de uso
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Adaptación no oficial del Manual de Procedimientos de SAMUR-Protección Civil. El contenido clínico pertenece a SAMUR-PC / Ayuntamiento de Madrid.
+                Esta es una adaptación NO oficial del Manual de Procedimientos de SAMUR-Protección Civil de la ciudad de Madrid, con el fin de hacer una lectura más cómoda, especialmente para dispositivos móviles. Todo el contenido clínico pertenece a SAMUR-PC, sus autores y al Ayuntamiento de Madrid.
               </p>
             </section>
 
@@ -183,13 +183,13 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
             <section className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                 <GitBranch className="h-3.5 w-3.5 text-muted-foreground" />
-                Autor de la aplicación
+                Sobre mí
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">MR</div>
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-foreground">Miguel Rosa Zazo</p>
-                  <p className="text-[11px] text-muted-foreground">Versión digital del Manual SAMUR-PC</p>
+                  <p className="text-xs font-medium text-foreground">Miguel Rosa (Vol. 15970)</p>
+                  <p className="text-[11px] text-muted-foreground">Todo feedback es bienvenido, por favor, envia tus bugs o sugerencias al correo de contacto.</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -201,7 +201,7 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
                   GitHub
                 </button>
                 <button
-                  onClick={() => openExternal("mailto:mrosaz00@estudiantes.unileon.es")}
+                  onClick={() => openExternal("mailto:feedback_manual_proc.duchess916@passinbox.com")}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
                 >
                   <Mail className="h-3 w-3" />
