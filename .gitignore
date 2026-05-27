@@ -39,4 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated iOS data (built by export-ios-data.js at build time)
+/public/data/
+
+# Xcode derived data
+apps/ios/ManualSAMUR.xcodeproj/xcuserdata/
+apps/ios/ManualSAMUR.xcodeproj/project.xcworkspace/xcuserdata/
+apps/ios/*.xcworkspace/
+apps/ios/ManualSAMUR/DerivedData/
 HistoricoActualizaciones_abril 2026.pdf.pdf
