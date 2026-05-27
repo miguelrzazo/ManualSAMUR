@@ -33,6 +33,27 @@
 		CCBECB52B7044DB99E7B6EC9 /* vademecum.json in Resources */ = {isa = PBXBuildFile; fileRef = AECB8989B2204FE3AE33F09D /* vademecum.json */; };
 		47EB8EA1E9F64CB6918E42F5 /* codigos.json in Resources */ = {isa = PBXBuildFile; fileRef = 99EC9311291848C3B1C65883 /* codigos.json */; };
 		F35B389CA4214A84959B6500 /* hospitals.json in Resources */ = {isa = PBXBuildFile; fileRef = B76AA2AB4CB74B58A607B8D8 /* hospitals.json */; };
+		AA1234567890ABCDEF123456 /* Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1234567890ABCDEF123456 /* Base.swift */; };
+		CC1234567890ABCDEF123456 /* Status4Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1234567890ABCDEF123456 /* Status4Entry.swift */; };
+		EE1234567890ABCDEF123456 /* bases.json in Resources */ = {isa = PBXBuildFile; fileRef = FF1234567890ABCDEF123456 /* bases.json */; };
+		001234567890ABCDEF123456 /* status4.json in Resources */ = {isa = PBXBuildFile; fileRef = 111234567890ABCDEF123456 /* status4.json */; };
+		A1B2C3D4E5F601234567ABCD /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F612345678ABCD /* GlobalSearchView.swift */; };
+		C1D2E3F4A5B601234567ABCD /* AbreviaturasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */; };
+		E1F2A3B4C5D601234567ABCD /* AppMenuSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */; };
+		A2B3C4D5E6F701234567ABCD /* abreviaturas.json in Resources */ = {isa = PBXBuildFile; fileRef = A2B3C4D5E6F712345678ABCD /* abreviaturas.json */; };
+		DD084EC6EAC84F7A908F894F /* CheatsheetSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC34734428D41E999823921 /* CheatsheetSection.swift */; };
+		1ED1ABED6A584C8F86540E44 /* CommercialDrug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70D3C12B221F474F8534BF16 /* CommercialDrug.swift */; };
+		CB412335E29A464F9D831518 /* Fluid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1DAEFE1D49401C9C4E8BD7 /* Fluid.swift */; };
+		44C92D2A391040DDBFA3005B /* PDFAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5402C8CE604604A1861622 /* PDFAttachment.swift */; };
+		D987CEFF31C84D51873AC38E /* Perfusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFFAEC6DD3841C68D539761 /* Perfusion.swift */; };
+		95D55726170A498EA2845DDF /* PerfusionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10FF60AA6CD4171A8E3EC54 /* PerfusionDetailView.swift */; };
+		92702C99AE5E458A9CA40A96 /* FluidDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFE760E73F24BC596FE63D6 /* FluidDetailView.swift */; };
+		39480F2E424141F686A63F74 /* ProcedureAnnexesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E20FCB236D407CA25400C4 /* ProcedureAnnexesView.swift */; };
+		22C5FB02B3184675B8379B96 /* codigos-cheatsheet.json in Resources */ = {isa = PBXBuildFile; fileRef = 3E0A69C6DEBA4FE3A2D52D3D /* codigos-cheatsheet.json */; };
+		2B114A337B0A4EEC96311492 /* fluidos.json in Resources */ = {isa = PBXBuildFile; fileRef = 390F0CF102C24A3C9F71DEDE /* fluidos.json */; };
+		78582CB7C80E41E390653904 /* pdf-classification.json in Resources */ = {isa = PBXBuildFile; fileRef = CD12258577424C69B324E1EF /* pdf-classification.json */; };
+		E7A132E6F1B244BCA77CA73B /* perfusiones.json in Resources */ = {isa = PBXBuildFile; fileRef = A4B744A6DF1741AFBC7C9CC9 /* perfusiones.json */; };
+		28FD9555640846E391C1A843 /* vademecum-comerciales.json in Resources */ = {isa = PBXBuildFile; fileRef = 2AF13C66682E4E6FB931EA44 /* vademecum-comerciales.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +84,27 @@
 		AECB8989B2204FE3AE33F09D /* vademecum.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vademecum.json; sourceTree = "<group>"; };
 		99EC9311291848C3B1C65883 /* codigos.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = codigos.json; sourceTree = "<group>"; };
 		B76AA2AB4CB74B58A607B8D8 /* hospitals.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = hospitals.json; sourceTree = "<group>"; };
+		BB1234567890ABCDEF123456 /* Base.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base.swift; sourceTree = "<group>"; };
+		DD1234567890ABCDEF123456 /* Status4Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status4Entry.swift; sourceTree = "<group>"; };
+		FF1234567890ABCDEF123456 /* bases.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bases.json; sourceTree = "<group>"; };
+		111234567890ABCDEF123456 /* status4.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status4.json; sourceTree = "<group>"; };
+		A1B2C3D4E5F612345678ABCD /* GlobalSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSearchView.swift; sourceTree = "<group>"; };
+		C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbreviaturasView.swift; sourceTree = "<group>"; };
+		E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMenuSheet.swift; sourceTree = "<group>"; };
+		A2B3C4D5E6F712345678ABCD /* abreviaturas.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = abreviaturas.json; sourceTree = "<group>"; };
+		DAC34734428D41E999823921 /* CheatsheetSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatsheetSection.swift; sourceTree = "<group>"; };
+		70D3C12B221F474F8534BF16 /* CommercialDrug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommercialDrug.swift; sourceTree = "<group>"; };
+		9B1DAEFE1D49401C9C4E8BD7 /* Fluid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fluid.swift; sourceTree = "<group>"; };
+		7A5402C8CE604604A1861622 /* PDFAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFAttachment.swift; sourceTree = "<group>"; };
+		2FFFAEC6DD3841C68D539761 /* Perfusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfusion.swift; sourceTree = "<group>"; };
+		D10FF60AA6CD4171A8E3EC54 /* PerfusionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfusionDetailView.swift; sourceTree = "<group>"; };
+		8AFE760E73F24BC596FE63D6 /* FluidDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidDetailView.swift; sourceTree = "<group>"; };
+		B0E20FCB236D407CA25400C4 /* ProcedureAnnexesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureAnnexesView.swift; sourceTree = "<group>"; };
+		3E0A69C6DEBA4FE3A2D52D3D /* codigos-cheatsheet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = codigos-cheatsheet.json; sourceTree = "<group>"; };
+		390F0CF102C24A3C9F71DEDE /* fluidos.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = fluidos.json; sourceTree = "<group>"; };
+		CD12258577424C69B324E1EF /* pdf-classification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pdf-classification.json; sourceTree = "<group>"; };
+		A4B744A6DF1741AFBC7C9CC9 /* perfusiones.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = perfusiones.json; sourceTree = "<group>"; };
+		2AF13C66682E4E6FB931EA44 /* vademecum-comerciales.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vademecum-comerciales.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +166,15 @@
 				14A04D8859A94D31B8DDE8BC /* Code.swift */,
 				64A9F152770E4791BF55463A /* Hospital.swift */,
 				757E3D40F9E44C52AB92B53C /* Manifest.swift */,
-			);
+				BB1234567890ABCDEF123456 /* Base.swift */,
+				DD1234567890ABCDEF123456 /* Status4Entry.swift */,
+			
+				DAC34734428D41E999823921 /* added */,
+				70D3C12B221F474F8534BF16 /* added */,
+				9B1DAEFE1D49401C9C4E8BD7 /* added */,
+				7A5402C8CE604604A1861622 /* added */,
+				2FFFAEC6DD3841C68D539761 /* added */,
+);
 			path = Models;
 			sourceTree = "<group>";
 		};
@@ -154,7 +204,9 @@
 			children = (
 				95E12014B4884A52972D652A /* ManualView.swift */,
 				9E115D5F465A4286AFDA7A92 /* ProcedureDetailView.swift */,
-			);
+			
+				B0E20FCB236D407CA25400C4 /* added */,
+);
 			path = Manual;
 			sourceTree = "<group>";
 		};
@@ -172,7 +224,10 @@
 			children = (
 				4E47FA49E8F54B368BBB11C1 /* VademecumView.swift */,
 				E8724F2E876943AF80AA63C9 /* DrugDetailView.swift */,
-			);
+			
+				D10FF60AA6CD4171A8E3EC54 /* added */,
+				8AFE760E73F24BC596FE63D6 /* added */,
+);
 			path = Vademecum;
 			sourceTree = "<group>";
 		};
@@ -191,6 +246,9 @@
 				D7F8F2CCCC3C43C8B6B807C4 /* SectionBadge.swift */,
 				058ED5171EAE4455A9E70B72 /* EmptySearchView.swift */,
 				C233C951F2994CEBB849A48F /* ColorExtension.swift */,
+				A1B2C3D4E5F612345678ABCD /* GlobalSearchView.swift */,
+				C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */,
+				E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -211,7 +269,16 @@
 				AECB8989B2204FE3AE33F09D /* vademecum.json */,
 				99EC9311291848C3B1C65883 /* codigos.json */,
 				B76AA2AB4CB74B58A607B8D8 /* hospitals.json */,
-			);
+				FF1234567890ABCDEF123456 /* bases.json */,
+				111234567890ABCDEF123456 /* status4.json */,
+				A2B3C4D5E6F712345678ABCD /* abreviaturas.json */,
+			
+				3E0A69C6DEBA4FE3A2D52D3D /* added */,
+				390F0CF102C24A3C9F71DEDE /* added */,
+				CD12258577424C69B324E1EF /* added */,
+				A4B744A6DF1741AFBC7C9CC9 /* added */,
+				2AF13C66682E4E6FB931EA44 /* added */,
+);
 			path = BundledData;
 			sourceTree = "<group>";
 		};
@@ -285,7 +352,16 @@
 				CCBECB52B7044DB99E7B6EC9 /* vademecum.json in Resources */,
 				47EB8EA1E9F64CB6918E42F5 /* codigos.json in Resources */,
 				F35B389CA4214A84959B6500 /* hospitals.json in Resources */,
-			);
+				EE1234567890ABCDEF123456 /* bases.json in Resources */,
+				001234567890ABCDEF123456 /* status4.json in Resources */,
+				A2B3C4D5E6F701234567ABCD /* abreviaturas.json in Resources */,
+			
+				22C5FB02B3184675B8379B96 /* codigos-cheatsheet.json in Resources */,
+				2B114A337B0A4EEC96311492 /* fluidos.json in Resources */,
+				78582CB7C80E41E390653904 /* pdf-classification.json in Resources */,
+				E7A132E6F1B244BCA77CA73B /* perfusiones.json in Resources */,
+				28FD9555640846E391C1A843 /* vademecum-comerciales.json in Resources */,
+);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
@@ -302,6 +378,8 @@
 				1E094FA316EB4DC4B0A33363 /* Code.swift in Sources */,
 				CA8BC90130AA4964911EFA9E /* Hospital.swift in Sources */,
 				5CCA7DE1BCF5485CB0E8844E /* Manifest.swift in Sources */,
+				AA1234567890ABCDEF123456 /* Base.swift in Sources */,
+				CC1234567890ABCDEF123456 /* Status4Entry.swift in Sources */,
 				950AF04E7DE542FC8E28BA8B /* DataStore.swift in Sources */,
 				505DEB4A608B463EA02E6725 /* DataService.swift in Sources */,
 				0B1C2DAD9DDE405B899B26B1 /* ManualView.swift in Sources */,
@@ -315,7 +393,19 @@
 				E2899DF2FF6F4044BB496AD4 /* SectionBadge.swift in Sources */,
 				83B7478990CD4D399CDC3CD3 /* EmptySearchView.swift in Sources */,
 				2F8329BD595A4F64936362E7 /* ColorExtension.swift in Sources */,
-			);
+				A1B2C3D4E5F601234567ABCD /* GlobalSearchView.swift in Sources */,
+				C1D2E3F4A5B601234567ABCD /* AbreviaturasView.swift in Sources */,
+				E1F2A3B4C5D601234567ABCD /* AppMenuSheet.swift in Sources */,
+			
+				DD084EC6EAC84F7A908F894F /* CheatsheetSection.swift in Sources */,
+				1ED1ABED6A584C8F86540E44 /* CommercialDrug.swift in Sources */,
+				CB412335E29A464F9D831518 /* Fluid.swift in Sources */,
+				44C92D2A391040DDBFA3005B /* PDFAttachment.swift in Sources */,
+				D987CEFF31C84D51873AC38E /* Perfusion.swift in Sources */,
+				95D55726170A498EA2845DDF /* PerfusionDetailView.swift in Sources */,
+				92702C99AE5E458A9CA40A96 /* FluidDetailView.swift in Sources */,
+				39480F2E424141F686A63F74 /* ProcedureAnnexesView.swift in Sources */,
+);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
