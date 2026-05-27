@@ -1,0 +1,582 @@
+[
+  {
+    "drugId": "n-acetilcisteina",
+    "activeIngredient": "Acetilcisteina",
+    "presentation": "Vial 5 g / 25 ml",
+    "brandNames": [
+      "Hidonac Antídoto 200mg/ml vial 25 ml",
+      "Inyesprin 0.9 g vial",
+      "Acetilsalicilato de Lisina Labesfal"
+    ]
+  },
+  {
+    "drugId": "acetilsalicilato-de-lisina",
+    "activeIngredient": "Acetilsalicilato de Lisina",
+    "presentation": "Vial 900 mg",
+    "brandNames": [
+      "Aspégic Injectable",
+      "A.S.L. PANPHARMA 900mg",
+      "Adiro 100mg comp.recub."
+    ]
+  },
+  {
+    "drugId": "aspirina",
+    "activeIngredient": "Acetilsalicílico Ácido",
+    "presentation": "Comprimido 100 mg · Comprimido 500 mg",
+    "brandNames": [
+      "Ac. Acetilsalicílico CINFA 100mg comp.recub.",
+      "Aspirina 500 mg comp.",
+      "A.A.S. 500mg comp.",
+      "Adenocor 6mg amp. 2ml"
+    ]
+  },
+  {
+    "drugId": "adenosina",
+    "activeIngredient": "Adenosina",
+    "presentation": "Vial 6 mg / 2 ml",
+    "brandNames": [
+      "Krénosin 6mg amp. 2ml",
+      "Adenosina Hikma 6mg amp. 2ml"
+    ]
+  },
+  {
+    "drugId": "adrenalina",
+    "activeIngredient": "Adrenalina",
+    "presentation": "Ampolla 1 mg / ml",
+    "brandNames": [
+      "Adrenalina B. Braun 1mg amp. 1 ml"
+    ]
+  },
+  {
+    "drugId": "amiodarona",
+    "activeIngredient": "Amiodarona clorhidrato",
+    "presentation": "Ampolla 150 mg / 3 ml",
+    "brandNames": [
+      "Trangorex 150mg amp. 3ml",
+      "Cordarone 150mg amp. 3ml"
+    ]
+  },
+  {
+    "drugId": "atropina",
+    "activeIngredient": "Atropina Sulfato",
+    "presentation": "Ampolla 1 mg / 1 ml",
+    "brandNames": [
+      "Atropina B. Braun 1mg amp. 1ml"
+    ]
+  },
+  {
+    "drugId": "bicarbonato-sodico-8-4-1m",
+    "activeIngredient": "Bicarbonato sódico",
+    "presentation": "Frasco 21 g / 250 ml",
+    "brandNames": [
+      "Venofusin Bicarbonato Sódico 8.4% frascos 250ml"
+    ]
+  },
+  {
+    "drugId": "budesonida",
+    "activeIngredient": "Budesonida",
+    "presentation": "Ampolla 0,50 mg / ml",
+    "brandNames": [
+      "Pulmicort 0,50 mg/ml susp. Inhalac. amp. 2ml",
+      "Budesonida ALDO-UNIÓN 0,50 mg/ml susp. Inhalac. amp. 2ml",
+      "Ampolla 2,3 mmol Ca / 10 ml"
+    ]
+  },
+  {
+    "drugId": "captopril",
+    "activeIngredient": "Captopril",
+    "presentation": "Comprimidos 25 mg",
+    "brandNames": [
+      "Captopril Normon 25mg comp."
+    ]
+  },
+  {
+    "drugId": "carbon-activado",
+    "activeIngredient": "Carbón activado",
+    "presentation": "Frasco 50 g",
+    "brandNames": [
+      "Carbón Ultra Adsorb. 50g frasco"
+    ]
+  },
+  {
+    "drugId": "cefazolina",
+    "activeIngredient": "Cefazolina",
+    "presentation": "Vial 2 g",
+    "brandNames": [
+      "Cefazolina 2g NORMON"
+    ]
+  },
+  {
+    "drugId": "clopidogrel-hidrogenosulfato",
+    "activeIngredient": "Clopidogrel",
+    "presentation": "Comprimido 300 mg · Comprimido 75 mg",
+    "brandNames": [
+      "Plavix 300mg comp rec.",
+      "Plavix 75mg comp recub."
+    ]
+  },
+  {
+    "drugId": "clorazepato-dipotasico",
+    "activeIngredient": "Clorazepato dipotásico",
+    "presentation": "Vial 20 mg",
+    "brandNames": [
+      "Tranxilium 20mg vial + disolvente 2ml",
+      "Tranxene 20mg vial + disolvente 2ml"
+    ]
+  },
+  {
+    "drugId": "clorpromazina",
+    "activeIngredient": "Clorpromazina",
+    "presentation": "Ampolla 25 mg / 5 ml",
+    "brandNames": [
+      "Largactil 25mg amp. 5ml"
+    ]
+  },
+  {
+    "drugId": "cloruro-potasico",
+    "activeIngredient": "Cloruro Potásico",
+    "presentation": "Ampolla 745 mg / 10 ml · Bolsa 9 mg / 100 ml (0,9%)",
+    "brandNames": [
+      "Cloruro Potasi. 7,45% (1M) Braun minipl. 10ml",
+      "Cloruro Potasi. 1M Grifols amp.10ml",
+      "Suero Fisiologico Fresenius 0,9% bolsa 100ml"
+    ]
+  },
+  {
+    "drugId": "cloruro-sodico-20",
+    "activeIngredient": "Cloruro Sódico",
+    "presentation": "Frasco 45 mg / 500 ml (0,9%) · Bolsa 45 mg / 500 ml (0,9%) · Miniplasco 2 g / 10 ml (20%) Cloruro Sódico 20 % B.Braun minipl.10ml",
+    "brandNames": [
+      "KabiPac Cloruro Sódico 0,9% frasco 500ml",
+      "Freeflex Cloruro Sódico 0,9% bolsa 500ml",
+      "Dexclorfeniramina Maleato 5 mg amp. 1 ml"
+    ]
+  },
+  {
+    "drugId": "dexametasona",
+    "activeIngredient": "Dexametasona 1mg/ml",
+    "presentation": "Frasco 10ml",
+    "brandNames": [
+      "Colircusi dexametasona 0,1% CORTICOSTER."
+    ]
+  },
+  {
+    "drugId": "dexclorfeniramina",
+    "activeIngredient": "Dexclorfeniramina Maleato",
+    "presentation": "Ampolla 5 mg / 1 ml · Comprimidos · Crema",
+    "brandNames": [
+      "Polaramine 5mg ampolla 1 ml",
+      "Diazepan PRODES 5 mg comp.",
+      "Polaramine 2 mg 20 comp.",
+      "Polaramine 2mg 20 comp",
+      "Silvederma 10mg/g 50g",
+      "Polaracrem crema 2mg/g + 5mg/g ANTIHISTAMÍN.",
+      "ANTISÉPTICO"
+    ]
+  },
+  {
+    "drugId": "diazepam",
+    "activeIngredient": "Diazepam",
+    "presentation": "Comprimido 5 mg · Ampolla 10 mg / 2 ml · Microenema 10 mg / 2,5 ml",
+    "brandNames": [
+      "Diazepan NORMON 5mg comp.",
+      "Diazepan NORMOGEN 5mg comp.",
+      "Valium 10mg amp. 2ml",
+      "Stesolid 10mg 5 microenema 2,5 ml"
+    ]
+  },
+  {
+    "drugId": "dopamina",
+    "activeIngredient": "Dopamina Clorhidrato",
+    "presentation": "Ampolla 200 mg / 5 ml",
+    "brandNames": [
+      "Dopamina Grifols 200mg amp 5ml",
+      "Dopamine Renaudin 40mg/ml amp 5ml"
+    ]
+  },
+  {
+    "drugId": "enoxaparina",
+    "activeIngredient": "Enoxaparina Sódica",
+    "presentation": "Jering. precarg. 100 mg / ml",
+    "brandNames": [
+      "Clexane 100mg 10000U.I. jer.prec.1ml"
+    ]
+  },
+  {
+    "drugId": "etomidato",
+    "activeIngredient": "Etomidato",
+    "presentation": "Ampolla 20 mg / 10 ml",
+    "brandNames": [
+      "Hypnomidate 20mg amp. 10ml"
+    ]
+  },
+  {
+    "drugId": "fentanilo",
+    "activeIngredient": "Fentanilo",
+    "presentation": "Ampolla 0,15 mg / 3 ml",
+    "brandNames": [
+      "Fentanest 0,15 mg/3ml amp. 3ml."
+    ]
+  },
+  {
+    "drugId": "fibrinogeno",
+    "activeIngredient": "Fibrinógeno humano",
+    "presentation": "Vial 1.5g + 100ml disolvente",
+    "brandNames": [
+      "FibCLOT 1,5g 1 vial"
+    ]
+  },
+  {
+    "drugId": "flumazenil",
+    "activeIngredient": "Flumazenil",
+    "presentation": "Ampolla 0,5 mg / 5 ml",
+    "brandNames": [
+      "Anexate Roche 0,5mg amp. 5ml",
+      "Flumazenil B. Braun 0,1mg/ml amp. 5ml",
+      "Flumazenil Fresenius Kabi 0,1mg/ml amp. 5ml"
+    ]
+  },
+  {
+    "drugId": "tiras-de-fluoresceina",
+    "activeIngredient": "Fluoresceina",
+    "presentation": "Tira",
+    "brandNames": [
+      "Fluoresceína Tiras"
+    ]
+  },
+  {
+    "drugId": "furosemida",
+    "activeIngredient": "Furosemida",
+    "presentation": "Ampolla 20 mg / 2 ml · Ampolla 10 g / 20 ml (50%) · Frasco 50 g / 100ml (50%) · Frasco 5 g / 100 ml (5%) · Frasco 25 g / 500 ml (5%)",
+    "brandNames": [
+      "Furosemida Fresenius Kabi 20 mg amp. 2ml",
+      "Furosemida Inibsa 20 mg amp. 2 ml",
+      "Furosemida Gesfur 20 mg amp. 2 ml",
+      "Seguril 20mg amp. 2ml",
+      "Glucocemin 50% amp. 20ml",
+      "Glucosada Grifols al 50% solución para perfusión frasco 100ml",
+      "Suero Glucosado 5% frasco KabiPac 100ml",
+      "Suero Glucosado 5% frasco 500ml",
+      "Haloperidol Esteve 5mg amp. 1ml"
+    ]
+  },
+  {
+    "drugId": "haloperidol",
+    "activeIngredient": "Haloperidol",
+    "presentation": "Ampolla 5 mg / 1 ml",
+    "brandNames": [
+      "Haloperidol GRINDEKS 5mg amp. 1ml",
+      "Heparina Sódica Sala 5000UI vial 5ml"
+    ]
+  },
+  {
+    "drugId": "heparina",
+    "activeIngredient": "Heparina sódica",
+    "presentation": "Vial 50 mg / 5 ml",
+    "brandNames": [
+      "Heparin Sodium 5000UI ampolla 5ml",
+      "Actocortina 100mg 10 viales 75mg.+amp.1ml"
+    ]
+  },
+  {
+    "drugId": "hidrocortisona",
+    "activeIngredient": "Hidrocortisona",
+    "presentation": "Vial 75 mg / 1 ml · Vial 100 mg",
+    "brandNames": [
+      "Actocortina 75mg 10 viales 75mg.+amp.1ml",
+      "Hidrocortisona LORIEN 100mg"
+    ]
+  },
+  {
+    "drugId": "hidroxocobalamina",
+    "activeIngredient": "Hidroxocobalamina",
+    "presentation": "Vial 5 g",
+    "brandNames": [
+      "Cyanokit antidoto 5g"
+    ]
+  },
+  {
+    "drugId": "insulina-regular",
+    "activeIngredient": "Insulina Humana",
+    "presentation": "Vial 1000 UI /10 ml · Monodosis 250 mcg / 2 ml · Monodosis 250 mcg / 1 ml",
+    "brandNames": [
+      "Humulina Regular 100 UI/ml vial 10ml",
+      "Atrovent 250mcg monodosis 2 ml",
+      "Bromuro de Ipratropio 250mcg monodosis 1ml",
+      "Atrovent 20mcg inhalador"
+    ]
+  },
+  {
+    "drugId": "ketamina",
+    "activeIngredient": "Ketamina",
+    "presentation": "Vial 500 mg / 10 ml",
+    "brandNames": [
+      "Ketamin INRESA vial 10ml"
+    ]
+  },
+  {
+    "drugId": "ketorolaco",
+    "activeIngredient": "Ketorolaco Trometamol",
+    "presentation": "Ampolla 30 mg / ml · Comprimidos · 500 comp",
+    "brandNames": [
+      "Ketalar 50mg/ml vial 10ml",
+      "Ketorolaco Tromet. Domac 30mg amp 1ml",
+      "Ketorolaco Tromet. Normon 30mg amp 1ml",
+      "ANTIPIRÉTICO",
+      "ANTI-"
+    ]
+  },
+  {
+    "drugId": "labetalol",
+    "activeIngredient": "Labetalol Clorhidrato",
+    "presentation": "Ampolla 100 mg / 20 ml",
+    "brandNames": [
+      "Trandate 100mg amp. 20ml"
+    ]
+  },
+  {
+    "drugId": "levetiracetam",
+    "activeIngredient": "Levetiracetam",
+    "presentation": "Vial 500mg/5ml",
+    "brandNames": [
+      "Levetiracetam NORMON 100mg/ml vial 5ml"
+    ]
+  },
+  {
+    "drugId": "lidocaina-clorhidrato",
+    "activeIngredient": "Lidocaina clorhidrato",
+    "presentation": "Ampolla 200 mg / 10 ml",
+    "brandNames": [
+      "Lidocaina 2% Braun miniplas. 10ml"
+    ]
+  },
+  {
+    "drugId": "lorazepam",
+    "activeIngredient": "Lorazepam",
+    "presentation": "Comprimido 1 mg",
+    "brandNames": [
+      "Lorazepam NORMON 1mg comp.",
+      "Lorazepam CINFA 1mg comp.",
+      "Orfidal 1mg comp.",
+      "Sulfato Magnesio 15% amp. 10ml"
+    ]
+  },
+  {
+    "drugId": "manitol",
+    "activeIngredient": "Manitol",
+    "presentation": "Frasco 50 g / 250 ml",
+    "brandNames": [
+      "Manitol 20% Mein frasco 250ml"
+    ]
+  },
+  {
+    "drugId": "mepivacaina-clorhidrato-2",
+    "activeIngredient": "Mepivacaina Clorhidrato",
+    "presentation": "Ampolla 200 mg / 10 ml",
+    "brandNames": [
+      "Mepivacaina BRAUN 2% miniplasco 10ml",
+      "Mepivacaina PHYSAN 2% miniplasco 10ml",
+      "Nolotil 2g amp. 5ml"
+    ]
+  },
+  {
+    "drugId": "metamizol",
+    "activeIngredient": "Metamizol Magnésico",
+    "presentation": "Ampolla 2 g / 5 ml",
+    "brandNames": [
+      "Metamizol Normon 2 g amp 5 ml",
+      "Urbasón 40 mg vial + amp. 2ml"
+    ]
+  },
+  {
+    "drugId": "metilprednisolona",
+    "activeIngredient": "Metilprednisolona",
+    "presentation": "Vial 40 mg · Gotas orales 7 mg/ ml · Comprimidos",
+    "brandNames": [
+      "Metilprednisolona NORMON 40 mg vial + amp. 1ml",
+      "Primperan 10mg amp. 2ml",
+      "Estilsona 7mg/ml gotas orales frasco 10ml",
+      "Urbason 4 mg 30 comp CORTICOIDES",
+      "ORALES",
+      "Urbason 16 mg 30 comp",
+      "Urbason 40 mg 20 comp"
+    ]
+  },
+  {
+    "drugId": "metoclopramida",
+    "activeIngredient": "Metoclopramida Hidrocloruro",
+    "presentation": "Ampolla 10 mg / 2 ml",
+    "brandNames": [
+      "Metoclopramida Kern 10mg amp. 2ml"
+    ]
+  },
+  {
+    "drugId": "metoprolol",
+    "activeIngredient": "Metoprolol Tartrato",
+    "presentation": "Ampolla 5 mg / 5 ml",
+    "brandNames": [
+      "Metoclopramide Renaudin 10mg amp. 2ml",
+      "Beloken 5mg amp 5 ml",
+      "Metoprolol CARINOPHARM 5mg amp. 5 ml"
+    ]
+  },
+  {
+    "drugId": "midazolam",
+    "activeIngredient": "Midazolam",
+    "presentation": "Ampolla 15 mg / 3 ml",
+    "brandNames": [
+      "Midazolam Normon 15mg amp 3ml"
+    ]
+  },
+  {
+    "drugId": "naloxona",
+    "activeIngredient": "Naloxona hidrocloruro",
+    "presentation": "Ampolla 0,4 mg / ml",
+    "brandNames": [
+      "Naloxone 0,4mg amp. 1ml"
+    ]
+  },
+  {
+    "drugId": "nitroglicerina-50mg-10ml",
+    "activeIngredient": "Nitroglicerina",
+    "presentation": "Ampolla 50 mg / 10 ml · Aerosol 0,4 mg / 0,05 ml",
+    "brandNames": [
+      "Solinitrina Fuerte 5mg/ml amp 10ml",
+      "Trinispray 400mcg/puls aerosol subling. 200 dosis",
+      "Glyceryl Trinitrate 180 dosis spray",
+      "Nitroprussiat Fides vial 50mg + amp. 5ml"
+    ]
+  },
+  {
+    "drugId": "nitroprusiato-sodico",
+    "activeIngredient": "Nitroprusiato Sódico",
+    "presentation": "Vial 50 mg · Ampolla 5 mg NA BASE / 10 ml · Ampolla 10 mg NA SAL / 10 ml",
+    "brandNames": [
+      "Nitroprusiato de Sodio Richet",
+      "Noradrenalina Normon 0,5 mg/ml amp 10ml (NA BASE)",
+      "Noradrenalina Normon 1 mg/ml amp 10ml (NA SAL)",
+      "Omeprazol GES 40mg vial"
+    ]
+  },
+  {
+    "drugId": "omeprazol",
+    "activeIngredient": "Omeprazol",
+    "presentation": "Vial 40 mg · Cápsulas",
+    "brandNames": [
+      "Omeprazol NORMON 40mg vial",
+      "GÁSTRICO",
+      "Omeprazol NORMON 20 mg 28 caps"
+    ]
+  },
+  {
+    "drugId": "ondansetron",
+    "activeIngredient": "Ondansetron",
+    "presentation": "Ampolla 4 mg/ 2 ml · Pelic. bucodisp. 4mg · Pelic. bucodisp. 8mg",
+    "brandNames": [
+      "Ondansetron NORMON 4mg/2ml sol inyect amp 2ml",
+      "Setofilm 4mg película bucodispersable sobre",
+      "Setofilm 8mg película bucodispersable sobre"
+    ]
+  },
+  {
+    "drugId": "paracetamol-iv",
+    "activeIngredient": "Paracetamol",
+    "presentation": "Frasco 1 g / 100 ml · Supositorio 150 mg · Soluc. oral 100mg/ml · Comprimidos · MUSCULAR",
+    "brandNames": [
+      "Paracetamol ALTAN 10mg/ml bolsa 100ml",
+      "Paracetamol B.Braun 10mg/ml frasco 100ml",
+      "Paracetamol Kabi 10mg/ml frasco 100ml",
+      "Febrectal Lactantes 150 mg supositorio",
+      "Paracetamol KERN PHARMA sol oral 100mg/ml frasco 30ml",
+      "Apiretal 100mg/ml solución oral 30ml",
+      "Paracetamol KERN 650 mg 20 comp.",
+      "Gelocatil 650 mg 12 comp.",
+      "RELAJANTE",
+      "Robaxisal comp 50 comp",
+      "Administración tópica",
+      "Flammazine 1% crema 50 g"
+    ]
+  },
+  {
+    "drugId": "rocuronio",
+    "activeIngredient": "Rocuronio Bromuro",
+    "presentation": "Vial 50 mg / 5 ml",
+    "brandNames": [
+      "Rocuronio Braun 10mg/ml vial 5 ml",
+      "Rocuronio Kabi 10mg/ml vial 5 ml"
+    ]
+  },
+  {
+    "drugId": "salbutamol",
+    "activeIngredient": "Salbutamol Sulfato",
+    "presentation": "Ampolla 2,5 mg / 2,5 ml · Ampolla 5 mg / 2,5 ml · Ampolla 0,5 mg / 1 ml · 100 mcg/inhalac.",
+    "brandNames": [
+      "Salbuair 2,5mg amp. 2,5ml",
+      "Salbuair 5mg amp. 2,5ml",
+      "Ventolín 500mcg amp. 1ml",
+      "Ventolín inhalador 200 dosis"
+    ]
+  },
+  {
+    "drugId": "sulfadiazina-argentica",
+    "activeIngredient": "Sulfadiazina Argéntica",
+    "presentation": "Tubo 10 mg / g · Crema",
+    "brandNames": [
+      "Flammazine 1% pomada 50g",
+      "Silvederma 10mg/g crema 50g",
+      "ANTIBIÓTICO"
+    ]
+  },
+  {
+    "drugId": "succinilcolina",
+    "activeIngredient": "Suxametonio Cloruro =",
+    "presentation": "Suxamethonium Chloride 50mg/ml amp. · Suxametonio Ethypharm 50mg/ml amp. 2ml",
+    "brandNames": [
+      "Ampolla 100 mg / 2 ml"
+    ]
+  },
+  {
+    "drugId": "tetracaina-clorhidrato",
+    "activeIngredient": "Tetracaina clorhidrato",
+    "presentation": "Tubo 7,5 mg / g",
+    "brandNames": [
+      "Lubristesic 7,5 mg/g pomada 25g"
+    ]
+  },
+  {
+    "drugId": "ticagrelor",
+    "activeIngredient": "Ticagrelor",
+    "presentation": "90 mg por comprimido",
+    "brandNames": [
+      "Brilique 90 mg/comp."
+    ]
+  },
+  {
+    "drugId": "acido-tranexamico",
+    "activeIngredient": "Tranexámico Ácido",
+    "presentation": "Ampolla 500 mg / 5 ml",
+    "brandNames": [
+      "Amchafibrin 500mg soluc. Inyect.amp. 5ml",
+      "Tranexamsäure Carinopharm 100mg/ml",
+      "Medsamic 100mg/ml Tranexamic Acid",
+      "Acide Tranexamique MYLAN 500mg/5ml amp 5ml",
+      "Elgadil 50mg amp. 10ml"
+    ]
+  },
+  {
+    "drugId": "urapidil",
+    "activeIngredient": "Urapidil",
+    "presentation": "Ampolla 50 mg / 10 ml",
+    "brandNames": [
+      "Urapidil ACCORD 50mg amp. 10ml"
+    ]
+  },
+  {
+    "drugId": "verapamilo-clorhidrato",
+    "activeIngredient": "Verapamilo clorhidrato",
+    "presentation": "Ampolla 5 mg / 2 ml",
+    "brandNames": [
+      "Manidón 5mg amp. 2ml"
+    ]
+  }
+]

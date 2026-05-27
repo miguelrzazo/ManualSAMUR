@@ -6,6 +6,8 @@ struct Code: Identifiable {
     let name: String
     let category: String?
     let description: String?
+    let noReport: Bool?
+    let tetra: Bool?
 
     var id: String { "\(type)-\(code)" }
 
@@ -25,6 +27,8 @@ struct RawCode: Decodable {
     let category: String?
     let description: String?
     let group: String?   // indicativos uses "group" instead of "category"
+    let noReport: Bool?
+    let tetra: Bool?
 
     func toCode(type: String) -> Code {
         Code(
@@ -32,12 +36,18 @@ struct RawCode: Decodable {
             code: code,
             name: name,
             category: category ?? group,
-            description: description
+            description: description,
+            noReport: noReport,
+            tetra: tetra
         )
     }
 }
 
-let codigoTypeOrder: [String] = ["incidente", "sva", "svb", "upsi", "upsq", "indicativos", "claves", "pc", "lima", "icao"]
+let codigoTypeOrder: [String] = [
+    "incidente", "sva", "svb", "upsi", "upsq",
+    "indicativos", "claves", "lima", "icao",
+    "hospitales", "bases", "comunicaciones"
+]
 
 let codigoTypeLabels: [String: String] = [
     "incidente": "Incidente",
@@ -47,7 +57,9 @@ let codigoTypeLabels: [String: String] = [
     "upsq": "UPSQ",
     "indicativos": "Indicativos",
     "claves": "Claves",
-    "pc": "PC",
     "lima": "Lima",
     "icao": "ICAO",
+    "hospitales": "Hospitales",
+    "bases": "Bases",
+    "comunicaciones": "Comunicaciones",
 ]
