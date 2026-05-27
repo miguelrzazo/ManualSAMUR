@@ -29,6 +29,10 @@
 		2F8329BD595A4F64936362E7 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C233C951F2994CEBB849A48F /* ColorExtension.swift */; };
 		553C7461C3F543EE85901F93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 676D7BA92F774678B5F3E4B8 /* Assets.xcassets */; };
 		31CDB8A20FD0467DAF3FC6F7 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 656C46BA777F4266AE7E80DB /* MarkdownUI */; };
+		E50EE9C0B03C402483F2532E /* procedures.json in Resources */ = {isa = PBXBuildFile; fileRef = 465CE1DBC7034C9D85AE0AA8 /* procedures.json */; };
+		CCBECB52B7044DB99E7B6EC9 /* vademecum.json in Resources */ = {isa = PBXBuildFile; fileRef = AECB8989B2204FE3AE33F09D /* vademecum.json */; };
+		47EB8EA1E9F64CB6918E42F5 /* codigos.json in Resources */ = {isa = PBXBuildFile; fileRef = 99EC9311291848C3B1C65883 /* codigos.json */; };
+		F35B389CA4214A84959B6500 /* hospitals.json in Resources */ = {isa = PBXBuildFile; fileRef = B76AA2AB4CB74B58A607B8D8 /* hospitals.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +59,10 @@
 		C233C951F2994CEBB849A48F /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		808B4DFBBC8C4977B565D1C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		676D7BA92F774678B5F3E4B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		465CE1DBC7034C9D85AE0AA8 /* procedures.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = procedures.json; sourceTree = "<group>"; };
+		AECB8989B2204FE3AE33F09D /* vademecum.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vademecum.json; sourceTree = "<group>"; };
+		99EC9311291848C3B1C65883 /* codigos.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = codigos.json; sourceTree = "<group>"; };
+		B76AA2AB4CB74B58A607B8D8 /* hospitals.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = hospitals.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,8 +199,20 @@
 			isa = PBXGroup;
 			children = (
 				676D7BA92F774678B5F3E4B8 /* Assets.xcassets */,
+				9A0D786551D14E8AB2CEB92A /* BundledData */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		9A0D786551D14E8AB2CEB92A /* BundledData */ = {
+			isa = PBXGroup;
+			children = (
+				465CE1DBC7034C9D85AE0AA8 /* procedures.json */,
+				AECB8989B2204FE3AE33F09D /* vademecum.json */,
+				99EC9311291848C3B1C65883 /* codigos.json */,
+				B76AA2AB4CB74B58A607B8D8 /* hospitals.json */,
+			);
+			path = BundledData;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +281,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				553C7461C3F543EE85901F93 /* Assets.xcassets in Resources */,
+				E50EE9C0B03C402483F2532E /* procedures.json in Resources */,
+				CCBECB52B7044DB99E7B6EC9 /* vademecum.json in Resources */,
+				47EB8EA1E9F64CB6918E42F5 /* codigos.json in Resources */,
+				F35B389CA4214A84959B6500 /* hospitals.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

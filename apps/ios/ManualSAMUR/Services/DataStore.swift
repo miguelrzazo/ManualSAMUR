@@ -20,15 +20,18 @@ final class DataStore {
 
     @MainActor
     func load() async {
-        // Load from cache immediately so UI is responsive
-        if DataService.hasCachedData {
-            if let cached = try? DataService.loadCached() {
-                apply(cached)
-                loadingState = .ready
-            }
+        // 1. Try Documents cache (fastest, most up-to-date local copy)
+        if DataService.hasCachedData, let cached = try? DataService.loadCached() {
+            apply(cached)
+            loadingState = .ready
+        }
+        // 2. Fall back to bundled data (always available, no network needed)
+        else if DataService.hasBundledData, let bundled = try? DataService.loadBundled() {
+            apply(bundled)
+            loadingState = .ready
         }
 
-        // Refresh from network in background
+        // 3. Background sync from network
         await refresh()
     }
 

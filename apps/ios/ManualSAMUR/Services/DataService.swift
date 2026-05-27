@@ -53,6 +53,37 @@ struct DataService {
         return result
     }
 
+    // MARK: - Bundle (initial data shipped with the app)
+
+    static func loadBundled() throws -> AppData {
+        let procedures: [Procedure] = try loadBundledFile(name: "procedures")
+        let drugs:      [Drug]      = try loadBundledFile(name: "vademecum")
+        let hospitals:  [Hospital]  = try loadBundledFile(name: "hospitals")
+
+        let codigosData = try bundledData(name: "codigos")
+        let codesMap    = try parseCodigos(data: codigosData)
+
+        return AppData(procedures: procedures, drugs: drugs, codes: codesMap, hospitals: hospitals)
+    }
+
+    private static func loadBundledFile<T: Decodable>(name: String) throws -> T {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "json") else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        return try JSONDecoder().decode(T.self, from: try Data(contentsOf: url))
+    }
+
+    private static func bundledData(name: String) throws -> Data {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "json") else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        return try Data(contentsOf: url)
+    }
+
+    static var hasBundledData: Bool {
+        Bundle.main.url(forResource: "procedures", withExtension: "json") != nil
+    }
+
     // MARK: - Cache
 
     private static var cacheDir: URL {
@@ -69,7 +100,6 @@ struct DataService {
         try JSONEncoder().encode(data.drugs)
             .write(to: dir.appendingPathComponent("vademecum.json"))
 
-        // Encode codes as [type: [RawCode]] equivalent
         var codesForStorage: [String: [StorableCode]] = [:]
         for (type, codes) in data.codes {
             codesForStorage[type] = codes.map { StorableCode(code: $0.code, name: $0.name, category: $0.category, description: $0.description) }
@@ -116,7 +146,6 @@ struct DataService {
     }
 }
 
-// Intermediate Codable struct for code cache persistence
 private struct StorableCode: Codable {
     let code: String
     let name: String
