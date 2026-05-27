@@ -113,6 +113,37 @@ final class DataStore {
         return grouped.sorted { $0.key < $1.key }.map { (letter: $0.key, items: $0.value) }
     }
 
+    var drugById: [String: Drug] {
+        Dictionary(uniqueKeysWithValues: drugs.map { ($0.id, $0) })
+    }
+
+    var perfusionesByCategory: [(category: String, items: [Perfusion])] {
+        var grouped: [String: [Perfusion]] = [:]
+        var orderedKeys: [String] = []
+        var seen = Set<String>()
+        for p in perfusiones {
+            if seen.insert(p.category).inserted { orderedKeys.append(p.category) }
+            grouped[p.category, default: []].append(p)
+        }
+        return orderedKeys.map { key in (category: key, items: grouped[key]!) }
+    }
+
+    var comercialesSortedAlphabetically: [(letter: String, items: [CommercialDrug])] {
+        let sorted = comerciales.sorted {
+            $0.activeIngredient.localizedCompare($1.activeIngredient) == .orderedAscending
+        }
+        var grouped: [String: [CommercialDrug]] = [:]
+        var orderedKeys: [String] = []
+        var seen = Set<String>()
+        for c in sorted {
+            let letter = String(c.activeIngredient.prefix(1)).uppercased()
+            if seen.insert(letter).inserted { orderedKeys.append(letter) }
+            grouped[letter, default: []].append(c)
+        }
+        return orderedKeys.sorted { $0.localizedCompare($1) == .orderedAscending }
+            .map { key in (letter: key, items: grouped[key]!) }
+    }
+
     func codes(for type: String) -> [Code] {
         codes[type] ?? []
     }
