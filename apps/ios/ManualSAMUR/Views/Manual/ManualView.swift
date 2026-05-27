@@ -2,63 +2,98 @@ import SwiftUI
 
 struct ManualView: View {
     @Environment(DataStore.self) private var store
-    @State private var searchText = ""
+    @State private var showSearch = false
+    @State private var showMenu = false
+    @State private var selectedSection: String? = nil
 
     var body: some View {
-        Group {
-            if searchText.isEmpty {
-                sectionedList
-            } else {
-                searchResults
-            }
+        VStack(spacing: 0) {
+            sectionJumpStrip
+            Divider()
+            sectionedList
         }
         .navigationTitle("Manual")
-        .searchable(text: $searchText, prompt: "Buscar procedimiento…")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showSearch = true } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showMenu = true } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showSearch) {
+            GlobalSearchView()
+        }
+        .sheet(isPresented: $showMenu) {
+            AppMenuSheet()
+                .presentationDetents([.large])
+        }
+    }
+
+    // MARK: - Section jump strip
+
+    private var sectionJumpStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(store.proceduresBySection, id: \.section) { group in
+                    let isSelected = selectedSection == group.section
+                    Button {
+                        selectedSection = group.section
+                    } label: {
+                        Text(group.items.first?.sectionDisplayName ?? group.section.capitalized)
+                            .font(.subheadline.weight(isSelected ? .semibold : .regular))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .background(
+                                isSelected ? Color.samurBlue : Color.secondary.opacity(0.12),
+                                in: Capsule()
+                            )
+                            .foregroundStyle(isSelected ? .white : .primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+        }
     }
 
     // MARK: - Sections list
 
     private var sectionedList: some View {
-        List {
-            ForEach(store.proceduresBySection, id: \.section) { group in
-                Section {
-                    ForEach(group.items) { procedure in
-                        NavigationLink(value: procedure) {
-                            ProcedureRow(procedure: procedure)
+        ScrollViewReader { proxy in
+            List {
+                ForEach(store.proceduresBySection, id: \.section) { group in
+                    Section {
+                        ForEach(group.items) { procedure in
+                            NavigationLink(value: procedure) {
+                                ProcedureRow(procedure: procedure)
+                            }
                         }
-                    }
-                } header: {
-                    HStack(spacing: 6) {
-                        Circle()
-                            .fill(Color(hex: group.items.first?.sectionColor ?? "#64748B"))
-                            .frame(width: 8, height: 8)
-                        Text(group.items.first?.sectionDisplayName ?? group.section.capitalized)
-                            .font(.subheadline.weight(.semibold))
+                    } header: {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(Color(hex: group.items.first?.sectionColor ?? "#64748B"))
+                                .frame(width: 8, height: 8)
+                            Text(group.items.first?.sectionDisplayName ?? group.section.capitalized)
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .id(group.section)
                     }
                 }
             }
-        }
-        .listStyle(.insetGrouped)
-        .navigationDestination(for: Procedure.self) { procedure in
-            ProcedureDetailView(procedure: procedure)
-        }
-    }
-
-    // MARK: - Search results
-
-    private var searchResults: some View {
-        let results = store.procedures.filter { $0.matches(searchText) }
-        return Group {
-            if results.isEmpty {
-                EmptySearchView(query: searchText)
-            } else {
-                List(results) { procedure in
-                    NavigationLink(value: procedure) {
-                        ProcedureRow(procedure: procedure, showSection: true)
-                    }
-                }
-                .navigationDestination(for: Procedure.self) { procedure in
-                    ProcedureDetailView(procedure: procedure)
+            .listStyle(.insetGrouped)
+            .navigationDestination(for: Procedure.self) { procedure in
+                ProcedureDetailView(procedure: procedure)
+            }
+            .onChange(of: selectedSection) { _, newSection in
+                guard let section = newSection else { return }
+                withAnimation {
+                    proxy.scrollTo(section, anchor: .top)
                 }
             }
         }
