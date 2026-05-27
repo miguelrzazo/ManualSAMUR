@@ -14,6 +14,13 @@ final class DataStore {
     var drugs: [Drug] = []
     var codes: [String: [Code]] = [:]
     var hospitals: [Hospital] = []
+    var bases: [Base] = []
+    var status4: [Status4Entry] = []
+    var perfusiones: [Perfusion] = []
+    var fluidos: [Fluid] = []
+    var comerciales: [CommercialDrug] = []
+    var cheatsheetSections: [CheatsheetSection] = []
+    var attachmentsByProcedure: [String: [PDFAttachment]] = [:]
     var loadingState: LoadingState = .idle
 
     private let lastUpdatedKey = "ios_data_last_updated"
@@ -31,7 +38,15 @@ final class DataStore {
             loadingState = .ready
         }
 
-        // 3. Background sync from network
+        // 3. Load stable reference data once from bundle (not part of AppData / cache cycle)
+        if let cheatsheet = try? DataService.loadBundledCheatsheet() {
+            cheatsheetSections = cheatsheet
+        }
+        if let classification = try? DataService.loadBundledPDFClassification() {
+            attachmentsByProcedure = Dictionary(grouping: classification.pdfs, by: \.procedureId)
+        }
+
+        // 4. Background sync from network
         await refresh()
     }
 
@@ -39,8 +54,8 @@ final class DataStore {
     func refresh() async {
         guard loadingState != .loading else { return }
 
-        // Check manifest to see if update is needed
-        if let manifest = try? await DataService.fetchManifest() {
+        let manifest = try? await DataService.fetchManifest()
+        if let manifest {
             let stored = UserDefaults.standard.string(forKey: lastUpdatedKey) ?? ""
             guard manifest.lastUpdated != stored || !DataService.hasCachedData else { return }
         }
@@ -50,24 +65,25 @@ final class DataStore {
             let data = try await DataService.fetchAll()
             apply(data)
             try? DataService.saveCache(data)
-            if let manifest = try? await DataService.fetchManifest() {
+            if let manifest {
                 UserDefaults.standard.set(manifest.lastUpdated, forKey: lastUpdatedKey)
             }
             loadingState = .ready
         } catch {
-            if loadingState != .ready {
-                loadingState = .error(error.localizedDescription)
-            } else {
-                loadingState = .ready
-            }
+            loadingState = loadingState == .ready ? .ready : .error(error.localizedDescription)
         }
     }
 
     private func apply(_ data: AppData) {
-        procedures = data.procedures
-        drugs = data.drugs
-        codes = data.codes
-        hospitals = data.hospitals
+        procedures  = data.procedures
+        drugs       = data.drugs
+        codes       = data.codes
+        hospitals   = data.hospitals
+        bases       = data.bases
+        status4     = data.status4
+        perfusiones = data.perfusiones
+        fluidos     = data.fluidos
+        comerciales = data.comerciales
     }
 
     // Grouped accessors
@@ -85,6 +101,16 @@ final class DataStore {
         var grouped: [String: [Drug]] = [:]
         for d in drugs { grouped[d.category, default: []].append(d) }
         return grouped.sorted { $0.key < $1.key }.map { (category: $0.key, items: $0.value) }
+    }
+
+    var drugsSortedAlphabetically: [(letter: String, items: [Drug])] {
+        let sorted = drugs.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+        var grouped: [String: [Drug]] = [:]
+        for drug in sorted {
+            let letter = String(drug.name.prefix(1)).uppercased()
+            grouped[letter, default: []].append(drug)
+        }
+        return grouped.sorted { $0.key < $1.key }.map { (letter: $0.key, items: $0.value) }
     }
 
     func codes(for type: String) -> [Code] {
