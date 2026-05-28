@@ -139,9 +139,15 @@ struct ManualView: View {
                 }
             }
         }
-        .sheet(isPresented: $showSearch) { GlobalSearchView() }
+        .sheet(isPresented: $showSearch) {
+            GlobalSearchView()
+                .presentationDragIndicator(.visible)
+        }
         .sheet(isPresented: $showMenu) {
-            AppMenuSheet().presentationDetents([.large])
+            AppMenuSheet()
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(Radius.lg)
         }
         .sheet(isPresented: $showHistorial) { HistorialView() }
     }

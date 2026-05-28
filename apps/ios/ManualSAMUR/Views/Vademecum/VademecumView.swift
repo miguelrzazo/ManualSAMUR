@@ -123,6 +123,13 @@ private struct FarmacosTab: View {
     let onSelect: (Drug) -> Void
 
     var body: some View {
+        if groups.isEmpty {
+            ContentUnavailableView(
+                "Sin resultados",
+                systemImage: "pills.fill",
+                description: Text("No se encontraron fármacos")
+            )
+        } else {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
@@ -174,6 +181,7 @@ private struct FarmacosTab: View {
             }
             .animation(.easeInOut(duration: 0.2), value: showScrollToTop)
         }
+        } // else
     }
 }
 

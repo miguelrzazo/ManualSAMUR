@@ -44,6 +44,8 @@ struct CodigosView: View {
         .sheet(item: $selectedCode) { code in
             CodeDetailView(code: code)
                 .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(Radius.lg)
         }
         .sheet(isPresented: $showSearch) {
             GlobalSearchView()
@@ -418,6 +420,15 @@ private struct CodesTab: View {
     }
 
     var body: some View {
+        if codes.isEmpty {
+            ContentUnavailableView(
+                "Sin códigos",
+                systemImage: "antenna.radiowaves.left.and.right.slash",
+                description: Text("No hay códigos disponibles para este tipo")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.top, 60)
+        } else {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
@@ -490,6 +501,7 @@ private struct CodesTab: View {
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showScrollToTop)
         }
+        } // else
     }
 }
 
