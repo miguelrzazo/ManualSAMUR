@@ -34,7 +34,6 @@ struct VademecumView: View {
     var body: some View {
         VStack(spacing: 0) {
             tabPicker
-            Divider()
             mainContent
         }
         .navigationTitle("Vademécum")
@@ -74,29 +73,12 @@ struct VademecumView: View {
     // MARK: - Tab picker
 
     private var tabPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(VademecumTab.allCases, id: \.self) { tab in
-                    Button {
-                        selectedTab = tab
-                        showScrollToTop = false
-                    } label: {
-                        Text(tab.label)
-                            .font(.subheadline.weight(selectedTab == tab ? .semibold : .regular))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 7)
-                            .background(
-                                selectedTab == tab ? Color.samurBlue : Color.secondary.opacity(0.12),
-                                in: Capsule()
-                            )
-                            .foregroundStyle(selectedTab == tab ? .white : .primary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-        }
+        UnderlineTabPicker(
+            tabs: VademecumTab.allCases.map { (label: $0.label, value: $0) },
+            selection: $selectedTab
+        )
+        .background(.ultraThinMaterial)
+        .onChange(of: selectedTab) { _, _ in showScrollToTop = false }
     }
 
     // MARK: - Main content
