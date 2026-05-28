@@ -38,6 +38,7 @@
 		CC4D5E6F7A8B9C0D1E2F3A44 /* ProcedureSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3C4D5E6F7A8B9C0D1E2F33 /* ProcedureSection.swift */; };
 		EE6F7A8B9C0D1E2F3A4B5C66 /* SectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */; };
 		GG8A9B0C1D2E3F4A5B6C7D88 /* HistorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */; };
+		D4E5F6A7B8C901234567DEFA /* BreakingNewsRibbon.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C912345678DEFA /* BreakingNewsRibbon.swift */; };
 		CC1234567890ABCDEF123456 /* Status4Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1234567890ABCDEF123456 /* Status4Entry.swift */; };
 		EE1234567890ABCDEF123456 /* bases.json in Resources */ = {isa = PBXBuildFile; fileRef = FF1234567890ABCDEF123456 /* bases.json */; };
 		001234567890ABCDEF123456 /* status4.json in Resources */ = {isa = PBXBuildFile; fileRef = 111234567890ABCDEF123456 /* status4.json */; };
@@ -109,6 +110,7 @@
 		BB3C4D5E6F7A8B9C0D1E2F33 /* ProcedureSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureSection.swift; sourceTree = "<group>"; };
 		DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionDetailView.swift; sourceTree = "<group>"; };
 		FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorialView.swift; sourceTree = "<group>"; };
+		D4E5F6A7B8C912345678DEFA /* BreakingNewsRibbon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakingNewsRibbon.swift; sourceTree = "<group>"; };
 		DD1234567890ABCDEF123456 /* Status4Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status4Entry.swift; sourceTree = "<group>"; };
 		FF1234567890ABCDEF123456 /* bases.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bases.json; sourceTree = "<group>"; };
 		111234567890ABCDEF123456 /* status4.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status4.json; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				9E115D5F465A4286AFDA7A92 /* ProcedureDetailView.swift */,
 				DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */,
 				FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */,
+				D4E5F6A7B8C912345678DEFA /* BreakingNewsRibbon.swift */,
 
 				B0E20FCB236D407CA25400C4 /* added */,
 );
@@ -460,6 +463,7 @@
 				AA2B3C4D5E6F7A8B9C0D1E22 /* ManualUpdateEvent.swift in Sources */,
 				CC4D5E6F7A8B9C0D1E2F3A44 /* ProcedureSection.swift in Sources */,
 				EE6F7A8B9C0D1E2F3A4B5C66 /* SectionDetailView.swift in Sources */,
+				D4E5F6A7B8C901234567DEFA /* BreakingNewsRibbon.swift in Sources */,
 				GG8A9B0C1D2E3F4A5B6C7D88 /* HistorialView.swift in Sources */,
 );
 			runOnlyForDeploymentPostprocessing = 0;
