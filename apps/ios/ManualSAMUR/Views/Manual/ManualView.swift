@@ -111,6 +111,7 @@ struct ManualView: View {
                     unseenCount: store.unseenEventCount
                 ) {
                     store.markAllNewEventsSeen()
+                    HapticFeedback.success()
                     showHistorial = true
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))

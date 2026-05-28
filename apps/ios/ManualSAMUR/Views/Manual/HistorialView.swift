@@ -112,6 +112,7 @@ private struct EventRow: View {
 
             if event.diff != nil {
                 Button {
+                    HapticFeedback.light()
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) { showDiff.toggle() }
                 } label: {
                     HStack(spacing: 4) {

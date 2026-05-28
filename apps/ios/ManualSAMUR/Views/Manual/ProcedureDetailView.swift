@@ -108,6 +108,7 @@ struct ProcedureDetailView: View {
             .overlay(alignment: .bottomTrailing) {
                 if showScrollToTop {
                     Button {
+                        HapticFeedback.rigid()
                         withAnimation { proxy.scrollTo("top", anchor: .top) }
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
@@ -136,6 +137,7 @@ struct ProcedureDetailView: View {
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .foregroundStyle(isFavorite ? .red : .secondary)
+                        .symbolEffect(.bounce, value: isFavorite)
                 }
             }
             if !tocEntries.isEmpty {
@@ -192,6 +194,7 @@ struct ProcedureDetailView: View {
                         Text(prev.id).font(.subheadline)
                     }
                 }
+                .simultaneousGesture(TapGesture().onEnded { HapticFeedback.light() })
             }
             Spacer()
             if let next = nextProcedure {
@@ -201,6 +204,7 @@ struct ProcedureDetailView: View {
                         Image(systemName: "chevron.right").font(.caption)
                     }
                 }
+                .simultaneousGesture(TapGesture().onEnded { HapticFeedback.light() })
             }
         }
         .padding(.horizontal)
@@ -219,9 +223,11 @@ struct ProcedureDetailView: View {
         if favs.contains(procedure.id) {
             favs.remove(procedure.id)
             isFavorite = false
+            HapticFeedback.light()
         } else {
             favs.insert(procedure.id)
             isFavorite = true
+            HapticFeedback.medium()
         }
         UserDefaults.standard.set(Array(favs), forKey: favoritesKey)
     }
