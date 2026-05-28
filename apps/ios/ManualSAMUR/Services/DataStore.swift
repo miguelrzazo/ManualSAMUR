@@ -23,7 +23,13 @@ final class DataStore {
     var attachmentsByProcedure: [String: [PDFAttachment]] = [:]
     var loadingState: LoadingState = .idle
 
+    var updateEvents: [ManualUpdateEvent] = []
+    var recents: [String] = []
+    private(set) var seenEventIds: Set<String> = []
+
     private let lastUpdatedKey = "ios_data_last_updated"
+    private let recentsKey = "ios_recent_procedure_ids"
+    private let seenEventsKey = "ios_seen_event_ids"
 
     @MainActor
     func load() async {
@@ -46,8 +52,26 @@ final class DataStore {
             attachmentsByProcedure = Dictionary(grouping: classification.pdfs, by: \.procedureId)
         }
 
-        // 4. Background sync from network
+        // 4. Load persisted recents
+        recents = UserDefaults.standard.stringArray(forKey: recentsKey) ?? []
+        seenEventIds = Set(UserDefaults.standard.stringArray(forKey: seenEventsKey) ?? [])
+
+        // 5. Load cached update events (non-blocking, refresh in background)
+        if DataService.hasCachedUpdateEvents,
+           let cached = try? DataService.loadCachedUpdateEvents() {
+            updateEvents = cached.events
+        }
+
+        // 6. Background sync from network
         await refresh()
+        Task { await refreshUpdateEvents() }
+    }
+
+    @MainActor
+    func refreshUpdateEvents() async {
+        guard let payload = try? await DataService.fetchUpdateEvents() else { return }
+        updateEvents = payload.events
+        try? DataService.saveUpdateEventsCache(payload)
     }
 
     @MainActor
@@ -146,5 +170,66 @@ final class DataStore {
 
     func codes(for type: String) -> [Code] {
         codes[type] ?? []
+    }
+
+    // MARK: - Recents
+
+    func recordRecent(_ id: String) {
+        var updated = recents.filter { $0 != id }
+        updated.insert(id, at: 0)
+        if updated.count > 15 { updated = Array(updated.prefix(15)) }
+        recents = updated
+        UserDefaults.standard.set(updated, forKey: recentsKey)
+    }
+
+    var recentProcedures: [Procedure] {
+        recents.compactMap { id in procedures.first { $0.id == id } }
+    }
+
+    // MARK: - Favorites
+
+    var favoriteProcedureIds: [String] {
+        UserDefaults.standard.stringArray(forKey: "favorites") ?? []
+    }
+
+    var favoriteProcedures: [Procedure] {
+        favoriteProcedureIds.compactMap { id in procedures.first { $0.id == id } }
+    }
+
+    // MARK: - Update events / Historial
+
+    var unseenEventCount: Int {
+        updateEvents.filter { $0.isNewThisWeek && !seenEventIds.contains($0.eventId) }.count
+    }
+
+    var hasNewsThisWeek: Bool {
+        updateEvents.contains { $0.isNewThisWeek }
+    }
+
+    func markAllNewEventsSeen() {
+        var seen = seenEventIds
+        for event in updateEvents where event.isNewThisWeek { seen.insert(event.eventId) }
+        let knownIds = Set(updateEvents.map(\.eventId))
+        seen = seen.filter { knownIds.contains($0) }
+        seenEventIds = seen
+        UserDefaults.standard.set(Array(seen), forKey: seenEventsKey)
+    }
+
+    // MARK: - Procedure sections for home grid
+
+    var procedureSections: [ProcedureSection] {
+        let order = ["sva","svb","operativos","administrativos","comunicaciones","tecnicas","psicologicos","drp","intervinientes","general"]
+        var grouped: [String: [Procedure]] = [:]
+        for p in procedures { grouped[p.section, default: []].append(p) }
+        return order.compactMap { key in
+            guard let items = grouped[key], !items.isEmpty else { return nil }
+            let first = items.first!
+            return ProcedureSection(
+                section: key,
+                displayName: first.sectionDisplayName,
+                colorHex: first.sectionColor,
+                procedures: items
+            )
+        }
     }
 }

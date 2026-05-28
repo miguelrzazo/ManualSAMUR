@@ -34,6 +34,10 @@
 		47EB8EA1E9F64CB6918E42F5 /* codigos.json in Resources */ = {isa = PBXBuildFile; fileRef = 99EC9311291848C3B1C65883 /* codigos.json */; };
 		F35B389CA4214A84959B6500 /* hospitals.json in Resources */ = {isa = PBXBuildFile; fileRef = B76AA2AB4CB74B58A607B8D8 /* hospitals.json */; };
 		AA1234567890ABCDEF123456 /* Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1234567890ABCDEF123456 /* Base.swift */; };
+		AA2B3C4D5E6F7A8B9C0D1E22 /* ManualUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1B2C3D4E5F6A7B8C9D0E11 /* ManualUpdateEvent.swift */; };
+		CC4D5E6F7A8B9C0D1E2F3A44 /* ProcedureSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3C4D5E6F7A8B9C0D1E2F33 /* ProcedureSection.swift */; };
+		EE6F7A8B9C0D1E2F3A4B5C66 /* SectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */; };
+		GG8A9B0C1D2E3F4A5B6C7D88 /* HistorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */; };
 		CC1234567890ABCDEF123456 /* Status4Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1234567890ABCDEF123456 /* Status4Entry.swift */; };
 		EE1234567890ABCDEF123456 /* bases.json in Resources */ = {isa = PBXBuildFile; fileRef = FF1234567890ABCDEF123456 /* bases.json */; };
 		001234567890ABCDEF123456 /* status4.json in Resources */ = {isa = PBXBuildFile; fileRef = 111234567890ABCDEF123456 /* status4.json */; };
@@ -54,6 +58,13 @@
 		78582CB7C80E41E390653904 /* pdf-classification.json in Resources */ = {isa = PBXBuildFile; fileRef = CD12258577424C69B324E1EF /* pdf-classification.json */; };
 		E7A132E6F1B244BCA77CA73B /* perfusiones.json in Resources */ = {isa = PBXBuildFile; fileRef = A4B744A6DF1741AFBC7C9CC9 /* perfusiones.json */; };
 		28FD9555640846E391C1A843 /* vademecum-comerciales.json in Resources */ = {isa = PBXBuildFile; fileRef = 2AF13C66682E4E6FB931EA44 /* vademecum-comerciales.json */; };
+		AA1122334455667788990011 /* TypographyExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1122334455667788990022 /* TypographyExtension.swift */; };
+		CC1122334455667788990033 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1122334455667788990044 /* HapticFeedback.swift */; };
+		F1A2B3C4D5E601234567ABCD /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E612345678ABCD /* DesignSystem.swift */; };
+		EE1122334455667788990055 /* InstrumentSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF1122334455667788990066 /* InstrumentSans-Regular.ttf */; };
+		AA2233445566778899001122 /* InstrumentSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB2233445566778899002233 /* InstrumentSans-Medium.ttf */; };
+		CC2233445566778899003344 /* InstrumentSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DD2233445566778899004455 /* InstrumentSans-SemiBold.ttf */; };
+		EE2233445566778899005566 /* InstrumentSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF2233445566778899006677 /* InstrumentSans-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +89,13 @@
 		D7F8F2CCCC3C43C8B6B807C4 /* SectionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionBadge.swift; sourceTree = "<group>"; };
 		058ED5171EAE4455A9E70B72 /* EmptySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySearchView.swift; sourceTree = "<group>"; };
 		C233C951F2994CEBB849A48F /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		BB1122334455667788990022 /* TypographyExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypographyExtension.swift; sourceTree = "<group>"; };
+		DD1122334455667788990044 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E612345678ABCD /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		FF1122334455667788990066 /* InstrumentSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSans-Regular.ttf"; sourceTree = "<group>"; };
+		BB2233445566778899002233 /* InstrumentSans-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSans-Medium.ttf"; sourceTree = "<group>"; };
+		DD2233445566778899004455 /* InstrumentSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSans-SemiBold.ttf"; sourceTree = "<group>"; };
+		FF2233445566778899006677 /* InstrumentSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSans-Bold.ttf"; sourceTree = "<group>"; };
 		808B4DFBBC8C4977B565D1C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		676D7BA92F774678B5F3E4B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		465CE1DBC7034C9D85AE0AA8 /* procedures.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = procedures.json; sourceTree = "<group>"; };
@@ -85,6 +103,10 @@
 		99EC9311291848C3B1C65883 /* codigos.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = codigos.json; sourceTree = "<group>"; };
 		B76AA2AB4CB74B58A607B8D8 /* hospitals.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = hospitals.json; sourceTree = "<group>"; };
 		BB1234567890ABCDEF123456 /* Base.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base.swift; sourceTree = "<group>"; };
+		FA1B2C3D4E5F6A7B8C9D0E11 /* ManualUpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualUpdateEvent.swift; sourceTree = "<group>"; };
+		BB3C4D5E6F7A8B9C0D1E2F33 /* ProcedureSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureSection.swift; sourceTree = "<group>"; };
+		DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionDetailView.swift; sourceTree = "<group>"; };
+		FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorialView.swift; sourceTree = "<group>"; };
 		DD1234567890ABCDEF123456 /* Status4Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status4Entry.swift; sourceTree = "<group>"; };
 		FF1234567890ABCDEF123456 /* bases.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bases.json; sourceTree = "<group>"; };
 		111234567890ABCDEF123456 /* status4.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status4.json; sourceTree = "<group>"; };
@@ -168,7 +190,9 @@
 				757E3D40F9E44C52AB92B53C /* Manifest.swift */,
 				BB1234567890ABCDEF123456 /* Base.swift */,
 				DD1234567890ABCDEF123456 /* Status4Entry.swift */,
-			
+				FA1B2C3D4E5F6A7B8C9D0E11 /* ManualUpdateEvent.swift */,
+				BB3C4D5E6F7A8B9C0D1E2F33 /* ProcedureSection.swift */,
+
 				DAC34734428D41E999823921 /* added */,
 				70D3C12B221F474F8534BF16 /* added */,
 				9B1DAEFE1D49401C9C4E8BD7 /* added */,
@@ -204,7 +228,9 @@
 			children = (
 				95E12014B4884A52972D652A /* ManualView.swift */,
 				9E115D5F465A4286AFDA7A92 /* ProcedureDetailView.swift */,
-			
+				DD5E6F7A8B9C0D1E2F3A4B55 /* SectionDetailView.swift */,
+				FF7A8B9C0D1E2F3A4B5C6D77 /* HistorialView.swift */,
+
 				B0E20FCB236D407CA25400C4 /* added */,
 );
 			path = Manual;
@@ -246,6 +272,9 @@
 				D7F8F2CCCC3C43C8B6B807C4 /* SectionBadge.swift */,
 				058ED5171EAE4455A9E70B72 /* EmptySearchView.swift */,
 				C233C951F2994CEBB849A48F /* ColorExtension.swift */,
+				BB1122334455667788990022 /* TypographyExtension.swift */,
+				DD1122334455667788990044 /* HapticFeedback.swift */,
+				F1A2B3C4D5E612345678ABCD /* DesignSystem.swift */,
 				A1B2C3D4E5F612345678ABCD /* GlobalSearchView.swift */,
 				C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */,
 				E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */,
@@ -253,11 +282,23 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		AA3344556677889900AABB11 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FF1122334455667788990066 /* InstrumentSans-Regular.ttf */,
+				BB2233445566778899002233 /* InstrumentSans-Medium.ttf */,
+				DD2233445566778899004455 /* InstrumentSans-SemiBold.ttf */,
+				FF2233445566778899006677 /* InstrumentSans-Bold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		9040221A451C4795A13261D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				676D7BA92F774678B5F3E4B8 /* Assets.xcassets */,
 				9A0D786551D14E8AB2CEB92A /* BundledData */,
+				AA3344556677889900AABB11 /* Fonts */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -393,6 +434,9 @@
 				E2899DF2FF6F4044BB496AD4 /* SectionBadge.swift in Sources */,
 				83B7478990CD4D399CDC3CD3 /* EmptySearchView.swift in Sources */,
 				2F8329BD595A4F64936362E7 /* ColorExtension.swift in Sources */,
+				AA1122334455667788990011 /* TypographyExtension.swift in Sources */,
+				CC1122334455667788990033 /* HapticFeedback.swift in Sources */,
+				F1A2B3C4D5E601234567ABCD /* DesignSystem.swift in Sources */,
 				A1B2C3D4E5F601234567ABCD /* GlobalSearchView.swift in Sources */,
 				C1D2E3F4A5B601234567ABCD /* AbreviaturasView.swift in Sources */,
 				E1F2A3B4C5D601234567ABCD /* AppMenuSheet.swift in Sources */,
@@ -405,6 +449,10 @@
 				95D55726170A498EA2845DDF /* PerfusionDetailView.swift in Sources */,
 				92702C99AE5E458A9CA40A96 /* FluidDetailView.swift in Sources */,
 				39480F2E424141F686A63F74 /* ProcedureAnnexesView.swift in Sources */,
+				AA2B3C4D5E6F7A8B9C0D1E22 /* ManualUpdateEvent.swift in Sources */,
+				CC4D5E6F7A8B9C0D1E2F3A44 /* ProcedureSection.swift in Sources */,
+				EE6F7A8B9C0D1E2F3A4B5C66 /* SectionDetailView.swift in Sources */,
+				GG8A9B0C1D2E3F4A5B6C7D88 /* HistorialView.swift in Sources */,
 );
 			runOnlyForDeploymentPostprocessing = 0;
 		};
