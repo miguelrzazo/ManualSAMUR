@@ -24,10 +24,11 @@ struct CodigosView: View {
     var body: some View {
         VStack(spacing: 0) {
             typePicker
-            Divider()
             mainContent
+                .samurPageBackground()
         }
         .navigationTitle("Códigos")
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showSearch = true } label: {
@@ -56,29 +57,12 @@ struct CodigosView: View {
     // MARK: - Type picker
 
     private var typePicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(availableTypes, id: \.self) { type in
-                    Button {
-                        selectedType = type
-                        showScrollToTop = false
-                    } label: {
-                        Text(codigoTypeLabels[type] ?? type)
-                            .font(.subheadline.weight(selectedType == type ? .semibold : .regular))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 7)
-                            .background(
-                                selectedType == type ? Color.samurBlue : Color.secondary.opacity(0.12),
-                                in: Capsule()
-                            )
-                            .foregroundStyle(selectedType == type ? .white : .primary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-        }
+        UnderlineTabPicker(
+            tabs: availableTypes.map { (label: codigoTypeLabels[$0] ?? $0, value: $0) },
+            selection: $selectedType
+        )
+        .background(.ultraThinMaterial)
+        .onChange(of: selectedType) { _, _ in showScrollToTop = false }
     }
 
     // MARK: - Sorted data
@@ -136,37 +120,38 @@ private struct HospitalRow: View {
     let hospital: Hospital
 
     private var typeColor: Color {
-        hospital.type == "public" ? Color.samurBlue : Color(hex: "#5E5CE6")
+        hospital.type == "public" ? Color.samurPrimary : Color(hex: "#8B5CF6")
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .center, spacing: 8) {
                 Text(hospital.typeLabel)
-                    .font(.caption2.weight(.semibold))
+                    .font(.samurCaption2.weight(.semibold))
                     .foregroundStyle(typeColor)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .background(typeColor.opacity(0.12), in: Capsule())
+                    .overlay(Capsule().strokeBorder(typeColor.opacity(0.2), lineWidth: 0.5))
                 Text(hospital.name)
-                    .font(.body)
+                    .font(.samurBody)
                     .lineLimit(2)
             }
             HStack(spacing: 4) {
                 if let district = hospital.district, !district.isEmpty {
                     Text(district)
-                        .font(.caption2)
+                        .font(.samurCaption2)
                         .foregroundStyle(.secondary)
                     Text("·")
-                        .font(.caption2)
+                        .font(.samurCaption2)
                         .foregroundStyle(.tertiary)
                 }
                 Text(hospital.address)
-                    .font(.caption)
+                    .font(.samurCaption)
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 3)
     }
 }
 
@@ -189,24 +174,24 @@ private struct BaseRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text("B\(base.number)")
-                .font(.system(.callout, design: .monospaced, weight: .bold))
+                .font(.samurMonoBody)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.samurBlue, in: RoundedRectangle(cornerRadius: 6))
+                .padding(.vertical, 5)
+                .background(Color.samurPrimary, in: RoundedRectangle(cornerRadius: 7))
                 .fixedSize()
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(base.name)
-                    .font(.body)
+                    .font(.samurBody)
                     .lineLimit(2)
                 Text("\(base.district) · \(base.address)")
-                    .font(.caption)
+                    .font(.samurCaption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 3)
     }
 }
 
@@ -217,6 +202,7 @@ private let comunicacionesKeys = ["plantillas", "grupos", "tetra", "estatus"]
 private struct ComunicacionesTab: View {
     let sections: [CheatsheetSection]
     @Binding var selectedKey: String
+    @Namespace private var subPickerNS
 
     private var filteredSections: [CheatsheetSection] {
         comunicacionesKeys.compactMap { key in
@@ -230,27 +216,34 @@ private struct ComunicacionesTab: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Section picker
+            // Sub-section picker — same sliding indicator treatment
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     ForEach(filteredSections) { section in
+                        let isSelected = selectedKey == section.key
                         Button {
-                            selectedKey = section.key
+                            withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                                selectedKey = section.key
+                            }
+                            HapticFeedback.selection()
                         } label: {
                             Text(section.title)
-                                .font(.subheadline.weight(selectedKey == section.key ? .semibold : .regular))
-                                .padding(.horizontal, 14)
+                                .font(.samurCaption.weight(isSelected ? .semibold : .medium))
+                                .foregroundStyle(isSelected ? .white : .secondary)
+                                .padding(.horizontal, 13)
                                 .padding(.vertical, 7)
-                                .background(
-                                    selectedKey == section.key ? Color.samurBlue : Color.secondary.opacity(0.12),
-                                    in: Capsule()
-                                )
-                                .foregroundStyle(selectedKey == section.key ? .white : .primary)
+                                .background {
+                                    if isSelected {
+                                        Capsule()
+                                            .fill(Color.samurPrimary)
+                                            .matchedGeometryEffect(id: "subIndicator", in: subPickerNS)
+                                    }
+                                }
                         }
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 14)
                 .padding(.vertical, 10)
             }
             Divider()
@@ -272,7 +265,7 @@ private struct CheatsheetSectionView: View {
         switch section.kind {
         case .cards:
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     ForEach(Array(section.items.enumerated()), id: \.offset) { _, item in
                         CheatsheetCardItem(item: item)
                     }
@@ -289,25 +282,26 @@ private struct CheatsheetCardItem: View {
     let item: CheatsheetItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 7) {
             if let title = item.title, !title.isEmpty {
                 Text(title)
-                    .font(.headline)
+                    .font(.samurHeadline)
             }
             ForEach(item.lines ?? [], id: \.self) { line in
-                HStack(alignment: .top, spacing: 6) {
-                    Text("•")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack(alignment: .top, spacing: 8) {
+                    Circle()
+                        .fill(Color.samurPrimary.opacity(0.5))
+                        .frame(width: 5, height: 5)
+                        .padding(.top, 6)
                     Text(line)
-                        .font(.subheadline)
+                        .font(.samurCallout)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
+        .samurGlassCard(cornerRadius: 12, tint: Color.samurPrimary)
     }
 }
 
@@ -332,31 +326,29 @@ private struct CheatsheetTableRow: View {
 
     var body: some View {
         if columns.count == 2 {
-            // Two-column: "label: value" layout
             HStack(alignment: .top, spacing: 8) {
                 Text(item.value(for: columns[0]) ?? "")
-                    .font(.body.weight(.semibold))
+                    .font(.samurBody.weight(.semibold))
                     .frame(minWidth: 60, alignment: .leading)
                 Text(item.value(for: columns[1]) ?? "")
-                    .font(.body)
+                    .font(.samurBody)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 2)
         } else if columns.count >= 3 {
-            // Three+ columns: first column as leading label, rest below
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.value(for: columns[0]) ?? "")
-                    .font(.body.weight(.semibold))
+                    .font(.samurBody.weight(.semibold))
                 HStack(spacing: 12) {
                     ForEach(columns.dropFirst(), id: \.self) { col in
                         if let val = item.value(for: col), !val.isEmpty {
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(col)
-                                    .font(.caption2)
+                                    .font(.samurCaption2)
                                     .foregroundStyle(.tertiary)
                                 Text(val)
-                                    .font(.caption)
+                                    .font(.samurCaption)
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -365,14 +357,18 @@ private struct CheatsheetTableRow: View {
             }
             .padding(.vertical, 2)
         } else {
-            // Fallback: show title
             Text(item.title ?? "")
-                .font(.body)
+                .font(.samurBody)
         }
     }
 }
 
-// MARK: - Codes tab (grouped by category)
+// MARK: - Codes tab
+
+private struct CodeGroup {
+    let category: String
+    let subcategories: [(name: String?, codes: [Code])]
+}
 
 private struct CodesTab: View {
     let selectedType: String
@@ -380,16 +376,41 @@ private struct CodesTab: View {
     @Binding var showScrollToTop: Bool
     let onSelect: (Code) -> Void
 
-    private var groupedCodes: [(category: String, codes: [Code])] {
-        var grouped: [String: [Code]] = [:]
-        var orderedKeys: [String] = []
-        var seen = Set<String>()
+    private var codeGroups: [CodeGroup] {
+        var categoryMap: [String: [Code]] = [:]
+        var categoryOrder: [String] = []
+        var seenCats = Set<String>()
         for code in codes {
-            let key = code.category ?? "General"
-            if seen.insert(key).inserted { orderedKeys.append(key) }
-            grouped[key, default: []].append(code)
+            let cat = code.category ?? "General"
+            if seenCats.insert(cat).inserted { categoryOrder.append(cat) }
+            categoryMap[cat, default: []].append(code)
         }
-        return orderedKeys.map { key in (category: key, codes: grouped[key]!) }
+
+        return categoryOrder.map { cat in
+            let catCodes = categoryMap[cat]!
+            let hasSubcategories = catCodes.contains { $0.subcategory != nil }
+            guard hasSubcategories else {
+                return CodeGroup(category: cat, subcategories: [(name: nil, codes: catCodes)])
+            }
+
+            var ungrouped: [Code] = []
+            var subMap: [String: [Code]] = [:]
+            var subOrder: [String] = []
+            var seenSubs = Set<String>()
+            for code in catCodes {
+                if let sub = code.subcategory {
+                    if seenSubs.insert(sub).inserted { subOrder.append(sub) }
+                    subMap[sub, default: []].append(code)
+                } else {
+                    ungrouped.append(code)
+                }
+            }
+
+            var subcategories: [(name: String?, codes: [Code])] = []
+            if !ungrouped.isEmpty { subcategories.append((name: nil, codes: ungrouped)) }
+            for sub in subOrder { subcategories.append((name: sub, codes: subMap[sub]!)) }
+            return CodeGroup(category: cat, subcategories: subcategories)
+        }
     }
 
     private var showNoReportLegend: Bool {
@@ -400,45 +421,54 @@ private struct CodesTab: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
-                    // Top anchor for back-to-top detection
                     Color.clear
                         .frame(height: 1)
                         .id("top")
                         .onAppear { showScrollToTop = false }
                         .onDisappear { showScrollToTop = true }
 
-                    // Grouped sections
-                    ForEach(groupedCodes, id: \.category) { group in
+                    ForEach(codeGroups, id: \.category) { group in
                         Section {
-                            ForEach(group.codes) { code in
-                                VStack(spacing: 0) {
-                                    CodeRow(code: code)
-                                        .contentShape(Rectangle())
-                                        .onTapGesture { onSelect(code) }
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 6)
-                                    Divider().padding(.leading, 16)
+                            ForEach(group.subcategories, id: \.name) { sub in
+                                if let subName = sub.name {
+                                    SubcategoryDividerRow(name: subName)
+                                }
+                                ForEach(sub.codes) { code in
+                                    VStack(spacing: 0) {
+                                        CodeRow(code: code, indented: sub.name != nil)
+                                            .contentShape(Rectangle())
+                                            .onTapGesture { onSelect(code) }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 7)
+                                        Divider().padding(.leading, sub.name != nil ? 32 : 16)
+                                    }
                                 }
                             }
                         } header: {
                             Text(group.category)
-                                .font(.subheadline.weight(.semibold))
+                                .font(.samurCaption.weight(.semibold))
                                 .foregroundStyle(.secondary)
+                                .textCase(.uppercase)
+                                .tracking(0.4)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
-                                .background(.background)
+                                .padding(.vertical, 7)
+                                .background(.ultraThinMaterial)
                         }
                     }
 
-                    // noReport legend
                     if showNoReportLegend {
-                        Text("Los códigos marcados con ⊘ no generan informe asistencial")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                        HStack(spacing: 6) {
+                            Image(systemName: "doc.badge.minus")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text("Los códigos marcados con ⊘ no generan informe asistencial")
+                                .font(.samurCaption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
                     }
                 }
             }
@@ -449,43 +479,60 @@ private struct CodesTab: View {
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.title2)
-                            .foregroundStyle(.white, Color.samurBlue)
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(Color.samurPrimary)
                             .padding(8)
                     }
                     .padding(.trailing, 16)
                     .padding(.bottom, 16)
-                    .transition(.opacity.combined(with: .scale))
+                    .transition(.opacity.combined(with: .scale(scale: 0.8)))
                 }
             }
-            .animation(.easeInOut(duration: 0.2), value: showScrollToTop)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showScrollToTop)
         }
+    }
+}
+
+private struct SubcategoryDividerRow: View {
+    let name: String
+
+    var body: some View {
+        Text(name)
+            .font(.samurCaption.weight(.semibold))
+            .foregroundStyle(.tertiary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 32)
+            .padding(.trailing, 16)
+            .padding(.vertical, 5)
+            .background(Color.secondary.opacity(0.04))
     }
 }
 
 // MARK: - CodeRow
 
-private struct CodeRow: View {
+struct CodeRow: View {
     let code: Code
+    var indented: Bool = false
 
     var body: some View {
         HStack(spacing: 10) {
-            // Prominent code badge
+            if indented {
+                Spacer().frame(width: 12)
+            }
             Text(code.code)
-                .font(.system(.callout, design: .monospaced, weight: .bold))
+                .font(.samurMonoBody)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.samurBlue, in: RoundedRectangle(cornerRadius: 6))
+                .padding(.vertical, 5)
+                .background(Color.samurPrimary, in: RoundedRectangle(cornerRadius: 7))
                 .fixedSize()
 
-            // Name
             Text(code.name)
-                .font(.body)
+                .font(.samurBody)
                 .lineLimit(2)
 
             Spacer(minLength: 4)
 
-            // Icons
             HStack(spacing: 4) {
                 if code.tetra == true {
                     Image(systemName: "antenna.radiowaves.left.and.right")
