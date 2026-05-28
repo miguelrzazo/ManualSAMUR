@@ -63,6 +63,7 @@
 		CC1122334455667788990033 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1122334455667788990044 /* HapticFeedback.swift */; };
 		F1A2B3C4D5E601234567ABCD /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E612345678ABCD /* DesignSystem.swift */; };
 		B2C3D4E5F6A701234567BCDE /* ProcedureListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A712345678BCDE /* ProcedureListRow.swift */; };
+		E5F6A7B8C9D001234567EFAB /* UnderlineTabPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6A7B8C9D012345678EFAB /* UnderlineTabPicker.swift */; };
 		C3D4E5F6A7B801234567CDEF /* SectionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B812345678CDEF /* SectionGroup.swift */; };
 		EE1122334455667788990055 /* InstrumentSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF1122334455667788990066 /* InstrumentSans-Regular.ttf */; };
 		AA2233445566778899001122 /* InstrumentSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB2233445566778899002233 /* InstrumentSans-Medium.ttf */; };
@@ -118,6 +119,7 @@
 		C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbreviaturasView.swift; sourceTree = "<group>"; };
 		E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMenuSheet.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A712345678BCDE /* ProcedureListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureListRow.swift; sourceTree = "<group>"; };
+		E5F6A7B8C9D012345678EFAB /* UnderlineTabPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderlineTabPicker.swift; sourceTree = "<group>"; };
 		C3D4E5F6A7B812345678CDEF /* SectionGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionGroup.swift; sourceTree = "<group>"; };
 		A2B3C4D5E6F712345678ABCD /* abreviaturas.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = abreviaturas.json; sourceTree = "<group>"; };
 		DAC34734428D41E999823921 /* CheatsheetSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheatsheetSection.swift; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				F1A2B3C4D5E612345678ABCD /* DesignSystem.swift */,
 				B2C3D4E5F6A712345678BCDE /* ProcedureListRow.swift */,
 				C3D4E5F6A7B812345678CDEF /* SectionGroup.swift */,
+				E5F6A7B8C9D012345678EFAB /* UnderlineTabPicker.swift */,
 				A1B2C3D4E5F612345678ABCD /* GlobalSearchView.swift */,
 				C1D2E3F4A5B612345678ABCD /* AbreviaturasView.swift */,
 				E1F2A3B4C5D612345678ABCD /* AppMenuSheet.swift */,
@@ -448,6 +451,7 @@
 				F1A2B3C4D5E601234567ABCD /* DesignSystem.swift in Sources */,
 				B2C3D4E5F6A701234567BCDE /* ProcedureListRow.swift in Sources */,
 				C3D4E5F6A7B801234567CDEF /* SectionGroup.swift in Sources */,
+				E5F6A7B8C9D001234567EFAB /* UnderlineTabPicker.swift in Sources */,
 				A1B2C3D4E5F601234567ABCD /* GlobalSearchView.swift in Sources */,
 				C1D2E3F4A5B601234567ABCD /* AbreviaturasView.swift in Sources */,
 				E1F2A3B4C5D601234567ABCD /* AppMenuSheet.swift in Sources */,
