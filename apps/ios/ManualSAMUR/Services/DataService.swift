@@ -123,6 +123,36 @@ struct DataService {
         Bundle.main.url(forResource: "procedures", withExtension: "json") != nil
     }
 
+    // MARK: - Manual Updates (Historial)
+
+    static func fetchUpdateEvents() async throws -> ManualUpdatesPayload {
+        let url = URL(string: "\(baseURL)/manual-updates.json")!
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        return try JSONDecoder().decode(ManualUpdatesPayload.self, from: data)
+    }
+
+    static func saveUpdateEventsCache(_ payload: ManualUpdatesPayload) throws {
+        let dir = cacheDir
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        try JSONEncoder().encode(payload)
+            .write(to: dir.appendingPathComponent("manual-updates.json"))
+    }
+
+    static func loadCachedUpdateEvents() throws -> ManualUpdatesPayload {
+        let path = cacheDir.appendingPathComponent("manual-updates.json")
+        let data = try Data(contentsOf: path)
+        return try JSONDecoder().decode(ManualUpdatesPayload.self, from: data)
+    }
+
+    static var hasCachedUpdateEvents: Bool {
+        FileManager.default.fileExists(
+            atPath: cacheDir.appendingPathComponent("manual-updates.json").path
+        )
+    }
+
     // MARK: - Cache
 
     private static var cacheDir: URL {
@@ -141,7 +171,9 @@ struct DataService {
 
         var codesForStorage: [String: [StorableCode]] = [:]
         for (type, codes) in data.codes {
-            codesForStorage[type] = codes.map { StorableCode(code: $0.code, name: $0.name, category: $0.category, description: $0.description, noReport: $0.noReport, tetra: $0.tetra) }
+            codesForStorage[type] = codes.map {
+                StorableCode(code: $0.code, name: $0.name, category: $0.category, subcategory: $0.subcategory, description: $0.description, noReport: $0.noReport, tetra: $0.tetra)
+            }
         }
         try JSONEncoder().encode(codesForStorage)
             .write(to: dir.appendingPathComponent("codigos.json"))
@@ -195,7 +227,9 @@ struct DataService {
 
         var codesMap: [String: [Code]] = [:]
         for (type, items) in codesRaw {
-            codesMap[type] = items.map { Code(type: type, code: $0.code, name: $0.name, category: $0.category, description: $0.description, noReport: $0.noReport, tetra: $0.tetra) }
+            codesMap[type] = items.map {
+                Code(type: type, code: $0.code, name: $0.name, category: $0.category, subcategory: $0.subcategory, description: $0.description, noReport: $0.noReport, tetra: $0.tetra)
+            }
         }
 
         let bases: [Base] = (try? loadBundledFile(name: "bases")) ?? []
@@ -219,6 +253,7 @@ private struct StorableCode: Codable {
     let code: String
     let name: String
     let category: String?
+    let subcategory: String?
     let description: String?
     let noReport: Bool?
     let tetra: Bool?

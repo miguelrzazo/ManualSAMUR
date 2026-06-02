@@ -1,0 +1,744 @@
+[
+  {
+    "letter": "A",
+    "entries": [
+      {
+        "abbreviation": "a",
+        "meaning": "año/os"
+      },
+      {
+        "abbreviation": "AAS",
+        "meaning": "Ácido acetil salicílico"
+      },
+      {
+        "abbreviation": "ACVA",
+        "meaning": "Accidente cerebrovascular agudo (ver EVCA)"
+      },
+      {
+        "abbreviation": "ADT",
+        "meaning": "Antidepresivos tricíclicos"
+      },
+      {
+        "abbreviation": "ADO",
+        "meaning": "Antidiabéticos orales"
+      },
+      {
+        "abbreviation": "ADVP",
+        "meaning": "Adicto a drogas por vía parenteral"
+      },
+      {
+        "abbreviation": "AESP",
+        "meaning": "Actividad eléctrica sin pulso"
+      },
+      {
+        "abbreviation": "AHA",
+        "meaning": "American Heart Association. (Asociación Americana del corazón)"
+      },
+      {
+        "abbreviation": "AINE",
+        "meaning": "Antiinflamatorio no esteroideo"
+      },
+      {
+        "abbreviation": "AIT",
+        "meaning": "Accidente isquémico transitorio"
+      },
+      {
+        "abbreviation": "AP",
+        "meaning": "Antecedentes personales"
+      },
+      {
+        "abbreviation": "AV",
+        "meaning": "Auriculoventricular"
+      },
+      {
+        "abbreviation": "AVDN",
+        "meaning": "Alerta, verbal, dolor, no respuesta."
+      }
+    ]
+  },
+  {
+    "letter": "B",
+    "entries": [
+      {
+        "abbreviation": "BAV",
+        "meaning": "Bloqueo aurículoventricular."
+      },
+      {
+        "abbreviation": "BRI",
+        "meaning": "Bloqueo de Rama izquierdo del Haz de His"
+      },
+      {
+        "abbreviation": "BNCO",
+        "meaning": "Bronconeumopatía crónica obstructiva"
+      }
+    ]
+  },
+  {
+    "letter": "C",
+    "entries": [
+      {
+        "abbreviation": "CAD",
+        "meaning": "Cetoacidosis diabética"
+      },
+      {
+        "abbreviation": "CASI",
+        "meaning": "Centro de Acogida San Isidro"
+      },
+      {
+        "abbreviation": "cc",
+        "meaning": "centímetros cúbicos"
+      },
+      {
+        "abbreviation": "cm",
+        "meaning": "centímetro"
+      },
+      {
+        "abbreviation": "cm de H2O",
+        "meaning": "centímetro de agua"
+      },
+      {
+        "abbreviation": "cpm",
+        "meaning": "compresiones por minuto"
+      },
+      {
+        "abbreviation": "CQ",
+        "meaning": "Llamada general"
+      }
+    ]
+  },
+  {
+    "letter": "D",
+    "entries": [
+      {
+        "abbreviation": "DAE",
+        "meaning": "Desfibrilación externa automática"
+      },
+      {
+        "abbreviation": "DESA",
+        "meaning": "Desfibrilación externa semiautomática"
+      },
+      {
+        "abbreviation": "DEM",
+        "meaning": "Disociación electromecánica"
+      },
+      {
+        "abbreviation": "DE",
+        "meaning": "Diplomado en enfermería"
+      },
+      {
+        "abbreviation": "DF",
+        "meaning": "Desfibrilación"
+      },
+      {
+        "abbreviation": "DM",
+        "meaning": "Diabetes Mellitus"
+      }
+    ]
+  },
+  {
+    "letter": "E",
+    "entries": [
+      {
+        "abbreviation": "EAP",
+        "meaning": "Edema agudo de pulmón"
+      },
+      {
+        "abbreviation": "EB",
+        "meaning": "Exceso de Base"
+      },
+      {
+        "abbreviation": "ECG",
+        "meaning": "Electrocardiograma"
+      },
+      {
+        "abbreviation": "EG",
+        "meaning": "Edad Gestacional"
+      },
+      {
+        "abbreviation": "et",
+        "meaning": "endotraqueal"
+      },
+      {
+        "abbreviation": "EPOC",
+        "meaning": "Enfermedad pulmonar obstructiva crónica"
+      },
+      {
+        "abbreviation": "ERA",
+        "meaning": "Equipo de Respiración Autónoma"
+      },
+      {
+        "abbreviation": "ERC",
+        "meaning": "'European Resucitation Council' (Consejo Europeo de Resucitación)"
+      },
+      {
+        "abbreviation": "ETCO2",
+        "meaning": "Dióxido de carbono al final de la espiración"
+      },
+      {
+        "abbreviation": "ETS",
+        "meaning": "Enfermedad de transmisión Sexual"
+      },
+      {
+        "abbreviation": "EV",
+        "meaning": "Extrasístoles ventriculares"
+      }
+    ]
+  },
+  {
+    "letter": "F",
+    "entries": [
+      {
+        "abbreviation": "FA",
+        "meaning": "Fibrilación auricular"
+      },
+      {
+        "abbreviation": "FC",
+        "meaning": "Frecuencia cardiaca"
+      },
+      {
+        "abbreviation": "FiO2",
+        "meaning": "Fracción inspiratoria de Oxígeno"
+      },
+      {
+        "abbreviation": "FPP",
+        "meaning": "Fecha prevista de parto"
+      },
+      {
+        "abbreviation": "FR",
+        "meaning": "Frecuencia respiratoria"
+      },
+      {
+        "abbreviation": "F",
+        "meaning": "Unidad de calibre (French)"
+      },
+      {
+        "abbreviation": "FUR",
+        "meaning": "Fecha de última regla"
+      },
+      {
+        "abbreviation": "FV",
+        "meaning": "Fibrilación ventricular"
+      },
+      {
+        "abbreviation": "FV / TV",
+        "meaning": "Fibrilación ventricular o taquicardia ventricular"
+      }
+    ]
+  },
+  {
+    "letter": "G",
+    "entries": [
+      {
+        "abbreviation": "g",
+        "meaning": "gramo/os"
+      },
+      {
+        "abbreviation": "G",
+        "meaning": "Unidades de grosor de catéteres (Gauge)"
+      },
+      {
+        "abbreviation": "GAV, GAPC",
+        "meaning": "Gestaciones/Abortos/Vivos; Gestaciones/Abortos/Partos/Cesáreas"
+      },
+      {
+        "abbreviation": "GCS",
+        "meaning": "'Glasgow Coma Score' (Escala de coma de Glasgow)"
+      },
+      {
+        "abbreviation": "GRUME",
+        "meaning": "Grupo de Menores de la Policía Nacional"
+      }
+    ]
+  },
+  {
+    "letter": "H",
+    "entries": [
+      {
+        "abbreviation": "h",
+        "meaning": "hora/as"
+      },
+      {
+        "abbreviation": "Hb",
+        "meaning": "Hemoglobina"
+      },
+      {
+        "abbreviation": "HDA",
+        "meaning": "Hemorragia Digestiva Aguda"
+      },
+      {
+        "abbreviation": "HTA",
+        "meaning": "Hipertensión arterial"
+      },
+      {
+        "abbreviation": "HTP",
+        "meaning": "Hipertensión pulmonar"
+      },
+      {
+        "abbreviation": "HTIC",
+        "meaning": "Hipertensión intracraneal"
+      },
+      {
+        "abbreviation": "Hto",
+        "meaning": "Hematocrito"
+      }
+    ]
+  },
+  {
+    "letter": "I",
+    "entries": [
+      {
+        "abbreviation": "IAM",
+        "meaning": "Infarto agudo de miocardio"
+      },
+      {
+        "abbreviation": "IC",
+        "meaning": "Insuficiencia cardiaca"
+      },
+      {
+        "abbreviation": "ICC",
+        "meaning": "Insuficiencia cardiaca congestiva"
+      },
+      {
+        "abbreviation": "io",
+        "meaning": "intraósea"
+      },
+      {
+        "abbreviation": "IOT",
+        "meaning": "intubación orotraqueal"
+      },
+      {
+        "abbreviation": "ILCOR",
+        "meaning": "'International Liaison Committee on Resucitation'"
+      },
+      {
+        "abbreviation": "IMAO",
+        "meaning": "Inhibidores de la monoaminooxidasa"
+      },
+      {
+        "abbreviation": "IMV",
+        "meaning": "Incidentes con Múltiples Víctimas"
+      },
+      {
+        "abbreviation": "IMVI",
+        "meaning": "Incidentes con Múltiples Víctimas Intencionado"
+      },
+      {
+        "abbreviation": "im",
+        "meaning": "intramuscular"
+      },
+      {
+        "abbreviation": "ir",
+        "meaning": "intrarrectal"
+      },
+      {
+        "abbreviation": "IRC",
+        "meaning": "Insuficiencia renal crónica"
+      },
+      {
+        "abbreviation": "iv",
+        "meaning": "intravenosa"
+      }
+    ]
+  },
+  {
+    "letter": "J",
+    "entries": [
+      {
+        "abbreviation": "J",
+        "meaning": "julio/os"
+      },
+      {
+        "abbreviation": "J/kg",
+        "meaning": "julio/kg"
+      }
+    ]
+  },
+  {
+    "letter": "K",
+    "entries": [
+      {
+        "abbreviation": "Kg",
+        "meaning": "kilogramo/os"
+      }
+    ]
+  },
+  {
+    "letter": "L",
+    "entries": [
+      {
+        "abbreviation": "l",
+        "meaning": "Litro/s"
+      },
+      {
+        "abbreviation": "l/min",
+        "meaning": "litros por minuto"
+      },
+      {
+        "abbreviation": "LCR",
+        "meaning": "Líquido Cefalorraquídeo"
+      },
+      {
+        "abbreviation": "lpm",
+        "meaning": "latido por minuto"
+      }
+    ]
+  },
+  {
+    "letter": "M",
+    "entries": [
+      {
+        "abbreviation": "mA",
+        "meaning": "miliamperio/os"
+      },
+      {
+        "abbreviation": "mcg",
+        "meaning": "microgramos"
+      },
+      {
+        "abbreviation": "mcgotas",
+        "meaning": "microgotas"
+      },
+      {
+        "abbreviation": "mEq",
+        "meaning": "miliequivalente/es"
+      },
+      {
+        "abbreviation": "mg",
+        "meaning": "miligramo/os"
+      },
+      {
+        "abbreviation": "min",
+        "meaning": "minuto/os"
+      },
+      {
+        "abbreviation": "ml",
+        "meaning": "mililitro/os"
+      },
+      {
+        "abbreviation": "ml/h",
+        "meaning": "mililitros por hora"
+      },
+      {
+        "abbreviation": "mmHg",
+        "meaning": "milímetros de Mercurio"
+      },
+      {
+        "abbreviation": "MMII",
+        "meaning": "miembros inferiores"
+      },
+      {
+        "abbreviation": "MMSS",
+        "meaning": "miembros superiores"
+      }
+    ]
+  },
+  {
+    "letter": "N",
+    "entries": [
+      {
+        "abbreviation": "Nº",
+        "meaning": "número"
+      },
+      {
+        "abbreviation": "NRBQ",
+        "meaning": "Nuclear/Radiológico/Biológico/Químico"
+      },
+      {
+        "abbreviation": "NSI",
+        "meaning": "Nota de Servicio Interior"
+      }
+    ]
+  },
+  {
+    "letter": "O",
+    "entries": [
+      {
+        "abbreviation": "O2",
+        "meaning": "Oxígeno"
+      }
+    ]
+  },
+  {
+    "letter": "P",
+    "entries": [
+      {
+        "abbreviation": "PCR",
+        "meaning": "Parada Cardiorrespiratoria"
+      },
+      {
+        "abbreviation": "PEF",
+        "meaning": "Pico de Flujo Espiratorio"
+      },
+      {
+        "abbreviation": "PIC",
+        "meaning": "Presión intracraneal"
+      },
+      {
+        "abbreviation": "PLS",
+        "meaning": "Posición lateral de seguridad"
+      },
+      {
+        "abbreviation": "PM",
+        "meaning": "Puesto de Mando"
+      },
+      {
+        "abbreviation": "PMA",
+        "meaning": "Puesto Médico Avanzado"
+      },
+      {
+        "abbreviation": "pO2",
+        "meaning": "Presión parcial de Oxígeno"
+      },
+      {
+        "abbreviation": "PaO2",
+        "meaning": "Presión parcial arterial de Oxígeno"
+      },
+      {
+        "abbreviation": "PaCO2",
+        "meaning": "Presión parcial arterial de Dióxido de carbono"
+      },
+      {
+        "abbreviation": "pCO2",
+        "meaning": "Presión parcial de Dióxido de carbono"
+      },
+      {
+        "abbreviation": "PTT",
+        "meaning": "'Press and Talk'"
+      }
+    ]
+  },
+  {
+    "letter": "R",
+    "entries": [
+      {
+        "abbreviation": "RCE",
+        "meaning": "Recuperación de la Circulación Espontánea"
+      },
+      {
+        "abbreviation": "RCP",
+        "meaning": "Resucitación cardiopulmonar"
+      },
+      {
+        "abbreviation": "RCP-A",
+        "meaning": "Resucitación cardiopulmonar avanzada"
+      },
+      {
+        "abbreviation": "RCP-B",
+        "meaning": "Resucitación cardiopulmonar básica"
+      },
+      {
+        "abbreviation": "RIVA",
+        "meaning": "Ritmo idioventricular acelerado"
+      },
+      {
+        "abbreviation": "RN",
+        "meaning": "Recién nacido"
+      },
+      {
+        "abbreviation": "rpm",
+        "meaning": "respiraciones por minuto"
+      }
+    ]
+  },
+  {
+    "letter": "S",
+    "entries": [
+      {
+        "abbreviation": "SAM",
+        "meaning": "Servicio de asistencia a la mujer (091)"
+      },
+      {
+        "abbreviation": "SAVD",
+        "meaning": "Servicio de Atención a la Violencia Doméstica (092 UAP)"
+      },
+      {
+        "abbreviation": "SCASEST",
+        "meaning": "Síndrome coronario agudo sin elevación del ST"
+      },
+      {
+        "abbreviation": "SEAM",
+        "meaning": "Servicio de Emergencias Alimentarias Municipales"
+      },
+      {
+        "abbreviation": "SatO2",
+        "meaning": "Saturación de oxígeno"
+      },
+      {
+        "abbreviation": "sc",
+        "meaning": "subcutánea"
+      },
+      {
+        "abbreviation": "SCQ",
+        "meaning": "superficie corporal quemada"
+      },
+      {
+        "abbreviation": "Sd",
+        "meaning": "síndrome"
+      },
+      {
+        "abbreviation": "sg",
+        "meaning": "segundo/os"
+      },
+      {
+        "abbreviation": "SG",
+        "meaning": "Suero glucosado"
+      },
+      {
+        "abbreviation": "sl",
+        "meaning": "sublingual"
+      },
+      {
+        "abbreviation": "SNG",
+        "meaning": "Sonda nasogástrica"
+      },
+      {
+        "abbreviation": "SSF",
+        "meaning": "Suero salino fisiológico"
+      },
+      {
+        "abbreviation": "SVA",
+        "meaning": "Soporte vital avanzado"
+      },
+      {
+        "abbreviation": "SVB",
+        "meaning": "Soporte vital básico"
+      },
+      {
+        "abbreviation": "SVE",
+        "meaning": "Suceso vital estresante"
+      }
+    ]
+  },
+  {
+    "letter": "T",
+    "entries": [
+      {
+        "abbreviation": "Tª",
+        "meaning": "Temperatura"
+      },
+      {
+        "abbreviation": "TA",
+        "meaning": "Tensión arterial"
+      },
+      {
+        "abbreviation": "TAD",
+        "meaning": "Tensión arterial diastólica"
+      },
+      {
+        "abbreviation": "TAM",
+        "meaning": "Tensión arterial media"
+      },
+      {
+        "abbreviation": "TAS",
+        "meaning": "Tensión arterial sistólica"
+      },
+      {
+        "abbreviation": "TATS",
+        "meaning": "Técnico Auxiliar de Transporte Sanitario"
+      },
+      {
+        "abbreviation": "TCE",
+        "meaning": "Traumatismo craneoencefálico"
+      },
+      {
+        "abbreviation": "TEP",
+        "meaning": "Tromboembolismo pulmonar"
+      },
+      {
+        "abbreviation": "TET / TOT",
+        "meaning": "Tubo endotraqueal"
+      },
+      {
+        "abbreviation": "TSV",
+        "meaning": "Taquicardia supraventricular"
+      },
+      {
+        "abbreviation": "TVP",
+        "meaning": "Trombosis venosa profunda"
+      },
+      {
+        "abbreviation": "TVSP",
+        "meaning": "Taquicardia ventricular sin pulso"
+      }
+    ]
+  },
+  {
+    "letter": "U",
+    "entries": [
+      {
+        "abbreviation": "UAPF",
+        "meaning": "Unidad de Atención y Protección a la Familia (092)"
+      },
+      {
+        "abbreviation": "UAD",
+        "meaning": "Unidad de apoyo a desastres"
+      },
+      {
+        "abbreviation": "UCIH",
+        "meaning": "Unidad de Coordinación Interhospitalaria"
+      },
+      {
+        "abbreviation": "UI",
+        "meaning": "Unidades internacionales"
+      },
+      {
+        "abbreviation": "UPSI",
+        "meaning": "Unidad de intervención psicológica"
+      },
+      {
+        "abbreviation": "UPSQ",
+        "meaning": "Unidad de transporte psiquiátrico"
+      },
+      {
+        "abbreviation": "USVA",
+        "meaning": "Unidad de soporte vital avanzado"
+      },
+      {
+        "abbreviation": "USVB",
+        "meaning": "Unidad de soporte vital básico"
+      }
+    ]
+  },
+  {
+    "letter": "V",
+    "entries": [
+      {
+        "abbreviation": "VAIS",
+        "meaning": "Vehículo de apoyo a la intervención"
+      },
+      {
+        "abbreviation": "VC o VT",
+        "meaning": "Volumen corriente o tidal"
+      },
+      {
+        "abbreviation": "VD",
+        "meaning": "Ventrículo derecho"
+      },
+      {
+        "abbreviation": "VI",
+        "meaning": "Ventrículo Izquierdo"
+      },
+      {
+        "abbreviation": "VM",
+        "meaning": "Volumen minuto"
+      },
+      {
+        "abbreviation": "vo",
+        "meaning": "vía oral"
+      },
+      {
+        "abbreviation": "V / Q",
+        "meaning": "Ventilación / perfusión pulmonar"
+      }
+    ]
+  },
+  {
+    "letter": "W",
+    "entries": [
+      {
+        "abbreviation": "WPW",
+        "meaning": "Wolf Parkinson White"
+      }
+    ]
+  }
+]

@@ -4,6 +4,16 @@ struct RootView: View {
     @Environment(DataStore.self) private var store
     @Environment(\.horizontalSizeClass) private var sizeClass
 
+    @State private var selectedTab: AppSection
+    @State private var selectedSection: AppSection?
+
+    init() {
+        let raw = UserDefaults.standard.string(forKey: "app.defaultTab") ?? "manual"
+        let initial = AppSection(rawValue: raw) ?? .manual
+        _selectedTab = State(initialValue: initial)
+        _selectedSection = State(initialValue: initial)
+    }
+
     var body: some View {
         Group {
             if sizeClass == .regular {
@@ -22,26 +32,25 @@ struct RootView: View {
     // MARK: - iPhone: TabView
 
     private var iPhoneLayout: some View {
-        TabView {
-            Tab("Manual", systemImage: "book.fill") {
+        TabView(selection: $selectedTab) {
+            Tab("Manual", systemImage: "book.fill", value: AppSection.manual) {
                 NavigationStack { ManualView() }
             }
-            Tab("Códigos", systemImage: "number.square.fill") {
+            .badge(store.unseenEventCount > 0 ? store.unseenEventCount : 0)
+            Tab("Códigos", systemImage: "number.square.fill", value: AppSection.codigos) {
                 NavigationStack { CodigosView() }
             }
-            Tab("Vademécum", systemImage: "pill.fill") {
+            Tab("Vademécum", systemImage: "pill.fill", value: AppSection.vademecum) {
                 NavigationStack { VademecumView() }
             }
-            Tab("Mapa", systemImage: "map.fill") {
+            Tab("Mapa", systemImage: "map.fill", value: AppSection.mapa) {
                 NavigationStack { MapaView() }
             }
         }
-        .tint(Color.samurBlue)
+        .tint(Color.samurPrimary)
     }
 
     // MARK: - iPad: NavigationSplitView
-
-    @State private var selectedSection: AppSection? = .manual
 
     private var iPadLayout: some View {
         NavigationSplitView {
@@ -59,7 +68,7 @@ struct RootView: View {
             case .none:      ManualView()
             }
         }
-        .tint(Color.samurBlue)
+        .tint(Color.samurPrimary)
     }
 }
 

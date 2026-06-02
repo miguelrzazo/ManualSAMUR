@@ -1,0 +1,6984 @@
+{
+  "cheatsheet": [
+    {
+      "key": "plantillas",
+      "title": "Plantillas operativas",
+      "kind": "cards",
+      "items": [
+        {
+          "title": "Operatividad (Por SAMUR-2)",
+          "lines": [
+            "Clave 11, Clave 0, con TETRA 12___ y 12___, Móvil ___.",
+            "Nos dirigimos al preventivo de ______ / retén / otro.",
+            "Estaremos ubicados en __.",
+            "A la escucha en canal SAMUR __."
+          ]
+        },
+        {
+          "title": "Solicitud Clave 16 de SVA (Por SAMUR-1)",
+          "lines": [
+            "Solicito Clave 16 de SVA para sexo, edad y motivo principal.",
+            "Añadir FR, SpO2, FC, TA y nivel de conciencia.",
+            "Si es trauma, indicar mecanismo lesional y lesiones principales.",
+            "Añadir otra información relevante."
+          ]
+        },
+        {
+          "title": "Paso a Clave 0 (Por SAMUR-3)",
+          "lines": [
+            "En el lugar (Clave 3): Clave 0 en el punto.",
+            "Se hace cargo SAMUR XXX / 091 / 092 / SAMUR Social / otro.",
+            "Código final _.__ y código de valoración _.__.__.",
+            "En hospital (Clave 5): Clave 0 en el hospital ______."
+          ]
+        },
+        {
+          "title": "Finalización del servicio",
+          "lines": [
+            "En el lugar: Solicitamos Clave 14 por finalización del evento.",
+            "Añadir sin asistencias o con __ asistencias.",
+            "Al llegar a B0: Clave 12."
+          ]
+        },
+        {
+          "title": "Estructura de un mensaje de aviso",
+          "lines": [
+            "8___ / _.__ / Lugar / __ / XXXXXX / Información / HH:MM / H__",
+            "Incluye unidad, código inicial, ubicación, distrito, número de informe, observaciones, hora y hospital de referencia si aplica."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "grupos",
+      "title": "Asignación de grupos de habla",
+      "kind": "table",
+      "columns": [
+        "Grupo",
+        "Uso",
+        "Indicativo"
+      ],
+      "items": [
+        {
+          "Grupo": "SAMUR-1",
+          "Uso": "Operativo ordinario",
+          "Indicativo": "Central"
+        },
+        {
+          "Grupo": "SAMUR-2",
+          "Uso": "Operatividad (C11, C12)",
+          "Indicativo": "Central"
+        },
+        {
+          "Grupo": "SAMUR-3",
+          "Uso": "Cierres (C0), Traslados (C4)",
+          "Indicativo": "Central"
+        },
+        {
+          "Grupo": "SAMUR-XX",
+          "Uso": "Preventivos, Otros",
+          "Indicativo": "Central, Base, Eco 0, Lima, Sierra, etc."
+        }
+      ]
+    },
+    {
+      "key": "tetra",
+      "title": "Utilidades TETRA Motorola",
+      "kind": "cards",
+      "items": [
+        {
+          "title": "Activar localización (GPS)",
+          "lines": [
+            "Menú → Ubicación → Interfaz → Activar → Selecc."
+          ]
+        },
+        {
+          "title": "Pasar a Metro",
+          "lines": [
+            "Paso 1: Menú → Redes → Selec. Red → Cualquier red → Selecc.",
+            "Paso 2: Pulsación prolongada del botón verde lateral izquierdo.",
+            "Debe aparecer METRO / SAMUR MTR si hay cobertura de la red TETRA de Metro."
+          ]
+        },
+        {
+          "title": "Bloquear o desbloquear teclado",
+          "lines": [
+            "Tecla menú + *"
+          ]
+        },
+        {
+          "title": "Cambiar modo Red (TMO) ↔ Directo (DMO)",
+          "lines": [
+            "Pulsación prolongada # o *"
+          ]
+        },
+        {
+          "title": "Llamada privada o cerrada",
+          "lines": [
+            "Recepción: cuando suena la llamada, pulsar PTT para descolgar.",
+            "Emisión: en pantalla principal teclear el número y después pulsar PTT."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "estatus",
+      "title": "Estatus",
+      "kind": "table",
+      "columns": [
+        "Estatus",
+        "Descripción"
+      ],
+      "items": [
+        {
+          "Estatus": "1",
+          "Descripción": "Clave 1"
+        },
+        {
+          "Estatus": "2",
+          "Descripción": "Clave 2 / Sólo desde el Tetra del vehículo, si no por voz"
+        },
+        {
+          "Estatus": "3",
+          "Descripción": "Clave 3"
+        },
+        {
+          "Estatus": "4",
+          "Descripción": "Clave 4 / Indicar hospital por status o voz por SAMUR-3"
+        },
+        {
+          "Estatus": "5",
+          "Descripción": "Clave 5"
+        },
+        {
+          "Estatus": "7",
+          "Descripción": "Aceptar solicitud mensaje Clave Victor o Clave 14"
+        },
+        {
+          "Estatus": "8",
+          "Descripción": "Rechazar solicitud mensaje Clave Victor o Clave 14"
+        },
+        {
+          "Estatus": "9",
+          "Descripción": "Paso a Clave 0 después de inoperatividad (C6.1, C22, etc.)"
+        }
+      ]
+    },
+    {
+      "key": "icao",
+      "title": "ICAO",
+      "kind": "table",
+      "columns": [
+        "Código",
+        "Nombre",
+        "Tipo"
+      ],
+      "items": [
+        {
+          "Código": "A",
+          "Nombre": "Alfa",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "B",
+          "Nombre": "Bravo",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "C",
+          "Nombre": "Charlie",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "D",
+          "Nombre": "Delta",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "E",
+          "Nombre": "Echo",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "F",
+          "Nombre": "Foxtrot",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "G",
+          "Nombre": "Golf",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "H",
+          "Nombre": "Hotel",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "I",
+          "Nombre": "India",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "J",
+          "Nombre": "Juliett",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "K",
+          "Nombre": "Kilo",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "L",
+          "Nombre": "Lima",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "M",
+          "Nombre": "Mike",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "N",
+          "Nombre": "November",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "O",
+          "Nombre": "Oscar",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "P",
+          "Nombre": "Papa",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "Q",
+          "Nombre": "Quebec",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "R",
+          "Nombre": "Romeo",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "S",
+          "Nombre": "Sierra",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "T",
+          "Nombre": "Tango",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "U",
+          "Nombre": "Uniform",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "V",
+          "Nombre": "Victor",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "W",
+          "Nombre": "Whiskey",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "X",
+          "Nombre": "X-Ray",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "Y",
+          "Nombre": "Yankee",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "Z",
+          "Nombre": "Zulu",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "Ñ",
+          "Nombre": "Ñoño",
+          "Tipo": "Letra"
+        },
+        {
+          "Código": "0",
+          "Nombre": "Negativo",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "1",
+          "Nombre": "Primero",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "2",
+          "Nombre": "Segundo",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "3",
+          "Nombre": "Tercero",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "4",
+          "Nombre": "Cuarto",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "5",
+          "Nombre": "Quinto",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "6",
+          "Nombre": "Sexto",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "7",
+          "Nombre": "Séptimo",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "8",
+          "Nombre": "Octavo",
+          "Tipo": "Número"
+        },
+        {
+          "Código": "9",
+          "Nombre": "Noveno",
+          "Tipo": "Número"
+        }
+      ]
+    },
+    {
+      "key": "hospitales",
+      "title": "Hospitales",
+      "kind": "table",
+      "columns": [
+        "H",
+        "Sta",
+        "Hospital",
+        "Acceso Urgencias"
+      ],
+      "items": [
+        {
+          "H": "HCO",
+          "Sta": "1",
+          "Hospital": "Concepción / FJD",
+          "Acceso Urgencias": "Av/ Reyes Católicos, 2"
+        },
+        {
+          "H": "HGM",
+          "Sta": "2",
+          "Hospital": "Gregorio Marañón",
+          "Acceso Urgencias": "C/ Ibiza, 47"
+        },
+        {
+          "H": "HDO",
+          "Sta": "3",
+          "Hospital": "12 de Octubre",
+          "Acceso Urgencias": "Glorieta de Málaga"
+        },
+        {
+          "H": "HCL",
+          "Sta": "5",
+          "Hospital": "Clínico San Carlos",
+          "Acceso Urgencias": "C/ Prof Martín Lagos, s/n"
+        },
+        {
+          "H": "HLP",
+          "Sta": "6",
+          "Hospital": "La Paz",
+          "Acceso Urgencias": "Paseo Castellana, 261"
+        },
+        {
+          "H": "HRC",
+          "Sta": "7",
+          "Hospital": "Ramón y Cajal",
+          "Acceso Urgencias": "C/ San Modesto, 42"
+        },
+        {
+          "H": "HPR",
+          "Sta": "8",
+          "Hospital": "La Princesa",
+          "Acceso Urgencias": "C/ Maldonado, 50"
+        },
+        {
+          "H": "HIL",
+          "Sta": "9",
+          "Hospital": "Infanta Leonor",
+          "Acceso Urgencias": "Av/ Gran Vía del Este, 80"
+        },
+        {
+          "H": "HGU",
+          "Sta": "",
+          "Hospital": "Gómez Ulla / Defensa",
+          "Acceso Urgencias": "Glorieta del Ejército, 1"
+        }
+      ]
+    },
+    {
+      "key": "bases",
+      "title": "Bases operativas",
+      "kind": "table",
+      "columns": [
+        "Nº",
+        "Base",
+        "Dirección",
+        "Distrito"
+      ],
+      "items": [
+        {
+          "Nº": "0",
+          "Base": "B-0 / Base central / M-0",
+          "Dirección": "Ronda de las Provincias, 7",
+          "Distrito": "Moncloa-Aravaca"
+        },
+        {
+          "Nº": "1",
+          "Base": "El Espinillo",
+          "Dirección": "Av/ Orovilla, 50",
+          "Distrito": "Villaverde"
+        },
+        {
+          "Nº": "2",
+          "Base": "Centro",
+          "Dirección": "C/ San Bernardo, 68",
+          "Distrito": "Centro"
+        },
+        {
+          "Nº": "3",
+          "Base": "Chamartín",
+          "Dirección": "C/ Federico Salmón, 8",
+          "Distrito": "Chamartín"
+        },
+        {
+          "Nº": "4",
+          "Base": "Ciudad Lineal",
+          "Dirección": "C/ Peloponeso, 9",
+          "Distrito": "Ciudad Lineal"
+        },
+        {
+          "Nº": "5",
+          "Base": "Carabanchel",
+          "Dirección": "C/ Eugenia de Montijo, 90",
+          "Distrito": "Carabanchel"
+        },
+        {
+          "Nº": "6",
+          "Base": "Francos Rodríguez",
+          "Dirección": "C/ Pirineos, 1",
+          "Distrito": "Moncloa-Aravaca"
+        },
+        {
+          "Nº": "7",
+          "Base": "La Estrella",
+          "Dirección": "Travesía del Vino, 1",
+          "Distrito": "Moncloa-Aravaca"
+        },
+        {
+          "Nº": "8",
+          "Base": "Pacífico",
+          "Dirección": "C/ Hoyuelo, 7",
+          "Distrito": "Retiro"
+        },
+        {
+          "Nº": "9",
+          "Base": "Usera",
+          "Dirección": "C/ Antonio López, 142 (posterior)",
+          "Distrito": "Usera"
+        },
+        {
+          "Nº": "10",
+          "Base": "Tetuán",
+          "Dirección": "C/ Infanta Mercedes, 34",
+          "Distrito": "Tetuán"
+        },
+        {
+          "Nº": "11",
+          "Base": "Hortaleza",
+          "Dirección": "C/ Arequipa, 8",
+          "Distrito": "Hortaleza"
+        },
+        {
+          "Nº": "12",
+          "Base": "Moratalaz",
+          "Dirección": "C/ Brujas, 28",
+          "Distrito": "Moratalaz"
+        },
+        {
+          "Nº": "13",
+          "Base": "Avenida Valladolid",
+          "Dirección": "Av/ Valladolid, 6",
+          "Distrito": "Moncloa-Aravaca"
+        },
+        {
+          "Nº": "14",
+          "Base": "Fuerte de Navidad",
+          "Dirección": "C/ Casuarina, 10",
+          "Distrito": "Latina"
+        },
+        {
+          "Nº": "15",
+          "Base": "Colón",
+          "Dirección": "Pl/ de Colón (subterráneo)",
+          "Distrito": "Salamanca"
+        },
+        {
+          "Nº": "16",
+          "Base": "Isla de Tabarca",
+          "Dirección": "C/ Doct. Ramón Castroviejo, 47",
+          "Distrito": "Fuencarral-El Pardo"
+        },
+        {
+          "Nº": "17",
+          "Base": "Vicálvaro",
+          "Dirección": "C/ las Santeras, 39",
+          "Distrito": "Vicálvaro"
+        },
+        {
+          "Nº": "18",
+          "Base": "Las Rosas (Metropolitano)",
+          "Dirección": "C/ María Sevilla de Diago, 40",
+          "Distrito": "San Blas - Canillejas"
+        },
+        {
+          "Nº": "20",
+          "Base": "Vallecas",
+          "Dirección": "Travesía Puerto de Reinosa, 4",
+          "Distrito": "Villa de Vallecas"
+        },
+        {
+          "Nº": "21",
+          "Base": "Barajas",
+          "Dirección": "C/ Playa de América, 34",
+          "Distrito": "Barajas"
+        },
+        {
+          "Nº": "22",
+          "Base": "Ventas",
+          "Dirección": "C/ Pedro Heredia, 34",
+          "Distrito": "Salamanca"
+        },
+        {
+          "Nº": "23",
+          "Base": "Legazpi",
+          "Dirección": "Pl/ Legazpi, 7",
+          "Distrito": "Arganzuela"
+        },
+        {
+          "Nº": "25",
+          "Base": "Chamberí",
+          "Dirección": "C/ del Monte Esquinza, 41",
+          "Distrito": "Chamberí"
+        },
+        {
+          "Nº": "26",
+          "Base": "Puente de Vallecas",
+          "Dirección": "Av/ de Buenos Aires, 17",
+          "Distrito": "Puente de Vallecas"
+        }
+      ]
+    },
+    {
+      "key": "distritos",
+      "title": "Distritos",
+      "kind": "table",
+      "columns": [
+        "Nº",
+        "Distrito"
+      ],
+      "items": [
+        {
+          "Nº": "1",
+          "Distrito": "Centro"
+        },
+        {
+          "Nº": "2",
+          "Distrito": "Arganzuela"
+        },
+        {
+          "Nº": "3",
+          "Distrito": "Retiro"
+        },
+        {
+          "Nº": "4",
+          "Distrito": "Salamanca"
+        },
+        {
+          "Nº": "5",
+          "Distrito": "Chamartín"
+        },
+        {
+          "Nº": "6",
+          "Distrito": "Tetuán"
+        },
+        {
+          "Nº": "7",
+          "Distrito": "Chamberí"
+        },
+        {
+          "Nº": "8",
+          "Distrito": "Fuencarral-El Pardo"
+        },
+        {
+          "Nº": "9",
+          "Distrito": "Moncloa-Aravaca"
+        },
+        {
+          "Nº": "10",
+          "Distrito": "Latina"
+        },
+        {
+          "Nº": "11",
+          "Distrito": "Carabanchel"
+        },
+        {
+          "Nº": "12",
+          "Distrito": "Usera"
+        },
+        {
+          "Nº": "13",
+          "Distrito": "Pte de Vallecas"
+        },
+        {
+          "Nº": "14",
+          "Distrito": "Moratalaz"
+        },
+        {
+          "Nº": "15",
+          "Distrito": "Ciudad Lineal"
+        },
+        {
+          "Nº": "16",
+          "Distrito": "Hortaleza"
+        },
+        {
+          "Nº": "17",
+          "Distrito": "Villaverde"
+        },
+        {
+          "Nº": "18",
+          "Distrito": "Villa de Vallecas"
+        },
+        {
+          "Nº": "19",
+          "Distrito": "Vicálvaro"
+        },
+        {
+          "Nº": "20",
+          "Distrito": "San Blas-Canillejas"
+        },
+        {
+          "Nº": "21",
+          "Distrito": "Barajas"
+        },
+        {
+          "Nº": "99",
+          "Distrito": "Fuera de Madrid"
+        }
+      ]
+    }
+  ],
+  "claves": [
+    {
+      "code": "0",
+      "name": "Recurso operativo"
+    },
+    {
+      "code": "1",
+      "name": "Recurso en emergencia"
+    },
+    {
+      "code": "2",
+      "name": "Salida hacia lugar de actuación"
+    },
+    {
+      "code": "2.1",
+      "name": "Función de supervisión (activación voluntaria)"
+    },
+    {
+      "code": "3",
+      "name": "Llegada al lugar de actuación"
+    },
+    {
+      "code": "4",
+      "name": "Salida del lugar en dirección al hospital"
+    },
+    {
+      "code": "5",
+      "name": "Llegada al hospital o centro asistencial"
+    },
+    {
+      "code": "6",
+      "name": "Unidad inoperativa. Requiere aclaración y autorización"
+    },
+    {
+      "code": "6.1",
+      "name": "Unidad en operatividad parcial. En C0"
+    },
+    {
+      "code": "7",
+      "name": "Unidad en su base"
+    },
+    {
+      "code": "7.1",
+      "name": "Unidad en su zona"
+    },
+    {
+      "code": "8",
+      "name": "Solicitud llamada telefónica"
+    },
+    {
+      "code": "8.1",
+      "name": "Solicitud llamada por TETRA"
+    },
+    {
+      "code": "9",
+      "name": "Localización geográfica precisa"
+    },
+    {
+      "code": "10",
+      "name": "Integridad dotación en riesgo"
+    },
+    {
+      "code": "10.1",
+      "name": "Solicitud de policía - Tráfico, presión social, etc."
+    },
+    {
+      "code": "11",
+      "name": "Inicio jornada laboral o servicio - Al salir de B0"
+    },
+    {
+      "code": "12",
+      "name": "Fin jornada laboral o servicio - Al llegar a B0"
+    },
+    {
+      "code": "13",
+      "name": "Imposibilidad dar información en el momento"
+    },
+    {
+      "code": "14",
+      "name": "Solicitud inicio de relevo / Fin DRP"
+    },
+    {
+      "code": "15",
+      "name": "Solicitud de Bomberos"
+    },
+    {
+      "code": "16",
+      "name": "Solicitud de apoyo de otra unidad de SAMUR-PC"
+    },
+    {
+      "code": "17",
+      "name": "Traslado con Charly, Delta, Romeo, Tecnico, ..."
+    },
+    {
+      "code": "18",
+      "name": "Solicitud contacto con Charly por Enfermería"
+    },
+    {
+      "code": "19",
+      "name": "Solicitud contacto con Charly por unidad"
+    },
+    {
+      "code": "20",
+      "name": "Comunicación a Prensa / Emergencias Madrid"
+    },
+    {
+      "code": "21",
+      "name": "Solicitud de farmacia móvil"
+    },
+    {
+      "code": "22",
+      "name": "Solicitud de repostaje"
+    },
+    {
+      "code": "23",
+      "name": "Solicitud teletraducción"
+    },
+    {
+      "code": "29",
+      "name": "En Clave 3, no paciente (rellamada a demandante)"
+    },
+    {
+      "code": "100",
+      "name": "Solicitud policía urgente (Conjunta con PMM)"
+    },
+    {
+      "code": "CQ",
+      "name": "Llamada general / a un grupo específico"
+    },
+    {
+      "code": "VICTOR",
+      "name": "Descanso, asuntos internos o avituallamiento"
+    }
+  ],
+  "icao": [
+    {
+      "code": "A",
+      "name": "Alfa"
+    },
+    {
+      "code": "B",
+      "name": "Bravo"
+    },
+    {
+      "code": "C",
+      "name": "Charlie"
+    },
+    {
+      "code": "D",
+      "name": "Delta"
+    },
+    {
+      "code": "E",
+      "name": "Echo"
+    },
+    {
+      "code": "F",
+      "name": "Foxtrot"
+    },
+    {
+      "code": "G",
+      "name": "Golf"
+    },
+    {
+      "code": "H",
+      "name": "Hotel"
+    },
+    {
+      "code": "I",
+      "name": "India"
+    },
+    {
+      "code": "J",
+      "name": "Juliett"
+    },
+    {
+      "code": "K",
+      "name": "Kilo"
+    },
+    {
+      "code": "L",
+      "name": "Lima"
+    },
+    {
+      "code": "M",
+      "name": "Mike"
+    },
+    {
+      "code": "N",
+      "name": "November"
+    },
+    {
+      "code": "O",
+      "name": "Oscar"
+    },
+    {
+      "code": "P",
+      "name": "Papa"
+    },
+    {
+      "code": "Q",
+      "name": "Quebec"
+    },
+    {
+      "code": "R",
+      "name": "Romeo"
+    },
+    {
+      "code": "S",
+      "name": "Sierra"
+    },
+    {
+      "code": "T",
+      "name": "Tango"
+    },
+    {
+      "code": "U",
+      "name": "Uniform"
+    },
+    {
+      "code": "V",
+      "name": "Victor"
+    },
+    {
+      "code": "W",
+      "name": "Whiskey"
+    },
+    {
+      "code": "X",
+      "name": "X-ray"
+    },
+    {
+      "code": "Y",
+      "name": "Yankee"
+    },
+    {
+      "code": "Z",
+      "name": "Zulu"
+    },
+    {
+      "code": "0",
+      "name": "Negativo"
+    },
+    {
+      "code": "1",
+      "name": "Primero"
+    },
+    {
+      "code": "2",
+      "name": "Segundo"
+    },
+    {
+      "code": "3",
+      "name": "Tercero"
+    },
+    {
+      "code": "4",
+      "name": "Cuarto"
+    },
+    {
+      "code": "5",
+      "name": "Quinto"
+    },
+    {
+      "code": "6",
+      "name": "Sexto"
+    },
+    {
+      "code": "7",
+      "name": "Séptimo"
+    },
+    {
+      "code": "8",
+      "name": "Octavo"
+    },
+    {
+      "code": "9",
+      "name": "Noveno"
+    }
+  ],
+  "incidente": [
+    {
+      "code": "1.1",
+      "name": "Accidente no especificado",
+      "category": "Accidentes",
+      "description": "Accidente de tráfico u otro tipo, no especificado"
+    },
+    {
+      "code": "1.2",
+      "name": "Accidente con menos de 3 víctimas",
+      "category": "Accidentes",
+      "description": "Accidente con menos de 3 víctimas"
+    },
+    {
+      "code": "1.3",
+      "name": "Accidente con más de 3 víctimas confirmadas",
+      "category": "Accidentes",
+      "description": "Accidente con más de 3 víctimas confirmadas",
+      "tetra": true
+    },
+    {
+      "code": "1.4",
+      "name": "Atropello",
+      "category": "Accidentes",
+      "description": "Atropello por vehículo de motor",
+      "tetra": true
+    },
+    {
+      "code": "1.5",
+      "name": "Accidente de motocicleta",
+      "category": "Accidentes",
+      "description": "Accidente de motocicleta o ciclomotor"
+    },
+    {
+      "code": "1.6",
+      "name": "Accidente de bicicleta",
+      "category": "Accidentes",
+      "description": "Accidente de bicicleta"
+    },
+    {
+      "code": "1.6.1",
+      "name": "Accidente de patinete / VMP / VMU",
+      "category": "Accidentes",
+      "description": "Accidente de vehículo de movilidad personal, vehículo de movilidad urbana"
+    },
+    {
+      "code": "1.7",
+      "name": "Accidente de autobús",
+      "category": "Accidentes",
+      "description": "Accidente en el que está implicado un autobús",
+      "tetra": true
+    },
+    {
+      "code": "1.8",
+      "name": "Accidente de vehículo pesado",
+      "category": "Accidentes",
+      "description": "Accidente de camión u otro vehículo pesado",
+      "tetra": true
+    },
+    {
+      "code": "2.1",
+      "name": "Heridas",
+      "category": "Traumáticos",
+      "description": "Herida de origen traumático no especificada"
+    },
+    {
+      "code": "2.2",
+      "name": "Atrapamiento/enterramiento",
+      "category": "Traumáticos",
+      "description": "Persona atrapada o aprisionada",
+      "tetra": true
+    },
+    {
+      "code": "2.3",
+      "name": "Caída casual",
+      "category": "Traumáticos",
+      "description": "Caída desde altura o al mismo nivel"
+    },
+    {
+      "code": "2.4",
+      "name": "Agresión física",
+      "category": "Traumáticos",
+      "description": "Agresión sin armas o con puños/patadas"
+    },
+    {
+      "code": "2.4.1",
+      "name": "Agresión por spray de autodefensa",
+      "category": "Traumáticos",
+      "description": "Agresión mediante spray de autodefensa"
+    },
+    {
+      "code": "2.5",
+      "name": "Arma blanca",
+      "category": "Traumáticos",
+      "description": "Herida por arma blanca o punzante",
+      "tetra": true
+    },
+    {
+      "code": "2.6",
+      "name": "Arma de fuego",
+      "category": "Traumáticos",
+      "description": "Herida por proyectil de arma de fuego",
+      "tetra": true
+    },
+    {
+      "code": "2.7",
+      "name": "Precipitado",
+      "category": "Traumáticos",
+      "description": "Persona que ha caído desde una altura",
+      "tetra": true
+    },
+    {
+      "code": "2.8",
+      "name": "Autólisis traumática",
+      "category": "Traumáticos",
+      "description": "Autolisis o suicidio"
+    },
+    {
+      "code": "2.9",
+      "name": "Arrollamiento por metro o tren",
+      "category": "Traumáticos",
+      "description": "Arrollamiento por metro o tren",
+      "tetra": true
+    },
+    {
+      "code": "2.10",
+      "name": "Quemado",
+      "category": "Traumáticos",
+      "description": "Persona quemada por exposición a fuego o calor extremo",
+      "tetra": true
+    },
+    {
+      "code": "2.11",
+      "name": "Electrocución",
+      "category": "Traumáticos",
+      "description": "Lesión por descarga eléctrica",
+      "tetra": true
+    },
+    {
+      "code": "2.12",
+      "name": "Ahogamiento",
+      "category": "Traumáticos",
+      "description": "Persona ahogada o en riesgo de ahogamiento",
+      "tetra": true
+    },
+    {
+      "code": "2.12.1",
+      "name": "OVACE",
+      "category": "Traumáticos",
+      "description": "Obstrucción de vías respiratorias",
+      "tetra": true
+    },
+    {
+      "code": "2.13",
+      "name": "Agresión sexual",
+      "category": "Traumáticos",
+      "description": "Agresión de naturaleza sexual",
+      "tetra": true
+    },
+    {
+      "code": "2.13.1",
+      "name": "Agresion sexual facilitada por drogas",
+      "category": "Traumáticos",
+      "description": "Agresión sexual facilitada por drogas",
+      "tetra": true
+    },
+    {
+      "code": "2.14",
+      "name": "Dispositivo Eléctrico de control policial (DEC / TASER)",
+      "category": "Traumáticos",
+      "description": "Dispositivo eléctrico de control policial"
+    },
+    {
+      "code": "3.1",
+      "name": "Parada cardiorrespiratoria",
+      "category": "Enfermedad",
+      "description": "PCR — parada cardiorrespiratoria",
+      "tetra": true
+    },
+    {
+      "code": "3.2",
+      "name": "Inconsciente de causa desconocida",
+      "category": "Enfermedad",
+      "description": "Paciente inconsciente, causa no determinada",
+      "tetra": true
+    },
+    {
+      "code": "3.3",
+      "name": "IAM / patología coronaria",
+      "category": "Enfermedad",
+      "description": "Infarto agudo de miocardio u otra patología coronaria",
+      "tetra": true
+    },
+    {
+      "code": "3.4",
+      "name": "Convulsión",
+      "category": "Enfermedad",
+      "description": "Crisis convulsiva o epiléptica"
+    },
+    {
+      "code": "3.5",
+      "name": "Intoxicación por drogas de abuso",
+      "category": "Enfermedad",
+      "description": "Intoxicación aguda por drogas de abuso"
+    },
+    {
+      "code": "3.6",
+      "name": "Intoxicación farmacológica / tóxica",
+      "category": "Enfermedad",
+      "description": "Intoxicación por fármacos u otras sustancias tóxicas"
+    },
+    {
+      "code": "3.7",
+      "name": "Intento de suicidio no traumático",
+      "category": "Enfermedad",
+      "description": "Intento autolítico por medios no traumáticos"
+    },
+    {
+      "code": "3.8",
+      "name": "Urgencia endocrino-metabólica",
+      "category": "Enfermedad",
+      "description": "Crisis diabética, hipoglucemia u otra urgencia metabólica"
+    },
+    {
+      "code": "3.9",
+      "name": "Intoxicación etílica aguda",
+      "category": "Enfermedad",
+      "description": "Intoxicación aguda por alcohol etílico"
+    },
+    {
+      "code": "3.11",
+      "name": "Patología respiratoria aguda",
+      "category": "Enfermedad",
+      "description": "Dificultad respiratoria aguda de origen médico"
+    },
+    {
+      "code": "3.12",
+      "name": "Patología cardiovascular",
+      "category": "Enfermedad",
+      "description": "Urgencia cardiovascular distinta de IAM o PCR"
+    },
+    {
+      "code": "3.13",
+      "name": "Patología neurológica aguda",
+      "category": "Enfermedad",
+      "description": "Urgencia neurológica: ictus, AIT, etc.",
+      "tetra": true
+    },
+    {
+      "code": "3.14",
+      "name": "Patología digestiva aguda",
+      "category": "Enfermedad",
+      "description": "Urgencia digestiva aguda"
+    },
+    {
+      "code": "3.15",
+      "name": "Patología obstétrica",
+      "category": "Enfermedad",
+      "description": "Parto inminente u otra urgencia obstétrica",
+      "tetra": true
+    },
+    {
+      "code": "3.16",
+      "name": "Patología ginecológica",
+      "category": "Enfermedad",
+      "description": "Urgencia ginecológica aguda"
+    },
+    {
+      "code": "3.17",
+      "name": "Patología urológica",
+      "category": "Enfermedad",
+      "description": "Urgencia urológica aguda"
+    },
+    {
+      "code": "3.18",
+      "name": "Patología infecciosa",
+      "category": "Enfermedad",
+      "description": "Sospecha de proceso infeccioso grave"
+    },
+    {
+      "code": "3.19",
+      "name": "Patología psicosomática",
+      "category": "Enfermedad",
+      "description": "Crisis de ansiedad, crisis conversiva u otra patología psicosomática"
+    },
+    {
+      "code": "3.20",
+      "name": "Reacción anafiláctica",
+      "category": "Enfermedad",
+      "description": "Anafilaxia o reacción alérgica grave"
+    },
+    {
+      "code": "3.21",
+      "name": "Patologia por agentes fisicos (frio/calor)",
+      "category": "Enfermedad",
+      "description": "Alteración térmica grave: hipotermia o golpe de calor"
+    },
+    {
+      "code": "4.1",
+      "name": "Incendio",
+      "category": "Bomberos",
+      "description": "Incendio con víctimas o explosión"
+    },
+    {
+      "code": "4.2",
+      "name": "Explosión",
+      "category": "Bomberos",
+      "description": "Derrumbe o colapso de estructura",
+      "tetra": true
+    },
+    {
+      "code": "4.3",
+      "name": "Apertura de Puerta",
+      "category": "Bomberos",
+      "description": "Riesgo nuclear, radiológico, biológico o químico"
+    },
+    {
+      "code": "4.4",
+      "name": "Derrumbamientos",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos",
+      "tetra": true
+    },
+    {
+      "code": "4.5",
+      "name": "Servicios Especiales",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    },
+    {
+      "code": "4.6",
+      "name": "Preventivos",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    },
+    {
+      "code": "4.7",
+      "name": "Riesgo Químico",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos",
+      "tetra": true
+    },
+    {
+      "code": "4.8",
+      "name": "Riesgo Nuclear",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos",
+      "tetra": true
+    },
+    {
+      "code": "4.9",
+      "name": "Riesgo Biológico",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos",
+      "tetra": true
+    },
+    {
+      "code": "4.10",
+      "name": "Incendio con víctimas confirmadas",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos",
+      "tetra": true
+    },
+    {
+      "code": "4.11",
+      "name": "Peticion de apoyo por parte de bomberos",
+      "category": "Bomberos",
+      "description": "Solicitud de apoyo sanitario específico a Bomberos"
+    },
+    {
+      "code": "5.1",
+      "name": "Orden judicial",
+      "category": "Sociosanitario",
+      "description": "Traslado por orden judicial o médica"
+    },
+    {
+      "code": "5.2",
+      "name": "Orden médica",
+      "category": "Sociosanitario",
+      "description": "Traslado por orden judicial o médica"
+    },
+    {
+      "code": "5.3",
+      "name": "Orden médica urgente / paciente muy agresivo",
+      "category": "Sociosanitario",
+      "description": "Traslado por orden judicial o médica",
+      "tetra": true
+    },
+    {
+      "code": "5.4",
+      "name": "Certificación psiquiátrica",
+      "category": "Sociosanitario",
+      "description": "Evaluación para certificación psiquiátrica"
+    },
+    {
+      "code": "5.5",
+      "name": "Problema social",
+      "category": "Sociosanitario",
+      "description": "Servicio de contenido principalmente social"
+    },
+    {
+      "code": "5.6",
+      "name": "Huelga de hambre",
+      "category": "Sociosanitario",
+      "description": "Servicio de contenido principalmente social"
+    },
+    {
+      "code": "5.7",
+      "name": "Violencia de género",
+      "category": "Sociosanitario",
+      "description": "Víctima de violencia de género"
+    },
+    {
+      "code": "5.8",
+      "name": "Maltrato infantil",
+      "category": "Sociosanitario",
+      "description": "Sospecha o confirmación de maltrato a menor"
+    },
+    {
+      "code": "5.9",
+      "name": "Maltrato a persona mayor",
+      "category": "Sociosanitario",
+      "description": "Sospecha o confirmación de maltrato a persona mayor"
+    },
+    {
+      "code": "5.10",
+      "name": "Desamparo sobrevenido persona dependiente",
+      "category": "Sociosanitario",
+      "description": "Situación de desamparo sobrevenido en persona dependiente"
+    },
+    {
+      "code": "6.1",
+      "name": "Domicilio",
+      "category": "Cadáver",
+      "description": "El servicio se presta en domicilio particular"
+    },
+    {
+      "code": "6.2",
+      "name": "Vía pública",
+      "category": "Cadáver",
+      "description": "El servicio se presta en vía pública"
+    },
+    {
+      "code": "6.3",
+      "name": "Local público (incluye centro sanitario)",
+      "category": "Cadáver",
+      "description": "El servicio se presta en local público, incluyendo hospitales"
+    },
+    {
+      "code": "6.4",
+      "name": "Persona sin hogar (independiente de lugar)",
+      "category": "Cadáver",
+      "description": "Paciente sin domicilio fijo (sin techo)"
+    },
+    {
+      "code": "7.1",
+      "name": "Amenaza de bomba",
+      "category": "Eventos especiales",
+      "description": "Aviso por amenaza de artefacto explosivo",
+      "tetra": true
+    },
+    {
+      "code": "7.2",
+      "name": "Atentado explosivo",
+      "category": "Eventos especiales",
+      "description": "Explosión confirmada con víctimas potenciales",
+      "tetra": true
+    },
+    {
+      "code": "7.3",
+      "name": "Otro tipo de atentado",
+      "category": "Eventos especiales",
+      "description": "Accidente de tren o metro",
+      "tetra": true
+    },
+    {
+      "code": "7.4",
+      "name": "Accidente de tren",
+      "category": "Eventos especiales",
+      "description": "Accidente de aeronave",
+      "tetra": true
+    },
+    {
+      "code": "7.5",
+      "name": "Accidente de avión",
+      "category": "Eventos especiales",
+      "description": "Accidente que implica mercancías peligrosas",
+      "tetra": true
+    },
+    {
+      "code": "7.6",
+      "name": "Accidente de mercancías peligrosas",
+      "category": "Eventos especiales",
+      "description": "Accidente que implica mercancías peligrosas",
+      "tetra": true
+    },
+    {
+      "code": "8.1",
+      "name": "1 unidad, sin SVA ni PSA",
+      "category": "Servicio Programado",
+      "description": "Se solicita 1 unidad"
+    },
+    {
+      "code": "8.2",
+      "name": "2-3 unidades, sin SVA ni PSA",
+      "category": "Servicio Programado",
+      "description": "Se solicitan 2 o 3 unidades"
+    },
+    {
+      "code": "8.3",
+      "name": "Más de 3 unidades, sin SVA ni PSA",
+      "category": "Servicio Programado",
+      "description": "Se solicitan más de 3 unidades"
+    },
+    {
+      "code": "8.4",
+      "name": "Presencia de SVA",
+      "category": "Servicio Programado",
+      "description": "Se requiere presencia de unidad de Soporte Vital Avanzado"
+    },
+    {
+      "code": "8.4.1",
+      "name": "Presencia de SVA con más de 3 recursos (sin PSA)",
+      "category": "Servicio Programado",
+      "description": "Presencia de una o más unidades SVA, sin PSA, sumando más de 3 recursos en total.",
+      "isNew": true
+    },
+    {
+      "code": "8.5",
+      "name": "Despliegue de PSA",
+      "category": "Servicio Programado",
+      "description": "Activación de Puesto Sanitario Avanzado"
+    },
+    {
+      "code": "8.5.1",
+      "name": "Despliegue de PSA con más de 3 recursos",
+      "category": "Servicio Programado",
+      "description": "Despliegue de PSA, con otros recursos (más de 3 recursos en total).",
+      "isNew": true
+    },
+    {
+      "code": "8.6",
+      "name": "Presencia de todos los recursos",
+      "category": "Servicio Programado",
+      "description": "Despliegue de la totalidad de los recursos disponibles"
+    },
+    {
+      "code": "8.7",
+      "name": "Preventivo desde el operativo ordinario",
+      "category": "Servicio Programado",
+      "description": "Servicio de carácter preventivo"
+    },
+    {
+      "code": "8.8",
+      "name": "Necesidad inmediata de refuerzo",
+      "category": "Servicio Programado",
+      "description": "Solicitud de refuerzo inmediato de recursos"
+    },
+    {
+      "code": "8.9",
+      "name": "Refuerzo programado por concentración de personas",
+      "category": "Servicio Programado",
+      "description": "Necesidad programada de refuerzo para el operativo por concentración de personas.",
+      "isNew": true
+    },
+    {
+      "code": "8.10",
+      "name": "CECOR externo en dispositivo de riesgo previsible",
+      "category": "Servicio Programado",
+      "description": "Puesto de mando externo en dispositivo de riesgo previsible.",
+      "isNew": true
+    },
+    {
+      "code": "8.11",
+      "name": "CECOR interno en dispositivo de riesgo previsible",
+      "category": "Servicio Programado",
+      "description": "Puesto de mando interno en dispositivo de riesgo previsible.",
+      "isNew": true
+    },
+    {
+      "code": "8.12",
+      "name": "Servicio de análisis de riesgos",
+      "category": "Servicio Programado",
+      "description": "Solicitud de refuerzo inmediato de recursos"
+    },
+    {
+      "code": "8.13",
+      "name": "Servicio de seguimiento de riesgos",
+      "category": "Servicio Programado",
+      "description": "Solicitud de refuerzo inmediato de recursos"
+    },
+    {
+      "code": "8.14",
+      "name": "Servicio de formación/divulgación externa",
+      "category": "Servicio Programado",
+      "description": "Solicitud de refuerzo inmediato de recursos"
+    },
+    {
+      "code": "8.15",
+      "name": "Servicio de logística y otros",
+      "category": "Servicio Programado",
+      "description": "Solicitud de refuerzo inmediato de recursos"
+    },
+    {
+      "code": "9",
+      "name": "Donante en asistolia",
+      "category": "Donante",
+      "description": "Potencial donante de órganos en asistolia"
+    },
+    {
+      "code": "10.1",
+      "name": "SAMUR-PC",
+      "category": "Componente Herido",
+      "description": "La institución responsable del servicio es SAMUR-Protección Civil",
+      "tetra": true
+    },
+    {
+      "code": "10.2",
+      "name": "Policía Municipal",
+      "category": "Componente Herido",
+      "description": "La institución responsable es la Policía Municipal"
+    },
+    {
+      "code": "10.3",
+      "name": "Bomberos de Madrid",
+      "category": "Componente Herido",
+      "description": "La institución responsable son los Bomberos de Madrid"
+    },
+    {
+      "code": "10.4",
+      "name": "Policía Nacional",
+      "category": "Componente Herido",
+      "description": "La institución responsable es la Policía Nacional"
+    },
+    {
+      "code": "10.5",
+      "name": "Otra institución",
+      "category": "Componente Herido",
+      "description": "Otra institución asume la responsabilidad del servicio"
+    },
+    {
+      "code": "INFARTO",
+      "name": "Reperfusión en SCACEST",
+      "category": "Especificos",
+      "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR"
+    },
+    {
+      "code": "11",
+      "name": "Asistencia integral Post-PCR",
+      "category": "Especificos",
+      "description": "Síndrome coronario agudo con elevación del ST o cuidados post-PCR"
+    },
+    {
+      "code": "12",
+      "name": "Angioplastia Primaria",
+      "category": "Especificos",
+      "description": "SCACEST — Para Angioplastia Primaria"
+    },
+    {
+      "code": "14",
+      "name": "Fibrinolisis",
+      "category": "Especificos",
+      "description": "SCACEST — Con Fibrinolisis"
+    },
+    {
+      "code": "13",
+      "name": "Ictus agudo",
+      "category": "Especificos",
+      "description": "Activación de código ictus para reperfusión precoz"
+    },
+    {
+      "code": "15",
+      "name": "Politraumatismo confirmado",
+      "category": "Especificos",
+      "description": "Código 15: politraumatismo grave confirmado"
+    },
+    {
+      "code": "15.1",
+      "name": "Politraumatismo potencial",
+      "category": "Especificos",
+      "description": "Código 15.1: mecanismo lesional de alto riesgo"
+    },
+    {
+      "code": "16",
+      "name": "SCASEST",
+      "category": "Especificos",
+      "description": "Síndrome coronario agudo sin elevación del ST"
+    },
+    {
+      "code": "18",
+      "name": "Sospecha de sepsis",
+      "category": "Especificos",
+      "description": "Activación de protocolo de sepsis"
+    },
+    {
+      "code": "19",
+      "name": "Tromboembolismo Pulmonar (TEP)",
+      "category": "Especificos",
+      "description": "Tromboembolismo pulmonar"
+    },
+    {
+      "code": "33",
+      "name": "Síncope o presincope post esfuerzo",
+      "category": "Especificos",
+      "description": "Síncope o presíncope tras esfuerzo"
+    },
+    {
+      "code": "90",
+      "name": "Escolta preavisos con Policía Municipal ",
+      "category": "Especificos",
+      "description": "Síncope o presíncope tras esfuerzo"
+    },
+    {
+      "code": "Crisis",
+      "name": "Crisis epiléptica grave/urgente ",
+      "category": "Especificos",
+      "description": "Síncope o presíncope tras esfuerzo"
+    },
+    {
+      "code": "VISEM",
+      "name": "Violencia sexual mujer adulta",
+      "category": "Especificos",
+      "description": "Asistencia a víctima de violencia sexual (mujer adulta)"
+    },
+    {
+      "code": "VISNNA",
+      "name": "Violencia sexual Niños, Niñas y Adolescentes",
+      "category": "Especificos",
+      "description": "Asistencia a víctima de violencia sexual (menor)"
+    },
+    {
+      "code": "15.1",
+      "name": "Atención psicológica a la víctima primaria",
+      "category": "Psicológicos",
+      "description": "Intervención psicológica con la víctima directa del incidente"
+    },
+    {
+      "code": "15.2",
+      "name": "Atención psicológica a familiares y allegados",
+      "category": "Psicológicos",
+      "description": "Intervención psicológica con familiares y personas allegadas a la víctima"
+    },
+    {
+      "code": "15.3",
+      "name": "Atención psicológica a implicados",
+      "category": "Psicológicos",
+      "description": "Intervención psicológica con personas implicadas en el incidente"
+    },
+    {
+      "code": "15.4",
+      "name": "Atención psicológica a testigos",
+      "category": "Psicológicos",
+      "description": "Intervención psicológica con testigos del incidente"
+    },
+    {
+      "code": "15.5",
+      "name": "Atención psicológica a intervinientes de SAMUR-Protección Civil",
+      "category": "Psicológicos",
+      "description": "Apoyo psicológico a personal de SAMUR-Protección Civil"
+    },
+    {
+      "code": "15.6",
+      "name": "Atención psicológica a intervinientes de Cuerpos y Fuerzas de Seguridad",
+      "category": "Psicológicos",
+      "description": "Apoyo psicológico a personal de Cuerpos y Fuerzas de Seguridad"
+    },
+    {
+      "code": "15.7",
+      "name": "Atención psicológica a intervinientes de Bomberos",
+      "category": "Psicológicos",
+      "description": "Apoyo psicológico a personal de Bomberos"
+    },
+    {
+      "code": "15.8",
+      "name": "Programa de Sensibilización y Reeducación vial",
+      "category": "Psicológicos",
+      "description": "Participación en programa de sensibilización y reeducación vial"
+    },
+    {
+      "code": "15.9",
+      "name": "Colaboración del Romeo en el suceso sin paciente «in situ»",
+      "category": "Psicológicos",
+      "description": "Colaboración del psicólogo de guardia en el suceso sin presencia física"
+    },
+    {
+      "code": "15.10",
+      "name": "Activación/Presencia del Romeo en situación de preventivo",
+      "category": "Psicológicos",
+      "description": "Activación o presencia del psicólogo de guardia en servicio preventivo"
+    },
+    {
+      "code": "16.1",
+      "name": "Colaboración de URO en una actuación",
+      "category": "URO",
+      "description": "Intervención del vehículo de mantenimiento (URO) en una actuación"
+    },
+    {
+      "code": "17.1",
+      "name": "Colaboración de Foxtrot en una actuación",
+      "category": "FOXTROT",
+      "description": "Intervención de la farmacia móvil (Foxtrot) en una actuación"
+    }
+  ],
+  "indicativos": [
+    {
+      "code": "Central",
+      "name": "Central de Comunicaciones",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Madrid 0",
+      "name": "Alcalde de Madrid",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Madrid 1",
+      "name": "Delegado del área de Seguridad y Emergencias",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Madrid 2",
+      "name": "Coordinador General de Seguridad y Emergencias",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Madrid 3",
+      "name": "Director General de Emergencias y Protección Civil",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 0",
+      "name": "Subdirector General Samur-Protección Civil",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 01",
+      "name": "Jefe de Servicio SAMUR-Protección Civil",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 02",
+      "name": "Jefe de Departamento de Asistencia Sanitaria Urgente",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 03",
+      "name": "Jefe de Departamento de Formación Interna",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 04",
+      "name": "Jefe de Sección Adjunta de Asistencia y Transporte Sanitario",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 05",
+      "name": "Jefe de Unidad de Observación y Evaluación",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 06",
+      "name": "Jefe de Sección Adjunta al Departamento de Protección Civil",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 07",
+      "name": "Jefe de Sección Adjunta de Investigación y Acreditación",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 08",
+      "name": "Jefe de Unidad de Organización de RRHH",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 09",
+      "name": "Jefe de Sección de Logística",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 10",
+      "name": "Jefe de Unidad de Formación",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 11",
+      "name": "Jefe de División Adjunta de Normativas de Calidad",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 12",
+      "name": "Jefe de División Adjunta de Documentación",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 13",
+      "name": "Jefe de División Adjunta de Formación de Protección civil y a la ciudadanía",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 14",
+      "name": "Jefe de División de Recursos materiales",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 15",
+      "name": "Jefe de División de Personal",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 16",
+      "name": "Jefe de División de Archivo",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 20",
+      "name": "Jefe de División de Procedimientos Especiales y Catástrofes",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 30",
+      "name": "Jefe de División de Recursos Móviles",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Samur 40",
+      "name": "Jefe de División de Programación",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Charly",
+      "name": "Jefe de la División de Guardia",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Charly Oscar",
+      "name": "Médico Jefe de División de Guardia y responsable Administrativo y Operativo de la guardia en ausencia del Charly Bravo",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Charly Eco",
+      "name": "Médico Jefe de División de Guardia",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Charly Bravo",
+      "name": "Médico Jefe de División de Guardia y Responsable Administrativo y Operativo de la Guardia",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Delta",
+      "name": "Jefe de la División de Enfermería de Guardia",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Delta Sigma",
+      "name": "Jefe de División de Enfermería de Guardia (turno Sigma)",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Delta Zeta",
+      "name": "Jefe de División de Enfermería de Guardia (turno Zeta)",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Romeo",
+      "name": "Psicólogo de Guardia",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Óscar",
+      "name": "TATS Encargado de Central de Comunicaciones",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Fénix 0",
+      "name": "TATS Jefe de Equipo Jefe de Guardia de procedimientos especiales",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Fénix 1",
+      "name": "TATS de Guardia de Procedimientos Especiales",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Lima",
+      "name": "TATS Jefe de Equipo de Guardia de Actividad Voluntaria",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Sierra",
+      "name": "Coordinador de Guardia de voluntarios",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Víctor Nº",
+      "name": "TATS Jefe de Equipo Jefe de Guardia de voluntarios",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Québec Nº",
+      "name": "TATS de Procedimientos Especiales",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Oscar",
+      "name": "Jefe de Equipo de la División de Guardia adscrito al Charly Oscar",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Eco",
+      "name": "Jefe de Equipo de la División de Guardia adscrito al Charly Eco",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Bravo",
+      "name": "Jefe de Equipo de la División de Guardia adscrito al Charly Bravo",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Sigma",
+      "name": "Jefe de Equipo de la División de Enfermería de Guardia adscrito al Delta Sigma",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Zeta",
+      "name": "Jefe de Equipo de la División de Enfermería de Guardia adscrito al Delta Zeta",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "Mike Supervisor",
+      "name": "Jefe de Equipo de la División de Guardia adscrito al Supervisor",
+      "group": "Propios · Particulares"
+    },
+    {
+      "code": "BASE",
+      "name": "Base de unidades",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "SAMUR",
+      "name": "USVA / Directivo de Guardia",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "VIR",
+      "name": "Vehículo de intervención rápida",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "ALFA",
+      "name": "USVB",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "PAPA",
+      "name": "Unidad psiquiatría",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "TANGO",
+      "name": "Vehículos de transporte",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "MIKE",
+      "name": "Coche de mando",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "ECO",
+      "name": "Equipo sanitario a pie",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "LINCE",
+      "name": "Equipo sanitario en bicicleta",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "HALCÓN",
+      "name": "Equipo sanitario en moto",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "PSA",
+      "name": "Puesto Sanitario Avanzado",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "YANKEE",
+      "name": "Unidad médica en vehículo ligero",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "UPR",
+      "name": "Unidad de Prevención y Reacción",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "FOXTROT",
+      "name": "Farmacia móvil",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "URO",
+      "name": "Personal y vehículo de mantenimiento",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "ZULÚ",
+      "name": "Personal conductor de vehículos pesados de la columna sanitaria",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "VRALA",
+      "name": "Vehículo rápido de apoyo logístico y avituallamiento",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "PM",
+      "name": "Puesto de Mando",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "PMA",
+      "name": "Puesto Médico Avanzado",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "VAIS",
+      "name": "Vehículo de Apoyo Intervención Sanitaria",
+      "group": "Propios · Generales"
+    },
+    {
+      "code": "Base 0",
+      "name": "Base central Ronda de las Provincias s/n, Casa de Campo - Distrito Moncloa-Aravaca",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 1",
+      "name": "Avenida Orovilla, 50 - El Espinillo - Distrito Villaverde",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 2",
+      "name": "C/ Vallehermoso, 1 - Distrito Centro",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 3",
+      "name": "C/ Federico Salmón, 8 - Distrito Chamartín",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 4",
+      "name": "Plaza Agustín González, 1 - Distrito Ciudad Lineal",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 5",
+      "name": "C/ Eugenia de Montijo, 90 - Distrito Carabanchel",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 6",
+      "name": "C/ Florestán Aguilar esq. C/ Gómez Ulla - Distrito Salamanca",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 7",
+      "name": "Ronda de las Provincias s/n, Casa de Campo - La Estrella - Distrito Moncloa-Aravaca",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 8",
+      "name": "C/ Vara del Rey esq. C/ Bustamante - Distrito Arganzuela",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 9",
+      "name": "C/ Hermenegildo Bielsa s/n - Distrito Usera",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 10",
+      "name": "C/ Infanta Mercedes, 34 - Distrito Tetuán",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 11",
+      "name": "C/ Silvano, 169 - Distrito Hortaleza",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 12",
+      "name": "Avenida de Moratalaz s/n, Parque Darwin - Distrito Moratalaz",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 13",
+      "name": "Carrera de San Francisco, 7 - Distrito Centro",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 14",
+      "name": "C/ Casuarina, 10 - Fuerte de Navidad - Distrito Latina",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 15",
+      "name": "Plaza de Colón - Distrito Centro",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 16",
+      "name": "C/ Doctor Ramón Castroviejo, 47 - Isla de Tabarca - Distrito Fuencarral",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 17",
+      "name": "Mercamadrid Parcela D-2, Local 2 - Distrito Villa de Vallecas",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 18",
+      "name": "C/ Rafael Alberti, 45 - Distrito Puente de Vallecas",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 19",
+      "name": "C/ María Sevilla de Diago esq. C/ Liverpool - Las Rosas - Distrito San Blas",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 20",
+      "name": "Travesía Puerto de Reinosa esq. C/ Real de Arganda - Distrito Villa de Vallecas",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Base 21",
+      "name": "C/ Playa de América s/n esquina C/ Alar del Rey - Distrito Barajas",
+      "group": "Propios · Bases"
+    },
+    {
+      "code": "Extraordinarios",
+      "name": "Indicativos de servicios y situaciones especiales designados en la planificación del servicio",
+      "group": "Propios · Extraordinarios"
+    },
+    {
+      "code": "BETA, 080",
+      "name": "Bomberos",
+      "group": "Ajenos"
+    },
+    {
+      "code": "092",
+      "name": "Policía Municipal",
+      "group": "Ajenos"
+    },
+    {
+      "code": "DELTA",
+      "name": "Coche patrulla de Policía Municipal",
+      "group": "Ajenos"
+    },
+    {
+      "code": "ZETA",
+      "name": "Coche patrulla Policía Nacional",
+      "group": "Ajenos"
+    },
+    {
+      "code": "PUERTO",
+      "name": "Patrulla a pie de Policía Municipal",
+      "group": "Ajenos"
+    },
+    {
+      "code": "HOTEL",
+      "name": "Patrulla de moto",
+      "group": "Ajenos"
+    },
+    {
+      "code": "GOLF",
+      "name": "Servicio grúa",
+      "group": "Ajenos"
+    },
+    {
+      "code": "091",
+      "name": "Policía Nacional",
+      "group": "Ajenos"
+    },
+    {
+      "code": "COTA",
+      "name": "Guardia Civil Rural y de Tráfico",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SUMMA",
+      "name": "Servicio de Urgencias Médicas de Madrid",
+      "group": "Ajenos"
+    },
+    {
+      "code": "CRUZ ROJA",
+      "name": "Cruz Roja",
+      "group": "Ajenos"
+    },
+    {
+      "code": "HELICÓPTERO",
+      "name": "Helicóptero seguido de la institución a la que pertenece",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SERMAS",
+      "name": "Servicio Madrileño de Salud",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SAMUR SOCIAL",
+      "name": "Servicios sociales municipales",
+      "group": "Ajenos"
+    },
+    {
+      "code": "UAPF (SAVD)",
+      "name": "Unidad de Atención y Protección a la Familia",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SELUR",
+      "name": "Servicio Especial de Limpieza Urgente",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SAM",
+      "name": "Servicio Atención a la Mujer de Policía Nacional",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SEAM",
+      "name": "Servicio de Emergencias Alimentarias Municipales",
+      "group": "Ajenos"
+    },
+    {
+      "code": "SEVEMUR",
+      "name": "Servicio de Emergencia Veterinaria",
+      "group": "Ajenos"
+    }
+  ],
+  "lima": [
+    {
+      "code": "AS.1.1",
+      "name": "Identificación y registro de riesgos específicos",
+      "category": "Análisis de riesgos",
+      "description": "Identificación y registro de riesgos específicos"
+    },
+    {
+      "code": "AS.1.2",
+      "name": "Identificación de riesgos en zona/local ante futura activación",
+      "category": "Análisis de riesgos",
+      "description": "Identificación de riesgos en zona/local ante futura activación"
+    },
+    {
+      "code": "AS.2.1",
+      "name": "Nevadas",
+      "category": "Riesgos meteorológicos",
+      "description": "Nevadas"
+    },
+    {
+      "code": "AS.2.2",
+      "name": "Lluvias torrenciales",
+      "category": "Riesgos meteorológicos",
+      "description": "Lluvias torrenciales"
+    },
+    {
+      "code": "AS.2.3",
+      "name": "Otras, a indicar",
+      "category": "Riesgos meteorológicos",
+      "description": "Otras, a indicar"
+    },
+    {
+      "code": "AS.3.1",
+      "name": "Manifestaciones",
+      "category": "Eventos",
+      "description": "Manifestaciones"
+    },
+    {
+      "code": "AS.3.2",
+      "name": "Concentraciones",
+      "category": "Eventos",
+      "description": "Concentraciones"
+    },
+    {
+      "code": "AS.3.3",
+      "name": "Fiestas",
+      "category": "Eventos",
+      "description": "Fiestas"
+    },
+    {
+      "code": "AS.3.4",
+      "name": "Otros",
+      "category": "Eventos",
+      "description": "Otros"
+    },
+    {
+      "code": "AS.4.1",
+      "name": "Verificación de instalaciones",
+      "category": "Verificación",
+      "description": "Verificación de instalaciones"
+    },
+    {
+      "code": "AS.4.2",
+      "name": "Activación en tiempo real",
+      "category": "Verificación",
+      "description": "Activación en tiempo real"
+    },
+    {
+      "code": "AS.4.3",
+      "name": "Mixto: Verificación y activación",
+      "category": "Verificación",
+      "description": "Mixto: Verificación y activación"
+    }
+  ],
+  "pc": [
+    {
+      "code": "0",
+      "name": "Recurso operativo",
+      "category": "Claves de estado",
+      "description": "Recurso operativo"
+    },
+    {
+      "code": "1",
+      "name": "Recurso en emergencia",
+      "category": "Claves de estado",
+      "description": "Recurso en emergencia"
+    },
+    {
+      "code": "2",
+      "name": "Salida hacia lugar de actuación",
+      "category": "Claves de estado",
+      "description": "Salida hacia lugar de actuación"
+    },
+    {
+      "code": "2.1",
+      "name": "Función de supervisión (activación voluntaria)",
+      "category": "Supervisión",
+      "description": "Función de supervisión (activación voluntaria)"
+    },
+    {
+      "code": "3",
+      "name": "Llegada al lugar de actuación",
+      "category": "Claves de estado",
+      "description": "Llegada al lugar de actuación"
+    },
+    {
+      "code": "4",
+      "name": "Salida del lugar en dirección al hospital",
+      "category": "Claves de estado",
+      "description": "Salida del lugar en dirección al hospital"
+    },
+    {
+      "code": "5",
+      "name": "Llegada al hospital o centro asistencial",
+      "category": "Claves de estado",
+      "description": "Llegada al hospital o centro asistencial"
+    },
+    {
+      "code": "6",
+      "name": "Unidad inoperativa. Requiere aclaración y autorización",
+      "category": "Claves de estado",
+      "description": "Unidad inoperativa. Requiere aclaración y autorización"
+    },
+    {
+      "code": "6.1",
+      "name": "Unidad en operatividad parcial. En C0",
+      "category": "Claves de estado",
+      "description": "Unidad en operatividad parcial. En C0"
+    },
+    {
+      "code": "7",
+      "name": "Unidad en su base",
+      "category": "Claves de estado",
+      "description": "Unidad en su base"
+    },
+    {
+      "code": "7.1",
+      "name": "Unidad en su zona",
+      "category": "Claves de estado",
+      "description": "Unidad en su zona"
+    },
+    {
+      "code": "8",
+      "name": "Solicitud llamada telefónica",
+      "category": "Claves de comunicación",
+      "description": "Solicitud llamada telefónica"
+    },
+    {
+      "code": "8.1",
+      "name": "Solicitud llamada por TETRA",
+      "category": "Claves de comunicación",
+      "description": "Solicitud llamada por TETRA"
+    },
+    {
+      "code": "9",
+      "name": "Localización geográfica precisa",
+      "category": "Claves de comunicación",
+      "description": "Localización geográfica precisa"
+    },
+    {
+      "code": "10",
+      "name": "Integridad dotación en riesgo",
+      "category": "Urgencias operativas",
+      "description": "Integridad dotación en riesgo"
+    },
+    {
+      "code": "10.1",
+      "name": "Solicitud de policía - Tráfico, presión social, etc.",
+      "category": "Urgencias operativas",
+      "description": "Solicitud de policía - Tráfico, presión social, etc."
+    },
+    {
+      "code": "11",
+      "name": "Inicio jornada laboral o servicio - Al salir de B0",
+      "category": "Jornada",
+      "description": "Inicio jornada laboral o servicio - Al salir de B0"
+    },
+    {
+      "code": "12",
+      "name": "Fin jornada laboral o servicio - Al llegar a B0",
+      "category": "Jornada",
+      "description": "Fin jornada laboral o servicio - Al llegar a B0"
+    },
+    {
+      "code": "13",
+      "name": "Imposibilidad dar información en el momento",
+      "category": "Claves de comunicación",
+      "description": "Imposibilidad dar información en el momento"
+    },
+    {
+      "code": "14",
+      "name": "Solicitud inicio de relevo / Fin DRP",
+      "category": "Jornada",
+      "description": "Solicitud inicio de relevo / Fin DRP"
+    },
+    {
+      "code": "15",
+      "name": "Solicitud de Bomberos",
+      "category": "Urgencias operativas",
+      "description": "Solicitud de Bomberos"
+    },
+    {
+      "code": "16",
+      "name": "Solicitud de apoyo de otra unidad de SAMUR-PC",
+      "category": "Urgencias operativas",
+      "description": "Solicitud de apoyo de otra unidad de SAMUR-PC"
+    },
+    {
+      "code": "17",
+      "name": "Traslado con Charly, Delta, Romeo, Tecnico, ...",
+      "category": "Claves de estado",
+      "description": "Traslado con Charly, Delta, Romeo, Tecnico, ..."
+    },
+    {
+      "code": "18",
+      "name": "Solicitud contacto con Charly por Enfermería",
+      "category": "Claves de comunicación",
+      "description": "Solicitud contacto con Charly por Enfermería"
+    },
+    {
+      "code": "19",
+      "name": "Solicitud contacto con Charly por unidad",
+      "category": "Claves de comunicación",
+      "description": "Solicitud contacto con Charly por unidad"
+    },
+    {
+      "code": "20",
+      "name": "Comunicación a Prensa / Emergencias Madrid",
+      "category": "Claves de comunicación",
+      "description": "Comunicación a Prensa / Emergencias Madrid"
+    },
+    {
+      "code": "21",
+      "name": "Solicitud de farmacia móvil",
+      "category": "Logística",
+      "description": "Solicitud de farmacia móvil"
+    },
+    {
+      "code": "22",
+      "name": "Solicitud de repostaje",
+      "category": "Logística",
+      "description": "Solicitud de repostaje"
+    },
+    {
+      "code": "23",
+      "name": "Solicitud teletraducción",
+      "category": "Logística",
+      "description": "Solicitud teletraducción"
+    },
+    {
+      "code": "29",
+      "name": "En Clave 3, no paciente (rellamada a demandante)",
+      "category": "Claves de comunicación",
+      "description": "En Clave 3, no paciente (rellamada a demandante)"
+    },
+    {
+      "code": "100",
+      "name": "Solicitud policía urgente (Conjunta con PMM)",
+      "category": "Supervisión",
+      "description": "Solicitud policía urgente (Conjunta con PMM)"
+    },
+    {
+      "code": "VICTOR",
+      "name": "Descanso, asuntos internos o avituallamiento",
+      "category": "Jornada",
+      "description": "Descanso, asuntos internos o avituallamiento"
+    },
+    {
+      "code": "CQ",
+      "name": "Llamada general / a un grupo específico",
+      "category": "Claves de comunicación",
+      "description": "Llamada general / a un grupo específico"
+    }
+  ],
+  "sva": [
+    {
+      "code": "A.0.0",
+      "name": "Urticaria generalizada",
+      "category": "Alérgico",
+      "description": "Reacción anafiláctica grave con compromiso hemodinámico"
+    },
+    {
+      "code": "A.0.1",
+      "name": "Reacción anafiláctica local/ eczema/ dermatitis",
+      "category": "Alérgico",
+      "description": "Reacción anafiláctica local/ eczema/ dermatitis"
+    },
+    {
+      "code": "A.1.0",
+      "name": "Edema de glotis",
+      "category": "Alérgico",
+      "description": "Angioedema con o sin urticaria"
+    },
+    {
+      "code": "A.2.0",
+      "name": "Anafilaxia/ Shock debido a fármacos (dosis correcta)",
+      "category": "Alérgico",
+      "description": "Reacción urticarial sin compromiso sistémico"
+    },
+    {
+      "code": "A.2.1",
+      "name": "Anafilaxia/ Shock después de picadura",
+      "category": "Alérgico",
+      "description": ".01 .01 Anafilaxia/ Shock después de picadura"
+    },
+    {
+      "code": "A.2.2",
+      "name": "Anafilaxia/ Shock debido a alimentos",
+      "category": "Alérgico",
+      "description": "Anafilaxia/ Shock debido a alimentos"
+    },
+    {
+      "code": "C.0.0",
+      "name": "PCR-Recuperada",
+      "category": "Cardiovascular",
+      "description": "Parada cardiorrespiratoria con recuperación de circulación espontánea (ROSC)"
+    },
+    {
+      "code": "C.0.1",
+      "name": "PCR Código 9",
+      "category": "Cardiovascular",
+      "description": "Parada cardiorrespiratoria sin recuperación — fallecimiento confirmado (Código 9)"
+    },
+    {
+      "code": "C.0.2",
+      "name": "PCR ECMO.",
+      "category": "Cardiovascular",
+      "description": "PCR refractaria en candidato a oxigenación por membrana extracorpórea"
+    },
+    {
+      "code": "C.1.0",
+      "name": "Fibrilación Auricular",
+      "category": "Cardiovascular",
+      "description": "Fibrilación auricular con o sin respuesta ventricular rápida"
+    },
+    {
+      "code": "C.1.1",
+      "name": "Fluter ventricular",
+      "category": "Cardiovascular",
+      "description": "Flutter auricular"
+    },
+    {
+      "code": "C.1.2",
+      "name": "Extrasístoles ventriculares",
+      "category": "Cardiovascular",
+      "description": "Extrasístoles ventriculares"
+    },
+    {
+      "code": "C.1.3",
+      "name": "Extrasístoles supraventriculares",
+      "category": "Cardiovascular",
+      "description": "Extrasístoles supraventriculares"
+    },
+    {
+      "code": "C.1.4",
+      "name": "Arritmia",
+      "category": "Cardiovascular",
+      "description": "Arritmia"
+    },
+    {
+      "code": "C.2.0",
+      "name": "IAM sin expresión ECG",
+      "category": "Cardiovascular",
+      "description": "Infarto agudo de miocardio anterolateral (STEMI)"
+    },
+    {
+      "code": "C.2.1",
+      "name": "IAM pared antero-lateral",
+      "category": "Cardiovascular",
+      "description": "Infarto agudo de miocardio anterior"
+    },
+    {
+      "code": "C.2.2",
+      "name": "IAM pared anterior",
+      "category": "Cardiovascular",
+      "description": "Infarto agudo de miocardio inferolateral"
+    },
+    {
+      "code": "C.2.3",
+      "name": "IAM pared infero-lateral",
+      "category": "Cardiovascular",
+      "description": "Infarto agudo de miocardio inferior"
+    },
+    {
+      "code": "C.2.4",
+      "name": "IAM pared infero-posterior",
+      "category": "Cardiovascular",
+      "description": "IAM pared infero-posterior"
+    },
+    {
+      "code": "C.2.5",
+      "name": "IAM pared inferior",
+      "category": "Cardiovascular",
+      "description": "IAM pared inferior"
+    },
+    {
+      "code": "C.2.6",
+      "name": "IAM otra pared lateral",
+      "category": "Cardiovascular",
+      "description": "IAM otra pared lateral"
+    },
+    {
+      "code": "C.2.7",
+      "name": "IAM otra pared posterior",
+      "category": "Cardiovascular",
+      "description": "IAM otra pared posterior"
+    },
+    {
+      "code": "C.2.8",
+      "name": "IAM sub-endocardico",
+      "category": "Cardiovascular",
+      "description": "IAM sub-endocardico"
+    },
+    {
+      "code": "C.2.9",
+      "name": "IAM otros sitios no especificados",
+      "category": "Cardiovascular",
+      "description": "IAM otros sitios no especificados"
+    },
+    {
+      "code": "C.3.0",
+      "name": "Angina de decúbito/ reposo",
+      "category": "Cardiovascular",
+      "description": "Angina de pecho en decúbito"
+    },
+    {
+      "code": "C.3.1",
+      "name": "Angina de Prizmetal",
+      "category": "Cardiovascular",
+      "description": "Angina vasoespástica de Prinzmetal"
+    },
+    {
+      "code": "C.3.2",
+      "name": "Otra angina de pecho",
+      "category": "Cardiovascular",
+      "description": "Angina inestable (SCASEST)"
+    },
+    {
+      "code": "C.3.3",
+      "name": "Angina inestable",
+      "category": "Cardiovascular",
+      "description": "Angina inestable"
+    },
+    {
+      "code": "C.4.0",
+      "name": "EAP",
+      "category": "Cardiovascular",
+      "description": "Edema agudo de pulmón de origen cardiogénico"
+    },
+    {
+      "code": "C.5.0",
+      "name": "SHOCK Hipovolémico",
+      "category": "Cardiovascular",
+      "description": "Shock por hipovolemia"
+    },
+    {
+      "code": "C.5.1",
+      "name": "SHOCK Cardiogénico",
+      "category": "Cardiovascular",
+      "description": "Shock de origen cardiogénico"
+    },
+    {
+      "code": "C.6.0",
+      "name": "Insuficiencia cardiaca sistólica aguda",
+      "category": "Cardiovascular",
+      "description": "Insuficiencia cardiaca sistólica aguda"
+    },
+    {
+      "code": "C.6.1",
+      "name": "Insuficiencia cardiaca diastólica aguda",
+      "category": "Cardiovascular",
+      "description": "seralucsavoidraC Insuficiencia cardiaca diastólica aguda"
+    },
+    {
+      "code": "C.7.0",
+      "name": "Taquicardia supra-ventricular paroxística",
+      "category": "Cardiovascular",
+      "description": "Taquicardia supraventricular paroxística"
+    },
+    {
+      "code": "C.7.1",
+      "name": "Taquicardia ventricular paroxística",
+      "category": "Cardiovascular",
+      "description": "Taquicardia ventricular estable (con pulso)"
+    },
+    {
+      "code": "C.7.2",
+      "name": "Fluter Auricular",
+      "category": "Cardiovascular",
+      "description": "Fluter Auricular"
+    },
+    {
+      "code": "C.7.3",
+      "name": "Bradicardia sinusal",
+      "category": "Cardiovascular",
+      "description": "Bradicardia sinusal"
+    },
+    {
+      "code": "C.8.0",
+      "name": "BAV completo/ BAV. De tercer grado",
+      "category": "Cardiovascular",
+      "description": "Bloqueo auriculoventricular de tercer grado"
+    },
+    {
+      "code": "C.8.1",
+      "name": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO II",
+      "category": "Cardiovascular",
+      "description": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO II"
+    },
+    {
+      "code": "C.8.2",
+      "name": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO I. Wekenbach",
+      "category": "Cardiovascular",
+      "description": "BAV inc/ BAV. De 2º grado. Mobitz. TIPO I. Wekenbach"
+    },
+    {
+      "code": "C.8.3",
+      "name": "BAV inc/ BAV. De 1º grado. Intervalo PR prolongado",
+      "category": "Cardiovascular",
+      "description": "BAV inc/ BAV. De 1º grado. Intervalo PR prolongado"
+    },
+    {
+      "code": "C.8.4",
+      "name": "HBRIz del fascículo",
+      "category": "Cardiovascular",
+      "description": "HBRIz del fascículo"
+    },
+    {
+      "code": "C.8.5",
+      "name": "BRIz del fascículo",
+      "category": "Cardiovascular",
+      "description": "BRIz del fascículo"
+    },
+    {
+      "code": "C.8.6",
+      "name": "BRD del fascículo",
+      "category": "Cardiovascular",
+      "description": "BRD del fascículo"
+    },
+    {
+      "code": "C.8.7",
+      "name": "Otro Bloqueo bilateral de la Rama del fascículo",
+      "category": "Cardiovascular",
+      "description": "Otro Bloqueo bilateral de la Rama del fascículo"
+    },
+    {
+      "code": "C.8.8",
+      "name": "Otro Bloqueo cardiaco (Incluye QTR largo)",
+      "category": "Cardiovascular",
+      "description": "Otro Bloqueo cardiaco (Incluye QTR largo)"
+    },
+    {
+      "code": "C.8.9",
+      "name": "Síndrome Wolff Parkinson White",
+      "category": "Cardiovascular",
+      "description": "Síndrome Wolff Parkinson White"
+    },
+    {
+      "code": "C.9.0",
+      "name": "Venas varicosas en MMII con sangrado",
+      "category": "Cardiovascular",
+      "description": "Venas varicosas en MMII con sangrado"
+    },
+    {
+      "code": "C.9.1",
+      "name": "Flebitis y tromboflebitis en MM.II",
+      "category": "Cardiovascular",
+      "description": "Flebitis y tromboflebitis en MM.II"
+    },
+    {
+      "code": "C.9.2",
+      "name": "Flebitis y tromboflebitis en MM.SS",
+      "category": "Cardiovascular",
+      "description": "Flebitis y tromboflebitis en MM.SS"
+    },
+    {
+      "code": "C.9.4",
+      "name": "Enfermedad vascular periférica no especificada",
+      "category": "Cardiovascular",
+      "description": "Enfermedad vascular periférica no especificada"
+    },
+    {
+      "code": "C.9.5",
+      "name": "Disección aórtica/ Aneurisma",
+      "category": "Cardiovascular",
+      "description": "Disección aórtica/ Aneurisma"
+    },
+    {
+      "code": "C.10.0",
+      "name": "HTA esencial / primaria / sistémica",
+      "category": "Cardiovascular",
+      "description": "Crisis hipertensiva"
+    },
+    {
+      "code": "C.10.1",
+      "name": "Encefalopatía hipertensiva",
+      "category": "Cardiovascular",
+      "description": "Urgencia hipertensiva"
+    },
+    {
+      "code": "C.10.2",
+      "name": "Cardiopatía hipertensiva con Insuficiencia cardiaca",
+      "category": "Cardiovascular",
+      "description": "Cardiopatía hipertensiva con Insuficiencia cardiaca"
+    },
+    {
+      "code": "C.10.3",
+      "name": "HTA secundaria renovascular",
+      "category": "Cardiovascular",
+      "description": "HTA secundaria renovascular"
+    },
+    {
+      "code": "C.10.4",
+      "name": "Otra HTA secundaria",
+      "category": "Cardiovascular",
+      "description": "Otra HTA secundaria"
+    },
+    {
+      "code": "C.10.5",
+      "name": "Crisis hipertensiva (Sin repercusión en órganos Diana)",
+      "category": "Cardiovascular",
+      "description": "Crisis hipertensiva (Sin repercusión en órganos Diana)"
+    },
+    {
+      "code": "C.11.0",
+      "name": "Pericarditis aguda no especificada",
+      "category": "Cardiovascular",
+      "description": "Síncope de origen vasovagal"
+    },
+    {
+      "code": "C.12.0",
+      "name": "Hipo TA sintomática",
+      "category": "Cardiovascular",
+      "description": "Hipo TA sintomática"
+    },
+    {
+      "code": "C.12.1",
+      "name": "Sincope vasovagal",
+      "category": "Cardiovascular",
+      "description": "Sincope vasovagal"
+    },
+    {
+      "code": "C.12.2",
+      "name": "Sincope no filiado",
+      "category": "Cardiovascular",
+      "description": "Sincope no filiado"
+    },
+    {
+      "code": "C.12.3",
+      "name": "Sincope tras esfuerzo",
+      "category": "Cardiovascular",
+      "description": "Sincope tras esfuerzo"
+    },
+    {
+      "code": "C.13.0",
+      "name": "OTROS/ Enfermedad cardiovascular",
+      "category": "Cardiovascular",
+      "description": "OTROS/ Enfermedad cardiovascular"
+    },
+    {
+      "code": "D.0.0",
+      "name": "Hernia inguinal",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.0.1",
+      "name": "Hernia umbilical",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.0.2",
+      "name": "Hernia ventral",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.1.0",
+      "name": "Hemorragia digestiva alta",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.1.1",
+      "name": "Melenas",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.1.2",
+      "name": "Rectorragia",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.0",
+      "name": "Abdomen Agudo No traumático",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.1",
+      "name": "Dolor abdominal no Tco. CSD",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.2",
+      "name": "Dolor abdominal no Tco. CSI",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.3",
+      "name": "Dolor abdominal no Tco. CID",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.4",
+      "name": "Dolor abdominal no Tco. CII",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.5",
+      "name": "Dolor abdominal no Tco. Periumbilical",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.2.6",
+      "name": "Dolor abdominal no Tco. Epigástrico",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.3.0",
+      "name": "Dispepsia",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.3.2",
+      "name": "Diarrea",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.4.0",
+      "name": "Cólico Biliar",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.5.0",
+      "name": "Gastritis aguda",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.6.0",
+      "name": "Pancreatitis aguda",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.7.0",
+      "name": "Otras gastroenteritis/ colitis no especificadas",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.8.0",
+      "name": "Hepatopatías no infecciosas",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.8.1",
+      "name": "Cirrosis hepática alcohólica",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.8.2",
+      "name": "Cirrosis hepática no alcohólica",
+      "category": "Digestivo"
+    },
+    {
+      "code": "D.9.0",
+      "name": "OTROS/ Enfermedad sistema digestivo",
+      "category": "Digestivo"
+    },
+    {
+      "code": "E.0.0",
+      "name": "Hipoglucemias",
+      "category": "Endocrino-metabólico",
+      "description": "Hipoglucemia sintomática"
+    },
+    {
+      "code": "E.0.1",
+      "name": "Hipoglucemias diabéticas/ ADO",
+      "category": "Endocrino-metabólico",
+      "description": "Hipoglucemias diabéticas/ ADO"
+    },
+    {
+      "code": "E.0.2",
+      "name": "Hipoglucemia insulínica",
+      "category": "Endocrino-metabólico",
+      "description": "Hipoglucemia insulínica"
+    },
+    {
+      "code": "E.0.3",
+      "name": "Coma diabético hipoglucémico",
+      "category": "Endocrino-metabólico",
+      "description": "Coma diabético hipoglucémico"
+    },
+    {
+      "code": "E.0.4",
+      "name": "Cetoacidosis diabética",
+      "category": "Endocrino-metabólico",
+      "description": "Cetoacidosis diabética"
+    },
+    {
+      "code": "E.0.5",
+      "name": "Coma hiperosmolar",
+      "category": "Endocrino-metabólico",
+      "description": "sacilóbatem-onircodnE Coma hiperosmolar"
+    },
+    {
+      "code": "E.1.0",
+      "name": "Hiperglucemia",
+      "category": "Endocrino-metabólico",
+      "description": "Hiperglucemia con o sin cetoacidosis"
+    },
+    {
+      "code": "E.2.0",
+      "name": "Hipertiroidismo",
+      "category": "Endocrino-metabólico",
+      "description": "Tormenta tiroidea o crisis tirotóxica"
+    },
+    {
+      "code": "E.2.1",
+      "name": "Hipotiroidismo",
+      "category": "Endocrino-metabólico",
+      "description": "Hipotiroidismo"
+    },
+    {
+      "code": "E.2.2",
+      "name": "Trastorno no específico de tiroides",
+      "category": "Endocrino-metabólico",
+      "description": "Trastorno no específico de tiroides"
+    },
+    {
+      "code": "E.3.0",
+      "name": "Hiperosmolaridad/ hipernatremia",
+      "category": "Endocrino-metabólico",
+      "description": "Hiper/hipopotasemia u otra alteración electrolítica grave"
+    },
+    {
+      "code": "E.3.1",
+      "name": "Hipoosmolaridad/ hiponatremia",
+      "category": "Endocrino-metabólico",
+      "description": "Hipoosmolaridad/ hiponatremia"
+    },
+    {
+      "code": "E.4.0",
+      "name": "Hiperpotasemia",
+      "category": "Endocrino-metabólico",
+      "description": "Hipotermia accidental o patológica"
+    },
+    {
+      "code": "E.4.1",
+      "name": "Hipopotasemia",
+      "category": "Endocrino-metabólico",
+      "description": "Hipopotasemia"
+    },
+    {
+      "code": "E.4.2",
+      "name": "Otros trastornos electrolíticos",
+      "category": "Endocrino-metabólico",
+      "description": "Otros trastornos electrolíticos"
+    },
+    {
+      "code": "E.5.0",
+      "name": "Deshidratación",
+      "category": "Endocrino-metabólico",
+      "description": "Deshidratación"
+    },
+    {
+      "code": "E.5.1",
+      "name": "Desnutrición",
+      "category": "Endocrino-metabólico",
+      "description": "Desnutrición"
+    },
+    {
+      "code": "E.5.2",
+      "name": "Desnutrición en niño por falta de cuidado",
+      "category": "Endocrino-metabólico",
+      "description": "Desnutrición en niño por falta de cuidado"
+    },
+    {
+      "code": "E.6.0",
+      "name": "OTROS/ Enfermedad metabólica",
+      "category": "Endocrino-metabólico",
+      "description": "OTROS/ Enfermedad metabólica"
+    },
+    {
+      "code": "E.6.1",
+      "name": "OTROS/ Enfermedad endocrina",
+      "category": "Endocrino-metabólico",
+      "description": "OTROS/ Enfermedad endocrina"
+    },
+    {
+      "code": "F.0.0",
+      "name": "Hipotermia",
+      "category": "Agentes físicos",
+      "description": "Quemadura de primer grado o pequeña extensión"
+    },
+    {
+      "code": "F.1.0",
+      "name": "Lesiones por congelación no especificados",
+      "category": "Agentes físicos",
+      "description": "Lesión por descarga eléctrica de alta o baja tensión"
+    },
+    {
+      "code": "F.1.1",
+      "name": "Lesión congelación de cara",
+      "category": "Agentes físicos",
+      "description": "Lesión congelación de cara"
+    },
+    {
+      "code": "F.1.2",
+      "name": "Lesión congelación de mano",
+      "category": "Agentes físicos",
+      "description": "Lesión congelación de mano"
+    },
+    {
+      "code": "F.1.3",
+      "name": "Congelación de pie",
+      "category": "Agentes físicos",
+      "description": "Congelación de pie"
+    },
+    {
+      "code": "F.2.0",
+      "name": "Cara/cabeza/ cuello/ grado 1",
+      "category": "Agentes físicos",
+      "description": "Hipertermia grave — golpe de calor"
+    },
+    {
+      "code": "F.2.1",
+      "name": "Cara/cabeza/ cuello/ grado 2",
+      "category": "Agentes físicos",
+      "description": "Cara/cabeza/ cuello/ grado 2"
+    },
+    {
+      "code": "F.2.2",
+      "name": "Cara/cabeza/ cuello/ grado 3",
+      "category": "Agentes físicos",
+      "description": "Cara/cabeza/ cuello/ grado 3"
+    },
+    {
+      "code": "F.2.3",
+      "name": "Tronco grado 1",
+      "category": "Agentes físicos",
+      "description": "Tronco grado 1"
+    },
+    {
+      "code": "F.2.4",
+      "name": "Tronco grado 2",
+      "category": "Agentes físicos",
+      "description": "Tronco grado 2"
+    },
+    {
+      "code": "F.2.5",
+      "name": "Tronco grado 3",
+      "category": "Agentes físicos",
+      "description": "Tronco grado 3"
+    },
+    {
+      "code": "F.2.6",
+      "name": "Miembro superior grado 1",
+      "category": "Agentes físicos",
+      "description": "sarudameuQ Miembro superior grado 1"
+    },
+    {
+      "code": "F.2.7",
+      "name": "Miembro superior grado 2",
+      "category": "Agentes físicos",
+      "description": "Miembro superior grado 2"
+    },
+    {
+      "code": "F.2.9",
+      "name": "Muñeca y mano grado 1",
+      "category": "Agentes físicos",
+      "description": "Muñeca y mano grado 1"
+    },
+    {
+      "code": "F.2.10",
+      "name": "Muñeca y mano grado 2",
+      "category": "Agentes físicos",
+      "description": "Muñeca y mano grado 2"
+    },
+    {
+      "code": "F.2.11",
+      "name": "Muñeca y mano grado 3",
+      "category": "Agentes físicos",
+      "description": "Muñeca y mano grado 3"
+    },
+    {
+      "code": "F.2.12",
+      "name": "Miembro inferior grado 1",
+      "category": "Agentes físicos",
+      "description": "Miembro inferior grado 1"
+    },
+    {
+      "code": "F.2.13",
+      "name": "Miembro inferior grado 2",
+      "category": "Agentes físicos",
+      "description": "Miembro inferior grado 2"
+    },
+    {
+      "code": "F.2.14",
+      "name": "Miembro inferior grado 3",
+      "category": "Agentes físicos",
+      "description": ".41 Miembro inferior grado 3"
+    },
+    {
+      "code": "F.2.15",
+      "name": "Otros sitios especificados",
+      "category": "Agentes físicos",
+      "description": "otros sitios especificados"
+    },
+    {
+      "code": "F.2.16",
+      "name": "Múltiples sitios (Gran quemado)",
+      "category": "Agentes físicos",
+      "description": "Múltiples sitios (Gran quemado)"
+    },
+    {
+      "code": "F.3.0",
+      "name": "Lesiones químicas",
+      "category": "Agentes físicos",
+      "description": "Lesión tisular por congelación"
+    },
+    {
+      "code": "F.3.1",
+      "name": "Lesiones por electricidad descarga",
+      "category": "Agentes físicos",
+      "description": "Lesiones por electricidad descarga"
+    },
+    {
+      "code": "F.3.2",
+      "name": "Lesiones por rayo",
+      "category": "Agentes físicos",
+      "description": "Lesiones por rayo"
+    },
+    {
+      "code": "F.4.0",
+      "name": "Hipertermia de origen ambiental",
+      "category": "Agentes físicos",
+      "description": "Casi-ahogamiento con compromiso respiratorio"
+    },
+    {
+      "code": "F.4.1",
+      "name": "Sincope por calor",
+      "category": "Agentes físicos",
+      "description": "Sincope por calor"
+    },
+    {
+      "code": "F.4.2",
+      "name": "Otros efectos especificados del calor",
+      "category": "Agentes físicos",
+      "description": "Otros efectos especificados del calor"
+    },
+    {
+      "code": "F.4.3",
+      "name": "Hipertermia maligna",
+      "category": "Agentes físicos",
+      "description": "Hipertermia maligna"
+    },
+    {
+      "code": "F.5.0",
+      "name": "Ahogamiento por inmersión",
+      "category": "Agentes físicos",
+      "description": "Ahogamiento por inmersión"
+    },
+    {
+      "code": "F.6.0",
+      "name": "Efectos por presión aire por explosión/ BLAST",
+      "category": "Agentes físicos",
+      "description": "Efectos por presión aire por explosión/ BLAST"
+    },
+    {
+      "code": "F.7.0",
+      "name": "OTROS/ Otros efectos de causas externas",
+      "category": "Agentes físicos",
+      "description": "OTROS/ Otros efectos de causas externas"
+    },
+    {
+      "code": "G.0.0",
+      "name": "Metrorragia",
+      "category": "Ginecológico"
+    },
+    {
+      "code": "G.1.0",
+      "name": "Hipermenorrea",
+      "category": "Ginecológico"
+    },
+    {
+      "code": "G.2.0",
+      "name": "Dismenorrea",
+      "category": "Ginecológico"
+    },
+    {
+      "code": "G.3.0",
+      "name": "Dolor de Origen Ginecológico periodo no menstrual",
+      "category": "Ginecológico"
+    },
+    {
+      "code": "G.4.0",
+      "name": "Otros sínt. rel. con órganos genitales femeninos",
+      "category": "Ginecológico"
+    },
+    {
+      "code": "I.0.0",
+      "name": "Infección en Vías respiratorias altas",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.1.0",
+      "name": "Bronquitis",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.1.1",
+      "name": "Neumonía",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.2.0",
+      "name": "Infección muco cutáneas",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.3.0",
+      "name": "Hepatitis infecciosa",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.4.0",
+      "name": "SIDA",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.5.0",
+      "name": "Viriasis",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.6.0",
+      "name": "Herpes zoster",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.7.0",
+      "name": "Meningitis",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.8.0",
+      "name": "Shock séptico",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "I.9.0",
+      "name": "OTROS/ Enfermedad infecciosa y/o parasitaria",
+      "category": "Infeccioso"
+    },
+    {
+      "code": "M.0.0",
+      "name": "Enfermedad Hematológica",
+      "category": "Otros",
+      "description": "Enfermedad Hematológica"
+    },
+    {
+      "code": "M.0.1",
+      "name": "Trastorno/ defecto de la coagulación/ hemostasia",
+      "category": "Otros",
+      "description": "aenálecsiM Trastorno/ defecto de la coagulación/ hemostasia"
+    },
+    {
+      "code": "M.0.2",
+      "name": "Anemia",
+      "category": "Otros",
+      "description": "Anemia"
+    },
+    {
+      "code": "M.1.0",
+      "name": "Enfermedad reumática",
+      "category": "Otros",
+      "description": "Enfermedad reumática"
+    },
+    {
+      "code": "M.2.0",
+      "name": "Neoplasia 1ª/ 2ª",
+      "category": "Otros",
+      "description": "Neoplasia 1ª/ 2ª"
+    },
+    {
+      "code": "M.2.1",
+      "name": "Neoplasia benigna",
+      "category": "Otros",
+      "description": "Neoplasia benigna"
+    },
+    {
+      "code": "M.3.0",
+      "name": "Enfermedad dermatológica",
+      "category": "Otros",
+      "description": "Enfermedad dermatológica"
+    },
+    {
+      "code": "M.4.0",
+      "name": "Persona que finge estar enferma",
+      "category": "Otros",
+      "description": "Persona que finge estar enferma"
+    },
+    {
+      "code": "N.0.0",
+      "name": "ACVA. (EVCA)",
+      "category": "Neurológico",
+      "description": "Accidente cerebrovascular — activación código ictus"
+    },
+    {
+      "code": "N.0.1",
+      "name": "ACVA. CODIGO 13",
+      "category": "Neurológico",
+      "description": "Accidente isquémico transitorio"
+    },
+    {
+      "code": "N.0.2",
+      "name": "TIA",
+      "category": "Neurológico",
+      "description": "Accidente cerebrovascular hemorrágico"
+    },
+    {
+      "code": "N.1.0",
+      "name": "Coma",
+      "category": "Neurológico",
+      "description": "Coma de etiología médica (no traumático)"
+    },
+    {
+      "code": "N.1.1",
+      "name": "Coma farmacológico",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.2.0",
+      "name": "Crisis convulsiva",
+      "category": "Neurológico",
+      "description": "Convulsión febril"
+    },
+    {
+      "code": "N.2.1",
+      "name": "Crisis convulsiva febril",
+      "category": "Neurológico",
+      "description": "Crisis epiléptica conocida"
+    },
+    {
+      "code": "N.3.0",
+      "name": "Status epiléptico",
+      "category": "Neurológico",
+      "description": "Afasia, disartria u otra alteración del lenguaje"
+    },
+    {
+      "code": "N.4.0",
+      "name": "Cefalea",
+      "category": "Neurológico",
+      "description": "Déficit motor unilateral"
+    },
+    {
+      "code": "N.4.1",
+      "name": "Alteraciones en el habla",
+      "category": "Neurológico",
+      "description": "Déficit motor bilateral en miembros inferiores"
+    },
+    {
+      "code": "N.4.2",
+      "name": "Falta de coordinación",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.4.3",
+      "name": "Déficit motor y/ o sensitivo",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.4.4",
+      "name": "Temblor",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.4.5",
+      "name": "Otros signos y/o síntomas SN y/o Músculo esquelético",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.5.0",
+      "name": "Parkinson",
+      "category": "Neurológico",
+      "description": "Temblor esencial o fisiológico"
+    },
+    {
+      "code": "N.5.1",
+      "name": "Alzheimer",
+      "category": "Neurológico",
+      "description": "Crisis o descompensación de la enfermedad de Parkinson"
+    },
+    {
+      "code": "N.5.2",
+      "name": "Degeneración cerebral",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.5.3",
+      "name": "Síndrome confusional",
+      "category": "Neurológico"
+    },
+    {
+      "code": "N.6.1",
+      "name": "OTROS/ Enfermedad SNP",
+      "category": "Neurológico"
+    },
+    {
+      "code": "O.0.0",
+      "name": "Gestante en expulsivo eutócico/ Parto normal",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.0.1",
+      "name": "Gestante en expulsivo / Parto prematuro (< 37 semanas)",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.0.2",
+      "name": "Gestante en expulsivo distócico/ Otras situaciones",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.1.0",
+      "name": "Hemorragia del 1º trimestre. (< de 22 semanas)",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.1.1",
+      "name": "Hemorragia del 2º trimestre",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.1.2",
+      "name": "Hemorragia del 3º trimestre",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.2.0",
+      "name": "Hemorragia Posparto. (Inmediata al parto)",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.2.1",
+      "name": "Hemorragia Posparto. (Después de 24 horas)",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.3.0",
+      "name": "Preeclampsia grave",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.3.1",
+      "name": "Eclampsia",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.5.0",
+      "name": "Amenaza de parto",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.5.1",
+      "name": "Aborto espontáneo",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.6.0",
+      "name": "RN/ Niño único nacido vivo",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.6.1",
+      "name": "RN/ Niño único nacido mortinato",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.6.2",
+      "name": "Gemelo y co-gemelo nacido vivo",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.6.3",
+      "name": "Gemelo vivo y co-gemelo mortinato",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "O.7.0",
+      "name": "OTROS/ Enfermedades y/o complicaciones del",
+      "category": "Obstétrico"
+    },
+    {
+      "code": "PS.0.0",
+      "name": "Demencia senil",
+      "category": "Psiquiátrico",
+      "description": "Síndrome confusional agudo"
+    },
+    {
+      "code": "PS.0.1",
+      "name": "Demencia senil con delirium",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "PS.1.0",
+      "name": "Delírium trémens",
+      "category": "Psiquiátrico",
+      "description": "Descompensación psicótica aguda"
+    },
+    {
+      "code": "PS.1.1",
+      "name": "Síndrome de abstinencia por alcohol",
+      "category": "Psiquiátrico",
+      "description": "Síndrome de abstinencia por alcohol"
+    },
+    {
+      "code": "PS.1.2",
+      "name": "Otras psicosis por alcohol",
+      "category": "Psiquiátrico",
+      "description": "Otras psicosis por alcohol"
+    },
+    {
+      "code": "PS.2.0",
+      "name": "Psicosis por drogas/ Alucinaciones inducidas por drogas",
+      "category": "Psiquiátrico",
+      "description": "Episodio maníaco o hipomaníaco agudo"
+    },
+    {
+      "code": "PS.2.1",
+      "name": "Psicosis por drogas/ Amnesia inducida por droga",
+      "category": "Psiquiátrico",
+      "description": "Psicosis por drogas/ Amnesia inducida por droga"
+    },
+    {
+      "code": "PS.2.2",
+      "name": "Psicosis por drogas/ síndrome de abstinencia",
+      "category": "Psiquiátrico",
+      "description": "Psicosis por drogas/ síndrome de abstinencia"
+    },
+    {
+      "code": "PS.2.3",
+      "name": "Psicosis por drogas/ estado depresivo por drogas",
+      "category": "Psiquiátrico",
+      "description": "Psicosis por drogas/ estado depresivo por drogas"
+    },
+    {
+      "code": "PS.2.4",
+      "name": "Psicosis por drogas/ otros estados mentales por drogas",
+      "category": "Psiquiátrico",
+      "description": "Psicosis por drogas/ otros estados mentales por drogas"
+    },
+    {
+      "code": "PS.3.0",
+      "name": "Esquizofrenia tipo catatónico",
+      "category": "Psiquiátrico",
+      "description": "Episodio depresivo mayor con riesgo autolítico"
+    },
+    {
+      "code": "PS.3.1",
+      "name": "Esquizofrenia tipo paranoide",
+      "category": "Psiquiátrico",
+      "description": "Esquizofrenia tipo paranoide"
+    },
+    {
+      "code": "PS.3.2",
+      "name": "Esquizofrenia tipo NEOM",
+      "category": "Psiquiátrico",
+      "description": "Esquizofrenia tipo NEOM"
+    },
+    {
+      "code": "PS.4.1",
+      "name": "Trastorno depresivo/ episodio recurrente",
+      "category": "Psiquiátrico",
+      "description": "Trastorno depresivo/ episodio recurrente"
+    },
+    {
+      "code": "PS.4.2",
+      "name": "Trastorno afectivo bipolar/ mixto",
+      "category": "Psiquiátrico",
+      "description": "Trastorno afectivo bipolar/ mixto"
+    },
+    {
+      "code": "PS.5.0",
+      "name": "Psicosis de tipo depresivo",
+      "category": "Psiquiátrico",
+      "description": "Tentativa suicida por ingesta medicamentosa"
+    },
+    {
+      "code": "PS.5.1",
+      "name": "Psicosis de tipo agitado",
+      "category": "Psiquiátrico",
+      "description": "Tentativa suicida por método traumático (precipitación, arma, etc.)"
+    },
+    {
+      "code": "PS.6.0",
+      "name": "Estado de ansiedad",
+      "category": "Psiquiátrico",
+      "description": ".11 .11 Estado de ansiedad"
+    },
+    {
+      "code": "PS.6.1",
+      "name": "Reacción aguda al estrés",
+      "category": "Psiquiátrico",
+      "description": "Reacción aguda al estrés"
+    },
+    {
+      "code": "PS.6.2",
+      "name": "Ataque de pánico",
+      "category": "Psiquiátrico",
+      "description": "Ataque de pánico"
+    },
+    {
+      "code": "PS.6.3",
+      "name": "Ataque de histeria",
+      "category": "Psiquiátrico",
+      "description": "Ataque de histeria"
+    },
+    {
+      "code": "PS.6.4",
+      "name": "Trastorno neurótico",
+      "category": "Psiquiátrico",
+      "description": "Trastorno neurótico"
+    },
+    {
+      "code": "PS.6.5",
+      "name": "Estado paranoico",
+      "category": "Psiquiátrico",
+      "description": "Estado paranoico"
+    },
+    {
+      "code": "PS.6.6",
+      "name": "Enfermedad ficticia con síntomas psicológicos",
+      "category": "Psiquiátrico",
+      "description": "Enfermedad ficticia con síntomas psicológicos"
+    },
+    {
+      "code": "PS.7.0",
+      "name": "Anorexia de origen no orgánico (Nerviosa)",
+      "category": "Psiquiátrico",
+      "description": "Anorexia de origen no orgánico (Nerviosa)"
+    },
+    {
+      "code": "PS.7.1",
+      "name": "Oligofrenia/ retraso mental",
+      "category": "Psiquiátrico",
+      "description": "Oligofrenia/ retraso mental"
+    },
+    {
+      "code": "PS.8.4",
+      "name": "Trastorno de la personalidad",
+      "category": "Psiquiátrico",
+      "description": "Trastorno de la personalidad"
+    },
+    {
+      "code": "PS.9.0",
+      "name": "OTROS/ Enfermedad Psiquiátrica",
+      "category": "Psiquiátrico",
+      "description": "OTROS/ Enfermedad Psiquiátrica"
+    },
+    {
+      "code": "PS.10.0",
+      "name": "Intento autolítico (Código 100)",
+      "category": "Psiquiátrico",
+      "description": "Intento autolítico (Código 100)"
+    },
+    {
+      "code": "R.0.0",
+      "name": "Parada Respiratoria",
+      "category": "Respiratorio",
+      "description": "Parada respiratoria o bradipnea grave"
+    },
+    {
+      "code": "R.2.0",
+      "name": "Gripe",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.3.0",
+      "name": "EPOC reag./ Bronquitis crón. Obs. con exacerbación",
+      "category": "Respiratorio",
+      "description": "Exacerbación aguda de EPOC"
+    },
+    {
+      "code": "R.3.1",
+      "name": "Bronquitis crónica obstructiva sin exacerbación",
+      "category": "Respiratorio",
+      "description": "Bronquitis aguda con distrés respiratorio"
+    },
+    {
+      "code": "R.3.2",
+      "name": "Bronquitis aguda/ Incluidas con broncoespasmo",
+      "category": "Respiratorio",
+      "description": "Bronquitis aguda/ Incluidas con broncoespasmo"
+    },
+    {
+      "code": "R.4.0",
+      "name": "Obstrucción por cuerpo extraño en tracto respiratorio",
+      "category": "Respiratorio",
+      "description": "OVACE — obstrucción de la vía aérea por cuerpo extraño"
+    },
+    {
+      "code": "R.4.1",
+      "name": "Obstrucción por moco en tracto respiratorio",
+      "category": "Respiratorio",
+      "description": "Obstrucción por moco en tracto respiratorio"
+    },
+    {
+      "code": "R.5.0",
+      "name": "Embolismo pulmonar/ infarto",
+      "category": "Respiratorio",
+      "description": "TEP — tromboembolismo pulmonar"
+    },
+    {
+      "code": "R.5.1",
+      "name": "Asfixia por ahorcamiento/ soterramiento/ presión",
+      "category": "Respiratorio",
+      "description": "Asfixia por ahorcamiento/ soterramiento/ presión"
+    },
+    {
+      "code": "R.6.0",
+      "name": "Neumotórax espontáneo",
+      "category": "Respiratorio",
+      "description": "Neumotórax espontáneo"
+    },
+    {
+      "code": "R.6.1",
+      "name": "Neumotórax con traumatismo cerrado",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.2",
+      "name": "Neumotórax por herida penetrante",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.3",
+      "name": "Neumohemotórax con traumatismo cerrado",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.4",
+      "name": "Neumohemotórax por herida penetrante",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.7.0",
+      "name": "Otras insuf. agudas y/o distres resp. en adulto",
+      "category": "Respiratorio",
+      "description": "Insuficiencia respiratoria aguda de otra causa"
+    },
+    {
+      "code": "R.8.0",
+      "name": "OTROS/ Enfermedad respiratoria",
+      "category": "Respiratorio",
+      "description": "OTROS/ Enfermedad respiratoria"
+    },
+    {
+      "code": "RR.0.0",
+      "name": "Cuerpo extraño en oído",
+      "category": "Otros",
+      "description": "Cuerpo extraño en oído"
+    },
+    {
+      "code": "RR.0.1",
+      "name": "Cuerpo extraño en nariz",
+      "category": "Otros",
+      "description": "Cuerpo extraño en nariz"
+    },
+    {
+      "code": "RR.1.0",
+      "name": "Otras infecciones agudas del oído externo",
+      "category": "Otros",
+      "description": "Otras infecciones agudas del oído externo"
+    },
+    {
+      "code": "RR.2.0",
+      "name": "Hemorragias orofaríngeas",
+      "category": "Otros",
+      "description": "Hemorragias orofaríngeas"
+    },
+    {
+      "code": "RR.3.0",
+      "name": "Vértigo periférico",
+      "category": "Otros",
+      "description": "LRO Vértigo periférico"
+    },
+    {
+      "code": "RR.4.0",
+      "name": "Epistaxis",
+      "category": "Otros",
+      "description": "Epistaxis"
+    },
+    {
+      "code": "RR.4.1",
+      "name": "Otorragia",
+      "category": "Otros",
+      "description": ".61 Otorragia"
+    },
+    {
+      "code": "RR.5.0",
+      "name": "Otalgia",
+      "category": "Otros",
+      "description": "Otalgia"
+    },
+    {
+      "code": "RR.6.0",
+      "name": "Perdida de audición repentina",
+      "category": "Otros",
+      "description": "Perdida de audición repentina"
+    },
+    {
+      "code": "RR.7.0",
+      "name": "OTROS/ Enfermedad oído",
+      "category": "Otros",
+      "description": "OTROS/ Enfermedad oído"
+    },
+    {
+      "code": "RR.7.1",
+      "name": "OTROS/ Enfermedad nariz",
+      "category": "Otros",
+      "description": "OTROS/ Enfermedad nariz"
+    },
+    {
+      "code": "T.0.0",
+      "name": "Contusiones menores/abrasiones x fricción/Otros",
+      "category": "Trauma",
+      "description": "Traumatismo craneoencefálico cerrado"
+    },
+    {
+      "code": "T.0.1",
+      "name": "Policontusionado / múltiples sitios",
+      "category": "Trauma",
+      "description": "Traumatismo craneoencefálico con fractura craneal asociada"
+    },
+    {
+      "code": "T.1.0",
+      "name": "Rotura fibrilar",
+      "category": "Trauma",
+      "description": "Contractura o distensión muscular"
+    },
+    {
+      "code": "T.1.1",
+      "name": "Esguince / torcedura de cervical",
+      "category": "Trauma",
+      "group": "Esguince / torcedura",
+      "description": "Rotura fibrilar grado I"
+    },
+    {
+      "code": "T.1.2",
+      "name": "Esguince / torcedura de muñeca",
+      "category": "Trauma",
+      "group": "Esguince / torcedura",
+      "description": "Rotura fibrilar grado II (parcial)"
+    },
+    {
+      "code": "T.1.3",
+      "name": "Esguince / torcedura de mano",
+      "category": "Trauma",
+      "group": "Esguince / torcedura",
+      "description": "Rotura fibrilar grado III (completa)"
+    },
+    {
+      "code": "T.1.4",
+      "name": "Esguince / torcedura de rodilla y pierna",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.1.5",
+      "name": "Esguince / torcedura de tobillo y pie",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.2.0",
+      "name": "Fractura de nasal",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de columna cervical"
+    },
+    {
+      "code": "T.2.1",
+      "name": "Fractura de mandíbula",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de huesos de la mano"
+    },
+    {
+      "code": "T.2.2",
+      "name": "Fractura de hombro",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura a nivel de rodilla (rótula, platillos tibiales)"
+    },
+    {
+      "code": "T.2.3",
+      "name": "Fractura de brazo",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura maleolar o de tobillo"
+    },
+    {
+      "code": "T.2.4",
+      "name": "Fractura de codo",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de huesos de la cara"
+    },
+    {
+      "code": "T.2.5",
+      "name": "Fractura de antebrazo",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de mandíbula"
+    },
+    {
+      "code": "T.2.6",
+      "name": "Fractura de muñeca",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de hombro, clavícula o escápula"
+    },
+    {
+      "code": "T.2.7",
+      "name": "Fractura de mano",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura a nivel de codo"
+    },
+    {
+      "code": "T.2.8",
+      "name": "Fractura de dedo de la mano",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de húmero"
+    },
+    {
+      "code": "T.2.9",
+      "name": "Fractura de columna vertebral",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de muñeca (radio/cúbito distal)"
+    },
+    {
+      "code": "T.2.10",
+      "name": "Fractura de clavícula",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de columna dorsal o lumbar"
+    },
+    {
+      "code": "T.2.11",
+      "name": "Fractura de escápula",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de una o varias costillas"
+    },
+    {
+      "code": "T.2.12",
+      "name": "Fractura de esternón",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de cadera o pelvis"
+    },
+    {
+      "code": "T.2.13",
+      "name": "Fractura de costilla",
+      "category": "Trauma",
+      "group": "Fractura cerrada",
+      "description": "Fractura de fémur (proximal, diafisaria o distal)"
+    },
+    {
+      "code": "T.2.14",
+      "name": "Fractura de cadera (incluye cuello y/o cabeza fémur)",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.15",
+      "name": "Fractura de fémur",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.16",
+      "name": "Fractura de rodilla",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.17",
+      "name": "Fractura de pierna",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.18",
+      "name": "Fractura de tobillo",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.19",
+      "name": "Fractura de pie",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.20",
+      "name": "Fractura de dedo pie",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.3.0",
+      "name": "Fractura abierta de nasal",
+      "category": "Trauma",
+      "group": "Fractura abierta",
+      "description": "Fractura abierta de columna cervical"
+    },
+    {
+      "code": "T.3.1",
+      "name": "Fractura abierta de mandíbula",
+      "category": "Trauma",
+      "group": "Fractura abierta",
+      "description": "Fractura abierta de huesos de la mano"
+    },
+    {
+      "code": "T.3.2",
+      "name": "Fractura abierta de hombro",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.3",
+      "name": "Fractura abierta de brazo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.4",
+      "name": "Fractura abierta de codo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.5",
+      "name": "Fractura abierta de antebrazo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.6",
+      "name": "Fractura abierta de muñeca",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.7",
+      "name": "Fractura abierta de mano",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.8",
+      "name": "Fractura abierta de dedo de la mano",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.9",
+      "name": "Fractura abierta de clavícula",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.10",
+      "name": "Fractura abierta de escápula",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.11",
+      "name": "Fractura abierta de cadera (incluye cuello y/o cabeza fémur)",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.12",
+      "name": "Fractura abierta de fémur",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.13",
+      "name": "Fractura abierta de rodilla",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.14",
+      "name": "Fractura abierta de pierna",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.15",
+      "name": "Fractura abierta de tobillo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.16",
+      "name": "Fractura abierta de pie",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.17",
+      "name": "Fractura abierta de dedo pie",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.4.0",
+      "name": "Herida abierta de cabeza (brecha)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en región craneal o cuero cabelludo"
+    },
+    {
+      "code": "T.4.1",
+      "name": "Herida abierta de cara (incluye herida/amputación nariz/oreja)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en región facial"
+    },
+    {
+      "code": "T.4.2",
+      "name": "Herida abierta de ojo (no globo, también zona periocular)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida o traumatismo ocular"
+    },
+    {
+      "code": "T.4.3",
+      "name": "Herida abierta de cuello",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en cuello"
+    },
+    {
+      "code": "T.4.4",
+      "name": "Herida abierta de hombro",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en región del hombro"
+    },
+    {
+      "code": "T.4.5",
+      "name": "Herida abierta de brazo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en brazo o antebrazo"
+    },
+    {
+      "code": "T.4.6",
+      "name": "Herida abierta de codo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en región del codo"
+    },
+    {
+      "code": "T.4.7",
+      "name": "Herida abierta de antebrazo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en muñeca"
+    },
+    {
+      "code": "T.4.8",
+      "name": "Herida abierta de muñeca",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en mano o dedos"
+    },
+    {
+      "code": "T.4.9",
+      "name": "Herida abierta de mano",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en tórax"
+    },
+    {
+      "code": "T.4.10",
+      "name": "Herida abierta de dedo de la mano",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en espalda"
+    },
+    {
+      "code": "T.4.11",
+      "name": "Herida abierta de tórax",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en abdomen"
+    },
+    {
+      "code": "T.4.12",
+      "name": "Herida abierta de espalda (incluye axila)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en región genital o perineal"
+    },
+    {
+      "code": "T.4.13",
+      "name": "Herida abierta de abdomen",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en cadera o región glútea"
+    },
+    {
+      "code": "T.4.14",
+      "name": "Herida abierta de órganos genitales (incluye amputación)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en rodilla"
+    },
+    {
+      "code": "T.4.15",
+      "name": "Herida abierta de muslo y/o cadera y/o glúteo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en muslo o pierna"
+    },
+    {
+      "code": "T.4.16",
+      "name": "Herida abierta de rodilla y/o pierna",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada",
+      "description": "Herida en pie o tobillo"
+    },
+    {
+      "code": "T.4.17",
+      "name": "Herida abierta de pie",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.18",
+      "name": "Herida abierta de dedo del pie",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.5.0",
+      "name": "Luxación de mandíbula",
+      "category": "Trauma",
+      "group": "Posible luxación",
+      "description": "Luxación glenohumeral o acromioclavicular"
+    },
+    {
+      "code": "T.5.2",
+      "name": "Luxación de codo",
+      "category": "Trauma",
+      "group": "Posible luxación",
+      "description": "Luxación de muñeca o carpo"
+    },
+    {
+      "code": "T.5.3",
+      "name": "Luxación de muñeca",
+      "category": "Trauma",
+      "group": "Posible luxación",
+      "description": "Luxación coxofemoral"
+    },
+    {
+      "code": "T.5.4",
+      "name": "Luxación de dedo de la mano",
+      "category": "Trauma",
+      "group": "Posible luxación",
+      "description": "Luxación femorotibial o rotuliana"
+    },
+    {
+      "code": "T.5.5",
+      "name": "Luxación de rodilla + rótula",
+      "category": "Trauma",
+      "group": "Posible luxación",
+      "description": "Luxación de tobillo"
+    },
+    {
+      "code": "T.5.6",
+      "name": "Luxación de tobillo",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.7",
+      "name": "Luxación de pie",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.6.0",
+      "name": "Amputación de dedo de la mano",
+      "category": "Trauma",
+      "group": "Amputación",
+      "description": "Traumatismo craneofacial con objeto penetrante"
+    },
+    {
+      "code": "T.6.1",
+      "name": "Amputación de ión",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.2",
+      "name": "Amputación de pu miembro superior",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.3",
+      "name": "Amputación de dedo de pie",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.4",
+      "name": "Amputación de miembro inferior",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.7.0",
+      "name": "TCE cerrado: Sin laceración (\"Chichón\")",
+      "category": "Trauma",
+      "group": "TCE",
+      "description": "Síndrome de aplastamiento (crush syndrome)"
+    },
+    {
+      "code": "T.7.2",
+      "name": "TCE cerrado: Con lacer. sin pérd. de conoc. (SCALP)",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.3",
+      "name": "TCE cerrado: Con laceración con pérd. de conoc.",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.4",
+      "name": "TCE cerrado: Fx de base de cráneo",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.5",
+      "name": "TCE Abierto",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.6",
+      "name": "TCE Abierto con salida de masa encefálica",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.8.0",
+      "name": "Traumatismo de Facial (incluye cuello)",
+      "category": "Trauma",
+      "description": "Trauma abdominal cerrado con afectación esplénica"
+    },
+    {
+      "code": "T.8.1",
+      "name": "Traumatismo de Torácico",
+      "category": "Trauma",
+      "description": "Trauma abdominal con afectación renal"
+    },
+    {
+      "code": "T.8.2",
+      "name": "Traumatismo de Abdominal",
+      "category": "Trauma",
+      "description": "Neumotórax traumático simple"
+    },
+    {
+      "code": "T.8.3",
+      "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+      "category": "Trauma",
+      "description": "Neumotórax a tensión"
+    },
+    {
+      "code": "T.8.4",
+      "name": "Traumatismo de Medular",
+      "category": "Trauma",
+      "description": "Hemotórax traumático"
+    },
+    {
+      "code": "T.8.5",
+      "name": "Traumatismo de Mayor / Politrauma",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.6",
+      "name": "Traumatismo de Globo ocular",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.7",
+      "name": "Traumatismo de Fosa renal",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.8",
+      "name": "Traumatismo de Perineo (incluye genitales externos)",
+      "category": "Trauma"
+    },
+    {
+      "code": "U.0.0",
+      "name": "Cólico Nefrítico",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.1.0",
+      "name": "Anuria",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.2.0",
+      "name": "Torsión Testicular",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.3.0",
+      "name": "Infección renal",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.3.1",
+      "name": "Infección tracto urinario",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.4.0",
+      "name": "Hematuria",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.5.0",
+      "name": "OTROS/ Enfermedad urinaria",
+      "category": "Urológico"
+    },
+    {
+      "code": "U.5.1",
+      "name": "OTROS/ Enfermedad renal/ uretral",
+      "category": "Urológico"
+    },
+    {
+      "code": "V.0.0",
+      "name": "Cuerpo extraño",
+      "category": "Otros",
+      "description": "Cuerpo extraño"
+    },
+    {
+      "code": "V.1.0",
+      "name": "Ojo rojo",
+      "category": "Otros",
+      "description": "Ojo rojo"
+    },
+    {
+      "code": "V.2.0",
+      "name": "Amaurosis brusca",
+      "category": "Otros",
+      "description": "sacigólomlatfO Amaurosis brusca"
+    },
+    {
+      "code": "V.2.1",
+      "name": "Visión borrosa",
+      "category": "Otros",
+      "description": "Visión borrosa"
+    },
+    {
+      "code": "V.2.2",
+      "name": "Perturbación visual no especificada",
+      "category": "Otros",
+      "description": "Perturbación visual no especificada"
+    },
+    {
+      "code": "V.3.0",
+      "name": "Avulsión ocular",
+      "category": "Otros",
+      "description": "Avulsión ocular"
+    },
+    {
+      "code": "V.3.1",
+      "name": "Perforación ocular",
+      "category": "Otros",
+      "description": "Perforación ocular"
+    },
+    {
+      "code": "V.4.0",
+      "name": "Glaucoma",
+      "category": "Otros",
+      "description": "Glaucoma"
+    },
+    {
+      "code": "V.4.1",
+      "name": "Conjuntivitis",
+      "category": "Otros",
+      "description": "Conjuntivitis"
+    },
+    {
+      "code": "V.5.0",
+      "name": "OTROS/ Enfermedad/ trastorno del ojo",
+      "category": "Otros",
+      "description": "OTROS/ Enfermedad/ trastorno del ojo"
+    },
+    {
+      "code": "W.0.0",
+      "name": "Éxitus sin asistencia / Probable éxitus sin asistencia",
+      "category": "Cierre",
+      "description": "Fallecimiento confirmado sin asistencia previa"
+    },
+    {
+      "code": "W.0.1",
+      "name": "Éxitus con asistencia",
+      "category": "Cierre",
+      "description": "Fallecimiento tras maniobras de resucitación"
+    },
+    {
+      "code": "W.1.0",
+      "name": "Otros",
+      "category": "Cierre",
+      "description": "Servicio originado por llamada de Policía Nacional (091)",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.1",
+      "name": "Por 091",
+      "category": "Cierre",
+      "description": "Servicio originado por llamada de Policía Municipal (092)",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.2",
+      "name": "Por 092",
+      "category": "Cierre",
+      "description": "Servicio originado por coordinación con 112",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.3",
+      "name": "Por 112",
+      "category": "Cierre",
+      "description": "Servicio originado por coordinación con SUMMA112",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.4",
+      "name": "Por SUMMA112",
+      "category": "Cierre",
+      "description": "Servicio originado por Bomberos (080)",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.5",
+      "name": "Por 080",
+      "category": "Cierre",
+      "description": "por 080",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.6",
+      "name": "Tras rellamada",
+      "category": "Cierre",
+      "description": "tras rellamada",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.7",
+      "name": "Por demandante",
+      "category": "Cierre",
+      "description": "por demandante",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.8",
+      "name": "Por recurso más cercano",
+      "category": "Cierre",
+      "description": "por recurso más cercano",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.2.0",
+      "name": "Suceso sin paciente o sin heridos",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.3.0",
+      "name": "No paciente (suceso existió, pero no está el pac.)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.4.0",
+      "name": "No hubo suceso (no suceso y/o ni paciente)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.5.0",
+      "name": "No precisa asistencia/negativo incidente sanitario",
+      "category": "Cierre",
+      "description": "Servicio con componente predominantemente social"
+    },
+    {
+      "code": "W.6.0",
+      "name": "Problema social",
+      "category": "Cierre",
+      "description": "Problema social"
+    },
+    {
+      "code": "W.7.0",
+      "name": "Actuación riesgos previsibles sin heridos (4.6)",
+      "category": "Cierre",
+      "description": "Actuación riesgos previsibles sin heridos (4.6)"
+    },
+    {
+      "code": "W.7.1",
+      "name": "Actuación riesgos prev. Progr. sin heridos (8.x)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.8.0",
+      "name": "Paciente renuncia ser atendido",
+      "category": "Cierre",
+      "description": "El paciente rechaza la asistencia y es colaborador"
+    },
+    {
+      "code": "W.8.1",
+      "name": "Paciente renuncia ser atendido-AGRESIVO",
+      "category": "Cierre",
+      "description": "El paciente rechaza la asistencia y es agresivo"
+    },
+    {
+      "code": "W.8.2",
+      "name": "Paciente renuncia ser atendido-NIEGA FILIACIÓN",
+      "category": "Cierre",
+      "description": "El paciente rechaza la asistencia y niega su identidad"
+    },
+    {
+      "code": "W.9.0",
+      "name": "Colaboración/seguimiento de directivo",
+      "category": "Cierre",
+      "description": "Colaboración/seguimiento de directivo"
+    },
+    {
+      "code": "W.9.1",
+      "name": "Colaboración/seguimiento de Charly",
+      "category": "Cierre",
+      "description": "Colaboración/seguimiento de Charly"
+    },
+    {
+      "code": "W.9.2",
+      "name": "Colaboración/seguimiento de Fénix",
+      "category": "Cierre",
+      "description": "Colaboración/seguimiento de Fénix"
+    },
+    {
+      "code": "W.9.3",
+      "name": "Colaboración/seguimiento de Delta",
+      "category": "Cierre",
+      "description": "Colaboración/seguimiento de Delta"
+    },
+    {
+      "code": "W.10.0",
+      "name": "Otros motivos de Clave 0",
+      "category": "Cierre",
+      "description": "Otros motivos de Clave 0"
+    },
+    {
+      "code": "W.11.0",
+      "name": "Se hace cargo otra institución",
+      "category": "Cierre",
+      "description": "Otro servicio sanitario o institución se hace cargo del paciente"
+    },
+    {
+      "code": "X.0.0",
+      "name": "Alimentaria",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación por alimentos en mal estado"
+    },
+    {
+      "code": "X.1.5",
+      "name": "Por fármacos. Anticonvulsivos",
+      "category": "Intoxicaciones",
+      "description": "por fármacos. Anticonvulsivos"
+    },
+    {
+      "code": "X.1.7",
+      "name": "Por fármacos. Depresores del SNC",
+      "category": "Intoxicaciones",
+      "description": "por fármacos. Depresores del SNC"
+    },
+    {
+      "code": "X.1.8",
+      "name": "Por fármacos. Psicotrópicos",
+      "category": "Intoxicaciones",
+      "description": "por fármacos. Psicotrópicos"
+    },
+    {
+      "code": "X.1.14",
+      "name": "Por fármacos no especificados",
+      "category": "Intoxicaciones",
+      "description": "nóicacixotnI por fármacos no especificados"
+    },
+    {
+      "code": "X.2.0",
+      "name": "Alcohólica aguda",
+      "category": "Intoxicaciones",
+      "description": "Sobredosis o intoxicación por fármacos"
+    },
+    {
+      "code": "X.2.1",
+      "name": "Alcohólica aguda sobre crónica",
+      "category": "Intoxicaciones",
+      "description": "alcohólica aguda sobre crónica"
+    },
+    {
+      "code": "X.3.0",
+      "name": "Por drogas de abuso. Cocaína",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación por inhalación de gases (CO, etc.)"
+    },
+    {
+      "code": "X.3.1",
+      "name": "Por drogas de abuso. Heroína",
+      "category": "Intoxicaciones",
+      "description": "por drogas de abuso. Heroína"
+    },
+    {
+      "code": "X.3.2",
+      "name": "Por drogas de abuso. Alucinógenos",
+      "category": "Intoxicaciones",
+      "description": "senoicacixotnI por drogas de abuso. Alucinógenos"
+    },
+    {
+      "code": "X.3.3",
+      "name": "Por drogas de abuso. Cannabis",
+      "category": "Intoxicaciones",
+      "description": "por drogas de abuso. Cannabis"
+    },
+    {
+      "code": "X.3.4",
+      "name": "Por drogas de abuso. Politoxicomanías",
+      "category": "Intoxicaciones",
+      "description": "por drogas de abuso. Politoxicomanías"
+    },
+    {
+      "code": "X.3.5",
+      "name": "Por drogas de abuso no especificadas",
+      "category": "Intoxicaciones",
+      "description": "por drogas de abuso no especificadas"
+    },
+    {
+      "code": "X.3.6",
+      "name": "Síndrome de abstinencia por opiáceos",
+      "category": "Intoxicaciones",
+      "description": "Síndrome de abstinencia por opiáceos"
+    },
+    {
+      "code": "X.4.0",
+      "name": "Intoxicación por agentes corrosivos",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación por agentes corrosivos"
+    },
+    {
+      "code": "X.5.0",
+      "name": "Gases de plomo",
+      "category": "Intoxicaciones",
+      "description": "Gases de plomo"
+    },
+    {
+      "code": "X.5.1",
+      "name": "Gases de metales",
+      "category": "Intoxicaciones",
+      "description": "Gases de metales"
+    },
+    {
+      "code": "X.5.2",
+      "name": "Monóxido de carbono",
+      "category": "Intoxicaciones",
+      "description": "Monóxido de carbono"
+    },
+    {
+      "code": "X.5.3",
+      "name": "Gas licuado/ butano/ propano",
+      "category": "Intoxicaciones",
+      "description": "Gas licuado/ butano/ propano"
+    },
+    {
+      "code": "X.5.4",
+      "name": "Derivados nitrosos",
+      "category": "Intoxicaciones",
+      "description": "Derivados nitrosos"
+    },
+    {
+      "code": "X.5.5",
+      "name": "Gas lacrimógeno",
+      "category": "Intoxicaciones",
+      "description": "Gas lacrimógeno"
+    },
+    {
+      "code": "X.5.6",
+      "name": "Gas de cloro",
+      "category": "Intoxicaciones",
+      "description": "Gas de cloro"
+    },
+    {
+      "code": "X.5.7",
+      "name": "Derivados sulfurosos (Cianhídrico)",
+      "category": "Intoxicaciones",
+      "description": "Derivados sulfurosos (Cianhídrico)"
+    },
+    {
+      "code": "X.5.8",
+      "name": "Otras intoxicaciones químicas",
+      "category": "Intoxicaciones",
+      "description": "Otras intoxicaciones químicas"
+    },
+    {
+      "code": "X.6.0",
+      "name": "Síndrome de Inhalación de humos",
+      "category": "Intoxicaciones",
+      "description": "Síndrome de Inhalación de humos"
+    },
+    {
+      "code": "X.6.1",
+      "name": "Inhalación de Humos/ Gases no especificados",
+      "category": "Intoxicaciones",
+      "description": "Inhalación de Humos/ Gases no especificados"
+    }
+  ],
+  "svb": [
+    {
+      "code": "C.0.0",
+      "name": "PCR-Recuperada / PCR-Código 9",
+      "category": "Cardiovascular",
+      "description": "Parada cardiorrespiratoria con ROSC"
+    },
+    {
+      "code": "C.0.1",
+      "name": "Dolor torácico de probable origen cardiaco",
+      "category": "Cardiovascular",
+      "description": "Parada cardiorrespiratoria sin recuperación"
+    },
+    {
+      "code": "C.2.0",
+      "name": "Síncope",
+      "category": "Cardiovascular",
+      "description": "Dolor torácico con sospecha de infarto"
+    },
+    {
+      "code": "C.2.1",
+      "name": "Síncope tras esfuerzo",
+      "category": "Cardiovascular"
+    },
+    {
+      "code": "C.3.0",
+      "name": "Lectura de TA anormalmente alta",
+      "category": "Cardiovascular",
+      "description": "Pérdida transitoria del conocimiento"
+    },
+    {
+      "code": "C.4.0",
+      "name": "Lectura de TA anormalmente baja",
+      "category": "Cardiovascular",
+      "description": "Síncope durante o tras esfuerzo físico"
+    },
+    {
+      "code": "C.5.0",
+      "name": "Taquicardia",
+      "category": "Cardiovascular",
+      "description": "Urgencia hipertensiva"
+    },
+    {
+      "code": "C.6.0",
+      "name": "Bradicardia",
+      "category": "Cardiovascular",
+      "description": "Frecuencia cardiaca elevada sintomática"
+    },
+    {
+      "code": "C.7.0",
+      "name": "Arritmia",
+      "category": "Cardiovascular",
+      "description": "Frecuencia cardiaca baja sintomática"
+    },
+    {
+      "code": "C.8.0",
+      "name": "Otros signos y/o síntomas cardiovasculares",
+      "category": "Cardiovascular",
+      "description": "Arritmia cardiaca de causa no especificada"
+    },
+    {
+      "code": "D.0.0",
+      "name": "Diarrea",
+      "category": "Digestivo",
+      "description": "Diarrea aguda, con o sin vómitos"
+    },
+    {
+      "code": "D.1.0",
+      "name": "Vómitos",
+      "category": "Digestivo",
+      "description": "Vómitos sin diarrea"
+    },
+    {
+      "code": "D.2.0",
+      "name": "Hematemesis",
+      "category": "Digestivo",
+      "description": "Vómitos con sangre"
+    },
+    {
+      "code": "D.3.0",
+      "name": "Melenas",
+      "category": "Digestivo",
+      "description": "Deposiciones negras y malolientes (hemorragia digestiva alta)"
+    },
+    {
+      "code": "D.4.0",
+      "name": "Dolor abdominal no traumático",
+      "category": "Digestivo",
+      "description": "Dolor abdominal de inicio agudo"
+    },
+    {
+      "code": "D.5.0",
+      "name": "Otros signos y/o síntomas del aparato digestivo",
+      "category": "Digestivo",
+      "description": "Otros síntomas del aparato digestivo"
+    },
+    {
+      "code": "F.0.0",
+      "name": "Hipotermia",
+      "category": "Agentes físicos",
+      "description": "Hipotermia accidental"
+    },
+    {
+      "code": "F.1.0",
+      "name": "Lesiones congelación no especificados",
+      "category": "Agentes físicos",
+      "description": "Lesión por exposición al frío"
+    },
+    {
+      "code": "F.2.0",
+      "name": "En cara/cabeza/cuero cabelludo",
+      "category": "Agentes físicos",
+      "description": "Quemadura térmica o química"
+    },
+    {
+      "code": "F.2.1",
+      "name": "En tronco",
+      "category": "Agentes físicos",
+      "description": "en tronco"
+    },
+    {
+      "code": "F.2.2",
+      "name": "En miembro superior",
+      "category": "Agentes físicos",
+      "description": "en miembro superior"
+    },
+    {
+      "code": "F.2.3",
+      "name": "En muñeca y mano",
+      "category": "Agentes físicos",
+      "description": "en muñeca y mano"
+    },
+    {
+      "code": "F.2.4",
+      "name": "De miembro inferior",
+      "category": "Agentes físicos",
+      "description": "de miembro inferior"
+    },
+    {
+      "code": "F.2.5",
+      "name": "En múltiples sitios / GRAN QUEMADO",
+      "category": "Agentes físicos",
+      "description": "en múltiples sitios / GRAN QUEMADO"
+    },
+    {
+      "code": "F.2.6",
+      "name": "En múltiples sitios",
+      "category": "Agentes físicos",
+      "description": "en múltiples sitios"
+    },
+    {
+      "code": "F.3.0",
+      "name": "Químicas",
+      "category": "Agentes físicos",
+      "description": "Lesión por descarga eléctrica"
+    },
+    {
+      "code": "F.3.1",
+      "name": "Nes por electricidad descarga",
+      "category": "Agentes físicos",
+      "description": "porelectricidad descarga"
+    },
+    {
+      "code": "F.3.2",
+      "name": "Por rayo",
+      "category": "Agentes físicos",
+      "description": "porrayo"
+    },
+    {
+      "code": "F.4.0",
+      "name": "Hipertermia de origen ambiental",
+      "category": "Agentes físicos",
+      "description": "Hipertermia por exposición al calor"
+    },
+    {
+      "code": "F.4.1",
+      "name": "Calor Síncope de calor",
+      "category": "Agentes físicos",
+      "description": "Síncope de calor"
+    },
+    {
+      "code": "F.4.2",
+      "name": "Otros efectos especificados del calor",
+      "category": "Agentes físicos",
+      "description": "Otros efectos especificados del calor"
+    },
+    {
+      "code": "F.5.0",
+      "name": "Ahogamiento por inmersión",
+      "category": "Agentes físicos",
+      "description": "Sumersión con compromiso respiratorio"
+    },
+    {
+      "code": "F.5.1",
+      "name": "Asfixia por ahorcamiento/soterramiento/presión",
+      "category": "Agentes físicos",
+      "description": "Asfixia por ahorcamiento/soterramiento/presión"
+    },
+    {
+      "code": "F.6.0",
+      "name": "Efectos por presión aire por explosión",
+      "category": "Agentes físicos",
+      "description": "Lesiones por onda expansiva u explosión"
+    },
+    {
+      "code": "G.0.0",
+      "name": "Parto normal",
+      "category": "Obstétrico",
+      "description": "Parto eutócico inminente o en curso"
+    },
+    {
+      "code": "G.0.1",
+      "name": "Parto de nalgas",
+      "category": "Obstétrico",
+      "description": "Presentación podálica inminente"
+    },
+    {
+      "code": "G.0.2",
+      "name": "Amenaza de parto",
+      "category": "Obstétrico",
+      "description": "Contracciones con feto prematuro"
+    },
+    {
+      "code": "G.1.0",
+      "name": "Recién nacido único",
+      "category": "Obstétrico",
+      "description": "Asistencia al recién nacido único"
+    },
+    {
+      "code": "G.1.1",
+      "name": "Recién nacido gemelo, co gemelo",
+      "category": "Obstétrico",
+      "description": "Asistencia a recién nacidos múltiples (gemelos, etc.)"
+    },
+    {
+      "code": "G.2.0",
+      "name": "Hemorragia embarazada después de 22 semanas",
+      "category": "Obstétrico",
+      "description": "Hemorragia durante el embarazo"
+    },
+    {
+      "code": "G.2.1",
+      "name": "Hemorragia embarazada hasta 22 semanas",
+      "category": "Obstétrico",
+      "description": "Hemorragia tras el parto"
+    },
+    {
+      "code": "G.2.2",
+      "name": "Hemorragia ginecológica",
+      "category": "Obstétrico",
+      "description": "Hemorragia ginecológica"
+    },
+    {
+      "code": "G.3.0",
+      "name": "HTA en embarazo",
+      "category": "Obstétrico",
+      "description": "Hipertensión en gestante o preeclampsia"
+    },
+    {
+      "code": "G.4.0",
+      "name": "Vómitos que complican el embarazo",
+      "category": "Obstétrico",
+      "description": "Hiperémesis gravídica u otros vómitos en la gestante"
+    },
+    {
+      "code": "G.5.0",
+      "name": "Otras complicaciones del embarazo",
+      "category": "Obstétrico",
+      "description": "Otras urgencias obstétricas"
+    },
+    {
+      "code": "G.6.0",
+      "name": "Dolor origen gine. periodo menst. (dismenorrea)",
+      "category": "Obstétrico",
+      "description": "Dolor pélvico o ginecológico agudo"
+    },
+    {
+      "code": "G.6.1",
+      "name": "Dolor origen ginecológico periodo no menstrual",
+      "category": "Obstétrico",
+      "description": "Metrorragia no relacionada con el embarazo"
+    },
+    {
+      "code": "G.6.2",
+      "name": "Otros signos y/o síntomas rel. órg. genitales fem.",
+      "category": "Obstétrico",
+      "description": "Otros signos y/o síntomas rel. órg. genitales fem."
+    },
+    {
+      "code": "I.0.0",
+      "name": "Etílicas",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación aguda por alcohol"
+    },
+    {
+      "code": "I.1.0",
+      "name": "No especificados",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación aguda por drogas de abuso"
+    },
+    {
+      "code": "I.1.1",
+      "name": "Monóxido de carbono",
+      "category": "Intoxicaciones",
+      "description": "monóxido de carbono"
+    },
+    {
+      "code": "I.1.2",
+      "name": "Cloro",
+      "category": "Intoxicaciones",
+      "description": "cloro"
+    },
+    {
+      "code": "I.1.3",
+      "name": "Butano / propano / ciudad",
+      "category": "Intoxicaciones",
+      "description": "Butano / propano / ciudad"
+    },
+    {
+      "code": "I.2.0",
+      "name": "Farmacológicas",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación por inhalación (CO, etc.)"
+    },
+    {
+      "code": "I.3.1",
+      "name": "Químicas",
+      "category": "Intoxicaciones",
+      "description": "Químicas"
+    },
+    {
+      "code": "I.4.0",
+      "name": "Otras",
+      "category": "Intoxicaciones",
+      "description": "Sobredosis o intoxicación medicamentosa"
+    },
+    {
+      "code": "I.4.1",
+      "name": "Drogas Cocaína",
+      "category": "Intoxicaciones",
+      "description": "Cocaína"
+    },
+    {
+      "code": "I.4.2",
+      "name": "Heroína",
+      "category": "Intoxicaciones",
+      "description": "Heroína"
+    },
+    {
+      "code": "I.4.3",
+      "name": "Politoxicomanías",
+      "category": "Intoxicaciones",
+      "description": "Politoxicomanías"
+    },
+    {
+      "code": "I.5.0",
+      "name": "Intoxicación alimentaria",
+      "category": "Intoxicaciones",
+      "description": "Intoxicación por otras sustancias"
+    },
+    {
+      "code": "M.0.0",
+      "name": "Dolor músculo-esquelético",
+      "category": "Miscelánea",
+      "description": "Dolor de origen musculoesquelético no traumático"
+    },
+    {
+      "code": "M.1.0",
+      "name": "Reacción alérgica",
+      "category": "Miscelánea",
+      "description": "Reacción alérgica sin componente anafiláctico grave"
+    },
+    {
+      "code": "M.2.0",
+      "name": "Infecciones",
+      "category": "Miscelánea",
+      "description": "Sospecha de infección aguda"
+    },
+    {
+      "code": "M.3.0",
+      "name": "Enfermedades de la piel",
+      "category": "Miscelánea",
+      "description": "Patología cutánea aguda"
+    },
+    {
+      "code": "M.4.0",
+      "name": "Antecedentes diabetes y/o sintomatología",
+      "category": "Miscelánea",
+      "description": "Síntomas de hiper o hipoglucemia"
+    },
+    {
+      "code": "M.5.0",
+      "name": "Otros signos y síntomas aparato genitourinario",
+      "category": "Miscelánea",
+      "description": "Urgencia genitourinaria"
+    },
+    {
+      "code": "N.0.0",
+      "name": "Disminución grave nivel de conciencia",
+      "category": "Neurológico",
+      "description": "GCS bajo o paciente no reactivo"
+    },
+    {
+      "code": "N.1.0",
+      "name": "Convulsiones",
+      "category": "Neurológico",
+      "description": "Crisis convulsiva o epiléptica"
+    },
+    {
+      "code": "N.2.0",
+      "name": "Alteraciones en el habla",
+      "category": "Neurológico",
+      "description": "Dificultad para hablar o afasia"
+    },
+    {
+      "code": "N.3.0",
+      "name": "Falta de coordinación",
+      "category": "Neurológico",
+      "description": "Ataxia, incoordinación o inestabilidad"
+    },
+    {
+      "code": "N.4.0",
+      "name": "Déficit motor y sensitivo",
+      "category": "Neurológico",
+      "description": "Debilidad o entumecimiento en extremidades"
+    },
+    {
+      "code": "N.5.0",
+      "name": "Vértigos",
+      "category": "Neurológico",
+      "description": "Vértigo o mareos intensos"
+    },
+    {
+      "code": "N.6.0",
+      "name": "Temblor",
+      "category": "Neurológico",
+      "description": "Temblor de reposo o de acción"
+    },
+    {
+      "code": "N.7.0",
+      "name": "Cefalea",
+      "category": "Neurológico",
+      "description": "Cefalea de inicio brusco o de gran intensidad"
+    },
+    {
+      "code": "N.8.0",
+      "name": "Otros signos y/o síntomas que afectan al SN",
+      "category": "Neurológico",
+      "description": "Otros signos y/o síntomas que afectan al SN"
+    },
+    {
+      "code": "PS.0.0",
+      "name": "Crisis nerviosa / trastornos de ansiedad",
+      "category": "Psiquiátrico",
+      "description": "Crisis de ansiedad o pánico"
+    },
+    {
+      "code": "PS.0.1",
+      "name": "Paciente agitado y/o violento",
+      "category": "Psiquiátrico",
+      "description": "Agitación psicomotriz de cualquier causa"
+    },
+    {
+      "code": "PS.0.2",
+      "name": "Intento autolítico (incluye ideas suicidas)",
+      "category": "Psiquiátrico",
+      "description": "Paciente con ideación autolítica activa"
+    },
+    {
+      "code": "PS.0.3",
+      "name": "Alucinaciones",
+      "category": "Psiquiátrico",
+      "description": "Alucinaciones auditivas, visuales u otras"
+    },
+    {
+      "code": "PS.0.4",
+      "name": "Otros signos y síntomas",
+      "category": "Psiquiátrico",
+      "description": "Otros síntomas de origen psiquiátrico"
+    },
+    {
+      "code": "R.0.0",
+      "name": "Parada Respiratoria/Bradipnea",
+      "category": "Respiratorio",
+      "description": "Parada o frecuencia respiratoria gravemente disminuida"
+    },
+    {
+      "code": "R.1.0",
+      "name": "Dolor torácico de origen no cardiaco",
+      "category": "Respiratorio",
+      "description": "Dolor torácico de origen no cardiogénico"
+    },
+    {
+      "code": "R.2.0",
+      "name": "Obstrucción x cuerpo extraño (atragantamiento)",
+      "category": "Respiratorio",
+      "description": "Cuerpo extraño ocular"
+    },
+    {
+      "code": "R.2.1",
+      "name": "Cuerpo extraño en ojo",
+      "category": "Respiratorio",
+      "description": "Cuerpo extraño en fosa nasal"
+    },
+    {
+      "code": "R.2.2",
+      "name": "Cuerpo extraño en nariz",
+      "category": "Respiratorio",
+      "description": "Cuerpo extraño en canal auditivo"
+    },
+    {
+      "code": "R.2.3",
+      "name": "Cuerpo extraño en oído",
+      "category": "Respiratorio",
+      "description": "Cuerpo extraño en oído"
+    },
+    {
+      "code": "R.3.0",
+      "name": "Disnea",
+      "category": "Respiratorio",
+      "description": "Dificultad respiratoria de causa no especificada"
+    },
+    {
+      "code": "R.4.0",
+      "name": "Epistaxis",
+      "category": "Respiratorio",
+      "description": "Hemorragia nasal (epistaxis)"
+    },
+    {
+      "code": "R.5.0",
+      "name": "Taquipnea",
+      "category": "Respiratorio",
+      "description": "Frecuencia respiratoria elevada"
+    },
+    {
+      "code": "R.6.0",
+      "name": "Hemoptisis",
+      "category": "Respiratorio",
+      "description": "Expectoración con sangre"
+    },
+    {
+      "code": "R.6.1",
+      "name": "Neumotórax con traumatismo cerrado",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.2",
+      "name": "Neumotórax por herida penetrante",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.3",
+      "name": "Neumohemotórax con traumatismo cerrado",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.6.4",
+      "name": "Neumohemotórax por herida penetrante",
+      "category": "Respiratorio"
+    },
+    {
+      "code": "R.7.0",
+      "name": "Otros síntomas que afectan respiración / tórax",
+      "category": "Respiratorio",
+      "description": "Otros síntomas del aparato respiratorio"
+    },
+    {
+      "code": "T.0.0",
+      "name": "Contusiones menores/abrasiones x fricción/Otros",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.0.1",
+      "name": "Policontusionado / múltiples sitios",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.1.0",
+      "name": "Rotura fibrilar",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.1.1",
+      "name": "Esguince / torcedura de cervical",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.1.2",
+      "name": "Esguince / torcedura de muñeca",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.1.3",
+      "name": "Esguince / torcedura de mano",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.1.4",
+      "name": "Esguince / torcedura de rodilla y pierna",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.1.5",
+      "name": "Esguince / torcedura de tobillo y pie",
+      "category": "Trauma",
+      "group": "Esguince / torcedura"
+    },
+    {
+      "code": "T.2.0",
+      "name": "Fractura de nasal",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.1",
+      "name": "Fractura de mandíbula",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.2",
+      "name": "Fractura de hombro",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.3",
+      "name": "Fractura de brazo",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.4",
+      "name": "Fractura de codo",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.5",
+      "name": "Fractura de antebrazo",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.6",
+      "name": "Fractura de muñeca",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.7",
+      "name": "Fractura de mano",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.8",
+      "name": "Fractura de dedo de la mano",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.9",
+      "name": "Fractura de columna vertebral",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.10",
+      "name": "Fractura de clavícula",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.11",
+      "name": "Fractura de escápula",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.12",
+      "name": "Fractura de esternón",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.13",
+      "name": "Fractura de costilla",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.14",
+      "name": "Fractura de cadera (incluye cuello y/o cabeza fémur)",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.15",
+      "name": "Fractura de fémur",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.16",
+      "name": "Fractura de rodilla",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.17",
+      "name": "Fractura de pierna",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.18",
+      "name": "Fractura de tobillo",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.19",
+      "name": "Fractura de pie",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.2.20",
+      "name": "Fractura de dedo pie",
+      "category": "Trauma",
+      "group": "Fractura cerrada"
+    },
+    {
+      "code": "T.3.0",
+      "name": "Fractura abierta de nasal",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.1",
+      "name": "Fractura abierta de mandíbula",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.2",
+      "name": "Fractura abierta de hombro",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.3",
+      "name": "Fractura abierta de brazo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.4",
+      "name": "Fractura abierta de codo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.5",
+      "name": "Fractura abierta de antebrazo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.6",
+      "name": "Fractura abierta de muñeca",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.7",
+      "name": "Fractura abierta de mano",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.8",
+      "name": "Fractura abierta de dedo de la mano",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.9",
+      "name": "Fractura abierta de clavícula",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.10",
+      "name": "Fractura abierta de escápula",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.11",
+      "name": "Fractura abierta de cadera (incluye cuello y/o cabeza fémur)",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.12",
+      "name": "Fractura abierta de fémur",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.13",
+      "name": "Fractura abierta de rodilla",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.14",
+      "name": "Fractura abierta de pierna",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.15",
+      "name": "Fractura abierta de tobillo",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.16",
+      "name": "Fractura abierta de pie",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.3.17",
+      "name": "Fractura abierta de dedo pie",
+      "category": "Trauma",
+      "group": "Fractura abierta"
+    },
+    {
+      "code": "T.4.0",
+      "name": "Herida abierta de cabeza (brecha)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.1",
+      "name": "Herida abierta de cara (incluye herida/amputación nariz/oreja)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.2",
+      "name": "Herida abierta de ojo (no globo, también zona periocular)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.3",
+      "name": "Herida abierta de cuello",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.4",
+      "name": "Herida abierta de hombro",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.5",
+      "name": "Herida abierta de brazo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.6",
+      "name": "Herida abierta de codo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.7",
+      "name": "Herida abierta de antebrazo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.8",
+      "name": "Herida abierta de muñeca",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.9",
+      "name": "Herida abierta de mano",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.10",
+      "name": "Herida abierta de dedo de la mano",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.11",
+      "name": "Herida abierta de tórax",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.12",
+      "name": "Herida abierta de espalda (incluye axila)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.13",
+      "name": "Herida abierta de abdomen",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.14",
+      "name": "Herida abierta de órganos genitales (incluye amputación)",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.15",
+      "name": "Herida abierta de muslo y/o cadera y/o glúteo",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.16",
+      "name": "Herida abierta de rodilla y/o pierna",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.17",
+      "name": "Herida abierta de pie",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.4.18",
+      "name": "Herida abierta de dedo del pie",
+      "category": "Trauma",
+      "group": "Herida abierta/complicada"
+    },
+    {
+      "code": "T.5.0",
+      "name": "Luxación de mandíbula",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.1",
+      "name": "Luxación de hombro",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.2",
+      "name": "Luxación de codo",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.3",
+      "name": "Luxación de muñeca",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.4",
+      "name": "Luxación de dedo de la mano",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.5",
+      "name": "Luxación de rodilla + rótula",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.6",
+      "name": "Luxación de tobillo",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.5.7",
+      "name": "Luxación de pie",
+      "category": "Trauma",
+      "group": "Posible luxación"
+    },
+    {
+      "code": "T.6.0",
+      "name": "Amputación de dedo de la mano",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.1",
+      "name": "Amputación de dedo pulgar de la mano",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.2",
+      "name": "Amputación de miembro superior",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.3",
+      "name": "Amputación de dedo de pie",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.6.4",
+      "name": "Amputación de miembro inferior",
+      "category": "Trauma",
+      "group": "Amputación"
+    },
+    {
+      "code": "T.7.0",
+      "name": "TCE cerrado: Sin laceración (\"Chichón\")",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.1",
+      "name": "TCE cerrado: Sin laceración, con pérd. de conoc.",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.2",
+      "name": "TCE cerrado: Con lacer. sin pérd. de conoc. (SCALP)",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.3",
+      "name": "TCE cerrado: Con laceración con pérd. de conoc.",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.4",
+      "name": "TCE cerrado: Fx de base de cráneo",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.5",
+      "name": "TCE Abierto",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.7.6",
+      "name": "TCE Abierto con salida de masa encefálica",
+      "category": "Trauma",
+      "group": "TCE"
+    },
+    {
+      "code": "T.8.0",
+      "name": "Traumatismo de Facial (incluye cuello)",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.1",
+      "name": "Traumatismo de Torácico",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.2",
+      "name": "Traumatismo de Abdominal",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.3",
+      "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.4",
+      "name": "Traumatismo de Medular",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.5",
+      "name": "Traumatismo de Mayor / Politrauma",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.6",
+      "name": "Traumatismo de Globo ocular",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.7",
+      "name": "Traumatismo de Fosa renal",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.8.8",
+      "name": "Traumatismo de Perineo (incluye genitales externos)",
+      "category": "Trauma"
+    },
+    {
+      "code": "T.9.0",
+      "name": "Síndrome de aplastamiento",
+      "category": "Trauma"
+    },
+    {
+      "code": "W.0.0",
+      "name": "Probable éxitus sin asistencia",
+      "category": "Cierre",
+      "description": "Fallecimiento confirmado sin asistencia"
+    },
+    {
+      "code": "W.0.1",
+      "name": "Éxitus con asistencia",
+      "category": "Cierre",
+      "description": "Fallecimiento tras maniobras de resucitación"
+    },
+    {
+      "code": "W.1.0",
+      "name": "Otros",
+      "category": "Cierre",
+      "description": "Otros",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.1",
+      "name": "Por 091",
+      "category": "Cierre",
+      "description": "por 091",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.2",
+      "name": "Por 092",
+      "category": "Cierre",
+      "description": "por 092",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.3",
+      "name": "Por 112",
+      "category": "Cierre",
+      "description": "por 112",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.4",
+      "name": "Por SUMMA112",
+      "category": "Cierre",
+      "description": "por SUMMA112",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.5",
+      "name": "Por 080",
+      "category": "Cierre",
+      "description": "por 080",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.6",
+      "name": "Tras rellamada",
+      "category": "Cierre",
+      "description": "tras rellamada",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.7",
+      "name": "Por demandante",
+      "category": "Cierre",
+      "description": "por demandante",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.1.8",
+      "name": "Por recurso más cercano",
+      "category": "Cierre",
+      "description": "por recurso más cercano",
+      "group": "Suspendido en Ruta por..."
+    },
+    {
+      "code": "W.2.0",
+      "name": "Suceso sin paciente o sin heridos",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.3.0",
+      "name": "No paciente (suceso existió, pero no está el pac.)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.4.0",
+      "name": "No hubo suceso (no suceso y/o ni paciente)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.5.0",
+      "name": "No precisa asistencia/negativo incidente sanitario",
+      "category": "Cierre",
+      "description": "Servicio de contenido social"
+    },
+    {
+      "code": "W.6.0",
+      "name": "Problema social",
+      "category": "Cierre",
+      "description": "Problema social"
+    },
+    {
+      "code": "W.7.0",
+      "name": "Actuación riesgos previsibles sin heridos (4.6)",
+      "category": "Cierre",
+      "description": "Actuación riesgos previsibles sin heridos (4.6)"
+    },
+    {
+      "code": "W.7.1",
+      "name": "Actuación riesgos prev. Progr. sin heridos (8.x)",
+      "category": "Cierre",
+      "noReport": true
+    },
+    {
+      "code": "W.8.0",
+      "name": "Paciente renuncia ser atendido",
+      "category": "Cierre",
+      "description": "El paciente rechaza la asistencia médica"
+    },
+    {
+      "code": "W.8.1",
+      "name": "Paciente renuncia ser atendido-AGRESIVO",
+      "category": "Cierre",
+      "description": "Paciente renuncia ser atendido-AGRESIVO"
+    },
+    {
+      "code": "W.8.2",
+      "name": "Paciente renuncia ser atendido-NIEGA FILIACIÓN",
+      "category": "Cierre",
+      "description": "Paciente renuncia ser atendido-NIEGA FILIACIÓN"
+    },
+    {
+      "code": "W.10.0",
+      "name": "Otros motivos de Clave 0",
+      "category": "Cierre",
+      "description": "Otros motivos de Clave 0"
+    },
+    {
+      "code": "W.11.0",
+      "name": "Se hace cargo otra institución",
+      "category": "Cierre",
+      "description": "Se hace cargo otra institución"
+    }
+  ],
+  "upsi": [
+    {
+      "code": "AP.0.0",
+      "name": "Amortiguación del impacto emocional por PCR de origen no traumático",
+      "category": "Impacto emocional",
+      "description": "Amortiguación del impacto emocional por PCR de origen no traumático"
+    },
+    {
+      "code": "AP.0.1",
+      "name": "Amortiguación del impacto emocional por accidentes de tráfico",
+      "category": "Impacto emocional",
+      "description": "Amortiguación del impacto emocional por accidentes de tráfico"
+    },
+    {
+      "code": "AP.0.2",
+      "name": "Amortiguación del impacto emocional por accidente laboral",
+      "category": "Impacto emocional",
+      "description": "Amortiguación del impacto emocional por accidente laboral"
+    },
+    {
+      "code": "AP.0.3",
+      "name": "Amortiguación del impacto emocional por intento autolítico",
+      "category": "Impacto emocional",
+      "description": "Amortiguación del impacto emocional por intento autolítico"
+    },
+    {
+      "code": "AP.0.4",
+      "name": "Amortiguación del impacto emocional por incidente crítico",
+      "category": "Impacto emocional",
+      "description": "Amortiguación del impacto emocional por incidente crítico"
+    },
+    {
+      "code": "AP.1.0",
+      "name": "Inicio del duelo por PCR de origen no traumático",
+      "category": "Duelo",
+      "description": "Inicio del duelo por PCR de origen no traumático"
+    },
+    {
+      "code": "AP.1.1",
+      "name": "Inicio del duelo por accidente de tráfico",
+      "category": "Duelo",
+      "description": "Inicio del duelo por accidente de tráfico"
+    },
+    {
+      "code": "AP.1.2",
+      "name": "Apoyo inicio del duelo por accidente laboral",
+      "category": "Duelo",
+      "description": "Apoyo inicio del duelo por accidente laboral"
+    },
+    {
+      "code": "AP.1.3",
+      "name": "Inicio del duelo por suicidio consumado",
+      "category": "Duelo",
+      "description": "Inicio del duelo por suicidio consumado"
+    },
+    {
+      "code": "AP.1.4",
+      "name": "Inicio del duelo por otros incidentes",
+      "category": "Duelo",
+      "description": "Inicio del duelo por otros incidentes"
+    },
+    {
+      "code": "AP.2.0",
+      "name": "Evaluación y/o intervención psicológica en ideación o tentativa suicida",
+      "category": "Crisis suicida",
+      "description": "Evaluación y/o intervención psicológica en ideación o tentativa suicida"
+    },
+    {
+      "code": "AP.2.1",
+      "name": "Manejo psicológico en intentos autolíticos en curso",
+      "category": "Crisis suicida",
+      "description": "Manejo psicológico en intentos autolíticos en curso"
+    },
+    {
+      "code": "AP.3.0",
+      "name": "Reducción de sintomatología psicosomática en sucesos no traumáticos",
+      "category": "Apoyo psicológico",
+      "description": "Reducción de sintomatología psicosomática en sucesos no traumáticos"
+    },
+    {
+      "code": "AP.4.0",
+      "name": "Código 9",
+      "category": "Apoyo a equipos",
+      "description": "Código 9"
+    },
+    {
+      "code": "AP.4.1",
+      "name": "Intervención en casos de violencia de género",
+      "category": "Apoyo a equipos",
+      "description": "Intervención en casos de violencia de género"
+    },
+    {
+      "code": "AP.4.2",
+      "name": "Intervención en casos de agresión sexual",
+      "category": "Apoyo a equipos",
+      "description": "Intervención en casos de agresión sexual"
+    },
+    {
+      "code": "AP.4.3",
+      "name": "Intervención en situaciones de maltrato infantil",
+      "category": "Intervención psicológica",
+      "description": "Intervención en situaciones de maltrato infantil"
+    },
+    {
+      "code": "AP.4.4",
+      "name": "Intervención en mayores en riesgo social / sospecha de maltrato",
+      "category": "Intervención psicológica",
+      "description": "Intervención en mayores en riesgo social / sospecha de maltrato"
+    },
+    {
+      "code": "AP.4.5",
+      "name": "Otras intervenciones en situaciones de crisis",
+      "category": "Intervención psicológica",
+      "description": "Otras intervenciones en situaciones de crisis"
+    },
+    {
+      "code": "AP.5.0",
+      "name": "Intervención en atentados terroristas",
+      "category": "Catástrofe",
+      "description": "Intervención en atentados terroristas"
+    },
+    {
+      "code": "AP.5.1",
+      "name": "Intervención en accidentes de avión",
+      "category": "Catástrofe",
+      "description": "Intervención en accidentes de avión"
+    },
+    {
+      "code": "AP.5.2",
+      "name": "Intervención en accidentes de tren",
+      "category": "Intervención psicológica",
+      "description": "Intervención en accidentes de tren"
+    },
+    {
+      "code": "AP.6.0",
+      "name": "Intervención en sucesos de impacto social",
+      "category": "Educación",
+      "description": "Intervención en sucesos de impacto social"
+    },
+    {
+      "code": "AP.6.1",
+      "name": "Intervención en AMV",
+      "category": "Intervención psicológica",
+      "description": "Intervención en AMV"
+    },
+    {
+      "code": "AP.6.2",
+      "name": "Intervención en desastre / catástrofe",
+      "category": "Intervención psicológica",
+      "description": "Intervención en desastre / catástrofe"
+    },
+    {
+      "code": "AP.7.0",
+      "name": "Intervención psicoeducativa en programa de sensibilización y reeducación vial",
+      "category": "Otras",
+      "description": "Intervención psicoeducativa en programa de sensibilización y reeducación vial"
+    },
+    {
+      "code": "AP.8.0",
+      "name": "Apoyo en tareas a equipo interviniente en el suceso",
+      "category": "Seguimiento",
+      "description": "Apoyo en tareas a equipo interviniente en el suceso"
+    },
+    {
+      "code": "AP.9.0",
+      "name": "Negativa paciente no precisa asistencia psicológica",
+      "category": "Derivación",
+      "description": "Negativa paciente no precisa asistencia psicológica"
+    },
+    {
+      "code": "AP.9.1",
+      "name": "Asistencia: paciente renuncia a ser atendido",
+      "category": "Derivación",
+      "description": "Asistencia: paciente renuncia a ser atendido"
+    },
+    {
+      "code": "AP.9.2",
+      "name": "Asistencia: sin suceso/paciente",
+      "category": "Derivación",
+      "description": "Asistencia: sin suceso/paciente"
+    }
+  ],
+  "upsq": [
+    {
+      "code": "P.0.0",
+      "name": "Sin clasificar. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.1.0",
+      "name": "No requisitos administrativos. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.1.1",
+      "name": "No requisitos administrativos. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.1.2",
+      "name": "No requisitos administrativos. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.0",
+      "name": "Riesgo suicida. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.1",
+      "name": "Riesgo suicida. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.2",
+      "name": "Riesgo suicida. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.3",
+      "name": "Riesgo suicida. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.4",
+      "name": "Riesgo suicida. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.5",
+      "name": "Riesgo suicida. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.6",
+      "name": "Riesgo suicida. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.2.7",
+      "name": "Riesgo suicida. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.0",
+      "name": "Agresividad - Heteroagresividad. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.1",
+      "name": "Agresividad - Heteroagresividad. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.2",
+      "name": "Agresividad - Heteroagresividad. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.3",
+      "name": "Agresividad - Heteroagresividad. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.4",
+      "name": "Agresividad - Heteroagresividad. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.5",
+      "name": "Agresividad - Heteroagresividad. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.6",
+      "name": "Agresividad - Heteroagresividad. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.3.7",
+      "name": "Agresividad - Heteroagresividad. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.0",
+      "name": "Agitación psicomotriz. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.1",
+      "name": "Agitación psicomotriz. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.2",
+      "name": "Agitación psicomotriz. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.3",
+      "name": "Agitación psicomotriz. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.4",
+      "name": "Agitación psicomotriz. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.5",
+      "name": "Agitación psicomotriz. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.6",
+      "name": "Agitación psicomotriz. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.4.7",
+      "name": "Agitación psicomotriz. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.0",
+      "name": "Signos de psicosis. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.1",
+      "name": "Signos de psicosis. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.2",
+      "name": "Signos de psicosis. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.3",
+      "name": "Signos de psicosis. Conducción",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.4",
+      "name": "Signos de psicosis. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.5",
+      "name": "Signos de psicosis. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.6",
+      "name": "Signos de psicosis. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.5.7",
+      "name": "Signos de psicosis. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.0",
+      "name": "Trastorno del comportamiento. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.1",
+      "name": "Trastorno del comportamiento. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.2",
+      "name": "Trastorno del comportamiento. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.3",
+      "name": "Trastorno del comportamiento. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.4",
+      "name": "Trastorno del comportamiento. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.5",
+      "name": "Trastorno del comportamiento. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.6",
+      "name": "Trastorno del comportamiento. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.6.7",
+      "name": "Trastorno del comportamiento. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.0",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.1",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.2",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.3",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.4",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.5",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.6",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.7.7",
+      "name": "Descompensación en paciente con Trastorno Esquizofrénico. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.0",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.1",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.2",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.3",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.4",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.5",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.6",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.8.7",
+      "name": "Descompensación en paciente con Trastorno Bipolar. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.0",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.1",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.2",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.3",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.4",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.5",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.6",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.9.7",
+      "name": "Descompensación en paciente con Trastorno Depresivo. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.0",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.1",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.2",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.3",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.4",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.5",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.6",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.10.7",
+      "name": "Descompensación en paciente con Trastorno Personalidad. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.0",
+      "name": "Abandono de medicación. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.1",
+      "name": "Abandono de medicación. Voluntario",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.2",
+      "name": "Abandono de medicación. Reducción verbal",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.3",
+      "name": "Abandono de medicación. Conducción. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.4",
+      "name": "Abandono de medicación. Reducción Física",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.5",
+      "name": "Abandono de medicación. Reducción mecánica. Transferencia efectiva",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.6",
+      "name": "Abandono de medicación. Empeoramiento en traslado",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.11.7",
+      "name": "Abandono de medicación. Reducción Mecánica. Preaviso",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.12.0",
+      "name": "Prevalece patología NO psiquiátrica. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.13.0",
+      "name": "Imposibilidad acceso al domicilio. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.14.0",
+      "name": "Ausencia de paciente. No suceso. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.15.0",
+      "name": "Anulado en ruta. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.16.0",
+      "name": "Negativa a la familia. Sin identificar",
+      "category": "Psiquiátrico"
+    },
+    {
+      "code": "P.17.0",
+      "name": "Clave 17 en otra unidad. Sin identificar",
+      "category": "Psiquiátrico"
+    }
+  ]
+}

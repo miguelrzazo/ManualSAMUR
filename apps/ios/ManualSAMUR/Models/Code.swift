@@ -5,6 +5,7 @@ struct Code: Identifiable {
     let code: String
     let name: String
     let category: String?
+    let subcategory: String?
     let description: String?
     let noReport: Bool?
     let tetra: Bool?
@@ -36,6 +37,7 @@ struct RawCode: Decodable {
             code: code,
             name: name,
             category: category ?? group,
+            subcategory: (category != nil && group != nil) ? group : nil,
             description: description,
             noReport: noReport,
             tetra: tetra

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct Drug: Codable, Identifiable {
     let id: String
@@ -14,6 +15,23 @@ struct Drug: Codable, Identifiable {
     let contraindications: String?
     let efectos_secundarios: String?
     let notes: String?
+
+    static func colorFor(category: String) -> Color {
+        switch category {
+        case "Analgesia y Sedación": return .purple
+        case "Antídotos":            return .orange
+        case "Cardiovascular":       return .red
+        case "Fluidos IV":           return .blue
+        case "Metabólico":           return Color(.systemYellow)
+        case "Neurológico":          return .teal
+        case "Obstétrico":           return .pink
+        case "Psiquiátrico":         return .green
+        case "Respiratorio":         return Color(.systemCyan)
+        default:                     return .gray
+        }
+    }
+
+    var categoryColor: Color { Drug.colorFor(category: category) }
 
     func matches(_ query: String) -> Bool {
         let q = query.lowercased()

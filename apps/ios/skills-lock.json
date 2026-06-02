@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ios-taste": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/ios-taste/SKILL.md",
+      "computedHash": "dcf373ece605dcf6f8279d99250681394c815a3330d6c9e8c7061e489c2aeae3"
+    }
+  }
+}
