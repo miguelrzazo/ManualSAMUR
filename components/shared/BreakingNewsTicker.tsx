@@ -19,11 +19,14 @@ export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    if (newThisWeekEventIds.length === 0) return;
-    const seen = readSeenEventIds();
-    if (newThisWeekEventIds.every((id) => seen.includes(id))) {
-      setHidden(true);
+    function checkSeen() {
+      if (newThisWeekEventIds.length === 0) return;
+      const seen = readSeenEventIds();
+      if (newThisWeekEventIds.every((id) => seen.includes(id))) setHidden(true);
     }
+    checkSeen();
+    window.addEventListener("samur:seen-events-updated", checkSeen);
+    return () => window.removeEventListener("samur:seen-events-updated", checkSeen);
   }, [newThisWeekEventIds]);
 
   if (!metadata.tickerEnabled || hidden) return null;

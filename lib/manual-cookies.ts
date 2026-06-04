@@ -57,6 +57,9 @@ export function readSeenEventIds(): string[] {
 
 export function writeSeenEventIds(ids: string[]) {
   writeRawCookie(SEEN_EVENTS_COOKIE, JSON.stringify(ids));
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("samur:seen-events-updated"));
+  }
 }
 
 export function addSeenEventId(seenIds: string[], eventId: string): string[] {

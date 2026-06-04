@@ -2,7 +2,8 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-export const DEFAULT_MANUAL_VERSION = "Abril 2026";
+const _MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+export const DEFAULT_MANUAL_VERSION = `${_MONTHS_ES[new Date().getMonth()]} ${new Date().getFullYear()}`;
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 
@@ -335,7 +336,9 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
         href: `/manual?update=${index}`,
       }));
     const tickerItems = filterUserFacingTickerItems(tickerItemsRaw);
-    const tickerEnabled = parsed.tickerEnabled ?? tickerItems.length > 0;
+    const enabledUntil = parsed.ticker?.enabledUntil || "";
+    const withinWindow = !enabledUntil || new Date(enabledUntil).getTime() > Date.now();
+    const tickerEnabled = (parsed.tickerEnabled ?? tickerItems.length > 0) && withinWindow;
 
     return {
       manualVersionCurrent,
@@ -366,7 +369,7 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
     const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<ManualUpdatesDataset>;
     return {
       generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : "",
-      events: Array.isArray(parsed.events) ? parsed.events as ManualUpdateEvent[] : [],
+      events: Array.isArray(parsed.events) ? applyNewThisWeek(parsed.events as ManualUpdateEvent[]) : [],
     };
   } catch {
     return createDefaultManualUpdatesDataset();
