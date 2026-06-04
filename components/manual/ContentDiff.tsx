@@ -65,19 +65,19 @@ export function ContentDiff({ changeKind, changedAt, summary, diff, procedureHre
       ) : header}
 
       {diff && open && (
-        <div className="border-t border-border/60 bg-muted/20 px-3 py-2 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-64 overflow-y-auto">
+        <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto overflow-y-auto" style={{ maxHeight: "min(50vh, 400px)" }}>
           {diff.split("\n").map((line, i) => (
             <div
               key={i}
-              className={
+              className={`whitespace-pre px-1 rounded-sm ${
                 line.startsWith("+") && !line.startsWith("+++")
                   ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
                   : line.startsWith("-") && !line.startsWith("---")
                   ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
                   : line.startsWith("@@")
-                  ? "text-blue-600 dark:text-blue-400"
+                  ? "text-blue-600 dark:text-blue-400 font-semibold"
                   : "text-muted-foreground"
-              }
+              }`}
             >
               {line || " "}
             </div>

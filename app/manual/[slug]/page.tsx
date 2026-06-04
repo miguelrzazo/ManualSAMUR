@@ -226,7 +226,7 @@ export default async function ProcedurePage({ params }: Props) {
 
         {/* Recent update badge — only when event < 30 days */}
         {(() => {
-          const recent = updateEvents.find((e) => e.effectiveDate >= updateCutoff);
+          const recent = updateEvents.find((e) => e.effectiveDate >= updateCutoff && e.changeKind !== "revisado");
           if (!recent) return null;
           return (
             <ContentDiff

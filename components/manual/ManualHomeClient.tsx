@@ -611,14 +611,14 @@ export function ManualHomeClient({
 
       {/* ── Timeline history modal ── */}
       <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="w-[95vw] max-w-5xl h-[85vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b border-border/40 flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-base">
               <History className="h-4 w-4" />
               Historial de actualizaciones
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-auto pr-1 -mr-1">
+          <div className="flex-1 overflow-auto px-5 py-4">
             <div className="relative pl-6">
               {/* vertical timeline line */}
               <div className="absolute left-2 top-2 bottom-2 w-px bg-border/50" />
@@ -655,11 +655,11 @@ export function ManualHomeClient({
                                       : "border-border/40 bg-background/40"
                                   }`}
                                 >
-                                  <div className="flex items-center gap-2 px-3 py-2">
+                                  <div className="flex items-start gap-2 px-3 py-2.5">
                                     {isUnseen && (
-                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1" />
                                     )}
-                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide flex-shrink-0 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
+                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
                                       {event.changeKind.toUpperCase()}
                                     </span>
                                     {(() => {
@@ -675,40 +675,40 @@ export function ManualHomeClient({
                                       return href ? (
                                         <button
                                           onClick={() => { router.push(href); setHistoryModalOpen(false); }}
-                                          className="text-xs flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors truncate"
+                                          className="text-sm flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors leading-snug"
                                         >
                                           {event.summary}
                                         </button>
                                       ) : (
-                                        <span className="text-xs flex-1 text-foreground/80 min-w-0 truncate">{event.summary}</span>
+                                        <span className="text-sm flex-1 text-foreground/80 min-w-0 leading-snug">{event.summary}</span>
                                       );
                                     })()}
                                     {event.diff && (
                                       <button
                                         onClick={() => handleExpandDiff(event.eventId, event.isNewThisWeek)}
-                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mt-0.5"
                                       >
-                                        Ver diff
+                                        {isExpanded ? "Ocultar" : "Ver diff"}
                                         <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                                       </button>
                                     )}
                                   </div>
                                   {event.diff && isExpanded && (
-                                    <div className="border-t border-border/60 bg-muted/20 px-3 py-2 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-48 overflow-y-auto">
+                                    <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto overflow-y-auto" style={{ maxHeight: "min(50vh, 400px)" }}>
                                       {event.diff.split("\n").map((line, i) => (
                                         <div
                                           key={i}
-                                          className={
+                                          className={`whitespace-pre px-1 rounded-sm ${
                                             line.startsWith("+") && !line.startsWith("+++")
                                               ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
                                               : line.startsWith("-") && !line.startsWith("---")
                                               ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
                                               : line.startsWith("@@")
-                                              ? "text-blue-600 dark:text-blue-400"
+                                              ? "text-blue-600 dark:text-blue-400 font-semibold"
                                               : "text-muted-foreground"
-                                          }
+                                          }`}
                                         >
-                                          {line || " "}
+                                          {line || " "}
                                         </div>
                                       ))}
                                     </div>
