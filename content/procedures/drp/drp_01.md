@@ -6,18 +6,16 @@ slug: drp_01-procedimiento-general-de-los-drp
 tags: []
 synonyms: []
 related: []
-updated: '2026-05-15'
-sourceUpdated: '2026-05-15'
+updated: '2026-06-04'
+sourceUpdated: '2026-06-04'
 source: >-
-  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29./Procedimiento%20General%20de%20los%20DRP/
-contentHash: 9bcebbdd20471f9fd2fecfa45badf713e48c58d5581e9d755f4df4137d78dfc6
+  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20General%20de%20los%20DRP/
+contentHash: 2fbb777fdc1b3441d11c42e9bfaf2ed09ce7ffbbb98eb14b2b9b87c1d9127db4
 attachments: []
 editorialStatus: source
 editorialLockedAt: ''
 lastApprovedOfficialUpdateAt: ''
 ---
-🖨 Imprimir esta página
-
 ## Definición y objeto.
 Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
 
