@@ -263,6 +263,8 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "valoracion del paciente pediatrico politraumatizado": "314_03",
   "ventilacion mecanica no invasiva": "602_13",
   "quemaduras": "314_06",
+  "paciente con posible alteracion de niveles de glucemia capilar": "415",
+  "transferencia de pacientes entre profesionales sanitarios": "219",
 };
 
 export function createDefaultManualSyncMetadata(): ManualSyncMetadata {
