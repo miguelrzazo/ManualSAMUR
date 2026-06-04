@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install system dependencies
+        run: sudo apt-get install -y poppler-utils
+
       - name: Apply official updates
         run: |
           if [ -n "${{ github.event.inputs.procedure_ids }}" ]; then
