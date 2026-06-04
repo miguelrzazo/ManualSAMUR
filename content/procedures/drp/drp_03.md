@@ -9,10 +9,14 @@ related: []
 updated: '2026-05-05'
 sourceUpdated: '2026-05-05'
 source: >-
-  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29./Procedimiento%20De%20%E2%80%9CCecor%E2%80%9D%20En%20Un%20Dispositivo%20De%20Riesgo%20Previsible/
+  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20De%20%E2%80%9CCecor%E2%80%9D%20En%20Un%20Dispositivo%20De%20Riesgo%20Previsible/
 contentHash: 8d91138e73a7dc142a70cc2813eafbdc9387f1b13bc01a3dbb7e31e5d9a0ef03
 attachments: []
+editorialStatus: source
+editorialLockedAt: ''
+lastApprovedOfficialUpdateAt: ''
 ---
+**Última modificación el 05/05/2026**
 
 **Objetivos de este procedimiento:**
 
