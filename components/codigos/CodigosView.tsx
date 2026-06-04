@@ -42,6 +42,8 @@ interface Hospital {
   address: string;
   district: string;
   type?: string;
+  lat?: number;
+  lng?: number;
   status4?: number | null;
 }
 
@@ -682,9 +684,9 @@ function OtrosContent({
 
   const filteredHospitales = useMemo(() => {
     if (showPrivateHospitals) {
-      return hospitales.filter((h) => (h as any).type === "private");
+      return hospitales.filter((h) => h.type === "private");
     }
-    return hospitales.filter((h) => (h as any).type === "public");
+    return hospitales.filter((h) => h.type === "public");
   }, [hospitales, showPrivateHospitals]);
 
   const filteredLima = useMemo(() => {
@@ -850,8 +852,8 @@ function HospitalesList({
   showPrivate: boolean;
   onShowPrivateChange: (show: boolean) => void;
 }) {
-  const publicCount = allHospitales.filter((h) => !(h as any).type || (h as any).type === "public").length;
-  const privateCount = allHospitales.filter((h) => (h as any).type === "private").length;
+  const publicCount = allHospitales.filter((h) => !h.type || h.type === "public").length;
+  const privateCount = allHospitales.filter((h) => h.type === "private").length;
 
   return (
     <div className="flex flex-col h-full">
@@ -890,9 +892,9 @@ function HospitalesList({
         ) : (
           hospitales.map((h) => {
             const accessAddr = HOSPITAL_ACCESS[h.id] ?? h.address;
-            const mapsUrl = `https://www.google.com/maps?q=${(h as any).lat},${(h as any).lng}`;
-            const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${(h as any).lat},${(h as any).lng}`;
-            const isPrivate = (h as any).type === "private";
+            const mapsUrl = `https://www.google.com/maps?q=${h.lat},${h.lng}`;
+            const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lng}`;
+            const isPrivate = h.type === "private";
             const badgeBg = isPrivate
               ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
               : "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300";
@@ -915,7 +917,7 @@ function HospitalesList({
                   <div className="text-sm font-semibold leading-snug truncate">{h.name ?? h.shortName}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{accessAddr}</div>
                 </div>
-                {(h as any).lat && (h as any).lng && (
+                {h.lat && h.lng && (
                   <div className="flex gap-1.5 flex-shrink-0">
                     <a
                       href={mapsUrl}

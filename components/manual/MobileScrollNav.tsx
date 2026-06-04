@@ -18,6 +18,7 @@ function useActiveHeadings(articleId: string) {
       text: el.textContent?.trim() ?? "",
       level: el.tagName === "H2" ? 2 : 3,
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHeadings(parsed);
 
     const observer = new IntersectionObserver(

@@ -179,6 +179,8 @@ export default async function ProcedurePage({ params }: Props) {
     return acc;
   }, {});
   const hasGraphData = related.length > 0 || backlinks.length > 0 || suggested.length > 0;
+  // eslint-disable-next-line react-hooks/purity
+  const updateCutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   return (
     <div className="mx-auto flex max-w-7xl gap-5 px-4 py-4 md:px-6 md:py-6">
@@ -224,8 +226,7 @@ export default async function ProcedurePage({ params }: Props) {
 
         {/* Recent update badge — only when event < 30 days */}
         {(() => {
-          const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-          const recent = updateEvents.find((e) => e.effectiveDate >= cutoff);
+          const recent = updateEvents.find((e) => e.effectiveDate >= updateCutoff);
           if (!recent) return null;
           return (
             <ContentDiff

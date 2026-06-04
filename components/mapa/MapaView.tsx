@@ -74,6 +74,7 @@ export function MapaView({ hospitals, bases, status4 }: Props) {
     if (hospitalId) {
       const hospital = hospitals.find(h => h.id === hospitalId);
       if (hospital) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelected({ kind: "hospital", data: hospital });
         if (hospital.type === "private") setShowPrivate(true);
         if (map) {

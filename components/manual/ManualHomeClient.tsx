@@ -462,6 +462,7 @@ export function ManualHomeClient({
   const [expandedDiffs, setExpandedDiffs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFavoriteIds(readCollectionCookie(FAVORITES_COOKIE, validIdSet));
     setRecentIds(readCollectionCookie(RECENT_COOKIE, validIdSet));
     setSeenEventIds(readSeenEventIds());
