@@ -517,7 +517,9 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
       const validationErrors = validateProcedure(space.title, markdown, attachments);
       if (validationErrors.length > 0) {
         skipped++;
-        errors.push(`${space.title}: ${validationErrors.join(", ")}`);
+        // "content too short" are known category index pages — don't log as errors
+        const realErrors = validationErrors.filter((e) => !e.includes("content too short"));
+        if (realErrors.length > 0) errors.push(`${space.title}: ${realErrors.join(", ")}`);
         continue;
       }
 

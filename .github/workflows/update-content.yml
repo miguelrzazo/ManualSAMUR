@@ -18,10 +18,12 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4.4.0
         with:
           node-version: "22"
           cache: "npm"
@@ -56,20 +58,38 @@ jobs:
             ? JSON.parse(fs.readFileSync(HISTORY_PATH, "utf8"))
             : { generatedAt: new Date().toISOString(), entries: [] };
 
-          const existingIds = new Set(existing.entries.map((e) => e.id));
-          const newEntries = updates.events
-            .filter((e) => !existingIds.has(e.eventId))
-            .map((e) => ({
-              id: e.eventId,
-              procedureId: e.procedureIds?.[0] ?? "",
-              procedureTitle: e.summary,
-              section: "",
-              slug: "",
-              changeKind: e.changeKind,
-              changedAt: e.approvedAt || e.effectiveDate,
-              summary: e.summary,
-              diff: e.diff,
-            }));
+          const now = new Date();
+          const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+          // Build stable IDs: "revisado" entries use procedure+month key so they
+          // deduplicate across re-runs and don't grow history unboundedly.
+          function stableId(e) {
+            if (e.changeKind === "revisado") {
+              const procId = e.procedureIds?.[0] ?? e.eventId;
+              return `revisado:${procId}:${yearMonth}`;
+            }
+            return e.eventId;
+          }
+
+          const existingById = new Map(existing.entries.map((e) => [e.id, e]));
+
+          const newEntries = [];
+          for (const e of updates.events) {
+            const id = stableId(e);
+            if (!existingById.has(id)) {
+              newEntries.push({
+                id,
+                procedureId: e.procedureIds?.[0] ?? "",
+                procedureTitle: e.summary,
+                section: "",
+                slug: "",
+                changeKind: e.changeKind,
+                changedAt: e.approvedAt || e.effectiveDate,
+                summary: e.summary,
+                diff: e.diff,
+              });
+            }
+          }
 
           existing.entries = [...newEntries, ...existing.entries].slice(0, 500);
           existing.generatedAt = new Date().toISOString();
@@ -105,9 +125,10 @@ jobs:
               }
               console.log("");
             }
-            if (run.errors?.length) {
+            const realErrors = (run.errors || []).filter((e) => !e.includes("content too short"));
+            if (realErrors.length) {
               console.log("## Errors\n");
-              for (const error of run.errors) console.log(`- ${error}`);
+              for (const error of realErrors) console.log(`- ${error}`);
             }
           }
           const recent = (updates.events || []).slice(0, 20);
@@ -120,7 +141,7 @@ jobs:
           NODE
 
       - name: Upload update artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: manual-update-detection
           path: |
@@ -141,7 +162,7 @@ jobs:
           node -e 'const fs=require("fs");const codes=JSON.parse(fs.readFileSync("content/data/codigos-incidente.json","utf8"));const eights=codes.filter(c=>String(c.code).startsWith("8"));console.log("8.x codes:",eights.map(c=>c.code).join(", "));'
 
       - name: Create review pull request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: codex/monthly-manual-update
           delete-branch: true
