@@ -272,7 +272,7 @@ export async function globalSearch(
   drugs: Drug[],
   codes: Code[],
   hospitals: Hospital[],
-  bases: Base[]
+  bases: Base[] = []
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
