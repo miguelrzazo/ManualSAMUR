@@ -9,7 +9,7 @@ import { AppMenu } from "@/components/shared/AppMenu";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ProcedureMeta } from "@/lib/content";
-import type { CollaboratorsData, MainLinksData } from "@/lib/main-content";
+import type { MainLinksData } from "@/lib/main-content";
 
 const navItems = [
   { href: "/manual", label: "Manual", icon: BookOpen },
@@ -20,11 +20,10 @@ const navItems = [
 
 interface Props {
   procedures: ProcedureMeta[];
-  collaborators: CollaboratorsData;
   mainLinks: MainLinksData;
 }
 
-export function NavBar({ procedures, collaborators, mainLinks }: Props) {
+export function NavBar({ procedures, mainLinks }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -89,7 +88,7 @@ export function NavBar({ procedures, collaborators, mainLinks }: Props) {
           >
             <CaseSensitive className="h-3.5 w-3.5" />
           </Link>
-          <AppMenu collaborators={collaborators} mainLinks={mainLinks} />
+          <AppMenu mainLinks={mainLinks} />
           <ThemeToggle />
         </div>
       </header>
@@ -142,7 +141,7 @@ export function NavBar({ procedures, collaborators, mainLinks }: Props) {
           >
             <CaseSensitive className="h-4 w-4" />
           </Link>
-          <AppMenu collaborators={collaborators} mainLinks={mainLinks} />
+          <AppMenu mainLinks={mainLinks} />
           <ThemeToggle />
         </div>
       </header>

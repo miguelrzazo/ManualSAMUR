@@ -18,28 +18,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { CollaboratorsData, MainLinksData } from "@/lib/main-content";
+import type { MainLinksData } from "@/lib/main-content";
 
 const APP_VERSION = "0.1.0";
 
 interface Props {
-  collaborators: CollaboratorsData;
   mainLinks: MainLinksData;
 }
 
-function summarizeCollaborators(data: CollaboratorsData): string[] {
-  if (data.list.length > 0) return data.list.slice(0, 5);
-  const fromBlocks = [
-    ...data.blocks.coordination,
-    ...data.blocks.technicalReview,
-    ...data.blocks.designAndProgramming,
-  ];
-  return fromBlocks.slice(0, 5);
-}
-
-export function AppMenu({ collaborators, mainLinks }: Props) {
+export function AppMenu({ mainLinks }: Props) {
   const [open, setOpen] = useState(false);
-  const collaboratorSummary = summarizeCollaborators(collaborators);
 
   const openExternal = (href: string) => {
     if (!href) return;
@@ -90,14 +78,6 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
                 <Users className="h-3.5 w-3.5 text-muted-foreground" />
                 Colaboradores
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Listado oficial: {collaborators.list.length > 0 ? `${collaborators.list.length} colaboradores` : "sin datos locales todavía"}.
-              </p>
-              {collaboratorSummary.length > 0 && (
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {collaboratorSummary.join(" · ")}
-                </p>
-              )}
               <button
                 onClick={() => openExternal("/colaboradores")}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
