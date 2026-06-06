@@ -611,7 +611,7 @@ export function ManualHomeClient({
 
       {/* ── Timeline history modal ── */}
       <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
-        <DialogContent className="w-[95vw] max-w-5xl h-[85vh] flex flex-col p-0 gap-0">
+        <DialogContent className="w-[95vw] max-w-7xl h-[90vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-5 pt-5 pb-3 border-b border-border/40 flex-shrink-0">
             <DialogTitle className="flex items-center gap-2 text-base">
               <History className="h-4 w-4" />
