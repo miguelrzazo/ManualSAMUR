@@ -611,38 +611,38 @@ export function ManualHomeClient({
 
       {/* ── Timeline history modal ── */}
       <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
-        <DialogContent className="w-[95vw] max-w-7xl h-[90vh] flex flex-col p-0 gap-0">
-          <DialogHeader className="px-5 pt-5 pb-3 border-b border-border/40 flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-base">
+        <DialogContent className="w-[95vw] sm:max-w-[90vw] lg:max-w-5xl h-[90vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/40 flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-base font-semibold">
               <History className="h-4 w-4" />
               Historial de actualizaciones
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-auto px-5 py-4">
-            <div className="relative pl-6">
+          <div className="flex-1 overflow-auto px-6 py-5">
+            <div className="relative pl-7">
               {/* vertical timeline line */}
-              <div className="absolute left-2 top-2 bottom-2 w-px bg-border/50" />
+              <div className="absolute left-2.5 top-2 bottom-2 w-px bg-border/50" />
 
-              <div className="grid gap-6">
+              <div className="grid gap-8">
                 {syncGroups.map((group) => (
                   <div key={group.date}>
                     {/* Sync node */}
-                    <div className="flex items-center gap-2 mb-3 -ml-6">
-                      <div className="h-4 w-4 rounded-full border-2 border-primary bg-background flex-shrink-0 z-10" />
-                      <span className="text-xs font-semibold text-foreground/70">
+                    <div className="flex items-center gap-2.5 mb-4 -ml-7">
+                      <div className="h-5 w-5 rounded-full border-2 border-primary bg-background flex-shrink-0 z-10" />
+                      <span className="text-sm font-semibold text-foreground/70">
                         Sync — {formatSyncDate(group.date)}
                       </span>
                     </div>
 
                     {/* Category sub-groups */}
-                    <div className="grid gap-3">
+                    <div className="grid gap-4">
                       {group.categoryGroups.map((catGroup) => (
                         <div key={catGroup.category}>
-                          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1.5 flex items-center gap-1.5">
+                          <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-2 flex items-center gap-1.5">
                             <span>{CATEGORY_ICON[catGroup.category]}</span>
                             {CATEGORY_LABEL[catGroup.category]}
                           </div>
-                          <div className="grid gap-1.5 pl-1">
+                          <div className="grid gap-2 pl-1">
                             {catGroup.events.map((event) => {
                               const isUnseen = event.isNewThisWeek && !seenEventIds.includes(event.eventId);
                               const isExpanded = expandedDiffs.has(event.eventId);
@@ -655,11 +655,11 @@ export function ManualHomeClient({
                                       : "border-border/40 bg-background/40"
                                   }`}
                                 >
-                                  <div className="flex items-start gap-2 px-3 py-2.5">
+                                  <div className="flex items-start gap-2.5 px-4 py-3">
                                     {isUnseen && (
-                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1" />
+                                      <div className="h-2 w-2 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
                                     )}
-                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
+                                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
                                       {event.changeKind.toUpperCase()}
                                     </span>
                                     {(() => {
