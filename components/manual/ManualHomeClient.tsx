@@ -695,7 +695,7 @@ export function ManualHomeClient({
                                   </div>
                                   {event.diff && (
                                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[400px]" : "max-h-0"}`}>
-                                      <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto">
+                                      <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto overflow-y-auto max-h-[400px]">
                                         {event.diff.split("\n").map((line, i) => (
                                           <div
                                             key={i}
