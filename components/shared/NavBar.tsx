@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { BookOpen, ChevronLeft, Code2, Map, FlaskConical, CaseSensitive } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
@@ -40,9 +41,7 @@ export function NavBar({ procedures, mainLinks }: Props) {
       {/* Desktop top nav */}
       <header className="hidden md:flex sticky top-0 z-50 items-center border-b border-border/60 bg-background/80 backdrop-blur-sm px-6 gap-4 pt-[env(safe-area-inset-top)] h-[calc(3.5rem+env(safe-area-inset-top))]">
         <Link href="/manual" className="mr-6 flex items-center gap-2">
-          <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
-            <span className="text-[10px] font-bold text-primary-foreground">S</span>
-          </div>
+          <Image src="/favicon.png" alt="SAMUR Manual" width={24} height={24} className="rounded" />
           <span className="font-semibold text-sm tracking-tight">SAMUR Manual</span>
         </Link>
 
@@ -119,9 +118,7 @@ export function NavBar({ procedures, mainLinks }: Props) {
           </div>
         ) : (
           <Link href="/manual" className="flex items-center gap-2">
-            <div className="h-5 w-5 rounded bg-primary flex items-center justify-center">
-              <span className="text-[9px] font-bold text-primary-foreground">S</span>
-            </div>
+            <Image src="/favicon.png" alt="SAMUR Manual" width={20} height={20} className="rounded" />
             <span className="font-semibold text-sm">SAMUR Manual</span>
           </Link>
         )}

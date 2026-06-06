@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   MoreVertical,
   ExternalLink,
@@ -51,9 +52,7 @@ export function AppMenu({ mainLinks }: Props) {
         </DialogHeader>
         <DialogContent className="sm:max-w-sm md:max-w-md p-0 overflow-hidden gap-0 flex flex-col" style={{ maxHeight: "min(90vh, 700px)" }}>
           <div className="flex items-center gap-3 px-5 py-4 border-b border-border/50 flex-shrink-0">
-            <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-primary-foreground">S</span>
-            </div>
+            <Image src="/favicon.png" alt="SAMUR Manual" width={36} height={36} className="rounded-xl flex-shrink-0" />
             <div>
               <p className="text-sm font-semibold leading-tight">Manual Procedimientos</p>
               <p className="text-xs text-muted-foreground">v{APP_VERSION}</p>
