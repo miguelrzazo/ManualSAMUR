@@ -515,12 +515,12 @@ export function ManualHomeClient({
     () => [...updateEvents].sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`)),
     [updateEvents],
   );
-  const newThisWeekEvents = sortedUpdateEvents.filter((e) => e.isNewThisWeek);
+  const newThisWeekEvents = sortedUpdateEvents.filter((e) => e.isNewThisWeek && e.changeKind !== "revisado");
   const unseenNewCount = newThisWeekEvents.filter((e) => !seenEventIds.includes(e.eventId)).length;
 
   const syncGroups = useMemo(() => {
     const groupMap = new Map<string, ManualUpdateEvent[]>();
-    for (const event of sortedUpdateEvents.filter((e) => e.isNewThisWeek)) {
+    for (const event of sortedUpdateEvents.filter((e) => e.isNewThisWeek && e.changeKind !== "revisado")) {
       const dateKey = (event.approvedAt ?? event.effectiveDate).slice(0, 10);
       const group = groupMap.get(dateKey) ?? [];
       group.push(event);

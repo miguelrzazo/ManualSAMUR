@@ -600,6 +600,7 @@ export function buildTickerFromEvents(events: ManualUpdateEvent[], referenceNow:
 
 export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): ManualUpdateEvent[] {
   return events.filter((event) => {
+    if (event.changeKind === "revisado") return false;
     if (event.procedureIds.length > 0) return true;
 
     const summary = normalizeProcedureLookupKey(event.summary);

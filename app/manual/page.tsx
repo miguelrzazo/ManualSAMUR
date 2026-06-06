@@ -12,7 +12,7 @@ export default async function ManualPage() {
   const updatesDataset = readManualUpdatesDataset();
 
   const newThisWeekEventIds = updatesDataset.events
-    .filter((e) => e.isNewThisWeek)
+    .filter((e) => e.isNewThisWeek && e.changeKind !== "revisado")
     .map((e) => e.eventId);
 
   return (
