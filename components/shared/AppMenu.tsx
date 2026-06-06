@@ -39,7 +39,7 @@ export function AppMenu({ mainLinks }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
+        className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors active:scale-95"
         aria-label="Menú"
       >
         <MoreVertical className="h-4 w-4" />
@@ -80,7 +80,7 @@ export function AppMenu({ mainLinks }: Props) {
               </div>
               <button
                 onClick={() => openExternal("/colaboradores")}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
               >
                 Ver lista completa
               </button>
@@ -96,21 +96,21 @@ export function AppMenu({ mainLinks }: Props) {
               <div className="flex flex-col gap-2">
                 <button
                   onClick={() => openExternal(mainLinks.avisoImportanteUrl)}
-                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors text-left"
+                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95 text-left"
                 >
                   <TriangleAlert className="h-3.5 w-3.5 flex-shrink-0" />
                   Aviso importante (PDF)
                 </button>
                 <button
                   onClick={() => openExternal(`mailto:${mainLinks.samurEmail}`)}
-                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors text-left"
+                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95 text-left"
                 >
                   <Mail className="h-3.5 w-3.5 flex-shrink-0" />
                   Enviar correo a SAMUR
                 </button>
                 <button
                   onClick={() => openExternal(mainLinks.officialWebUrl)}
-                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors text-left"
+                  className="w-full inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95 text-left"
                 >
                   <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
                   Web oficial del Ayuntamiento
@@ -143,14 +143,14 @@ export function AppMenu({ mainLinks }: Props) {
               <div className="flex gap-2">
                 <button
                   onClick={() => openExternal("/llms.txt")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
                 >
                   <Bot className="h-3 w-3" />
                   llms.txt
                 </button>
                 <button
                   onClick={() => openExternal("/llms-full.txt")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
                 >
                   <Bot className="h-3 w-3" />
                   llms-full.txt
@@ -175,14 +175,14 @@ export function AppMenu({ mainLinks }: Props) {
               <div className="flex gap-2">
                 <button
                   onClick={() => openExternal("https://github.com/miguelrzazo")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
                 >
                   <GitBranch className="h-3 w-3" />
                   GitHub
                 </button>
                 <button
                   onClick={() => openExternal("mailto:feedback_manual_proc.duchess916@passinbox.com")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
                 >
                   <Mail className="h-3 w-3" />
                   Contacto

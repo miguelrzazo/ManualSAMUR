@@ -634,7 +634,7 @@ function CodeList({
                       )}
                       <span className="text-sm font-medium leading-snug">{item.name}</span>
                       {item.addedAt && Date.now() - new Date(item.addedAt).getTime() < 30 * 24 * 60 * 60 * 1000 && (
-                        <span className="flex-shrink-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                        <span className="flex-shrink-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide animate-in zoom-in-95 fade-in duration-300">
                           Nuevo
                         </span>
                       )}

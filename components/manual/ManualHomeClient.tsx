@@ -675,7 +675,7 @@ export function ManualHomeClient({
                                       return href ? (
                                         <button
                                           onClick={() => { router.push(href); setHistoryModalOpen(false); }}
-                                          className="text-sm flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors leading-snug"
+                                          className="text-sm flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors active:scale-[0.98] leading-snug"
                                         >
                                           {event.summary}
                                         </button>
@@ -686,31 +686,33 @@ export function ManualHomeClient({
                                     {event.diff && (
                                       <button
                                         onClick={() => handleExpandDiff(event.eventId, event.isNewThisWeek)}
-                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mt-0.5"
+                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors active:scale-95 mt-0.5"
                                       >
                                         {isExpanded ? "Ocultar" : "Ver diff"}
                                         <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                                       </button>
                                     )}
                                   </div>
-                                  {event.diff && isExpanded && (
-                                    <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto overflow-y-auto" style={{ maxHeight: "min(50vh, 400px)" }}>
-                                      {event.diff.split("\n").map((line, i) => (
-                                        <div
-                                          key={i}
-                                          className={`whitespace-pre px-1 rounded-sm ${
-                                            line.startsWith("+") && !line.startsWith("+++")
-                                              ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
-                                              : line.startsWith("-") && !line.startsWith("---")
-                                              ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
-                                              : line.startsWith("@@")
-                                              ? "text-blue-600 dark:text-blue-400 font-semibold"
-                                              : "text-muted-foreground"
-                                          }`}
-                                        >
-                                          {line || " "}
-                                        </div>
-                                      ))}
+                                  {event.diff && (
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[400px]" : "max-h-0"}`}>
+                                      <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto">
+                                        {event.diff.split("\n").map((line, i) => (
+                                          <div
+                                            key={i}
+                                            className={`whitespace-pre px-1 rounded-sm ${
+                                              line.startsWith("+") && !line.startsWith("+++")
+                                                ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
+                                                : line.startsWith("-") && !line.startsWith("---")
+                                                ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
+                                                : line.startsWith("@@")
+                                                ? "text-blue-600 dark:text-blue-400 font-semibold"
+                                                : "text-muted-foreground"
+                                            }`}
+                                          >
+                                            {line || " "}
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   )}
                                 </div>
