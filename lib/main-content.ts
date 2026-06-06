@@ -37,6 +37,7 @@ export interface MainLinksData {
   officialWebUrl: string;
   abbreviationsUrl: string;
   collaboratorsUrl: string;
+  manualVersion?: string;
 }
 
 const DEFAULT_COLLABORATORS_DATA: CollaboratorsData = {
@@ -72,6 +73,16 @@ function toAbsoluteUrl(href: string | undefined): string {
   if (/^https?:\/\//i.test(href)) return href;
   if (href.startsWith("/")) return `${WIKI_BASE}${href}`;
   return href;
+}
+
+function extractManualVersion(text: string): string | undefined {
+  // Full pattern: "Manual de Procedimientos 2026 versión 1.1 – de Mayo"
+  const full = text.match(/Manual\s+de\s+Procedimientos\s+(\d{4})\s+versi[oó]n\s+([0-9.]+)\s*[–\-]\s*de\s+(\w+)/i);
+  if (full) return `v${full[2]} ${full[3].trim()} ${full[1]}`;
+  // Simpler fallback: "versión 1.1"
+  const simple = text.match(/versi[oó]n\s+([0-9]+\.[0-9]+)/i);
+  if (simple) return `v${simple[1]}`;
+  return undefined;
 }
 
 function extractUpdatedAt(text: string): string {
@@ -194,14 +205,16 @@ export function parseMainLinksFromHtml(html: string, sourceUrl = ""): MainLinksD
   const abbreviationsUrl = toAbsoluteUrl($("a[href*='/Abreviaturas/']").first().attr("href"));
   const collaboratorsUrl = toAbsoluteUrl($("a[href*='/Colaboradores/']").first().attr("href"));
 
+  const bodyText = cleanText($("body").text());
   return {
     sourceUrl,
-    updatedAt: extractUpdatedAt(cleanText($("body").text())),
+    updatedAt: extractUpdatedAt(bodyText),
     avisoImportanteUrl,
     samurEmail: samurEmailHref?.replace(/^mailto:/i, "") || DEFAULT_MAIN_LINKS_DATA.samurEmail,
     officialWebUrl: officialWebUrl || DEFAULT_MAIN_LINKS_DATA.officialWebUrl,
     abbreviationsUrl,
     collaboratorsUrl,
+    manualVersion: extractManualVersion(bodyText),
   };
 }
 

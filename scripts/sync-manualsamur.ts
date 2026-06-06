@@ -49,6 +49,7 @@ import {
   parseAbbreviationsFromHtml,
   parseCollaboratorsFromHtml,
   parseMainLinksFromHtml,
+  readMainLinksData,
 } from "../lib/main-content.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -906,10 +907,15 @@ async function executeSync(options: SyncOptions) {
   writeManualUpdatesDataset({ generatedAt: finishedAt, events: mergedEvents }, ROOT_DIR);
 
   const tickerData = buildTickerFromEvents(mergedEvents, new Date());
+  const freshMainLinks = readMainLinksData(ROOT_DIR);
   metadata = {
     ...metadata,
     globalUpdateTimeline: mergedEvents.map((event) => event.eventId),
     ...tickerData,
+    ...(freshMainLinks.manualVersion ? {
+      manualVersionCurrent: freshMainLinks.manualVersion,
+      manualVersion: freshMainLinks.manualVersion,
+    } : {}),
   };
 
   saveMetadata(metadata);
