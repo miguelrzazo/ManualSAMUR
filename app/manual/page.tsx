@@ -15,9 +15,24 @@ export default async function ManualPage() {
     .filter((e) => e.isNewThisWeek && e.changeKind !== "revisado")
     .map((e) => e.eventId);
 
+  // Resolve ticker hrefs to direct procedure pages using the slug map
+  const idToSlug = new Map(allProcedures.map((p) => [p.id, p.slug]));
+  const resolvedMetadata = {
+    ...syncMetadata,
+    ticker: {
+      ...syncMetadata.ticker,
+      items: syncMetadata.ticker.items.map((item) => ({
+        ...item,
+        href: item.procedureId && idToSlug.has(item.procedureId)
+          ? `/manual/${idToSlug.get(item.procedureId)}`
+          : item.href,
+      })),
+    },
+  };
+
   return (
     <>
-      <BreakingNewsTicker metadata={syncMetadata} newThisWeekEventIds={newThisWeekEventIds} />
+      <BreakingNewsTicker metadata={resolvedMetadata} newThisWeekEventIds={newThisWeekEventIds} />
       <Suspense fallback={<div>Cargando manual...</div>}>
         <ManualHomeClient
           sidebarSections={sidebarSections}
