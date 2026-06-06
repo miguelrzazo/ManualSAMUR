@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * generate-llms.ts — Genera /public/llms.txt y /public/llms-full.txt
+ *                    y copia los .md individuales a /public/procedures/
  *
  * Formato estándar llmstxt.org para acceso AI-friendly al contenido.
  *
@@ -38,6 +39,7 @@ interface ProcedureMeta {
   slug: string;
   updated: string;
   content: string;
+  filePath: string;
 }
 
 function walkMarkdownFiles(dir: string): string[] {
@@ -64,6 +66,7 @@ function loadProcedures(): ProcedureMeta[] {
       slug: String(data.slug ?? filename),
       updated: String(data.updated ?? ""),
       content,
+      filePath,
     };
   });
 }
@@ -74,23 +77,6 @@ function sortProcedures(procedures: ProcedureMeta[]): ProcedureMeta[] {
     if (sectionDiff !== 0) return sectionDiff;
     return a.id.localeCompare(b.id, "es", { numeric: true });
   });
-}
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^---[\s\S]*?---\n/m, "")
-    .replace(/```[\s\S]*?```/g, "")
-    .replace(/`[^`]+`/g, "")
-    .replace(/!\[.*?\]\(.*?\)/g, "")
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/^\s*[-*+]\s+/gm, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/\*(.+?)\*/g, "$1")
-    .replace(/\{\{[^}]*\}\}/g, "")
-    .replace(/<[^>]+>/g, "")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
 }
 
 function generateLlmsTxt(procedures: ProcedureMeta[]): string {
@@ -117,6 +103,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
     `- Códigos radio: ${BASE_URL}/codigos`,
     `- Mapa de hospitales y bases: ${BASE_URL}/mapa`,
     `- Contenido completo para LLMs: ${BASE_URL}/llms-full.txt`,
+    `- Procedimientos individuales (Markdown): ${BASE_URL}/procedures/{id}.md (ej: ${BASE_URL}/procedures/101.md)`,
     "",
   ];
 
@@ -139,6 +126,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
   lines.push("  técnicas de intervención, procedimientos operativos, comunicaciones y psicología de emergencias");
   lines.push("- El contenido NO es un sustituto del criterio clínico del profesional");
   lines.push("- Para contenido completo con texto de cada procedimiento, ver /llms-full.txt");
+  lines.push("- Para acceso a un procedimiento concreto, usar /procedures/{id}.md");
   lines.push("");
 
   return lines.join("\n");
@@ -159,26 +147,27 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
   ].join("\n");
 
   const sections = procedures.map((proc) => {
-    const textContent = stripMarkdown(proc.content);
-    const truncated = textContent.length > 3000
-      ? textContent.slice(0, 3000) + "\n[...contenido truncado, ver URL completa]"
-      : textContent;
-
-    return [
+    const lines = [
       `# [${proc.id}] ${proc.title}`,
       "",
       `Sección: ${proc.section}`,
       `URL: ${BASE_URL}/manual/${proc.slug}`,
-      proc.updated ? `Actualizado: ${proc.updated}` : "",
-      "",
-      truncated,
-      "",
-      "---",
-      "",
-    ].filter(Boolean).join("\n");
+      `Markdown: ${BASE_URL}/procedures/${proc.id}.md`,
+    ];
+    if (proc.updated) lines.push(`Actualizado: ${proc.updated}`);
+    lines.push("", proc.content.trim(), "", "---", "");
+    return lines.join("\n");
   });
 
   return header + sections.join("\n");
+}
+
+function copyProceduresMd(procedures: ProcedureMeta[]): void {
+  const destDir = path.join(PUBLIC_DIR, "procedures");
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const proc of procedures) {
+    fs.copyFileSync(proc.filePath, path.join(destDir, `${proc.id}.md`));
+  }
 }
 
 function main() {
@@ -194,6 +183,9 @@ function main() {
 
   fs.writeFileSync(path.join(PUBLIC_DIR, "llms-full.txt"), llmsFullTxt, "utf8");
   console.log("  → public/llms-full.txt generado");
+
+  copyProceduresMd(procedures);
+  console.log(`  → public/procedures/ — ${procedures.length} archivos .md copiados`);
 
   console.log("Listo.");
 }

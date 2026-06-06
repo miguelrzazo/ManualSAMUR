@@ -3,8 +3,8 @@
 > Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
-Última actualización: 2026-05-15
-Total procedimientos: 231
+Última actualización: 2026-06-06
+Total procedimientos: 234
 
 ## Recursos principales
 
@@ -13,6 +13,7 @@ Total procedimientos: 231
 - Códigos radio: https://manualsamur.es/codigos
 - Mapa de hospitales y bases: https://manualsamur.es/mapa
 - Contenido completo para LLMs: https://manualsamur.es/llms-full.txt
+- Procedimientos individuales (Markdown): https://manualsamur.es/procedures/{id}.md (ej: https://manualsamur.es/procedures/101.md)
 
 ## Administrativos (4 procedimientos)
 
@@ -37,7 +38,7 @@ Total procedimientos: 231
 - [125_08] Pacientes politraumatizados por accidente de tráfico: https://manualsamur.es/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
 - [126] Gestión de recursos: https://manualsamur.es/manual/126-gestion-de-recursos
 
-## Operativos (44 procedimientos)
+## Operativos (45 procedimientos)
 
 - [201] Actuación General: https://manualsamur.es/manual/201-actuacion-general
 - [203] Conducción de vehículos sanitarios en emergencias: https://manualsamur.es/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
@@ -83,6 +84,7 @@ Total procedimientos: 231
 - [217_08] Con Metro: https://manualsamur.es/manual/217_08-con-metro
 - [217_09] Con Unidad de Medio Ambiente: https://manualsamur.es/manual/217_09-con-unidad-de-medio-ambiente
 - [218] Actuación preventiva en Disturbios urbanos y Actos antisociales: https://manualsamur.es/manual/218-actuacion-preventiva-en-disturbios-urbanos-y-actos
+- [219] Transferencia de pacientes* entre profesionales sanitarios.: https://manualsamur.es/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
 
 ## SVA (67 procedimientos)
 
@@ -154,7 +156,7 @@ Total procedimientos: 231
 - [316] Reacción alérgica: https://manualsamur.es/manual/316-reaccion-alergica
 - [414] Solicitud de USVA: https://manualsamur.es/manual/414-solicitud-de-usva
 
-## SVB (19 procedimientos)
+## SVB (20 procedimientos)
 
 - [401] Valoración de la escena: https://manualsamur.es/manual/401-valoracion-de-la-escena
 - [402] Valoración del paciente adulto: https://manualsamur.es/manual/402-valoracion-del-paciente-adulto
@@ -175,6 +177,7 @@ Total procedimientos: 231
 - [412_03] Torácico: https://manualsamur.es/manual/412_03-toracico
 - [412_04] Abdominal: https://manualsamur.es/manual/412_04-abdominal
 - [413] Atención y traslado al paciente psiquiátrico: https://manualsamur.es/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
+- [415] Paciente con posible alteración de niveles de glucemia capilar: https://manualsamur.es/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
 
 ## Psicológicos (9 procedimientos)
 
@@ -258,6 +261,10 @@ Total procedimientos: 231
 - [609_01] Cesárea postparada: https://manualsamur.es/manual/609_01-cesarea-postparada
 - [609_02] Episotomía Mediolateral: https://manualsamur.es/manual/609_02-episotomia-mediolateral
 
+## General (1 procedimientos)
+
+- [501] Activación y actuación del psicólogo de Guardia: https://manualsamur.es/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
+
 ## Notas para LLMs
 
 - Este manual cubre procedimientos de emergencias prehospitalarias (SAMUR-Protección Civil, Madrid)
@@ -265,3 +272,4 @@ Total procedimientos: 231
   técnicas de intervención, procedimientos operativos, comunicaciones y psicología de emergencias
 - El contenido NO es un sustituto del criterio clínico del profesional
 - Para contenido completo con texto de cada procedimiento, ver /llms-full.txt
+- Para acceso a un procedimiento concreto, usar /procedures/{id}.md
