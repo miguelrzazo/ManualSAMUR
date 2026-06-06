@@ -61,7 +61,7 @@ export function AppMenu({ collaborators, mainLinks }: Props) {
         <DialogHeader className="sr-only">
           <DialogTitle>Acerca de Manual Procedimientos</DialogTitle>
         </DialogHeader>
-        <DialogContent className="sm:max-w-xs p-0 overflow-hidden gap-0 flex flex-col" style={{ maxHeight: "min(90vh, 640px)" }}>
+        <DialogContent className="sm:max-w-sm md:max-w-md p-0 overflow-hidden gap-0 flex flex-col" style={{ maxHeight: "min(90vh, 700px)" }}>
           <div className="flex items-center gap-3 px-5 py-4 border-b border-border/50 flex-shrink-0">
             <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-bold text-primary-foreground">S</span>
