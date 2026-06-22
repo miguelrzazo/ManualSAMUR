@@ -10,6 +10,9 @@ const ROOT_DIR = path.join(__dirname, "..");
 
 const LEGACY_DOCS_DIR = path.join(ROOT_DIR, "docs", "procedures");
 const PUBLIC_DOCS_DIR = path.join(ROOT_DIR, "public", "docs", "procedures");
+const PUBLIC_DIR = path.join(ROOT_DIR, "public");
+const PDF_WORKER_SOURCE = path.join(ROOT_DIR, "node_modules", "pdfjs-dist", "build", "pdf.worker.min.mjs");
+const PDF_WORKER_DESTINATION = path.join(PUBLIC_DIR, "pdf.worker.min.mjs");
 
 interface SyncStats {
   copied: number;
@@ -67,9 +70,26 @@ function main() {
   const stats: SyncStats = { copied: 0, skipped: 0 };
   syncDirectory(LEGACY_DOCS_DIR, PUBLIC_DOCS_DIR, stats);
 
+  copyPdfWorker();
+
   console.log(
     `[sync-public-docs] Sincronización completada. Copiados: ${stats.copied}, sin cambios: ${stats.skipped}.`,
   );
+}
+
+function copyPdfWorker() {
+  if (!fs.existsSync(PDF_WORKER_SOURCE)) {
+    console.warn(`[sync-public-docs] Aviso: no se encontró ${PDF_WORKER_SOURCE}. El visor PDF usará un fallback en cliente.`);
+    return;
+  }
+
+  if (!fs.existsSync(PDF_WORKER_DESTINATION) || shouldCopyFile(PDF_WORKER_SOURCE, PDF_WORKER_DESTINATION)) {
+    fs.mkdirSync(path.dirname(PDF_WORKER_DESTINATION), { recursive: true });
+    fs.copyFileSync(PDF_WORKER_SOURCE, PDF_WORKER_DESTINATION);
+    const sourceStat = fs.statSync(PDF_WORKER_SOURCE);
+    fs.utimesSync(PDF_WORKER_DESTINATION, sourceStat.atime, sourceStat.mtime);
+    console.log("[sync-public-docs] Worker de pdf.js copiado a /public/pdf.worker.min.mjs.");
+  }
 }
 
 main();
