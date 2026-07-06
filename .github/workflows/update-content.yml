@@ -164,6 +164,10 @@ jobs:
       - name: Create review pull request
         uses: peter-evans/create-pull-request@v7
         with:
+          # Use a PAT so the created pull request triggers the CI workflow
+          # automatically. PRs opened with the default GITHUB_TOKEN do not
+          # trigger new workflow runs and show "awaiting approval".
+          token: ${{ secrets.PAT_FOR_PR }}
           branch: codex/monthly-manual-update
           delete-branch: true
           title: "chore: monthly ManualSAMUR content update"
