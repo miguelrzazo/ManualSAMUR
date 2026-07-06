@@ -4,36 +4,10 @@ import { useState } from "react";
 import { ChevronDown, ExternalLink, FileText, Image as ImageIcon, Paperclip } from "lucide-react";
 import type { ManualAttachment } from "@/lib/manual-sync";
 import { ImageWithLightbox } from "@/components/manual/mdx-extras";
+import { PdfViewer } from "@/components/manual/PdfViewer";
 
 function filenameFromPath(pathname: string) {
   return pathname.split("/").pop() ?? pathname;
-}
-
-function PdfCard({ src, title }: { src: string; title: string }) {
-  return (
-    <div className="space-y-3">
-      {/* Inline embed — uses browser/OS native PDF viewer */}
-      <embed
-        src={`${src}#toolbar=0&navpanes=0&scrollbar=0`}
-        type="application/pdf"
-        title={title}
-        className="w-full rounded-lg border border-border/50 bg-muted/10"
-        style={{ height: "64vh", minHeight: 340 }}
-      />
-      <p className="text-xs text-muted-foreground">
-        Si no se visualiza,{" "}
-        <a
-          href={src}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground transition-colors"
-        >
-          abre en nueva pestaña
-        </a>
-        .
-      </p>
-    </div>
-  );
 }
 
 export function ProcedureAttachmentsView({ attachments }: { attachments: ManualAttachment[] }) {
@@ -103,7 +77,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
                       <ImageWithLightbox src={attachment.localPath} alt={filename} />
                     </div>
                   ) : isPdf ? (
-                    <PdfCard src={attachment.localPath} title={filename} />
+                    <PdfViewer src={attachment.localPath} title={filename} />
                   ) : (
                     <a
                       href={attachment.localPath}
