@@ -1,0 +1,47 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  MOBILE_SNAPSHOT_SCHEMA,
+  MOBILE_SNAPSHOT_VERSION,
+  contentHash,
+  isMobileContentSnapshot,
+  type MobileContentSnapshot,
+} from "../lib/mobile-snapshot.ts";
+
+const content: MobileContentSnapshot["content"] = {
+  procedures: [],
+  codes: { incidente: [] },
+  drugs: [],
+  perfusions: [],
+  fluids: [],
+  commercialNames: [],
+  abbreviations: [],
+  hospitals: [],
+  bases: [],
+  status4: [],
+  manual: {},
+  links: {
+    sourceUrl: "",
+    updatedAt: "",
+    avisoImportanteUrl: "",
+    samurEmail: "samur@madrid.es",
+    officialWebUrl: "https://www.madrid.es/samur",
+    abbreviationsUrl: "",
+    collaboratorsUrl: "",
+  },
+};
+
+test("mobile snapshots validate their schema, version and content hash", () => {
+  const snapshot: MobileContentSnapshot = {
+    schema: MOBILE_SNAPSHOT_SCHEMA,
+    version: MOBILE_SNAPSHOT_VERSION,
+    generatedAt: "2026-07-11T00:00:00.000Z",
+    hash: contentHash(content),
+    content,
+  };
+
+  assert.equal(isMobileContentSnapshot(snapshot), true);
+  assert.equal(isMobileContentSnapshot({ ...snapshot, version: 99 }), false);
+  assert.equal(isMobileContentSnapshot({ ...snapshot, hash: "changed" }), false);
+});

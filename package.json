@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "npm run sync:docs-public && next dev",
     "generate:llms": "node --experimental-strip-types scripts/generate-llms.ts",
+    "generate:mobile-snapshot": "node --experimental-strip-types scripts/generate-mobile-snapshot.ts",
     "sync:docs-public": "node --experimental-strip-types scripts/sync-public-docs.ts",
     "extract:pdf": "node --experimental-strip-types scripts/extract-pdf-text.ts",
     "discover:wiki": "node --experimental-strip-types scripts/discover-wiki-pages.ts",
     "sync:full": "npm run sync:manualsamur && npm run sync:docs-public && npm run extract:pdf && npm run generate:llms",
-    "build": "npm run sync:docs-public && node --experimental-strip-types scripts/generate-llms.ts && next build",
+    "build": "npm run sync:docs-public && npm run generate:mobile-snapshot && node --experimental-strip-types scripts/generate-llms.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
