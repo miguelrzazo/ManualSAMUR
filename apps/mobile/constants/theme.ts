@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
+import { Appearance, StyleSheet } from "react-native";
 
-export const palette = {
+const lightPalette = {
   blue: "#0B3A6E",
   blueSoft: "#EAF2FB",
   red: "#D62D2D",
@@ -9,10 +9,21 @@ export const palette = {
   muted: "#64748B",
   border: "#D9E2EE",
   canvas: "#F7FAFC",
-  darkCanvas: "#101827",
-  darkCard: "#172235",
   white: "#FFFFFF",
 };
+
+const darkPalette: typeof lightPalette = {
+  ...lightPalette,
+  blueSoft: "#163456",
+  ink: "#F4F8FC",
+  muted: "#B5C2D2",
+  border: "#314158",
+  canvas: "#101827",
+  white: "#172235",
+};
+
+// Match the system appearance at application startup; the Expo Router navigation theme uses the same setting.
+export const palette = Appearance.getColorScheme() === "dark" ? darkPalette : lightPalette;
 
 export const commonStyles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: palette.canvas },

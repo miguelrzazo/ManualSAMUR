@@ -26,6 +26,7 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="procedure/[id]" options={{ title: "Procedimiento" }} />
               <Stack.Screen name="drug/[id]" options={{ title: "Vademécum" }} />
+              <Stack.Screen name="reference/[kind]/[id]" options={{ title: "Referencia" }} />
               <Stack.Screen name="search" options={{ title: "Buscar", presentation: "modal" }} />
               <Stack.Screen name="more" options={{ title: "Más", presentation: "formSheet" }} />
             </Stack>

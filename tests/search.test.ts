@@ -14,6 +14,7 @@ const procedures = [
     tags: ["taquicardia"],
     synonyms: ["cardioversion"],
     related: [],
+    relations: [],
     backlinks: [],
     updated: "",
     sourceUpdated: "",
@@ -32,6 +33,7 @@ const procedures = [
     tags: ["estabilización"],
     synonyms: ["shock"],
     related: [],
+    relations: [],
     backlinks: [],
     updated: "",
     sourceUpdated: "",
@@ -40,7 +42,7 @@ const procedures = [
     editorialBlocks: [],
     searchText: "Si existe arritmia con compromiso hemodinámico, prepare cardioversión inmediata.",
   },
-] as const;
+];
 
 test("search prioritizes title matches above content-only matches", () => {
   const results = search("arritmia", [...procedures]);

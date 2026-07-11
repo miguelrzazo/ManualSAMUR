@@ -4,7 +4,11 @@ import type { ComponentProps } from "react";
 
 import { palette } from "@/constants/theme";
 
-const icon = (name: ComponentProps<typeof FontAwesome>["name"]) => ({ color }: { color: string }) => <FontAwesome name={name} size={21} color={color} />;
+function TabIcon({ name, color }: { name: ComponentProps<typeof FontAwesome>["name"]; color: string }) {
+  return <FontAwesome name={name} size={21} color={color} />;
+}
+
+const icon = (name: ComponentProps<typeof FontAwesome>["name"]) => ({ color }: { color: string }) => <TabIcon name={name} color={color} />;
 
 export default function TabLayout() {
   return <Tabs screenOptions={{ tabBarActiveTintColor: palette.blue, tabBarInactiveTintColor: "#607085", tabBarStyle: { borderTopColor: "#D9E2EE" }, headerTintColor: palette.blue, headerTitleStyle: { fontWeight: "700" } }}>

@@ -1,6 +1,4 @@
 import { Text, StyleSheet, View } from "react-native";
-import { palette } from "@/constants/theme";
-
 export function OfflineNotice({ message }: { message: string | null }) {
   if (!message) return null;
   return <View style={styles.notice}><Text style={styles.text}>Sin conexión: se muestra el contenido disponible en el dispositivo.</Text></View>;
