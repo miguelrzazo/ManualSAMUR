@@ -3,6 +3,7 @@ export type Procedure = {
   title: string;
   section: string;
   slug: string;
+  routeKey: string;
   tags: string[];
   synonyms: string[];
   related: string[];

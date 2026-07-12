@@ -16,7 +16,7 @@ export default function GlobalSearch() {
   const results = useMemo<Result[]>(() => {
     if (!query.trim()) return [];
     const matches = (value: unknown) => matchesSearch(value, query);
-    const procedures = snapshot.content.procedures.filter(matches).slice(0, 8).map((item) => ({ id: item.slug, type: "Procedimiento", title: item.title, subtitle: `${item.id} · ${item.section}`, onPress: () => router.push({ pathname: "/procedure/[id]", params: { id: item.slug } }) }));
+    const procedures = snapshot.content.procedures.filter(matches).slice(0, 8).map((item) => ({ id: item.routeKey, type: "Procedimiento", title: item.title, subtitle: `${item.id} · ${item.section}`, onPress: () => router.push({ pathname: "/procedure/[id]", params: { id: item.routeKey } }) }));
     const drugs = snapshot.content.drugs.filter(matches).slice(0, 6).map((item) => ({ id: String(item.id), type: "Fármaco", title: String(item.name), subtitle: String(item.category ?? "Vademécum"), onPress: () => router.push({ pathname: "/drug/[id]", params: { id: String(item.id) } }) }));
     const facilities = [...snapshot.content.hospitals, ...snapshot.content.bases].filter(matches).slice(0, 6).map((item) => ({ id: item.id, type: item.number == null ? "Hospital" : "Base", title: item.shortName ?? item.name, subtitle: `${item.address} · ${item.district}`, onPress: () => router.replace("/(tabs)/mapa") }));
     const abbreviations = snapshot.content.abbreviations.flatMap((section) => section.entries).filter(matches).slice(0, 6).map((item) => ({ id: item.abbreviation, type: "Abreviatura", title: item.abbreviation, subtitle: item.meaning, onPress: () => router.push("/more") }));

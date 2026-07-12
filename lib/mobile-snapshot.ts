@@ -11,6 +11,7 @@ export interface MobileProcedure {
   title: string;
   section: string;
   slug: string;
+  routeKey: string;
   tags: string[];
   synonyms: string[];
   related: string[];
@@ -74,6 +75,7 @@ function readProcedures(cwd: string): MobileProcedure[] {
         title: String(data.title ?? id),
         section: String(data.section ?? "General"),
         slug: String(data.slug ?? id),
+        routeKey: "",
         tags: Array.isArray(data.tags) ? data.tags.filter((tag): tag is string => typeof tag === "string") : [],
         synonyms: Array.isArray(data.synonyms) ? data.synonyms.filter((synonym): synonym is string => typeof synonym === "string") : [],
         related: Array.isArray(data.related) ? data.related.filter((related): related is string => typeof related === "string") : [],
@@ -96,11 +98,11 @@ function readProcedures(cwd: string): MobileProcedure[] {
     .sort((left, right) => left.id.localeCompare(right.id, "es", { numeric: true }));
 
   const idBySlug = new Map(procedures.map((procedure) => [procedure.slug, procedure.id]));
-  return procedures.map((procedure) => {
+  return procedures.map((procedure, index) => {
     const linkedProcedureIds = [...procedure.content.matchAll(/\/manual\/([^\s)#?"']+)/g)]
       .map((match) => idBySlug.get(decodeURIComponent(match[1])))
       .filter((id): id is string => Boolean(id) && id !== procedure.id);
-    return { ...procedure, related: [...new Set([...procedure.related, ...linkedProcedureIds])] };
+    return { ...procedure, routeKey: `${procedure.slug}--${index + 1}`, related: [...new Set([...procedure.related, ...linkedProcedureIds])] };
   });
 }
 

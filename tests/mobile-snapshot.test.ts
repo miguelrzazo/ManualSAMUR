@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   MOBILE_SNAPSHOT_SCHEMA,
   MOBILE_SNAPSHOT_VERSION,
+  buildMobileContentSnapshot,
   contentHash,
   isMobileContentSnapshot,
   type MobileContentSnapshot,
@@ -44,4 +45,10 @@ test("mobile snapshots validate their schema, version and content hash", () => {
   assert.equal(isMobileContentSnapshot(snapshot), true);
   assert.equal(isMobileContentSnapshot({ ...snapshot, version: 99 }), false);
   assert.equal(isMobileContentSnapshot({ ...snapshot, hash: "changed" }), false);
+});
+
+test("mobile snapshots give every procedure a unique route key", () => {
+  const procedures = buildMobileContentSnapshot().content.procedures;
+
+  assert.equal(new Set(procedures.map((procedure) => procedure.routeKey)).size, procedures.length);
 });
