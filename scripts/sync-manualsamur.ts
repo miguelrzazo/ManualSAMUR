@@ -14,7 +14,7 @@ import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
 import {
   appendSyncRun,
-  applyNewThisWeek,
+  applyRecencyWindow,
   approvePendingChanges,
   buildTickerFromEvents,
   classifyProcedureChange,
@@ -853,7 +853,7 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         summary,
         effectiveDate: change.sourceUpdated || run.finishedAt.slice(0, 10),
         approvedAt,
-        isNewThisWeek: false,
+        isRecent: false,
         diff: change.diff,
       });
     }
@@ -893,7 +893,7 @@ function ingestOfficialPdf(options: SyncOptions) {
 
   const dataset = readManualUpdatesDataset(ROOT_DIR);
   const merged = mergeEvents(dataset.events, incomingEvents);
-  const normalized = applyNewThisWeek(merged, new Date());
+  const normalized = applyRecencyWindow(merged, new Date());
   writeManualUpdatesDataset({ generatedAt: approvedAt, events: normalized }, ROOT_DIR);
 
   const metadata = readManualSyncMetadata(ROOT_DIR);
@@ -981,7 +981,7 @@ async function executeSync(options: SyncOptions) {
 
   const updates = readManualUpdatesDataset(ROOT_DIR);
   const events = runChangesToEvents(run, approvedAt);
-  const mergedEvents = applyNewThisWeek(mergeEvents(updates.events, events), new Date());
+  const mergedEvents = applyRecencyWindow(mergeEvents(updates.events, events), new Date());
   // dryRun solo protegía los .md y las descargas: esto se escribía siempre, así que
   // `sync:manualsamur:detect` ensuciaba dos ficheros versionados pese a anunciarse
   // como simulación. Ahora detect no escribe nada.

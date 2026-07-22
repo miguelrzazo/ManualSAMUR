@@ -26,7 +26,7 @@ import {
   addSeenEventId,
 } from "@/lib/manual-cookies";
 import type { ProcedureNavMeta, ProcedureSidebarSection } from "@/lib/content";
-import { applyNewThisWeek, parseLocalDate, type ManualSyncClientMetadata, type UpdatePillEvent } from "@/lib/manual-updates-logic";
+import { applyRecencyWindow, parseLocalDate, type ManualSyncClientMetadata, type UpdatePillEvent } from "@/lib/manual-updates-logic";
 import { useNow } from "@/lib/hooks/use-now";
 import type { ManualHistoryEntry, ManualUpdateEvent } from "@/lib/manual-sync";
 
@@ -536,11 +536,13 @@ export function ManualHomeClient({
   // La píldora solo necesita {eventId, approvedAt, changeKind}. Los eventos completos
   // con sus diffs se descargan al abrir el diálogo.
   const livePillEvents = useMemo(
-    () => (now === null ? [] : applyNewThisWeek(pillEvents, new Date(now)).filter((e) => e.isNewThisWeek)),
+    () => (now === null ? [] : applyRecencyWindow(pillEvents, new Date(now)).filter((e) => e.isRecent)),
     [pillEvents, now],
   );
   const unseenNewCount = livePillEvents.filter((e) => !seenEventIds.includes(e.eventId)).length;
-  const newThisWeekIds = useMemo(() => new Set(livePillEvents.map((e) => e.eventId)), [livePillEvents]);
+  // Set de ids de eventos recientes. Nombre distinto de recentIds, que son los
+  // procedimientos vistos hace poco y viven en cookie.
+  const recentEventIdSet = useMemo(() => new Set(livePillEvents.map((e) => e.eventId)), [livePillEvents]);
 
   // Datasets bajo demanda: se piden al abrir el diálogo, no en cada carga de página.
   const [updateEvents, setUpdateEvents] = useState<ManualUpdateEvent[] | null>(null);
@@ -577,7 +579,7 @@ export function ManualHomeClient({
     if (!updateEvents) return [];
     const groupMap = new Map<string, ManualUpdateEvent[]>();
     for (const event of updateEvents) {
-      if (event.changeKind === "revisado" || !newThisWeekIds.has(event.eventId)) continue;
+      if (event.changeKind === "revisado" || !recentEventIdSet.has(event.eventId)) continue;
       const dateKey = (event.approvedAt ?? event.effectiveDate).slice(0, 10);
       const group = groupMap.get(dateKey) ?? [];
       group.push(event);
@@ -598,7 +600,7 @@ export function ManualHomeClient({
           .map((cat) => ({ category: cat, events: catMap.get(cat)! }));
         return { date, categoryGroups };
       });
-  }, [updateEvents, newThisWeekIds]);
+  }, [updateEvents, recentEventIdSet]);
 
   function handleExpandDiff(eventId: string) {
     setExpandedDiffs((prev) => {
@@ -726,7 +728,7 @@ export function ManualHomeClient({
                           </div>
                           <div className="grid gap-2 pl-1">
                             {catGroup.events.map((event) => {
-                              const isUnseen = newThisWeekIds.has(event.eventId) && !seenEventIds.includes(event.eventId);
+                              const isUnseen = recentEventIdSet.has(event.eventId) && !seenEventIds.includes(event.eventId);
                               const isExpanded = expandedDiffs.has(event.eventId);
                               return (
                                 <div

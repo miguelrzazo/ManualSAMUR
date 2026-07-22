@@ -7,7 +7,7 @@ import { useNow } from "@/lib/hooks/use-now";
 
 interface Props {
   metadata: ManualSyncClientMetadata;
-  newThisWeekEventIds: string[];
+  recentEventIds: string[];
 }
 
 function domainIcon(href: string): string {
@@ -16,7 +16,7 @@ function domainIcon(href: string): string {
   return "📋";
 }
 
-export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
+export function BreakingNewsTicker({ metadata, recentEventIds }: Props) {
   const [hidden, setHidden] = useState(false);
   // La caducidad se evalúa con el reloj del usuario. El sitio es estático
   // (output: "export"), así que hacerlo en servidor lo congelaba en tiempo de build:
@@ -26,14 +26,14 @@ export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
 
   useEffect(() => {
     function checkSeen() {
-      if (newThisWeekEventIds.length === 0) return;
+      if (recentEventIds.length === 0) return;
       const seen = readSeenEventIds();
-      if (newThisWeekEventIds.every((id) => seen.includes(id))) setHidden(true);
+      if (recentEventIds.every((id) => seen.includes(id))) setHidden(true);
     }
     checkSeen();
     window.addEventListener("samur:seen-events-updated", checkSeen);
     return () => window.removeEventListener("samur:seen-events-updated", checkSeen);
-  }, [newThisWeekEventIds]);
+  }, [recentEventIds]);
 
   if (!metadata.tickerEnabled || hidden || expired) return null;
 
