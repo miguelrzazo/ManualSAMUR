@@ -6,11 +6,11 @@ slug: drp_02-procedimiento-de-despliege-de-un-drp
 tags: []
 synonyms: []
 related: []
-updated: '2026-07-01'
-sourceUpdated: '2026-07-01'
+updated: '2026-07-22'
+sourceUpdated: '2026-07-22'
 source: >-
   https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20de%20despliege%20de%20un%20DRP/
-contentHash: b0e5a4d17e9296e8a82106a22a06da90b1b7af2b067def3f3829fe7f77b13f4f
+contentHash: b35ca0ba72777e95831275150788c42b6aef90256c866e3c6575c8583ccc3669
 attachments: []
 editorialStatus: source
 editorialLockedAt: ''
@@ -97,5 +97,3 @@ El Lima de guardia recabará la información necesaria para la cumplimentación 
 * Pacientes trasladados, indicando el tipo de unidad que traslada.
 * El número de preavisos.
 * El número total de pacientes atendidos en PSA y, de éstos, los que son vistos sin informe específico.
-
-Manual de Procedimientos SAMUR-Protección Civil · edición 2026 1.1
