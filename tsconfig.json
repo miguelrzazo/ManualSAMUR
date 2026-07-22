@@ -31,5 +31,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "tests/**"]
+  // tests/** ya no se excluye: los tests typechequean sin errores y asi el
+  // tipado tambien los cubre. Antes quedaban fuera y podian pudrirse en silencio.
+  "exclude": ["node_modules"]
 }
