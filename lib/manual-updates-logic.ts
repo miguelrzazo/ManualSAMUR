@@ -24,7 +24,8 @@ export interface ManualSyncClientMetadata {
   tickerEnabled: boolean;
 }
 
-export const NEW_THIS_WEEK_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+export const RECENT_WINDOW_DAYS = 30;
+export const RECENT_WINDOW_MS = RECENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
 /**
  * Lo mínimo que /manual necesita servir para decidir la píldora "N nuevos".
@@ -36,32 +37,32 @@ export interface UpdatePillEvent {
   eventId: string;
   approvedAt: string;
   changeKind: ManualUpdateChangeKind;
-  isNewThisWeek?: boolean;
+  isRecent?: boolean;
 }
 
-/** Forma mínima que necesita applyNewThisWeek; ManualUpdateEvent la cumple. */
-export interface NewThisWeekCandidate {
+/** Forma mínima que necesita applyRecencyWindow; ManualUpdateEvent la cumple. */
+export interface RecencyCandidate {
   approvedAt?: string;
-  isNewThisWeek?: boolean;
+  isRecent?: boolean;
 }
 
 /**
  * Marca los eventos aprobados dentro de la ventana de 7 días respecto a
  * `referenceNow`. El genérico conserva el tipo concreto que entra y garantiza
- * que `isNewThisWeek` sale ya resuelto.
+ * que `isRecent` sale ya resuelto.
  */
-export function applyNewThisWeek<T extends NewThisWeekCandidate>(
+export function applyRecencyWindow<T extends RecencyCandidate>(
   events: T[],
   referenceNow = new Date(),
-): Array<T & { isNewThisWeek: boolean }> {
+): Array<T & { isRecent: boolean }> {
   return events.map((event) => {
-    if (!event.approvedAt) return { ...event, isNewThisWeek: false };
+    if (!event.approvedAt) return { ...event, isRecent: false };
     const approved = new Date(event.approvedAt).getTime();
-    if (Number.isNaN(approved)) return { ...event, isNewThisWeek: false };
+    if (Number.isNaN(approved)) return { ...event, isRecent: false };
     const diff = referenceNow.getTime() - approved;
     return {
       ...event,
-      isNewThisWeek: diff >= 0 && diff <= NEW_THIS_WEEK_WINDOW_MS,
+      isRecent: diff >= 0 && diff <= RECENT_WINDOW_MS,
     };
   });
 }

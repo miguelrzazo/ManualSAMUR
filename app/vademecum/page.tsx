@@ -24,12 +24,6 @@ export default async function VademecumPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem-4rem)] md:h-[calc(100vh-3.5rem)]">
-      <div className="construction-banner border-b border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
-        <div className="construction-banner-track">
-          <span className="construction-banner-item">&gt;&gt;&gt;&gt; EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL &lt;&lt;&lt;&lt;</span>
-          <span className="construction-banner-item">&gt;&gt;&gt;&gt; EN REVISION Y DESARROLLO — LA INFORMACION PUEDE NO CORRESPONDERSE CON EL MANUAL OFICIAL &lt;&lt;&lt;&lt;</span>
-        </div>
-      </div>
       <Suspense fallback={<div>Cargando vademécum...</div>}>
         <VademecumView
           drugs={drugs}

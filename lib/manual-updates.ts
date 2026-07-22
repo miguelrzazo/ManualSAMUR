@@ -146,6 +146,6 @@ export function toOfficialPdfEvents(
     summary: entry.summary,
     effectiveDate,
     approvedAt,
-    isNewThisWeek: true,
+    isRecent: true,
   }));
 }

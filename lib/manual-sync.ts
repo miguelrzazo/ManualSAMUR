@@ -105,7 +105,7 @@ export interface ManualUpdateEvent {
   summary: string;
   effectiveDate: string;
   approvedAt?: string;
-  isNewThisWeek: boolean;
+  isRecent: boolean;
   diff?: string;
   category?: ManualUpdateCategory;
 }
@@ -383,13 +383,13 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
     const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<ManualUpdatesDataset>;
     return {
       generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : "",
-      // NO se llama aquí a applyNewThisWeek. Este módulo se ejecuta en servidor y,
+      // NO se llama aquí a applyRecencyWindow. Este módulo se ejecuta en servidor y,
       // con output: "export", eso significa "una vez, en tiempo de build": el booleano
       // quedaba congelado en el HTML estático y la insignia "nuevo" no caducaba nunca
       // (se han llegado a mostrar 117 novedades de hace 47 días). Se fuerza a false y
-      // el cliente recalcula con el reloj del usuario mediante applyNewThisWeek.
+      // el cliente recalcula con el reloj del usuario mediante applyRecencyWindow.
       events: Array.isArray(parsed.events)
-        ? (parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isNewThisWeek: false }))
+        ? (parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isRecent: false }))
         : [],
     };
   } catch {
@@ -638,7 +638,7 @@ export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): Manua
 
 // Reexportado desde lib/manual-updates-logic.ts (puro, sin Node) para que los
 // componentes cliente puedan usarlo sin arrastrar node:fs al bundle del navegador.
-export { applyNewThisWeek, NEW_THIS_WEEK_WINDOW_MS, isTickerWithinWindow } from "./manual-updates-logic.ts";
+export { applyRecencyWindow, RECENT_WINDOW_MS, isTickerWithinWindow } from "./manual-updates-logic.ts";
 
 export function getSectionFromXWikiUrl(url: string): string {
   const decoded = decodeURIComponent(url);

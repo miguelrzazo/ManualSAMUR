@@ -14,7 +14,7 @@ export default async function ManualPage() {
   const historyCount = readManualHistoryDataset().entries.length;
 
   // Los IDs que el banner considera "pendientes de ver" son los de sus propios
-  // elementos. Antes se filtraba por isNewThisWeek, que ahora se calcula en cliente
+  // elementos. Antes se filtraba por isRecent, que ahora se calcula en cliente
   // (en servidor quedaba congelado en tiempo de build), así que aquí siempre saldría
   // vacío y el banner nunca podría descartarse al haberlo visto.
   const tickerEventIds = syncMetadata.ticker.items
@@ -51,7 +51,7 @@ export default async function ManualPage() {
 
   return (
     <>
-      <BreakingNewsTicker metadata={resolvedMetadata} newThisWeekEventIds={tickerEventIds} />
+      <BreakingNewsTicker metadata={resolvedMetadata} recentEventIds={tickerEventIds} />
       <Suspense fallback={<div>Cargando manual...</div>}>
         <ManualHomeClient
           sidebarSections={sidebarSections}

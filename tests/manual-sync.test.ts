@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  applyNewThisWeek,
+  applyRecencyWindow,
   buildTickerFromEvents,
   filterUserFacingTickerItems,
   filterUserFacingTickerEvents,
@@ -107,9 +107,9 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
   assert.equal(metadata.runs.length, 1);
 });
 
-test("applyNewThisWeek marks only events approved within the last 7 days", () => {
+test("applyRecencyWindow marca solo lo aprobado dentro de la ventana de 30 dias", () => {
   const now = new Date("2026-05-09T12:00:00.000Z");
-  const events = applyNewThisWeek([
+  const events = applyRecencyWindow([
     {
       eventId: "a",
       origin: "wiki",
@@ -118,7 +118,7 @@ test("applyNewThisWeek marks only events approved within the last 7 days", () =>
       summary: "A",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-08T10:00:00.000Z",
-      isNewThisWeek: false,
+      isRecent: false,
     },
     {
       eventId: "b",
@@ -126,14 +126,14 @@ test("applyNewThisWeek marks only events approved within the last 7 days", () =>
       procedureIds: ["302"],
       changeKind: "actualizado",
       summary: "B",
-      effectiveDate: "2026-05-01",
-      approvedAt: "2026-04-20T10:00:00.000Z",
-      isNewThisWeek: false,
+      effectiveDate: "2026-03-01",
+      approvedAt: "2026-03-20T10:00:00.000Z",
+      isRecent: false,
     },
   ], now);
 
-  assert.equal(events[0].isNewThisWeek, true);
-  assert.equal(events[1].isNewThisWeek, false);
+  assert.equal(events[0].isRecent, true);
+  assert.equal(events[1].isRecent, false);
 });
 
 test("buildTickerFromEvents enables ribbon for seven days from latest approved event", () => {
@@ -146,7 +146,7 @@ test("buildTickerFromEvents enables ribbon for seven days from latest approved e
       summary: "Actualizado: 301",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-09T10:00:00.000Z",
-      isNewThisWeek: true,
+      isRecent: true,
     },
   ], new Date("2026-05-10T10:00:00.000Z"));
 
@@ -164,7 +164,7 @@ test("filterUserFacingTickerEvents excludes internal file and vademecum-only cha
       summary: "Actualizado: 301",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-09T10:00:00.000Z",
-      isNewThisWeek: true,
+      isRecent: true,
     },
     {
       eventId: "main",
@@ -174,7 +174,7 @@ test("filterUserFacingTickerEvents excludes internal file and vademecum-only cha
       summary: "main actualizado: main-links.json",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-09T10:00:00.000Z",
-      isNewThisWeek: true,
+      isRecent: true,
     },
     {
       eventId: "vademecum",
@@ -184,7 +184,7 @@ test("filterUserFacingTickerEvents excludes internal file and vademecum-only cha
       summary: "vademecum actualizado: Adrenalina",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-09T10:00:00.000Z",
-      isNewThisWeek: true,
+      isRecent: true,
     },
     {
       eventId: "codigos",
@@ -194,7 +194,7 @@ test("filterUserFacingTickerEvents excludes internal file and vademecum-only cha
       summary: "codigos actualizado: Código 19",
       effectiveDate: "2026-05-09",
       approvedAt: "2026-05-09T10:00:00.000Z",
-      isNewThisWeek: true,
+      isRecent: true,
     },
   ]);
 
