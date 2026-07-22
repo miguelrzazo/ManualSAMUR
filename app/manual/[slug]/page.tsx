@@ -41,20 +41,17 @@ import {
   Warning,
 } from "@/components/manual/mdx-extras";
 import { TableOfContents } from "@/components/manual/TableOfContents";
+import { TableOfContentsRail } from "@/components/manual/TableOfContentsRail";
 import { Breadcrumbs } from "@/components/manual/Breadcrumbs";
 import { ProcedureNav } from "@/components/manual/ProcedureNav";
 import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
 import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
-import { ProcedureReferences } from "@/components/manual/ProcedureReferences";
 import { RecentUpdateBadge } from "@/components/manual/RecentUpdateBadge";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
-import { buildManualRelationsIndex } from "@/lib/manual-relations-index";
-import { getCodeReferenceSources } from "@/lib/manual-reference-data";
-import vademecumData from "@/content/data/vademecum.json";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -133,15 +130,6 @@ export default async function ProcedurePage({ params }: Props) {
   const backlinks = getBacklinkProcedures(procedure);
   const suggested = getSuggestedProcedures(procedure);
   const allProcedures = getProcedureMeta();
-  const procedureReferenceEntry = buildManualRelationsIndex({
-    procedures: [procedure],
-    drugs: vademecumData,
-    codes: getCodeReferenceSources(),
-  }).procedures[procedure.id];
-  const drugById = new Map((vademecumData as Array<{ id: string; name: string; category?: string }>).map((drug) => [drug.id, drug]));
-  const citedDrugs = (procedureReferenceEntry?.drugIds ?? [])
-    .map((id) => drugById.get(id))
-    .filter((drug): drug is { id: string; name: string; category?: string } => Boolean(drug));
   const updateEvents = readManualUpdatesDataset().events
     .filter((event) => event.procedureIds.includes(procedure.id))
     .sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`));
@@ -178,20 +166,23 @@ export default async function ProcedurePage({ params }: Props) {
     acc[item.id] = text.length > 260 ? `${text.slice(0, 257).trim()}...` : text;
     return acc;
   }, {});
-  const hasGraphData = related.length > 0 || backlinks.length > 0 || suggested.length > 0;
   // updateEvents ya viene ordenado por effectiveDate descendente, así que el primer
   // evento no-"revisado" es el candidato más reciente. Si ese no entra en la ventana,
   // ninguno lo hace. La comparación temporal la resuelve RecentUpdateBadge en cliente.
   const latestUpdate = updateEvents.find((e) => e.changeKind !== "revisado");
 
+  // max-w-4xl mantiene la medida de lectura en ~75 caracteres. Al retirar la barra
+  // lateral el texto llegaba a 92, incomodo para contenido clinico denso: el espacio
+  // recuperado se reparte como margenes y hueco para el minimapa lateral.
   return (
-    <div className="mx-auto flex max-w-7xl gap-5 px-4 py-4 md:px-6 md:py-6">
+    <div className="mx-auto max-w-4xl px-4 py-4 md:px-6 md:py-6">
+      <TableOfContentsRail articleId="procedure-content" pageTitle={procedure.title} />
       <ProcedureVisitTracker
         procedureId={procedure.id}
         validIds={allProcedures.map((item) => item.id)}
       />
       {/* Main content */}
-      <article id="procedure-content" className="min-w-0 flex-1 max-w-4xl">
+      <article id="procedure-content" className="min-w-0">
         <Breadcrumbs
           section={procedure.section}
           group={procedure.sidebarGroup}
@@ -236,8 +227,10 @@ export default async function ProcedurePage({ params }: Props) {
           />
         )}
 
-        {/* Mobile TOC — collapsible, below header */}
-        <div className="lg:hidden mb-4" data-print-hide>
+        {/* Índice desplegable. Se muestra hasta xl, que es donde entra el
+            minimapa lateral; el corte debe coincidir con el de
+            TableOfContentsRail o habría anchuras sin ningún índice. */}
+        <div className="xl:hidden mb-4" data-print-hide>
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />
         </div>
 
@@ -332,7 +325,11 @@ export default async function ProcedurePage({ params }: Props) {
 
         <ProcedureNav prev={prev} next={next} />
 
-        <div className="mt-8 grid gap-4 lg:hidden" data-print-hide>
+        {/* Enlaces relacionados: una sola declaración. Antes existían dos copias
+            (esta para móvil y otra idéntica en la barra lateral de escritorio).
+            Al retirar la barra, el artículo gana el ancho completo y las tarjetas
+            pasan a rejilla de tres columnas bajo el texto. */}
+        <div className="mt-8 grid gap-4 lg:grid-cols-3" data-print-hide>
           {backlinks.length > 0 && (
             <ProcedureLinkCard
               title="Enlazado desde"
@@ -362,38 +359,6 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
       </article>
 
-      {/* Right sidebar — desktop only */}
-      <aside className="hidden lg:flex flex-col gap-4 w-72 flex-shrink-0 pt-0" data-print-hide>
-        <div className="sticky top-6 flex flex-col gap-4 pb-4">
-          <TableOfContents articleId="procedure-content" pageTitle={procedure.title} />
-          {backlinks.length > 0 && (
-            <ProcedureLinkCard
-              title="Enlazado desde"
-              icon={<GitBranch className="h-3.5 w-3.5" />}
-              procedures={backlinks}
-              previewByProcedureId={previewByProcedureId}
-              emptyLabel="Ningún otro artículo enlaza aquí"
-            />
-          )}
-          {related.length > 0 && (
-            <ProcedureLinkCard
-              title="Ver también"
-              icon={<Link2 className="h-3.5 w-3.5" />}
-              procedures={related}
-              previewByProcedureId={previewByProcedureId}
-            />
-          )}
-          {suggested.length > 0 && (
-            <ProcedureLinkCard
-              title="Sugeridos"
-              icon={<Network className="h-3.5 w-3.5" />}
-              procedures={suggested}
-              previewByProcedureId={previewByProcedureId}
-              emptyLabel="Sin Sugerencias Conservadoras Para Ampliar La Red De Esta Nota"
-            />
-          )}
-        </div>
-      </aside>
     </div>
   );
 }
