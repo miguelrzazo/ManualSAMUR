@@ -6,28 +6,37 @@ El contenido clínico pertenece a SAMUR-PC / Ayuntamiento de Madrid. Esta aplica
 
 ## Características
 
-- 226 procedimientos de emergencias prehospitalarias (SVA, SVB, Operativos, Técnicas, Comunicaciones, Psicológicos, Administrativos)
+- 234 procedimientos de emergencias prehospitalarias (SVA, SVB, Operativos, Técnicas, Comunicaciones, Psicológicos, Administrativos, DRP, Intervinientes)
 - Vademécum de fármacos con dosis y vías de administración
 - Códigos radio y claves de comunicación
 - Mapa interactivo de hospitales y bases
 - Grafo de relaciones entre procedimientos
+- Búsqueda global con filtros por tipo (`:p` procedimientos · `:c` códigos · `:v` medicamentos) y búsqueda a texto completo dentro de los procedimientos
+- Abreviaturas y colaboradores
+- Historial de actualizaciones y avisos de novedades
 - Modo oscuro, PWA, soporte para móvil
 
 ## Desarrollo
 
 ```bash
 npm run dev        # Servidor de desarrollo (http://localhost:3000)
-npm run build      # Build de producción (también genera llms.txt)
+npm run build      # Build de producción (sincroniza docs, genera datos de cliente y llms.txt)
 npm run lint       # ESLint
+npm test           # Tests (runner nativo de Node)
 ```
 
 ### Scripts de sincronización
 
 ```bash
-npm run sync:manualsamur   # Sincronizar procedimientos desde el wiki oficial
-npm run sync:vademecum     # Sincronizar vademécum
-npm run generate:llms      # Regenerar llms.txt y llms-full.txt
+npm run sync:manualsamur:detect  # Simulación: informa de cambios sin escribir nada
+npm run sync:manualsamur:apply   # Sincronización real desde el wiki oficial
+npm run sync:vademecum           # Sincronizar vademécum
+npm run generate:llms            # Regenerar llms.txt y llms-full.txt
+npm run generate:client-data     # Regenerar los datasets bajo demanda de public/
 ```
+
+La sincronización mensual corre en `.github/workflows/update-content.yml` y abre un PR
+de revisión únicamente si hay cambios de contenido reales.
 
 ## Acceso para LLMs
 
@@ -47,7 +56,13 @@ O accede a un procedimiento individual: https://manualsamur.es/manual/301-parada
 ## Arquitectura
 
 - **Next.js 16** con App Router, React 19, TypeScript, Tailwind CSS
-- **Contenido**: Markdown en `content/procedures/`, datos JSON en `content/data/`
+- **Export estático** (`output: "export"`): no hay servidor en producción, solo ficheros en CDN.
+  Como consecuencia, cualquier comparación de fechas debe hacerse en cliente — en servidor
+  quedaría congelada en el momento del build. Ver el hook `lib/hooks/use-now.ts`.
+- **Contenido**: Markdown en `content/procedures/` (10 subcarpetas por sección), datos JSON en `content/data/`
+- **Datos de cliente**: `public/search-index.json`, `public/manual-updates.json` y
+  `public/manual-history.json` se generan en el build y se descargan bajo demanda, para
+  no inflar el HTML de cada página
 - **Scraping**: Scripts en `scripts/` que sincronizan desde el wiki oficial XWiki
 - **Visualización**: D3-force para grafo local, React Flow para grafo global
 
@@ -57,4 +72,3 @@ O accede a un procedimiento individual: https://manualsamur.es/manual/301-parada
 - Tailwind CSS v4, Radix UI / shadcn
 - next-mdx-remote (rendering de procedimientos)
 - D3 (grafos de relaciones), MapLibre GL (mapa)
-- Capacitor (wrapper nativo iOS)
