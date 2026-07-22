@@ -48,9 +48,9 @@ El contenido está disponible en formato [llms.txt](https://llmstxt.org) para us
 Ejemplo de uso con Claude u otro LLM:
 
 ```
-Fetch https://manualsamur.es/llms.txt para obtener el índice de procedimientos.
-Fetch https://manualsamur.es/llms-full.txt para el contenido completo.
-O accede a un procedimiento individual: https://manualsamur.es/manual/301-parada-cardiorrespiratoria
+Fetch https://manual-proced-spc.vercel.app/llms.txt para obtener el índice de procedimientos.
+Fetch https://manual-proced-spc.vercel.app/llms-full.txt para el contenido completo.
+O accede a un procedimiento individual: https://manual-proced-spc.vercel.app/manual/301-parada-cardiorrespiratoria
 ```
 
 ## Arquitectura
