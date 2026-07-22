@@ -28,5 +28,8 @@ jobs:
       - name: Lint procedure IDs
         run: node --experimental-strip-types scripts/lint-procedure-ids.ts
 
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build

@@ -8,6 +8,7 @@ import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
 import { createPatch } from "diff";
+import { assertDiscoveryIsPlausible } from "../lib/sync-guards.ts";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -200,6 +201,19 @@ function loadExistingTitleMap() {
     const title = typeof parsed.data.title === "string" ? parsed.data.title : "";
     const id = typeof parsed.data.id === "string" ? parsed.data.id : path.basename(filePath, ".md");
     if (title && id) map.set(normalizeTitle(title), id);
+  }
+  return map;
+}
+
+/** id → título tal cual, para poder nombrar un procedimiento desaparecido. */
+function loadExistingIdTitleMap() {
+  const map = new Map<string, string>();
+  for (const filePath of walkProceduresDir()) {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const parsed = matter(raw);
+    const title = typeof parsed.data.title === "string" ? parsed.data.title : "";
+    const id = typeof parsed.data.id === "string" ? parsed.data.id : path.basename(filePath, ".md");
+    if (id) map.set(id, title || id);
   }
   return map;
 }
@@ -588,16 +602,28 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
   // Detect procedures that existed locally but were not discovered in this sync run
   if (!allowedProcedureIds) {
     const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)));
-    for (const [existingId, existingTitle] of Object.entries(loadExistingTitleMap())) {
-      if (!discoveredIds.has(existingId)) {
-        changes.push({
-          id: existingId,
-          title: existingTitle,
-          changeType: "deleted",
-          changeKind: "eliminado",
-          sourceUpdated: new Date().toISOString().slice(0, 10),
-        });
-      }
+    // Antes esto era Object.entries(loadExistingTitleMap()), y loadExistingTitleMap
+    // devuelve un Map: Object.entries() sobre un Map da [], así que el bloque nunca
+    // llegó a ejecutarse y ninguna baja real se detectaba. Además el destructuring
+    // estaba invertido (el Map va de título normalizado a id).
+    const existingEntries = [...loadExistingIdTitleMap().entries()];
+    const missing = existingEntries.filter(([existingId]) => !discoveredIds.has(existingId));
+
+    // Suelo de seguridad. parseProcedureSpacesXml es regex sobre el XML sin validar
+    // esquema: devuelve [] si el wiki cambia de estructura o responde con un 200 de
+    // mantenimiento o de login. Sin este corte, TODOS los procedimientos locales se
+    // marcarían "eliminado", esos eventos entrarían en manual-updates.json y el
+    // changelog público quedaría corrupto tras un PR grande y verosímil.
+    assertDiscoveryIsPlausible(spaces.length, existingEntries.length, missing.length);
+
+    for (const [existingId, existingTitle] of missing) {
+      changes.push({
+        id: existingId,
+        title: existingTitle,
+        changeType: "deleted",
+        changeKind: "eliminado",
+        sourceUpdated: new Date().toISOString().slice(0, 10),
+      });
     }
   }
 
@@ -904,7 +930,12 @@ async function executeSync(options: SyncOptions) {
   const updates = readManualUpdatesDataset(ROOT_DIR);
   const events = runChangesToEvents(run, approvedAt);
   const mergedEvents = applyNewThisWeek(mergeEvents(updates.events, events), new Date());
-  writeManualUpdatesDataset({ generatedAt: finishedAt, events: mergedEvents }, ROOT_DIR);
+  // dryRun solo protegía los .md y las descargas: esto se escribía siempre, así que
+  // `sync:manualsamur:detect` ensuciaba dos ficheros versionados pese a anunciarse
+  // como simulación. Ahora detect no escribe nada.
+  if (!options.dryRun) {
+    writeManualUpdatesDataset({ generatedAt: finishedAt, events: mergedEvents }, ROOT_DIR);
+  }
 
   const tickerData = buildTickerFromEvents(mergedEvents, new Date());
   const freshMainLinks = readMainLinksData(ROOT_DIR);
@@ -918,7 +949,11 @@ async function executeSync(options: SyncOptions) {
     } : {}),
   };
 
-  saveMetadata(metadata);
+  if (!options.dryRun) {
+    saveMetadata(metadata);
+  } else {
+    console.error("[sync] Simulación (detect): no se ha escrito manual-sync.json ni manual-updates.json.");
+  }
   console.log(JSON.stringify(run, null, 2));
 }
 

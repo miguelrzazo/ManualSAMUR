@@ -32,7 +32,11 @@ jobs:
         run: npm ci
 
       - name: Install system dependencies
-        run: sudo apt-get install -y poppler-utils
+        # apt-get update primero: sin él, un índice desactualizado en el runner hace
+        # fallar la instalación de poppler-utils.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
 
       - name: Apply official updates
         run: |
@@ -161,9 +165,45 @@ jobs:
           echo "=== Missing codes check (8.x) ==="
           node -e 'const fs=require("fs");const codes=JSON.parse(fs.readFileSync("content/data/codigos-incidente.json","utf8"));const eights=codes.filter(c=>String(c.code).startsWith("8"));console.log("8.x codes:",eights.map(c=>c.code).join(", "));'
 
+      - name: Check for meaningful changes
+        id: meaningful
+        # Cada ejecución añade una entrada de run y un generatedAt nuevos a
+        # manual-sync.json / manual-updates.json, así que el árbol NUNCA queda idéntico
+        # y create-pull-request abría un PR mensual aunque el wiki no hubiera cambiado.
+        # Aquí se ignora ese ruido de marcas de tiempo y se mira el contenido real.
+        run: |
+          set -euo pipefail
+
+          # Cualquier cambio fuera de los ficheros propensos a ruido ya es significativo.
+          OTHER=$(git status --porcelain -- . \
+            ':!content/data/manual-sync.json' \
+            ':!content/data/manual-updates.json' \
+            ':!content/data/manual-history.json')
+
+          # En los ficheros ruidosos solo cuentan las líneas que no son generatedAt/lastSyncAt.
+          NOISY=$(git diff -- \
+            content/data/manual-updates.json \
+            content/data/manual-history.json \
+            | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' \
+            | grep -Ev '"(generatedAt|lastSyncAt|lastApprovedAt)"' || true)
+
+          if [ -n "$OTHER" ] || [ -n "$NOISY" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "Se han detectado cambios de contenido reales."
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "Solo han cambiado marcas de tiempo; no se abre PR."
+          fi
+
       - name: Create review pull request
+        if: steps.meaningful.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
+          # Con el GITHUB_TOKEN por defecto, los PR que crea esta acción NO disparan
+          # ci.yml (on: pull_request), así que el PR de contenido nunca se lintaba ni
+          # se construía. Con un PAT en CONTENT_PR_TOKEN sí se dispara; si no existe,
+          # se cae al token por defecto y el PR se abre igual, solo que sin CI.
+          token: ${{ secrets.CONTENT_PR_TOKEN || github.token }}
           branch: codex/monthly-manual-update
           delete-branch: true
           title: "chore: monthly ManualSAMUR content update"
