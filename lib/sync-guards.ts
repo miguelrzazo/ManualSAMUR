@@ -96,3 +96,49 @@ export function assertDiscoveryIsPlausible(
     );
   }
 }
+
+// ─── Vaciado silencioso de datasets ───────────────────────────────────────────
+
+export class DatasetEmptiedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DatasetEmptiedError";
+  }
+}
+
+/**
+ * Longitud mínima de HTML para considerar que la página trajo contenido.
+ *
+ * Por debajo de esto lo razonable es asumir un error de red o una respuesta
+ * vacía, no que el wiki haya borrado la página de verdad.
+ */
+export const MIN_MEANINGFUL_HTML = 500;
+
+/**
+ * ¿Es creíble que un parser devuelva 0 entradas para este dataset?
+ *
+ * Solo si la página venía vacía o si antes tampoco había nada. Si el HTML trae
+ * contenido y existían datos, un resultado vacío significa que el parser ya no
+ * entiende el marcado, no que el contenido haya desaparecido.
+ *
+ * Este es exactamente el fallo que vació las abreviaturas: el wiki cambió las
+ * letras de <h1> a <h3>, el parser devolvió [], syncMain lo anotó en errors[]
+ * sin abortar, y se escribieron 22 secciones como array vacío. Nadie se enteró
+ * hasta que alguien miró la página.
+ */
+export function assertDatasetNotEmptied(
+  datasetName: string,
+  parsedCount: number,
+  previousCount: number,
+  htmlLength: number,
+): void {
+  if (parsedCount > 0) return;
+  if (previousCount === 0) return;
+  if (htmlLength < MIN_MEANINGFUL_HTML) return;
+
+  throw new DatasetEmptiedError(
+    `El parser de "${datasetName}" no extrajo nada de ${htmlLength} bytes de HTML, `
+    + `pero habia ${previousCount} entradas. Lo mas probable es que el marcado del wiki `
+    + "haya cambiado. Se aborta para no sobrescribir datos buenos con un fichero vacio.",
+  );
+}

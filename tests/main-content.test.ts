@@ -91,3 +91,34 @@ test("parseMainLinksFromHtml resolves official links and contact", () => {
     "https://servpub.madrid.es/manualsamur/bin/view/Menu/Cabecera%20principal/Colaboradores/WebHome",
   );
 });
+
+test("parseAbbreviationsFromHtml acepta letras en h3, no solo en h1", () => {
+  // El wiki cambio los encabezados de letra de <h1> a <h3> y el parser, que
+  // buscaba root.children("h1"), devolvia [] en silencio. Asi se vaciaron las
+  // abreviaturas en el sync de julio de 2026.
+  // Estructura real de la pagina: el h3 y su tabla son hermanos, dentro de un
+  // div.col-xs-12. Antes el parser exigia h1 como hijo directo de #xwikicontent.
+  const html = `<div id="xwikicontent">
+    <div class="col-xs-12">
+      <h3>A</h3>
+      <table><tr><td>AAS</td><td>Ácido acetil salicílico</td></tr></table>
+    </div>
+    <div class="col-xs-12">
+      <h3>B</h3>
+      <table><tr><td>BZD</td><td>Benzodiacepinas</td></tr></table>
+    </div>
+  </div>`;
+
+  const sections = parseAbbreviationsFromHtml(html);
+  assert.equal(sections.length, 2);
+  assert.deepEqual(sections.map((s) => s.letter), ["A", "B"]);
+  assert.deepEqual(sections[0].entries, [{ abbreviation: "AAS", meaning: "Ácido acetil salicílico" }]);
+});
+
+test("parseAbbreviationsFromHtml sigue aceptando el formato antiguo con h1", () => {
+  const html = `<div id="xwikicontent">
+    <h1>A</h1>
+    <table><tr><td>AAS</td><td>Ácido acetil salicílico</td></tr></table>
+  </div>`;
+  assert.equal(parseAbbreviationsFromHtml(html).length, 1);
+});

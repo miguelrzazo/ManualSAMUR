@@ -269,6 +269,15 @@ export function parseWikiDrugsFromHtml(html: string): WikiDrugEntry[] {
       continue;
     }
     if (lastField === "indication") {
+      // El wiki no siempre etiqueta el bloque de posologia con "Dosis:". Cuando no
+      // lo hace, estas lineas seguian acumulandose en la indicacion y el campo dose
+      // quedaba vacio: le paso a 15 de 105 fichas (issue #28). Si la linea abre un
+      // bloque de posologia, se cambia de campo aqui.
+      if (startsDoseBlock(text)) {
+        currentDrug.dose = appendField(currentDrug.dose ?? "", text);
+        lastField = "dose";
+        continue;
+      }
       currentDrug.indication = appendField(currentDrug.indication ?? "", text);
       continue;
     }
@@ -318,6 +327,28 @@ function resolveExistingDrugId(importedDrug: WikiDrugEntry, existingDrugs: DrugR
   }
 
   return bestMatch && bestMatch.score >= 0.55 ? bestMatch.id : null;
+}
+
+/** Cantidad de medicamento real: un numero seguido de unidad. */
+const DOSE_QUANTITY = /\d+\s*[.,]?\d*\s*(mg|ml|mcg|µg|g|UI|U)\b/i;
+
+/** Cabecera de bloque de posologia: "- Adultos:", "Dosis nebulizacion:", "Ninos:". */
+const DOSE_HEADER = /^\s*-?\s*(dosis|adultos?|ni[nñ]os?|lactantes?|pediatr|adolescentes?)\b.{0,40}:\s*$/i;
+
+/**
+ * ¿Esta linea abre el bloque de posologia?
+ *
+ * Se ancla en una cantidad real o en una cabecera corta de dosificacion. No basta
+ * con que la linea sea una viñeta: las indicaciones del wiki tambien van en viñetas,
+ * y cortar ahi metia indicaciones en el campo de dosis. Clopidogrel es el caso
+ * claro, y en una referencia farmacologica eso induce a error.
+ */
+export function startsDoseBlock(line: string): boolean {
+  if (DOSE_HEADER.test(line)) return true;
+  if (!DOSE_QUANTITY.test(line)) return false;
+  // Una cantidad suelta dentro de una frase de indicacion no abre bloque; se exige
+  // que la linea sea una viñeta o mencione explicitamente la dosis.
+  return /^\s*-/.test(line) || /\bdosis\b/i.test(line);
 }
 
 export function mergeImportedDrugs(

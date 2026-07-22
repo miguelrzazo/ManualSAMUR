@@ -8,7 +8,7 @@ import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
 import { createPatch } from "diff";
-import { assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
+import { assertDatasetNotEmptied, assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -757,6 +757,22 @@ async function syncMain(dryRun: boolean): Promise<DomainResult> {
       const collaborators = parseCollaboratorsFromHtml(collaboratorsHtml, MAIN_COLLABORATORS_URL);
       const mainLinks = parseMainLinksFromHtml(mainHtml, MAIN_PAGE_URL);
 
+      // Antes de escribir: si el parser no saco nada de una pagina que si traia
+      // contenido y antes habia datos, es que el marcado cambio. Abortar en vez de
+      // sobrescribir con vacio, que es como se perdieron las abreviaturas en julio.
+      assertDatasetNotEmptied(
+        "abreviaturas",
+        abbreviationSections.length,
+        readExistingDatasetLength(MAIN_CONTENT_PATHS.abbreviations),
+        abbreviationsHtml.length,
+      );
+      assertDatasetNotEmptied(
+        "colaboradores",
+        collaborators.list.length,
+        readExistingDatasetLength(MAIN_CONTENT_PATHS.collaborators, "list"),
+        collaboratorsHtml.length,
+      );
+
       writeJsonDataset(MAIN_CONTENT_PATHS.abbreviations, abbreviationSections);
       writeJsonDataset(MAIN_CONTENT_PATHS.collaborators, collaborators);
       writeJsonDataset(MAIN_CONTENT_PATHS.mainLinks, {
@@ -776,6 +792,19 @@ async function syncMain(dryRun: boolean): Promise<DomainResult> {
     changes,
     errors,
   };
+}
+
+/** Cuantas entradas tiene ya un dataset en disco, para el guarda de vaciado. */
+function readExistingDatasetLength(relativePath: string, key?: string): number {
+  try {
+    const full = path.join(ROOT_DIR, relativePath);
+    if (!fs.existsSync(full)) return 0;
+    const parsed = JSON.parse(fs.readFileSync(full, "utf8"));
+    const value = key ? parsed?.[key] : parsed;
+    return Array.isArray(value) ? value.length : 0;
+  } catch {
+    return 0;
+  }
 }
 
 function emptyDomainResult(): DomainResult {

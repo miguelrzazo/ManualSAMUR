@@ -6,6 +6,8 @@ import {
   assertDiscoveryIsPlausible,
   checkDiscoveryPlausibility,
   isDeletionCandidate,
+  assertDatasetNotEmptied,
+  DatasetEmptiedError,
 } from "../lib/sync-guards.ts";
 import { parseProcedureSpacesXml } from "../lib/manual-sync.ts";
 
@@ -121,4 +123,24 @@ test("el filtro de bajas reproduce el resultado de la primera ejecucion real", (
     .map((p) => p.id);
 
   assert.deepEqual(candidatos, ["205b", "602_05"], "Solo deben quedar las dos bajas verificadas");
+});
+
+// ─── Vaciado silencioso de datasets ───────────────────────────────────────────
+
+test("un parseo vacio sobre un dataset con datos aborta", () => {
+  // El caso real: el wiki cambio <h1> por <h3>, el parser devolvio [] y se
+  // sobrescribieron 22 secciones de abreviaturas con un fichero vacio.
+  assert.throws(
+    () => assertDatasetNotEmptied("abreviaturas", 0, 22, 83161),
+    DatasetEmptiedError,
+  );
+});
+
+test("un parseo vacio es aceptable si no habia nada o la pagina vino vacia", () => {
+  // Primer sync: no hay nada que proteger.
+  assert.doesNotThrow(() => assertDatasetNotEmptied("abreviaturas", 0, 0, 83161));
+  // Respuesta vacia o error de red: no es culpa del parser.
+  assert.doesNotThrow(() => assertDatasetNotEmptied("abreviaturas", 0, 22, 10));
+  // Y si extrajo algo, no hay nada que comprobar.
+  assert.doesNotThrow(() => assertDatasetNotEmptied("abreviaturas", 22, 22, 83161));
 });
