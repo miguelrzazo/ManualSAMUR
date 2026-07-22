@@ -39,6 +39,13 @@ yarn-error.log*
 # pdf.js worker — generated from node_modules during build
 /public/pdf.worker.min.mjs
 
+# Datasets de cliente — los regenera `npm run generate:client-data` en cada build.
+# Sin ignorar, cada PR mensual de contenido arrastraría ~3,4 MB de diff generado y
+# ocultaría los cambios clínicos reales, que es justo lo que se revisa a mano.
+/public/search-index.json
+/public/manual-updates.json
+/public/manual-history.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

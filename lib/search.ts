@@ -1,5 +1,22 @@
 import Fuse, { type FuseResult, type FuseResultMatch } from "fuse.js";
-import type { ProcedureMeta } from "@/lib/content";
+
+/**
+ * Documento mínimo del índice de búsqueda. Es un subconjunto estructural de
+ * ProcedureMeta (cualquier ProcedureMeta es asignable aquí), pero se define de
+ * forma independiente para que este módulo no arrastre lib/content.ts —y con él
+ * node:fs— al bundle del cliente. Se sirve como /search-index.json y se descarga
+ * bajo demanda al abrir la búsqueda, no en el payload de cada página.
+ */
+export interface ProcedureSearchDoc {
+  id: string;
+  title: string;
+  slug: string;
+  section: string;
+  synonyms: string[];
+  tags: string[];
+  backlinks: string[];
+  searchText: string;
+}
 
 export type ProcedureSearchField =
   | "id"
@@ -16,7 +33,7 @@ export interface SearchSnippet {
 }
 
 export interface ProcedureSearchResult {
-  item: ProcedureMeta;
+  item: ProcedureSearchDoc;
   score: number;
   matchedField: ProcedureSearchField;
   matches: readonly FuseResultMatch[];
@@ -43,9 +60,16 @@ const FIELD_PENALTY: Record<ProcedureSearchField, number> = {
   searchText: 0.06, // reduced: content matches should surface for acronyms/abbreviations
 };
 
-let fuseInstance: Fuse<ProcedureMeta> | null = null;
+// Construir el índice recorre el texto completo de los 234 procedimientos, así que
+// lo memoizamos por identidad del array: search() se llama en cada pulsación y antes
+// reconstruía el Fuse entero cada vez.
+let fuseInstance: Fuse<ProcedureSearchDoc> | null = null;
+let fuseSource: ProcedureSearchDoc[] | null = null;
 
-export function buildSearchIndex(procedures: ProcedureMeta[]): Fuse<ProcedureMeta> {
+export function buildSearchIndex(procedures: ProcedureSearchDoc[]): Fuse<ProcedureSearchDoc> {
+  if (fuseInstance && fuseSource === procedures) return fuseInstance;
+
+  fuseSource = procedures;
   fuseInstance = new Fuse(procedures, {
     keys: [
       { name: "id", weight: 2.4 },
@@ -213,14 +237,14 @@ function resolveMatchedField(matches: readonly FuseResultMatch[]): ProcedureSear
   return fields[0] ?? "searchText";
 }
 
-function getFieldValues(item: ProcedureMeta, field: ProcedureSearchField): string[] {
+function getFieldValues(item: ProcedureSearchDoc, field: ProcedureSearchField): string[] {
   const value = item[field];
   if (typeof value === "string") return [value];
   if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === "string");
   return [];
 }
 
-function computeMatchBonus(item: ProcedureMeta, field: ProcedureSearchField, query: string): number {
+function computeMatchBonus(item: ProcedureSearchDoc, field: ProcedureSearchField, query: string): number {
   const normalizedQuery = normalizeForSearch(query.trim());
   if (!normalizedQuery) return 0;
 
@@ -238,7 +262,7 @@ function computeMatchBonus(item: ProcedureMeta, field: ProcedureSearchField, que
   return bonus;
 }
 
-function toProcedureSearchResult(query: string, result: FuseResult<ProcedureMeta>): ProcedureSearchResult {
+function toProcedureSearchResult(query: string, result: FuseResult<ProcedureSearchDoc>): ProcedureSearchResult {
   const matches = result.matches ?? [];
   const matchedField = resolveMatchedField(matches);
   const baseScore = result.score ?? 1;
@@ -254,7 +278,7 @@ function toProcedureSearchResult(query: string, result: FuseResult<ProcedureMeta
   };
 }
 
-export function search(query: string, procedures: ProcedureMeta[]): ProcedureSearchResult[] {
+export function search(query: string, procedures: ProcedureSearchDoc[]): ProcedureSearchResult[] {
   if (!query.trim()) return [];
 
   const fuse = buildSearchIndex(procedures);

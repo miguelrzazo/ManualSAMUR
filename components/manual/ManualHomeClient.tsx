@@ -25,8 +25,10 @@ import {
   writeSeenEventIds,
   addSeenEventId,
 } from "@/lib/manual-cookies";
-import type { ProcedureMeta, ProcedureSidebarSection } from "@/lib/content";
-import type { ManualSyncMetadata, ManualUpdateEvent } from "@/lib/manual-sync";
+import type { ProcedureNavMeta, ProcedureSidebarSection } from "@/lib/content";
+import { applyNewThisWeek, parseLocalDate, type ManualSyncClientMetadata, type UpdatePillEvent } from "@/lib/manual-updates-logic";
+import { useNow } from "@/lib/hooks/use-now";
+import type { ManualHistoryEntry, ManualUpdateEvent } from "@/lib/manual-sync";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos"];
 
@@ -105,19 +107,29 @@ const SECTION_META: Record<string, { dot: string; badge: string; card: string }>
   },
 };
 
+// El diálogo renderizaba TODOS los eventos coincidentes de golpe; con 500 entradas
+// de historial eso son 500 tarjetas en un modal. Se pagina.
+const HISTORY_PAGE_SIZE = 50;
+
 const FALLBACK = SECTION_META.General;
 const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes"]);
 
 interface Props {
   sidebarSections: ProcedureSidebarSection[];
-  allProcedures: ProcedureMeta[];
-  syncMetadata: ManualSyncMetadata;
-  updateEvents: ManualUpdateEvent[];
+  allProcedures: ProcedureNavMeta[];
+  syncMetadata: ManualSyncClientMetadata;
+  /** Solo lo justo para la píldora; el detalle se descarga al abrir el diálogo. */
+  pillEvents: UpdatePillEvent[];
+  /** Número de entradas del historial, para saber si mostrar el botón. */
+  historyCount: number;
 }
 
 function formatSyncDate(value: string) {
   if (!value) return "Pendiente";
-  const date = new Date(value);
+  // parseLocalDate y no new Date(): "2026-06-04" se interpretaría como medianoche
+  // UTC y luego se renderiza en la zona del usuario, así que con desfase negativo
+  // (América) se mostraba el día anterior.
+  const date = parseLocalDate(value);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat("es", { dateStyle: "medium" }).format(date);
 }
@@ -223,7 +235,9 @@ function ProcedureRow({
   favoriteIds,
   onFavoritesChange,
 }: {
-  procedure: ProcedureMeta;
+  // Nav meta basta (id/slug/title) y admite también ProcedureMeta, que es un
+  // supertipo estructural. Así la sidebar puede pasar filas ligeras.
+  procedure: ProcedureNavMeta;
   validIds: string[];
   favoriteIds: string[];
   onFavoritesChange: () => void;
@@ -260,7 +274,7 @@ function CollectionSection({
 }: {
   icon: React.ReactNode;
   title: string;
-  procedures: ProcedureMeta[];
+  procedures: ProcedureNavMeta[];
   validIds: string[];
   favoriteIds: string[];
   onFavoritesChange: () => void;
@@ -443,7 +457,8 @@ export function ManualHomeClient({
   sidebarSections,
   allProcedures,
   syncMetadata,
-  updateEvents,
+  pillEvents,
+  historyCount,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -459,6 +474,8 @@ export function ManualHomeClient({
   const [activeSectionFilter, setActiveSectionFilter] = useState<string | undefined>(initialSection);
 
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [historyTab, setHistoryTab] = useState<"novedades" | "historial">("novedades");
+  const [historyPage, setHistoryPage] = useState(1);
   const [expandedDiffs, setExpandedDiffs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -479,10 +496,10 @@ export function ManualHomeClient({
 
   const favorites = favoriteIds
     .map((id) => allProcedures.find((p) => p.id === id))
-    .filter(Boolean) as ProcedureMeta[];
+    .filter(Boolean) as ProcedureNavMeta[];
   const recents = recentIds
     .map((id) => allProcedures.find((p) => p.id === id))
-    .filter(Boolean) as ProcedureMeta[];
+    .filter(Boolean) as ProcedureNavMeta[];
 
   const sortedSections = sortSections(sidebarSections);
   const effectiveSection = activeSectionFilter ?? initialSection;
@@ -511,16 +528,56 @@ export function ManualHomeClient({
 
 
 
-  const sortedUpdateEvents = useMemo(
-    () => [...updateEvents].sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`)),
-    [updateEvents],
-  );
-  const newThisWeekEvents = sortedUpdateEvents.filter((e) => e.isNewThisWeek && e.changeKind !== "revisado");
-  const unseenNewCount = newThisWeekEvents.filter((e) => !seenEventIds.includes(e.eventId)).length;
+  // "Nuevo esta semana" se decide aquí, con el reloj del usuario. El servidor ya no
+  // lo calcula: bajo output: "export" ese booleano se congelaba en tiempo de build y
+  // la insignia no caducaba (117 novedades de hace 47 días seguían marcadas).
+  const now = useNow();
 
+  // La píldora solo necesita {eventId, approvedAt, changeKind}. Los eventos completos
+  // con sus diffs se descargan al abrir el diálogo.
+  const livePillEvents = useMemo(
+    () => (now === null ? [] : applyNewThisWeek(pillEvents, new Date(now)).filter((e) => e.isNewThisWeek)),
+    [pillEvents, now],
+  );
+  const unseenNewCount = livePillEvents.filter((e) => !seenEventIds.includes(e.eventId)).length;
+  const newThisWeekIds = useMemo(() => new Set(livePillEvents.map((e) => e.eventId)), [livePillEvents]);
+
+  // Datasets bajo demanda: se piden al abrir el diálogo, no en cada carga de página.
+  const [updateEvents, setUpdateEvents] = useState<ManualUpdateEvent[] | null>(null);
+  const [historyEntries, setHistoryEntries] = useState<ManualHistoryEntry[] | null>(null);
+  const [dataError, setDataError] = useState(false);
+
+  useEffect(() => {
+    if (!historyModalOpen || updateEvents) return;
+    let active = true;
+
+    (async () => {
+      try {
+        const [updatesRes, historyRes] = await Promise.all([
+          fetch("/manual-updates.json"),
+          fetch("/manual-history.json"),
+        ]);
+        if (!updatesRes.ok || !historyRes.ok) throw new Error("HTTP error al cargar el historial");
+        const updates = (await updatesRes.json()) as { events: ManualUpdateEvent[] };
+        const history = (await historyRes.json()) as { entries: ManualHistoryEntry[] };
+        if (!active) return;
+        setUpdateEvents(updates.events);
+        setHistoryEntries(history.entries);
+      } catch (error) {
+        console.error("No se pudo cargar el historial:", error);
+        if (active) setDataError(true);
+      }
+    })();
+
+    return () => { active = false; };
+  }, [historyModalOpen, updateEvents]);
+
+  // Novedades: eventos recientes agrupados por fecha y categoría.
   const syncGroups = useMemo(() => {
+    if (!updateEvents) return [];
     const groupMap = new Map<string, ManualUpdateEvent[]>();
-    for (const event of sortedUpdateEvents.filter((e) => e.isNewThisWeek && e.changeKind !== "revisado")) {
+    for (const event of updateEvents) {
+      if (event.changeKind === "revisado" || !newThisWeekIds.has(event.eventId)) continue;
       const dateKey = (event.approvedAt ?? event.effectiveDate).slice(0, 10);
       const group = groupMap.get(dateKey) ?? [];
       group.push(event);
@@ -541,35 +598,32 @@ export function ManualHomeClient({
           .map((cat) => ({ category: cat, events: catMap.get(cat)! }));
         return { date, categoryGroups };
       });
-  }, [sortedUpdateEvents]);
+  }, [updateEvents, newThisWeekIds]);
 
-  function handleExpandDiff(eventId: string, isNew: boolean) {
+  function handleExpandDiff(eventId: string) {
     setExpandedDiffs((prev) => {
       const next = new Set(prev);
       if (next.has(eventId)) next.delete(eventId);
       else next.add(eventId);
       return next;
     });
-    if (isNew) {
-      const next = addSeenEventId(seenEventIds, eventId);
-      if (next !== seenEventIds) {
-        writeSeenEventIds(next);
-        setSeenEventIds(next);
-      }
-    }
   }
 
   function openHistoryModal() {
     setHistoryModalOpen(true);
+    // Abrir el historial marca como vistas todas las novedades. Antes se excluían
+    // las que traían diff, así que la píldora roja se quedaba clavada en un número
+    // distinto de cero aunque ya se hubiera abierto el diálogo.
     let updatedSeen = seenEventIds;
-    for (const event of newThisWeekEvents) {
-      if (!event.diff) updatedSeen = addSeenEventId(updatedSeen, event.eventId);
+    for (const event of livePillEvents) {
+      updatedSeen = addSeenEventId(updatedSeen, event.eventId);
     }
     if (updatedSeen !== seenEventIds) {
       writeSeenEventIds(updatedSeen);
       setSeenEventIds(updatedSeen);
     }
   }
+
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-4 md:py-6">
@@ -591,7 +645,7 @@ export function ManualHomeClient({
 
         {/* History pill — compact, low prominence */}
         <div className="flex items-center gap-2">
-          {sortedUpdateEvents.length > 0 && (
+          {(historyCount > 0 || pillEvents.length > 0) && (
             <button
               onClick={openHistoryModal}
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors border ${
@@ -617,9 +671,37 @@ export function ManualHomeClient({
               <History className="h-4 w-4" />
               Historial de actualizaciones
             </DialogTitle>
+            <div className="flex gap-0 mt-3 -mb-4 border-b border-border/40">
+              {([["novedades", `Novedades${livePillEvents.length ? ` (${livePillEvents.length})` : ""}`], ["historial", `Historial completo${historyEntries ? ` (${historyEntries.length})` : ""}`]] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setHistoryTab(key)}
+                  className={`px-4 py-2 text-xs font-bold tracking-wide border-b-2 -mb-px transition-colors ${
+                    historyTab === key
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </DialogHeader>
           <div className="flex-1 overflow-auto px-6 py-5">
-            <div className="relative pl-7">
+            {dataError && (
+              <p className="text-sm text-muted-foreground py-8 text-center">
+                No se pudo cargar el historial. Comprueba tu conexión y vuelve a abrirlo.
+              </p>
+            )}
+            {!dataError && !updateEvents && (
+              <p className="text-sm text-muted-foreground py-8 text-center">Cargando historial...</p>
+            )}
+            {!dataError && updateEvents && historyTab === "novedades" && syncGroups.length === 0 && (
+              <p className="text-sm text-muted-foreground py-8 text-center">
+                No hay novedades en los últimos 7 días. Consulta el historial completo.
+              </p>
+            )}
+            <div className={!dataError && updateEvents && historyTab === "novedades" ? "relative pl-7" : "hidden"}>
               {/* vertical timeline line */}
               <div className="absolute left-2.5 top-2 bottom-2 w-px bg-border/50" />
 
@@ -644,7 +726,7 @@ export function ManualHomeClient({
                           </div>
                           <div className="grid gap-2 pl-1">
                             {catGroup.events.map((event) => {
-                              const isUnseen = event.isNewThisWeek && !seenEventIds.includes(event.eventId);
+                              const isUnseen = newThisWeekIds.has(event.eventId) && !seenEventIds.includes(event.eventId);
                               const isExpanded = expandedDiffs.has(event.eventId);
                               return (
                                 <div
@@ -685,7 +767,7 @@ export function ManualHomeClient({
                                     })()}
                                     {event.diff && (
                                       <button
-                                        onClick={() => handleExpandDiff(event.eventId, event.isNewThisWeek)}
+                                        onClick={() => handleExpandDiff(event.eventId)}
                                         className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors active:scale-95 mt-0.5"
                                       >
                                         {isExpanded ? "Ocultar" : "Ver diff"}
@@ -726,6 +808,41 @@ export function ManualHomeClient({
                 ))}
               </div>
             </div>
+
+            {/* Historial completo — lee manual-history.json, incluye "revisado" */}
+            {!dataError && historyEntries && historyTab === "historial" && (
+              <div className="grid gap-2">
+                {historyEntries.slice(0, historyPage * HISTORY_PAGE_SIZE).map((entry) => (
+                  <div key={entry.id} className="rounded-lg border border-border/40 bg-background/40 px-4 py-3">
+                    <div className="flex items-start gap-2.5">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[entry.changeKind] ?? KIND_BADGE.sync}`}>
+                        {entry.changeKind.toUpperCase()}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <button
+                          onClick={() => { router.push(`/manual/${entry.slug}`); setHistoryModalOpen(false); }}
+                          className="text-sm text-left text-foreground/80 hover:text-primary hover:underline transition-colors leading-snug"
+                        >
+                          {entry.procedureTitle}
+                        </button>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{entry.summary}</p>
+                      </div>
+                      <span className="text-[11px] tabular-nums text-muted-foreground/70 flex-shrink-0 mt-0.5">
+                        {formatSyncDate(entry.changedAt)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                {historyEntries.length > historyPage * HISTORY_PAGE_SIZE && (
+                  <button
+                    onClick={() => setHistoryPage((page) => page + 1)}
+                    className="mx-auto mt-2 rounded-full border border-border/60 px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Cargar más ({historyEntries.length - historyPage * HISTORY_PAGE_SIZE} restantes)
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

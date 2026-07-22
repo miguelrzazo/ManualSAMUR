@@ -6,7 +6,7 @@ import {
   buildTickerFromEvents,
   filterUserFacingTickerItems,
   filterUserFacingTickerEvents,
-  DEFAULT_MANUAL_VERSION,
+  getDefaultManualVersion,
   appendSyncRun,
   classifyProcedureChange,
   classifyProcedureUpdateKind,
@@ -59,8 +59,8 @@ test("classifyProcedureUpdateKind maps source-only changes to revisado", () => {
 test("appendSyncRun keeps newest run first, derives ticker items and preserves manual version", () => {
   const metadata = appendSyncRun(
     {
-      manualVersionCurrent: DEFAULT_MANUAL_VERSION,
-      manualVersion: DEFAULT_MANUAL_VERSION,
+      manualVersionCurrent: getDefaultManualVersion(),
+      manualVersion: getDefaultManualVersion(),
       lastSyncAt: "",
       lastApprovedAt: "",
       ticker: { enabledUntil: "", items: [] },
@@ -95,8 +95,8 @@ test("appendSyncRun keeps newest run first, derives ticker items and preserves m
     },
   );
 
-  assert.equal(metadata.manualVersion, DEFAULT_MANUAL_VERSION);
-  assert.equal(metadata.manualVersionCurrent, DEFAULT_MANUAL_VERSION);
+  assert.equal(metadata.manualVersion, getDefaultManualVersion());
+  assert.equal(metadata.manualVersionCurrent, getDefaultManualVersion());
   assert.equal(metadata.lastSyncAt, "2026-05-05T10:02:00.000Z");
   assert.equal(metadata.tickerEnabled, true);
   assert.deepEqual(metadata.tickerItems, [

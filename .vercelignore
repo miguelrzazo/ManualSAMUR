@@ -4,12 +4,9 @@
 .venv
 node_modules
 out
-ios
-apps
 tests
 docs
 HistoricoActualizaciones_abril 2026.pdf.pdf
-icon.png
 *.log
 *.tmp
 *.swp

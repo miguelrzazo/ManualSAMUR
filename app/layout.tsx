@@ -6,7 +6,7 @@ import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
 import { SuppressNextThemesWarning } from "@/components/shared/SuppressNextThemesWarning";
 import { Toaster } from "@/components/ui/toaster";
-import { getProcedureMeta } from "@/lib/content";
+import { getProcedureNavMeta } from "@/lib/content";
 import { readMainLinksData } from "@/lib/main-content";
 import "./globals.css";
 
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const procedures = getProcedureMeta();
+  const procedures = getProcedureNavMeta();
   const mainLinks = readMainLinksData();
 
   return (

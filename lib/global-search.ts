@@ -1,6 +1,5 @@
 import Fuse, { type FuseResult, type FuseResultMatch } from "fuse.js";
-import type { ProcedureMeta } from "./content.ts";
-import { search as searchProcedures, type SearchSnippet } from "./search.ts";
+import { search as searchProcedures, type ProcedureSearchDoc, type SearchSnippet } from "./search.ts";
 
 interface Drug {
   id: string;
@@ -268,7 +267,7 @@ function mapBaseResult(query: string, result: FuseResult<Base>): SearchResult {
 
 export async function globalSearch(
   query: string,
-  procedures: ProcedureMeta[],
+  procedures: ProcedureSearchDoc[],
   drugs: Drug[],
   codes: Code[],
   hospitals: Hospital[],

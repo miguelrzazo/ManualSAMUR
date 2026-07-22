@@ -3,7 +3,17 @@ import fs from "node:fs";
 import path from "node:path";
 
 const _MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-export const DEFAULT_MANUAL_VERSION = `${_MONTHS_ES[new Date().getMonth()]} ${new Date().getFullYear()}`;
+
+/**
+ * Versión por defecto del manual cuando manual-sync.json no trae una.
+ *
+ * Es una función, no una constante: como constante se evaluaba al cargar el módulo,
+ * es decir en tiempo de build bajo output: "export", y quedaba congelada para siempre
+ * en el HTML estático.
+ */
+export function getDefaultManualVersion(referenceNow = new Date()): string {
+  return `${_MONTHS_ES[referenceNow.getMonth()]} ${referenceNow.getFullYear()}`;
+}
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 
@@ -269,8 +279,8 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
 
 export function createDefaultManualSyncMetadata(): ManualSyncMetadata {
   return {
-    manualVersionCurrent: DEFAULT_MANUAL_VERSION,
-    manualVersion: DEFAULT_MANUAL_VERSION,
+    manualVersionCurrent: getDefaultManualVersion(),
+    manualVersion: getDefaultManualVersion(),
     lastSyncAt: "",
     lastApprovedAt: "",
     ticker: {
@@ -326,7 +336,7 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
 
   try {
     const parsed = JSON.parse(fs.readFileSync(metadataPath, "utf8")) as Partial<ManualSyncMetadata>;
-    const manualVersionCurrent = parsed.manualVersionCurrent || parsed.manualVersion || DEFAULT_MANUAL_VERSION;
+    const manualVersionCurrent = parsed.manualVersionCurrent || parsed.manualVersion || getDefaultManualVersion();
     const legacyTickerItems = Array.isArray(parsed.tickerItems) ? parsed.tickerItems.filter(isString) : [];
     const parsedTickerItems = Array.isArray(parsed.ticker?.items)
       ? parsed.ticker.items.filter((item): item is ManualTickerItem => !!item && typeof item.label === "string" && typeof item.href === "string")
@@ -338,9 +348,11 @@ export function readManualSyncMetadata(cwd = process.cwd()): ManualSyncMetadata 
         href: `/manual?update=${index}`,
       }));
     const tickerItems = filterUserFacingTickerItems(tickerItemsRaw);
-    const enabledUntil = parsed.ticker?.enabledUntil || "";
-    const withinWindow = !enabledUntil || new Date(enabledUntil).getTime() > Date.now();
-    const tickerEnabled = (parsed.tickerEnabled ?? tickerItems.length > 0) && withinWindow;
+    // Sin comparación temporal aquí: con output: "export" se evaluaría en tiempo de
+    // build y el banner se quedaría fijo (ha estado visible 40 días después de su
+    // enabledUntil). Se publica la intención editorial y BreakingNewsTicker comprueba
+    // la caducidad en cliente contra el reloj real.
+    const tickerEnabled = parsed.tickerEnabled ?? tickerItems.length > 0;
 
     return {
       manualVersionCurrent,
@@ -371,7 +383,14 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
     const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<ManualUpdatesDataset>;
     return {
       generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : "",
-      events: Array.isArray(parsed.events) ? applyNewThisWeek(parsed.events as ManualUpdateEvent[]) : [],
+      // NO se llama aquí a applyNewThisWeek. Este módulo se ejecuta en servidor y,
+      // con output: "export", eso significa "una vez, en tiempo de build": el booleano
+      // quedaba congelado en el HTML estático y la insignia "nuevo" no caducaba nunca
+      // (se han llegado a mostrar 117 novedades de hace 47 días). Se fuerza a false y
+      // el cliente recalcula con el reloj del usuario mediante applyNewThisWeek.
+      events: Array.isArray(parsed.events)
+        ? (parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isNewThisWeek: false }))
+        : [],
     };
   } catch {
     return createDefaultManualUpdatesDataset();
@@ -502,8 +521,8 @@ export function appendSyncRun(
 
   return {
     ...metadata,
-    manualVersionCurrent: metadata.manualVersionCurrent || metadata.manualVersion || DEFAULT_MANUAL_VERSION,
-    manualVersion: metadata.manualVersion || metadata.manualVersionCurrent || DEFAULT_MANUAL_VERSION,
+    manualVersionCurrent: metadata.manualVersionCurrent || metadata.manualVersion || getDefaultManualVersion(),
+    manualVersion: metadata.manualVersion || metadata.manualVersionCurrent || getDefaultManualVersion(),
     lastSyncAt: run.finishedAt,
     tickerEnabled: tickerItems.length > 0,
     tickerItems: tickerItems.map((item) => item.label),
@@ -617,17 +636,9 @@ export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): Manua
   });
 }
 
-export function applyNewThisWeek(events: ManualUpdateEvent[], referenceNow = new Date()): ManualUpdateEvent[] {
-  return events.map((event) => {
-    if (!event.approvedAt) return { ...event, isNewThisWeek: false };
-    const approved = new Date(event.approvedAt).getTime();
-    const diff = referenceNow.getTime() - approved;
-    return {
-      ...event,
-      isNewThisWeek: diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000,
-    };
-  });
-}
+// Reexportado desde lib/manual-updates-logic.ts (puro, sin Node) para que los
+// componentes cliente puedan usarlo sin arrastrar node:fs al bundle del navegador.
+export { applyNewThisWeek, NEW_THIS_WEEK_WINDOW_MS, isTickerWithinWindow } from "./manual-updates-logic.ts";
 
 export function getSectionFromXWikiUrl(url: string): string {
   const decoded = decodeURIComponent(url);

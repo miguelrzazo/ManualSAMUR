@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ManualSyncMetadata } from "@/lib/manual-sync";
 import { readSeenEventIds } from "@/lib/manual-cookies";
+import { isTickerWithinWindow, type ManualSyncClientMetadata } from "@/lib/manual-updates-logic";
+import { useNow } from "@/lib/hooks/use-now";
 
 interface Props {
-  metadata: ManualSyncMetadata;
+  metadata: ManualSyncClientMetadata;
   newThisWeekEventIds: string[];
 }
 
@@ -17,6 +18,11 @@ function domainIcon(href: string): string {
 
 export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
   const [hidden, setHidden] = useState(false);
+  // La caducidad se evalúa con el reloj del usuario. El sitio es estático
+  // (output: "export"), así que hacerlo en servidor lo congelaba en tiempo de build:
+  // el banner ha estado visible 40 días después de su enabledUntil.
+  const now = useNow();
+  const expired = now !== null && !isTickerWithinWindow(metadata.ticker?.enabledUntil ?? "", new Date(now));
 
   useEffect(() => {
     function checkSeen() {
@@ -29,7 +35,7 @@ export function BreakingNewsTicker({ metadata, newThisWeekEventIds }: Props) {
     return () => window.removeEventListener("samur:seen-events-updated", checkSeen);
   }, [newThisWeekEventIds]);
 
-  if (!metadata.tickerEnabled || hidden) return null;
+  if (!metadata.tickerEnabled || hidden || expired) return null;
 
   const items = (metadata.ticker?.items ?? [])
     .map((item) => ({ label: item.label.trim(), href: item.href }))

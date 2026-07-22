@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import vademecumData from "@/content/data/vademecum.json";
 import {
   buildAutoSynonyms,
   buildAutoTags,
@@ -13,12 +12,19 @@ import {
   getProcedureSidebarMeta,
   normalizeProcedureContent,
   stripMarkdownToText,
-} from "@/lib/manual-data";
-import type { ManualAttachment } from "@/lib/manual-sync";
-import { buildVademecumHref, resolveDrugIdReference, type VademecumDrugReference } from "@/lib/vademecum-utils";
+} from "./manual-data.ts";
+import type { ManualAttachment } from "./manual-sync.ts";
+import { buildVademecumHref, resolveDrugIdReference, type VademecumDrugReference } from "./vademecum-utils.ts";
 
 const PROCEDURES_DIR = path.join(process.cwd(), "content/procedures");
-const VADEMECUM_DRUGS = vademecumData as VademecumDrugReference[];
+
+// Se lee del disco en vez de `import ... from "@/content/data/vademecum.json"`
+// para que este módulo sea ejecutable tanto por Next como por Node a secas
+// (scripts/generate-search-index.ts): el ESM de Node exige atributos de
+// importación para JSON, y no resuelve el alias "@/".
+const VADEMECUM_DRUGS = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"),
+) as VademecumDrugReference[];
 
 function walkMarkdownFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
@@ -89,9 +95,15 @@ export interface Procedure {
 
 export type ProcedureMeta = Omit<Procedure, "content">;
 
+/** Identidad mínima de un procedimiento: lo único que la navegación necesita en cliente. */
+export type ProcedureNavMeta = Pick<Procedure, "id" | "title" | "slug" | "section">;
+
 export interface ProcedureSidebarSubgroup {
   name: string;
-  procedures: ProcedureMeta[];
+  // Nav meta, no ProcedureMeta: la sidebar se renderiza en app/manual/layout.tsx,
+  // así que su contenido viaja en las 232 páginas de procedimiento. Con ProcedureMeta
+  // arrastraba el searchText de todo el corpus a cada una.
+  procedures: ProcedureNavMeta[];
 }
 
 export interface ProcedureSidebarGroup {
@@ -116,7 +128,17 @@ const SECTIONS_ORDER = [
   "Técnicas",
 ];
 
+// El corpus es inmutable durante un build, y cada accesor de este módulo pasa por
+// aquí (~5 veces por página × 232 páginas). Memoizamos a nivel de módulo para
+// recorrer y parsear los 234 ficheros una sola vez por worker. En desarrollo lo
+// desactivamos para que los cambios en content/procedures/ se reflejen al recargar.
+let allProceduresCache: Procedure[] | null = null;
+
 export function getAllProcedures(): Procedure[] {
+  if (allProceduresCache && process.env.NODE_ENV !== "development") {
+    return allProceduresCache;
+  }
+
   if (!fs.existsSync(PROCEDURES_DIR)) return [];
 
   const procedures: Procedure[] = walkMarkdownFiles(PROCEDURES_DIR)
@@ -201,7 +223,7 @@ export function getAllProcedures(): Procedure[] {
     baseProcedures.map((procedure) => [procedure.id, procedure.relations]),
   );
 
-  return baseProcedures.map((procedure: Procedure) => {
+  const resolved = baseProcedures.map((procedure: Procedure) => {
     const suggestedRelations = buildSuggestedRelations(
       {
         id: procedure.id,
@@ -243,6 +265,9 @@ export function getAllProcedures(): Procedure[] {
       relations: [...procedure.relations, ...incomingRelations, ...suggestedRelations],
     };
   });
+
+  allProceduresCache = resolved;
+  return resolved;
 }
 
 export function getProcedureBySlug(slug: string): Procedure | null {
@@ -263,6 +288,25 @@ export function getProcedureMeta(): ProcedureMeta[] {
   });
 }
 
+/**
+ * Variante ligera de getProcedureMeta() para lo que cruza a componentes cliente
+ * desde el layout raíz.
+ *
+ * getProcedureMeta() solo descarta `content`: conserva `searchText`, el cuerpo
+ * completo de cada procedimiento. Al pasarlo a <NavBar> (cliente) se serializaba
+ * el corpus entero en cada página del sitio. El índice de búsqueda vive ahora en
+ * /search-index.json y se descarga bajo demanda, así que la navegación solo
+ * necesita los campos de identidad.
+ */
+export function getProcedureNavMeta(): ProcedureNavMeta[] {
+  return getAllProcedures().map((procedure) => ({
+    id: procedure.id,
+    title: procedure.title,
+    slug: procedure.slug,
+    section: procedure.section,
+  }));
+}
+
 export function getProceduresBySection(): Record<string, ProcedureMeta[]> {
   const meta = getProcedureMeta();
   const result: Record<string, ProcedureMeta[]> = {};
@@ -275,7 +319,7 @@ export function getProceduresBySection(): Record<string, ProcedureMeta[]> {
 
 export function getProcedureSidebarSections(): ProcedureSidebarSection[] {
   const meta = getProcedureMeta();
-  const grouped = new Map<string, Map<string, Map<string, ProcedureMeta[]>>>();
+  const grouped = new Map<string, Map<string, Map<string, ProcedureNavMeta[]>>>();
 
   for (const procedure of meta) {
     if (!grouped.has(procedure.section)) {
@@ -292,7 +336,12 @@ export function getProcedureSidebarSections(): ProcedureSidebarSection[] {
       subgroupMap.set(procedure.sidebarSubgroup, []);
     }
 
-    subgroupMap.get(procedure.sidebarSubgroup)!.push(procedure);
+    subgroupMap.get(procedure.sidebarSubgroup)!.push({
+      id: procedure.id,
+      title: procedure.title,
+      slug: procedure.slug,
+      section: procedure.section,
+    });
   }
 
   return [...grouped.entries()].map(([section, groups]) => ({

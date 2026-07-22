@@ -918,12 +918,26 @@ export function normalizeCookieIds(
   }
 }
 
+/** Atributos JSX que contienen texto legible por una persona. */
+const READABLE_JSX_ATTRS = /\b(?:name|label|title|alt|text)\s*=\s*"([^"]*)"/g;
+
 export function stripMarkdownToText(content: string): string {
   return content
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/`[^`]+`/g, " ")
     .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
     .replace(/\[([^\]]+)]\([^)]+\)/g, "$1")
+    // Componentes MDX autocerrados: se conserva el texto útil de sus atributos y se
+    // descarta el resto. Sin esto, los fragmentos de búsqueda mostraban literalmente
+    // `<DrugLink name="Adrenalina" /` al usuario.
+    // El (?:"[^"]*"|[^>"])* salta por encima de los tramos entrecomillados, para que
+    // un atributo que contenga ">" —como chart="graph TD; A-->B"— no corte la etiqueta.
+    .replace(/<[A-Z][A-Za-z0-9]*(?:"[^"]*"|[^>"])*\/>/g, (tag) => {
+      const values = [...tag.matchAll(READABLE_JSX_ATTRS)].map((match) => match[1]);
+      return values.length ? ` ${values.join(" ")} ` : " ";
+    })
+    // Etiquetas de apertura/cierre restantes: fuera la etiqueta, dentro el contenido.
+    .replace(/<\/?[A-Za-z][A-Za-z0-9]*(?:"[^"]*"|[^>"])*>/g, " ")
     .replace(/^#+\s+/gm, "")
     .replace(/[*_>~-]/g, " ")
     .replace(/\s+/g, " ")

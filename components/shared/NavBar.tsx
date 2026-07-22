@@ -9,7 +9,7 @@ import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { AppMenu } from "@/components/shared/AppMenu";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureNavMeta } from "@/lib/content";
 import type { MainLinksData } from "@/lib/main-content";
 
 const navItems = [
@@ -20,7 +20,7 @@ const navItems = [
 ];
 
 interface Props {
-  procedures: ProcedureMeta[];
+  procedures: ProcedureNavMeta[];
   mainLinks: MainLinksData;
 }
 
@@ -166,7 +166,7 @@ export function NavBar({ procedures, mainLinks }: Props) {
         })}
       </nav>
 
-      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} procedures={procedures} />
+      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 }

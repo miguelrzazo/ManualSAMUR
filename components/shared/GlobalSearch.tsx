@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pill, Code, MapPin } from "lucide-react";
 import { globalSearch, type SearchResult } from "@/lib/global-search";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureSearchDoc } from "@/lib/search";
 import {
   CommandDialog,
   CommandEmpty,
@@ -18,7 +18,6 @@ import {
 interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  procedures: ProcedureMeta[];
 }
 
 const RESULT_ICONS = {
@@ -82,21 +81,30 @@ function parseQuery(raw: string): { term: string; filter: string | null } {
   return { term: raw, filter: null };
 }
 
-export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
+export function GlobalSearch({ isOpen, onOpenChange }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { term, filter } = parseQuery(query);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<{ drugs: any[]; codes: any[]; hospitals: any[]; bases: any[] } | null>(null);
+  const [data, setData] = useState<{
+    procedures: ProcedureSearchDoc[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    drugs: any[]; codes: any[]; hospitals: any[]; bases: any[];
+  } | null>(null);
 
+  // Los datasets solo se cargan cuando el usuario abre la búsqueda: antes se
+  // descargaban al montar, en todas las páginas, la abriera o no. El índice de
+  // procedimientos es un asset estático (~MB) que el navegador cachea entre visitas.
   useEffect(() => {
+    if (!isOpen || data) return;
+
     let mounted = true;
     const load = async () => {
       try {
         const [
+          searchIndex,
           vademecum,
           indicativos,
           claves,
@@ -111,6 +119,10 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           hospitals,
           bases,
         ] = await Promise.all([
+          fetch("/search-index.json").then((response) => {
+            if (!response.ok) throw new Error(`search-index.json: HTTP ${response.status}`);
+            return response.json() as Promise<ProcedureSearchDoc[]>;
+          }),
           import("@/content/data/vademecum.json"),
           import("@/content/data/codigos-indicativos.json"),
           import("@/content/data/codigos-claves.json"),
@@ -142,24 +154,35 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
           ...upsq.default,
         ];
 
-        setData({ drugs, codes, hospitals: hospitals.default, bases: bases.default });
+        setData({ procedures: searchIndex, drugs, codes, hospitals: hospitals.default, bases: bases.default });
       } catch (error) {
         console.error("Failed to load search data:", error);
       }
     };
     load();
     return () => { mounted = false; };
-  }, []);
+  }, [isOpen, data]);
 
   useEffect(() => {
     const performSearch = async () => {
-      if (!term.trim() || !data) {
+      if (!term.trim()) {
         setResults([]);
+        setIsLoading(false);
         return;
       }
+
+      // El índice se descarga al abrir el diálogo, así que puede haber consultas
+      // antes de que llegue. Mostramos "Buscando..." en lugar de "sin resultados":
+      // un falso negativo en una referencia clínica es peor que una espera. Al
+      // resolverse `data` este efecto se vuelve a ejecutar y lanza la búsqueda.
+      if (!data) {
+        setIsLoading(true);
+        return;
+      }
+
       setIsLoading(true);
       try {
-        const searchResults = await globalSearch(term, procedures, data.drugs, data.codes, data.hospitals, data.bases);
+        const searchResults = await globalSearch(term, data.procedures, data.drugs, data.codes, data.hospitals, data.bases);
         setResults(filter ? searchResults.filter((r) => r.type === filter) : searchResults);
       } catch (error) {
         console.error("Search failed:", error);
@@ -171,7 +194,7 @@ export function GlobalSearch({ isOpen, onOpenChange, procedures }: Props) {
 
     const id = setTimeout(performSearch, 150);
     return () => clearTimeout(id);
-  }, [term, filter, data, procedures]);
+  }, [term, filter, data]);
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, result) => {
     if (!acc[result.type]) acc[result.type] = [];

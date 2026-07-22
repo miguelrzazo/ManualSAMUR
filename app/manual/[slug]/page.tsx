@@ -46,7 +46,7 @@ import { ProcedureNav } from "@/components/manual/ProcedureNav";
 import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
 import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import { ProcedureReferences } from "@/components/manual/ProcedureReferences";
-import { ContentDiff } from "@/components/manual/ContentDiff";
+import { RecentUpdateBadge } from "@/components/manual/RecentUpdateBadge";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -179,8 +179,10 @@ export default async function ProcedurePage({ params }: Props) {
     return acc;
   }, {});
   const hasGraphData = related.length > 0 || backlinks.length > 0 || suggested.length > 0;
-  // eslint-disable-next-line react-hooks/purity
-  const updateCutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  // updateEvents ya viene ordenado por effectiveDate descendente, así que el primer
+  // evento no-"revisado" es el candidato más reciente. Si ese no entra en la ventana,
+  // ninguno lo hace. La comparación temporal la resuelve RecentUpdateBadge en cliente.
+  const latestUpdate = updateEvents.find((e) => e.changeKind !== "revisado");
 
   return (
     <div className="mx-auto flex max-w-7xl gap-5 px-4 py-4 md:px-6 md:py-6">
@@ -224,19 +226,15 @@ export default async function ProcedurePage({ params }: Props) {
 
 
 
-        {/* Recent update badge — only when event < 30 days */}
-        {(() => {
-          const recent = updateEvents.find((e) => e.effectiveDate >= updateCutoff && e.changeKind !== "revisado");
-          if (!recent) return null;
-          return (
-            <ContentDiff
-              changeKind={recent.changeKind as "nuevo" | "revisado" | "actualizado" | "eliminado" | "sync"}
-              changedAt={recent.effectiveDate}
-              summary={recent.summary}
-              diff={recent.diff}
-            />
-          );
-        })()}
+        {/* Recent update badge — la ventana de 30 días se evalúa en cliente */}
+        {latestUpdate && (
+          <RecentUpdateBadge
+            changeKind={latestUpdate.changeKind as "nuevo" | "revisado" | "actualizado" | "eliminado" | "sync"}
+            changedAt={latestUpdate.effectiveDate}
+            summary={latestUpdate.summary}
+            diff={latestUpdate.diff}
+          />
+        )}
 
         {/* Mobile TOC — collapsible, below header */}
         <div className="lg:hidden mb-4" data-print-hide>

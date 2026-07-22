@@ -12,9 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    "apps/mobile/.expo/**",
-    "ios/App/App/public/**",
-    "ios/DerivedData/**",
+    // Worktrees de agentes: contienen sus propios .next/out y copias del árbol,
+    // que inundaban `npm run lint` con cientos de errores de ficheros generados.
+    ".claude/**",
+    // pdf.worker.min.mjs es un bundle minificado de pdfjs-dist copiado por
+    // scripts/sync-public-docs.ts, no código fuente de este repo.
+    "public/pdf.worker.min.mjs",
   ]),
 ]);
 

@@ -325,7 +325,7 @@ test("codigos navigation removes PC/Lima and nests communications subtabs", () =
     ["incidente", "comunicaciones", "icao"],
   );
 
-  assert.ok(!CODIGOS_TOP_LEVEL_TABS.some((tab) => tab.label === "PC/Lima"));
+  assert.ok(!CODIGOS_TOP_LEVEL_TABS.some((tab) => String(tab.label) === "PC/Lima"));
 
   assert.deepEqual(
     CODIGOS_COMMUNICATION_SUBTABS.map((tab) => tab.key),
