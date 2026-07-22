@@ -10,6 +10,7 @@ import {
 import {
   extractVademecumAttachmentLinks,
   mergeImportedDrugs,
+  startsDoseBlock,
   parseCommercialRowsFromText,
   parseFluidsFromText,
   parsePerfusionsFromText,
@@ -283,4 +284,18 @@ SSF (0,9%) (100 ml)                          308                                
       contraindications: ["Hipertensión", "Edemas en general"],
     },
   ]);
+});
+
+test("startsDoseBlock separa posologia de indicacion", () => {
+  // Abre bloque de dosis: cantidad real o cabecera de dosificacion.
+  assert.equal(startsDoseBlock("- a dosis 1º de 12,5 mg iv en bolo"), true);
+  assert.equal(startsDoseBlock("- Adultos:"), true);
+  assert.equal(startsDoseBlock("Dosis nebulización:"), true);
+  assert.equal(startsDoseBlock("- 0,075 - 0,15 mg / kg iv lento"), true);
+
+  // NO abre bloque: son indicaciones, aunque vayan en viñeta. Cortar en la
+  // primera viñeta metia estas lineas de Clopidogrel en el campo de dosis.
+  assert.equal(startsDoseBlock("- Pacientes alérgicos a AAS, como única antiagregación."), false);
+  assert.equal(startsDoseBlock("- Pacientes que presentan un síndrome coronario agudo:"), false);
+  assert.equal(startsDoseBlock("Emergencias hipertensivas. Indicado en crisis."), false);
 });

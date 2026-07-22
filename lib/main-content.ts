@@ -112,7 +112,13 @@ export function parseAbbreviationsFromHtml(html: string): AbbreviationSection[] 
 
   const sections: AbbreviationSection[] = [];
 
-  root.children("h1").each((_idx, heading) => {
+  // Cualquier nivel de encabezado, no solo h1: el wiki paso las letras de <h1> a
+  // <h3> y este parser, que buscaba root.children("h1"), empezo a devolver [] en
+  // silencio. Asi se vaciaron las 22 secciones de abreviaturas en el sync de julio.
+  // Tampoco se exige que sea hijo directo, porque algunas van envueltas en un div.
+  const HEADING = "h1, h2, h3, h4";
+
+  root.find(HEADING).each((_idx, heading) => {
     const letter = cleanText($(heading).text()).toUpperCase();
     if (!/^[A-Z]$/.test(letter)) return;
 
@@ -122,7 +128,7 @@ export function parseAbbreviationsFromHtml(html: string): AbbreviationSection[] 
     while (cursor.length) {
       const node = cursor.get(0);
       const tagName = node && node.type === "tag" ? node.tagName : "";
-      if (tagName === "h1") break;
+      if (/^h[1-4]$/.test(tagName)) break;
 
       if (tagName === "table") {
         cursor.find("tr").each((_rowIndex, row) => {
