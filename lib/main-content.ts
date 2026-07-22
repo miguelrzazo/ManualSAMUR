@@ -195,7 +195,6 @@ export function parseCollaboratorsFromHtml(html: string, sourceUrl = ""): Collab
 
 export function parseMainLinksFromHtml(html: string, sourceUrl = ""): MainLinksData {
   const $ = cheerio.load(html);
-  const root = $("#xwikicontent").first();
 
   const avisoImportanteUrl = toAbsoluteUrl($("a[href*='AvisoImportante.pdf']").first().attr("href"));
   const samurEmailHref = $("a[href^='mailto:']").filter((_idx, el) =>

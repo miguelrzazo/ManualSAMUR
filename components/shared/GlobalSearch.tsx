@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pill, Code, MapPin } from "lucide-react";
 import { globalSearch, type SearchResult } from "@/lib/global-search";
+import { cn } from "@/lib/utils";
 import type { ProcedureSearchDoc } from "@/lib/search";
 import {
   CommandDialog,
@@ -72,6 +73,23 @@ function renderHighlightedSnippet(result: SearchResult): ReactNode {
 const FILTER_PREFIXES: Record<string, string> = { ":p": "procedure", ":c": "code", ":v": "drug" };
 const FILTER_LABELS: Record<string, string> = { ":p": "Procedimientos", ":c": "Códigos", ":v": "Medicamentos" };
 
+/**
+ * Chips de filtro, derivados de los propios prefijos para que ambas vías —escribir
+ * ":p" o pulsar el chip— no puedan describir cosas distintas. Antes los filtros solo
+ * existían como prefijos escritos, invisibles para quien no los conociera.
+ */
+const FILTER_CHIPS = Object.entries(FILTER_PREFIXES).map(([prefix, type]) => ({
+  type,
+  prefix,
+  label: FILTER_LABELS[prefix],
+}));
+
+const CHIP_STYLE: Record<string, string> = {
+  procedure: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
+  code: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
+  drug: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+};
+
 function parseQuery(raw: string): { term: string; filter: string | null } {
   for (const [prefix, type] of Object.entries(FILTER_PREFIXES)) {
     if (raw.startsWith(prefix + " ") || raw === prefix) {
@@ -86,7 +104,10 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { term, filter } = parseQuery(query);
+  const { term, filter: prefixFilter } = parseQuery(query);
+  const [chipFilter, setChipFilter] = useState<string | null>(null);
+  // Si se escribe un prefijo, manda sobre el chip: es la intención más explícita.
+  const filter = prefixFilter ?? chipFilter;
 
   const [data, setData] = useState<{
     procedures: ProcedureSearchDoc[];
@@ -213,7 +234,10 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
 
   const handleOpenChange = useCallback((nextOpen: boolean) => {
     onOpenChange(nextOpen);
-    if (!nextOpen) setQuery("");
+    if (!nextOpen) {
+      setQuery("");
+      setChipFilter(null);
+    }
   }, [onOpenChange]);
 
   useEffect(() => {
@@ -239,25 +263,41 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
         value={query}
         onValueChange={setQuery}
       />
-      {filter && (
-        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/40 bg-muted/30">
-          <span className="text-[11px] text-muted-foreground">Filtrando:</span>
-          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            filter === "procedure" ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300"
-            : filter === "code" ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300"
-            : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-          }`}>
-            {filter === "procedure" ? "Procedimientos" : filter === "code" ? "Códigos" : "Medicamentos"}
-          </span>
-          <button
-            type="button"
-            onClick={() => setQuery(term)}
-            className="ml-auto text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ✕ quitar filtro
-          </button>
-        </div>
-      )}
+      <div className="flex items-center gap-1.5 border-b border-border/40 px-3 py-2">
+        <button
+          type="button"
+          onClick={() => { setChipFilter(null); if (prefixFilter) setQuery(term); }}
+          className={cn(
+            "rounded-full px-2.5 py-0.5 text-[11px] font-semibold transition-colors",
+            !filter ? "bg-foreground text-background" : "bg-muted/60 text-muted-foreground hover:text-foreground",
+          )}
+        >
+          Todo
+        </button>
+        {FILTER_CHIPS.map((chip) => {
+          const active = filter === chip.type;
+          return (
+            <button
+              key={chip.type}
+              type="button"
+              onClick={() => {
+                // Escribir el prefijo gana al chip, así que al pulsar hay que retirarlo.
+                if (prefixFilter) setQuery(term);
+                setChipFilter(active ? null : chip.type);
+              }}
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-[11px] font-semibold transition-colors",
+                active ? CHIP_STYLE[chip.type] : "bg-muted/60 text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {chip.label}
+            </button>
+          );
+        })}
+        <span className="ml-auto hidden sm:inline text-[10px] text-muted-foreground/70">
+          o escribe :p · :c · :v
+        </span>
+      </div>
       <CommandList>
         {isLoading && (
           <div className="p-4 text-center text-sm text-muted-foreground">Buscando...</div>
@@ -302,7 +342,13 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
                     </span>
                   )}
                   {result.badge && (
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex-shrink-0 font-mono">
+                    // max-w + truncate: en procedimientos el badge es un id corto
+                    // ("301"), pero en medicamentos es la presentación completa, que
+                    // sin tope desbordaba la fila y tapaba el título.
+                    <span
+                      title={result.badge}
+                      className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground flex-shrink-0 font-mono max-w-[45%] truncate"
+                    >
                       {result.badge}
                     </span>
                   )}

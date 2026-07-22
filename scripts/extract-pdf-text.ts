@@ -19,7 +19,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
-import matter from "gray-matter";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +27,6 @@ const DOCS_DIRS = [
   path.join(ROOT_DIR, "public/docs/procedures"),
   path.join(ROOT_DIR, "docs/procedures"),
 ];
-const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
 
 const TEXT_THRESHOLD = 300; // chars — below this, treat as image PDF
 
@@ -80,25 +78,6 @@ function extractTextFromPdf(pdfPath: string): { text: string; error?: string } {
 
 // ─── Procedure .md lookup ─────────────────────────────────────────────────────
 
-function findProcedureFile(procedureId: string): string | null {
-  function walk(dir: string): string | null {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const p = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        const found = walk(p);
-        if (found) return found;
-      } else if (entry.isFile() && entry.name.endsWith(".md")) {
-        const raw = fs.readFileSync(p, "utf8");
-        const { data } = matter(raw);
-        if (data.id === procedureId) return p;
-      }
-    }
-    return null;
-  }
-
-  if (!fs.existsSync(PROCEDURES_DIR)) return null;
-  return walk(PROCEDURES_DIR);
-}
 
 // ─── Process a single PDF ─────────────────────────────────────────────────────
 

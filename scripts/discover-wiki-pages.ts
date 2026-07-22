@@ -42,12 +42,6 @@ interface WikiPage {
   source: "spaces-api" | "pages-api" | "alldocs";
 }
 
-interface DiscoveryResult {
-  wikiPages: WikiPage[];
-  localIds: Set<string>;
-  localTitles: Map<string, string>;
-  missing: WikiPage[];
-}
 
 // ─── Section detection ────────────────────────────────────────────────────────
 
@@ -235,7 +229,7 @@ async function discoverViaAllDocs(): Promise<WikiPage[]> {
 
 // ─── Match wiki page against local ───────────────────────────────────────────
 
-function isAlreadyLocal(page: WikiPage, localTitles: Map<string, string>, localSlugs: Set<string>): boolean {
+function isAlreadyLocal(page: WikiPage, localTitles: Map<string, string>): boolean {
   const normalized = normalizeTitle(page.title);
 
   if (localTitles.has(normalized)) return true;
@@ -281,7 +275,7 @@ async function main() {
   const doScrape = args.includes("--scrape");
 
   console.log("Cargando índice local...");
-  const { ids, titles: localTitles, slugs } = loadLocalIndex();
+  const { ids, titles: localTitles } = loadLocalIndex();
   console.log(`  ${ids.size} procedimientos locales indexados`);
 
   console.log("\nDescubriendo páginas en el wiki...");
@@ -305,7 +299,7 @@ async function main() {
   // Find missing pages
   const missing: WikiPage[] = [];
   for (const page of allPages.values()) {
-    if (!isAlreadyLocal(page, localTitles, slugs)) {
+    if (!isAlreadyLocal(page, localTitles)) {
       missing.push(page);
     }
   }

@@ -197,14 +197,6 @@ const HOSPITAL_ACCESS: Record<string, string> = {
   HGU: "Glorieta del Ejército, 1",
 };
 
-const HGU_EXTRA: Hospital = {
-  id: "HGU",
-  name: "Hospital General Universitario Gómez Ulla / Defensa",
-  shortName: "Gómez Ulla",
-  address: "Glorieta del Ejército, 1",
-  district: "Carabanchel",
-};
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function getFamilyMeta(tabKey: TopTabKey, code: string) {
