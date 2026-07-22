@@ -4,7 +4,7 @@
 > Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.
 
 Última actualización: 2026-07-22
-Total procedimientos: 234
+Total procedimientos: 232
 
 ## Recursos principales
 
@@ -38,14 +38,13 @@ Total procedimientos: 234
 - [125_08] Pacientes politraumatizados por accidente de tráfico: https://manualsamur.es/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
 - [126] Gestión de recursos: https://manualsamur.es/manual/126-gestion-de-recursos
 
-## Operativos (45 procedimientos)
+## Operativos (44 procedimientos)
 
 - [201] Actuación General: https://manualsamur.es/manual/201-actuacion-general
 - [203] Conducción de vehículos sanitarios en emergencias: https://manualsamur.es/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
 - [203b] Procedimiento en caso de accidente con Unidades: https://manualsamur.es/manual/203b-procedimiento-en-caso-de-accidente-con-unidades
 - [204] Farmacia Móvil: https://manualsamur.es/manual/204-farmacia-movil
 - [205] Cumplimentación de los informes de asistencia: https://manualsamur.es/manual/205-cumplimentacion-de-los-informes-de-asistencia
-- [205b] Transferencia de pacientes: https://manualsamur.es/manual/205b-transferencia-de-pacientes
 - [206] Preaviso Hospitalario: https://manualsamur.es/manual/206-preaviso-hospitalario
 - [206b] Circulación de Unidades en Convoy: https://manualsamur.es/manual/206b-circulacion-de-unidades-en-convoy
 - [207] Incidentes con múltiples víctimas y Triaje (IMV): https://manualsamur.es/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
@@ -191,7 +190,7 @@ Total procedimientos: 234
 - [508] Asistencia psicológica en agresión sexual: https://manualsamur.es/manual/508-asistencia-psicologica-en-agresion-sexual
 - [509] Asistencia psicológica en violencia de género: https://manualsamur.es/manual/509-asistencia-psicologica-en-violencia-de-genero
 
-## Técnicas (67 procedimientos)
+## Técnicas (66 procedimientos)
 
 - [123] Técnicas de comunicación: https://manualsamur.es/manual/123-tecnicas-de-comunicacion
 - [601_01] Relación con el paciente: https://manualsamur.es/manual/601_01-relacion-con-el-paciente
@@ -205,7 +204,6 @@ Total procedimientos: 234
 - [602_02] Aspiración de secreciones: https://manualsamur.es/manual/602_02-aspiracion-de-secreciones
 - [602_03] Intubación Endotraqueal: https://manualsamur.es/manual/602_03-intubacion-endotraqueal
 - [602_04] INTRODUCTOR DE FROVA 14,0 Fr (adultos): https://manualsamur.es/manual/602_04-introductor-de-frova-140-fr-adultos
-- [602_05] AIRTRAQ® y MONITOR AIRTRAQ®: https://manualsamur.es/manual/602_05-airtraq-y-monitor-airtraq
 - [602_06] CRICOTIROIDOTOMÍA: https://manualsamur.es/manual/602_06-cricotiroidotomia
 - [602_07] TORACOCENTESIS: https://manualsamur.es/manual/602_07-toracocentesis
 - [602_08] TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®: https://manualsamur.es/manual/602_08-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
