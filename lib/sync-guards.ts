@@ -15,6 +15,22 @@
  */
 export const MAX_DELETION_RATIO = 0.2;
 
+/**
+ * ¿Puede este sync declarar de baja el procedimiento si deja de aparecer?
+ *
+ * Solo si viene del wiki y se llegó a sincronizar de él (contentHash no vacío).
+ * El descubrimiento recorre únicamente el wiki, así que un procedimiento
+ * importado de otra fuente falta de sus resultados por definición, no por haber
+ * sido retirado.
+ *
+ * En la primera ejecución real esto separaba 2 bajas verdaderas (ambas 404 en
+ * origen) de 9 falsos positivos: 7 importaciones de samurpc.net y 2 fichas con
+ * source truncado que nunca se sincronizaron.
+ */
+export function isDeletionCandidate(source: string, contentHash: string, wikiHost: string): boolean {
+  return source.includes(wikiHost) && contentHash.trim().length > 0;
+}
+
 export class DiscoveryImplausibleError extends Error {
   constructor(message: string) {
     super(message);

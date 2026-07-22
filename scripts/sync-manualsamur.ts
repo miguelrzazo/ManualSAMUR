@@ -8,7 +8,7 @@ import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
 import { createPatch } from "diff";
-import { assertDiscoveryIsPlausible } from "../lib/sync-guards.ts";
+import { assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -58,6 +58,9 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, "..");
 const WIKI_BASE = "https://servpub.madrid.es/manualsamur";
 const REST_BASE = `${WIKI_BASE}/rest/wikis/xwiki`;
+// Host del wiki, para distinguir los procedimientos que este sync puede dar de baja
+// de los importados de otras fuentes (p. ej. samurpc.net), que nunca descubre.
+const WIKI_BASE_HOST = "servpub.madrid.es";
 const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
 const METADATA_PATH = path.join(ROOT_DIR, "content/data/manual-sync.json");
 const DELAY_MS = 650;
@@ -205,15 +208,35 @@ function loadExistingTitleMap() {
   return map;
 }
 
-/** id → título tal cual, para poder nombrar un procedimiento desaparecido. */
-function loadExistingIdTitleMap() {
+/**
+ * Procedimientos que este sync puede declarar eliminados si dejan de aparecer.
+ *
+ * Solo entran los que proceden del wiki Y se sincronizaron de él alguna vez
+ * (contentHash no vacío). El descubrimiento recorre únicamente WIKI_BASE, así
+ * que cualquier otro procedimiento desaparece de sus resultados por definición,
+ * no por haber sido dado de baja.
+ *
+ * Sin este filtro, la primera ejecución real marcaba 11 bajas de las que 7 eran
+ * importaciones antiguas de samurpc.net —que el scraper del wiki jamás puede
+ * encontrar— y 2 fichas que nunca llegaron a sincronizarse (source truncado,
+ * contentHash vacío). Solo 2 eran reales, y ambas responden 404 en origen.
+ * Un 64% de falsos positivos, por debajo del suelo del 20%, así que el guarda
+ * no habría llegado a saltar.
+ */
+function loadDeletionCandidates() {
   const map = new Map<string, string>();
   for (const filePath of walkProceduresDir()) {
     const raw = fs.readFileSync(filePath, "utf8");
     const parsed = matter(raw);
     const title = typeof parsed.data.title === "string" ? parsed.data.title : "";
     const id = typeof parsed.data.id === "string" ? parsed.data.id : path.basename(filePath, ".md");
-    if (id) map.set(id, title || id);
+    const source = typeof parsed.data.source === "string" ? parsed.data.source : "";
+    const contentHash = typeof parsed.data.contentHash === "string" ? parsed.data.contentHash : "";
+
+    if (!id) continue;
+    if (!isDeletionCandidate(source, contentHash, WIKI_BASE_HOST)) continue;
+
+    map.set(id, title || id);
   }
   return map;
 }
@@ -602,11 +625,11 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
   // Detect procedures that existed locally but were not discovered in this sync run
   if (!allowedProcedureIds) {
     const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)));
-    // Antes esto era Object.entries(loadExistingTitleMap()), y loadExistingTitleMap
-    // devuelve un Map: Object.entries() sobre un Map da [], así que el bloque nunca
-    // llegó a ejecutarse y ninguna baja real se detectaba. Además el destructuring
-    // estaba invertido (el Map va de título normalizado a id).
-    const existingEntries = [...loadExistingIdTitleMap().entries()];
+    // Antes esto era Object.entries(loadExistingTitleMap()), y ese helper devuelve
+    // un Map: Object.entries() sobre un Map da [], así que el bloque nunca llegó a
+    // ejecutarse y ninguna baja real se detectaba. Además el destructuring estaba
+    // invertido (el Map va de título normalizado a id).
+    const existingEntries = [...loadDeletionCandidates().entries()];
     const missing = existingEntries.filter(([existingId]) => !discoveredIds.has(existingId));
 
     // Suelo de seguridad. parseProcedureSpacesXml es regex sobre el XML sin validar

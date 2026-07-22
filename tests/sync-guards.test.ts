@@ -5,6 +5,7 @@ import {
   DiscoveryImplausibleError,
   assertDiscoveryIsPlausible,
   checkDiscoveryPlausibility,
+  isDeletionCandidate,
 } from "../lib/sync-guards.ts";
 import { parseProcedureSpacesXml } from "../lib/manual-sync.ts";
 
@@ -71,4 +72,53 @@ test("un descubrimiento vacío no puede cascar en borrado masivo", () => {
     DiscoveryImplausibleError,
     "Un descubrimiento vacío debe abortar el sync, no emitir 234 eventos 'eliminado'",
   );
+});
+
+// ─── Quién puede darse de baja ────────────────────────────────────────────────
+
+test("solo son candidatos a baja los procedimientos sincronizados del wiki", () => {
+  const HOST = "servpub.madrid.es";
+  const wiki = `https://${HOST}/manualsamur/bin/view/Tecnicas/Algo`;
+
+  // Caso normal: viene del wiki y se sincronizó de él.
+  assert.equal(isDeletionCandidate(wiki, "abc123", HOST), true);
+
+  // Importado de otra fuente: el scraper del wiki no lo descubre nunca, así que
+  // su ausencia no significa que lo hayan retirado.
+  assert.equal(isDeletionCandidate("https://www.samurpc.net/data/218.htm", "abc123", HOST), false);
+
+  // Del wiki pero nunca sincronizado (source truncado, sin hash): no hay
+  // constancia de que llegara a existir ahí.
+  assert.equal(isDeletionCandidate(wiki, "", HOST), false);
+  assert.equal(isDeletionCandidate(wiki, "   ", HOST), false);
+
+  // Sin origen declarado.
+  assert.equal(isDeletionCandidate("", "abc123", HOST), false);
+});
+
+test("el filtro de bajas reproduce el resultado de la primera ejecucion real", () => {
+  const HOST = "servpub.madrid.es";
+  const wiki = `https://${HOST}/manualsamur/bin/view/x`;
+  const externo = "https://www.samurpc.net/data/x.htm";
+
+  // Los 11 que marcó la primera ejecución, con su origen y hash reales.
+  const marcados = [
+    { id: "101", source: wiki, hash: "" },        // wiki, nunca sincronizado
+    { id: "102", source: wiki, hash: "" },        // wiki, nunca sincronizado
+    { id: "205b", source: wiki, hash: "f11ce09" },   // baja real (404 en origen)
+    { id: "214d", source: externo, hash: "" },
+    { id: "216c", source: externo, hash: "" },
+    { id: "216d", source: externo, hash: "" },
+    { id: "218", source: externo, hash: "" },
+    { id: "309_06", source: externo, hash: "" },
+    { id: "601_04", source: externo, hash: "" },
+    { id: "602_05", source: wiki, hash: "494c928" },  // baja real (404 en origen)
+    { id: "604_05", source: externo, hash: "" },
+  ];
+
+  const candidatos = marcados
+    .filter((p) => isDeletionCandidate(p.source, p.hash, HOST))
+    .map((p) => p.id);
+
+  assert.deepEqual(candidatos, ["205b", "602_05"], "Solo deben quedar las dos bajas verificadas");
 });
