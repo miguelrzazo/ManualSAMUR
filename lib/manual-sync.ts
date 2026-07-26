@@ -125,6 +125,7 @@ export interface ManualHistoryEntry {
   changedAt: string;
   summary: string;
   diff?: string;
+  category?: string;
 }
 
 export interface ManualHistoryDataset {

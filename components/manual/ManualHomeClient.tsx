@@ -54,6 +54,11 @@ const KIND_BADGE: Record<string, string> = {
   sync: "bg-muted text-muted-foreground",
 };
 
+const DOMAIN_CHIP: Record<string, string> = {
+  vademecum: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  codigo: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+};
+
 const SECTION_META: Record<string, { dot: string; badge: string; card: string }> = {
   DRP: {
     dot: "bg-orange-500",
@@ -821,12 +826,31 @@ export function ManualHomeClient({
                         {entry.changeKind.toUpperCase()}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <button
-                          onClick={() => { router.push(`/manual/${entry.slug}`); setHistoryModalOpen(false); }}
-                          className="text-sm text-left text-foreground/80 hover:text-primary hover:underline transition-colors leading-snug"
-                        >
-                          {entry.procedureTitle}
-                        </button>
+                        {(() => {
+                          const href = entry.category === "vademecum" ? "/vademecum"
+                            : entry.category === "codigo" ? "/codigos"
+                            : entry.slug ? `/manual/${entry.slug}`
+                            : null;
+                          return (
+                            <>
+                              {entry.category && entry.category !== "procedure" && (
+                                <span className={`mr-1.5 rounded-full px-2 py-0.5 text-xs font-bold tracking-wide ${DOMAIN_CHIP[entry.category] ?? ""}`}>
+                                  {entry.category === "vademecum" ? "VADEMÉCUM" : "CÓDIGO"}
+                                </span>
+                              )}
+                              {href ? (
+                                <button
+                                  onClick={() => { router.push(href); setHistoryModalOpen(false); }}
+                                  className="text-sm text-left text-foreground/80 hover:text-primary hover:underline transition-colors leading-snug"
+                                >
+                                  {entry.procedureTitle}
+                                </button>
+                              ) : (
+                                <span className="text-sm text-foreground/80 leading-snug">{entry.procedureTitle}</span>
+                              )}
+                            </>
+                          );
+                        })()}
                         <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{entry.summary}</p>
                       </div>
                       <span className="text-[11px] tabular-nums text-muted-foreground/70 flex-shrink-0 mt-0.5">
