@@ -330,6 +330,335 @@ const PROCEDURE_KEYWORD_LINKS: Array<{ patterns: RegExp[]; id: string; anchor?: 
   { patterns: [/\bEscala de Glasgow\b/gi], id: "301a", anchor: "escala-de-glasgow" },
 ];
 
+const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
+  // SVA - PCR / RCP
+  { patterns: [
+    /\bver procedimiento (?:de )?PCR adulto/gi,
+  ], id: "301" },
+  { patterns: [
+    /\bver procedimiento (?:de )?PCR(?! pediatric)/gi,
+  ], id: "301" },
+
+  // SVA - Shock
+  { patterns: [
+    /\bver procedimiento (?:de )?shock/gi,
+  ], id: "309_01" },
+
+  // SVA - Intoxicaciones
+  { patterns: [
+    /\bver procedimiento (?:de )?intoxicaciones/gi,
+    /\bver procedimiento (?:de )?intoxicación por humos?/gi,
+  ], id: "315_03" },
+  { patterns: [
+    /\bver procedimiento:? Paciente intoxicado por humo/gi,
+    /\bver procedimiento de Paciente intoxicado por humo/gi,
+  ], id: "315_02" },
+
+  // SVA - Analgesia y sedación
+  { patterns: [
+    /\bver procedimiento (?:de )?analgesia y sedación/gi,
+  ], id: "303" },
+
+  // SVA - Vía aérea
+  { patterns: [
+    /\bver procedimiento 'Manejo avanzado de vía aérea'/gi,
+    /\bver procedimiento de manejo de (?:la )?vía aérea/gi,
+    /\bver procedimiento asistencial de manejo de la vía aérea/gi,
+  ], id: "302" },
+  { patterns: [
+    /\bver procedimiento Manejo de la vía aérea difícil/gi,
+  ], id: "302a" },
+
+  // SVA - Ictus
+  { patterns: [
+    /\bver procedimiento (?:de )?ICTUS/gi,
+  ], id: "306_02" },
+
+  // SVA - Calor / hipotermia
+  { patterns: [
+    /\bver procedimiento (?:de )?golpe de calor/gi,
+  ], id: "313_02" },
+  { patterns: [
+    /\bver procedimiento (?:de )?hipotermia/gi,
+  ], id: "313_03" },
+
+  // SVA - Anafilaxia
+  { patterns: [
+    /\bVer procedimiento de Anafilaxia/g,
+  ], id: "316" },
+
+  // SVA - Urgencias psiquiátricas
+  { patterns: [
+    /\bver procedimiento SVA 'urgencias psiquiátricas'/gi,
+    /\bver procedimiento (?:de )?urgencias?\s+psiquiátric[ao]/gi,
+  ], id: "311" },
+
+  // SVA - Complicaciones diabéticas / hipoglucemia
+  { patterns: [
+    /\bver procedimiento (?:de )?complicaciones diabéticas/gi,
+    /\bver procedimiento (?:de )?hipoglucemia/gi,
+  ], id: "312_01" },
+
+  // SVA - Traumatismos
+  { patterns: [
+    /\bver procedimiento traumatismos ortopédicos/gi,
+  ], id: "304_06" },
+  { patterns: [
+    /\bVer procedimiento de Traumatismo Vertebral\. Manejo de shock neurogénico/g,
+  ], id: "304_05" },
+  { patterns: [
+    /\bver procedimiento (?:de )?urgencias traumáticas/gi,
+  ], id: "304_01" },
+
+  // SVA - Urgencias pediátricas
+  { patterns: [
+    /\bver procedimiento (?:de )?urgencias pediátricas/gi,
+  ], id: "314_00" },
+
+  // SVA - Quemado
+  { patterns: [
+    /\bver procedimiento: 'paciente quemado'/gi,
+  ], id: "313_01" },
+
+  // SVA - Crisis comiciales → crisis epiléptico
+  { patterns: [
+    /\bver procedimiento crisis comiciales/gi,
+  ], id: "306_03" },
+
+  // SVA / Técnicas - Electrocución
+  { patterns: [
+    /\bVer procedimiento asistencial de electrocución\.?/gi,
+  ], id: "313_04" },
+
+  // SVA / Técnicas - Marcapasos
+  { patterns: [
+    /\bver procedimiento (?:de )?marcapasos transcutaneo/gi,
+  ], id: "603_04" },
+
+  // SVA - Tromboembolismo pulmonar
+  { patterns: [
+    /\bver procedimientos? de Tromboembolismo pulmonar/gi,
+    /\bver procedimientos? de TEP\b/gi,
+  ], id: "310_03" },
+
+  // SVA - Arritmias
+  { patterns: [
+    /\bver procedimientos? de arritmia/gi,
+  ], id: "309_04" },
+
+  // SVA - IAM / SCACEST / SCASEST
+  { patterns: [
+    /\bver procedimientos? de IAM\b/gi,
+  ], id: "309_02" },
+
+  // SVA - Urgencias obstétricas
+  { patterns: [
+    /\bver procedimiento (?:en )?\u00a0?Urgencias obstétricas\b/gi,
+  ], id: "308_01" },
+
+  // SVA - Crisis hipertensivas
+  { patterns: [
+    /\bver procedimiento de Urgencias cardiovasculares: Crisis hipertensivas/gi,
+  ], id: "309_05" },
+
+  // SVB - Valoración del paciente
+  { patterns: [
+    /\bver procedimiento SVB 'Valoración del paciente'/gi,
+  ], id: "402" },
+  { patterns: [
+    /\bVer procedimiento SVB Valoración del paciente adulto/gi,
+  ], id: "402" },
+
+  // SVB - Instrumental en adultos
+  { patterns: [
+    /\bver procedimiento SVB 'Instrumental en adultos'/gi,
+    /\bver procedimiento de SVB Instrumental en adultos/gi,
+  ], id: "403" },
+
+  // SVB - Valoración de la escena
+  { patterns: [
+    /\bver procedimiento SVB 'valoración de la escena'/gi,
+    /\bver procedimiento Valoración de la escena/gi,
+  ], id: "401" },
+
+  // SVB - Signos vitales
+  { patterns: [
+    /\bver procedimiento técnico 'Signos Vitales'/gi,
+    /\bVer procedimiento Signos vitales/gi,
+  ], id: "601_03" },
+
+  // SVB - Desfibrilación externa
+  { patterns: [
+    /\bver\s+procedimiento desfibrilación externa/gi,
+  ], id: "406" },
+
+  // Técnicas - Carbón activado
+  { patterns: [
+    /\bver procedimiento 'Administración de Carbón activado'/gi,
+  ], id: "605_03" },
+
+  // Técnicas - Sondaje vesical
+  { patterns: [
+    /\bver procedimiento (?:de )?'Sondaje vesical'/gi,
+  ], id: "605_04" },
+
+  // Técnicas - Control de hemorragias
+  { patterns: [
+    /\bver procedimiento técnico(?: de trauma)? 'Control de hemorragias'/gi,
+  ], id: "606_02" },
+
+  // Técnicas - Parche oclusivo torácico
+  { patterns: [
+    /\bver procedimiento colocación parche oclusivo torácico/gi,
+  ], id: "606_03a" },
+
+  // Técnicas - Intubación endotraqueal
+  { patterns: [
+    /\bver procedimiento (?:de )?intubación endotraqueal/gi,
+  ], id: "602_03" },
+
+  // Técnicas - Toracocentesis
+  { patterns: [
+    /\bver procedimiento (?:de )?toracocentesis/gi,
+  ], id: "602_07" },
+
+  // Técnicas - Toracostomía
+  { patterns: [
+    /\bver procedimiento (?:de )?toracostomía/gi,
+  ], id: "602_08" },
+
+  // Técnicas - Vía intraósea EZ-IO
+  { patterns: [
+    /\bver procedimiento (?:de )?vía intraósea con dispositivo EZ-IO/gi,
+  ], id: "604_05b" },
+
+  // Técnicas - Saturación de oxígeno
+  { patterns: [
+    /\bver procedimiento 'Técnica de medición de la saturación de oxígeno'/gi,
+  ], id: "602_09" },
+
+  // Técnicas - Desfibrilación de Doble Secuencia
+  { patterns: [
+    /\bver procedimiento técnico Desfibrilación de Doble Secuencia \(DDS\)/gi,
+  ], id: "603_02b" },
+
+  // SVB - Valoración inicial del paciente politraumatizado
+  { patterns: [
+    /\bver procedimiento 'Valoración inicial del paciente politraumatizado'/gi,
+  ], id: "412_00" },
+
+  // Operativos - Actuación General
+  { patterns: [
+    /\bVer procedimiento de actuación general\. Operativos/gi,
+  ], id: "201" },
+
+  // Operativos - Actuación conjunta con SAMUR Social
+  { patterns: [
+    /\bver procedimiento de Actuación conjunta con SAMUR-Social/gi,
+  ], id: "217_05" },
+
+  // Operativos - Bomberos
+  { patterns: [
+    /\bver procedimiento (?:de )?actuación con Bomberos/gi,
+  ], id: "217_03" },
+
+  // Operativos - NRBQ
+  { patterns: [
+    /\bver procedimiento operativo:? (?:Primera respuesta )?NRBQ/gi,
+    /\bver procedimiento NRBQ/gi,
+  ], id: "208" },
+
+  // Operativos - IMV / Triaje
+  { patterns: [
+    /\bver procedimiento operativo:? Incidentes? con Múltiples Víctimas y Triaje/gi,
+  ], id: "207" },
+
+  // Operativos - Preaviso hospitalario (paciente psiquiátrico)
+  { patterns: [
+    /\bver procedimiento operativo 'Preaviso hospitalario en paciente psiquiátrico'/gi,
+  ], id: "206" },
+
+  // Operativos - Atención a menores
+  { patterns: [
+    /\bver procedimiento Operativo 'Atención a menores'/gi,
+  ], id: "209" },
+
+  // Operativos - Policía Municipal
+  { patterns: [
+    /\bVer Procedimiento de Actuación conjunta con Policía Municipal/gi,
+  ], id: "217_01" },
+
+  // Operativos - Conducción de vehículos
+  { patterns: [
+    /\bver procedimiento conducción de vehículos sanitarios en emergencias/gi,
+  ], id: "203" },
+
+  // Operativos - Asistencia psicológica en violencia de género
+  { patterns: [
+    /\bVer procedimiento de Asistencia psicológica en violencia de género/g,
+  ], id: "509" },
+
+  // Operativos - Asistencia psicológica en código 9
+  { patterns: [
+    /\bVer procedimiento de asistencia psicológica en código 9/gi,
+  ], id: "507" },
+
+  // Comunicaciones - Radiotelefónico
+  { patterns: [
+    /\bver procedimiento radiotelefónico: situaciones especiales/gi,
+    /\bver Procedimiento radiotelefónico: Claves/gi,
+  ], id: "121" },
+
+  // DRP - CECOR en dispositivo de riesgo previsible
+  { patterns: [
+    /\bver procedimiento de CECOR en un dispositivo de riesgo previsible/gi,
+  ], id: "drp_03" },
+
+  // SVA - Complicaciones de la diabetes (extended pattern)
+  { patterns: [
+    /\bver procedimiento Complicaciones de la diabetes: Hipoglucemia/gi,
+  ], id: "312_01" },
+
+  // Comunicaciones - RCP transtelefónica
+  { patterns: [
+    /\bver procedimiento RCP transtelefónica/gi,
+  ], id: "125_01" },
+
+  // General - Cumplimentación de informes asistenciales
+  { patterns: [
+    /\bver procedimiento Cumplimentación de informes asistenciales/gi,
+  ], id: "205" },
+];
+
+function linkProcedureMentions(
+  content: string,
+  idToSlug: Map<string, string>,
+  currentProcedureId?: string,
+): string {
+  const nbspNormalized = content.replace(/\u00a0/g, " ");
+  let result = nbspNormalized;
+
+  for (const { patterns, id } of PROCEDURE_MENTION_LINKS) {
+    if (id === currentProcedureId) continue;
+    const slug = idToSlug.get(id);
+    if (!slug) continue;
+
+    const href = `/manual/${slug}`;
+
+    for (const pattern of patterns) {
+      result = result.replace(pattern, (match) => {
+        const cleanMatch = match
+          .replace(/>>[\s\S]*$/, "")
+          .replace(/\s*\(\(\(/g, "")
+          .trim();
+        return `[${cleanMatch}](${href})`;
+      });
+    }
+  }
+
+  return result;
+}
+
 function linkProcedureKeywords(
   content: string,
   idToSlug: Map<string, string>,
@@ -630,7 +959,8 @@ export function normalizeProcedureContent(
 
   const { protectedContent, links } = protectMarkdownLinks(rewrittenLinks);
   const linkedCodes = linkSafeCodeMentions(protectedContent, idToSlug, options.currentProcedureId);
-  const linkedKeywords = linkProcedureKeywords(linkedCodes, idToSlug, options.currentProcedureId);
+  const linkedMentions = linkProcedureMentions(linkedCodes, idToSlug, options.currentProcedureId);
+  const linkedKeywords = linkProcedureKeywords(linkedMentions, idToSlug, options.currentProcedureId);
 
   const restored = restoreMarkdownLinks(linkedKeywords, links).replace(/\n{3,}/g, "\n\n");
 
