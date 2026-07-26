@@ -77,20 +77,64 @@ jobs:
 
           const existingById = new Map(existing.entries.map((e) => [e.id, e]));
 
+          // Build id → slug map from procedure markdown files
+          const PROC_DIR = path.join(ROOT, "content/procedures");
+          const idToSlug = new Map();
+          const idToSection = new Map();
+          function parseFrontmatterIdAndSlug(content) {
+            const match = content.match(/^---\n([\s\S]*?)\n---/);
+            if (!match) return {};
+            const fm = match[1];
+            const id = fm.match(/^id:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? "";
+            const slug = fm.match(/^slug:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? "";
+            const section = fm.match(/^section:\s*['"]?(.+?)['"]?\s*$/m)?.[1] ?? "";
+            return { id, slug, section };
+          }
+          if (fs.existsSync(PROC_DIR)) {
+            function walkDir(dir) {
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+              for (const entry of entries) {
+                const fullPath = path.join(dir, entry.name);
+                if (entry.isDirectory()) walkDir(fullPath);
+                else if (entry.name.endsWith(".md")) {
+                  const raw = fs.readFileSync(fullPath, "utf8");
+                  const { id, slug, section } = parseFrontmatterIdAndSlug(raw);
+                  if (id && slug) {
+                    idToSlug.set(id, slug);
+                    idToSection.set(id, section);
+                  }
+                }
+              }
+            }
+            walkDir(PROC_DIR);
+          }
+          console.log(`Loaded ${idToSlug.size} procedure slug mappings`);
+
           const newEntries = [];
           for (const e of updates.events) {
             const id = stableId(e);
             if (!existingById.has(id)) {
+              const procId = e.procedureIds?.[0] ?? "";
+              let slug = idToSlug.get(procId) ?? "";
+              const category = e.category ?? "";
+              let section = idToSection.get(procId) ?? "";
+              if (!section) {
+                if (category === "vademecum") section = "Vademécum";
+                else if (category === "codigo") section = "Códigos";
+                else section = "";
+              }
+
               newEntries.push({
                 id,
-                procedureId: e.procedureIds?.[0] ?? "",
+                procedureId: procId,
                 procedureTitle: e.summary,
-                section: "",
-                slug: "",
+                section,
+                slug,
                 changeKind: e.changeKind,
                 changedAt: e.approvedAt || e.effectiveDate,
                 summary: e.summary,
                 diff: e.diff,
+                category,
               });
             }
           }
