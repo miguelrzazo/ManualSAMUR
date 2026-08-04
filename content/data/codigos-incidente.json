@@ -687,6 +687,24 @@
     "description": "Síndrome coronario agudo sin elevación del ST"
   },
   {
+    "code": "16.1",
+    "name": "SCASEST tipo A — alto riesgo",
+    "category": "Especificos",
+    "description": "Paciente tipo A de alto riesgo: dolor recurrente pese a tratamiento antiisquémico, síntomas crecientes en 48h, inestabilidad hemodinámica, arritmias ventriculares, ICC severa"
+  },
+  {
+    "code": "16.2",
+    "name": "SCASEST tipo B — alto riesgo",
+    "category": "Especificos",
+    "description": "Paciente tipo B de alto riesgo: ECG patológico (BCRIHH o trastornos de conducción)"
+  },
+  {
+    "code": "16.3",
+    "name": "SCASEST tipo C — bajo riesgo",
+    "category": "Especificos",
+    "description": "Paciente tipo C de bajo riesgo: no cumple criterios de los tipos A o B"
+  },
+  {
     "code": "18",
     "name": "Sospecha de sepsis",
     "category": "Especificos",
