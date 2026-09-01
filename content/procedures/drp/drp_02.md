@@ -6,8 +6,8 @@ slug: drp_02-procedimiento-de-despliege-de-un-drp
 tags: []
 synonyms: []
 related: []
-updated: '2026-08-01'
-sourceUpdated: '2026-08-01'
+updated: '2026-09-01'
+sourceUpdated: '2026-09-01'
 source: >-
   https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20de%20despliege%20de%20un%20DRP/
 contentHash: b35ca0ba72777e95831275150788c42b6aef90256c866e3c6575c8583ccc3669
