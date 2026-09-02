@@ -19,7 +19,6 @@ const drugs = JSON.parse(
  * campo `dose` este vacio.
  */
 const MATERIAL = new Set([
-  "Antiséptico de manos",
   "Apósitos de gel de agua",
   "Tiras de Fluoresceína",
 ]);
