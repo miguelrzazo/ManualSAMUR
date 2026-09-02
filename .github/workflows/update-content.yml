@@ -15,9 +15,14 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: manual-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
@@ -162,6 +167,14 @@ jobs:
             console.log("## Domain summary\n");
             for (const [domain, summary] of Object.entries(run.summary || {})) {
               console.log(`- ${domain}: created ${summary.created || 0}, updated ${summary.updated || 0}, unchanged ${summary.unchanged || 0}, skipped ${summary.skipped || 0}, failed ${summary.failed || 0}`);
+            }
+            const missingAssets = run.attachmentFailures || [];
+            if (missingAssets.length) {
+              console.log("\n## Unavailable upstream attachments\n");
+              console.log(`Count: ${missingAssets.length}`);
+              for (const asset of missingAssets) {
+                console.log(`- ${asset.sourceUrl} — ${asset.error}`);
+              }
             }
             console.log("\n## Changes\n");
             for (const [domain, changes] of Object.entries(run.changes || {})) {

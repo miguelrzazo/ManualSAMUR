@@ -13,13 +13,14 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import matter from "gray-matter";
+import { normalizeProcedureContent } from "../lib/manual-data.ts";
+import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "../lib/markdown-export.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PROCEDURES_DIR = path.join(__dirname, "../content/procedures");
 const PUBLIC_DIR = path.join(__dirname, "../public");
-const BASE_URL = "https://manualsamur.es";
 
 const SECTIONS_ORDER = [
   "Administrativos",
@@ -38,6 +39,11 @@ interface ProcedureMeta {
   section: string;
   slug: string;
   updated: string;
+  source?: string;
+  tags?: string[];
+  synonyms?: string[];
+  related?: string[];
+  attachments?: unknown[];
   content: string;
   filePath: string;
 }
@@ -65,6 +71,11 @@ function loadProcedures(): ProcedureMeta[] {
       section: String(data.section ?? "General"),
       slug: String(data.slug ?? filename),
       updated: String(data.updated ?? ""),
+      source: typeof data.source === "string" ? data.source : undefined,
+      tags: Array.isArray(data.tags) ? data.tags.map(String) : undefined,
+      synonyms: Array.isArray(data.synonyms) ? data.synonyms.map(String) : undefined,
+      related: Array.isArray(data.related) ? data.related.map(String) : undefined,
+      attachments: Array.isArray(data.attachments) ? data.attachments : undefined,
       content,
       filePath,
     };
@@ -80,6 +91,7 @@ function sortProcedures(procedures: ProcedureMeta[]): ProcedureMeta[] {
 }
 
 function generateLlmsTxt(procedures: ProcedureMeta[]): string {
+  const baseUrl = resolveCanonicalSiteUrl();
   const grouped = new Map<string, ProcedureMeta[]>();
   for (const proc of procedures) {
     const list = grouped.get(proc.section) ?? [];
@@ -98,12 +110,12 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
     "",
     "## Recursos principales",
     "",
-    `- Procedimientos: ${BASE_URL}/manual`,
-    `- Vademécum de fármacos: ${BASE_URL}/vademecum`,
-    `- Códigos radio: ${BASE_URL}/codigos`,
-    `- Mapa de hospitales y bases: ${BASE_URL}/mapa`,
-    `- Contenido completo para LLMs: ${BASE_URL}/llms-full.txt`,
-    `- Procedimientos individuales (Markdown): ${BASE_URL}/procedures/{id}.md (ej: ${BASE_URL}/procedures/101.md)`,
+    `- Procedimientos: ${baseUrl}/manual`,
+    `- Vademécum de fármacos: ${baseUrl}/vademecum`,
+    `- Códigos radio: ${baseUrl}/codigos`,
+    `- Mapa de hospitales y bases: ${baseUrl}/mapa`,
+    `- Contenido completo para LLMs: ${baseUrl}/llms-full.txt`,
+    `- Procedimientos individuales (Markdown): ${baseUrl}/procedures/{id}.md (ej: ${baseUrl}/procedures/101.md)`,
     "",
   ];
 
@@ -114,7 +126,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
     lines.push(`## ${section} (${procs.length} procedimientos)`);
     lines.push("");
     for (const proc of procs) {
-      lines.push(`- [${proc.id}] ${proc.title}: ${BASE_URL}/manual/${proc.slug}`);
+      lines.push(`- [${proc.id}] ${proc.title}: ${baseUrl}/manual/${proc.slug}`);
     }
     lines.push("");
   }
@@ -133,6 +145,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
 }
 
 function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
+  const baseUrl = resolveCanonicalSiteUrl();
   const header = [
     "# SAMUR Manual — Contenido Completo",
     "",
@@ -151,8 +164,8 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
       `# [${proc.id}] ${proc.title}`,
       "",
       `Sección: ${proc.section}`,
-      `URL: ${BASE_URL}/manual/${proc.slug}`,
-      `Markdown: ${BASE_URL}/procedures/${proc.id}.md`,
+      `URL: ${baseUrl}/manual/${proc.slug}`,
+      `Markdown: ${baseUrl}/procedures/${proc.id}.md`,
     ];
     if (proc.updated) lines.push(`Actualizado: ${proc.updated}`);
     lines.push("", proc.content.trim(), "", "---", "");
@@ -166,7 +179,7 @@ function copyProceduresMd(procedures: ProcedureMeta[]): void {
   const destDir = path.join(PUBLIC_DIR, "procedures");
   fs.mkdirSync(destDir, { recursive: true });
   for (const proc of procedures) {
-    fs.copyFileSync(proc.filePath, path.join(destDir, `${proc.id}.md`));
+    fs.writeFileSync(path.join(destDir, `${proc.id}.md`), canonicalProcedureMarkdown(proc), "utf8");
   }
 }
 
@@ -174,6 +187,14 @@ function main() {
   console.log("Cargando procedimientos...");
   const procedures = sortProcedures(loadProcedures());
   console.log(`  ${procedures.length} procedimientos encontrados`);
+
+  const idToSlug = new Map(procedures.map((procedure) => [procedure.id, procedure.slug]));
+  for (const procedure of procedures) {
+    procedure.content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
+      currentProcedureId: procedure.id,
+      procedureTitle: procedure.title,
+    });
+  }
 
   const llmsTxt = generateLlmsTxt(procedures);
   const llmsFullTxt = generateLlmsFullTxt(procedures);

@@ -26,6 +26,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
       <div className="space-y-2">
         {attachments.map((attachment) => {
           const filename = filenameFromPath(attachment.localPath);
+          const unavailable = attachment.availability === "unavailable";
           const isImage = attachment.kind === "image" || /\.(jpe?g|png|gif|webp|svg)$/i.test(attachment.localPath);
           const isPdf = attachment.kind === "pdf" || attachment.localPath.toLowerCase().endsWith(".pdf");
           const isExpanded = Boolean(expandedByPath[attachment.localPath]);
@@ -42,17 +43,19 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
                   aria-expanded={isExpanded}
                   className="flex flex-1 min-w-0 items-center gap-2 text-left"
                 >
-                  {isImage ? (
+                  {unavailable ? (
+                    <FileText className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                  ) : isImage ? (
                     <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   ) : (
                     <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   )}
                   <span className="truncate text-sm font-medium">{filename}</span>
                   <span className="flex-shrink-0 text-xs uppercase text-muted-foreground">
-                    {isImage ? "imagen" : isPdf ? "pdf" : attachment.kind}
+                    {unavailable ? "no disponible" : isImage ? "imagen" : isPdf ? "pdf" : attachment.kind}
                   </span>
                 </button>
-                {isPdf && (
+                {!unavailable && isPdf && (
                   <a
                     href={attachment.localPath}
                     target="_blank"
@@ -72,7 +75,17 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
 
               {isExpanded ? (
                 <div className="px-4 pb-4 pt-2">
-                  {isImage ? (
+                  {unavailable ? (
+                    <div role="status" className="rounded-lg border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/30 dark:text-amber-200">
+                      <p>No se pudo descargar este anexo desde la fuente oficial.</p>
+                      {attachment.error ? <p className="mt-1 text-xs opacity-80">{attachment.error}</p> : null}
+                      {attachment.sourceUrl ? (
+                        <a href={attachment.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 font-medium underline">
+                          <ExternalLink className="h-3 w-3" /> Intentar abrir la fuente oficial
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : isImage ? (
                     <div className="flex justify-center">
                       <ImageWithLightbox src={attachment.localPath} alt={filename} />
                     </div>
