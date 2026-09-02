@@ -65,9 +65,15 @@ function normalizeAttachments(value: unknown): ManualAttachment[] {
     const kind = typeof (attachment as { kind?: unknown }).kind === "string"
       ? (attachment as { kind: ManualAttachment["kind"] }).kind
       : "other";
+    const availability = (attachment as { availability?: unknown }).availability === "unavailable"
+      ? "unavailable"
+      : "available";
+    const error = typeof (attachment as { error?: unknown }).error === "string"
+      ? (attachment as { error: string }).error
+      : undefined;
 
     if (!sourceUrl || !localPath) return [];
-    return [{ sourceUrl, localPath, kind }];
+    return [{ sourceUrl, localPath, kind, availability, ...(error ? { error } : {}) }];
   });
 }
 

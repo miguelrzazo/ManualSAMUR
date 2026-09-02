@@ -20,6 +20,7 @@ export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
 export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial" | "deleted";
 export type AttachmentKind = "image" | "pdf" | "other";
+export type AttachmentAvailability = "available" | "unavailable";
 export type EditorialStatus = "source" | "enhanced";
 export type ManualUpdateOrigin = "wiki" | "official-pdf";
 export type ManualUpdateChangeKind = "nuevo" | "revisado" | "actualizado" | "eliminado" | "sync";
@@ -28,12 +29,22 @@ export interface ManualAttachment {
   sourceUrl: string;
   localPath: string;
   kind: AttachmentKind;
+  availability?: AttachmentAvailability;
+  error?: string;
 }
 
 export interface AttachmentDownloadFailure {
   sourceUrl: string;
   localPath: string;
   error: string;
+}
+
+/** Keep an attachment in the corpus while making an upstream failure explicit. */
+export function markAttachmentUnavailable(
+  attachment: ManualAttachment,
+  failure: Pick<AttachmentDownloadFailure, "error">,
+): ManualAttachment {
+  return { ...attachment, availability: "unavailable", error: failure.error };
 }
 
 export interface ProcedureSnapshot {
@@ -75,6 +86,7 @@ export interface ManualSyncRun {
   summary: Record<SyncDomain, SyncDomainSummary>;
   changes: Record<SyncDomain, SyncChange[]>;
   errors: string[];
+  attachmentFailures?: AttachmentDownloadFailure[];
 }
 
 export interface PendingChange {

@@ -11,6 +11,7 @@ import {
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
+  markAttachmentUnavailable,
   parseProcedureSpacesXml,
   rewriteAttachmentLinks,
   resolveStableProcedureId,
@@ -264,6 +265,15 @@ test("extractAttachmentLinks and rewriteAttachmentLinks map official images and 
   assert.match(rewriteAttachmentLinks(markdown, attachments), /\/images\/procedures\/301\/algoritmo-inicial\.png/);
   assert.match(rewriteAttachmentLinks(markdown, attachments), /\/docs\/procedures\/301\/anexo\.pdf/);
   assert.match(rewriteAttachmentLinks(markdown, attachments), /!\[\]\(\/images\/procedures\/301\/foto\.jpeg\)/);
+});
+
+test("markAttachmentUnavailable retains the local path and official source", () => {
+  const attachment = { sourceUrl: "https://official.test/a.pdf", localPath: "/docs/a.pdf", kind: "pdf" as const };
+  assert.deepEqual(markAttachmentUnavailable(attachment, { error: "HTTP 404" }), {
+    ...attachment,
+    availability: "unavailable",
+    error: "HTTP 404",
+  });
 });
 
 test("resolveStableProcedureId prefers known SAMUR procedure codes over title slugs", () => {
