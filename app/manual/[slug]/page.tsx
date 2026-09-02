@@ -52,6 +52,8 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
+import { canonicalProcedureMarkdown } from "@/lib/markdown-export";
+import { CopyMarkdownButton } from "@/components/manual/CopyMarkdownButton";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -205,6 +207,7 @@ export default async function ProcedurePage({ params }: Props) {
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <PrintButton />
+              <CopyMarkdownButton markdown={canonicalProcedureMarkdown(procedure)} />
               <FavoriteButton
                 procedureId={procedure.id}
                 validIds={allProcedures.map((item) => item.id)}

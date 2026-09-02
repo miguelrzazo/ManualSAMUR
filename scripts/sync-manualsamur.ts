@@ -26,6 +26,7 @@ import {
   readManualUpdatesDataset,
   resolveStableProcedureIdForSource,
   rewriteAttachmentLinks,
+  markAttachmentUnavailable,
   stableContentHash,
   summarizeChanges,
   withPendingChanges,
@@ -93,6 +94,7 @@ interface DomainResult {
   summary: SyncDomainSummary;
   changes: SyncChange[];
   errors: string[];
+  attachmentFailures?: AttachmentDownloadFailure[];
 }
 
 function parseArgs(argv: string[]): SyncOptions {
@@ -524,6 +526,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
   const existingTitleMap = loadExistingTitleMap();
   const changes: SyncChange[] = [];
   const errors: string[] = [];
+  const attachmentFailuresForReport: AttachmentDownloadFailure[] = [];
   let failed = 0;
   let skipped = 0;
 
@@ -606,6 +609,13 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         }
 
         const attachmentFailures = await downloadAttachments(attachments, false);
+        attachmentFailuresForReport.push(...attachmentFailures);
+        const unavailableBySource = new Map(attachmentFailures.map((failure) => [failure.sourceUrl, failure]));
+        snapshot.attachments = snapshot.attachments.map((attachment) => {
+          const failure = unavailableBySource.get(attachment.sourceUrl);
+          if (failure) markdown = markdown.replaceAll(attachment.localPath, attachment.sourceUrl);
+          return failure ? markAttachmentUnavailable(attachment, failure) : attachment;
+        });
         for (const failure of attachmentFailures) {
           errors.push(`${space.title}: adjunto no descargado ${failure.sourceUrl} (${failure.error})`);
         }
@@ -654,6 +664,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     summary: { ...summarizeChanges(changes, spaces.length), failed, skipped },
     changes,
     errors,
+    attachmentFailures: attachmentFailuresForReport,
   };
 }
 
@@ -960,6 +971,12 @@ async function executeSync(options: SyncOptions) {
       ...results.vademecum.errors,
       ...results.codigos.errors,
       ...results.main.errors,
+    ],
+    attachmentFailures: [
+      ...(results.procedures.attachmentFailures ?? []),
+      ...(results.vademecum.attachmentFailures ?? []),
+      ...(results.codigos.attachmentFailures ?? []),
+      ...(results.main.attachmentFailures ?? []),
     ],
   };
 

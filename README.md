@@ -66,6 +66,14 @@ O accede a un procedimiento individual: https://manual-proced-spc.vercel.app/man
 - **Scraping**: Scripts en `scripts/` que sincronizan desde el wiki oficial XWiki
 - **Visualización**: D3-force para grafo local, React Flow para grafo global
 
+## Integración y CI
+
+El trabajo sobre `main` exige una aprobación y el check requerido `build`. El workflow
+`.github/workflows/ci.yml` conserva ese nombre, ejecuta lint, IDs, tests y build, y admite
+ejecución manual. Vercel mantiene despliegues Preview para pull requests; el PR mensual
+usa `CONTENT_PR_TOKEN` cuando está configurado para que el check `build` se dispare también
+en cambios automáticos.
+
 ## Stack técnico
 
 - Next.js 16, React 19, TypeScript
