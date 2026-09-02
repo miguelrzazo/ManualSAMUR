@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "ManualSAMUR",
+    "slug": "manualsamur",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "manualsamur",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#D92732"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "es.madrid.samur.manual"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon-foreground.png",
+        "backgroundColor": "#D92732"
+      },
+      "package": "es.madrid.samur.manual"
+    },
+    "plugins": ["expo-crypto"],
+    "extra": {
+      "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
+      "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata"
+    }
+  }
+}
