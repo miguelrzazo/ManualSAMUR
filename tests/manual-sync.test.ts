@@ -39,10 +39,36 @@ test("classifyProcedureChange detects new, unchanged and updated procedures", ()
   assert.equal(classifyProcedureChange(null, incoming), "created");
   assert.equal(classifyProcedureChange({ ...incoming }, incoming), "unchanged");
   assert.equal(classifyProcedureChange({ ...incoming, contentHash: "hash-old" }, incoming), "updated");
-  assert.equal(classifyProcedureChange({ ...incoming, sourceUpdated: "2026-03-01" }, incoming), "updated");
+  assert.equal(classifyProcedureChange({ ...incoming, title: "Otro título" }, incoming), "updated");
+  assert.equal(
+    classifyProcedureChange({ ...incoming, attachments: [{ sourceUrl: "u", localPath: "/p", kind: "pdf" }] }, incoming),
+    "updated",
+  );
 });
 
-test("classifyProcedureUpdateKind maps source-only changes to revisado", () => {
+test("classifyProcedureChange ignores a source date bump with identical content", () => {
+  const incoming = {
+    id: "301",
+    title: "Parada cardiorrespiratoria",
+    source: "https://servpub.madrid.es/manualsamur/bin/view/SVA/301/WebHome",
+    sourceUpdated: "2026-04-01",
+    contentHash: "hash-a",
+    attachments: [],
+  };
+
+  // La wiki republica páginas subiendo solo la fecha. Tratarlo como cambio
+  // reescribía los 230 ficheros, abría el PR mensual vacío y llenó el historial
+  // de 492 entradas "revisado" sin contenido.
+  assert.equal(classifyProcedureChange({ ...incoming, sourceUpdated: "2026-03-01" }, incoming), "unchanged");
+
+  // Pero si además cambia el contenido, sigue siendo una actualización.
+  assert.equal(
+    classifyProcedureChange({ ...incoming, sourceUpdated: "2026-03-01", contentHash: "hash-old" }, incoming),
+    "updated",
+  );
+});
+
+test("classifyProcedureUpdateKind reserves revisado for editorial blocks", () => {
   const incoming = {
     id: "301",
     title: "Parada cardiorrespiratoria",
@@ -53,8 +79,28 @@ test("classifyProcedureUpdateKind maps source-only changes to revisado", () => {
   };
 
   assert.equal(classifyProcedureUpdateKind(null, incoming, "created"), "nuevo");
-  assert.equal(classifyProcedureUpdateKind({ ...incoming, sourceUpdated: "2026-03-01" }, incoming, "updated"), "revisado");
+  assert.equal(classifyProcedureUpdateKind({ ...incoming }, incoming, "unchanged"), "sync");
   assert.equal(classifyProcedureUpdateKind({ ...incoming, contentHash: "hash-old" }, incoming, "updated"), "actualizado");
+
+  // "revisado" ya solo significa una cosa: origen ha cambiado y mantenemos
+  // nuestra versión editada. Una subida de fecha a secas no llega hasta aquí.
+  assert.equal(
+    classifyProcedureUpdateKind({ ...incoming, contentHash: "hash-old" }, incoming, "blocked_by_editorial"),
+    "revisado",
+  );
+  assert.equal(classifyProcedureUpdateKind({ ...incoming, sourceUpdated: "2026-03-01" }, incoming, "updated"), "actualizado");
+});
+
+test("the history filter keeps real changes and drops empty revisions", () => {
+  // Mismo predicado que aplica update-content.yml al añadir al historial.
+  const isMeaningful = (e: { changeKind: string; diff?: string }) =>
+    e.changeKind !== "revisado" || Boolean(e.diff);
+
+  assert.equal(isMeaningful({ changeKind: "actualizado" }), true);
+  assert.equal(isMeaningful({ changeKind: "nuevo" }), true);
+  assert.equal(isMeaningful({ changeKind: "revisado", diff: "@@ -1 +1 @@" }), true);
+  assert.equal(isMeaningful({ changeKind: "revisado" }), false);
+  assert.equal(isMeaningful({ changeKind: "revisado", diff: "" }), false);
 });
 
 test("appendSyncRun keeps newest run first, derives ticker items and preserves manual version", () => {

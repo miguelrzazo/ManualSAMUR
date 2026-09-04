@@ -87,6 +87,109 @@ test("normalizeProcedureContent removes legacy chrome and rewrites internal manu
   assert.ok(normalized.includes("[Lorazepam](/vademecum?farmaco=lorazepam)"));
 });
 
+test("normalizeProcedureContent rewrites XWiki page links through the local resolver", () => {
+  const normalized = normalizeProcedureContent(
+    `Realice la filiación e [Informe de Asistencia Psicológica](https://xwiki.example/bin/view/Procedimientos%20Operativos/Informes/).`,
+    new Map(),
+    undefined,
+    {
+      resolveInternalHref: (href) => href.includes("/bin/view/") ? "/manual/205-informes" : null,
+    },
+  );
+
+  assert.equal(normalized, "Realice la filiación e [Informe de Asistencia Psicológica](/manual/205-informes).");
+});
+
+test("normalizeProcedureContent keeps local PDF references as links", () => {
+  const normalized = normalizeProcedureContent(
+    "Consulte el anexo>>/docs/procedures/301/301_algoritmo_SVA.pdf",
+  );
+
+  assert.equal(normalized, "[Consulte el anexo](/docs/procedures/301/301_algoritmo_SVA.pdf)");
+});
+
+test("normalizeProcedureContent repairs malformed multiline XWiki tables", () => {
+  const normalized = normalizeProcedureContent(`
+|**Parámetro**|**Leve**|**Grave**|(((
+Valor normal
+)))|(((
+Valor alterado
+)))
+|**Frecuencia**|20 rpm|Más de 30 rpm
+* Después de la tabla.
+`);
+
+  assert.match(normalized, /\| \*\*Parámetro\*\* \| \*\*Leve\*\* \| \*\*Grave\*\* \|/);
+  assert.match(normalized, /\| \*\*Frecuencia\*\* \| 20 rpm \| Más de 30 rpm \|/);
+  assert.match(normalized, /\n\* Después de la tabla\./);
+  assert.doesNotMatch(normalized, /Después de la tabla[^\n]*\|/);
+});
+
+test("normalizeProcedureContent keeps multiline bullet cells inside XWiki tables", () => {
+  const normalized = normalizeProcedureContent(`
+**Valoración del riesgo e indicaciones de hospitalización**
+
+|**Edad**| |>65| | 
+|**Patología previa**|(((
+* Enferm. de la coagulación
+* Shunt de derivación por hidrocefalia
+)))| | | 
+|**Signos y síntomas**|(((
+* Convulsiones postraumáticas
+* Déficit neurológicos
+* Sospecha de Fx craneal
+)))| |(((
+* Pérdida de conciencia
+* ≥ 2 episodios de vómitos
+)))| 
+|**Medicación**|Anticoagulación|Antiagregantes| | 
+`);
+
+  assert.match(normalized, /\| \*\*Patología previa\*\* \|[\s\S]*Enferm\. de la coagulación/);
+  assert.match(normalized, /\| \*\*Signos y síntomas\*\* \|[\s\S]*Pérdida de conciencia/);
+  assert.doesNotMatch(normalized, /^\| \| \|\s*$/m);
+  assert.doesNotMatch(normalized, /^\|\s*$/m);
+});
+
+test("normalizeProcedureContent repairs a malformed two-column risk table", () => {
+  const normalized = normalizeProcedureContent(`
+|**Escala (puntos)**|**Probabilidad de mortalidad intrahospitalaria ~≤ 108|Bajo riesgo (&lt; 1%)
+|109 - 140|Riesgo intermedio (1 - 3%)
+|> 140|Alto riesgo (> 3%)
+`);
+
+  assert.match(
+    normalized,
+    /\| \*\*Escala \(puntos\)\*\* \| \*\*Probabilidad de mortalidad intrahospitalaria\*\* \|\n\| --- \| --- \|\n\| ≤ 108 \| Bajo riesgo \(&lt; 1%\) \|/,
+  );
+  assert.match(normalized, /\| 109 - 140 \| Riesgo intermedio \(1 - 3%\) \|/);
+  assert.match(normalized, /\| > 140 \| Alto riesgo \(> 3%\) \|/);
+});
+
+test("normalizeProcedureContent promotes standalone bold section labels to headings", () => {
+  const normalized = normalizeProcedureContent(`
+**Consideraciones previas:**
+Texto introductorio.
+
+**Debe sospecharse un TEP en pacientes con disnea brusca.**
+`);
+
+  assert.match(normalized, /^### Consideraciones previas$/m);
+  assert.match(normalized, /\*\*Debe sospecharse un TEP en pacientes con disnea brusca\.\*\*/);
+});
+
+test("normalizeProcedureContent does not swallow footer text after an unclosed cell", () => {
+  const normalized = normalizeProcedureContent(`
+|**RE-LEER**|(((
+* Confirmar la transferencia cumplimentando el informe de asistencia.
+
+Inicio página>>doc:
+`);
+
+  assert.match(normalized, /\| \*\*RE-LEER\*\* \|[\s\S]*Confirmar la transferencia/);
+  assert.doesNotMatch(normalized, /Inicio página>>/);
+});
+
 test("normalizeProcedureContent keeps unresolved vademecum placeholders as plain text", () => {
   const normalized = normalizeProcedureContent(
     `Valore [Fármaco desconocido](# "consultar vademecum").`,

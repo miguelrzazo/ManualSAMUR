@@ -22,6 +22,7 @@ const SIMPLE_ARROW_LINK_RE = /^([^\n\[]+?)>>((?:\/docs|\/images)[^\]\s)]+)(?:\]\
 const DRUG_LINK_RE = /<DrugLink\s+name="([^"]+)"\s*\/>/g;
 const PROTECTED_LINK_TOKEN_RE = /__MDLINK_(\d+)__/g;
 const INTERNAL_MANUAL_LINK_RE = /\[[^\]]+\]\(\/manual\/([^)\s#?]+)(?:#[^)]+)?\)/g;
+const MARKDOWN_LINK_WITH_TITLE_RE = /\[([^\]]+)\]\(([^)\s]+)(\s+"[^"]*")?\)/g;
 
 const TECHNIQUE_PATTERNS: Array<[string, RegExp]> = [
   ["Intubación endotraqueal", /\bintubacion endotraqueal\b/i],
@@ -98,6 +99,7 @@ export interface ProcedureContentNormalizationOptions {
   currentProcedureId?: string;
   procedureTitle?: string;
   resolveDrugHref?: (reference: string) => string | null;
+  resolveInternalHref?: (href: string) => string | null;
 }
 
 export type ProcedureRelationDirection = "outgoing" | "incoming";
@@ -161,6 +163,7 @@ function normalizeXWikiTables(text: string): string {
       let row = lines[i++];
       let depth = xwikiCellDepth(row);
       let contCount = 0;
+      const pipeCount = () => (row.match(/\|/g)?.length ?? 0);
 
       while (i < lines.length) {
         if (contCount >= 14) break;
@@ -168,11 +171,26 @@ function normalizeXWikiTables(text: string): string {
         const next = lines[i];
         const trimmed = next.trim();
 
-        // New table row with no open depth ends continuation
-        if (next.startsWith("|") && depth === 0) break;
+        // XWiki occasionally leaves a cell wrapper unclosed. Once a row has
+        // multiple cells, a fresh pipe-prefixed line is still unambiguously a
+        // new row even when the previous row's wrapper is malformed.
+        if (next.startsWith("|") && (depth === 0 || pipeCount() > 1)) break;
 
-        // Blank line ends simple (non-((()) continuations
-        if (trimmed.length === 0 && depth === 0) break;
+        // A malformed final multiline cell must not swallow the paragraph or
+        // list that follows the table.
+        if (/^Inicio página>>/.test(trimmed)) break;
+
+        if (depth === 0 && /^(?:[*-] |#{1,6} )/.test(trimmed)) break;
+
+        // A blank line can occur inside a well-formed multiline cell. Consume
+        // it only when a closing wrapper is still ahead; this also prevents an
+        // unclosed final cell from swallowing the footer or later paragraphs.
+        if (trimmed.length === 0) {
+          const closingWrapperAhead = lines
+            .slice(i + 1, i + 15)
+            .some((candidate) => candidate.includes(")))"));
+          if (depth === 0 || !closingWrapperAhead) break;
+        }
 
         // Row is already syntactically complete (ends with |) and depth = 0
         if (depth === 0 && row.trimEnd().endsWith("|")) break;
@@ -185,7 +203,11 @@ function normalizeXWikiTables(text: string): string {
         depth += opens - closes;
 
         const clean = trimmed.replace(/\(\(\(/g, "").replace(/\)\)\)/g, "").trim();
-        if (clean) row = row.trimEnd() + (clean === "|" ? clean : " " + clean);
+        if (clean) {
+          const isListItem = /^[*-]\s+/.test(clean);
+          const continuation = isListItem ? clean.replace(/^[*-]\s+/, "• ") : clean;
+          row = row.trimEnd() + (clean === "|" ? clean : isListItem ? `<br />${continuation}` : " " + continuation);
+        }
       }
 
       row = row.replace(/\(\(\(/g, "").replace(/\)\)\)/g, "").trim();
@@ -200,6 +222,28 @@ function normalizeXWikiTables(text: string): string {
       return r.split("|").map(c => c.trim());
     });
 
+    // One upstream table loses the line break and closing delimiter between
+    // its header and its first data row. Reconstruct the intended two-column
+    // Wells-risk table before applying the generic padding rules.
+    if (
+      parsed.length >= 3
+      && parsed[0].length === 3
+      && parsed.slice(1).every((row) => row.length <= 2)
+      && /^\*\*?Escala\s*\(puntos\)/i.test(parsed[0][0])
+      && /probabilidad de mortalidad intrahospitalaria/i.test(parsed[0][1])
+      && /^Bajo riesgo/i.test(parsed[0][2])
+    ) {
+      const firstRisk = parsed[0][2] ?? "";
+      const header = parsed[0][1]
+        .replace(/\s*~?≤\s*108\s*$/, "")
+        .trim();
+      parsed[0] = [
+        parsed[0][0],
+        header.startsWith("**") && !header.endsWith("**") ? `${header}**` : header,
+      ];
+      parsed.splice(1, 0, ["≤ 108", firstRisk]);
+    }
+
     // Title rows: single-cell rows at the start
     let firstData = 0;
     while (firstData < parsed.length && parsed[firstData].length === 1) firstData++;
@@ -211,6 +255,14 @@ function normalizeXWikiTables(text: string): string {
 
     const dataRows = parsed.slice(firstData);
     if (dataRows.length === 0) continue;
+
+    // A final single-cell row is often a malformed multiline note (for
+    // example the Wells probability thresholds). Keep it readable outside the
+    // table instead of padding it into a misleading row.
+    const trailingText: string[] = [];
+    while (dataRows.length > 1 && dataRows.at(-1)?.length === 1) {
+      trailingText.unshift(dataRows.pop()?.[0] ?? "");
+    }
 
     const colCount = Math.max(...dataRows.map(r => r.length), 1);
     const pad = (row: string[]) => {
@@ -224,10 +276,28 @@ function normalizeXWikiTables(text: string): string {
     for (const row of dataRows.slice(1)) {
       out.push("| " + pad(row).join(" | ") + " |");
     }
+    if (trailingText.length > 0) out.push(trailingText.join(" "));
     out.push("");
   }
 
   return out.join("\n");
+}
+
+function normalizeStandaloneBoldHeadings(text: string): string {
+  return text.replace(/^(\s*)\*\*([^*\n]+?)\*\*\s*:?\s*$/gm, (match, indent: string, rawHeading: string) => {
+    const heading = rawHeading.trim().replace(/:\s*$/, "");
+    if (
+      !heading
+      || heading.length > 140
+      || /[.!]$/.test(heading)
+      || /^[*-]\s/.test(heading)
+      || /<[^>]+>/.test(heading)
+    ) {
+      return match;
+    }
+
+    return `${indent}### ${heading}`;
+  });
 }
 
 export function deriveRelatedIds(content: string, validIds: Set<string>): string[] {
@@ -698,6 +768,21 @@ function rewriteLegacyDrugLinks(
   });
 }
 
+function rewriteResolvedInternalLinks(
+  content: string,
+  resolveInternalHref?: (href: string) => string | null,
+): string {
+  if (!resolveInternalHref) return content;
+
+  return content.replace(
+    MARKDOWN_LINK_WITH_TITLE_RE,
+    (match: string, label: string, href: string, title = "") => {
+      const localHref = resolveInternalHref(href);
+      return localHref ? `[${label}](${localHref}${title})` : match;
+    },
+  );
+}
+
 function protectMarkdownLinks(content: string) {
   const links: string[] = [];
   const protectedContent = content.replace(MARKDOWN_LINK_RE, (match) => {
@@ -946,16 +1031,21 @@ export function normalizeProcedureContent(
     .replace(PRINT_EMOJI_RE, "")
     .replace(CONTENIDO_STANDALONE_RE, "");
 
-  const rewrittenLinks = rewriteLegacyDrugLinks(rewriteLegacyArrowLinks(normalized), options)
-    .replace(LOCAL_MARKDOWN_LINK_RE, (_, label: string, href: string) => {
-      const id = href.match(PROCEDURE_LINK_RE)?.[1];
-      if (!id) return label;
+  const withHeadings = normalizeStandaloneBoldHeadings(normalized);
 
-      const slug = idToSlug.get(id);
-      if (!slug) return label;
+  const rewrittenLinks = rewriteResolvedInternalLinks(
+    rewriteLegacyDrugLinks(rewriteLegacyArrowLinks(withHeadings), options)
+      .replace(LOCAL_MARKDOWN_LINK_RE, (_, label: string, href: string) => {
+        const id = href.match(PROCEDURE_LINK_RE)?.[1];
+        if (!id) return label;
 
-      return `[${label}](/manual/${slug})`;
-    });
+        const slug = idToSlug.get(id);
+        if (!slug) return label;
+
+        return `[${label}](/manual/${slug})`;
+      }),
+    options.resolveInternalHref,
+  );
 
   const { protectedContent, links } = protectMarkdownLinks(rewrittenLinks);
   const linkedCodes = linkSafeCodeMentions(protectedContent, idToSlug, options.currentProcedureId);
