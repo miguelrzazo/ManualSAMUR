@@ -6,8 +6,8 @@ slug: drp_01-procedimiento-general-de-los-drp
 tags: []
 synonyms: []
 related: []
-updated: '2026-07-22'
-sourceUpdated: '2026-07-22'
+updated: '2026-09-01'
+sourceUpdated: '2026-09-01'
 source: >-
   https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20General%20de%20los%20DRP/
 contentHash: 2fbb777fdc1b3441d11c42e9bfaf2ed09ce7ffbbb98eb14b2b9b87c1d9127db4
