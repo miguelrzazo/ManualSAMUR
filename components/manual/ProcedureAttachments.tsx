@@ -15,6 +15,12 @@ const ProcedureAttachmentsView = dynamic(
   },
 );
 
-export function ProcedureAttachments({ attachments }: { attachments: ManualAttachment[] }) {
-  return <ProcedureAttachmentsView attachments={attachments} />;
+export function ProcedureAttachments({
+  attachments,
+  defaultExpanded = false,
+}: {
+  attachments: ManualAttachment[];
+  defaultExpanded?: boolean;
+}) {
+  return <ProcedureAttachmentsView attachments={attachments} defaultExpanded={defaultExpanded} />;
 }
