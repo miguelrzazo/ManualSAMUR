@@ -21,6 +21,8 @@ React Native 0.79.5, and React 19.2.4. `package.json` prevents accidentally usin
 with this Expo generation; `npm ci` is the clean-install boundary. The Expo-managed
 scaffold is intentional: the native boundary is `expo run:ios` / `expo run:android`, while
 the repository keeps no generated `ios/` or `android/` directories.
+The managed `with-ios-deployment-target` plugin normalizes all CocoaPods targets to iOS
+15.1, including resource-only pods whose upstream podspec still declares an older target.
 
 For native simulator builds (Xcode and an Android SDK/emulator are required):
 
