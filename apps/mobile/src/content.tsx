@@ -20,6 +20,7 @@ import {
   type MobileProcedure,
   type MobileSnapshot,
 } from "./data/schema";
+import { resolveProcedureReference } from "./procedure-logic";
 
 const SNAPSHOT_KEY = "manualsamur.content.snapshot.v2";
 const FAVORITES_KEY = "manualsamur.preferences.favorites";
@@ -174,5 +175,5 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function findProcedure(content: MobileContent, id: string): MobileProcedure | undefined {
-  return content.procedures.find((procedure) => procedure.id === id || procedure.slug === id || procedure.routeKey === id);
+  return resolveProcedureReference(content.procedures, id);
 }

@@ -3,7 +3,7 @@ import { NavigationContainer, type NavigatorScreenParams } from "@react-navigati
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Linking,
@@ -21,6 +21,7 @@ import { colors, radii, spacing } from "@manual-samur/design-tokens";
 import { ContentProvider, findProcedure, useContent } from "./src/content";
 import { PreferencesProvider, usePreferences, type AppearancePreference } from "./src/preferences";
 import type { MobileProcedure } from "./src/data/schema";
+import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 
 type TabsParamList = {
   Inicio: undefined;
@@ -185,10 +186,12 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
   const { content } = useContent();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"Todo" | "Procedimientos" | "Fármacos">("Todo");
-  const normalized = query.trim().toLocaleLowerCase("es");
-  const procedures = useMemo(() => content.procedures.filter((item) => !normalized || `${item.id} ${item.title} ${item.section} ${item.searchText} ${item.synonyms.join(" ")}`.toLocaleLowerCase("es").includes(normalized)), [content.procedures, normalized]);
-  const drugs = useMemo(() => content.drugs.filter((item) => !normalized || JSON.stringify(item).toLocaleLowerCase("es").includes(normalized)), [content.drugs, normalized]);
-  const visibleProcedures = filter === "Fármacos" ? [] : procedures.slice(0, 60);
+  const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
+  const drugs = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase("es");
+    return content.drugs.filter((item) => !normalized || JSON.stringify(item).toLocaleLowerCase("es").includes(normalized));
+  }, [content.drugs, query]);
+  const visibleProcedures = filter === "Fármacos" ? [] : procedureResults.map(({ procedure }) => procedure);
   const visibleDrugs = filter === "Procedimientos" ? [] : drugs.slice(0, 60);
 
   return (
@@ -203,7 +206,7 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
         keyExtractor={(item, index) => `${item.kind}-${item.kind === "procedure" ? item.item.id : String(item.item.id ?? index)}`}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
-        ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con un código, un nombre o una palabra clínica." />}
+        ListEmptyComponent={<EmptyState title={query.trim() ? "Sin coincidencias" : "Procedimientos no disponibles"} detail={query.trim() ? "Prueba con un código, un nombre, un sinónimo o una palabra del contenido." : "El paquete local no contiene procedimientos utilizables. Revisa una actualización cuando tengas conexión."} />}
         renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.item.id })} /> : <DrugRow drug={item.item} onPress={() => navigation.getParent()?.navigate("Drug", { id: String(item.item.id) })} />}
       />
     </SafeAreaView>
@@ -255,18 +258,55 @@ function MapScreen() {
 
 function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Procedure">) {
   const { content, favorites, toggleFavorite, remember } = useContent();
+  const [attachmentError, setAttachmentError] = useState<string>();
   const procedure = findProcedure(content, route.params.id);
+  const scrollRef = useRef<ScrollView>(null);
+  const routeKey = procedure ? procedureRouteKey(procedure) : `procedure:${route.params.id}`;
+  const sections = useMemo(() => procedure ? splitProcedureSections(procedure.content) : [], [procedure]);
+  const headings = useMemo(() => procedureHeadings(procedure?.content ?? ""), [procedure]);
+  const sectionOffsets = useRef<Record<string, number>>({});
+  const markdownOrigin = useRef(0);
   useEffect(() => {
     if (procedure) remember(procedure.id);
   }, [procedure, remember]);
-  if (!procedure) return <MissingResource title="Procedimiento no disponible" />;
+  useEffect(() => {
+    if (!procedure) return;
+    const offset = readingPositions.get(routeKey);
+    if (offset > 0) requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: offset, animated: false }));
+  }, [procedure, routeKey]);
+  if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const favorite = favorites.includes(procedure.id);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}>
+  const relatedIds = [...new Set([
+    ...procedure.related,
+    ...procedure.backlinks,
+    ...procedure.relations.map((relation) => relation.id),
+  ])].filter((id) => id !== procedure.id);
+  const related = relatedIds.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
+  const unresolvedRelatedIds = relatedIds.filter((id) => !findProcedure(content, id));
+  const openAttachment = async (sourceUrl: string, filename: string) => {
+    try {
+      if (!(await Linking.canOpenURL(sourceUrl))) throw new Error("URL no disponible");
+      await Linking.openURL(sourceUrl);
+    } catch {
+      setAttachmentError(`No se pudo abrir ${filename}. El archivo local no está disponible; prueba de nuevo con conexión.`);
+    }
+  };
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView
+    ref={scrollRef}
+    contentContainerStyle={styles.detailContent}
+    onScroll={(event) => readingPositions.set(routeKey, event.nativeEvent.contentOffset.y)}
+    scrollEventThrottle={100}
+  >
     <View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>PROCEDIMIENTO {procedure.id}</Text><Pressable onPress={() => toggleFavorite(procedure.id)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View>
     <Text style={styles.detailSection}>{procedure.section.toUpperCase()}</Text><Text style={styles.detailTitle}>{procedure.title}</Text><Text style={styles.detailMeta}>Actualizado {procedure.updated || "sin fecha"} · {procedure.attachments.length} anexos</Text>
     <View style={styles.sourceNotice}><MaterialCommunityIcons name="information-outline" size={19} color={colors.red} /><Text style={styles.sourceNoticeText}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text></View>
-    <MarkdownContent markdown={procedure.content} />
-    {procedure.attachments.length > 0 && <><SectionHeading eyebrow="MATERIAL OFICIAL" title="Anexos" /><View style={styles.cardList}>{procedure.attachments.map((attachment) => <Pressable key={attachment.id} onPress={() => void Linking.openURL(attachment.sourceUrl)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`Abrir anexo ${attachment.filename}`}><MaterialCommunityIcons name={attachment.kind === "pdf" ? "file-pdf-box" : "image-outline"} size={23} color={colors.red} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle} numberOfLines={2}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachment.kind.toUpperCase()} · fuente oficial</Text></View><MaterialCommunityIcons name="open-in-new" size={18} color={colors.inkMuted} /></Pressable>)}</View></>}
+    {headings.length > 0 && <View style={styles.contentsCard} accessibilityLabel="Contenido del procedimiento"><Text style={styles.contentsTitle}>CONTENIDO</Text>{headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - spacing.md), animated: true }); }} style={styles.contentsRow} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`}><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text><MaterialCommunityIcons name="chevron-down" size={16} color={colors.inkMuted} /></Pressable>)}</View>}
+    <MarkdownContent sections={sections} onContainerLayout={(offset) => { markdownOrigin.current = offset; }} onSectionLayout={(id, offset) => { sectionOffsets.current[id] = markdownOrigin.current + offset; }} />
+    <ProcedureEditorialBlocks blocks={procedure.editorialBlocks} onProcedure={(id) => navigation.push("Procedure", { id })} />
+    {related.length > 0 && <><SectionHeading eyebrow="CONTEXTO DEL MANUAL" title="Referencias relacionadas" /><View style={styles.cardList}>{related.map((item) => <ProcedureRow key={`related-${item.id}`} procedure={item} onPress={() => navigation.push("Procedure", { id: item.id })} />)}</View></>}
+    {unresolvedRelatedIds.length > 0 && <View style={styles.sourceNotice}><MaterialCommunityIcons name="link-variant-off" size={19} color={colors.red} /><Text style={styles.sourceNoticeText}>Algunas referencias ({unresolvedRelatedIds.join(", ")}) no están incluidas en este paquete local.</Text></View>}
+    {procedure.updates.length > 0 && <><SectionHeading eyebrow="HISTORIAL EDITORIAL" title="Actualizaciones" /><View style={styles.updateList}>{procedure.updates.map((update, index) => <ProcedureUpdate key={index} update={update} />)}</View></>}
+    {procedure.attachments.length > 0 && <><SectionHeading eyebrow="MATERIAL OFICIAL" title="Anexos" />{attachmentError && <View style={styles.sourceNotice}><MaterialCommunityIcons name="alert-circle-outline" size={19} color={colors.red} /><Text style={styles.sourceNoticeText}>{attachmentError}</Text></View>}<View style={styles.cardList}>{procedure.attachments.map((attachment) => <Pressable key={attachment.id} onPress={() => void openAttachment(attachment.sourceUrl, attachment.filename)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`Abrir anexo ${attachment.filename}. Requiere conexión para abrir la fuente externa`}><MaterialCommunityIcons name={attachment.kind === "pdf" ? "file-pdf-box" : "image-outline"} size={23} color={colors.red} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle} numberOfLines={2}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachment.kind.toUpperCase()} · requiere conexión para abrir fuente externa</Text></View><MaterialCommunityIcons name="open-in-new" size={18} color={colors.inkMuted} /></Pressable>)}</View></>}
   </ScrollView></SafeAreaView>;
 }
 
@@ -290,13 +330,40 @@ function AbbreviationsScreen({ navigation }: NativeStackScreenProps<RootStackPar
   return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={entries} keyExtractor={(item, index) => `${item.letter}-${String(item.entry.abbreviation ?? index)}`} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><Text style={styles.pageKicker}>LENGUAJE OPERATIVO</Text></>} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{String(item.entry.abbreviation ?? "")}</Text><Text style={styles.resourceTitle}>{String(item.entry.meaning ?? "")}</Text></View>} /></SafeAreaView>;
 }
 
-function MarkdownContent({ markdown }: { markdown: string }) {
-  const lines = markdown.replace(/\r/g, "").split("\n").filter((line) => line.trim() && !line.startsWith("🖨️"));
-  return <View style={styles.markdown}>{lines.slice(0, 240).map((line, index) => { const trimmed = line.trim(); if (trimmed.startsWith("###")) return <Text key={index} style={styles.markdownH3}>{trimmed.replace(/^#+\s*/, "")}</Text>; if (trimmed.startsWith("##")) return <Text key={index} style={styles.markdownH2}>{trimmed.replace(/^#+\s*/, "")}</Text>; if (/^(\*|-|•)\s/.test(trimmed)) return <View key={index} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{trimmed.replace(/^(\*|-|•)\s*/, "")}</Text></View>; return <Text key={index} style={styles.markdownText}>{trimmed.replace(/\*\*/g, "")}</Text>; })}</View>;
+function readableMarkdownLine(line: string): string {
+  return line
+    .replace(/^\s*[-*•]\s+/, "")
+    .replace(/^\s*[*_~`]+|[*_~`]+\s*$/g, "")
+    .replace(/<DrugLink\s+name="([^"]+)"\s*\/>/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/\*\*/g, "")
+    .replace(/__/g, "")
+    .replace(/>>\S+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function MarkdownContent({ sections, onContainerLayout, onSectionLayout }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void }) {
+  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{section.lines.map((line, index) => { const trimmed = line.trim(); if (!trimmed || trimmed.startsWith("🖨️") || /^#{2,6}\s/.test(trimmed)) return null; const text = readableMarkdownLine(trimmed); if (!text) return null; if (/^(\*|-|•)\s/.test(trimmed)) return <View key={`${section.key}-${index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{text}</Text></View>; return <Text key={`${section.key}-${index}`} style={styles.markdownText}>{text}</Text>; })}</View>)}</View>;
+}
+
+function ProcedureEditorialBlocks({ blocks, onProcedure }: { blocks: unknown[]; onProcedure?: (id: string) => void }) {
+  const usable = blocks.filter((block): block is Record<string, unknown> => Boolean(block) && typeof block === "object");
+  if (!usable.length) return null;
+  return <><SectionHeading eyebrow="NOTAS EDITORIALES" title="Puntos destacados" /><View style={styles.editorialList}>{usable.map((block, index) => { const items = Array.isArray(block.items) ? block.items : []; const assets = Array.isArray(block.assets) ? block.assets : []; return <View key={String(block.id ?? index)} style={styles.editorialBlock}><Text style={styles.infoLabel}>{String(block.label ?? block.type ?? "Nota")}</Text>{typeof block.title === "string" && <Text style={styles.editorialTitle}>{block.title}</Text>}{typeof block.content === "string" && <Text style={styles.infoValue}>{block.content}</Text>}{items.map((item, itemIndex) => { const itemId = typeof item === "string" && /^\d/.test(item) ? item : undefined; const itemText = typeof item === "string" ? item : String((item as Record<string, unknown>)?.label ?? (item as Record<string, unknown>)?.title ?? "Referencia"); return itemId && onProcedure ? <Pressable key={itemIndex} onPress={() => onProcedure(itemId)} style={styles.editorialLink} accessibilityRole="button" accessibilityLabel={`Abrir procedimiento ${itemId}`}><Text style={styles.markdownText}>• {itemText}</Text><MaterialCommunityIcons name="chevron-right" size={17} color={colors.inkMuted} /></Pressable> : <Text key={itemIndex} style={styles.markdownText}>• {itemText}</Text>; })}{assets.map((asset, assetIndex) => <Text key={assetIndex} style={styles.resourceMeta}>{String((asset as Record<string, unknown>)?.title ?? (asset as Record<string, unknown>)?.src ?? "Material editorial")}</Text>)}</View>; })}</View></>;
+}
+
+function ProcedureUpdate({ update }: { update: unknown }) {
+  const value = update && typeof update === "object" ? update as Record<string, unknown> : {};
+  const date = String(value.date ?? value.updatedAt ?? value.createdAt ?? "Fecha no indicada");
+  const label = String(value.title ?? value.label ?? value.type ?? "Actualización del contenido");
+  const detail = String(value.summary ?? value.description ?? value.message ?? "");
+  return <View style={styles.updateRow}><Text style={styles.infoLabel}>{date.slice(0, 10)}</Text><Text style={styles.resourceTitle}>{label}</Text>{detail && <Text style={styles.resourceMeta}>{detail}</Text>}</View>;
 }
 
 function EmptyState({ title, detail }: { title: string; detail: string }) { return <View style={styles.emptyState}><MaterialCommunityIcons name="bookmark-off-outline" size={28} color={colors.inkMuted} /><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text></View>; }
-function MissingResource({ title }: { title: string }) { return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><Text style={styles.emptyTitle}>{title}</Text></View></SafeAreaView>; }
+function MissingResource({ title, detail, onRecover }: { title: string; detail?: string; onRecover?: () => void }) { return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><MaterialCommunityIcons name="file-alert-outline" size={30} color={colors.red} /><Text style={styles.emptyTitle}>{title}</Text>{detail && <Text style={styles.emptyDetail}>{detail}</Text>}{onRecover && <Pressable onPress={onRecover} style={styles.primaryButton} accessibilityRole="button"><Text style={styles.primaryButtonText}>Buscar otro procedimiento</Text></Pressable>}</View></SafeAreaView>; }
 
 function SettingsModal({ visible, onClose, onRefresh, generatedAt, isRefreshing, lastError }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; generatedAt: string; isRefreshing: boolean; lastError?: string }) {
   const { appearance, setAppearance } = usePreferences();
@@ -417,7 +484,7 @@ const styles = StyleSheet.create({
   mapLegend: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, mapLegendDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: colors.green }, mapLegendText: { color: colors.inkMuted, fontSize: 12 },
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: "#E7ECF2", overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: colors.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: "#F7F8FA", transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: "#F7F8FA", transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: "#F7F8FA", transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPin: { position: "absolute", width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: colors.white }, mapPinRed: { backgroundColor: colors.red }, mapPinNavy: { backgroundColor: colors.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: colors.ink, fontWeight: "900" }, mapNote: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl },
   locationRow: { minHeight: 66, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, locationIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: colors.redWash, alignItems: "center", justifyContent: "center" }, locationIconBase: { backgroundColor: colors.amberWash },
-  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: colors.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: colors.red, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: colors.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: colors.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: colors.redWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: colors.redDark, fontSize: 12, lineHeight: 17 }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: colors.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: colors.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: colors.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: colors.red, fontSize: 18, lineHeight: 23 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: colors.line },
+  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: colors.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: colors.red, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: colors.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: colors.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: colors.redWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: colors.redDark, fontSize: 12, lineHeight: 17 }, contentsCard: { backgroundColor: colors.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, contentsTitle: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginBottom: spacing.sm }, contentsRow: { minHeight: 38, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.line }, contentsText: { flex: 1, color: colors.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: colors.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: colors.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: colors.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: colors.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: colors.red, fontSize: 18, lineHeight: 23 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: colors.line }, editorialList: { backgroundColor: colors.surface, borderRadius: radii.md, borderWidth: 1, borderColor: colors.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: colors.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: colors.surface, borderRadius: radii.md, borderWidth: 1, borderColor: colors.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line },
   infoBlock: { borderTopWidth: 1, borderTopColor: colors.line, paddingVertical: spacing.md }, infoLabel: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.1, textTransform: "uppercase", marginBottom: 5 }, infoValue: { color: colors.ink, fontSize: 15, lineHeight: 22 }, codeRow: { flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, codeValue: { minWidth: 55, color: colors.red, fontSize: 15, fontWeight: "900" }, abbreviationRow: { flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, abbreviation: { width: 70, color: colors.red, fontWeight: "900", fontSize: 13 },
   modal: { flex: 1, backgroundColor: colors.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: colors.ink, fontSize: 24, fontWeight: "800" }, modalKicker: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: 4 }, modalClose: { color: colors.red, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: colors.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, borderColor: colors.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, primaryButton: { backgroundColor: colors.red, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: colors.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: colors.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: colors.ink }, appearanceText: { color: colors.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: colors.white }, infoPanel: { backgroundColor: colors.redWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: colors.redDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: colors.redDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.line }, linkText: { color: colors.red, fontSize: 13, fontWeight: "800" }, legalText: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" }, locationSheet: { backgroundColor: colors.paper, padding: spacing.xl, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg }, sheetHandle: { width: 42, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: "center", marginBottom: spacing.xl }, sheetTitle: { color: colors.ink, fontSize: 24, lineHeight: 28, fontWeight: "800", marginBottom: spacing.sm },
   launchScreen: { flex: 1, backgroundColor: colors.ink, alignItems: "center", justifyContent: "center" }, launchTitle: { color: colors.white, fontSize: 30, fontWeight: "900", letterSpacing: -0.8, marginTop: spacing.lg }, launchSubtitle: { color: "#B8C4D7", fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: spacing.sm }, disclosureScreen: { flex: 1, backgroundColor: colors.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: colors.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureBody: { color: colors.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
