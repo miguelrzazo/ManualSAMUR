@@ -11,15 +11,13 @@ related: []
 attachments: []
 ---
 
-**Objetivos de este procedimiento:**
-
+### Objetivos de este procedimiento
 * Establecerá la definición de CECOR y sus diferentes tipos.
 * Describir las obligaciones del Responsable del CECOR.
 * Unificar la actuación de las Unidades de Comunicación de SAMUR-Protección Civil durante el desarrollo de un dispositivo de riesgo previsible.
 * Estructurar la cumplimentación de los informes de CECOR que son emitidos por los responsables cuando finalizan los dispositivos de riesgo previsibles.
 
-**Definición y tipos:**
-
+### Definición y tipos
 * Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.).
 * Se denomina **“CECOR”** a todo aquel Centro de Coordinación Operativa, especialmente diseñado para la gestión de las comunicaciones y de las intervenciones, en los dispositivos de riesgo previsible. Tiene como objetivo la coordinación adecuada entre los diferentes servicios/dispositivos sanitarios. Puede estar formado por un solo DRP o por varios. Podemos diferenciar:
   * **CECOR INTERNO:** Centro de Coordinación establecido por SAMUR-Protección Civil para la gestión de las unidades o intervenciones sanitarias durante uno o varios DRP.
@@ -51,8 +49,7 @@ Es el responsable de la gestión de las comunicaciones en el/los dispositivos de
 * Informará al Supervisor de Guardia, el responsable del DRP y a cualquier otro responsable directamente implicado, de cualquier incidencia acontecida durante el desarrollo del mismo.
 * Cumplimentará el informe web de CECOR al finalizar el DRP.
 
-**El CECOR INTERNO puede gestionarse a través de la aplicación “DRP” atendiendo a los siguientes criterios:**
-
+### El CECOR INTERNO puede gestionarse a través de la aplicación “DRP” atendiendo a los siguientes criterios
 1. Multiservicio.
 1. Macroservicio.
 

@@ -52,8 +52,7 @@ Cada servicio tendrá un responsable que será acorde al nivel de complejidad de
 **1. Podrá apoyarse en el Coordinador del DRP para la gestión y coordinación de las unidades de voluntarios.
 * **Servicios no asistenciales con funciones de enlace o coordinación.** El responsable será el responsable de CECOR externo designado específicamente para dicho servicio, acorde al procedimiento de CECOR en un dispositivo de riesgo previsible.
 
-**El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos:**
-
+### El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos
 * Mantiene sus funciones de responsabilidad sobre el personal voluntario, por lo que prestará la asistencia que éstos puedan necesitar.
 * En los DRP con un Coordinador del DRP mantendrá la supervisión sobre el mismo y resolverá cualquier incidencia que pudiera presentarse, llegando a relevar al Eco 0 si así lo estima oportuno.
 * En los servicios con Jefe del DRP colaborará con el mismo en la recepción de personal voluntario y despliegue.

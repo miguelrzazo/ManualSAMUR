@@ -799,9 +799,11 @@ function isRemoteUrl(value: string) {
 
 function remoteFilename(value: string) {
   try {
-    return decodeURIComponent(new URL(value).pathname.split("/").at(-1) ?? "adjunto");
+    const filename = decodeURIComponent(new URL(value).pathname.split("/").at(-1) ?? "adjunto");
+    return filename.split("@").at(-1) || filename;
   } catch {
-    return value.split("/").at(-1) ?? "adjunto";
+    const filename = value.split("/").at(-1) ?? "adjunto";
+    return filename.split("@").at(-1) || filename;
   }
 }
 
