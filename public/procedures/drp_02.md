@@ -1,21 +1,16 @@
 ---
-id: drp_02
-title: Procedimiento de despliege de un DRP
-section: DRP
-slug: drp_02-procedimiento-de-despliege-de-un-drp
+id: "drp_02"
+title: "Procedimiento de despliege de un DRP"
+section: "DRP"
+slug: "drp_02-procedimiento-de-despliege-de-un-drp"
+updated: "2026-09-01"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20de%20despliege%20de%20un%20DRP/"
 tags: []
 synonyms: []
 related: []
-updated: '2026-07-22'
-sourceUpdated: '2026-07-22'
-source: >-
-  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20de%20despliege%20de%20un%20DRP/
-contentHash: b35ca0ba72777e95831275150788c42b6aef90256c866e3c6575c8583ccc3669
 attachments: []
-editorialStatus: source
-editorialLockedAt: ''
-lastApprovedOfficialUpdateAt: ''
 ---
+
 ## **Objeto**.
 Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).
 
@@ -64,7 +59,7 @@ Este procedimiento tiene por objeto establecer el modo de actuar en los desplieg
 * El despliegue y operatividad de las unidades se realizarán de forma análoga al operativo ordinario o retén, con la salvedad de poder establecer un canal de comunicación específico.
 
 ### Servicios preventivos no asistenciales con funciones de enlace o coordinación.
-* El despliegue del CECOR externo e interno tendrá lugar acorde al procedimiento correspondiente (ver procedimiento de CECOR en un dispositivo de riesgo previsible.
+* El despliegue del CECOR externo e interno tendrá lugar acorde al procedimiento correspondiente ([ver procedimiento de CECOR en un dispositivo de riesgo previsible](/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible).
 
 ## **Repliegue**
 ### Finalización del servicio (clave 14).
