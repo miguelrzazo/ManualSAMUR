@@ -22,7 +22,7 @@ import { ContentProvider, findProcedure, useContent } from "./src/content";
 import { PreferencesProvider, usePreferences, type AppearancePreference } from "./src/preferences";
 import type { MobileProcedure } from "./src/data/schema";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
-import { searchAbbreviations, searchCodes, searchVademecum, type MobileReferenceSearchResult } from "./src/reference-search-logic";
+import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, type MobileReferenceSearchResult } from "./src/reference-search-logic";
 
 type TabsParamList = {
   Inicio: undefined;
@@ -35,6 +35,8 @@ type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabsParamList> | undefined;
   Procedure: { id: string };
   Drug: { id: string };
+  Vademecum: { routeKey: string };
+  Code: { routeKey: string };
   Codes: { query?: string } | undefined;
   Abbreviations: { query?: string } | undefined;
 };
@@ -156,7 +158,6 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
           <ActionCard icon="clipboard-text-outline" label="Procedimientos" detail={`${content.procedures.length} fichas`} onPress={() => navigation.navigate("Buscar")} />
           <ActionCard icon="pill" label="Vademécum" detail={`${content.drugs.length} fármacos`} tone="navy" onPress={() => navigation.navigate("Buscar")} />
           <ActionCard icon="radio-handheld" label="Códigos" detail="Radio y claves" tone="amber" onPress={() => navigation.getParent()?.navigate("Codes")} />
-          <ActionCard icon="format-letter-case" label="Abreviaturas" detail="Consulta rápida" tone="green" onPress={() => navigation.getParent()?.navigate("Abbreviations")} />
         </View>
 
         {recentProcedures.length > 0 && <>
@@ -178,7 +179,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
         </View>
         <Text style={styles.disclaimer}>Pulso abierto es una adaptación independiente y no oficial. Consulta siempre la fuente operativa vigente.</Text>
       </ScrollView>
-      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} generatedAt={snapshot.generatedAt} isRefreshing={isRefreshing} lastError={lastError} />
+      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} isRefreshing={isRefreshing} lastError={lastError} />
     </SafeAreaView>
   );
 }
@@ -186,20 +187,20 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
 function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
   const { content } = useContent();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"Todo" | "Procedimientos" | "Vademécum" | "Códigos" | "Abreviaturas">("Todo");
+  const [filter, setFilter] = useState<"Todo" | "Procedimientos" | "Vademécum" | "Códigos">("Todo");
+  const [vademecumCategory, setVademecumCategory] = useState<"Todos" | "Fármacos" | "Comerciales" | "Perfusiones" | "Fluidos">("Todos");
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
   const vademecumResults = useMemo(() => searchVademecum(content, query), [content, query]);
   const codeResults = useMemo(() => searchCodes(content.codes, query), [content.codes, query]);
-  const abbreviationResults = useMemo(() => searchAbbreviations(content.abbreviations, query), [content.abbreviations, query]);
-  const visibleProcedures = filter === "Vademécum" || filter === "Códigos" || filter === "Abreviaturas" ? [] : procedureResults.map(({ procedure }) => procedure);
-  const visibleVademecum = filter === "Procedimientos" || filter === "Códigos" || filter === "Abreviaturas" ? [] : vademecumResults;
-  const visibleCodes = filter === "Procedimientos" || filter === "Vademécum" || filter === "Abreviaturas" ? [] : codeResults;
-  const visibleAbbreviations = filter === "Procedimientos" || filter === "Vademécum" || filter === "Códigos" ? [] : abbreviationResults;
+  const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults.map(({ procedure }) => procedure);
+  const visibleVademecum = (filter === "Todo" || filter === "Vademécum")
+    ? vademecumResults.filter((item) => vademecumCategory === "Todos" || (vademecumCategory === "Fármacos" && item.kind === "drug") || (vademecumCategory === "Comerciales" && item.kind === "commercialName") || (vademecumCategory === "Perfusiones" && item.kind === "perfusion") || (vademecumCategory === "Fluidos" && item.kind === "fluid"))
+    : [];
+  const visibleCodes = filter === "Todo" || filter === "Códigos" ? codeResults : [];
   const rows = [
     ...visibleProcedures.map((item) => ({ kind: "procedure" as const, item })),
     ...visibleVademecum.map((item) => ({ kind: "reference" as const, item })),
     ...visibleCodes.map((item) => ({ kind: "reference" as const, item })),
-    ...visibleAbbreviations.map((item) => ({ kind: "reference" as const, item })),
   ];
 
   return (
@@ -207,24 +208,28 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
       <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Buscar</Text><Text style={styles.pageKicker}>CONSULTA LOCAL</Text></View>
       <View style={styles.searchPadding}><SearchBar value={query} onChangeText={setQuery} /></View>
       <View style={styles.filterRow} accessibilityRole="tablist">
-        {(["Todo", "Procedimientos", "Vademécum", "Códigos", "Abreviaturas"] as const).map((item) => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filterChip, filter === item && styles.filterChipActive]} accessibilityRole="tab" accessibilityState={{ selected: filter === item }}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item}</Text></Pressable>)}
+        {(["Todo", "Procedimientos", "Vademécum", "Códigos"] as const).map((item) => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filterChip, filter === item && styles.filterChipActive]} accessibilityRole="tab" accessibilityState={{ selected: filter === item }}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item}</Text></Pressable>)}
       </View>
+      {(filter === "Todo" || filter === "Vademécum") && <View style={styles.filterRow} accessibilityRole="tablist">
+        {(["Todos", "Fármacos", "Comerciales", "Perfusiones", "Fluidos"] as const).map((item) => <Pressable key={item} onPress={() => { setFilter("Vademécum"); setVademecumCategory(item); }} style={[styles.filterChip, vademecumCategory === item && filter === "Vademécum" && styles.filterChipActive]} accessibilityRole="tab" accessibilityState={{ selected: vademecumCategory === item && filter === "Vademécum" }}><Text style={[styles.filterText, vademecumCategory === item && filter === "Vademécum" && styles.filterTextActive]}>{item}</Text></Pressable>)}
+      </View>}
       <FlatList
         data={rows}
         keyExtractor={(item, index) => `${item.kind}-${item.item.id}-${index}`}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={<EmptyState title={query.trim() ? "Sin coincidencias" : "Procedimientos no disponibles"} detail={query.trim() ? "Prueba con un código, un nombre, un sinónimo o una palabra del contenido." : "El paquete local no contiene procedimientos utilizables. Revisa una actualización cuando tengas conexión."} />}
-        renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.item.id })} /> : <ReferenceRow reference={item.item} onCodes={() => navigation.getParent()?.navigate("Codes", { query: query.trim() || undefined })} onAbbreviations={() => navigation.getParent()?.navigate("Abbreviations", { query: query.trim() || undefined })} onDrug={(id) => navigation.getParent()?.navigate("Drug", { id })} />}
+        renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.item.id })} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => navigation.getParent()?.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.getParent()?.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.getParent()?.navigate("Drug", { id })} />}
       />
     </SafeAreaView>
   );
 }
 
-function ReferenceRow({ reference, onCodes, onAbbreviations, onDrug }: { reference: MobileReferenceSearchResult; onCodes: () => void; onAbbreviations: () => void; onDrug: (id: string) => void }) {
+function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: MobileReferenceSearchResult; onCode: (routeKey: string) => void; onVademecum: (routeKey: string) => void; onDrug: (id: string) => void }) {
   const icon = reference.kind === "code" ? "radio-handheld" : reference.kind === "abbreviation" ? "format-letter-case" : "pill";
-  const onPress = reference.kind === "code" ? onCodes : reference.kind === "abbreviation" ? onAbbreviations : () => reference.targetId && onDrug(reference.targetId);
-  return <Pressable onPress={onPress} disabled={reference.kind !== "code" && reference.kind !== "abbreviation" && !reference.targetId} style={({ pressed }) => [styles.resourceRow, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${reference.title}. ${reference.subtitle}`}>
+  const targetId = reference.targetId;
+  const onPress = reference.kind === "code" ? () => onCode(reference.routeKey) : reference.kind === "drug" && targetId ? () => onDrug(targetId) : () => onVademecum(reference.routeKey);
+  return <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRow, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${reference.title}. ${reference.subtitle}`}>
     <View style={[styles.resourceCode, reference.kind === "code" ? styles.codeResultCode : reference.kind === "abbreviation" ? styles.abbreviationResultCode : styles.drugCode]}><MaterialCommunityIcons name={icon} size={17} color={colors.ink} /></View>
     <View style={styles.resourceCopy}><Text style={styles.resourceTitle} numberOfLines={2}>{reference.title}</Text><Text style={styles.resourceMeta}>{reference.badge ? `${reference.badge} · ` : ""}{reference.subtitle}</Text></View>
     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} />
@@ -329,18 +334,43 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
 }
 
 function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Drug">) {
-  const { content } = useContent();
+  const { content, snapshot } = useContent();
   const drug = content.drugs.find((item) => String(item.id) === route.params.id);
   if (!drug) return <MissingResource title="Fármaco no disponible" />;
-  const fields = [["Función", "funcion"], ["Indicación", "indication"], ["Dosis", "dose"], ["Presentación", "presentation"]] as const;
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>VADEMÉCUM</Text><Text style={styles.detailTitle}>{String(drug.name ?? "Fármaco")}</Text><Text style={styles.detailMeta}>{String(drug.category ?? "")} · {String(drug.subcategory ?? "")}</Text>{fields.map(([label, key]) => typeof drug[key] === "string" && drug[key] ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{String(drug[key])}</Text></View> : null)}</ScrollView></SafeAreaView>;
+  const fields = [["Función", "funcion"], ["Indicación", "indication"], ["Presentación publicada", "presentation"], ["Vía", "route"], ["Dosis publicada", "dose"], ["Contraindicaciones", "contraindications"], ["Efectos secundarios", "efectos_secundarios"], ["Notas", "notes"]] as const;
+  const relatedIds = relatedProcedureIdsForDrug(content, drug).slice(0, 12);
+  const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
+  const sourceUrl = typeof content.links.officialWebUrl === "string" && content.links.officialWebUrl ? content.links.officialWebUrl : content.links.sourceUrl;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>VADEMÉCUM · FÁRMACO</Text><Text style={styles.detailTitle}>{String(drug.name ?? "Fármaco")}</Text><Text style={styles.detailMeta}>{String(drug.category ?? "")} · {String(drug.subcategory ?? "")}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia publicada en el paquete local {packageRevision}{sourceUrl ? ` · Fuente: ${sourceUrl}` : ""}</Text></View>{fields.map(([label, key]) => { const value = drug[key]; const display = Array.isArray(value) ? value.join(" · ") : value; return typeof display === "string" && display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null; })}{relatedIds.length > 0 && <><SectionHeading eyebrow="CONTEXTO DEL MANUAL" title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedIds.map((id) => { const procedure = findProcedure(content, id); return procedure ? <ProcedureRow key={id} procedure={procedure} onPress={() => navigation.push("Procedure", { id })} /> : null; })}</View></>}</ScrollView></SafeAreaView>;
+}
+
+function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Vademecum">) {
+  const { content, snapshot } = useContent();
+  const reference = resolveVademecumReference(content, route.params.routeKey);
+  if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  const details = reference.detail ?? {};
+  const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
+  const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>VADEMÉCUM · {reference.kind.toUpperCase()}</Text><Text style={styles.detailTitle}>{reference.title}</Text><Text style={styles.detailMeta}>{reference.subtitle}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia local · revisión {packageRevision}</Text></View>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key.replace(/([A-Z])/g, " $1")}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
+}
+
+function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Code">) {
+  const { content, snapshot } = useContent();
+  const reference = resolveCodeReference(content.codes, route.params.routeKey);
+  if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  const details = reference.detail ?? {};
+  const description = typeof details.description === "string" ? details.description : "";
+  const category = typeof details.category === "string" ? details.category : "";
+  const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
+  const extraFields = Object.entries(details).filter(([key, value]) => !["code", "name", "title", "category", "description"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 8);
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={colors.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}<View style={styles.infoBlock}><Text style={styles.infoLabel}>Ruta estable</Text><Text style={styles.infoValue}>{reference.routeKey}</Text></View></ScrollView></SafeAreaView>;
 }
 
 function CodesScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Codes">) {
   const { content } = useContent();
   const [query, setQuery] = useState(route.params?.query ?? "");
   const codes = useMemo(() => searchCodes(content.codes, query, 2000), [content.codes, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={codes} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.pageTitle}>Códigos y claves</Text><Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el código, nombre, categoría o descripción." />} renderItem={({ item }) => <View style={styles.codeRow}><Text style={styles.codeValue}>{item.badge ?? "—"}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text></View></View>} /></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={codes} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.pageTitle}>Códigos y claves</Text><Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el código, nombre, categoría o descripción." />} renderItem={({ item }) => <Pressable onPress={() => navigation.push("Code", { routeKey: item.routeKey })} style={styles.codeRow} accessibilityRole="button" accessibilityLabel={`Abrir código ${item.badge ?? item.title}`}><Text style={styles.codeValue}>{item.badge ?? "—"}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text></View><MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} /></Pressable>} /></SafeAreaView>;
 }
 
 function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Abbreviations">) {
@@ -385,7 +415,7 @@ function ProcedureUpdate({ update }: { update: unknown }) {
 function EmptyState({ title, detail }: { title: string; detail: string }) { return <View style={styles.emptyState}><MaterialCommunityIcons name="bookmark-off-outline" size={28} color={colors.inkMuted} /><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text></View>; }
 function MissingResource({ title, detail, onRecover }: { title: string; detail?: string; onRecover?: () => void }) { return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><MaterialCommunityIcons name="file-alert-outline" size={30} color={colors.red} /><Text style={styles.emptyTitle}>{title}</Text>{detail && <Text style={styles.emptyDetail}>{detail}</Text>}{onRecover && <Pressable onPress={onRecover} style={styles.primaryButton} accessibilityRole="button"><Text style={styles.primaryButtonText}>Buscar otro procedimiento</Text></Pressable>}</View></SafeAreaView>; }
 
-function SettingsModal({ visible, onClose, onRefresh, generatedAt, isRefreshing, lastError }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; generatedAt: string; isRefreshing: boolean; lastError?: string }) {
+function SettingsModal({ visible, onClose, onRefresh, onOpenAbbreviations, generatedAt, isRefreshing, lastError }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; onOpenAbbreviations: () => void; generatedAt: string; isRefreshing: boolean; lastError?: string }) {
   const { appearance, setAppearance } = usePreferences();
   const appearanceLabels: Record<AppearancePreference, string> = { system: "Sistema", light: "Claro", dark: "Oscuro" };
   return <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" allowSwipeDismissal onRequestClose={onClose}>
@@ -398,6 +428,13 @@ function SettingsModal({ visible, onClose, onRefresh, generatedAt, isRefreshing,
           <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{lastError ? "Contenido local sin actualizar" : "Contenido disponible offline"}</Text><Text style={styles.resourceMeta}>{lastError ?? `Generado ${generatedAt.slice(0, 10)} · hash verificado`}</Text></View>
         </View>
         <Pressable onPress={() => void onRefresh()} disabled={isRefreshing} style={[styles.primaryButton, isRefreshing && styles.disabledButton]} accessibilityRole="button" accessibilityLabel="Buscar actualización"><Text style={styles.primaryButtonText}>{isRefreshing ? "Actualizando…" : "Buscar actualización"}</Text></Pressable>
+
+        <Text style={styles.settingsSectionTitle}>Consulta rápida</Text>
+        <Pressable onPress={onOpenAbbreviations} style={styles.settingsCard} accessibilityRole="button" accessibilityLabel="Abrir abreviaturas">
+          <MaterialCommunityIcons name="format-letter-case" size={25} color={colors.green} />
+          <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>Abreviaturas</Text><Text style={styles.resourceMeta}>Búsqueda local por abreviatura o significado</Text></View>
+          <MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} />
+        </Pressable>
 
         <Text style={styles.settingsSectionTitle}>Apariencia</Text>
         <View style={styles.appearanceControl} accessibilityRole="radiogroup" accessibilityLabel="Apariencia de la aplicación">
@@ -445,7 +482,7 @@ function MainTabs() {
 }
 
 function AppNavigation() {
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: colors.paper } }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Codes" component={CodesScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: colors.paper } }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card" }} /><Stack.Screen name="Codes" component={CodesScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {

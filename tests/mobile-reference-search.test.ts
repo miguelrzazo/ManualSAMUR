@@ -6,6 +6,10 @@ import {
   buildAbbreviationReferences,
   buildCodeReferences,
   buildVademecumReferences,
+  codeRouteKey,
+  relatedProcedureIdsForDrug,
+  resolveCodeReference,
+  resolveVademecumReference,
   searchAbbreviations,
   searchCodes,
   searchVademecum,
@@ -47,4 +51,38 @@ test("reference lookup is accent insensitive and deterministic for empty queries
   const second = searchVademecum(snapshot.content, "acido acetil salicilico", 10);
   assert.deepEqual(first.map((item) => item.id), second.map((item) => item.id));
   assert.equal(searchAbbreviations(snapshot.content.abbreviations, "", 500).length, buildAbbreviationReferences(snapshot.content.abbreviations).length);
+});
+
+test("code and vademécum entries resolve through stable detail routes and recover when absent", () => {
+  const code = buildCodeReferences(snapshot.content.codes).find((item) => item.badge === "1.1");
+  assert.ok(code);
+  assert.equal(code.routeKey, codeRouteKey("incidente", "1.1"));
+  assert.equal(resolveCodeReference(snapshot.content.codes, code.routeKey)?.title, "Accidente no especificado");
+  assert.equal(resolveCodeReference(snapshot.content.codes, "code:missing:9.9"), undefined);
+
+  const medicine = buildVademecumReferences(snapshot.content).find((item) => item.kind === "drug" && item.targetId === "n-acetilcisteina");
+  assert.ok(medicine);
+  assert.equal(resolveVademecumReference(snapshot.content, medicine.routeKey)?.title, medicine.title);
+  const fluid = buildVademecumReferences(snapshot.content).find((item) => item.kind === "fluid");
+  assert.ok(fluid);
+  assert.equal(resolveVademecumReference(snapshot.content, fluid.routeKey)?.kind, "fluid");
+  assert.equal(resolveVademecumReference(snapshot.content, "vademecum:fluid:missing"), undefined);
+  assert.ok(relatedProcedureIdsForDrug(snapshot.content, medicine.detail ?? {}).every((id) => snapshot.content.procedures.some((procedure) => procedure.id === id)));
+});
+
+test("abbreviations stay out of global search while remaining in the information hub", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), "utf8");
+  const searchStart = source.indexOf("function SearchScreen");
+  const searchEnd = source.indexOf("function ReferenceRow", searchStart);
+  const globalSearch = source.slice(searchStart, searchEnd);
+  assert.doesNotMatch(globalSearch, /searchAbbreviations|Abreviaturas/);
+  assert.match(source, /onOpenAbbreviations/);
+  assert.match(source, /Abrir abreviaturas/);
+  assert.match(source, /Fármacos/);
+  assert.match(source, /Comerciales/);
+  assert.match(source, /Perfusiones/);
+  assert.match(source, /Fluidos/);
+  assert.match(source, /Presentación publicada/);
+  assert.match(source, /Procedimientos relacionados/);
+  assert.match(source, /function CodeScreen/);
 });

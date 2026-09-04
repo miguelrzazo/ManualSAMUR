@@ -10,11 +10,15 @@ export interface MobileReferenceSearchResult {
   badge?: string;
   /** ID of the canonical medication record when this is a vademécum alias. */
   targetId?: string;
+  /** Group/category provenance used to build stable detail routes. */
+  sourceGroup?: string;
+  detail?: ReferenceRecord;
+  routeKey: string;
   searchText: string;
   rank: number;
 }
 
-type ReferenceRecord = Record<string, unknown>;
+export type ReferenceRecord = Record<string, unknown>;
 
 function normalize(value: unknown): string {
   return String(value ?? "")
@@ -52,8 +56,24 @@ function asRecords(value: unknown): ReferenceRecord[] {
   return Array.isArray(value) ? value.filter((item): item is ReferenceRecord => Boolean(item) && typeof item === "object" && !Array.isArray(item)) : [];
 }
 
-function result(kind: MobileReferenceKind, record: ReferenceRecord, fields: Omit<MobileReferenceSearchResult, "kind" | "searchText" | "rank">): MobileReferenceSearchResult {
-  return { kind, ...fields, searchText: recordText(record), rank: 0 };
+function canonicalDrugId(drugs: ReferenceRecord[], item: ReferenceRecord): string | undefined {
+  const explicit = stringValue(item, "drugId");
+  if (explicit) return explicit;
+  const drugName = normalize(stringValue(item, "drug"));
+  const match = drugs.find((drug) => drugName && normalize(stringValue(drug, "name")) === drugName);
+  return match ? stringValue(match, "id") || undefined : undefined;
+}
+
+function result(kind: MobileReferenceKind, record: ReferenceRecord, fields: Omit<MobileReferenceSearchResult, "kind" | "searchText" | "rank" | "routeKey" | "detail"> & { routeKey?: string }): MobileReferenceSearchResult {
+  return { kind, ...fields, routeKey: fields.routeKey ?? `${kind}:${fields.id}`, detail: record, searchText: recordText(record), rank: 0 };
+}
+
+export function vademecumRouteKey(kind: Exclude<MobileReferenceKind, "code" | "abbreviation">, id: string): string {
+  return `vademecum:${kind}:${id}`;
+}
+
+export function codeRouteKey(group: string, code: string): string {
+  return `code:${group}:${code}`;
 }
 
 export function buildVademecumReferences(content: Pick<MobileContent, "drugs" | "perfusions" | "fluids" | "commercialNames">): MobileReferenceSearchResult[] {
@@ -68,19 +88,22 @@ export function buildVademecumReferences(content: Pick<MobileContent, "drugs" | 
       subtitle: [stringValue(item, "category"), stringValue(item, "subcategory")].filter(Boolean).join(" · ") || "Vademécum",
       badge: stringValue(item, "id") || undefined,
       targetId: stringValue(item, "id") || undefined,
+      routeKey: vademecumRouteKey("drug", stringValue(item, "id", "name")),
     })),
     ...perfusions.map((item) => result("perfusion", item, {
       id: stringValue(item, "id", "drugId", "drug"),
       title: stringValue(item, "drug", "id") || "Perfusión",
       subtitle: ["Perfusión", stringValue(item, "category")].filter(Boolean).join(" · "),
       badge: "PERF",
-      targetId: stringValue(item, "drugId") || undefined,
+      targetId: canonicalDrugId(drugs, item),
+      routeKey: vademecumRouteKey("perfusion", stringValue(item, "id", "drugId", "drug")),
     })),
     ...fluids.map((item) => result("fluid", item, {
       id: stringValue(item, "id", "name"),
       title: stringValue(item, "name", "id") || "Fluido",
       subtitle: ["Fluido", stringValue(item, "type")].filter(Boolean).join(" · "),
       badge: "FLUIDO",
+      routeKey: vademecumRouteKey("fluid", stringValue(item, "id", "name")),
     })),
     ...commercialNames.map((item) => result("commercialName", item, {
       id: `${stringValue(item, "drugId", "activeIngredient")}:${stringValue(item, "presentation")}`,
@@ -88,6 +111,7 @@ export function buildVademecumReferences(content: Pick<MobileContent, "drugs" | 
       subtitle: ["Nombre comercial", stringValue(item, "presentation")].filter(Boolean).join(" · "),
       badge: "MARCA",
       targetId: stringValue(item, "drugId") || undefined,
+      routeKey: vademecumRouteKey("commercialName", `${stringValue(item, "drugId", "activeIngredient")}:${stringValue(item, "presentation")}`),
     })),
   ];
 }
@@ -101,6 +125,8 @@ export function buildCodeReferences(codes: MobileContent["codes"]): MobileRefere
       title,
       subtitle: [group.toUpperCase(), stringValue(item, "category", "group")].filter(Boolean).join(" · "),
       badge: code || undefined,
+      sourceGroup: group,
+      routeKey: codeRouteKey(group, code || title),
     });
   }));
 }
@@ -153,6 +179,25 @@ export function searchVademecum(content: Pick<MobileContent, "drugs" | "perfusio
 
 export function searchCodes(codes: MobileContent["codes"], query: string, limit = 60): MobileReferenceSearchResult[] {
   return searchMobileReferences(buildCodeReferences(codes), query, limit);
+}
+
+export function resolveCodeReference(codes: MobileContent["codes"], reference: string): MobileReferenceSearchResult | undefined {
+  return buildCodeReferences(codes).find((item) => item.routeKey === reference || item.id === reference);
+}
+
+export function resolveVademecumReference(content: Pick<MobileContent, "drugs" | "perfusions" | "fluids" | "commercialNames">, reference: string): MobileReferenceSearchResult | undefined {
+  return buildVademecumReferences(content).find((item) => item.routeKey === reference || item.id === reference);
+}
+
+export function relatedProcedureIdsForDrug(content: Pick<MobileContent, "procedures">, drug: ReferenceRecord): string[] {
+  const terms = [stringValue(drug, "id"), stringValue(drug, "name"), ...textValues(drug.synonyms)].map(normalize).filter((term) => term.length > 2);
+  if (!terms.length) return [];
+  return content.procedures
+    .filter((procedure) => {
+      const haystack = normalize(`${procedure.title} ${procedure.searchText} ${procedure.content}`);
+      return terms.some((term) => haystack.includes(term));
+    })
+    .map((procedure) => procedure.id);
 }
 
 export function searchAbbreviations(abbreviations: MobileContent["abbreviations"], query: string, limit = 60): MobileReferenceSearchResult[] {
