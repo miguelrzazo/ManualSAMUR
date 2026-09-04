@@ -23,7 +23,6 @@
       },
       "package": "es.madrid.samur.manual"
     },
-    "plugins": ["expo-crypto"],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
       "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata"

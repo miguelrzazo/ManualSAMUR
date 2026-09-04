@@ -26,3 +26,8 @@ test("bundled snapshot and attachment manifest form an integrity-checked package
   const manifest = JSON.parse(readFileSync(path.join(packageRoot, "attachment-manifest.json"), "utf8")) as unknown;
   assert.equal(isMobileContentPackage(snapshot, manifest), true);
 });
+
+test("managed Expo config does not register runtime-only packages as plugins", () => {
+  const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as { expo?: { plugins?: unknown[] } };
+  assert.equal(appConfig.expo?.plugins?.includes("expo-crypto") ?? false, false);
+});
