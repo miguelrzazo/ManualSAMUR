@@ -4,17 +4,12 @@
     "slug": "manualsamur",
     "version": "0.1.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
     "scheme": "manualsamur",
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#D92732"
-    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "es.madrid.samur.manual"
+      "bundleIdentifier": "es.madrid.samur.manual",
+      "deploymentTarget": "16.4"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +18,10 @@
       },
       "package": "es.madrid.samur.manual"
     },
-    "plugins": ["./plugins/with-ios-deployment-target"],
+    "plugins": [
+      "expo-status-bar",
+      "expo-font"
+    ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
       "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata"

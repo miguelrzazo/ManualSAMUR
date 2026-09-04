@@ -51,3 +51,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 HistoricoActualizaciones_abril 2026.pdf.pdf
+# Expo local state and generated native projects (Continuous Native Generation).
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/

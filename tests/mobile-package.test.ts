@@ -27,11 +27,8 @@ test("bundled snapshot and attachment manifest form an integrity-checked package
   assert.equal(isMobileContentPackage(snapshot, manifest), true);
 });
 
-test("managed Expo config does not register runtime-only packages as plugins", () => {
+test("managed Expo config registers only supported Expo plugins", () => {
   const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as { expo?: { plugins?: unknown[] } };
   assert.equal(appConfig.expo?.plugins?.includes("expo-crypto") ?? false, false);
-  assert.equal(appConfig.expo?.plugins?.includes("./plugins/with-ios-deployment-target") ?? false, true);
-  const plugin = readFileSync(path.join(process.cwd(), "apps/mobile/plugins/with-ios-deployment-target.js"), "utf8");
-  assert.match(plugin, /IPHONEOS_DEPLOYMENT_TARGET/);
-  assert.match(plugin, /15\.1/);
+  assert.equal(appConfig.expo?.plugins?.includes("./plugins/with-ios-deployment-target") ?? false, false);
 });

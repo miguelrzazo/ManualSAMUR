@@ -16,13 +16,13 @@ npm ci --ignore-scripts
 npm run start:dev-client
 ```
 
-The approved local runtime is Node 22.x, Expo SDK 53 (`expo@53.0.27` in the lockfile),
-React Native 0.79.5, and React 19.2.4. `package.json` prevents accidentally using Node 23+
+The approved local runtime is Node 22.13+, Expo SDK 57 (`expo@57.0.20` in the lockfile),
+React Native 0.86.3, and React 19.2.3. `package.json` prevents accidentally using Node 23+
 with this Expo generation; `npm ci` is the clean-install boundary. The Expo-managed
 scaffold is intentional: the native boundary is `expo run:ios` / `expo run:android`, while
 the repository keeps no generated `ios/` or `android/` directories.
-The managed `with-ios-deployment-target` plugin normalizes all CocoaPods targets to iOS
-15.1, including resource-only pods whose upstream podspec still declares an older target.
+The iOS deployment target is explicitly pinned to 16.4, matching the SDK 57 minimum and
+Xcode 26.4+ baseline.
 
 For native simulator builds (Xcode and an Android SDK/emulator are required):
 
