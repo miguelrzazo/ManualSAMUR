@@ -5,7 +5,11 @@
 node_modules
 out
 tests
-docs
+# Solo el docs/ de la raíz, que es el original del que sync-docs-public copia.
+# Sin la barra inicial el patrón casa con cualquier directorio llamado docs a
+# cualquier profundidad, public/docs/ incluido, y eso dejaba TODOS los PDF del
+# sitio en 404 en producción: los adjuntos de las fichas nunca se subían.
+/docs
 HistoricoActualizaciones_abril 2026.pdf.pdf
 *.log
 *.tmp
