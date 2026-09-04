@@ -33,5 +33,5 @@
   ],
   // tests/** ya no se excluye: los tests typechequean sin errores y asi el
   // tipado tambien los cubre. Antes quedaban fuera y podian pudrirse en silencio.
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "apps/mobile"]
 }

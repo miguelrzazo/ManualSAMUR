@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install mobile workspace dependencies
+        run: npm ci --prefix apps/mobile --ignore-scripts
+
       - name: Lint
         run: npm run lint
 
@@ -39,6 +42,12 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Generate mobile content package
+        run: npm run mobile:content
+
+      - name: Mobile typecheck
+        run: npm run mobile:typecheck
 
       - name: Build
         run: npm run build
