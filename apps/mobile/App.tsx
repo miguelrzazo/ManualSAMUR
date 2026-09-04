@@ -151,7 +151,7 @@ function syncPresentation(state: ReturnType<typeof useContent>["syncState"], fre
 }
 
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
-  const { content, recents, snapshot, isRefreshing, lastError, refresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
+  const { content, recents, snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const recentProcedures = recents.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item)).slice(0, 3);
   const manualVersion = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : "paquete local";
@@ -192,13 +192,11 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
             <Text style={[styles.syncTitle, { color: syncCopy.color }]}>{syncCopy.title}</Text>
             <Text style={styles.syncDetail}>{manualVersion} · rev {snapshot.packageHash?.slice(0, 10) ?? "—"} · {syncCopy.detail}</Text>
           </View>
-          <Pressable onPress={() => void refresh()} disabled={isRefreshing} accessibilityRole="button" accessibilityLabel="Actualizar contenido">
-            <Text style={styles.syncAction}>{isRefreshing ? "…" : "Actualizar"}</Text>
-          </Pressable>
+          {isRefreshing ? <Pressable onPress={cancelRefresh} disabled={syncState === "activating"} accessibilityRole="button" accessibilityLabel={syncState === "activating" ? "Aplicando actualización" : "Cancelar actualización"}><Text style={styles.syncAction}>{syncState === "activating" ? "Aplicando…" : "Cancelar"}</Text></Pressable> : <Pressable onPress={() => void refresh()} accessibilityRole="button" accessibilityLabel="Actualizar contenido"><Text style={styles.syncAction}>Actualizar</Text></Pressable>}
         </View>
         <Text style={styles.disclaimer}>Pulso abierto es una adaptación independiente y no oficial. Consulta siempre la fuente operativa vigente.</Text>
       </ScrollView>
-      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} />
+      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} onCancelRefresh={cancelRefresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} />
     </SafeAreaView>
   );
 }
@@ -434,7 +432,7 @@ function ProcedureUpdate({ update }: { update: unknown }) {
 function EmptyState({ title, detail }: { title: string; detail: string }) { return <View style={styles.emptyState}><MaterialCommunityIcons name="bookmark-off-outline" size={28} color={colors.inkMuted} /><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text></View>; }
 function MissingResource({ title, detail, onRecover }: { title: string; detail?: string; onRecover?: () => void }) { return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><MaterialCommunityIcons name="file-alert-outline" size={30} color={colors.red} /><Text style={styles.emptyTitle}>{title}</Text>{detail && <Text style={styles.emptyDetail}>{detail}</Text>}{onRecover && <Pressable onPress={onRecover} style={styles.primaryButton} accessibilityRole="button"><Text style={styles.primaryButtonText}>Buscar otro procedimiento</Text></Pressable>}</View></SafeAreaView>; }
 
-function SettingsModal({ visible, onClose, onRefresh, onResumeStaged, onDiscardStaged, onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState, syncProgress, stagedPackage }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; onResumeStaged: () => Promise<void>; onDiscardStaged: () => Promise<void>; onOpenAbbreviations: () => void; generatedAt: string; packageHash?: string; isRefreshing: boolean; lastError?: string; syncState: SyncState; syncProgress: SyncProgress; stagedPackage?: StagedPackage }) {
+function SettingsModal({ visible, onClose, onRefresh, onCancelRefresh, onResumeStaged, onDiscardStaged, onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState, syncProgress, stagedPackage }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; onCancelRefresh: () => void; onResumeStaged: () => Promise<void>; onDiscardStaged: () => Promise<void>; onOpenAbbreviations: () => void; generatedAt: string; packageHash?: string; isRefreshing: boolean; lastError?: string; syncState: SyncState; syncProgress: SyncProgress; stagedPackage?: StagedPackage }) {
   const { appearance, setAppearance } = usePreferences();
   const appearanceLabels: Record<AppearancePreference, string> = { system: "Sistema", light: "Claro", dark: "Oscuro" };
   const presentation = syncPresentation(syncState, contentFreshness(generatedAt), syncProgress, stagedPackage?.packageHash);
@@ -448,7 +446,7 @@ function SettingsModal({ visible, onClose, onRefresh, onResumeStaged, onDiscardS
           <MaterialCommunityIcons name={presentation.icon} size={25} color={presentation.color} />
           <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{presentation.title}</Text><Text style={styles.resourceMeta}>{lastError ?? `${generatedAt.slice(0, 10)} · rev ${packageHash?.slice(0, 10) ?? "—"} · ${presentation.detail}`}</Text>{progressPercent !== undefined && <View style={styles.progressTrack} accessibilityLabel={`Progreso de actualización ${progressPercent}%`}><View style={[styles.progressFill, { width: `${progressPercent}%` }]} /></View>}</View>
         </View>
-        <Pressable onPress={() => void onRefresh()} disabled={isRefreshing} style={[styles.primaryButton, isRefreshing && styles.disabledButton]} accessibilityRole="button" accessibilityLabel="Buscar actualización"><Text style={styles.primaryButtonText}>{isRefreshing ? "Actualizando…" : "Buscar actualización"}</Text></Pressable>
+        {isRefreshing ? <Pressable onPress={onCancelRefresh} disabled={syncState === "activating"} style={[styles.primaryButton, syncState === "activating" && styles.disabledButton]} accessibilityRole="button" accessibilityLabel={syncState === "activating" ? "Aplicando actualización" : "Cancelar actualización"}><Text style={styles.primaryButtonText}>{syncState === "activating" ? "Aplicando actualización…" : "Cancelar actualización"}</Text></Pressable> : <Pressable onPress={() => void onRefresh()} style={styles.primaryButton} accessibilityRole="button" accessibilityLabel="Buscar actualización"><Text style={styles.primaryButtonText}>Buscar actualización</Text></Pressable>}
         {stagedPackage && <View style={styles.recoveryActions}><Text style={styles.resourceMeta}>Hay un paquete descargado que no llegó a activarse. El contenido anterior sigue protegido.</Text><View style={styles.recoveryButtons}><Pressable onPress={() => void onResumeStaged()} disabled={isRefreshing} style={styles.recoveryButton} accessibilityRole="button"><Text style={styles.recoveryButtonText}>Reanudar</Text></Pressable><Pressable onPress={() => void onDiscardStaged()} disabled={isRefreshing} style={styles.recoveryButtonSecondary} accessibilityRole="button"><Text style={styles.recoveryButtonSecondaryText}>Descartar</Text></Pressable></View></View>}
 
         <Text style={styles.settingsSectionTitle}>Consulta rápida</Text>

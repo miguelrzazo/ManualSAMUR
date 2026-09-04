@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import type { MobileSnapshot } from "../apps/mobile/src/data/schema.ts";
+import { contentHash, isMobileContentSnapshot, packageHash } from "../lib/mobile-snapshot.ts";
 import {
   ACTIVE_POINTER_KEY,
   LEGACY_SNAPSHOT_KEY,
@@ -37,6 +38,12 @@ class MemoryStorage implements ContentStorage {
 }
 
 const accepts = async (value: unknown) => Boolean(value && typeof value === "object" && (value as MobileSnapshot).schema === "samur-manual.mobile-content");
+
+function validatedSnapshot(): MobileSnapshot {
+  const content = { procedures: [] } as MobileSnapshot["content"];
+  const hashValue = contentHash(content);
+  return { schema: "samur-manual.mobile-content", version: 2, generatedAt: "2026-09-01T00:00:00.000Z", hash: hashValue, contentHash: hashValue, packageHash: packageHash(content, []), content };
+}
 
 test("staging writes an immutable package and recovery record without changing the active pointer", async () => {
   const storage = new MemoryStorage();
@@ -84,6 +91,41 @@ test("pointer write failure leaves staged content resumable and active content i
   assert.equal(afterFailure.staged?.phase, "staged");
 });
 
+test("cancellation before activation never changes the active pointer and leaves staged work recoverable", async () => {
+  const storage = new MemoryStorage();
+  const active = await stagePackage(storage, snapshot("8"), accepts);
+  await activateStagedPackage(storage, active, accepts);
+  const pending = await stagePackage(storage, snapshot("9"), accepts);
+  const controller = new AbortController();
+  controller.abort();
+  await assert.rejects(() => activateStagedPackage(storage, pending, accepts, undefined, controller.signal), /cancelada/);
+  const afterCancellation = await readTransaction(storage, accepts);
+  assert.equal(afterCancellation.snapshot?.packageHash, hash("8"));
+  assert.equal(afterCancellation.stagedSnapshot?.packageHash, hash("9"));
+});
+
+test("real package validation rejects incompatible schema, invalid hash, and unsafe attachment candidates", async () => {
+  const storage = new MemoryStorage();
+  const validate = async (value: unknown) => isMobileContentSnapshot(value);
+  const valid = validatedSnapshot();
+  await stagePackage(storage, valid, validate);
+  await activateStagedPackage(storage, (await readTransaction(storage, validate)).staged!, validate);
+
+  const incompatible = { ...valid, schema: "samur-manual.future-content" } as unknown as MobileSnapshot;
+  await assert.rejects(() => stagePackage(storage, incompatible, validate), /integridad/);
+
+  const invalidHash = { ...valid, hash: hash("a"), contentHash: hash("a") };
+  await assert.rejects(() => stagePackage(storage, invalidHash, validate), /integridad/);
+
+  const invalidContent = {
+    ...valid.content,
+    procedures: [{ id: "bad", routeKey: "procedure:bad", attachments: [{ id: "unsafe", sourceUrl: "https://example.test/file.pdf", localPath: "/docs/../file.pdf", filename: "file.pdf", kind: "pdf" }] }],
+  } as MobileSnapshot["content"];
+  const invalidAttachmentHash = contentHash(invalidContent);
+  const invalidAttachment = { ...valid, hash: invalidAttachmentHash, contentHash: invalidAttachmentHash, packageHash: packageHash(invalidContent, []) , content: invalidContent };
+  await assert.rejects(() => stagePackage(storage, invalidAttachment, validate), /integridad/);
+});
+
 test("a staged-record or package write failure cannot move the active pointer", async () => {
   const storage = new MemoryStorage();
   const good = await stagePackage(storage, snapshot("6"), accepts);
@@ -93,7 +135,7 @@ test("a staged-record or package write failure cannot move the active pointer", 
   assert.equal((await readTransaction(storage, accepts)).snapshot?.packageHash, hash("6"));
 });
 
-test("process-death recovery can resume or discard a staged package", async () => {
+test("process interruption recovery can resume or discard a staged package", async () => {
   const storage = new MemoryStorage();
   const staged = await stagePackage(storage, snapshot("2"), accepts);
   const resumed = await resumeStagedPackage(storage, accepts);

@@ -64,6 +64,17 @@ export interface StageProgress {
 
 export type SnapshotValidator = (candidate: unknown) => Promise<boolean>;
 
+export class ContentUpdateCancelledError extends Error {
+  constructor() {
+    super("Actualización cancelada; el contenido anterior permanece activo");
+    this.name = "ContentUpdateCancelledError";
+  }
+}
+
+export function throwIfCancelled(signal?: AbortSignal): void {
+  if (signal?.aborted) throw new ContentUpdateCancelledError();
+}
+
 export type ContentFreshness = "fresh" | "stale" | "unknown";
 
 export function contentFreshness(generatedAt: string, now = new Date()): ContentFreshness {
@@ -158,8 +169,11 @@ export async function stagePackage(
   validate: SnapshotValidator,
   now = new Date().toISOString(),
   progress: StageProgress = {},
+  signal?: AbortSignal,
 ): Promise<StagedPackage> {
+  throwIfCancelled(signal);
   if (!await validate(snapshot)) throw new Error("El paquete no supera la validación de integridad");
+  throwIfCancelled(signal);
   if (!isHash(snapshot.packageHash)) throw new Error("El paquete no tiene packageHash compatible");
   const packageHash = snapshot.packageHash;
   const packageKeyValue = packageKey(packageHash);
@@ -172,6 +186,7 @@ export async function stagePackage(
   // Content is written before its tiny recovery record. Neither write can
   // alter the package selected by the active pointer.
   await storage.setItem(packageKeyValue, JSON.stringify(envelope));
+  throwIfCancelled(signal);
   const staged: StagedPackage = {
     schema: CONTENT_STORAGE_SCHEMA,
     version: CONTENT_STORAGE_VERSION,
@@ -213,13 +228,19 @@ export async function activateStagedPackage(
   staged: StagedPackage,
   validate: SnapshotValidator,
   now = new Date().toISOString(),
+  signal?: AbortSignal,
 ): Promise<ActivePointer> {
+  throwIfCancelled(signal);
   const envelope = parseJson<unknown>(await storage.getItem(staged.packageKey));
   if (!isPackageEnvelope(envelope) || envelope.packageHash !== staged.packageHash || !await validate(envelope.snapshot)) {
     const failed: StagedPackage = { ...staged, phase: "failed", updatedAt: now, error: "El paquete staged no supera la validación" };
     await storage.setItem(STAGED_PACKAGE_KEY, JSON.stringify(failed));
     throw new Error(failed.error);
   }
+  // Cancellation is intentionally checked immediately before the only write
+  // that changes what the reader considers active. Once this point is reached
+  // the UI disables Cancel while the tiny pointer commit completes.
+  throwIfCancelled(signal);
   const pointer: ActivePointer = {
     schema: CONTENT_STORAGE_SCHEMA,
     version: CONTENT_STORAGE_VERSION,

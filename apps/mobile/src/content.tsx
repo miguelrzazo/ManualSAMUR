@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import * as Crypto from "expo-crypto";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
 import bundledAttachmentManifest from "./data/attachment-manifest.json";
 import {
@@ -23,12 +23,14 @@ import {
 import { resolveProcedureReference } from "./procedure-logic";
 import {
   activateStagedPackage,
+  ContentUpdateCancelledError,
   contentFreshness,
   discardStagedPackage,
   migrateLegacySnapshot,
   readTransaction,
   resumeStagedPackage,
   stagePackage,
+  throwIfCancelled,
   type StagedPackage,
 } from "./content-transaction";
 
@@ -50,6 +52,7 @@ type ContentContextValue = {
   toggleFavorite: (id: string) => void;
   remember: (id: string) => void;
   refresh: () => Promise<void>;
+  cancelRefresh: () => void;
   resumeStaged: () => Promise<void>;
   discardStaged: () => Promise<void>;
 };
@@ -116,6 +119,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [syncState, setSyncState] = useState<SyncState>("idle");
   const [syncProgress, setSyncProgress] = useState<SyncProgress>({});
   const [stagedPackage, setStagedPackage] = useState<StagedPackage>();
+  const refreshController = useRef<AbortController | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -186,31 +190,53 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setLastError(undefined);
     setSyncState("checking");
     setSyncProgress({});
+    const controller = new AbortController();
+    refreshController.current = controller;
     let responseReceived = false;
     try {
-      const response = await fetch(url, { headers: { Accept: "application/json" } });
+      const response = await fetch(url, { headers: { Accept: "application/json" }, signal: controller.signal });
       responseReceived = true;
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       setSyncState("downloading");
       const totalBytes = Number(response.headers.get("content-length") ?? "");
       const candidate: unknown = await response.json();
       setSyncState("validating");
-      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, snapshotIsValid, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {});
+      throwIfCancelled(controller.signal);
+      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, snapshotIsValid, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {}, controller.signal);
       setStagedPackage(staged);
       setSyncProgress({ downloadedBytes: staged.downloadedBytes, totalBytes: staged.totalBytes });
       setSyncState("activating");
-      await activateStagedPackage(AsyncStorage, staged, snapshotIsValid);
+      await activateStagedPackage(AsyncStorage, staged, snapshotIsValid, new Date().toISOString(), controller.signal);
       setSnapshot(candidate as MobileSnapshot);
       setStagedPackage(undefined);
       setSyncState("success");
       setSyncProgress({ downloadedBytes: totalBytes || undefined, totalBytes: totalBytes || undefined });
     } catch (error) {
       setLastError(error instanceof Error ? error.message : "No se pudo actualizar el contenido");
-      setSyncState(responseReceived ? "failure" : "offline");
+      if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
+        const transaction = await readTransaction(AsyncStorage, snapshotIsValid);
+        if (transaction.staged) {
+          setStagedPackage(transaction.staged);
+          setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
+          setSyncState(transaction.stagedSnapshot ? "recovery" : "failure");
+        } else {
+          setSyncState("stale");
+        }
+      } else {
+        setSyncState(responseReceived ? "failure" : "offline");
+      }
     } finally {
       setIsRefreshing(false);
+      if (refreshController.current === controller) refreshController.current = null;
     }
   }, []);
+
+  const cancelRefresh = useCallback(() => {
+    // Once activation starts, cancellation is disabled so the pointer write
+    // cannot be interrupted between validation and commit.
+    if (syncState === "activating") return;
+    refreshController.current?.abort();
+  }, [syncState]);
 
   const resumeStaged = useCallback(async () => {
     setIsRefreshing(true);
@@ -251,9 +277,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     toggleFavorite,
     remember,
     refresh,
+    cancelRefresh,
     resumeStaged,
     discardStaged,
-  }), [discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
+  }), [cancelRefresh, discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }
