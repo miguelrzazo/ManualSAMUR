@@ -188,7 +188,12 @@ export default async function ProcedurePage({ params }: Props) {
         validIds={allProcedures.map((item) => item.id)}
       />
       {/* Main content */}
-      <article id="procedure-content" className="min-w-0">
+      {/* El id vive en el div del cuerpo, no aquí: el índice ("En esta página")
+          debe recorrer solo el contenido del procedimiento, no la navegación ni
+          las tarjetas de enlaces relacionados. Antes estaba en los dos sitios,
+          lo que era HTML inválido —id duplicado— y hacía que getElementById
+          devolviera este <article>, el más externo de los dos. */}
+      <article className="min-w-0">
         <Breadcrumbs
           section={procedure.section}
           group={procedure.sidebarGroup}
