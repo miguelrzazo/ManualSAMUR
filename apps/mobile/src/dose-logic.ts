@@ -132,6 +132,7 @@ export type DoseFailureCode =
   | "stale-source"
   | "invalid-input"
   | "unsupported-unit"
+  | "invalid-rate-unit"
   | "dimension-mismatch"
   | "missing-weight"
   | "invalid-rounding";
@@ -203,6 +204,28 @@ function timeUnit(value: unknown) {
   const key = canonicalUnit(value);
   const factor = TIME_FACTORS_TO_HOURS[key];
   return factor ? { key, factor } : undefined;
+}
+
+function parseRateUnit(unit: unknown, explicitTimeUnit: unknown, explicitPerKg: boolean | undefined): { amountUnit: string; timeUnit: string; perKg: boolean } | DoseConversionFailure {
+  if (typeof unit !== "string" || !unit.trim()) return failure("invalid-rate-unit", "La unidad de dosis por tiempo está incompleta.");
+  const parts = unit.split("/").map((part) => part.trim());
+  const hasSlash = unit.includes("/");
+  if (parts.some((part) => !part)) return failure("invalid-rate-unit", "La unidad de dosis por tiempo tiene separadores vacíos.");
+  if (!hasSlash) {
+    if (!explicitTimeUnit || !timeUnit(explicitTimeUnit)) return failure("invalid-rate-unit", "Una dosis por tiempo requiere una unidad temporal admitida.");
+    return { amountUnit: parts[0], timeUnit: String(explicitTimeUnit), perKg: explicitPerKg === true };
+  }
+  if (parts.length !== 2 && parts.length !== 3) return failure("invalid-rate-unit", "La unidad de dosis por tiempo tiene una dimensión no admitida.");
+  const compoundTime = parts.at(-1) ?? "";
+  if (!timeUnit(compoundTime)) return failure("invalid-rate-unit", "La unidad temporal del compuesto no está admitida.");
+  const perKg = parts.length === 3;
+  if (perKg && canonicalUnit(parts[1]) !== "kg") return failure("invalid-rate-unit", "Solo se admite la dimensión explícita cantidad/kg/tiempo.");
+  if (!perKg && canonicalUnit(parts[1]) === "kg") return failure("invalid-rate-unit", "Una unidad por kg debe declarar también la unidad temporal.");
+  if (explicitTimeUnit && (!timeUnit(explicitTimeUnit) || canonicalUnit(explicitTimeUnit) !== canonicalUnit(compoundTime))) {
+    return failure("invalid-rate-unit", "La unidad temporal explícita contradice la unidad temporal compuesta.");
+  }
+  if (explicitPerKg !== undefined && explicitPerKg !== perKg) return failure("invalid-rate-unit", "La declaración perKg contradice la unidad compuesta.");
+  return { amountUnit: parts[0], timeUnit: compoundTime, perKg };
 }
 
 function routeKey(value: unknown): string {
@@ -379,16 +402,15 @@ export function calculateDoseConversion(request: DoseConversionRequest): DoseCon
   } else {
     if (!request.doseRate) return failure("invalid-input", "Introduce una dosis por tiempo y unidad completas.");
     const dose = numberValue(request.doseRate.value);
-    const compoundRateUnits = request.doseRate.unit.split("/").map((item) => item.trim()).filter(Boolean);
-    const compoundTimeUnit = compoundRateUnits.length >= 2 ? compoundRateUnits.at(-1) : undefined;
-    const compoundPerKg = compoundRateUnits.length === 3 && canonicalUnit(compoundRateUnits[1]) === "kg";
-    const rateAmountUnit = compoundRateUnits.length >= 2 ? compoundRateUnits[0] : request.doseRate.unit;
+    const parsedRateUnit = parseRateUnit(request.doseRate.unit, request.doseRate.timeUnit, request.doseRate.perKg);
+    if (isFailure(parsedRateUnit)) return parsedRateUnit;
+    const { amountUnit: rateAmountUnit, timeUnit: parsedTimeUnit, perKg: parsedPerKg } = parsedRateUnit;
     const unit = massUnit(rateAmountUnit);
-    const time = timeUnit(request.doseRate.timeUnit ?? compoundTimeUnit);
+    const time = timeUnit(parsedTimeUnit);
     if (!dose) return failure("invalid-input", "La dosis por tiempo debe ser un número positivo finito.");
     if (!unit || !time) return failure("unsupported-unit", "La dosis por tiempo usa una unidad no admitida.");
     if (unit.dimension !== concentration.dimension) return failure("dimension-mismatch", "La unidad de dosis no es dimensionalmente compatible con la concentración.");
-    const isPerKg = request.doseRate.perKg === true || compoundPerKg;
+    const isPerKg = parsedPerKg;
     const weight = isPerKg ? numberValue(request.weightKg) : undefined;
     if (isPerKg && !weight) return failure("missing-weight", "Una dosis por kg requiere un peso positivo finito.");
     const totalDosePerHour = (dose * (weight ?? 1) * unit.mg) / time.factor;

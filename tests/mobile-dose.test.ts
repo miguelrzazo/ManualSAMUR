@@ -130,6 +130,10 @@ const rejectionCases: Array<[string, Partial<DoseConversionRequest>, string]> = 
   ["rejects unsupported dose unit", { amount: { value: 5, unit: "tablet" } }, "unsupported-unit"],
   ["rejects dimensional mismatch", { amount: { value: 5, unit: "mEq" } }, "dimension-mismatch"],
   ["rejects missing weight for weight-based rate", { operation: "dose-rate-to-pump-rate", amount: undefined, doseRate: { value: 1, unit: "mg", timeUnit: "min", perKg: true }, approvedRounding: { increment: 1, mode: "nearest", unit: "mL/h" } }, "missing-weight"],
+  ["rejects an unsupported compound dimension", { operation: "dose-rate-to-pump-rate", amount: undefined, doseRate: { value: 1, unit: "mg/foo/min" }, weightKg: 70, approvedRounding: { increment: 1, mode: "nearest", unit: "mL/h" } }, "invalid-rate-unit"],
+  ["rejects extra compound rate segments", { operation: "dose-rate-to-pump-rate", amount: undefined, doseRate: { value: 1, unit: "mg/kg/min/foo" }, weightKg: 70, approvedRounding: { increment: 1, mode: "nearest", unit: "mL/h" } }, "invalid-rate-unit"],
+  ["rejects contradictory explicit and compound time units", { operation: "dose-rate-to-pump-rate", amount: undefined, doseRate: { value: 1, unit: "mg/kg/min", timeUnit: "h" }, weightKg: 70, approvedRounding: { increment: 1, mode: "nearest", unit: "mL/h" } }, "invalid-rate-unit"],
+  ["rejects contradictory perKg declaration", { operation: "dose-rate-to-pump-rate", amount: undefined, doseRate: { value: 1, unit: "mg/kg/min", perKg: false }, weightKg: 70, approvedRounding: { increment: 1, mode: "nearest", unit: "mL/h" } }, "invalid-rate-unit"],
   ["rejects invalid and non-positive input", { amount: { value: "0", unit: "mg" } }, "invalid-input"],
   ["rejects stale source", { now: "2027-01-01T00:00:00Z" }, "stale-source"],
 ];
