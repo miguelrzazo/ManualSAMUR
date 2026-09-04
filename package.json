@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run sync:docs-public && npm run generate:client-data && next dev",
+    "prototype:icon": "next dev",
     "generate:llms": "node --experimental-strip-types scripts/generate-llms.ts",
     "generate:client-data": "node --experimental-strip-types scripts/generate-client-data.ts",
     "sync:docs-public": "node --experimental-strip-types scripts/sync-public-docs.ts",
