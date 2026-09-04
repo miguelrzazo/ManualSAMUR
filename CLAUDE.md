@@ -89,6 +89,10 @@ The app is built with Next.js 16 (see AGENTS.md for breaking changes), React 19,
 
 ## Common Tasks
 
+**⚠️ Hand-editing a procedure body requires `editorialStatus: "enhanced"`.** The monthly sync rewrites `content/procedures/*.md` wholesale from the wiki (`scripts/sync-manualsamur.ts:627`), so an uncommented manual correction is silently clobbered on the 1st of the month. Setting `editorialStatus: "enhanced"` in the frontmatter makes the sync take `writeProcedureMetadataOnly` instead and preserve your body. The trade-off is real and one-way until you unset it: an `enhanced` procedure **stops receiving upstream body updates entirely** and needs a human to reconcile. The monthly PR report still shows the diff of what changed upstream underneath it, so you can see what you are holding out against. As of PR #55 only `214d` is marked.
+
+**⚠️ A source date bump is not a change.** The wiki republishes pages moving only `sourceUpdated`, with identical content. `classifyProcedureChange` (`lib/manual-sync.ts`) deliberately excludes `sourceUpdated` from its comparison, so those republishes classify as `unchanged`, no file is written, no event is emitted and no PR opens. This means `updated:` in the frontmatter tracks the last *real* content change, which is what the UI claims to show. Do not "fix" this by adding `sourceUpdated` back to the comparison: it previously churned all 230 files monthly and filled `manual-history.json` with 492 empty `revisado` entries out of 500, evicting the real ones. `contentHash` must keep being written — `isDeletionCandidate` (`lib/sync-guards.ts`) needs it non-empty to tell a real deletion from a never-synced import.
+
 **Adding a new procedure page**: Place the .md inside the right section subfolder (e.g. `content/procedures/sva/`) — `walkMarkdownFiles` recurses, and `scripts/lint-procedure-ids.ts` (run in CI) requires the filename stem to equal the `id` frontmatter. Links between procedures use markdown `[label](/manual/slug)` format after normalization.
 
 **Adding code datasets**: Add JSON to `content/data/`, import in `lib/codigos-config.ts`, and reference in CodigosView component.

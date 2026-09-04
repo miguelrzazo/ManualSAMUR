@@ -42,3 +42,21 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Check the build left no drift
+        # public/procedures/*.md y llms*.txt se generan y se commitean. Hasta
+        # ahora CI construía pero nunca miraba si la build cambiaba algo, así que
+        # el corpus commiteado llevaba obsoleto desde 13a60ae y la deriva salió
+        # a la luz en un diff de 232 ficheros. Si esto falla, ejecuta
+        # `npm run build` en local y commitea lo que quede modificado.
+        run: |
+          set -euo pipefail
+          DRIFT=$(git status --porcelain -- public content)
+          if [ -n "$DRIFT" ]; then
+            echo "La build ha modificado ficheros versionados:"
+            echo "$DRIFT"
+            echo ""
+            git diff --stat -- public content
+            exit 1
+          fi
+          echo "Sin deriva: la build no ha tocado nada versionado."

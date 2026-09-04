@@ -485,6 +485,23 @@ export function resolveStableProcedureIdForSource(title: string, sourceUrl: stri
   return resolveStableProcedureId(title);
 }
 
+/**
+ * ¿Ha cambiado de verdad el procedimiento?
+ *
+ * `sourceUpdated` NO entra en la comparación a propósito. La wiki republica
+ * páginas subiendo solo esa fecha, sin tocar una coma del contenido, y contarlo
+ * como cambio salía caro: el sync reescribía los 230 ficheros, el PR mensual se
+ * abría sin nada que revisar y el historial se llenaba de entradas «revisado»
+ * vacías — 492 de las 500 que cabían, desalojando las reales.
+ *
+ * Con la fecha fuera, `updated` en el frontmatter se queda en la del último
+ * cambio de contenido real, que es lo que la ficha dice mostrar y lo que el
+ * lector entiende al leerla.
+ *
+ * `contentHash` sí se sigue escribiendo: isDeletionCandidate (lib/sync-guards.ts)
+ * lo necesita no vacío para distinguir una baja real de una importación que
+ * nunca llegó a sincronizarse.
+ */
 export function classifyProcedureChange(
   existing: ProcedureSnapshot | null,
   incoming: ProcedureSnapshot,
@@ -493,7 +510,6 @@ export function classifyProcedureChange(
   if (
     existing.title !== incoming.title
     || existing.source !== incoming.source
-    || existing.sourceUpdated !== incoming.sourceUpdated
     || existing.contentHash !== incoming.contentHash
     || JSON.stringify(existing.attachments) !== JSON.stringify(incoming.attachments)
   ) {
@@ -509,10 +525,11 @@ export function classifyProcedureUpdateKind(
 ): ManualUpdateChangeKind {
   if (changeType === "created") return "nuevo";
   if (changeType === "unchanged") return "sync";
+  // "revisado" queda reservado para el bloqueo editorial, donde significa algo:
+  // origen ha cambiado pero mantenemos nuestra versión. El caso de "solo cambió
+  // la fecha" ya no llega hasta aquí — classifyProcedureChange lo devuelve como
+  // "unchanged" y el sync ni siquiera escribe el fichero.
   if (changeType === "blocked_by_editorial") return "revisado";
-  if (existing && existing.contentHash === incoming.contentHash && existing.sourceUpdated !== incoming.sourceUpdated) {
-    return "revisado";
-  }
   return "actualizado";
 }
 
