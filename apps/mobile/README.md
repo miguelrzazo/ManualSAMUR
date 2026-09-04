@@ -1,9 +1,14 @@
-# ManualSAMUR mobile
+# Pulso abierto mobile
 
-Expo surface for the ManualSAMUR reference product. The app is intentionally local-first:
+Pulso abierto is the independent ManualSAMUR reference companion. The app is intentionally local-first:
 the generated v2 content snapshot is bundled, favorites and recents stay in AsyncStorage,
 and an update is accepted only after its package integrity validates. A failed or
 interrupted refresh leaves the last known-good snapshot in place.
+
+On the first launch, the app presents a one-time notice that this is an unofficial,
+reference-only adaptation. Acknowledgement is stored locally; subsequent launches open
+the Inicio tab directly without focusing the search field. Información y ajustes exposes
+content sync status, the disclaimer/source/legal text, and System/Light/Dark appearance.
 
 ## Run
 

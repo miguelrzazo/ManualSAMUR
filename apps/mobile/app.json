@@ -1,14 +1,22 @@
 {
   "expo": {
-    "name": "ManualSAMUR",
+    "name": "Pulso abierto",
     "slug": "manualsamur",
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "manualsamur",
     "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#D92732"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "es.madrid.samur.manual",
+      "infoPlist": {
+        "CFBundleDisplayName": "Pulso abierto"
+      },
       "deploymentTarget": "16.4"
     },
     "android": {
@@ -16,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
         "backgroundColor": "#D92732"
       },
-      "package": "es.madrid.samur.manual"
+      "package": "es.madrid.samur.manual",
+      "label": "Pulso abierto"
     },
     "plugins": [
       "expo-status-bar",

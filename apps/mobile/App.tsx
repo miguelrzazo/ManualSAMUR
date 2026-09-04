@@ -19,6 +19,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "@manual-samur/design-tokens";
 import { ContentProvider, findProcedure, useContent } from "./src/content";
+import { PreferencesProvider, usePreferences, type AppearancePreference } from "./src/preferences";
 import type { MobileProcedure } from "./src/data/schema";
 
 type TabsParamList = {
@@ -41,7 +42,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function LogoMark({ small = false }: { small?: boolean }) {
   return (
-    <View style={[styles.logoMark, small && styles.logoMarkSmall]} accessible accessibilityLabel="ManualSAMUR">
+    <View style={[styles.logoMark, small && styles.logoMarkSmall]} accessible accessibilityLabel="Pulso abierto">
       <View style={[styles.logoCrossVertical, small && styles.logoSmallBar]} />
       <View style={[styles.logoCrossHorizontal, small && styles.logoSmallHorizontal]} />
       <View style={[styles.logoArrow, small && styles.logoArrowSmall]} />
@@ -55,8 +56,8 @@ function BrandHeader({ onSettings }: { onSettings?: () => void }) {
       <View style={styles.brandLockup}>
         <LogoMark small />
         <View>
-          <Text style={styles.brandName}>ManualSAMUR</Text>
-          <Text style={styles.brandSubline}>REFERENCIA DE GUARDIA</Text>
+          <Text style={styles.brandName}>Pulso abierto</Text>
+          <Text style={styles.brandSubline}>MANUALSAMUR · REFERENCIA</Text>
         </View>
       </View>
       {onSettings && (
@@ -72,16 +73,15 @@ function SearchBar({ value, onChangeText, onPress }: { value?: string; onChangeT
   return (
     <Pressable onPress={onPress} style={styles.searchBar} accessibilityRole={onChangeText ? "none" : "button"} accessibilityLabel="Buscar en el manual">
       <MaterialCommunityIcons name="magnify" size={22} color={colors.inkMuted} />
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        onFocus={onPress}
-        placeholder="Buscar procedimientos, fármacos o códigos"
-        placeholderTextColor={colors.inkMuted}
-        style={styles.searchInput}
-        returnKeyType="search"
-        accessibilityLabel="Buscar procedimientos, fármacos o códigos"
-      />
+      {onChangeText ? <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          placeholder="Buscar procedimientos, fármacos o códigos"
+          placeholderTextColor={colors.inkMuted}
+          style={styles.searchInput}
+          returnKeyType="search"
+          accessibilityLabel="Buscar procedimientos, fármacos o códigos"
+        /> : <Text style={styles.searchPlaceholder}>Buscar procedimientos, fármacos o códigos</Text>}
       <View style={styles.offlineDot} />
     </Pressable>
   );
@@ -130,7 +130,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure:
 }
 
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
-  const { content, recents, snapshot, isRefreshing, refresh } = useContent();
+  const { content, recents, snapshot, isRefreshing, lastError, refresh } = useContent();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const recentProcedures = recents.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item)).slice(0, 3);
   const manualVersion = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : "paquete local";
@@ -174,9 +174,9 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
             <Text style={styles.syncAction}>{isRefreshing ? "…" : "Actualizar"}</Text>
           </Pressable>
         </View>
-        <Text style={styles.disclaimer}>Adaptación digital no oficial · SAMUR-Protección Civil Madrid</Text>
+        <Text style={styles.disclaimer}>Pulso abierto es una adaptación independiente y no oficial. Consulta siempre la fuente operativa vigente.</Text>
       </ScrollView>
-      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} generatedAt={snapshot.generatedAt} />
+      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} onRefresh={refresh} generatedAt={snapshot.generatedAt} isRefreshing={isRefreshing} lastError={lastError} />
     </SafeAreaView>
   );
 }
@@ -298,8 +298,47 @@ function MarkdownContent({ markdown }: { markdown: string }) {
 function EmptyState({ title, detail }: { title: string; detail: string }) { return <View style={styles.emptyState}><MaterialCommunityIcons name="bookmark-off-outline" size={28} color={colors.inkMuted} /><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text></View>; }
 function MissingResource({ title }: { title: string }) { return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><Text style={styles.emptyTitle}>{title}</Text></View></SafeAreaView>; }
 
-function SettingsModal({ visible, onClose, onRefresh, generatedAt }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; generatedAt: string }) {
-  return <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}><SafeAreaView style={styles.modal}><View style={styles.modalHeader}><Text style={styles.modalTitle}>Ajustes locales</Text><Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Cerrar"><Text style={styles.modalClose}>Cerrar</Text></Pressable></View><View style={styles.settingsCard}><MaterialCommunityIcons name="database-check-outline" size={25} color={colors.green} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>Paquete de contenido</Text><Text style={styles.resourceMeta}>Generado {generatedAt.slice(0, 10)} · validación SHA-256</Text></View></View><Pressable onPress={() => void onRefresh()} style={styles.primaryButton} accessibilityRole="button"><Text style={styles.primaryButtonText}>Buscar actualización</Text></Pressable><Text style={styles.disclaimer}>Las preferencias, favoritos y recientes permanecen solo en este dispositivo. No hay cuentas ni sincronización personal.</Text></SafeAreaView></Modal>;
+function SettingsModal({ visible, onClose, onRefresh, generatedAt, isRefreshing, lastError }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; generatedAt: string; isRefreshing: boolean; lastError?: string }) {
+  const { appearance, setAppearance } = usePreferences();
+  const appearanceLabels: Record<AppearancePreference, string> = { system: "Sistema", light: "Claro", dark: "Oscuro" };
+  return <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" allowSwipeDismissal onRequestClose={onClose}>
+    <SafeAreaView style={styles.modal} edges={["top", "bottom"]}>
+      <ScrollView contentContainerStyle={styles.modalContent} keyboardShouldPersistTaps="handled">
+        <View style={styles.modalHeader}><View><Text style={styles.modalTitle}>Información y ajustes</Text><Text style={styles.modalKicker}>PULSO ABIERTO</Text></View><Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Cerrar"><Text style={styles.modalClose}>Cerrar</Text></Pressable></View>
+        <Text style={styles.settingsSectionTitle}>Contenido y sincronización</Text>
+        <View style={styles.settingsCard} accessibilityLabel="Estado del contenido local">
+          <MaterialCommunityIcons name={isRefreshing ? "cloud-sync-outline" : lastError ? "cloud-alert-outline" : "database-check-outline"} size={25} color={lastError ? colors.red : colors.green} />
+          <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{lastError ? "Contenido local sin actualizar" : "Contenido disponible offline"}</Text><Text style={styles.resourceMeta}>{lastError ?? `Generado ${generatedAt.slice(0, 10)} · hash verificado`}</Text></View>
+        </View>
+        <Pressable onPress={() => void onRefresh()} disabled={isRefreshing} style={[styles.primaryButton, isRefreshing && styles.disabledButton]} accessibilityRole="button" accessibilityLabel="Buscar actualización"><Text style={styles.primaryButtonText}>{isRefreshing ? "Actualizando…" : "Buscar actualización"}</Text></Pressable>
+
+        <Text style={styles.settingsSectionTitle}>Apariencia</Text>
+        <View style={styles.appearanceControl} accessibilityRole="radiogroup" accessibilityLabel="Apariencia de la aplicación">
+          {(Object.keys(appearanceLabels) as AppearancePreference[]).map((option) => <Pressable key={option} onPress={() => setAppearance(option)} style={[styles.appearanceOption, appearance === option && styles.appearanceOptionActive]} accessibilityRole="radio" accessibilityState={{ selected: appearance === option }}><MaterialCommunityIcons name={option === "system" ? "theme-light-dark" : option === "light" ? "white-balance-sunny" : "weather-night"} size={17} color={appearance === option ? colors.white : colors.inkMuted} /><Text style={[styles.appearanceText, appearance === option && styles.appearanceTextActive]}>{appearanceLabels[option]}</Text></Pressable>)}
+        </View>
+
+        <Text style={styles.settingsSectionTitle}>Aviso y alcance</Text>
+        <View style={styles.infoPanel}><Text style={styles.infoPanelTitle}>Referencia independiente</Text><Text style={styles.infoPanelText}>Pulso abierto es una adaptación digital no oficial para consulta. No sustituye instrucciones, protocolos ni criterio profesional. Verifica siempre la versión operativa vigente con SAMUR-Protección Civil Madrid.</Text></View>
+        <Text style={styles.settingsSectionTitle}>Privacidad y funcionamiento</Text>
+        <Text style={styles.disclaimer}>No se solicitan cuentas ni datos de pacientes. Favoritos, recientes y preferencias permanecen en este dispositivo. No hay publicidad, pagos, analítica obligatoria, notificaciones push ni sincronización entre dispositivos.</Text>
+        <Pressable onPress={() => void Linking.openURL("https://servpub.madrid.es/manualsamur/bin/view/Main/")} style={styles.linkRow} accessibilityRole="link"><Text style={styles.linkText}>Abrir fuente oficial del manual</Text><MaterialCommunityIcons name="open-in-new" size={17} color={colors.red} /></Pressable>
+        <Text style={styles.legalText}>ManualSAMUR y SAMUR-Protección Civil son referencias de sus titulares. Pulso abierto no implica afiliación, aprobación ni representación institucional.</Text>
+      </ScrollView>
+    </SafeAreaView>
+  </Modal>;
+}
+
+function LaunchScreen() {
+  return <SafeAreaView style={styles.launchScreen}><LogoMark /><Text style={styles.launchTitle}>Pulso abierto</Text><Text style={styles.launchSubtitle}>MANUALSAMUR · REFERENCIA LOCAL</Text></SafeAreaView>;
+}
+
+function FirstUseDisclosure({ onContinue }: { onContinue: () => Promise<void> }) {
+  const [isSaving, setIsSaving] = useState(false);
+  const continueToApp = async () => { setIsSaving(true); await onContinue(); };
+  return <Modal visible animationType="fade" presentationStyle="fullScreen" onRequestClose={() => undefined}><SafeAreaView style={styles.disclosureScreen}>
+    <View style={styles.disclosureContent}><LogoMark /><Text style={styles.disclosureEyebrow}>ANTES DE EMPEZAR</Text><Text style={styles.disclosureTitle}>Una referencia abierta para la guardia.</Text><Text style={styles.disclosureBody}>Pulso abierto es una adaptación digital independiente y no oficial del ManualSAMUR. El contenido es de referencia: no sustituye protocolos, instrucciones ni criterio profesional.</Text><Text style={styles.disclosureBody}>El manual se consulta offline. No necesitas cuenta y no se recogen datos de pacientes.</Text></View>
+    <View><Pressable onPress={() => void continueToApp()} disabled={isSaving} style={[styles.primaryButton, isSaving && styles.disabledButton]} accessibilityRole="button"><Text style={styles.primaryButtonText}>{isSaving ? "Preparando…" : "Entendido, abrir el manual"}</Text></Pressable><Text style={styles.disclosureFooter}>Puedes revisar este aviso, la fuente y la privacidad desde Información y ajustes.</Text></View>
+  </SafeAreaView></Modal>;
 }
 
 function LocationModal({ location, onClose }: { location?: Record<string, unknown>; onClose: () => void }) {
@@ -310,7 +349,7 @@ function LocationModal({ location, onClose }: { location?: Record<string, unknow
 function TabIcon({ name, color }: { name: keyof typeof MaterialCommunityIcons.glyphMap; color: string }) { return <MaterialCommunityIcons name={name} size={23} color={color} />; }
 
 function MainTabs() {
-  return <Tabs.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.red, tabBarInactiveTintColor: colors.inkMuted, tabBarLabelStyle: styles.tabLabel, tabBarStyle: styles.tabBar, tabBarHideOnKeyboard: true }}>
+  return <Tabs.Navigator backBehavior="history" screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.red, tabBarInactiveTintColor: colors.inkMuted, tabBarLabelStyle: styles.tabLabel, tabBarStyle: styles.tabBar, tabBarHideOnKeyboard: true, tabBarAccessibilityLabel: "Navegación principal" }}>
     <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
     <Tabs.Screen name="Buscar" component={SearchScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="magnify" color={color} /> }} />
     <Tabs.Screen name="Guardados" component={SavedScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="star-outline" color={color} /> }} />
@@ -319,10 +358,17 @@ function MainTabs() {
 }
 
 function AppNavigation() {
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right" }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} /><Stack.Screen name="Drug" component={DrugScreen} /><Stack.Screen name="Codes" component={CodesScreen} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: colors.paper } }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Codes" component={CodesScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
-export default function App() { return <SafeAreaProvider><StatusBar style="dark" /><ContentProvider><AppNavigation /></ContentProvider></SafeAreaProvider>; }
+function AppGate() {
+  const { isHydrated, hasAcknowledgedFirstUse, acknowledgeFirstUse, appearance } = usePreferences();
+  if (!isHydrated) return <LaunchScreen />;
+  if (!hasAcknowledgedFirstUse) return <FirstUseDisclosure onContinue={acknowledgeFirstUse} />;
+  return <><StatusBar style={appearance === "dark" ? "light" : "dark"} /><ContentProvider><AppNavigation /></ContentProvider></>;
+}
+
+export default function App() { return <SafeAreaProvider><PreferencesProvider><AppGate /></PreferencesProvider></SafeAreaProvider>; }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },
@@ -347,7 +393,7 @@ const styles = StyleSheet.create({
   heroTitle: { color: colors.white, fontSize: 29, lineHeight: 32, fontWeight: "800", letterSpacing: -1 },
   heroBody: { color: "#D7DEEA", fontSize: 13, lineHeight: 18, marginTop: spacing.md, maxWidth: 225 },
   searchBar: { height: 58, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
-  searchInput: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 0 },
+  searchInput: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 0 }, searchPlaceholder: { flex: 1, color: colors.inkMuted, fontSize: 14 },
   offlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.green },
   sectionHeading: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginTop: spacing.md, marginBottom: spacing.md },
   eyebrow: { color: colors.red, fontSize: 10, letterSpacing: 1.3, fontWeight: "800", marginBottom: 4 },
@@ -373,6 +419,7 @@ const styles = StyleSheet.create({
   locationRow: { minHeight: 66, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, locationIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: colors.redWash, alignItems: "center", justifyContent: "center" }, locationIconBase: { backgroundColor: colors.amberWash },
   detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: colors.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: colors.red, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: colors.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: colors.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: colors.redWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: colors.redDark, fontSize: 12, lineHeight: 17 }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: colors.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: colors.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: colors.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: colors.red, fontSize: 18, lineHeight: 23 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: colors.line },
   infoBlock: { borderTopWidth: 1, borderTopColor: colors.line, paddingVertical: spacing.md }, infoLabel: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.1, textTransform: "uppercase", marginBottom: 5 }, infoValue: { color: colors.ink, fontSize: 15, lineHeight: 22 }, codeRow: { flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, codeValue: { minWidth: 55, color: colors.red, fontSize: 15, fontWeight: "900" }, abbreviationRow: { flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line }, abbreviation: { width: 70, color: colors.red, fontWeight: "900", fontSize: 13 },
-  modal: { flex: 1, backgroundColor: colors.paper, padding: spacing.lg }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: colors.ink, fontSize: 24, fontWeight: "800" }, modalClose: { color: colors.red, fontWeight: "800" }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, borderColor: colors.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.lg }, primaryButton: { backgroundColor: colors.red, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, primaryButtonText: { color: colors.white, fontWeight: "800", fontSize: 14 }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" }, locationSheet: { backgroundColor: colors.paper, padding: spacing.xl, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg }, sheetHandle: { width: 42, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: "center", marginBottom: spacing.xl }, sheetTitle: { color: colors.ink, fontSize: 24, lineHeight: 28, fontWeight: "800", marginBottom: spacing.sm },
+  modal: { flex: 1, backgroundColor: colors.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: colors.ink, fontSize: 24, fontWeight: "800" }, modalKicker: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: 4 }, modalClose: { color: colors.red, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: colors.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, borderColor: colors.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, primaryButton: { backgroundColor: colors.red, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: colors.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: colors.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: colors.ink }, appearanceText: { color: colors.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: colors.white }, infoPanel: { backgroundColor: colors.redWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: colors.redDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: colors.redDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.line }, linkText: { color: colors.red, fontSize: 13, fontWeight: "800" }, legalText: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" }, locationSheet: { backgroundColor: colors.paper, padding: spacing.xl, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg }, sheetHandle: { width: 42, height: 5, borderRadius: 3, backgroundColor: colors.line, alignSelf: "center", marginBottom: spacing.xl }, sheetTitle: { color: colors.ink, fontSize: 24, lineHeight: 28, fontWeight: "800", marginBottom: spacing.sm },
+  launchScreen: { flex: 1, backgroundColor: colors.ink, alignItems: "center", justifyContent: "center" }, launchTitle: { color: colors.white, fontSize: 30, fontWeight: "900", letterSpacing: -0.8, marginTop: spacing.lg }, launchSubtitle: { color: "#B8C4D7", fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: spacing.sm }, disclosureScreen: { flex: 1, backgroundColor: colors.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: colors.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: colors.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureBody: { color: colors.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
   tabBar: { height: Platform.OS === "ios" ? 84 : 64, paddingTop: 7, paddingBottom: Platform.OS === "ios" ? 20 : 7, backgroundColor: colors.surface, borderTopColor: colors.line }, tabLabel: { fontSize: 10, fontWeight: "700" },
 });
