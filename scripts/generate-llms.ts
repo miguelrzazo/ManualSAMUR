@@ -157,6 +157,12 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
   return lines.join("\n");
 }
 
+/** Fecha del procedimiento más reciente del corpus. Estable entre builds. */
+function latestUpdatedDate(procedures: ProcedureMeta[]): string {
+  const dates = procedures.map((proc) => proc.updated).filter((value): value is string => Boolean(value));
+  return dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : "desconocida";
+}
+
 function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const header = [
@@ -165,7 +171,12 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
     "> Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.",
     "> Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.",
     "",
-    `Generado: ${new Date().toISOString()}`,
+    // Fecha del contenido, no de la build. Un `new Date()` aquí cambiaba este
+    // fichero versionado en cada `npm run build`, así que llms-full.txt salía
+    // modificado en todos los PR sin que hubiera cambiado nada, y la guarda de
+    // deriva de ci.yml no podría pasar nunca. Además es la fecha que de verdad
+    // le sirve a quien consume el corpus.
+    `Actualizado: ${latestUpdatedDate(procedures)}`,
     `Total procedimientos: ${procedures.length}`,
     "",
     "---",

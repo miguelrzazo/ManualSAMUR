@@ -580,8 +580,12 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
       const changeType = blockedByEditorial ? "blocked_by_editorial" : rawChangeType;
       const changeKind = classifyProcedureUpdateKind(existingSnapshot, snapshot, changeType);
 
+      // El diff se calcula también cuando el cambio queda bloqueado por edición
+      // editorial. Es justo entonces cuando hace falta: mantenemos nuestra
+      // versión del cuerpo, y el informe mensual es lo único que cuenta qué ha
+      // cambiado por debajo y contra qué la estamos manteniendo.
       let contentDiff: string | undefined;
-      if (changeType === "updated" && !blockedByEditorial && existingMeta?.content) {
+      if ((changeType === "updated" || blockedByEditorial) && existingMeta?.content) {
         const oldBody = existingMeta.content.trim();
         const newBody = markdown.trim();
         if (oldBody !== newBody) {

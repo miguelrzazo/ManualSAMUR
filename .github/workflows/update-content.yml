@@ -51,6 +51,15 @@ jobs:
             npm run sync:manualsamur:apply
           fi
 
+      - name: Regenerate agent corpus
+        # Sin esto, public/procedures/*.md y llms*.txt se quedaban atrás respecto
+        # a content/procedures y la deriva solo salía a la luz meses después, en
+        # un diff de 232 ficheros mezclado con cambios reales. Además la guarda
+        # de ci.yml exige que la build no ensucie el árbol.
+        run: |
+          npm run generate:client-data
+          npm run generate:llms
+
       - name: Update history from latest sync run
         run: |
           node --input-type=module << 'EOF'
@@ -115,8 +124,15 @@ jobs:
           }
           console.log(`Loaded ${idToSlug.size} procedure slug mappings`);
 
+          // Una entrada "revisado" sin diff no dice nada: es la wiki subiendo la
+          // fecha de una página sin tocar el contenido. Llegaron a ser 492 de las
+          // 500 que caben, desalojando las reales. classifyProcedureChange ya no
+          // las genera, pero el filtro se queda como segunda barrera.
+          const isMeaningful = (e) => e.changeKind !== "revisado" || Boolean(e.diff);
+
           const newEntries = [];
           for (const e of updates.events) {
+            if (!isMeaningful(e)) continue;
             const id = stableId(e);
             if (!existingById.has(id)) {
               const procId = e.procedureIds?.[0] ?? "";
@@ -235,7 +251,23 @@ jobs:
           OTHER=$(git status --porcelain -- . \
             ':!content/data/manual-sync.json' \
             ':!content/data/manual-updates.json' \
-            ':!content/data/manual-history.json')
+            ':!content/data/manual-history.json' \
+            ':!content/procedures' \
+            ':!public/procedures' \
+            ':!public/llms.txt' \
+            ':!public/llms-full.txt')
+
+          # En el corpus solo cuentan las líneas que no son sellos de fecha o de
+          # hash. classifyProcedureChange ya no reescribe una ficha cuando origen
+          # solo sube la fecha, así que esto no debería saltar nunca; se queda
+          # por si alguna otra ruta vuelve a colar una actualización vacía.
+          CORPUS=$(git diff -- content/procedures public/procedures public/llms.txt public/llms-full.txt \
+            | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' \
+            | grep -Ev '^[+-](updated|sourceUpdated|contentHash):' || true)
+
+          # Ficheros nuevos o borrados en el corpus siempre son significativos.
+          CORPUS_FILES=$(git status --porcelain -- content/procedures public/procedures \
+            | grep -Ev '^ M ' || true)
 
           # En los ficheros ruidosos solo cuentan las líneas que no son generatedAt/lastSyncAt.
           NOISY=$(git diff -- \
@@ -244,7 +276,7 @@ jobs:
             | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' \
             | grep -Ev '"(generatedAt|lastSyncAt|lastApprovedAt)"' || true)
 
-          if [ -n "$OTHER" ] || [ -n "$NOISY" ]; then
+          if [ -n "$OTHER" ] || [ -n "$NOISY" ] || [ -n "$CORPUS" ] || [ -n "$CORPUS_FILES" ]; then
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
             echo "Se han detectado cambios de contenido reales."
           else
