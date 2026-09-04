@@ -155,7 +155,9 @@ function IconPrototypeBody({ variant, treatment, setTreatment }: { variant: Vari
             <div><p className="mb-3 text-xs font-bold uppercase tracking-[.16em] text-slate-400">Tratamientos maestros</p><TreatmentStrip treatment={treatment} onChange={setTreatment} /></div>
 
             <section><div className="mb-4 flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Prueba de contexto</p><h2 className="mt-1 text-2xl font-black tracking-tight">¿Se reconoce fuera de la portada?</h2></div><p className="hidden text-right text-xs text-slate-400 sm:block">Launcher · navegación · mapa</p></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <IconContext label="Launcher iOS" size={108} className="bg-[#d8e0e6]" radius="rounded-[2rem]" variant={variant} /><IconContext label="Android adaptive" size={108} className="bg-[#d8e0e6]" radius="rounded-full" variant={variant} /><IconContext label="Header" size={56} className="bg-white dark:bg-slate-900" radius="rounded-xl" variant={variant} /><IconContext label="Mapa" size={42} className="bg-[#e6efe8] dark:bg-emerald-950" radius="rounded-full" variant={variant} /></div></section>
+              <IconContext label="Launcher iOS" size={108} className="bg-[#d8e0e6]" radius="rounded-[2rem]" variant={variant} /><IconContext label="Android adaptive" size={108} className="bg-[#d8e0e6]" radius="rounded-full" variant={variant} /><IconContext label="Header" size={56} className="bg-white dark:bg-slate-900" radius="rounded-xl" variant={variant} /><IconContext label="Mapa" size={42} className="bg-[#e6efe8] dark:bg-emerald-950" radius="rounded-full" variant={variant} /></div><div className="mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-slate-800 dark:bg-slate-900"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Prueba de tamaño</p><p className="mt-1 text-xs text-slate-500 dark:text-slate-400">La silueta debe conservar un único gesto reconocible.</p></div><div className="flex items-end gap-4"><SmallMark variant={variant} size={16} label="16" /><SmallMark variant={variant} size={24} label="24" /><SmallMark variant={variant} size={32} label="32" /></div></div></section>
+
+            <section><div className="mb-4"><p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Handoff de superficies</p><h2 className="mt-1 text-2xl font-black tracking-tight">Un master, varios usos.</h2></div><div className="grid gap-3 sm:grid-cols-2"><SurfaceGuide title="Launcher y store" detail="Exportar master 1024 px; mantener el gesto dentro del área segura y dejar que iOS/Android apliquen su máscara." /><SurfaceGuide title="Splash" detail="Usar campo rojo completo y el mark centrado; no añadir texto ni forzar una forma de icono alrededor." /><SurfaceGuide title="Favicon y PWA" detail="Derivar 16, 32, 180, 192 y 512 px; preferir mark rojo sobre transparente o campo blanco." /><SurfaceGuide title="Notificación y mapa" detail="Usar tratamiento monocromo blanco sobre el tinte del sistema y mark rojo/blanco con contorno limpio en mapa." /></div></section>
           </section>
 
           <aside className="space-y-4 lg:pt-0">
@@ -172,4 +174,12 @@ function IconPrototypeBody({ variant, treatment, setTreatment }: { variant: Vari
 
 function IconContext({ label, size, className, radius, variant }: { label: string; size: number; className: string; radius: string; variant: Variant }) {
   return <div className="flex flex-col items-center gap-2"><IconFrame className={`aspect-square w-full ${className} ${radius}`}><IconMark variant={variant} size={size} /></IconFrame><p className="text-center text-[10px] font-semibold text-slate-500 dark:text-slate-400">{label}</p></div>;
+}
+
+function SmallMark({ variant, size, label }: { variant: Variant; size: number; label: string }) {
+  return <div className="flex flex-col items-center gap-1"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d8e0e6]"><IconMark variant={variant} size={size} /></div><span className="font-mono text-[9px] text-slate-400">{label}px</span></div>;
+}
+
+function SurfaceGuide({ title, detail }: { title: string; detail: string }) {
+  return <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="text-sm font-bold">{title}</p><p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">{detail}</p></div>;
 }
