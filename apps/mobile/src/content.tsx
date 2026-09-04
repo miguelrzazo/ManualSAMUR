@@ -21,8 +21,17 @@ import {
   type MobileSnapshot,
 } from "./data/schema";
 import { resolveProcedureReference } from "./procedure-logic";
+import {
+  activateStagedPackage,
+  contentFreshness,
+  discardStagedPackage,
+  migrateLegacySnapshot,
+  readTransaction,
+  resumeStagedPackage,
+  stagePackage,
+  type StagedPackage,
+} from "./content-transaction";
 
-const SNAPSHOT_KEY = "manualsamur.content.snapshot.v2";
 const FAVORITES_KEY = "manualsamur.preferences.favorites";
 const RECENTS_KEY = "manualsamur.preferences.recents";
 const MAX_RECENTS = 12;
@@ -35,10 +44,21 @@ type ContentContextValue = {
   isHydrated: boolean;
   isRefreshing: boolean;
   lastError?: string;
+  syncState: SyncState;
+  syncProgress: SyncProgress;
+  stagedPackage?: StagedPackage;
   toggleFavorite: (id: string) => void;
   remember: (id: string) => void;
   refresh: () => Promise<void>;
+  resumeStaged: () => Promise<void>;
+  discardStaged: () => Promise<void>;
 };
+
+export type SyncState = "idle" | "checking" | "downloading" | "validating" | "activating" | "success" | "stale" | "offline" | "failure" | "recovery";
+export interface SyncProgress {
+  downloadedBytes?: number;
+  totalBytes?: number;
+}
 
 const ContentContext = createContext<ContentContextValue | null>(null);
 
@@ -93,24 +113,40 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastError, setLastError] = useState<string>();
+  const [syncState, setSyncState] = useState<SyncState>("idle");
+  const [syncProgress, setSyncProgress] = useState<SyncProgress>({});
+  const [stagedPackage, setStagedPackage] = useState<StagedPackage>();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [storedSnapshot, storedFavorites, storedRecents] = await Promise.all([
-        AsyncStorage.getItem(SNAPSHOT_KEY),
+      const [storedFavorites, storedRecents, transaction] = await Promise.all([
         AsyncStorage.getItem(FAVORITES_KEY),
         AsyncStorage.getItem(RECENTS_KEY),
+        readTransaction(AsyncStorage, snapshotIsValid),
       ]);
       if (cancelled) return;
-      if (storedSnapshot) {
+      if (transaction.snapshot) {
+        setSnapshot(transaction.snapshot);
+      } else {
         try {
-          const parsed = JSON.parse(storedSnapshot);
-          if (await snapshotIsValid(parsed)) setSnapshot(parsed as MobileSnapshot);
-        } catch { /* Keep the bundled snapshot if storage is corrupt. */ }
+          const migrated = await migrateLegacySnapshot(AsyncStorage, snapshotIsValid);
+          if (migrated) setSnapshot(migrated);
+        } catch { /* Keep the bundled snapshot if legacy storage is corrupt. */ }
+      }
+      if (transaction.staged) {
+        setStagedPackage(transaction.staged);
+        setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
+        setSyncState(transaction.stagedSnapshot ? "recovery" : "failure");
+      } else if (transaction.warning) {
+        setLastError(transaction.warning);
+        setSyncState("stale");
+      } else if (contentFreshness(transaction.snapshot?.generatedAt ?? (bundledSnapshot as MobileSnapshot).generatedAt) !== "fresh") {
+        setSyncState("stale");
       }
       if (!await snapshotIsValid(bundledSnapshot, bundledAttachmentManifest as MobileAttachmentManifest)) {
         setLastError("El paquete local no supera la validación de integridad");
+        setSyncState("failure");
       }
       if (storedFavorites) {
         try { setFavorites(JSON.parse(storedFavorites)); } catch { /* ignore */ }
@@ -141,21 +177,64 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = useCallback(async () => {
     const url = endpoint("contentEndpoint");
-    if (!url) return;
+    if (!url) {
+      setLastError("No hay conexión de actualización configurada; se mantiene el paquete local.");
+      setSyncState("offline");
+      return;
+    }
     setIsRefreshing(true);
     setLastError(undefined);
+    setSyncState("checking");
+    setSyncProgress({});
+    let responseReceived = false;
     try {
       const response = await fetch(url, { headers: { Accept: "application/json" } });
+      responseReceived = true;
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setSyncState("downloading");
+      const totalBytes = Number(response.headers.get("content-length") ?? "");
       const candidate: unknown = await response.json();
-      if (!await snapshotIsValid(candidate)) throw new Error("El paquete no supera la validación de integridad");
+      setSyncState("validating");
+      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, snapshotIsValid, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {});
+      setStagedPackage(staged);
+      setSyncProgress({ downloadedBytes: staged.downloadedBytes, totalBytes: staged.totalBytes });
+      setSyncState("activating");
+      await activateStagedPackage(AsyncStorage, staged, snapshotIsValid);
       setSnapshot(candidate as MobileSnapshot);
-      await AsyncStorage.setItem(SNAPSHOT_KEY, JSON.stringify(candidate));
+      setStagedPackage(undefined);
+      setSyncState("success");
+      setSyncProgress({ downloadedBytes: totalBytes || undefined, totalBytes: totalBytes || undefined });
     } catch (error) {
       setLastError(error instanceof Error ? error.message : "No se pudo actualizar el contenido");
+      setSyncState(responseReceived ? "failure" : "offline");
     } finally {
       setIsRefreshing(false);
     }
+  }, []);
+
+  const resumeStaged = useCallback(async () => {
+    setIsRefreshing(true);
+    setLastError(undefined);
+    setSyncState("activating");
+    try {
+      const result = await resumeStagedPackage(AsyncStorage, snapshotIsValid);
+      if (!result) throw new Error("No hay ningún paquete pendiente de recuperación");
+      setSnapshot(result.snapshot);
+      setStagedPackage(undefined);
+      setSyncState("success");
+    } catch (error) {
+      setLastError(error instanceof Error ? error.message : "No se pudo recuperar el paquete pendiente");
+      setSyncState("failure");
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  const discardStaged = useCallback(async () => {
+    await discardStagedPackage(AsyncStorage);
+    setStagedPackage(undefined);
+    setSyncProgress({});
+    setSyncState("stale");
   }, []);
 
   const value = useMemo<ContentContextValue>(() => ({
@@ -166,10 +245,15 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     isHydrated,
     isRefreshing,
     lastError,
+    syncState,
+    syncProgress,
+    stagedPackage,
     toggleFavorite,
     remember,
     refresh,
-  }), [favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, snapshot, toggleFavorite]);
+    resumeStaged,
+    discardStaged,
+  }), [discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }
