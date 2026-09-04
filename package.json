@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "npm run sync:docs-public && npm run generate:client-data && next dev",
-    "prototype:icon": "next dev",
     "generate:llms": "node --experimental-strip-types scripts/generate-llms.ts",
     "generate:client-data": "node --experimental-strip-types scripts/generate-client-data.ts",
     "sync:docs-public": "node --experimental-strip-types scripts/sync-public-docs.ts",
@@ -19,8 +18,6 @@
     "sync:vademecum": "node --experimental-strip-types scripts/scrape-vademecum.ts",
     "migrate:subfolders": "node --experimental-strip-types scripts/migrate-to-subfolders.ts",
     "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts",
-    "mobile:content": "node --experimental-strip-types apps/mobile/scripts/build-content-package.ts",
-    "mobile:typecheck": "npx tsc --noEmit -p apps/mobile/tsconfig.json",
     "sync:manualsamur:detect": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
     "sync:manualsamur:apply": "npx ts-node scripts/sync-manualsamur.ts apply --all",
     "sync:manualsamur:ingest-pdf": "node --experimental-strip-types scripts/sync-manualsamur.ts ingest-official-pdf"
