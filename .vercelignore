@@ -10,9 +10,6 @@ tests
 # cualquier profundidad, public/docs/ incluido, y eso dejaba TODOS los PDF del
 # sitio en 404 en producción: los adjuntos de las fichas nunca se subían.
 /docs
-# La app Expo es un workspace aparte, con su propio package.json. No forma parte
-# del despliegue web y sin excluirla Next intenta compilarla.
-apps/mobile
 HistoricoActualizaciones_abril 2026.pdf.pdf
 *.log
 *.tmp

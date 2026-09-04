@@ -15,7 +15,6 @@ El contenido clínico pertenece a SAMUR-PC / Ayuntamiento de Madrid. Esta aplica
 - Abreviaturas y colaboradores
 - Historial de actualizaciones y avisos de novedades
 - Modo oscuro, PWA, soporte para móvil
-- Superficie Expo para iOS/Android en `apps/mobile/`, con contenido local y actualizaciones verificadas por hash
 
 ## Desarrollo
 
@@ -34,8 +33,6 @@ npm run sync:manualsamur:apply   # Sincronización real desde el wiki oficial
 npm run sync:vademecum           # Sincronizar vademécum
 npm run generate:llms            # Regenerar llms.txt y llms-full.txt
 npm run generate:client-data     # Regenerar los datasets bajo demanda de public/
-npm run mobile:content           # Regenerar el paquete offline de la app Expo
-npm run mobile:typecheck         # Typecheck de la superficie nativa
 ```
 
 La sincronización mensual corre en `.github/workflows/update-content.yml` y abre un PR
