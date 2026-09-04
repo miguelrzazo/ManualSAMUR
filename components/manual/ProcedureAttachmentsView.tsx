@@ -30,6 +30,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
           const isImage = attachment.kind === "image" || /\.(jpe?g|png|gif|webp|svg)$/i.test(attachment.localPath);
           const isPdf = attachment.kind === "pdf" || attachment.localPath.toLowerCase().endsWith(".pdf");
           const isExpanded = Boolean(expandedByPath[attachment.localPath]);
+          const href = unavailable ? attachment.sourceUrl : attachment.localPath;
 
           return (
             <section
@@ -55,9 +56,9 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
                     {unavailable ? "no disponible" : isImage ? "imagen" : isPdf ? "pdf" : attachment.kind}
                   </span>
                 </button>
-                {!unavailable && isPdf && (
+                {isPdf && href && (
                   <a
-                    href={attachment.localPath}
+                    href={href}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}

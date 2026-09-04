@@ -90,6 +90,19 @@ function sortProcedures(procedures: ProcedureMeta[]): ProcedureMeta[] {
   });
 }
 
+function normalizeWikiPagePath(value: string): string | null {
+  try {
+    const pathname = new URL(value, "https://manual.invalid").pathname;
+    const marker = pathname.toLowerCase().indexOf("/bin/view/");
+    if (marker < 0) return null;
+    return decodeURIComponent(pathname.slice(marker))
+      .replace(/\/WebHome\/?$/i, "")
+      .replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
+}
+
 function generateLlmsTxt(procedures: ProcedureMeta[]): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const grouped = new Map<string, ProcedureMeta[]>();
@@ -189,10 +202,23 @@ function main() {
   console.log(`  ${procedures.length} procedimientos encontrados`);
 
   const idToSlug = new Map(procedures.map((procedure) => [procedure.id, procedure.slug]));
+  const wikiPathToSlug = new Map<string, string>();
+  for (const procedure of procedures) {
+    const sourcePath = procedure.source ? normalizeWikiPagePath(procedure.source) : null;
+    if (sourcePath) wikiPathToSlug.set(sourcePath, procedure.slug);
+  }
+
+  const resolveInternalHref = (href: string) => {
+    const wikiPath = normalizeWikiPagePath(href);
+    const slug = wikiPath ? wikiPathToSlug.get(wikiPath) : null;
+    return slug ? `/manual/${slug}` : null;
+  };
+
   for (const procedure of procedures) {
     procedure.content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
       currentProcedureId: procedure.id,
       procedureTitle: procedure.title,
+      resolveInternalHref,
     });
   }
 

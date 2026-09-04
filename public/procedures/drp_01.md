@@ -1,23 +1,18 @@
 ---
-id: drp_01
-title: Procedimiento General de los DRP
-section: DRP
-slug: drp_01-procedimiento-general-de-los-drp
+id: "drp_01"
+title: "Procedimiento General de los DRP"
+section: "DRP"
+slug: "drp_01-procedimiento-general-de-los-drp"
+updated: "2026-09-01"
+source: "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20General%20de%20los%20DRP/"
 tags: []
 synonyms: []
 related: []
-updated: '2026-07-22'
-sourceUpdated: '2026-07-22'
-source: >-
-  https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20en%20Dispositivos%20de%20Riesgo%20Previsible%28DRP%29/Procedimiento%20General%20de%20los%20DRP/
-contentHash: 2fbb777fdc1b3441d11c42e9bfaf2ed09ce7ffbbb98eb14b2b9b87c1d9127db4
 attachments: []
-editorialStatus: source
-editorialLockedAt: ''
-lastApprovedOfficialUpdateAt: ''
 ---
+
 ## Definición y objeto.
-Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
+Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
 
 Este procedimiento, y los que lo acompañan para los aspectos específicos, tienen como objeto establecer la operativa de SAMUR-Protección Civil en los DRP en los que participa.
 
@@ -57,8 +52,7 @@ Cada servicio tendrá un responsable que será acorde al nivel de complejidad de
 **1. Podrá apoyarse en el Coordinador del DRP para la gestión y coordinación de las unidades de voluntarios.
 * **Servicios no asistenciales con funciones de enlace o coordinación.** El responsable será el responsable de CECOR externo designado específicamente para dicho servicio, acorde al procedimiento de CECOR en un dispositivo de riesgo previsible.
 
-**El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos:**
-
+### El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos
 * Mantiene sus funciones de responsabilidad sobre el personal voluntario, por lo que prestará la asistencia que éstos puedan necesitar.
 * En los DRP con un Coordinador del DRP mantendrá la supervisión sobre el mismo y resolverá cualquier incidencia que pudiera presentarse, llegando a relevar al Eco 0 si así lo estima oportuno.
 * En los servicios con Jefe del DRP colaborará con el mismo en la recepción de personal voluntario y despliegue.
@@ -102,7 +96,7 @@ La orden de servicio debe de constar, al menos, de los siguientes apartados:
 1*. Cualquier otra información de interés o indicación que se considere relevante para el desarrollo del servicio.
 
 ## Informes asistenciales en un DRP.
-Todas las unidades cumplimentarán el informe asistencial para los pacientes atendidos (ver procedimiento Cumplimentación de informes asistenciales), reflejando la resolución* *del aviso. En el caso de realizar transferencia (al PSA del DRP, a otra unidad del DRP o a otra unidad procedente del operativo ordinario) se reflejará esta circunstancia y el nº de informe de la unidad receptora.
+Todas las unidades cumplimentarán el informe asistencial para los pacientes atendidos ([ver procedimiento Cumplimentación de informes asistenciales](/manual/205-cumplimentacion-de-los-informes-de-asistencia)), reflejando la resolución* *del aviso. En el caso de realizar transferencia (al PSA del DRP, a otra unidad del DRP o a otra unidad procedente del operativo ordinario) se reflejará esta circunstancia y el nº de informe de la unidad receptora.
 
 * **Informes en un PSA.**
   * De forma general se realizará un informe asistencial por cada paciente atendido en el PSA. Se asignará un número de paciente correlativo, con el número de informe del PSA, comenzando con el paciente número 1.

@@ -17,6 +17,17 @@ import type { ManualAttachment } from "./manual-sync.ts";
 import { buildVademecumHref, resolveDrugIdReference, type VademecumDrugReference } from "./vademecum-utils.ts";
 
 const PROCEDURES_DIR = path.join(process.cwd(), "content/procedures");
+const PUBLIC_DIR = path.join(process.cwd(), "public");
+// Apaño: la página de origen tiene el nombre de fichero mal escrito y el PDF
+// espejado lo comparten los procedimientos pediátricos vecinos.
+//
+// Su sitio no es esta capa. Lo correcto es corregirlo en `downloadAttachments`
+// (scripts/sync-manualsamur.ts) para que el espejo se guarde ya con el nombre
+// bueno y el render no tenga que saber nada de erratas de origen. Mientras siga
+// aquí, cada errata nueva de la wiki añade una entrada a mano a este mapa.
+const LOCAL_ASSET_ALIASES: Record<string, string> = {
+  "14_MedicacionIntranasal.pdf": "314_MedicacionIntranasal.pdf",
+};
 
 // Se lee del disco en vez de `import ... from "@/content/data/vademecum.json"`
 // para que este módulo sea ejecutable tanto por Next como por Node a secas
@@ -50,6 +61,73 @@ function readProcedureEditorialBlocks(filePath: string): ProcedureEditorialBlock
   }
 }
 
+function walkPublicAssets(dir: string, relativeDir = ""): string[] {
+  if (!fs.existsSync(dir)) return [];
+
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const absolutePath = path.join(dir, entry.name);
+    const relativePath = path.join(relativeDir, entry.name);
+    if (entry.isDirectory()) return walkPublicAssets(absolutePath, relativePath);
+    return entry.isFile() ? [relativePath] : [];
+  });
+}
+
+let publicAssetIndex: Map<string, string[]> | null = null;
+
+function getPublicAssetIndex() {
+  // Igual que el memo de getAllProcedures: en desarrollo no se cachea, porque si
+  // no, un PDF añadido a public/docs/procedures/ con `npm run dev` levantado se
+  // queda en "no disponible" hasta reiniciar el servidor.
+  if (publicAssetIndex && process.env.NODE_ENV !== "development") return publicAssetIndex;
+
+  publicAssetIndex = new Map<string, string[]>();
+  for (const relativePath of walkPublicAssets(PUBLIC_DIR)) {
+    if (!/^docs\/procedures\/|^images\/procedures\//.test(relativePath)) continue;
+    const filename = path.basename(relativePath);
+    const matches = publicAssetIndex.get(filename) ?? [];
+    matches.push(`/${relativePath.split(path.sep).join("/")}`);
+    publicAssetIndex.set(filename, matches);
+  }
+
+  return publicAssetIndex;
+}
+
+function filenameFromAttachment(sourceUrl: string, localPath: string) {
+  const localFilename = path.basename(localPath);
+  try {
+    const sourceFilename = decodeURIComponent(new URL(sourceUrl).pathname.split("/").at(-1) ?? "");
+    return sourceFilename.split("@").at(-1) || localFilename;
+  } catch {
+    return localFilename;
+  }
+}
+
+function resolveLocalAttachmentPath(sourceUrl: string, localPath: string): string | null {
+  const directPath = path.join(PUBLIC_DIR, localPath.replace(/^\/+/, ""));
+  if (fs.existsSync(directPath)) return localPath;
+
+  const filename = filenameFromAttachment(sourceUrl, localPath);
+  const index = getPublicAssetIndex();
+  const exactMatch = index.get(filename)?.[0];
+  if (exactMatch) return exactMatch;
+
+  const alias = LOCAL_ASSET_ALIASES[filename];
+  return alias ? index.get(alias)?.[0] ?? null : null;
+}
+
+function normalizeWikiPagePath(value: string): string | null {
+  try {
+    const pathname = new URL(value, "https://manual.invalid").pathname;
+    const marker = pathname.toLowerCase().indexOf("/bin/view/");
+    if (marker < 0) return null;
+    return decodeURIComponent(pathname.slice(marker))
+      .replace(/\/WebHome\/?$/i, "")
+      .replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
+}
+
 function normalizeAttachments(value: unknown): ManualAttachment[] {
   if (!Array.isArray(value)) return [];
 
@@ -59,21 +137,29 @@ function normalizeAttachments(value: unknown): ManualAttachment[] {
     const sourceUrl = typeof (attachment as { sourceUrl?: unknown }).sourceUrl === "string"
       ? (attachment as { sourceUrl: string }).sourceUrl
       : "";
-    const localPath = typeof (attachment as { localPath?: unknown }).localPath === "string"
+    const originalLocalPath = typeof (attachment as { localPath?: unknown }).localPath === "string"
       ? (attachment as { localPath: string }).localPath
       : "";
     const kind = typeof (attachment as { kind?: unknown }).kind === "string"
       ? (attachment as { kind: ManualAttachment["kind"] }).kind
       : "other";
-    const availability = (attachment as { availability?: unknown }).availability === "unavailable"
-      ? "unavailable"
-      : "available";
     const error = typeof (attachment as { error?: unknown }).error === "string"
       ? (attachment as { error: string }).error
       : undefined;
 
-    if (!sourceUrl || !localPath) return [];
-    return [{ sourceUrl, localPath, kind, availability, ...(error ? { error } : {}) }];
+    if (!sourceUrl || !originalLocalPath) return [];
+    const resolvedLocalPath = resolveLocalAttachmentPath(sourceUrl, originalLocalPath);
+    const localPath = resolvedLocalPath ?? originalLocalPath;
+    const availability = resolvedLocalPath ? "available" : "unavailable";
+    return [{
+      sourceUrl,
+      localPath,
+      kind,
+      availability,
+      ...((error || availability === "unavailable")
+        ? { error: error ?? "No hay una copia local disponible." }
+        : {}),
+    }];
   });
 }
 
@@ -184,10 +270,43 @@ export function getAllProcedures(): Procedure[] {
   const validIds = new Set<string>(procedures.map((procedure) => procedure.id));
   const idToSlug = new Map<string, string>(procedures.map((procedure) => [procedure.id, procedure.slug]));
   const slugToId = new Map<string, string>(procedures.map((procedure) => [procedure.slug, procedure.id]));
+  const wikiPathToSlug = new Map<string, string>();
+  for (const procedure of procedures) {
+    const sourcePath = procedure.source ? normalizeWikiPagePath(procedure.source) : null;
+    if (sourcePath) wikiPathToSlug.set(sourcePath, procedure.slug);
+  }
+
+  const attachmentHrefMap = new Map<string, string>();
+  for (const procedure of procedures) {
+    for (const attachment of procedure.attachments) {
+      const href = attachment.availability === "unavailable"
+        ? attachment.sourceUrl
+        : attachment.localPath;
+      attachmentHrefMap.set(attachment.localPath, href);
+      attachmentHrefMap.set(attachment.sourceUrl, href);
+    }
+  }
+
+  const resolveInternalHref = (href: string) => {
+    const attachmentHref = attachmentHrefMap.get(href);
+    if (attachmentHref) return attachmentHref;
+
+    const wikiPath = normalizeWikiPagePath(href);
+    const slug = wikiPath ? wikiPathToSlug.get(wikiPath) : null;
+    if (slug) return `/manual/${slug}`;
+
+    if (/\.pdf(?:[?#].*)?$/i.test(href)) {
+      return resolveLocalAttachmentPath("", href) ?? null;
+    }
+
+    return null;
+  };
+
   const baseProcedures = procedures.map((procedure: Procedure) => {
     const content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
       currentProcedureId: procedure.id,
       procedureTitle: procedure.title,
+      resolveInternalHref,
       resolveDrugHref(reference) {
         const drugId = resolveDrugIdReference(reference, VADEMECUM_DRUGS);
         return drugId ? buildVademecumHref(drugId) : null;
