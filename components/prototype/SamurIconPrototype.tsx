@@ -26,9 +26,9 @@ const VARIANT_NOTES: Record<Variant, { thesis: string; read: string; recommendat
     recommendation: "La más distintiva en launcher y mapa; requiere más cuidado en favicon diminuto.",
   },
   C: {
-    thesis: "Un pulso que deja espacio para actuar.",
-    read: "Los cuatro brazos abiertos sugieren señal, movimiento y coordinación inmediata.",
-    recommendation: "La más flexible en un sistema de iconos; pierde fuerza si el fondo no contrasta.",
+    thesis: "Un pulso de guardia, firme y fácil de reencontrar.",
+    read: "La señal abierta conserva movimiento, mientras el campo navy aporta confianza y contraste.",
+    recommendation: "Esta segunda pasada es la dirección recomendada: más propia, más legible y menos genérica.",
   },
 };
 
@@ -40,7 +40,7 @@ function IconMark({ variant, treatment = "color", size = 96 }: { variant: Varian
   const isColor = treatment === "color";
   const isWhiteOnRed = treatment === "whiteOnRed";
   const foreground = treatment === "transparent" ? "#c8102e" : treatment === "white" || isWhiteOnRed ? "#ffffff" : treatment === "black" ? "#101820" : "#ffffff";
-  const background = isColor ? "#c8102e" : isWhiteOnRed ? "#c8102e" : treatment === "transparent" ? "transparent" : treatment === "white" ? "#c8102e" : "#ffffff";
+  const background = isColor && variant === "C" ? "#102a43" : isColor ? "#c8102e" : isWhiteOnRed ? "#c8102e" : treatment === "transparent" ? "transparent" : treatment === "white" ? "#c8102e" : "#ffffff";
   const navy = treatment === "black" ? "#101820" : treatment === "white" || isWhiteOnRed ? "#ffffff" : "#102a43";
   const red = treatment === "black" ? "#101820" : "#c8102e";
 
@@ -63,9 +63,9 @@ function IconMark({ variant, treatment = "color", size = 96 }: { variant: Varian
       )}
       {variant === "C" && (
         <>
-          <path d="M107 40h42v54l38-38 30 30-38 38h54v42h-54l38 38-30 30-38-38v54h-42v-54l-38 38-30-30 38-38H23v-42h54l-38-38 30-30 38 38V40Z" fill={foreground} />
-          <path d="M110 106h36v36h-36z" fill={red} />
-          <path d="M118 114h20v20h-20z" fill={navy} opacity={treatment === "white" || isWhiteOnRed ? 0.22 : 0.95} />
+          <path d="M103 42h50v44l30-30 35 35-30 30h44v50h-44l30 30-35 35-30-30v44h-50v-44l-30 30-35-35 30-30H24v-50h44L38 91l35-35 30 30V42Z" fill={isColor ? "#c8102e" : foreground} />
+          <path d="M99 99h58v58H99z" fill={isColor ? "#f6f5f2" : red} />
+          <path d="M114 114h28v28h-28z" fill={isColor ? "#102a43" : navy} opacity={treatment === "white" || isWhiteOnRed ? 0.22 : 0.98} />
         </>
       )}
       {treatment === "transparent" && <path d="M128 222 75 169h31v-31H75l53-53 53 53h-31v31h31l-53 53Z" fill={red} opacity=".16" />}
@@ -162,7 +162,7 @@ function IconPrototypeBody({ variant, treatment, setTreatment }: { variant: Vari
 
           <aside className="space-y-4 lg:pt-0">
             <div className="rounded-[2rem] bg-[#102a43] p-6 text-white shadow-xl shadow-slate-900/10"><div className="flex items-center gap-2 text-red-300"><Check className="h-4 w-4" /><p className="text-xs font-bold uppercase tracking-[.16em]">Criterio de elección</p></div><p className="mt-4 text-lg font-bold leading-7">Debe sobrevivir a la urgencia, la escala y el contexto.</p><ul className="mt-5 space-y-3 text-sm leading-5 text-slate-200"><li><b className="text-white">01</b> Silueta propia en 16 px.</li><li><b className="text-white">02</b> Contraste alto en light y dark.</li><li><b className="text-white">03</b> Recorte seguro en máscaras redondas.</li><li><b className="text-white">04</b> Un solo gesto, sin texto ni detalle frágil.</li></ul></div>
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Recomendación de esta ronda</p><p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{note.recommendation}</p><div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400"><Sun className="h-4 w-4" /> light <span className="text-slate-300">/</span> <Moon className="h-4 w-4" /> dark</div></div>
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"><p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Recomendación de esta ronda</p><p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{note.recommendation}</p><div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400"><Sun className="h-4 w-4" /> light <span className="text-slate-300">/</span> <Moon className="h-4 w-4" /> dark</div><div className="mt-4 flex items-center gap-2"><span className="h-5 w-5 rounded-md bg-[#102a43] ring-1 ring-black/10" title="Azul navy de confianza" /><span className="h-5 w-5 rounded-md bg-[#c8102e] ring-1 ring-black/10" title="Rojo SAMUR" /><span className="h-5 w-5 rounded-md bg-[#f6f5f2] ring-1 ring-black/10" title="Blanco cálido" /><span className="ml-1 text-[10px] font-semibold text-slate-400">navy · rojo · blanco cálido</span></div></div>
             <div className="rounded-[2rem] border border-dashed border-red-300 bg-red-50/70 p-6 dark:border-red-900 dark:bg-red-950/20"><p className="text-xs font-bold uppercase tracking-[.16em] text-red-700 dark:text-red-300">Pregunta para revisión</p><p className="mt-3 text-lg font-black leading-6 text-red-950 dark:text-red-100">¿Cuál de las tres recordarías después de verla una sola vez?</p><p className="mt-3 text-xs leading-5 text-red-900/70 dark:text-red-200/70">La selección desbloquea la exportación del master, safe-area y assets de plataforma.</p></div>
           </aside>
         </main>
