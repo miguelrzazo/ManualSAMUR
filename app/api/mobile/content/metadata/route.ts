@@ -9,6 +9,7 @@ export async function GET() {
       schema: snapshot.schema,
       version: snapshot.version,
       hash: snapshot.hash,
+      packageHash: snapshot.packageHash,
       generatedAt: snapshot.generatedAt,
     },
     { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } },

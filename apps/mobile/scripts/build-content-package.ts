@@ -1,19 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
-import { buildMobileContentSnapshot } from "../../../lib/mobile-snapshot.ts";
+import { fileURLToPath } from "node:url";
+import { buildMobileContentPackage, isMobileContentPackage } from "../../../lib/mobile-snapshot.ts";
 
-const target = path.join(process.cwd(), "apps/mobile/src/data");
-const snapshot = buildMobileContentSnapshot(process.cwd());
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const target = path.join(repositoryRoot, "apps/mobile/src/data");
+const { snapshot, manifest } = buildMobileContentPackage(repositoryRoot);
+if (!isMobileContentPackage(snapshot, manifest)) {
+  throw new Error("[mobile-content] El paquete generado no supera la validación de integridad");
+}
 fs.mkdirSync(target, { recursive: true });
 fs.writeFileSync(path.join(target, "snapshot.json"), `${JSON.stringify(snapshot)}\n`, "utf8");
 
-const attachments = snapshot.content.procedures.flatMap((procedure) => procedure.attachments.map((attachment) => ({
-  ...attachment,
-  procedureId: procedure.id,
-})));
-const missingLocalPaths = attachments.filter((attachment) => !fs.existsSync(path.join(process.cwd(), "public", attachment.localPath.replace(/^\//, ""))));
+const attachments = manifest.attachments;
+const missingLocalPaths = attachments.filter((attachment) => !fs.existsSync(path.join(repositoryRoot, "public", attachment.localPath.replace(/^\//, ""))));
 if (missingLocalPaths.length > 0) {
   console.warn(`[mobile-content] Aviso: ${missingLocalPaths.length} anexos oficiales no están disponibles localmente; permanecen en el manifiesto para resolverlos en la fase de empaquetado/actualización.`);
 }
-fs.writeFileSync(path.join(target, "attachment-manifest.json"), `${JSON.stringify({ generatedAt: snapshot.generatedAt, attachments })}\n`, "utf8");
-console.log(`[mobile-content] ${snapshot.content.procedures.length} procedimientos, ${attachments.length} anexos → apps/mobile/src/data`);
+fs.writeFileSync(path.join(target, "attachment-manifest.json"), `${JSON.stringify(manifest)}\n`, "utf8");
+console.log(`[mobile-content] ${snapshot.content.procedures.length} procedimientos, ${attachments.length} anexos, paquete ${snapshot.packageHash} → apps/mobile/src/data`);

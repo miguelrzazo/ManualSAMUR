@@ -4,9 +4,22 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { ProcedureEditorialBlock, ProcedureRelation } from "./manual-data.ts";
 import type { ManualUpdateEvent } from "./manual-sync.ts";
+import {
+  MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
+  MOBILE_ATTACHMENT_MANIFEST_VERSION,
+  MOBILE_SNAPSHOT_SCHEMA,
+  MOBILE_SNAPSHOT_VERSION,
+  canonicalJson,
+  isValidAttachment,
+  isValidManifestAttachment,
+  mobileAttachmentEntries,
+  mobilePackageHashPayload,
+  stableRouteKey,
+  type MobileAttachmentManifest as MobileAttachmentManifestPackage,
+} from "../apps/mobile/src/data/schema.ts";
 
-export const MOBILE_SNAPSHOT_SCHEMA = "samur-manual.mobile-content";
-export const MOBILE_SNAPSHOT_VERSION = 2;
+export { MOBILE_SNAPSHOT_SCHEMA, MOBILE_SNAPSHOT_VERSION };
+export { canonicalJson };
 
 export interface MobileProcedure {
   id: string;
@@ -42,6 +55,8 @@ export interface MobileContentSnapshot {
   version: typeof MOBILE_SNAPSHOT_VERSION;
   generatedAt: string;
   hash: string;
+  contentHash?: string;
+  packageHash?: string;
   content: {
     procedures: MobileProcedure[];
     codes: Record<string, unknown[]>;
@@ -57,6 +72,11 @@ export interface MobileContentSnapshot {
     links: Record<string, unknown>;
     updates: ManualUpdateEvent[];
   };
+}
+
+export interface MobileContentPackage {
+  snapshot: MobileContentSnapshot;
+  manifest: MobileAttachmentManifestPackage;
 }
 
 function readData<T>(name: string, cwd = process.cwd()): T {
@@ -90,7 +110,7 @@ function readProceduresLegacy(cwd: string): MobileProcedure[] {
         title: String(data.title ?? id),
         section: String(data.section ?? "General"),
         slug: String(data.slug ?? id),
-        routeKey: "",
+        routeKey: stableRouteKey(id),
         tags: Array.isArray(data.tags) ? data.tags.filter((tag): tag is string => typeof tag === "string") : [],
         synonyms: Array.isArray(data.synonyms) ? data.synonyms.filter((synonym): synonym is string => typeof synonym === "string") : [],
         related: Array.isArray(data.related) ? data.related.filter((related): related is string => typeof related === "string") : [],
@@ -123,11 +143,11 @@ function readProceduresLegacy(cwd: string): MobileProcedure[] {
     .sort((left, right) => left.id.localeCompare(right.id, "es", { numeric: true }));
 
   const idBySlug = new Map(procedures.map((procedure) => [procedure.slug, procedure.id]));
-  const withLinks = procedures.map((procedure, index) => {
+  const withLinks = procedures.map((procedure) => {
     const linkedProcedureIds = [...procedure.content.matchAll(/\/manual\/([^\s)#?"']+)/g)]
       .map((match) => idBySlug.get(decodeURIComponent(match[1])))
       .filter((id): id is string => Boolean(id) && id !== procedure.id);
-    return { ...procedure, routeKey: `${procedure.slug}--${index + 1}`, related: [...new Set([...procedure.related, ...linkedProcedureIds])] };
+    return { ...procedure, routeKey: stableRouteKey(procedure.id), related: [...new Set([...procedure.related, ...linkedProcedureIds])] };
   });
   return withLinks.map((procedure) => ({
     ...procedure,
@@ -154,19 +174,18 @@ function readProcedures(cwd: string, updates: ManualUpdateEvent[]): MobileProced
   }));
 }
 
-function stableJson(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
-  if (value && typeof value === "object") {
-    return `{${Object.entries(value as Record<string, unknown>)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, child]) => `${JSON.stringify(key)}:${stableJson(child)}`)
-      .join(",")}}`;
-  }
-  return JSON.stringify(value);
+export function contentHash(content: MobileContentSnapshot["content"]): string {
+  return createHash("sha256").update(canonicalJson(content), "utf8").digest("hex");
 }
 
-export function contentHash(content: MobileContentSnapshot["content"]): string {
-  return createHash("sha256").update(stableJson(content)).digest("hex");
+export function attachmentManifestHash(attachments: MobileAttachmentManifestPackage["attachments"]): string {
+  return createHash("sha256").update(canonicalJson(attachments), "utf8").digest("hex");
+}
+
+export function packageHash(content: MobileContentSnapshot["content"], attachments: MobileAttachmentManifestPackage["attachments"]): string {
+  return createHash("sha256")
+    .update(canonicalJson(mobilePackageHashPayload({ hash: contentHash(content) }, attachmentManifestHash(attachments))), "utf8")
+    .digest("hex");
 }
 
 export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: string): MobileContentSnapshot {
@@ -199,6 +218,8 @@ export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: st
     updates,
   };
 
+  const hash = contentHash(content);
+  const attachments = mobileAttachmentEntries(content);
   return {
     schema: MOBILE_SNAPSHOT_SCHEMA,
     version: MOBILE_SNAPSHOT_VERSION,
@@ -206,8 +227,26 @@ export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: st
       ?? (typeof manual.lastApprovedAt === "string" ? manual.lastApprovedAt : undefined)
       ?? (typeof manual.lastSyncAt === "string" ? manual.lastSyncAt : undefined)
       ?? "1970-01-01T00:00:00.000Z",
-    hash: contentHash(content),
+    hash,
+    contentHash: hash,
+    packageHash: packageHash(content, attachments),
     content,
+  };
+}
+
+export function buildMobileContentPackage(cwd = process.cwd(), generatedAt?: string): MobileContentPackage {
+  const snapshot = buildMobileContentSnapshot(cwd, generatedAt);
+  const attachments = mobileAttachmentEntries(snapshot.content);
+  return {
+    snapshot,
+    manifest: {
+      schema: MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
+      version: MOBILE_ATTACHMENT_MANIFEST_VERSION,
+      generatedAt: snapshot.generatedAt,
+      contentHash: snapshot.hash,
+      packageHash: snapshot.packageHash as string,
+      attachments,
+    },
   };
 }
 
@@ -217,5 +256,27 @@ export function isMobileContentSnapshot(value: unknown): value is MobileContentS
   if (snapshot.schema !== MOBILE_SNAPSHOT_SCHEMA || snapshot.version !== MOBILE_SNAPSHOT_VERSION) return false;
   if (!snapshot.content || typeof snapshot.content !== "object" || !Array.isArray(snapshot.content.procedures)) return false;
   if (!snapshot.hash || typeof snapshot.hash !== "string") return false;
-  return contentHash(snapshot.content as MobileContentSnapshot["content"]) === snapshot.hash;
+  if (!/^[a-f0-9]{64}$/.test(snapshot.hash)) return false;
+  if (snapshot.contentHash !== undefined && snapshot.contentHash !== snapshot.hash) return false;
+  if (snapshot.packageHash !== undefined && !/^[a-f0-9]{64}$/.test(snapshot.packageHash)) return false;
+  const content = snapshot.content as MobileContentSnapshot["content"];
+  if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
+  if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
+  if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;
+  if (content.procedures.some((procedure) => procedure.attachments.some((attachment) => !isValidAttachment(attachment)))) return false;
+  const attachments = mobileAttachmentEntries(content);
+  if (new Set(attachments.map((attachment) => attachment.id)).size !== attachments.length) return false;
+  if (attachments.some((attachment) => !isValidManifestAttachment(attachment))) return false;
+  return contentHash(content) === snapshot.hash;
+}
+
+export function isMobileContentPackage(value: unknown, manifestValue: unknown): value is MobileContentSnapshot {
+  if (!isMobileContentSnapshot(value) || !manifestValue || typeof manifestValue !== "object") return false;
+  const manifest = manifestValue as Partial<MobileAttachmentManifestPackage>;
+  if (manifest.schema !== MOBILE_ATTACHMENT_MANIFEST_SCHEMA || manifest.version !== MOBILE_ATTACHMENT_MANIFEST_VERSION) return false;
+  if (manifest.generatedAt !== value.generatedAt || manifest.contentHash !== value.hash || !Array.isArray(manifest.attachments)) return false;
+  const expectedAttachments = mobileAttachmentEntries(value.content);
+  if (canonicalJson(manifest.attachments) !== canonicalJson(expectedAttachments)) return false;
+  if (manifest.packageHash !== packageHash(value.content, expectedAttachments)) return false;
+  return value.packageHash === manifest.packageHash;
 }

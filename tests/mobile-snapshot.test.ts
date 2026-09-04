@@ -5,8 +5,12 @@ import {
   MOBILE_SNAPSHOT_SCHEMA,
   MOBILE_SNAPSHOT_VERSION,
   buildMobileContentSnapshot,
+  canonicalJson,
   contentHash,
+  isMobileContentPackage,
   isMobileContentSnapshot,
+  packageHash,
+  type MobileAttachmentManifest,
   type MobileContentSnapshot,
 } from "../lib/mobile-snapshot.ts";
 
@@ -52,6 +56,33 @@ test("mobile snapshots give every procedure a unique route key", () => {
   const procedures = buildMobileContentSnapshot().content.procedures;
 
   assert.equal(new Set(procedures.map((procedure) => procedure.routeKey)).size, procedures.length);
+  assert.equal(procedures.every((procedure) => procedure.routeKey === `procedure:${procedure.id}`), true);
+});
+
+test("canonical package bytes do not depend on object insertion order", () => {
+  assert.equal(canonicalJson({ z: 1, a: { y: true, x: "ok" } }), '{"a":{"x":"ok","y":true},"z":1}');
+});
+
+test("package hash includes the attachment manifest", () => {
+  const snapshot = buildMobileContentSnapshot();
+  const attachments = snapshot.content.procedures.flatMap((procedure) => procedure.attachments.map((attachment) => ({ ...attachment, procedureId: procedure.id }))) as MobileAttachmentManifest["attachments"];
+  assert.equal(snapshot.packageHash, packageHash(snapshot.content, attachments));
+  assert.equal(isMobileContentPackage(snapshot, {
+    schema: "samur-manual.mobile-attachments",
+    version: 1,
+    generatedAt: snapshot.generatedAt,
+    contentHash: snapshot.hash,
+    packageHash: snapshot.packageHash as string,
+    attachments,
+  }), true);
+  assert.equal(isMobileContentPackage(snapshot, {
+    schema: "samur-manual.mobile-attachments",
+    version: 1,
+    generatedAt: snapshot.generatedAt,
+    contentHash: snapshot.hash,
+    packageHash: snapshot.packageHash as string,
+    attachments: [{ ...attachments[0], localPath: "/docs/../private.txt" }, ...attachments.slice(1)],
+  }), false);
 });
 
 test("v2 snapshots carry canonical relation, editorial, update and attachment data", () => {

@@ -20,6 +20,7 @@
     "migrate:subfolders": "node --experimental-strip-types scripts/migrate-to-subfolders.ts",
     "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts",
     "mobile:content": "node --experimental-strip-types apps/mobile/scripts/build-content-package.ts",
+    "mobile:content:validate": "node --experimental-strip-types apps/mobile/scripts/validate-content-package.ts",
     "mobile:typecheck": "npx tsc --noEmit -p apps/mobile/tsconfig.json",
     "sync:manualsamur:detect": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
     "sync:manualsamur:apply": "npx ts-node scripts/sync-manualsamur.ts apply --all",

@@ -3,7 +3,23 @@ import Constants from "expo-constants";
 import * as Crypto from "expo-crypto";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
-import type { MobileContent, MobileProcedure, MobileSnapshot } from "./data/schema";
+import bundledAttachmentManifest from "./data/attachment-manifest.json";
+import {
+  MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
+  MOBILE_ATTACHMENT_MANIFEST_VERSION,
+  MOBILE_SNAPSHOT_SCHEMA,
+  MOBILE_SNAPSHOT_VERSION,
+  canonicalJson,
+  mobileAttachmentEntries,
+  mobilePackageHashPayload,
+  isValidAttachment,
+  isValidManifestAttachment,
+  stableRouteKey,
+  type MobileAttachmentManifest,
+  type MobileContent,
+  type MobileProcedure,
+  type MobileSnapshot,
+} from "./data/schema";
 
 const SNAPSHOT_KEY = "manualsamur.content.snapshot.v2";
 const FAVORITES_KEY = "manualsamur.preferences.favorites";
@@ -25,24 +41,35 @@ type ContentContextValue = {
 
 const ContentContext = createContext<ContentContextValue | null>(null);
 
-function stableJson(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
-  if (value && typeof value === "object") {
-    return `{${Object.entries(value as Record<string, unknown>)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, child]) => `${JSON.stringify(key)}:${stableJson(child)}`)
-      .join(",")}}`;
-  }
-  return JSON.stringify(value);
-}
-
-async function snapshotIsValid(candidate: unknown): Promise<boolean> {
+async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAttachmentManifest): Promise<boolean> {
   if (!candidate || typeof candidate !== "object") return false;
   const snapshot = candidate as Partial<MobileSnapshot>;
-  if (snapshot.schema !== "samur-manual.mobile-content" || snapshot.version !== 2 || !snapshot.content) return false;
-  if (typeof snapshot.hash !== "string" || snapshot.hash.length < 32) return false;
-  const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, stableJson(snapshot.content));
-  return digest === snapshot.hash;
+  if (snapshot.schema !== MOBILE_SNAPSHOT_SCHEMA || snapshot.version !== MOBILE_SNAPSHOT_VERSION || !snapshot.content) return false;
+  if (typeof snapshot.generatedAt !== "string" || !/^[a-f0-9]{64}$/.test(snapshot.hash ?? "")) return false;
+  if (snapshot.contentHash !== undefined && snapshot.contentHash !== snapshot.hash) return false;
+  if (!/^[a-f0-9]{64}$/.test(snapshot.packageHash ?? "")) return false;
+  const content = snapshot.content as MobileContent;
+  if (!Array.isArray(content.procedures)) return false;
+  if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
+  if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
+  if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;
+  if (content.procedures.some((procedure) => procedure.attachments.some((attachment) => !isValidAttachment(attachment)))) return false;
+  const attachments = mobileAttachmentEntries(content);
+  if (new Set(attachments.map((attachment) => attachment.id)).size !== attachments.length) return false;
+  if (attachments.some((attachment) => !isValidManifestAttachment(attachment))) return false;
+  if (expectedManifest && (canonicalJson(expectedManifest) !== canonicalJson({
+    schema: MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
+    version: MOBILE_ATTACHMENT_MANIFEST_VERSION,
+    generatedAt: snapshot.generatedAt,
+    contentHash: snapshot.hash,
+    packageHash: snapshot.packageHash,
+    attachments,
+  }))) return false;
+  const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(content));
+  if (digest !== snapshot.hash) return false;
+  const manifestDigest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(attachments));
+  const packageDigest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(mobilePackageHashPayload(snapshot as MobileSnapshot, manifestDigest)));
+  return packageDigest === snapshot.packageHash;
 }
 
 function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
@@ -80,6 +107,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
           const parsed = JSON.parse(storedSnapshot);
           if (await snapshotIsValid(parsed)) setSnapshot(parsed as MobileSnapshot);
         } catch { /* Keep the bundled snapshot if storage is corrupt. */ }
+      }
+      if (!await snapshotIsValid(bundledSnapshot, bundledAttachmentManifest as MobileAttachmentManifest)) {
+        setLastError("El paquete local no supera la validación de integridad");
       }
       if (storedFavorites) {
         try { setFavorites(JSON.parse(storedFavorites)); } catch { /* ignore */ }
