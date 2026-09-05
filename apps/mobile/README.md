@@ -87,3 +87,10 @@ The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`)
   Location permission is requested only after tapping “Usar mi ubicación”, and denial keeps
   the searchable directory and accessible schematic available. Distances are on-device
   straight-line estimates only; a selected point is handed to the platform Maps app.
+- The online map seam is provider-neutral and disabled by `online-map-provider-policy.json`.
+  No SDK, tile endpoint, or provider is selected until the owner records approval for the
+  provider, license/attribution, offline scope, OS floor, and installed-size budget. A future
+  adapter must use `OnlineMapRequest`/`OnlineMapSnapshot`; network, provider, stale-data, and
+  location-permission failures transition to the same offline directory and accessible schematic.
+  Run `npm --prefix apps/mobile run online-map:check-release` as a release gate; it is expected
+  to fail until those owner decisions are evidenced.

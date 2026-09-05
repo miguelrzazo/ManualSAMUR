@@ -1,0 +1,13 @@
+{
+  "schema": "samur-manual.online-map-policy",
+  "version": 1,
+  "approved": false,
+  "provider": null,
+  "providerApproved": false,
+  "licenseApproved": false,
+  "offlineScopeApproved": false,
+  "osFloorApproved": false,
+  "sizeBudgetApproved": false,
+  "sizeBudgetBytes": 0,
+  "notes": "Bloqueado hasta que el propietario apruebe proveedor, licencia/atribución, alcance offline, OS floor y presupuesto de tamaño. No instalar ni integrar un SDK mientras esté bloqueado."
+}

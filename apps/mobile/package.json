@@ -12,7 +12,8 @@
     "content": "node --experimental-strip-types scripts/build-content-package.ts",
     "content:validate": "node --experimental-strip-types scripts/validate-content-package.ts",
     "attachments:check-release": "node --experimental-strip-types scripts/check-attachment-release.ts",
-    "locations:check-release": "node --experimental-strip-types scripts/check-location-release.ts"
+    "locations:check-release": "node --experimental-strip-types scripts/check-location-release.ts",
+    "online-map:check-release": "node --experimental-strip-types scripts/check-online-map-release.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
