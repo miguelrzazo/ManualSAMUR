@@ -36,7 +36,7 @@ function approvedPolicy(): OnlineMapReleasePolicy {
 
 test("online map policy is disabled by default and reports every owner gate", () => {
   assert.equal(onlineMapPolicyReady(), false);
-  assert.deepEqual(onlineMapPolicyGates(), ["provider", "license", "offline-scope", "os-floor", "size-budget"]);
+  assert.deepEqual(onlineMapPolicyGates(), ["owner-approval", "provider", "license", "offline-scope", "os-floor", "size-budget"]);
   assert.equal(initialOnlineMapState().status, "disabled");
   const report = evaluateOnlineMapRelease();
   assert.equal(report.ready, false);
@@ -54,7 +54,33 @@ test("an approved policy is the only route out of the feature-off boundary", () 
   const online = transitionOnlineMapState(loading, { type: "success", snapshot: { fetchedAt: "2026-09-05T10:00:00Z", pins: [] } }, policy);
   assert.equal(online.status, "online");
   const blockedAgain = transitionOnlineMapState(online, { type: "failure", reason: "provider-error" }, DEFAULT_ONLINE_MAP_POLICY);
-  assert.deepEqual(blockedAgain, { status: "disabled", gate: "provider", fallback: "offline-directory-and-schematic" });
+  assert.deepEqual(blockedAgain, { status: "disabled", gate: "owner-approval", fallback: "offline-directory-and-schematic" });
+});
+
+test("top-level owner approval remains a hard gate even when every sub-gate is true", () => {
+  const policy = { ...approvedPolicy(), approved: false };
+  assert.equal(onlineMapPolicyReady(policy), false);
+  assert.equal(initialOnlineMapState(policy).status, "disabled");
+  assert.deepEqual(transitionOnlineMapState({ status: "idle" }, { type: "request", request: { query: "", filter: "all" } }, policy), {
+    status: "disabled",
+    gate: "owner-approval",
+    fallback: "offline-directory-and-schematic",
+  });
+});
+
+test("release gates validate provider evidence instead of trusting approval booleans", () => {
+  const cases = [
+    { gate: "provider" as const, provider: { ...approvedPolicy().provider!, id: "", displayName: "" } },
+    { gate: "license" as const, provider: { ...approvedPolicy().provider!, attribution: "" } },
+    { gate: "os-floor" as const, provider: { ...approvedPolicy().provider!, minimumOS: { ios: 0, android: Number.NaN } } },
+    { gate: "size-budget" as const, provider: { ...approvedPolicy().provider!, estimatedInstalledBytes: 2_049 } },
+    { gate: "size-budget" as const, provider: { ...approvedPolicy().provider!, estimatedInstalledBytes: -1 } },
+  ];
+  for (const item of cases) {
+    const report = evaluateOnlineMapRelease({ ...approvedPolicy(), provider: item.provider });
+    assert.equal(report.ready, false);
+    assert.equal(report.issues.some((issue) => issue.gate === item.gate), true, item.gate);
+  }
 });
 
 test("network, provider, stale-data, and denied-location failures all preserve the offline fallback", () => {

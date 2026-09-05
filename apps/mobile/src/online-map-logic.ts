@@ -4,7 +4,7 @@ import type { LocationCoordinate, LocationFilter, LocationKind, LocationRecord }
 export const ONLINE_MAP_POLICY_SCHEMA = "samur-manual.online-map-policy" as const;
 export const ONLINE_MAP_POLICY_VERSION = 1 as const;
 
-export type OnlineMapPolicyGate = "provider" | "license" | "offline-scope" | "os-floor" | "size-budget";
+export type OnlineMapPolicyGate = "owner-approval" | "provider" | "license" | "offline-scope" | "os-floor" | "size-budget";
 
 export interface OnlineMapProviderConfig {
   id: string;
@@ -77,11 +77,29 @@ export const disabledOnlineMapProvider: OnlineMapProviderAdapter = {
 
 export function onlineMapPolicyGates(policy: OnlineMapReleasePolicy = DEFAULT_ONLINE_MAP_POLICY): OnlineMapPolicyGate[] {
   const gates: OnlineMapPolicyGate[] = [];
-  if (!policy.providerApproved || !policy.provider?.id.trim()) gates.push("provider");
-  if (!policy.licenseApproved) gates.push("license");
+  if (!policy.approved) gates.push("owner-approval");
+
+  const provider = policy.provider;
+  const hasProviderIdentity = Boolean(provider?.id.trim() && provider?.displayName.trim());
+  if (!policy.providerApproved || !hasProviderIdentity) gates.push("provider");
+
+  const hasAttribution = Boolean(provider?.attribution.trim());
+  if (!policy.licenseApproved || !hasAttribution) gates.push("license");
+
   if (!policy.offlineScopeApproved) gates.push("offline-scope");
-  if (!policy.osFloorApproved) gates.push("os-floor");
-  if (!policy.sizeBudgetApproved || !Number.isSafeInteger(policy.sizeBudgetBytes) || policy.sizeBudgetBytes <= 0) gates.push("size-budget");
+
+  const hasValidOSMatrix = Boolean(provider
+    && Number.isFinite(provider.minimumOS.ios) && provider.minimumOS.ios > 0
+    && Number.isFinite(provider.minimumOS.android) && provider.minimumOS.android > 0);
+  if (!policy.osFloorApproved || !hasValidOSMatrix) gates.push("os-floor");
+
+  const hasValidSizeEvidence = Boolean(provider
+    && Number.isFinite(provider.estimatedInstalledBytes)
+    && provider.estimatedInstalledBytes >= 0
+    && Number.isFinite(policy.sizeBudgetBytes)
+    && policy.sizeBudgetBytes > 0
+    && provider.estimatedInstalledBytes <= policy.sizeBudgetBytes);
+  if (!policy.sizeBudgetApproved || !hasValidSizeEvidence) gates.push("size-budget");
   return gates;
 }
 
@@ -111,7 +129,7 @@ export function initialOnlineMapState(policy: OnlineMapReleasePolicy = DEFAULT_O
 
 export function transitionOnlineMapState(state: OnlineMapState, event: OnlineMapEvent, policy: OnlineMapReleasePolicy = DEFAULT_ONLINE_MAP_POLICY): OnlineMapState {
   const gate = onlineMapPolicyGates(policy)[0];
-  if (gate) return { status: "disabled", gate, fallback: "offline-directory-and-schematic" };
+  if (!onlineMapPolicyReady(policy) && gate) return { status: "disabled", gate, fallback: "offline-directory-and-schematic" };
   switch (event.type) {
     case "enable": return state.status === "disabled" ? { status: "idle" } : state;
     case "request": return { status: "loading", request: event.request };
