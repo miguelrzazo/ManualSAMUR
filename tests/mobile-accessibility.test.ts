@@ -91,10 +91,19 @@ test("route contracts expose the important stateful workflows", () => {
 
   const firstUse = sourceFor("FirstUseDisclosure");
   assert.match(firstUse, /accessibilityViewIsModal/);
+  assert.match(firstUse, /<ScrollView[\s\S]*flexGrow: 1/);
+  assert.match(firstUse, /contentContainerStyle=\{\{[^}]*justifyContent: "space-between"/);
   assert.doesNotMatch(firstUse, /SafeAreaView[^>]+\baccessible(?:=|\s|>)/);
 
   const locationModal = sourceFor("LocationModal");
   assert.match(locationModal, /accessibilityViewIsModal/);
   assert.match(locationModal, /accessibilityElementsHidden/);
+  assert.match(locationModal, /<ScrollView style=\{\[styles\.locationSheet, \{ maxHeight: "85%"/);
+  assert.doesNotMatch(locationModal, /modalBackdrop[^>]+accessibilityElementsHidden/);
   assert.doesNotMatch(locationModal, /locationSheet[^>]+\baccessible(?:=|\s|>)/);
+
+  const searchBar = sourceFor("SearchBar");
+  assert.match(searchBar, /accessible=\{!onChangeText\}/);
+  assert.match(appSource, /forwardRef<View, PressableProps>/);
+  assert.match(appSource, /styles\.minimumTarget/);
 });
