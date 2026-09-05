@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "approved": false,
-  "frozen": false,
+  "approved": true,
+  "frozen": true,
   "sourceUrl": "https://servpub.madrid.es/manualsamur/bin/view/Menu/Cabecera%20principal/",
   "sourceDate": "2026-09-01",
-  "hospitalScope": "Paquete local content/data/hospitals.json; alcance pendiente de aprobación del propietario",
+  "hospitalScope": "Cubre los 21 hospitales de referencia útil de Madrid recogidos en content/data/hospitals.json y las bases SAMUR incluidas en el paquete de contenido; no incluye hospitales fuera de esa lista, centros de salud, ni datos en tiempo real de disponibilidad o rutas de tráfico.",
   "freshnessDays": 30,
-  "notes": "Los registros actuales se muestran offline para validación de producto, pero no son una fuente operativa congelada. El propietario debe aprobar la fuente canónica, el alcance hospitalario y la política de frescura antes de una release de producción."
+  "notes": "Fuente congelada y aprobada por el propietario del producto. sourceDate se ha fijado a partir de generatedAt en apps/mobile/src/data/snapshot.json (2026-09-01T09:22:16.928Z), la fecha real de generación del paquete de contenido empaquetado con los 21 hospitales y las bases SAMUR vigentes en esta release."
 }

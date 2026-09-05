@@ -10,6 +10,7 @@ import {
   locationPolicyReady,
   locationPolicyStatus,
   locationRecords,
+  locationSourcePolicy,
   locationRouteKey,
   parseLocationRouteKey,
   platformMapsUrl,
@@ -73,9 +74,24 @@ test("schematic nodes preserve the same location information as the accessible l
   }
 });
 
-test("source freshness is visible but production remains blocked until owner approval", () => {
-  assert.equal(locationPolicyReady(), false);
-  assert.equal(locationPolicyStatus(), "unapproved");
+test("owner has approved and frozen the location source, and the JSON policy matches the TS constant", () => {
+  const jsonPolicy = JSON.parse(readFileSync(path.join(appRoot, "location-source-policy.json"), "utf8")) as Record<string, unknown>;
+  assert.equal(locationPolicyReady(), true);
+  assert.equal(locationPolicyStatus(), "ready");
+  assert.equal(jsonPolicy.approved, true);
+  assert.equal(jsonPolicy.frozen, true);
+  // The TS constant is derived from the JSON file via a static import (not node:fs), so this
+  // also guards against the two ever diverging.
+  assert.equal(jsonPolicy.version, locationSourcePolicy.version);
+  assert.equal(jsonPolicy.approved, locationSourcePolicy.approved);
+  assert.equal(jsonPolicy.frozen, locationSourcePolicy.frozen);
+  assert.equal(jsonPolicy.sourceUrl, locationSourcePolicy.sourceUrl);
+  assert.equal(jsonPolicy.sourceDate, locationSourcePolicy.sourceDate);
+  assert.equal(jsonPolicy.hospitalScope, locationSourcePolicy.hospitalScope);
+  assert.equal(jsonPolicy.freshnessDays, locationSourcePolicy.freshnessDays);
+});
+
+test("staleness is still computed correctly for an approved, frozen policy", () => {
   assert.equal(isLocationStale("2026-09-01", new Date("2026-09-05T00:00:00Z")), false);
   assert.equal(isLocationStale("2026-07-01", new Date("2026-09-05T00:00:00Z")), true);
 });

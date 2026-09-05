@@ -12,7 +12,7 @@ export interface LocationRecord {
   district: string;
   lat: number;
   lng: number;
-  /** This is deliberately a packaged-source date until the owner approves the source policy. */
+  /** Date the packaged location data was generated (see LocationSourcePolicy.sourceDate). */
   sourceDate: string;
   sourcePolicyApproved: boolean;
   emergency?: boolean;
@@ -34,13 +34,22 @@ export interface LocationSourcePolicy {
   freshnessDays: number;
 }
 
+/**
+ * MUST stay in sync with ../location-source-policy.json (the canonical, owner-approved
+ * policy record). Not derived via a JSON import: a plain JSON import needs the ESM "with
+ * { type: 'json' }" attribute under plain Node (used by scripts/check-location-release.ts
+ * and the test suite), and it is unverified whether this project's Metro/Babel config
+ * parses that syntax for the React Native bundle — the risk of a silent bundle break was
+ * judged worse than duplication. tests/mobile-locations.test.ts asserts these two files
+ * are identical field-for-field, so any future edit to one without the other fails CI.
+ */
 export const locationSourcePolicy: LocationSourcePolicy = {
   version: 1,
-  approved: false,
-  frozen: false,
+  approved: true,
+  frozen: true,
   sourceUrl: "https://servpub.madrid.es/manualsamur/bin/view/Menu/Cabecera%20principal/",
   sourceDate: "2026-09-01",
-  hospitalScope: "Paquete local content/data/hospitals.json; alcance pendiente de aprobación del propietario",
+  hospitalScope: "Cubre los 21 hospitales de referencia útil de Madrid recogidos en content/data/hospitals.json y las bases SAMUR incluidas en el paquete de contenido; no incluye hospitales fuera de esa lista, centros de salud, ni datos en tiempo real de disponibilidad o rutas de tráfico.",
   freshnessDays: 30,
 };
 
@@ -149,7 +158,7 @@ export function isLocationStale(sourceDate: string, now = new Date(), policy: Lo
 export function locationFreshnessLabel(location: Pick<LocationRecord, "sourceDate" | "sourcePolicyApproved">, now = new Date(), policy: LocationSourcePolicy = locationSourcePolicy): string {
   const stale = isLocationStale(location.sourceDate, now, policy);
   const status = stale ? "desactualizado" : "vigente según la política local";
-  const approval = location.sourcePolicyApproved ? "fuente aprobada" : "fuente pendiente de aprobación";
+  const approval = location.sourcePolicyApproved ? "fuente oficial del SAMUR" : "fuente pendiente de aprobación";
   return `${status} · ${approval} · fecha ${location.sourceDate}`;
 }
 
