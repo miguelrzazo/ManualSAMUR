@@ -945,13 +945,20 @@ function AppGate() {
 
 export default function App() { return <SafeAreaProvider><PreferencesProvider><AppGate /></PreferencesProvider></SafeAreaProvider>; }
 
+/**
+ * The tab capsules float over the content instead of pushing it up, so every scrolling
+ * surface has to end above them. Without this the last card sits behind the glass and
+ * reads as clipped.
+ */
+const TAB_BAR_INSET = 116;
+
 function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptivePalette>) {
   return StyleSheet.create({
   appSurface: { flex: 1 },
   minimumTarget: accessibilityTargetStyle(),
   screen: { flex: 1, backgroundColor: nativeTheme?.paper ?? palette.paper },
-  scrollContent: { padding: spacing.lg, paddingBottom: 40, alignSelf: "center", width: "100%", maxWidth: 960 },
-  listContent: { padding: spacing.lg, paddingBottom: 40, gap: 8, alignSelf: "center", width: "100%", maxWidth: 1040 },
+  scrollContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 960 },
+  listContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, gap: 8, alignSelf: "center", width: "100%", maxWidth: 1040 },
   detailContent: { padding: spacing.lg, paddingBottom: 48, alignSelf: "center", width: "100%", maxWidth: 720 },
   brandHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl },
   brandLockup: { flexDirection: "row", alignItems: "center", gap: spacing.sm },

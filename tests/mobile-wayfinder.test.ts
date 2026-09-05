@@ -54,7 +54,10 @@ test("the tab bar and search capsule use Liquid Glass with an honest, palette-ba
   assert.match(source, /isLiquidGlassAvailable\(\)/);
   assert.match(source, /useReduceTransparency/);
   assert.match(source, /AccessibilityInfo\.isReduceTransparencyEnabled/);
-  assert.match(source, /<GlassContainer spacing=\{\d+\}/);
+  // Deliberately NOT wrapped in a GlassContainer: that component makes neighbouring
+  // glass elements merge, and it drew a visible bridge between the two capsules even at
+  // spacing 0. The tab bar and the search button must read as two separate objects.
+  assert.doesNotMatch(source, /<GlassContainer/);
   assert.match(source, /glassEffectStyle="regular"/);
   assert.match(source, /isInteractive/);
   // Fallback path renders plain, opaque Views styled from the app's own palette tokens

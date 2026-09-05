@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { GlassContainer, GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
+import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
 import React, { useEffect, useMemo, useState } from "react";
 import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,7 +40,7 @@ type GlassTabBarProps = BottomTabBarProps & {
  * its default bar in JS, so it can never receive real Liquid Glass — this renders two
  * independent capsules instead: the four-destination tab pill and a detached search
  * button, laid out on the same line per the GitHub Copilot mobile reference. Both use
- * `GlassView`/`GlassContainer` on iOS 26/27 when available and not overridden by Reduce
+ * `GlassView` on iOS 26/27 when available and not overridden by Reduce
  * Transparency; every other path (Android, pre-iOS-26, Reduce Transparency on) gets a
  * deliberate opaque capsule using the existing palette, not a degraded glass imitation.
  */
@@ -100,17 +100,21 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
     </Pressable>
   );
 
+  // The two capsules are deliberately NOT wrapped in a GlassContainer: that component
+  // exists to let neighbouring glass elements merge, and it drew a visible bridge
+  // between the tab bar and the search button even at spacing 0. They are separate
+  // controls and must read as separate objects.
   return (
     <View pointerEvents="box-none" style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
       {glassReady ? (
-        <GlassContainer spacing={16} style={styles.row}>
+        <View style={styles.row}>
           <GlassView glassEffectStyle="regular" isInteractive colorScheme={scheme === "dark" ? "dark" : "light"} style={styles.tabCapsule}>
             {tabButtons}
           </GlassView>
           <GlassView glassEffectStyle="regular" isInteractive colorScheme={scheme === "dark" ? "dark" : "light"} style={styles.searchCapsule}>
             {searchButton}
           </GlassView>
-        </GlassContainer>
+        </View>
       ) : (
         <View style={styles.row}>
           <View style={[styles.tabCapsule, fallbackCapsule, styles.fallbackShadow]}>{tabButtons}</View>
