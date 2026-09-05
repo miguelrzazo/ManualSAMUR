@@ -48,6 +48,8 @@ export interface MobileAttachmentManifest {
   localPath: string;
   filename: string;
   kind: "image" | "pdf" | "other";
+  byteLength?: number;
+  sha256?: string;
 }
 
 export interface MobileContentSnapshot {
@@ -100,6 +102,22 @@ function textForSearch(markdown: string): string {
     .trim();
 }
 
+function localAttachmentIntegrity(cwd: string, localPath: string): Pick<MobileAttachmentManifest, "byteLength" | "sha256"> {
+  if (!localPath.startsWith("/") || localPath.includes("..") || localPath.includes("\\")) return {};
+  const filePath = path.join(cwd, "public", localPath.slice(1));
+  try {
+    const bytes = readFileSync(filePath);
+    return {
+      byteLength: bytes.byteLength,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    };
+  } catch {
+    // A missing upstream attachment stays in the manifest, but is never
+    // claimable as local/essential until a later sync supplies its bytes.
+    return {};
+  }
+}
+
 function readProceduresLegacy(cwd: string): MobileProcedure[] {
   const procedures = walkMarkdownFiles(path.join(cwd, "content/procedures"))
     .map((filePath) => {
@@ -132,6 +150,7 @@ function readProceduresLegacy(cwd: string): MobileProcedure[] {
                 localPath: candidate.localPath,
                 filename: path.basename(candidate.localPath),
                 kind: (candidate.kind === "image" || candidate.kind === "pdf" ? candidate.kind : "other") as MobileAttachmentManifest["kind"],
+                ...localAttachmentIntegrity(cwd, candidate.localPath),
               }]
               : [];
           })

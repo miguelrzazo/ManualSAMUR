@@ -50,6 +50,15 @@ target.
   existing `/api/mobile/content/v2` contract. Every snapshot carries a content hash and
   package hash; the generator and runtime also verify canonical bytes, stable route keys,
   a matching attachment manifest, and safe `/docs` or `/images` paths.
+- Attachment delivery is independent from snapshot activation: optional attachments download
+  on demand into a persistent, identity-keyed directory and are opened offline only after
+  byte length and SHA-256 match the manifest. Interrupted, cancelled, failed, missing, or
+  corrupt files remain retryable/unavailable and never appear as local content.
+- Essential attachment release policy is intentionally unfrozen in
+  `attachment-release-policy.json`. The empty, unapproved allowlist is a safety boundary;
+  the owner must approve the future allowlist and provide every bundled asset before a
+  release may be frozen. The 75 MB essential and 150 MB installed V1 caps are enforced by
+  `npm run attachments:check-release`.
 - There are no accounts, user analytics, or cross-device synchronization paths.
 
 ## Acceptance checklist
@@ -68,6 +77,7 @@ Run these without invoking the web app build:
 npm run mobile:content
 npm run mobile:content:validate
 npm run mobile:typecheck
+npm --prefix apps/mobile run attachments:check-release # expected to remain blocked until owner approval
 ```
 
 The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`).

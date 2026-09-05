@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "approved": false,
+  "essentialAttachmentIds": [],
+  "notes": "La allowlist de anexos esenciales y su aprobación son decisiones del propietario del contenido. Mientras permanezcan sin aprobar, la release no puede congelarse; los anexos siguen disponibles bajo demanda cuando tienen metadatos SHA-256."
+}

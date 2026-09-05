@@ -14,6 +14,9 @@ export interface MobileAttachment {
   localPath: string;
   filename: string;
   kind: "image" | "pdf" | "other";
+  /** Expected bytes and digest are required before a file may be reported local. */
+  byteLength?: number;
+  sha256?: string;
 }
 
 export interface MobileManifestAttachment extends MobileAttachment {
@@ -123,6 +126,8 @@ export function isValidAttachment(value: unknown): value is MobileAttachment {
   if (!isSafeAttachmentPath(attachment.localPath)) return false;
   if (typeof attachment.filename !== "string" || attachment.filename.length === 0 || attachment.filename.includes("/")) return false;
   if (attachment.filename !== attachment.localPath.split("/").at(-1)) return false;
+  if (attachment.byteLength !== undefined && (!Number.isSafeInteger(attachment.byteLength) || attachment.byteLength < 0)) return false;
+  if (attachment.sha256 !== undefined && (typeof attachment.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(attachment.sha256))) return false;
   return attachment.kind === "image" || attachment.kind === "pdf" || attachment.kind === "other";
 }
 
