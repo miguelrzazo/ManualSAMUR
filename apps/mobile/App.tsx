@@ -62,23 +62,19 @@ import {
 } from "./src/online-map-logic";
 import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider } from "./src/online-map-runtime";
 import { OnlineMapView, ONLINE_MAP_ATTRIBUTION_TEXT } from "./src/online-map-view";
-import {
-  canRecordRecent,
-  savedReferenceIcon,
-  selectSavedReferences,
-  type ResolvedSavedReference,
-  type SavedReference,
-} from "./src/saved-logic";
+import { canRecordRecent } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, resolveAdaptivePalette, routeAccessibilityLabels } from "./src/accessibility";
 import { GlassTabBar } from "./src/nav-shell";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
+import { InicioScreen } from "./src/screens/InicioScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
-// `Guardados` intentionally stays out of TabsParamList and off the tab bar: the new IA
-// (see T5a) drops it as a destination and a later ticket relocates its content into
-// Inicio. `SavedScreen` below is kept alive, unrouted, for that migration.
+// `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
+// Its favorites/recents content now lives inside Inicio (src/screens/InicioScreen.tsx,
+// T5b) rather than a separate, unrouted `SavedScreen`.
 // Both param lists live in ./src/navigation-types so screen modules under src/screens/
-// (e.g. CodigosScreen) can type their own navigation/route props against the same lists.
+// (e.g. CodigosScreen, InicioScreen) can type their own navigation/route props against
+// the same lists.
 import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
@@ -187,18 +183,6 @@ function SectionHeading({ eyebrow, title, action, onAction }: { eyebrow?: string
   );
 }
 
-function ActionCard({ icon, label, detail, tone = "red", onPress, fullWidth = false }: { icon: keyof typeof MaterialCommunityIcons.glyphMap; label: string; detail: string; tone?: "red" | "navy" | "amber" | "green"; onPress: () => void; fullWidth?: boolean }) {
-  return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.actionCard, fullWidth && styles.actionCardSingle, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={label} accessibilityValue={{ text: detail }} accessibilityHint={accessibilityHints.openDetail}>
-      <View style={[styles.actionIcon, tone === "navy" && styles.actionIconNavy, tone === "amber" && styles.actionIconAmber, tone === "green" && styles.actionIconGreen]}>
-        <MaterialCommunityIcons name={icon} size={22} color={tone === "red" ? activePalette.red : tone === "navy" ? activePalette.ink : tone === "amber" ? activePalette.amber : activePalette.green} />
-      </View>
-      <Text style={styles.actionLabel}>{label}</Text>
-      <Text style={styles.actionDetail}>{detail}</Text>
-    </Pressable>
-  );
-}
-
 function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure: MobileProcedure; onPress: () => void; showFavorite?: boolean }) {
   const { favorites, toggleFavorite } = useContent();
   const routeKey = procedureRouteKey(procedure);
@@ -235,55 +219,27 @@ function syncPresentation(state: ReturnType<typeof useContent>["syncState"], fre
   return { title: "Contenido disponible offline", detail: "hash verificado", icon: "database-check-outline", color: activePalette.green };
 }
 
+// Inicio's actual content (the manual tree, favoritos, recientes and the
+// update history) lives in its own module — see src/screens/InicioScreen.tsx
+// for why. This wrapper only keeps the brand header and the settings modal,
+// both of which depend on App.tsx's module-scoped logo/theme/StyleSheet and
+// would have been awkward to duplicate or thread through as props.
+//
+// The old hero ("La referencia que te acompaña", a repeated app icon right
+// below the header's own icon) and the doubled "ACCESOS RÁPIDOS · Consulta
+// por recurso" heading over three shortcut cards are gone: they spent the
+// most valuable screen space in the app on marketing copy and on shortcuts
+// the tab bar already provides, for a reference meant to be consulted
+// full-screen during a shift.
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
-  const { content, recents, snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
-  const { width, fontScale } = useWindowDimensions();
-  const layout = adaptiveLayout(width, fontScale);
+  const { snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
   const settingsTriggerRef = useRef<View>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const recentProcedures = recents.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item)).slice(0, 3);
-  const manualVersion = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : "paquete local";
-  const freshness = contentFreshness(snapshot.generatedAt);
-  const syncCopy = syncPresentation(syncState, freshness, syncProgress, stagedPackage?.packageHash);
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
-        <View style={[styles.hero, layout.singleColumn && styles.heroStacked]}>
-          <View style={styles.heroCopy}>
-            <Text style={styles.heroEyebrow}>TODO A MANO · SIN COBERTURA</Text>
-            <Text style={styles.heroTitle}>La referencia que{`\n`}te acompaña.</Text>
-            <Text style={styles.heroBody}>Procedimientos, medicación y comunicaciones listos para consulta en guardia.</Text>
-          </View>
-          <LogoMark />
-        </View>
-        <SearchBar onPress={() => navigation.getParent()?.navigate("Search")} />
-
-        <SectionHeading eyebrow="ACCESOS RÁPIDOS" title="Consulta por recurso" />
-        <View style={[styles.actionGrid, layout.singleColumn && styles.actionGridSingle]}>
-          <ActionCard icon="clipboard-text-outline" label="Procedimientos" detail={`${content.procedures.length} fichas`} fullWidth={layout.singleColumn} onPress={() => navigation.getParent()?.navigate("Search")} />
-          <ActionCard icon="pill" label="Vademécum" detail={`${content.drugs.length} fármacos`} fullWidth={layout.singleColumn} tone="navy" onPress={() => navigation.navigate("VademecumList")} />
-          <ActionCard icon="radio-handheld" label="Códigos" detail="Radio y claves" fullWidth={layout.singleColumn} tone="amber" onPress={() => navigation.navigate("Codigos")} />
-        </View>
-
-        {recentProcedures.length > 0 && <>
-          <SectionHeading eyebrow="SESIÓN ACTUAL" title="Continuar consulta" />
-          <View style={styles.cardList}>
-            {recentProcedures.map((procedure) => <ProcedureRow key={procedure.id} procedure={procedure} onPress={() => navigation.getParent()?.navigate("Procedure", { id: procedure.id })} />)}
-          </View>
-        </>}
-
-        <View style={styles.syncCard}>
-          <View style={styles.syncIcon}><MaterialCommunityIcons name={syncCopy.icon} size={20} color={syncCopy.color} /></View>
-          <View style={styles.syncCopy}>
-            <Text style={[styles.syncTitle, { color: syncCopy.color }]}>{syncCopy.title}</Text>
-            <Text style={styles.syncDetail}>{manualVersion} · rev {snapshot.packageHash?.slice(0, 10) ?? "—"} · {syncCopy.detail}</Text>
-          </View>
-          {isRefreshing ? <Pressable onPress={cancelRefresh} disabled={syncState === "activating"} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={syncState === "activating" ? "Aplicando actualización" : "Cancelar actualización"} accessibilityState={{ busy: syncState === "activating" }}><Text style={styles.syncAction}>{syncState === "activating" ? "Aplicando…" : "Cancelar"}</Text></Pressable> : <Pressable onPress={() => void refresh()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Actualizar contenido" accessibilityHint="Comprueba si hay un paquete local más reciente."><Text style={styles.syncAction}>Actualizar</Text></Pressable>}
-        </View>
-        <Text style={styles.disclaimer}>Pulso abierto es una adaptación independiente y no oficial. Consulta siempre la fuente operativa vigente.</Text>
-      </ScrollView>
+      <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
+      <InicioScreen navigation={navigation} />
       <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} />
     </SafeAreaView>
   );
@@ -360,44 +316,9 @@ function DrugRow({ drug, onPress }: { drug: Record<string, unknown>; onPress: ()
   </Pressable>;
 }
 
-function SavedRow({ item, isFavorite, onPress, onToggleFavorite, onRemove }: { item: ResolvedSavedReference; isFavorite: boolean; onPress?: () => void; onToggleFavorite: () => void; onRemove?: () => void }) {
-  const stale = item.kind === "stale";
-  const body = <><View style={[styles.resourceCode, stale ? styles.staleResourceCode : item.kind === "drug" || item.kind === "perfusion" || item.kind === "fluid" || item.kind === "commercialName" ? styles.drugCode : item.kind === "code" ? styles.codeResultCode : item.kind === "hospital" ? styles.locationIcon : item.kind === "base" ? styles.locationIconBase : undefined]}><MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={18} color={stale ? activePalette.red : activePalette.ink} /></View>
-    <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text>{stale && <Text style={styles.staleResourceText}>Paquete local actualizado: revisa esta referencia o elimínala.</Text>}</View></>;
-  const row = <View style={styles.resourceRow} accessible={false}>
-    {onPress && !stale ? <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${item.title}. ${item.subtitle}`} accessibilityHint={accessibilityHints.openDetail}>{body}</Pressable> : body}
-    {!stale && <Pressable onPress={onToggleFavorite} hitSlop={12} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={isFavorite ? "Quitar de guardados" : "Guardar en guardados"} accessibilityHint={accessibilityHints.toggleFavorite} accessibilityState={{ selected: isFavorite }}><MaterialCommunityIcons name={isFavorite ? "star" : "star-outline"} size={21} color={isFavorite ? activePalette.amber : activePalette.inkMuted} /></Pressable>}
-    {stale && onRemove && <Pressable onPress={onRemove} hitSlop={12} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Quitar referencia no disponible" accessibilityHint="Elimina esta referencia antigua del historial."><MaterialCommunityIcons name="trash-can-outline" size={20} color={activePalette.red} /></Pressable>}
-    {!stale && <MaterialCommunityIcons name="chevron-right" size={20} color={activePalette.inkMuted} accessibilityElementsHidden />}
-  </View>;
-  return row;
-}
-
-function openSavedReference(navigation: BottomTabScreenProps<TabsParamList, "Inicio">["navigation"], item: SavedReference) {
-  if (item.kind === "procedure") navigation.getParent()?.navigate("Procedure", { id: item.id });
-  else if (item.kind === "drug") navigation.getParent()?.navigate("Drug", { id: item.id });
-  else if (item.kind === "code") navigation.getParent()?.navigate("Code", { routeKey: item.routeKey });
-  else if (item.kind === "hospital" || item.kind === "base") navigation.getParent()?.navigate("Location", { routeKey: item.routeKey });
-  else navigation.getParent()?.navigate("Vademecum", { routeKey: item.routeKey });
-}
-
-function SavedScreen({ navigation }: { navigation: BottomTabScreenProps<TabsParamList, "Inicio">["navigation"] }) {
-  const { content, favorites, recents, toggleFavorite, removeRecent } = useContent();
-  const [segment, setSegment] = useState<"favorites" | "recents">("favorites");
-  const routeKeys = segment === "favorites" ? favorites : recents;
-  const items = selectSavedReferences(content, routeKeys);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.scrollContent}>
-    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Guardados</Text><Text style={styles.pageKicker}>TU TURNO · SOLO EN ESTE DISPOSITIVO</Text></View>
-    <View style={styles.filterRow} accessibilityRole="tablist">
-      <Pressable onPress={() => setSegment("favorites")} style={[styles.filterChip, segment === "favorites" && styles.filterChipActive]} accessibilityRole="tab" accessibilityLabel="Favoritos" accessibilityState={{ selected: segment === "favorites" }}><Text style={[styles.filterText, segment === "favorites" && styles.filterTextActive]}>Favoritos</Text></Pressable>
-      <Pressable onPress={() => setSegment("recents")} style={[styles.filterChip, segment === "recents" && styles.filterChipActive]} accessibilityRole="tab" accessibilityLabel="Recientes" accessibilityState={{ selected: segment === "recents" }}><Text style={[styles.filterText, segment === "recents" && styles.filterTextActive]}>Recientes</Text></Pressable>
-    </View>
-    <SectionHeading eyebrow={segment === "favorites" ? "ACCESO DIRECTO" : "HISTORIAL LOCAL"} title={segment === "favorites" ? "Favoritos" : "Recientes"} />
-    {items.length ? <View style={styles.cardList}>{items.map((item) => <SavedRow key={item.routeKey} item={item} isFavorite={favorites.includes(item.routeKey)} onToggleFavorite={() => toggleFavorite(item.routeKey)} onRemove={segment === "favorites" ? () => toggleFavorite(item.routeKey) : () => removeRecent(item.routeKey)} onPress={item.kind === "stale" ? undefined : () => openSavedReference(navigation, item)} />)}</View> : <EmptyState title={segment === "favorites" ? "Aún no hay favoritos" : "Sin historial"} detail={segment === "favorites" ? "Guarda una ficha con la estrella para encontrarla aquí." : "Las fichas que consultes aparecerán aquí después de abrirlas."} />}
-    <Text style={styles.disclaimer}>Tus favoritos y recientes permanecen en este dispositivo. No se sincronizan con una cuenta.</Text>
-  </ScrollView></SafeAreaView>;
-}
-
+// Favorites/recents rendering (SavedRow, openSavedReference) and the standalone
+// Guardados screen moved into src/screens/InicioScreen.tsx — Inicio absorbs them
+// now that Guardados is no longer a destination (see T5a/T5b).
 
 type LocationWithDistance = LocationRecord & { distanceMeters?: number };
 
@@ -965,11 +886,6 @@ function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptive
   brandName: { color: nativeTheme?.ink ?? palette.ink, fontSize: 18, fontWeight: "800", letterSpacing: -0.4 },
   brandSubline: { color: nativeTheme?.red ?? palette.red, fontSize: 9, fontWeight: "800", letterSpacing: 1.3, marginTop: 2 },
   iconButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: nativeTheme?.surface ?? palette.surface, borderWidth: 1, borderColor: nativeTheme?.line ?? palette.line },
-  hero: { backgroundColor: nativeTheme?.ink ?? palette.ink, borderRadius: radii.lg, padding: spacing.xl, minHeight: 190, flexDirection: "row", overflow: "hidden", marginBottom: spacing.lg },
-  heroCopy: { flex: 1, zIndex: 1 }, heroStacked: { flexDirection: "column", minHeight: 250 },
-  heroEyebrow: { color: "#B8C4D7", fontSize: 10, fontWeight: "800", letterSpacing: 1.2, marginBottom: spacing.md },
-  heroTitle: { color: palette.white, fontSize: 29, lineHeight: 32, fontWeight: "800", letterSpacing: -1 },
-  heroBody: { color: "#D7DEEA", fontSize: 13, lineHeight: 18, marginTop: spacing.md, maxWidth: 225 },
   searchBar: { minHeight: 58, borderRadius: radii.md, backgroundColor: nativeTheme?.surface ?? palette.surface, borderWidth: 1, borderColor: nativeTheme?.line ?? palette.line, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
   searchInput: { flex: 1, color: nativeTheme?.ink ?? palette.ink, fontSize: 14, paddingVertical: 0 }, searchPlaceholder: { flex: 1, color: nativeTheme?.inkMuted ?? palette.inkMuted, fontSize: 14 },
   offlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: palette.green },
@@ -977,17 +893,12 @@ function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptive
   eyebrow: { color: nativeTheme?.red ?? palette.red, fontSize: 10, letterSpacing: 1.3, fontWeight: "800", marginBottom: 4 },
   sectionTitle: { color: nativeTheme?.ink ?? palette.ink, fontSize: 21, lineHeight: 25, fontWeight: "800", letterSpacing: -0.5 },
   sectionAction: { color: nativeTheme?.red ?? palette.red, fontSize: 12, fontWeight: "800", paddingBottom: 2 },
-  actionGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.lg, maxWidth: 720 }, actionGridSingle: { flexDirection: "column" },
-  actionCard: { width: "48%", minHeight: 126, padding: spacing.md, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line }, actionCardSingle: { width: "100%" },
-  actionIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: palette.redWash, alignItems: "center", justifyContent: "center", marginBottom: spacing.sm },
-  actionIconNavy: { backgroundColor: palette.surfaceMuted }, actionIconAmber: { backgroundColor: palette.amberWash }, actionIconGreen: { backgroundColor: palette.greenWash },
-  actionLabel: { fontSize: 15, fontWeight: "800", color: palette.ink }, actionDetail: { fontSize: 11, color: palette.inkMuted, marginTop: 3 },
   cardList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl },
   resourceRow: { minHeight: 70, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderBottomWidth: 1, borderBottomColor: palette.line }, resourceRowMain: { flex: 1, minHeight: 44, flexDirection: "row", alignItems: "center", gap: spacing.md },
-  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: palette.redWash, alignItems: "center", justifyContent: "center" }, resourceCodeText: { fontSize: 11, fontWeight: "900", color: palette.red }, staleResourceCode: { backgroundColor: palette.redWash }, staleResourceText: { color: palette.redDark, fontSize: 10, lineHeight: 14, marginTop: 3 },
+  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: palette.redWash, alignItems: "center", justifyContent: "center" }, resourceCodeText: { fontSize: 11, fontWeight: "900", color: palette.red },
   drugCode: { backgroundColor: palette.surfaceMuted }, resourceCopy: { flex: 1 }, resourceTitle: { color: palette.ink, fontSize: 14, lineHeight: 18, fontWeight: "700" }, resourceMeta: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: 3 },
   pressed: { opacity: 0.72 },
-  syncCard: { backgroundColor: palette.greenWash, borderRadius: radii.md, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.lg }, syncIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: palette.white, alignItems: "center", justifyContent: "center" }, syncCopy: { flex: 1 }, syncTitle: { color: palette.green, fontWeight: "800", fontSize: 13 }, syncDetail: { color: palette.inkMuted, fontSize: 11, marginTop: 2 }, syncAction: { color: palette.green, fontSize: 12, fontWeight: "800" }, progressTrack: { height: 4, borderRadius: 2, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
+  progressTrack: { height: 4, borderRadius: 2, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
   disclaimer: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginVertical: spacing.md },
   searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, searchScreenHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md }, pageTitle: { color: palette.ink, fontSize: 31, fontWeight: "800", letterSpacing: -1 }, pageKicker: { color: palette.red, fontSize: 10, fontWeight: "800", letterSpacing: 1.3, marginTop: 4 }, searchPadding: { paddingHorizontal: spacing.lg }, detailSearch: { marginTop: spacing.lg },
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }, filterChip: { minHeight: 44, justifyContent: "center", paddingVertical: 9, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted }, filterChipActive: { backgroundColor: palette.ink }, filterText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" }, filterTextActive: { color: palette.white },

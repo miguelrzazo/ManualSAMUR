@@ -9,6 +9,13 @@ const appSource = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), 
 // UI wouldn't balloon the already-huge App.tsx file further; its accessibility contract is
 // checked against that module instead of the inline `function CodesScreen` App.tsx used to have.
 const codigosScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/CodigosScreen.tsx"), "utf8");
+// Inicio (T5b) was extracted the same way: it absorbed the old Guardados screen's
+// favorites/recents and became the manual tree + update history, which would have
+// made App.tsx worse still. `HomeScreen` remains in App.tsx only as a thin wrapper
+// around the brand header and the settings modal — its own accessibility contract
+// (settingsTriggerRef/restoreAccessibilityFocus) is still checked against App.tsx
+// below, but the tree/favorites/history accessibility contract lives here instead.
+const inicioScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/InicioScreen.tsx"), "utf8");
 
 test("route accessibility contracts provide stable, speakable names", () => {
   for (const [route, label] of Object.entries(routeAccessibilityLabels)) {
@@ -43,16 +50,21 @@ test("adaptive layout reflows controls at large text and separates tablet list/d
 });
 
 test("core routes expose accessibility semantics and adaptive behavior", () => {
-  for (const route of ["HomeScreen", "SearchScreen", "SavedScreen", "MapScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
+  for (const route of ["SearchScreen", "MapScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
     const start = appSource.indexOf(`function ${route}`);
     assert.ok(start >= 0, `${route} must remain a route-level surface`);
     const end = appSource.indexOf("\nfunction ", start + 10);
     const source = appSource.slice(start, end < 0 ? undefined : end);
     assert.match(source, /accessibility(Label|Role|State)/, `${route} needs an accessibility contract`);
   }
-  // CodigosScreen lives in its own module (see comment above) — check it there instead.
+  // CodigosScreen and InicioScreen live in their own modules (see comments above) —
+  // check them there instead.
   assert.match(codigosScreenSource, /export function CodigosScreen/, "CodigosScreen must remain a route-level surface");
   assert.match(codigosScreenSource, /accessibility(Label|Role|State)/, "CodigosScreen needs an accessibility contract");
+  assert.match(inicioScreenSource, /export function InicioScreen/, "InicioScreen must remain a route-level surface");
+  assert.match(inicioScreenSource, /accessibility(Label|Role|State)/, "InicioScreen needs an accessibility contract");
+  assert.match(inicioScreenSource, /accessibilityState=\{\{ expanded: item\.expanded \}\}/, "InicioScreen must announce tree expansion state");
+  assert.doesNotMatch(appSource, /function SavedScreen/, "the old unrouted Guardados screen must not linger in App.tsx");
   assert.match(appSource, /AccessibilityInfo\.isReduceMotionEnabled/);
   assert.match(appSource, /reduceMotion \? "none"/);
   assert.match(appSource, /useColorScheme/);
