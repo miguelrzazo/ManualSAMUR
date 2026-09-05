@@ -137,6 +137,10 @@ export default async function ProcedurePage({ params }: Props) {
     .sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`));
   const { prev, next } = getAdjacentProcedures(procedure.id);
   const hasEditorialBlocks = procedure.editorialBlocks.length > 0;
+  // 101 y 102 son organigramas: su contenido ES el PDF adjunto y el cuerpo viene
+  // vacío. Sin esto se pintaba una tarjeta en blanco encima de «Anexos» y el
+  // procedimiento parecía roto, con el organigrama escondido tras un acordeón.
+  const hasBody = hasEditorialBlocks || procedure.content.trim().length > 0;
   const procedureSections = hasEditorialBlocks ? splitProcedureContentSections(procedure.content) : [];
   const groupedEditorialBlocks = hasEditorialBlocks
     ? groupProcedureEditorialBlocks(procedure.editorialBlocks, procedureSections)
@@ -184,7 +188,12 @@ export default async function ProcedurePage({ params }: Props) {
         validIds={allProcedures.map((item) => item.id)}
       />
       {/* Main content */}
-      <article id="procedure-content" className="min-w-0">
+      {/* El id vive en el div del cuerpo, no aquí: el índice ("En esta página")
+          debe recorrer solo el contenido del procedimiento, no la navegación ni
+          las tarjetas de enlaces relacionados. Antes estaba en los dos sitios,
+          lo que era HTML inválido —id duplicado— y hacía que getElementById
+          devolviera este <article>, el más externo de los dos. */}
+      <article className="min-w-0">
         <Breadcrumbs
           section={procedure.section}
           group={procedure.sidebarGroup}
@@ -238,6 +247,7 @@ export default async function ProcedurePage({ params }: Props) {
         </div>
 
         {/* MDX Content */}
+        {hasBody && (
         <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
           prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-24
           prose-h2:text-[1.75rem] md:prose-h2:text-[2.1rem] prose-h2:mt-12 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-primary/25 prose-h2:pb-3 prose-h2:leading-snug prose-h2:text-foreground
@@ -308,6 +318,7 @@ export default async function ProcedurePage({ params }: Props) {
             />
           )}
         </div>
+        )}
 
         {/* Source link */}
         {procedure.source && (
@@ -324,7 +335,9 @@ export default async function ProcedurePage({ params }: Props) {
           </div>
         )}
 
-        {procedure.attachments.length > 0 ? <ProcedureAttachments attachments={procedure.attachments} /> : null}
+        {procedure.attachments.length > 0 ? (
+          <ProcedureAttachments attachments={procedure.attachments} defaultExpanded={!hasBody} />
+        ) : null}
 
         <ProcedureNav prev={prev} next={next} />
 

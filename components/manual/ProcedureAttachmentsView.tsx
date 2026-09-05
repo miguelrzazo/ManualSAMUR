@@ -10,11 +10,19 @@ function filenameFromPath(pathname: string) {
   return pathname.split("/").pop() ?? pathname;
 }
 
-export function ProcedureAttachmentsView({ attachments }: { attachments: ManualAttachment[] }) {
+export function ProcedureAttachmentsView({
+  attachments,
+  defaultExpanded = false,
+}: {
+  attachments: ManualAttachment[];
+  // Cuando el procedimiento no tiene cuerpo, el adjunto es el contenido: se abre
+  // solo en vez de esconderse tras un acordeón.
+  defaultExpanded?: boolean;
+}) {
   const [expandedByPath, setExpandedByPath] = useState<Record<string, boolean>>({});
 
   const toggle = (localPath: string) => {
-    setExpandedByPath((prev) => ({ ...prev, [localPath]: !prev[localPath] }));
+    setExpandedByPath((prev) => ({ ...prev, [localPath]: !(prev[localPath] ?? defaultExpanded) }));
   };
 
   return (
@@ -29,7 +37,7 @@ export function ProcedureAttachmentsView({ attachments }: { attachments: ManualA
           const unavailable = attachment.availability === "unavailable";
           const isImage = attachment.kind === "image" || /\.(jpe?g|png|gif|webp|svg)$/i.test(attachment.localPath);
           const isPdf = attachment.kind === "pdf" || attachment.localPath.toLowerCase().endsWith(".pdf");
-          const isExpanded = Boolean(expandedByPath[attachment.localPath]);
+          const isExpanded = expandedByPath[attachment.localPath] ?? defaultExpanded;
           const href = unavailable ? attachment.sourceUrl : attachment.localPath;
 
           return (

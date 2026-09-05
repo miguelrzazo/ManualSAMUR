@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,7 +12,31 @@ const ROOT_DIR = path.join(__dirname, "..");
 const LEGACY_DOCS_DIR = path.join(ROOT_DIR, "docs", "procedures");
 const PUBLIC_DOCS_DIR = path.join(ROOT_DIR, "public", "docs", "procedures");
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
-const PDF_WORKER_SOURCE = path.join(ROOT_DIR, "node_modules", "pdfjs-dist", "build", "pdf.worker.min.mjs");
+/**
+ * Ruta del worker de pdf.js que react-pdf va a usar de verdad.
+ *
+ * pdf.js aborta si la versión del worker no es exactamente la misma que la de la
+ * API. react-pdf trae su propio pdfjs-dist anidado (10.4.1 → 5.4.296), mientras
+ * que el pdfjs-dist de la raíz iba por 5.7.284. Copiábamos el de la raíz, así que
+ * en producción TODOS los PDF en línea fallaban con «No se pudo renderizar el PDF
+ * en línea», aunque el fichero se sirviera perfectamente.
+ *
+ * Resolviendo desde react-pdf se copia siempre el worker que le corresponde,
+ * dedupe o no dedupe npm las dos copias.
+ */
+function resolvePdfWorkerSource(): string {
+  const fallback = path.join(ROOT_DIR, "node_modules", "pdfjs-dist", "build", "pdf.worker.min.mjs");
+  try {
+    const requireFromRoot = createRequire(path.join(ROOT_DIR, "package.json"));
+    const requireFromReactPdf = createRequire(requireFromRoot.resolve("react-pdf"));
+    const pdfjsPackage = requireFromReactPdf.resolve("pdfjs-dist/package.json");
+    return path.join(path.dirname(pdfjsPackage), "build", "pdf.worker.min.mjs");
+  } catch {
+    return fallback;
+  }
+}
+
+const PDF_WORKER_SOURCE = resolvePdfWorkerSource();
 const PDF_WORKER_DESTINATION = path.join(PUBLIC_DIR, "pdf.worker.min.mjs");
 
 interface SyncStats {
