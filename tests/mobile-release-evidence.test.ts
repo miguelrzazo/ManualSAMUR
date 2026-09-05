@@ -1,8 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import {
+  compareCurrentProvenance,
   RELEASE_GATE_IDS,
   createInternalTestHandoff,
   createReleaseEvidence,
@@ -31,9 +34,11 @@ function completeEvidence(): ReleaseEvidence {
   evidence.referenceDevices.android = { platform: "android", approved: true, model: "Android reference", os: "Android 16", approvalReference: "owner-device-approval", approvedBy: "owner" };
   evidence.fieldValidation = { status: "pass", checklist: "apps/mobile/release/field-validation-checklist.md", phiProhibited: true, completedBy: "owner", completedAt: "2026-09-05T00:00:00.000Z" };
   evidence.ownerGates = { attachments: "approved", locations: "approved", onlineMap: "approved", accessibility: "approved" };
-  evidence.signing = { ios: "provided", android: "provided", iosArtifact: "artifacts/app.ipa", androidArtifact: "artifacts/app.aab", owner: "owner" };
-  evidence.humanDecision = "approved";
+  evidence.humanReview = { status: "complete", checklist: "apps/mobile/release/human-review-checklist.md", completedBy: "owner", completedAt: "2026-09-05T00:00:00.000Z" };
+  evidence.internalTestDecision = { status: "approved", decidedBy: "owner", decidedAt: "2026-09-05T00:00:00.000Z" };
+  evidence.signing = { ios: "provided", android: "provided", iosArtifact: "artifacts/app.ipa", androidArtifact: "artifacts/app.aab", iosSha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", androidSha256: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789", iosBytes: 100, androidBytes: 200, iosSignedAt: "2026-09-05T00:00:00.000Z", androidSignedAt: "2026-09-05T00:00:00.000Z", owner: "owner" };
   evidence.status = "ready";
+  evidence.productionDecision = { submission: "required", rollout: "required", halt: "required", rollback: "required" };
   return evidence;
 }
 
@@ -52,6 +57,32 @@ test("strict release readiness requires every matrix gate, provenance, device an
   const missingMeasurement = completeEvidence();
   missingMeasurement.gates.performance.artifact = null;
   assert.equal(validateReleaseEvidence(missingMeasurement, true).ready, false);
+  const emptyMeasurements = completeEvidence();
+  emptyMeasurements.gates.performance.measurements = {};
+  assert.equal(validateReleaseEvidence(emptyMeasurements, true).ready, false);
+  const pendingGate = completeEvidence();
+  pendingGate.gates.performance.status = "pending";
+  assert.equal(validateReleaseEvidence(pendingGate, true).ready, false);
+  const failedGate = completeEvidence();
+  failedGate.gates.performance.status = "fail";
+  assert.equal(validateReleaseEvidence(failedGate, true).ready, false);
+  const notApplicableGate = completeEvidence();
+  notApplicableGate.gates.performance.status = "not-applicable";
+  notApplicableGate.gates.performance.notes = "No exemption is allowed by the release matrix.";
+  assert.equal(validateReleaseEvidence(notApplicableGate, true).ready, false);
+  const incompleteHumanReview = completeEvidence();
+  incompleteHumanReview.humanReview = { ...incompleteHumanReview.humanReview, status: "pending" };
+  assert.equal(validateReleaseEvidence(incompleteHumanReview, true).ready, false);
+  const missingInternalApproval = completeEvidence();
+  missingInternalApproval.internalTestDecision = { status: "required", decidedBy: null, decidedAt: null };
+  assert.equal(validateReleaseEvidence(missingInternalApproval, true).ready, false);
+  const productionApproval = completeEvidence();
+  productionApproval.productionDecision = { submission: "approved", rollout: "approved", halt: "approved", rollback: "approved" } as ReleaseEvidence["productionDecision"];
+  assert.equal(validateReleaseEvidence(productionApproval, true).ready, false);
+  const missingSigningMetadata = completeEvidence();
+  missingSigningMetadata.signing.iosSha256 = null;
+  missingSigningMetadata.signing.androidBytes = null;
+  assert.equal(validateReleaseEvidence(missingSigningMetadata, true).ready, false);
   const unapprovedDevice = completeEvidence();
   unapprovedDevice.referenceDevices.ios.approved = false;
   assert.equal(validateReleaseEvidence(unapprovedDevice, true).ready, false);
@@ -75,11 +106,15 @@ test("handoff is prepared for human upload but never becomes an automated submis
 });
 
 test("matrix, schema and synthetic checklist cover every hard evidence surface", () => {
-  const matrix = JSON.parse(readFileSync(path.join(appRoot, "release/evidence-matrix.json"), "utf8")) as { requiredGates: Array<{ id: string }>; finalDecision: string };
-  const schema = JSON.parse(readFileSync(path.join(appRoot, "release/evidence-schema.json"), "utf8")) as { properties: { gates: { required: string[] } } };
+  const matrix = JSON.parse(readFileSync(path.join(appRoot, "release/evidence-matrix.json"), "utf8")) as { requiredGates: Array<{ id: string }>; finalDecision: string; allowNotApplicable: boolean };
+  const schema = JSON.parse(readFileSync(path.join(appRoot, "release/evidence-schema.json"), "utf8")) as { required: string[]; properties: { gates: { required: string[] } } };
   const checklist = readFileSync(path.join(appRoot, "release/field-validation-checklist.md"), "utf8");
   assert.deepEqual(matrix.requiredGates.map((gate) => gate.id), [...RELEASE_GATE_IDS]);
+  assert.equal(matrix.allowNotApplicable, false);
   assert.deepEqual(schema.properties.gates.required, [...RELEASE_GATE_IDS]);
+  assert.ok(schema.required.includes("humanReview"));
+  assert.ok(schema.required.includes("internalTestDecision"));
+  assert.ok(schema.required.includes("productionDecision"));
   assert.equal(matrix.finalDecision, "human-only");
   assert.match(checklist, /PHI/i);
   assert.match(checklist, /Synthetic/i);
@@ -97,7 +132,7 @@ test("CI runs validation and retains dated evidence without store deployment com
   assert.match(workflow, /upload-artifact@v4\.6\.2/);
   assert.match(workflow, /retention-days: 30/);
   assert.match(workflow, /MOBILE_EVIDENCE_TIMESTAMP/);
-  assert.doesNotMatch(workflow, /(^|\n)\s*run:.*\b(?:eas\s+(?:submit|update|upload)|fastlane\s+(?:deliver|pilot)|gradle\s+publish|xcrun\s+altool)\b/i);
+  assert.doesNotMatch(workflow, /\b(?:eas\s+(?:submit|update|upload)|fastlane\s+(?:deliver|pilot|release)|gradle\s+publish|xcrun\s+altool|gh\s+release|upload-testflight|google-play-publish)\b/i);
   assert.doesNotMatch(workflow, /uses:.*(?:apple-actions|google-github-actions).*store/i);
 });
 
@@ -106,4 +141,45 @@ test("EAS config exposes only a human-controlled internal distribution profile",
   assert.equal(eas.build.preview.distribution, "internal");
   assert.equal(eas.build.development.distribution, "internal");
   assert.equal(readFileSync(path.join(appRoot, "release/human-review-checklist.md"), "utf8").includes("human"), true);
+});
+
+test("completed evidence can be validated against the current provenance", () => {
+  const currentSha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+  const current = completeEvidence();
+  current.provenance.commitSha = currentSha;
+  current.provenance.nodeVersion = process.version;
+  current.provenance.expoVersion = "57.0.20";
+  assert.deepEqual(compareCurrentProvenance(current.provenance, { ...current.provenance, buildId: "new-build" }), []);
+  const stale = { ...current.provenance, commitSha: "fedcba9876543210fedcba9876543210fedcba98" };
+  assert.ok(compareCurrentProvenance(stale, current.provenance).some((issue) => issue.includes("otro commit")));
+});
+
+test("collector accepts a completed current input and rejects stale provenance in strict mode", () => {
+  const temp = mkdtempSync(path.join(os.tmpdir(), "manualsamur-release-"));
+  const input = path.join(temp, "completed.json");
+  const output = path.join(temp, "out.json");
+  const handoff = path.join(temp, "handoff.json");
+  const currentSha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+  const current = completeEvidence();
+  current.provenance.commitSha = currentSha;
+  current.provenance.nodeVersion = process.version;
+  current.provenance.expoVersion = "57.0.20";
+  writeFileSync(input, JSON.stringify(current));
+  const env = { ...process.env };
+  delete env.GITHUB_SHA;
+  delete env.GITHUB_REF;
+  delete env.GITHUB_RUN_ID;
+  const script = path.join(root, "apps/mobile/scripts/collect-release-evidence.ts");
+  const fresh = spawnSync(process.execPath, ["--experimental-strip-types", script, "--strict", `--input=${input}`, `--output=${output}`, `--handoff-output=${handoff}`], { cwd: root, env, encoding: "utf8" });
+  assert.equal(fresh.status, 0, fresh.stdout + fresh.stderr);
+  const completedHandoff = JSON.parse(readFileSync(handoff, "utf8"));
+  assert.equal(completedHandoff.status, "ready-for-human-upload");
+  assert.equal(completedHandoff.productionDecision.submission, "required");
+  assert.equal(completedHandoff.humanReview.status, "complete");
+  const stale = { ...current, provenance: { ...current.provenance, commitSha: "fedcba9876543210fedcba9876543210fedcba98" } };
+  writeFileSync(input, JSON.stringify(stale));
+  const rejected = spawnSync(process.execPath, ["--experimental-strip-types", script, "--strict", `--input=${input}`, `--output=${output}`, `--handoff-output=${handoff}`], { cwd: root, env, encoding: "utf8" });
+  assert.equal(rejected.status, 1, rejected.stdout + rejected.stderr);
+  assert.match(rejected.stdout, /otro commit/);
+  assert.equal(JSON.parse(readFileSync(handoff, "utf8")).status, "blocked");
 });

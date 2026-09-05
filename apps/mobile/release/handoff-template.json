@@ -3,10 +3,12 @@
   "version": 1,
   "status": "blocked",
   "signing": {
-    "ios": { "artifact": null, "signed": false, "owner": null, "testFlightAppId": null },
-    "android": { "artifact": null, "signed": false, "owner": null, "packageName": null }
+    "ios": { "artifact": null, "sha256": null, "bytes": null, "signed": false, "signedAt": null, "owner": null, "testFlightAppId": null },
+    "android": { "artifact": null, "sha256": null, "bytes": null, "signed": false, "signedAt": null, "owner": null, "packageName": null }
   },
-  "humanDecision": "required",
+  "humanReview": { "status": "pending", "checklist": "apps/mobile/release/human-review-checklist.md", "completedBy": null, "completedAt": null },
+  "internalTestDecision": { "status": "required", "decidedBy": null, "decidedAt": null },
+  "productionDecision": { "submission": "required", "rollout": "required", "halt": "required", "rollback": "required" },
   "submission": "human-controlled only",
   "note": "Fill only outside source control after owner approval; this template cannot upload or submit anything."
 }

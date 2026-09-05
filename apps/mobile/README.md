@@ -89,6 +89,12 @@ as an artifact. The collector records commit, build, Node/Expo, content-hash, an
 package-hash provenance but never supplies measurements, approvals, signatures, or
 secrets. Normal CI reports a blocked readiness package and remains useful; a human can
 run `npm run mobile:release:evidence:strict` only after completing every gate.
+To validate a completed matrix, pass it back through the collector with
+`npm run mobile:release:evidence:strict -- --input=artifacts/completed-evidence.json`;
+the command rejects evidence from another commit, snapshot hash/schema/version, Node, or
+Expo runtime before preparing the handoff. Strict readiness also requires completed human
+review and internal-test approval plus per-platform SHA-256, byte-size, signer, and signed-at
+metadata; production submission, rollout, halt, and rollback remain required human decisions.
 
 The handoff is prepared for a human owner to generate and upload signed candidates for
 TestFlight and Google Play internal testing. It does not perform any upload, submission,

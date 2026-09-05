@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { createInternalTestHandoff, createReleaseEvidence, validateReleaseEvidence, type ReleaseEvidenceProvenance } from "../src/release-evidence.ts";
+import { compareCurrentProvenance, createInternalTestHandoff, createReleaseEvidence, validateReleaseEvidence, type ReleaseEvidence, type ReleaseEvidenceProvenance } from "../src/release-evidence.ts";
 import type { MobileSnapshot } from "../src/data/schema.ts";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -48,19 +48,26 @@ const provenance: ReleaseEvidenceProvenance = {
   },
 };
 
-const evidence = createReleaseEvidence(snapshot, provenance, generatedAt);
 const evidenceOutput = path.resolve(repositoryRoot, argument("output") || process.env.MOBILE_EVIDENCE_OUTPUT || path.join("artifacts", "mobile-release-evidence.json"));
 const handoffOutput = path.resolve(repositoryRoot, argument("handoff-output") || process.env.MOBILE_HANDOFF_OUTPUT || path.join(path.dirname(evidenceOutput), "mobile-internal-test-handoff.json"));
+const inputPath = argument("input") || process.env.MOBILE_EVIDENCE_INPUT;
+const evidence = inputPath
+  ? readJson<ReleaseEvidence>(path.resolve(repositoryRoot, inputPath))
+  : createReleaseEvidence(snapshot, provenance, generatedAt);
 const evidenceFile = path.relative(repositoryRoot, evidenceOutput);
+const strict = process.argv.includes("--strict");
+const provenanceIssues = inputPath ? compareCurrentProvenance(evidence.provenance, provenance) : [];
+const validation = validateReleaseEvidence(evidence, strict);
+const issues = [...validation.issues, ...provenanceIssues];
 const handoff = createInternalTestHandoff(evidence, evidenceFile);
+if (strict && provenanceIssues.length > 0) handoff.status = "blocked";
 writeJson(evidenceOutput, evidence);
 writeJson(handoffOutput, handoff);
 
-const validation = validateReleaseEvidence(evidence, process.argv.includes("--strict"));
 console.log(`[mobile-release] evidence: ${evidenceFile}`);
 console.log(`[mobile-release] handoff: ${path.relative(repositoryRoot, handoffOutput)}`);
-console.log(`[mobile-release] status: ${validation.ready ? "ready" : "blocked"}`);
-if (!validation.ready) {
-  for (const issue of validation.issues) console.log(`[mobile-release] pending: ${issue}`);
-  if (process.argv.includes("--strict")) process.exitCode = 1;
+console.log(`[mobile-release] status: ${validation.ready && provenanceIssues.length === 0 ? "ready" : "blocked"}`);
+if (issues.length > 0) {
+  for (const issue of issues) console.log(`[mobile-release] pending: ${issue}`);
+  if (strict) process.exitCode = 1;
 }

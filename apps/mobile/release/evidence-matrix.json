@@ -1,6 +1,7 @@
 {
   "schema": "samur-manual.mobile-release-evidence-matrix",
   "version": 1,
+  "allowNotApplicable": false,
   "requiredGates": [
     { "id": "performance", "label": "Launch, search and detail latency", "requiresReferenceDevice": true, "prohibits": ["unmeasured claim"] },
     { "id": "memory", "label": "Peak and sustained memory", "requiresReferenceDevice": true, "prohibits": ["unmeasured claim"] },

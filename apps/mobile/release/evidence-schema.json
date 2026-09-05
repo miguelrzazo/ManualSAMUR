@@ -3,17 +3,19 @@
   "$id": "https://manualsamur.example/schemas/mobile-release-evidence.json",
   "title": "Pulso abierto mobile release evidence",
   "type": "object",
-  "required": ["schema", "version", "generatedAt", "status", "provenance", "referenceDevices", "gates", "fieldValidation", "ownerGates", "signing", "humanDecision"],
+  "required": ["schema", "version", "generatedAt", "status", "provenance", "referenceDevices", "gates", "fieldValidation", "ownerGates", "humanReview", "internalTestDecision", "productionDecision", "signing"],
   "properties": {
     "schema": { "const": "samur-manual.mobile-release-evidence" },
     "version": { "const": 1 },
     "status": { "enum": ["blocked", "ready"] },
-    "humanDecision": { "enum": ["required", "approved"] },
     "gates": { "type": "object", "required": ["performance", "memory", "battery", "binary-size", "installed-size", "offline", "recovery", "attachments", "accessibility", "map-fallback", "route-gates"] },
     "fieldValidation": { "type": "object", "required": ["status", "checklist", "phiProhibited"] },
+    "humanReview": { "type": "object", "required": ["status", "checklist", "completedBy", "completedAt"] },
+    "internalTestDecision": { "type": "object", "required": ["status", "decidedBy", "decidedAt"] },
+    "productionDecision": { "type": "object", "required": ["submission", "rollout", "halt", "rollback"] },
     "referenceDevices": { "type": "object", "required": ["ios", "android"] },
     "provenance": { "type": "object", "required": ["commitSha", "ref", "buildId", "package"] },
-    "signing": { "type": "object", "required": ["ios", "android", "iosArtifact", "androidArtifact", "owner"] }
+    "signing": { "type": "object", "required": ["ios", "android", "iosArtifact", "androidArtifact", "iosSha256", "androidSha256", "iosBytes", "androidBytes", "iosSignedAt", "androidSignedAt", "owner"] }
   },
   "additionalProperties": true
 }
