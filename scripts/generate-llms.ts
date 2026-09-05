@@ -33,7 +33,7 @@ const SECTIONS_ORDER = [
   "General",
 ];
 
-interface ProcedureMeta {
+export interface ProcedureMeta {
   id: string;
   title: string;
   section: string;
@@ -103,7 +103,7 @@ function normalizeWikiPagePath(value: string): string | null {
   }
 }
 
-function generateLlmsTxt(procedures: ProcedureMeta[]): string {
+export function generateLlmsTxt(procedures: ProcedureMeta[], updatedDate = latestUpdatedDate(procedures)): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const grouped = new Map<string, ProcedureMeta[]>();
   for (const proc of procedures) {
@@ -118,7 +118,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
     "> Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.",
     "> Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.",
     "",
-    `Última actualización: ${new Date().toISOString().split("T")[0]}`,
+    `Última actualización: ${updatedDate}`,
     `Total procedimientos: ${procedures.length}`,
     "",
     "## Recursos principales",
@@ -163,7 +163,7 @@ function latestUpdatedDate(procedures: ProcedureMeta[]): string {
   return dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : "desconocida";
 }
 
-function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
+export function generateLlmsFullTxt(procedures: ProcedureMeta[], updatedDate = latestUpdatedDate(procedures)): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const header = [
     "# SAMUR Manual — Contenido Completo",
@@ -176,7 +176,7 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
     // modificado en todos los PR sin que hubiera cambiado nada, y la guarda de
     // deriva de ci.yml no podría pasar nunca. Además es la fecha que de verdad
     // le sirve a quien consume el corpus.
-    `Actualizado: ${latestUpdatedDate(procedures)}`,
+    `Actualizado: ${updatedDate}`,
     `Total procedimientos: ${procedures.length}`,
     "",
     "---",
@@ -233,8 +233,9 @@ function main() {
     });
   }
 
-  const llmsTxt = generateLlmsTxt(procedures);
-  const llmsFullTxt = generateLlmsFullTxt(procedures);
+  const updatedDate = latestUpdatedDate(procedures);
+  const llmsTxt = generateLlmsTxt(procedures, updatedDate);
+  const llmsFullTxt = generateLlmsFullTxt(procedures, updatedDate);
 
   fs.writeFileSync(path.join(PUBLIC_DIR, "llms.txt"), llmsTxt, "utf8");
   console.log("  → public/llms.txt generado");
@@ -248,4 +249,4 @@ function main() {
   console.log("Listo.");
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) main();
