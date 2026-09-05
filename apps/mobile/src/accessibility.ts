@@ -1,13 +1,15 @@
 import type { ColorSchemeName } from "react-native";
 
-export type MobileRoute = "Inicio" | "Buscar" | "Guardados" | "Mapa" | "Procedimiento" | "Vademécum" | "Fármaco" | "Código" | "Ubicación" | "Ajustes";
+export type MobileRoute = "Inicio" | "Codigos" | "VademecumList" | "Mapa" | "Buscar" | "Guardados" | "Procedimiento" | "Vademécum" | "Fármaco" | "Código" | "Ubicación" | "Ajustes";
 
 /** Stable spoken names used by Voice Control and route-level accessibility checks. */
 export const routeAccessibilityLabels: Record<MobileRoute, string> = {
   Inicio: "Inicio",
+  Codigos: "Códigos",
+  VademecumList: "Vademécum",
+  Mapa: "Mapa offline",
   Buscar: "Buscar en el manual",
   Guardados: "Guardados",
-  Mapa: "Mapa offline",
   Procedimiento: "Procedimiento",
   "Vademécum": "Vademécum",
   "Fármaco": "Fármaco",
@@ -22,6 +24,7 @@ export const accessibilityHints = {
   openMap: "Abre el punto en la aplicación Mapas del dispositivo.",
   dismiss: "Cierra esta pantalla y devuelve el foco al elemento que la abrió.",
   search: "Escribe términos, identificadores o texto del manual.",
+  switchTab: "Cambia a esta sección de la navegación principal.",
 } as const;
 
 /** Text colors deliberately stay dark enough on both the light and dark surfaces. */

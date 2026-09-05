@@ -70,21 +70,25 @@ import {
   type SavedReference,
 } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, resolveAdaptivePalette, routeAccessibilityLabels } from "./src/accessibility";
+import { GlassTabBar } from "./src/nav-shell";
 
+// `Guardados` intentionally stays out of TabsParamList and off the tab bar: the new IA
+// (see T5a) drops it as a destination and a later ticket relocates its content into
+// Inicio. `SavedScreen` below is kept alive, unrouted, for that migration.
 type TabsParamList = {
   Inicio: undefined;
-  Buscar: undefined;
-  Guardados: undefined;
+  Codigos: { query?: string } | undefined;
+  VademecumList: undefined;
   Mapa: undefined;
 };
 
 type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabsParamList> | undefined;
+  Search: undefined;
   Procedure: { id: string };
   Drug: { id: string };
   Vademecum: { routeKey: string };
   Code: { routeKey: string };
-  Codes: { query?: string } | undefined;
   Abbreviations: { query?: string } | undefined;
   Location: { routeKey: string };
 };
@@ -266,17 +270,17 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
           </View>
           <LogoMark />
         </View>
-        <SearchBar onPress={() => navigation.navigate("Buscar")} />
+        <SearchBar onPress={() => navigation.getParent()?.navigate("Search")} />
 
         <SectionHeading eyebrow="ACCESOS RÁPIDOS" title="Consulta por recurso" />
         <View style={[styles.actionGrid, layout.singleColumn && styles.actionGridSingle]}>
-          <ActionCard icon="clipboard-text-outline" label="Procedimientos" detail={`${content.procedures.length} fichas`} fullWidth={layout.singleColumn} onPress={() => navigation.navigate("Buscar")} />
-          <ActionCard icon="pill" label="Vademécum" detail={`${content.drugs.length} fármacos`} fullWidth={layout.singleColumn} tone="navy" onPress={() => navigation.navigate("Buscar")} />
-          <ActionCard icon="radio-handheld" label="Códigos" detail="Radio y claves" fullWidth={layout.singleColumn} tone="amber" onPress={() => navigation.getParent()?.navigate("Codes")} />
+          <ActionCard icon="clipboard-text-outline" label="Procedimientos" detail={`${content.procedures.length} fichas`} fullWidth={layout.singleColumn} onPress={() => navigation.getParent()?.navigate("Search")} />
+          <ActionCard icon="pill" label="Vademécum" detail={`${content.drugs.length} fármacos`} fullWidth={layout.singleColumn} tone="navy" onPress={() => navigation.navigate("VademecumList")} />
+          <ActionCard icon="radio-handheld" label="Códigos" detail="Radio y claves" fullWidth={layout.singleColumn} tone="amber" onPress={() => navigation.navigate("Codigos")} />
         </View>
 
         {recentProcedures.length > 0 && <>
-          <SectionHeading eyebrow="SESIÓN ACTUAL" title="Continuar consulta" action="Ver todo" onAction={() => navigation.navigate("Guardados")} />
+          <SectionHeading eyebrow="SESIÓN ACTUAL" title="Continuar consulta" />
           <View style={styles.cardList}>
             {recentProcedures.map((procedure) => <ProcedureRow key={procedure.id} procedure={procedure} onPress={() => navigation.getParent()?.navigate("Procedure", { id: procedure.id })} />)}
           </View>
@@ -297,7 +301,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
   );
 }
 
-function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+function SearchScreen({ navigation }: NativeStackScreenProps<RootStackParamList, "Search">) {
   const { content } = useContent();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"Todo" | "Procedimientos" | "Vademécum" | "Códigos">("Todo");
@@ -318,7 +322,12 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
-      <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Buscar</Text><Text style={styles.pageKicker}>CONSULTA LOCAL</Text></View>
+      <View style={[styles.searchScreenHeader, styles.searchScreenHeaderRow]}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver" accessibilityHint={accessibilityHints.dismiss}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} />
+        </Pressable>
+        <View><Text style={styles.pageTitle}>Buscar</Text><Text style={styles.pageKicker}>CONSULTA LOCAL</Text></View>
+      </View>
       <View style={styles.searchPadding}><SearchBar value={query} onChangeText={setQuery} /></View>
       <View style={styles.filterRow} accessibilityRole="tablist">
         {(["Todo", "Procedimientos", "Vademécum", "Códigos"] as const).map((item) => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filterChip, filter === item && styles.filterChipActive]} accessibilityRole="tab" accessibilityLabel={`Filtrar por ${item}`} accessibilityState={{ selected: filter === item }}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item}</Text></Pressable>)}
@@ -332,7 +341,7 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={<EmptyState title={query.trim() ? "Sin coincidencias" : "Procedimientos no disponibles"} detail={query.trim() ? "Prueba con un código, un nombre, un sinónimo o una palabra del contenido." : "El paquete local no contiene procedimientos utilizables. Revisa una actualización cuando tengas conexión."} />}
-        renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.item.id })} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => navigation.getParent()?.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.getParent()?.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.getParent()?.navigate("Drug", { id })} />}
+        renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.navigate("Procedure", { id: item.item.id })} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => navigation.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.navigate("Drug", { id })} />}
       />
     </SafeAreaView>
   );
@@ -376,7 +385,7 @@ function SavedRow({ item, isFavorite, onPress, onToggleFavorite, onRemove }: { i
   return row;
 }
 
-function openSavedReference(navigation: BottomTabScreenProps<TabsParamList, "Guardados">["navigation"], item: SavedReference) {
+function openSavedReference(navigation: BottomTabScreenProps<TabsParamList, "Inicio">["navigation"], item: SavedReference) {
   if (item.kind === "procedure") navigation.getParent()?.navigate("Procedure", { id: item.id });
   else if (item.kind === "drug") navigation.getParent()?.navigate("Drug", { id: item.id });
   else if (item.kind === "code") navigation.getParent()?.navigate("Code", { routeKey: item.routeKey });
@@ -384,7 +393,7 @@ function openSavedReference(navigation: BottomTabScreenProps<TabsParamList, "Gua
   else navigation.getParent()?.navigate("Vademecum", { routeKey: item.routeKey });
 }
 
-function SavedScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Guardados">) {
+function SavedScreen({ navigation }: { navigation: BottomTabScreenProps<TabsParamList, "Inicio">["navigation"] }) {
   const { content, favorites, recents, toggleFavorite, removeRecent } = useContent();
   const [segment, setSegment] = useState<"favorites" | "recents">("favorites");
   const routeKeys = segment === "favorites" ? favorites : recents;
@@ -589,7 +598,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   useEffect(() => () => {
     Object.values(attachmentControllers.current).forEach((controller) => controller.abort());
   }, []);
-  if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Search")} />;
   const favorite = favorites.includes(routeKey);
   const relatedIds = [...new Set([
     ...procedure.related,
@@ -736,7 +745,7 @@ function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<
   useEffect(() => {
     if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
   }, [content, reference?.routeKey, remember, route.params.routeKey]);
-  if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Search")} />;
   const details = reference.detail ?? {};
   const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
   const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
@@ -750,7 +759,7 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   useEffect(() => {
     if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
   }, [content, reference?.routeKey, remember, route.params.routeKey]);
-  if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Search")} />;
   const details = reference.detail ?? {};
   const description = typeof details.description === "string" ? details.description : "";
   const category = typeof details.category === "string" ? details.category : "";
@@ -759,11 +768,25 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? activePalette.amber : activePalette.ink} /></Pressable></View><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={activePalette.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}<View style={styles.infoBlock}><Text style={styles.infoLabel}>Ruta estable</Text><Text style={styles.infoValue}>{reference.routeKey}</Text></View></ScrollView></SafeAreaView>;
 }
 
-function CodesScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Codes">) {
+function CodesScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
   const { content } = useContent();
   const [query, setQuery] = useState(route.params?.query ?? "");
   const codes = useMemo(() => searchCodes(content.codes, query, 2000), [content.codes, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={codes} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.pageTitle}>Códigos y claves</Text><Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el código, nombre, categoría o descripción." />} renderItem={({ item }) => <Pressable onPress={() => navigation.push("Code", { routeKey: item.routeKey })} style={styles.codeRow} accessibilityRole="button" accessibilityLabel={`Abrir código ${item.badge ?? item.title}`}><Text style={styles.codeValue}>{item.badge ?? "—"}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text></View><MaterialCommunityIcons name="chevron-right" size={20} color={activePalette.inkMuted} /></Pressable>} /></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={codes} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Text style={styles.pageTitle}>Códigos y claves</Text><Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el código, nombre, categoría o descripción." />} renderItem={({ item }) => <Pressable onPress={() => navigation.getParent()?.navigate("Code", { routeKey: item.routeKey })} style={styles.codeRow} accessibilityRole="button" accessibilityLabel={`Abrir código ${item.badge ?? item.title}`}><Text style={styles.codeValue}>{item.badge ?? "—"}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text></View><MaterialCommunityIcons name="chevron-right" size={20} color={activePalette.inkMuted} /></Pressable>} /></SafeAreaView>;
+}
+
+function VademecumListScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
+  const { content } = useContent();
+  const [query, setQuery] = useState("");
+  const results = useMemo(() => searchVademecum(content, query, 2000), [content, query]);
+  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList
+    data={results}
+    keyExtractor={(item) => item.id}
+    contentContainerStyle={styles.listContent}
+    ListHeaderComponent={<><Text style={styles.pageTitle}>Vademécum</Text><Text style={styles.pageKicker}>FÁRMACOS · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} placeholder="Buscar fármacos, comerciales, perfusiones o fluidos" /></View></>}
+    ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el nombre del fármaco, comercial, perfusión o fluido." />}
+    renderItem={({ item }) => <ReferenceRow reference={item} onCode={(routeKey) => navigation.getParent()?.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.getParent()?.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.getParent()?.navigate("Drug", { id })} />}
+  /></SafeAreaView>;
 }
 
 function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Abbreviations">) {
@@ -882,13 +905,18 @@ function LocationModal({ location, onClose, onOpenMaps, policy = locationSourceP
 function TabIcon({ name, color }: { name: keyof typeof MaterialCommunityIcons.glyphMap; color: string }) { return <MaterialCommunityIcons name={name} size={23} color={color} />; }
 
 function MainTabs() {
-  const { width, fontScale } = useWindowDimensions();
-  const layout = adaptiveLayout(width, fontScale);
-  return <Tabs.Navigator backBehavior="history" screenOptions={{ headerShown: false, tabBarActiveTintColor: activePalette.red, tabBarInactiveTintColor: activePalette.inkMuted, tabBarLabelStyle: [styles.tabLabel, layout.singleColumn && styles.tabLabelLarge], tabBarStyle: [styles.tabBar, layout.isTablet && styles.tabBarTablet, layout.singleColumn && styles.tabBarLargeFont], tabBarHideOnKeyboard: true, tabBarAccessibilityLabel: "Navegación principal" }}>
-    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
-    <Tabs.Screen name="Buscar" component={SearchScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="magnify" color={color} /> }} />
-    <Tabs.Screen name="Guardados" component={SavedScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="star-outline" color={color} /> }} />
-    <Tabs.Screen name="Mapa" component={MapScreen} options={{ tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
+  // Search deliberately isn't a Tabs.Screen: it lives in its own capsule beside the tab
+  // pill (see GlassTabBar) and opens the top-level "Search" stack route. Exactly four
+  // destinations remain in the tab bar, matching the revised information architecture.
+  return <Tabs.Navigator
+    backBehavior="history"
+    tabBar={(props) => <GlassTabBar {...props} palette={activePalette} onOpenSearch={() => props.navigation.getParent()?.navigate("Search")} />}
+    screenOptions={{ headerShown: false }}
+  >
+    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
+    <Tabs.Screen name="Codigos" component={CodesScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumListScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
+    <Tabs.Screen name="Mapa" component={MapScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
   </Tabs.Navigator>;
 }
 
@@ -897,7 +925,7 @@ function AppNavigation() {
   const { width, fontScale } = useWindowDimensions();
   const layout = adaptiveLayout(width, fontScale);
   const tablet = layout.isTablet;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card" }} /><Stack.Screen name="Codes" component={CodesScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Search" component={SearchScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card" }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {
@@ -961,7 +989,7 @@ function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptive
   pressed: { opacity: 0.72 },
   syncCard: { backgroundColor: palette.greenWash, borderRadius: radii.md, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.lg }, syncIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: palette.white, alignItems: "center", justifyContent: "center" }, syncCopy: { flex: 1 }, syncTitle: { color: palette.green, fontWeight: "800", fontSize: 13 }, syncDetail: { color: palette.inkMuted, fontSize: 11, marginTop: 2 }, syncAction: { color: palette.green, fontSize: 12, fontWeight: "800" }, progressTrack: { height: 4, borderRadius: 2, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
   disclaimer: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginVertical: spacing.md },
-  searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, pageTitle: { color: palette.ink, fontSize: 31, fontWeight: "800", letterSpacing: -1 }, pageKicker: { color: palette.red, fontSize: 10, fontWeight: "800", letterSpacing: 1.3, marginTop: 4 }, searchPadding: { paddingHorizontal: spacing.lg }, detailSearch: { marginTop: spacing.lg },
+  searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, searchScreenHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md }, pageTitle: { color: palette.ink, fontSize: 31, fontWeight: "800", letterSpacing: -1 }, pageKicker: { color: palette.red, fontSize: 10, fontWeight: "800", letterSpacing: 1.3, marginTop: 4 }, searchPadding: { paddingHorizontal: spacing.lg }, detailSearch: { marginTop: spacing.lg },
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }, filterChip: { minHeight: 44, justifyContent: "center", paddingVertical: 9, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted }, filterChipActive: { backgroundColor: palette.ink }, filterText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" }, filterTextActive: { color: palette.white },
   emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm }, emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 16 }, emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 13, lineHeight: 18 },
   mapLegend: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, mapLegendDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: palette.green }, mapLegendText: { color: palette.inkMuted, fontSize: 12 }, locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabled: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surfaceMuted, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabledTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" }, onlineMapDisabledCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, locationActions: { gap: spacing.sm, marginBottom: spacing.md }, locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg }, locationActionText: { color: palette.white, fontSize: 13, fontWeight: "800" }, nearestToggle: { flexDirection: "row", gap: spacing.sm }, nearestChoice: { flex: 1, minHeight: 42, borderRadius: radii.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm }, nearestChoiceActive: { backgroundColor: palette.redWash, borderWidth: 1, borderColor: palette.red }, nearestChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, nearestChoiceTextActive: { color: palette.redDark }, locationFallback: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }, locationFallbackText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 }, accessibleEquivalent: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }, accessibleEquivalentTitle: { color: palette.ink, fontSize: 14, fontWeight: "800" }, accessibleEquivalentCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 },
@@ -973,7 +1001,9 @@ function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptive
   doseCard: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.lg, marginTop: spacing.lg, marginBottom: spacing.xl }, doseHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, doseTitle: { color: palette.ink, fontSize: 16, fontWeight: "800" }, doseLabel: { color: palette.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.1, marginTop: spacing.md, marginBottom: spacing.sm }, doseChoiceRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.sm }, doseChoice: { flex: 1, minWidth: 120, minHeight: 44, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center" }, doseChoiceActive: { backgroundColor: palette.ink }, doseChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, doseChoiceTextActive: { color: palette.white }, doseInputRow: { flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: palette.line, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md }, doseInput: { flex: 1, color: palette.ink, fontSize: 17, paddingVertical: 8 }, doseInputStandalone: { borderWidth: 1, borderColor: palette.line, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md, color: palette.ink, fontSize: 16, marginBottom: spacing.sm }, doseUnit: { color: palette.inkMuted, fontWeight: "800", fontSize: 12 }, doseUnitChoice: { minHeight: 44, borderRadius: radii.pill, paddingVertical: 7, paddingHorizontal: 11, backgroundColor: palette.surfaceMuted, justifyContent: "center" }, doseUnitChoiceActive: { backgroundColor: palette.ink }, doseUnitChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, doseUnitChoiceTextActive: { color: palette.white }, doseCheckRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 }, doseCheckText: { color: palette.ink, fontSize: 12, lineHeight: 17, flex: 1 }, doseCalculateButton: { backgroundColor: palette.redAction, borderRadius: radii.md, padding: spacing.md, alignItems: "center", marginTop: spacing.md }, doseResult: { backgroundColor: palette.greenWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseResultLabel: { color: palette.green, fontSize: 10, fontWeight: "900", letterSpacing: 1.1 }, doseResultValue: { color: palette.ink, fontSize: 27, fontWeight: "900", marginVertical: 3 }, doseResultDetail: { color: palette.inkMuted, fontSize: 11, lineHeight: 16 }, doseWarning: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: spacing.sm }, doseError: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.redWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseErrorText: { color: palette.redDark, flex: 1, fontSize: 12, lineHeight: 17 }, doseUnavailable: { color: palette.ink, fontSize: 13, lineHeight: 18 }, doseDisclaimer: { color: palette.inkMuted, fontSize: 10, lineHeight: 15, marginTop: spacing.md },
   modal: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: palette.ink, fontSize: 24, fontWeight: "800" }, modalKicker: { color: palette.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: 4 }, modalClose: { color: palette.red, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: palette.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderColor: palette.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, recoveryActions: { backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.sm }, recoveryButtons: { flexDirection: "row", gap: spacing.sm }, recoveryButton: { marginTop: spacing.sm, backgroundColor: palette.ink, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonText: { color: palette.white, fontSize: 12, fontWeight: "800" }, recoveryButtonSecondary: { marginTop: spacing.sm, borderColor: palette.ink, borderWidth: 1, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonSecondaryText: { color: palette.ink, fontSize: 12, fontWeight: "800" }, primaryButton: { backgroundColor: palette.redAction, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, secondaryButton: { borderColor: palette.ink, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.sm }, secondaryButtonText: { color: palette.ink, fontWeight: "800", fontSize: 14 }, locationDetailBlock: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.lg }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: palette.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceControlStacked: { flexDirection: "column" }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: palette.ink }, appearanceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: palette.white }, infoPanel: { backgroundColor: palette.redWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: palette.redDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: palette.redDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: palette.line }, linkText: { color: palette.red, fontSize: 13, fontWeight: "800" }, legalText: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" }, locationSheet: { backgroundColor: palette.paper, padding: spacing.xl, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg }, sheetHandle: { width: 42, height: 5, borderRadius: 3, backgroundColor: palette.line, alignSelf: "center", marginBottom: spacing.xl }, sheetTitle: { color: palette.ink, fontSize: 24, lineHeight: 28, fontWeight: "800", marginBottom: spacing.sm },
   launchScreen: { flex: 1, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" }, launchTitle: { color: palette.white, fontSize: 30, fontWeight: "900", letterSpacing: -0.8, marginTop: spacing.lg }, launchSubtitle: { color: "#B8C4D7", fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginTop: spacing.sm }, disclosureScreen: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: palette.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: palette.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureBody: { color: palette.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
-  tabBar: { height: Platform.OS === "ios" ? 84 : 64, paddingTop: 7, paddingBottom: Platform.OS === "ios" ? 20 : 7, backgroundColor: palette.surface, borderTopColor: palette.line }, tabBarTablet: { maxWidth: 720, alignSelf: "center", width: "100%" }, tabBarLargeFont: { height: Platform.OS === "ios" ? 104 : 84, paddingBottom: Platform.OS === "ios" ? 28 : 12 }, tabLabel: { fontSize: 10, fontWeight: "700" }, tabLabelLarge: { fontSize: 12 },
+  // The default JS-drawn tab bar styles (tabBar/tabBarTablet/tabLabel/…) were removed here:
+  // MainTabs now supplies a custom `tabBar` (GlassTabBar, src/nav-shell.tsx) so the system
+  // can render real Liquid Glass, which `@react-navigation/bottom-tabs` can never draw itself.
   });
 }
 
