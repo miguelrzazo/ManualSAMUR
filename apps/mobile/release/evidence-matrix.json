@@ -1,0 +1,24 @@
+{
+  "schema": "samur-manual.mobile-release-evidence-matrix",
+  "version": 1,
+  "requiredGates": [
+    { "id": "performance", "label": "Launch, search and detail latency", "requiresReferenceDevice": true, "prohibits": ["unmeasured claim"] },
+    { "id": "memory", "label": "Peak and sustained memory", "requiresReferenceDevice": true, "prohibits": ["unmeasured claim"] },
+    { "id": "battery", "label": "Battery impact during field session", "requiresReferenceDevice": true, "prohibits": ["unmeasured claim"] },
+    { "id": "binary-size", "label": "Signed binary size", "requiresReferenceDevice": false, "prohibits": ["estimated size presented as measured"] },
+    { "id": "installed-size", "label": "Installed application size", "requiresReferenceDevice": true, "prohibits": ["estimated size presented as measured"] },
+    { "id": "offline", "label": "Offline launch and reference lookup", "requiresReferenceDevice": true, "prohibits": ["network-dependent pass"] },
+    { "id": "recovery", "label": "Failed update and last-known-good recovery", "requiresReferenceDevice": true, "prohibits": ["silent fallback"] },
+    { "id": "attachments", "label": "Essential and optional attachment behavior", "requiresReferenceDevice": true, "prohibits": ["unverified attachment"] },
+    { "id": "accessibility", "label": "VoiceOver/TalkBack, Dynamic Type, contrast and touch targets", "requiresReferenceDevice": true, "prohibits": ["automated check as human sign-off"] },
+    { "id": "map-fallback", "label": "Permission denial and offline map-directory fallback", "requiresReferenceDevice": true, "prohibits": ["route or travel-time claim"] },
+    { "id": "route-gates", "label": "Stable route, Back/context and stale-record gates", "requiresReferenceDevice": true, "prohibits": ["missing route silently dropped"] }
+  ],
+  "ownerGates": [
+    "attachments",
+    "locations",
+    "onlineMap",
+    "accessibility"
+  ],
+  "finalDecision": "human-only"
+}

@@ -80,6 +80,27 @@ npm run mobile:typecheck
 npm --prefix apps/mobile run attachments:check-release # expected to remain blocked until owner approval
 ```
 
+## Release readiness and internal-test handoff
+
+CI runs `npm run mobile:release:evidence` after the content validation, lint, tests,
+mobile typecheck, and web build steps. It retains a dated evidence JSON, schema, gate
+matrix, synthetic field checklist, human review checklist, and an EAS-referenced handoff
+as an artifact. The collector records commit, build, Node/Expo, content-hash, and
+package-hash provenance but never supplies measurements, approvals, signatures, or
+secrets. Normal CI reports a blocked readiness package and remains useful; a human can
+run `npm run mobile:release:evidence:strict` only after completing every gate.
+
+The handoff is prepared for a human owner to generate and upload signed candidates for
+TestFlight and Google Play internal testing. It does not perform any upload, submission,
+promotion, pause, halt, rollback, or production approval. See `release/evidence-matrix.json`,
+`release/field-validation-checklist.md`, and `release/human-review-checklist.md` for the
+required evidence and unresolved owner decisions.
+
+The initial evidence keeps the unresolved owner gates from the Wayfinder work visible:
+attachment allowlist/asset approval (issue 62), location source approval (issue 64),
+online-map provider/licence/scope/size approval (issue 65), and the manual accessibility
+review/device evidence (issue 66). None of these statuses is inferred from a passing CI run.
+
 The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`).
 - The packaged location directory is guarded by `location-source-policy.json`. Its current
   source, hospital scope, source date, and freshness window are provisional and explicitly

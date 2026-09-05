@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "content": "node --experimental-strip-types scripts/build-content-package.ts",
     "content:validate": "node --experimental-strip-types scripts/validate-content-package.ts",
+    "release:evidence": "node --experimental-strip-types scripts/collect-release-evidence.ts",
+    "release:evidence:strict": "node --experimental-strip-types scripts/collect-release-evidence.ts --strict",
     "attachments:check-release": "node --experimental-strip-types scripts/check-attachment-release.ts",
     "locations:check-release": "node --experimental-strip-types scripts/check-location-release.ts",
     "online-map:check-release": "node --experimental-strip-types scripts/check-online-map-release.ts"

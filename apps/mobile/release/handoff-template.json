@@ -1,0 +1,12 @@
+{
+  "schema": "samur-manual.mobile-internal-test-handoff",
+  "version": 1,
+  "status": "blocked",
+  "signing": {
+    "ios": { "artifact": null, "signed": false, "owner": null, "testFlightAppId": null },
+    "android": { "artifact": null, "signed": false, "owner": null, "packageName": null }
+  },
+  "humanDecision": "required",
+  "submission": "human-controlled only",
+  "note": "Fill only outside source control after owner approval; this template cannot upload or submit anything."
+}

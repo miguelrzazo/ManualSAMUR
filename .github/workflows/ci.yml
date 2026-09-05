@@ -46,11 +46,37 @@ jobs:
       - name: Generate mobile content package
         run: npm run mobile:content
 
+      - name: Validate mobile content package
+        run: npm run mobile:content:validate
+
       - name: Mobile typecheck
         run: npm run mobile:typecheck
 
       - name: Build
         run: npm run build
+
+      - name: Collect dated mobile release evidence
+        env:
+          MOBILE_BUILD_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          MOBILE_EVIDENCE_TIMESTAMP: ${{ github.run_started_at }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/mobile-release
+          npm run mobile:release:evidence -- \
+            --output="$PWD/artifacts/mobile-release/mobile-release-evidence.json" \
+            --handoff-output="$PWD/artifacts/mobile-release/mobile-internal-test-handoff.json"
+          cp apps/mobile/release/evidence-schema.json artifacts/mobile-release/
+          cp apps/mobile/release/evidence-matrix.json artifacts/mobile-release/
+          cp apps/mobile/release/field-validation-checklist.md artifacts/mobile-release/
+          cp apps/mobile/release/human-review-checklist.md artifacts/mobile-release/
+
+      - name: Retain release evidence and human handoff
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mobile-release-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/mobile-release/
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Check the build left no drift
         # public/procedures/*.md y llms*.txt se generan y se commitean. Hasta

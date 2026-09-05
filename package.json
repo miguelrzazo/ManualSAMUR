@@ -21,6 +21,8 @@
     "audit:manual-relations": "node --experimental-strip-types scripts/audit-manual-relations.ts",
     "mobile:content": "node --experimental-strip-types apps/mobile/scripts/build-content-package.ts",
     "mobile:content:validate": "node --experimental-strip-types apps/mobile/scripts/validate-content-package.ts",
+    "mobile:release:evidence": "node --experimental-strip-types apps/mobile/scripts/collect-release-evidence.ts",
+    "mobile:release:evidence:strict": "node --experimental-strip-types apps/mobile/scripts/collect-release-evidence.ts --strict",
     "mobile:locations:check-release": "node --experimental-strip-types apps/mobile/scripts/check-location-release.ts",
     "mobile:typecheck": "npx tsc --noEmit -p apps/mobile/tsconfig.json",
     "sync:manualsamur:detect": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
