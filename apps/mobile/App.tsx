@@ -51,7 +51,17 @@ import {
   type LocationFilter,
   type LocationRecord,
 } from "./src/location-logic";
-import { initialOnlineMapState, onlineMapFallbackLabel } from "./src/online-map-logic";
+import {
+  APPROVED_ONLINE_MAP_POLICY,
+  initialOnlineMapState,
+  onlineMapFallbackLabel,
+  transitionOnlineMapState,
+  type OnlineMapPin,
+  type OnlineMapRequest,
+  type OnlineMapState,
+} from "./src/online-map-logic";
+import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider } from "./src/online-map-runtime";
+import { OnlineMapView, ONLINE_MAP_ATTRIBUTION_TEXT } from "./src/online-map-view";
 import {
   canRecordRecent,
   savedReferenceIcon,
@@ -154,20 +164,20 @@ function BrandHeader({ onSettings, settingsRef }: { onSettings?: () => void; set
   );
 }
 
-function SearchBar({ value, onChangeText, onPress }: { value?: string; onChangeText?: (value: string) => void; onPress?: () => void }) {
+function SearchBar({ value, onChangeText, onPress, placeholder = "Buscar procedimientos, fármacos o códigos" }: { value?: string; onChangeText?: (value: string) => void; onPress?: () => void; placeholder?: string }) {
   return (
     <Pressable onPress={onPress} style={styles.searchBar} accessible={!onChangeText} accessibilityRole={onChangeText ? "none" : "button"} accessibilityLabel={routeAccessibilityLabels.Buscar} accessibilityHint={onChangeText ? accessibilityHints.search : accessibilityHints.openDetail}>
       <MaterialCommunityIcons name="magnify" size={22} color={activePalette.inkMuted} />
       {onChangeText ? <TextInput
           value={value}
           onChangeText={onChangeText}
-          placeholder="Buscar procedimientos, fármacos o códigos"
+          placeholder={placeholder}
           placeholderTextColor={activePalette.inkMuted}
           style={styles.searchInput}
           returnKeyType="search"
           accessibilityLabel="Campo de búsqueda del manual"
           accessibilityHint={accessibilityHints.search}
-        /> : <Text style={styles.searchPlaceholder}>Buscar procedimientos, fármacos o códigos</Text>}
+        /> : <Text style={styles.searchPlaceholder}>{placeholder}</Text>}
       <View style={styles.offlineDot} />
     </Pressable>
   );
@@ -403,6 +413,9 @@ function mapPercent(value: number): DimensionValue {
   return (String(value) + "%") as DimensionValue;
 }
 
+/** Geographic center of Madrid, used as the online map's default camera when no user location is available. */
+const MADRID_MAP_CENTER: [longitude: number, latitude: number] = [-3.7038, 40.4168];
+
 function MapScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) {
   const { content } = useContent();
   const [query, setQuery] = useState("");
@@ -410,9 +423,13 @@ function MapScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) 
   const [nearestKind, setNearestKind] = useState<"hospital" | "base">("hospital");
   const [origin, setOrigin] = useState<LocationCoordinate>();
   const [permission, setPermission] = useState<"idle" | "requesting" | "granted" | "denied" | "unavailable">("idle");
+  const scheme = useColorScheme();
   const policy = locationSourcePolicy;
-  const onlineMapState = useMemo(() => initialOnlineMapState(), []);
+  const mapPolicy = APPROVED_ONLINE_MAP_POLICY;
+  const [mapState, setMapState] = useState<OnlineMapState>(() => initialOnlineMapState(mapPolicy));
+  const lastSnapshotRef = useRef<boolean>(false);
   const locations = useMemo(() => locationRecords(content, policy), [content, policy]);
+  const mapProvider = useMemo(() => createMapLibreOnlineMapProvider(locations), [locations]);
   const visibleLocations = useMemo(() => {
     const filtered = filterLocations(locations, query, filter);
     return origin ? sortLocationsByDistance(filtered, origin) : filtered as LocationWithDistance[];
@@ -422,31 +439,77 @@ function MapScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) 
   const displayLocations = origin ? nearestLocations : visibleLocations;
   const schematic = useMemo(() => schematicNodes(displayLocations), [displayLocations]);
 
-  const requestLocation = async () => {
-    if (permission === "requesting") return;
+  const requestLocation = async (): Promise<"granted" | "denied" | "unavailable" | "requesting"> => {
+    if (permission === "requesting") return "requesting";
     setPermission("requesting");
     try {
       const response = await ExpoLocation.requestForegroundPermissionsAsync();
       if (response.status !== ExpoLocation.PermissionStatus.GRANTED) {
         setOrigin(undefined);
         setPermission("denied");
-        return;
+        return "denied";
       }
       const position = await ExpoLocation.getCurrentPositionAsync({ accuracy: ExpoLocation.Accuracy.Low });
       setOrigin({ lat: position.coords.latitude, lng: position.coords.longitude });
       setPermission("granted");
+      return "granted";
     } catch {
       setOrigin(undefined);
       setPermission("unavailable");
+      return "unavailable";
     }
   };
 
+  const loadOnlineMap = async (request: OnlineMapRequest) => {
+    setMapState((previous) => transitionOnlineMapState(previous, { type: "request", request }, mapPolicy));
+    try {
+      const snapshot = await mapProvider.fetch(request);
+      lastSnapshotRef.current = true;
+      setMapState((previous) => transitionOnlineMapState(previous, { type: "success", snapshot }, mapPolicy));
+    } catch (error) {
+      const reason = classifyOnlineMapFailure(error, lastSnapshotRef.current);
+      setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason }, mapPolicy));
+    }
+  };
+
+  // Explicit user action only: nothing here fires on mount. Pressing "Mostrar mapa
+  // online" is what may first ask for location permission (to center the map), and
+  // only then fetches the online basemap. A denial stops before any network request.
+  const activateOnlineMap = async () => {
+    let effectivePermission = permission;
+    if (permission === "idle") effectivePermission = await requestLocation();
+    if (effectivePermission === "denied") {
+      setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "permission-denied" }, mapPolicy));
+      return;
+    }
+    await loadOnlineMap({ query, filter, currentLocation: origin });
+  };
+
+  const retryOnlineMap = () => { void loadOnlineMap({ query, filter, currentLocation: origin }); };
+
+  const openLocationFromMap = (pin: OnlineMapPin) => { navigation.getParent()?.navigate("Location", { routeKey: pin.locationRouteKey }); };
+
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.scrollContent}>
-    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Mapa</Text><Text style={styles.pageKicker}>MADRID · OFFLINE</Text></View>
+    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Mapa</Text><Text style={styles.pageKicker}>MADRID · OFFLINE + ONLINE</Text></View>
     <View style={styles.locationPolicyNotice} accessibilityLabel="Estado de la fuente de ubicaciones"><MaterialCommunityIcons name="check-decagram-outline" size={20} color={activePalette.green} /><Text style={styles.sourceNoticeText}>Fuente oficial del SAMUR · paquete del {policy.sourceDate}. El directorio funciona sin red.</Text></View>
-    {onlineMapState.status === "disabled" && <View style={styles.onlineMapDisabled} accessibilityLiveRegion="polite" accessibilityLabel="Mapa online desactivado"><MaterialCommunityIcons name="map-marker-off-outline" size={20} color={activePalette.amber} /><View style={styles.resourceCopy}><Text style={styles.onlineMapDisabledTitle}>Mapa online no habilitado</Text><Text style={styles.onlineMapDisabledCopy}>La cartografía online está desactivada hasta aprobar proveedor, licencia, alcance offline, OS floor y presupuesto de tamaño. El directorio y el esquema accesible siguen disponibles.</Text></View></View>}
-    {onlineMapState.status === "fallback" && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-marker-path" size={20} color={activePalette.amber} /><Text style={styles.locationFallbackText}>{onlineMapFallbackLabel(onlineMapState.reason)}</Text></View>}
-    <View style={styles.searchPadding}><SearchBar value={query} onChangeText={setQuery} /></View>
+    {mapState.status === "disabled" && <View style={styles.onlineMapDisabled} accessibilityLiveRegion="polite" accessibilityLabel="Mapa online desactivado"><MaterialCommunityIcons name="map-marker-off-outline" size={20} color={activePalette.amber} /><View style={styles.resourceCopy}><Text style={styles.onlineMapDisabledTitle}>Mapa online no habilitado</Text><Text style={styles.onlineMapDisabledCopy}>La cartografía online está desactivada hasta aprobar proveedor, licencia, alcance offline, OS floor y presupuesto de tamaño. El directorio y el esquema accesible siguen disponibles.</Text></View></View>}
+    {mapState.status === "idle" && <Pressable onPress={() => void activateOnlineMap()} style={styles.locationActionButton} accessibilityRole="button" accessibilityLabel="Mostrar mapa online" accessibilityHint="Activa el mapa en vivo con MapLibre y CARTO sobre OpenStreetMap. Puede solicitar permiso de ubicación."><MaterialCommunityIcons name="map-outline" size={18} color={activePalette.white} /><Text style={styles.locationActionText}>Mostrar mapa online</Text></Pressable>}
+    {mapState.status === "loading" && <View style={styles.onlineMapDisabled} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-clock-outline" size={20} color={activePalette.inkMuted} /><Text style={styles.onlineMapDisabledCopy}>Cargando mapa online…</Text></View>}
+    {mapState.status === "online" && <View style={styles.onlineMapContainer} accessibilityLabel={"Mapa online con " + mapState.snapshot.pins.length + " puntos; el directorio y el esquema accesible siguen disponibles más abajo"}>
+      <OnlineMapView
+        dark={scheme === "dark"}
+        pins={mapState.snapshot.pins}
+        center={origin ? [origin.lng, origin.lat] : MADRID_MAP_CENTER}
+        onPinPress={openLocationFromMap}
+        onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
+        markerColor={activePalette.red}
+        markerColorBase={activePalette.ink}
+      />
+      <View style={styles.onlineMapAttribution} pointerEvents="none"><Text style={styles.onlineMapAttributionText}>{ONLINE_MAP_ATTRIBUTION_TEXT}</Text></View>
+      <Pressable onPress={retryOnlineMap} style={styles.onlineMapRefresh} accessibilityRole="button" accessibilityLabel="Actualizar mapa online"><MaterialCommunityIcons name="refresh" size={16} color={activePalette.white} /></Pressable>
+    </View>}
+    {mapState.status === "fallback" && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-marker-path" size={20} color={activePalette.amber} /><Text style={styles.locationFallbackText}>{onlineMapFallbackLabel(mapState.reason)}</Text><Pressable onPress={() => void activateOnlineMap()} accessibilityRole="button" accessibilityLabel="Reintentar mapa online"><Text style={styles.retryLinkText}>Reintentar</Text></Pressable></View>}
+    <View style={styles.searchPadding}><SearchBar value={query} onChangeText={setQuery} placeholder="Buscar hospitales, bases o direcciones" /></View>
     <View style={styles.filterRow} accessibilityRole="tablist">
       {(["all", "hospital", "base"] as const).map((item) => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filterChip, filter === item && styles.filterChipActive]} accessibilityRole="tab" accessibilityLabel={`Filtrar por ${item === "all" ? "todos" : item === "hospital" ? "hospitales" : "bases"}`} accessibilityState={{ selected: filter === item }}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item === "all" ? "Todos" : item === "hospital" ? "Hospitales" : "Bases"}</Text></Pressable>)}
     </View>
@@ -902,6 +965,7 @@ function createStyles(palette: typeof colors | ReturnType<typeof resolveAdaptive
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }, filterChip: { minHeight: 44, justifyContent: "center", paddingVertical: 9, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted }, filterChipActive: { backgroundColor: palette.ink }, filterText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" }, filterTextActive: { color: palette.white },
   emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm }, emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 16 }, emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 13, lineHeight: 18 },
   mapLegend: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, mapLegendDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: palette.green }, mapLegendText: { color: palette.inkMuted, fontSize: 12 }, locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabled: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surfaceMuted, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabledTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" }, onlineMapDisabledCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, locationActions: { gap: spacing.sm, marginBottom: spacing.md }, locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg }, locationActionText: { color: palette.white, fontSize: 13, fontWeight: "800" }, nearestToggle: { flexDirection: "row", gap: spacing.sm }, nearestChoice: { flex: 1, minHeight: 42, borderRadius: radii.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm }, nearestChoiceActive: { backgroundColor: palette.redWash, borderWidth: 1, borderColor: palette.red }, nearestChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, nearestChoiceTextActive: { color: palette.redDark }, locationFallback: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }, locationFallbackText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 }, accessibleEquivalent: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }, accessibleEquivalentTitle: { color: palette.ink, fontSize: 14, fontWeight: "800" }, accessibleEquivalentCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 },
+  onlineMapContainer: { height: 300, borderRadius: radii.lg, overflow: "hidden", position: "relative", marginBottom: spacing.md, borderWidth: 1, borderColor: palette.line }, onlineMapAttribution: { position: "absolute", right: 6, bottom: 6, backgroundColor: "rgba(255,255,255,0.82)", borderRadius: radii.sm, paddingHorizontal: 6, paddingVertical: 2 }, onlineMapAttributionText: { fontSize: 10, color: "#13233D" }, onlineMapRefresh: { position: "absolute", top: 8, right: 8, width: 32, height: 32, borderRadius: 16, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" }, retryLinkText: { color: palette.ink, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: 4 },
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: palette.surfaceMuted, overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: palette.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: palette.paper, transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: palette.paper, transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: palette.paper, transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPin: { position: "absolute", width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: palette.white }, mapPinRed: { backgroundColor: palette.red }, mapPinNavy: { backgroundColor: palette.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: palette.ink, fontWeight: "900" }, mapNote: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl },
   locationRow: { minHeight: 66, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, locationIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: palette.redWash, alignItems: "center", justifyContent: "center" }, locationIconBase: { backgroundColor: palette.amberWash }, locationAddress: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: 2 }, locationDistance: { color: palette.green, fontSize: 11, fontWeight: "800", lineHeight: 16, marginTop: 2 }, locationFreshness: { color: palette.inkMuted, fontSize: 10, lineHeight: 14, marginTop: 2 },
   detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.red, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.redWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.redDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.redDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, contentsTitle: { color: palette.red, fontSize: 10, fontWeight: "900", letterSpacing: 1.2, marginBottom: spacing.sm }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.red, fontSize: 18, lineHeight: 23 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },

@@ -20,6 +20,7 @@
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@manual-samur/design-tokens": "file:../../packages/design-tokens",
+    "@maplibre/maplibre-react-native": "^11.3.8",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",

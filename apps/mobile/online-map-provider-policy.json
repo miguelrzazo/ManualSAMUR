@@ -1,13 +1,20 @@
 {
   "schema": "samur-manual.online-map-policy",
   "version": 1,
-  "approved": false,
-  "provider": null,
-  "providerApproved": false,
-  "licenseApproved": false,
-  "offlineScopeApproved": false,
-  "osFloorApproved": false,
-  "sizeBudgetApproved": false,
-  "sizeBudgetBytes": 0,
-  "notes": "Bloqueado hasta que el propietario apruebe proveedor, licencia/atribución, alcance offline, OS floor y presupuesto de tamaño. No instalar ni integrar un SDK mientras esté bloqueado."
+  "approved": true,
+  "provider": {
+    "id": "maplibre-carto-osm",
+    "displayName": "MapLibre GL Native + CARTO (Positron / Dark Matter) sobre datos de OpenStreetMap",
+    "attribution": "© OpenStreetMap contributors · © CARTO",
+    "minimumOS": { "ios": 16.4, "android": 24 },
+    "estimatedInstalledBytes": 9270265
+  },
+  "providerApproved": true,
+  "licenseApproved": true,
+  "offlineScopeApproved": true,
+  "osFloorApproved": true,
+  "sizeBudgetApproved": true,
+  "sizeBudgetBytes": 15000000,
+  "approvalReference": "issue-65-owner-decision-2026-09-05",
+  "notes": "estimatedInstalledBytes es MEDIDO, no estimado: dos builds Release de iOS (con y sin @maplibre/maplibre-react-native@11.3.8), comparando únicamente la porción arm64 (lipo -thin arm64, para descartar la mitad x86_64 del binario fat de simulador) de MapLibre.framework (7.671.568 bytes), el delta del ejecutable principal Pulsoabierto por enlazar el framework (4.618.992 - 3.156.672 = 1.462.320 bytes) y el delta de main.jsbundle por el wrapper JS de maplibre-react-native, sus dependencias @turf/* y el código propio de online-map-view.tsx/online-map-runtime.ts (12.993.081 - 12.856.704 = 136.377 bytes). Suma: 9.270.265 bytes (~8,8 MB). Todas las demás frameworks (Expo*, hermesvm, React, ReactNativeDependencies) tienen el mismo tamaño arm64 en ambos builds, confirmando que el delta es atribuible solo a MapLibre. Advertencia: es un build de simulador sin firmar (Release, sin thinning de arquitectura única de dispositivo real ni post-procesado de App Store); el tamaño real de descarga en un dispositivo puede diferir. sizeBudgetBytes (15 MB) deja margen por esa incertidumbre sin ocultar el número medido."
 }

@@ -26,6 +26,7 @@ export interface OnlineMapReleasePolicy {
   sizeBudgetApproved: boolean;
   sizeBudgetBytes: number;
   approvalReference?: string;
+  notes?: string;
 }
 
 /** Deliberately disabled until the owner supplies a provider decision and evidence. */
@@ -40,6 +41,37 @@ export const DEFAULT_ONLINE_MAP_POLICY: OnlineMapReleasePolicy = {
   osFloorApproved: false,
   sizeBudgetApproved: false,
   sizeBudgetBytes: 0,
+};
+
+/**
+ * Owner-approved policy (issue #65): MapLibre rendering CARTO's Positron/Dark Matter
+ * basemap styles over OpenStreetMap data — the same stack the web app already uses
+ * (see `components/ui/map.tsx`). MUST stay in sync with
+ * ../online-map-provider-policy.json field-for-field; tests/mobile-online-map.test.ts
+ * asserts the two are identical. Not a plain JSON import for the same reason
+ * `locationSourcePolicy` in location-logic.ts isn't: this file is bundled by both
+ * Metro (the app) and plain Node (release-gate scripts and tests), and only the TS
+ * constant is verified safe across both.
+ */
+export const APPROVED_ONLINE_MAP_POLICY: OnlineMapReleasePolicy = {
+  schema: ONLINE_MAP_POLICY_SCHEMA,
+  version: ONLINE_MAP_POLICY_VERSION,
+  approved: true,
+  provider: {
+    id: "maplibre-carto-osm",
+    displayName: "MapLibre GL Native + CARTO (Positron / Dark Matter) sobre datos de OpenStreetMap",
+    attribution: "© OpenStreetMap contributors · © CARTO",
+    minimumOS: { ios: 16.4, android: 24 },
+    estimatedInstalledBytes: 9_270_265,
+  },
+  providerApproved: true,
+  licenseApproved: true,
+  offlineScopeApproved: true,
+  osFloorApproved: true,
+  sizeBudgetApproved: true,
+  sizeBudgetBytes: 15_000_000,
+  approvalReference: "issue-65-owner-decision-2026-09-05",
+  notes: "estimatedInstalledBytes es MEDIDO, no estimado: dos builds Release de iOS (con y sin @maplibre/maplibre-react-native@11.3.8), comparando únicamente la porción arm64 (lipo -thin arm64, para descartar la mitad x86_64 del binario fat de simulador) de MapLibre.framework (7.671.568 bytes), el delta del ejecutable principal Pulsoabierto por enlazar el framework (4.618.992 - 3.156.672 = 1.462.320 bytes) y el delta de main.jsbundle por el wrapper JS de maplibre-react-native, sus dependencias @turf/* y el código propio de online-map-view.tsx/online-map-runtime.ts (12.993.081 - 12.856.704 = 136.377 bytes). Suma: 9.270.265 bytes (~8,8 MB). Todas las demás frameworks (Expo*, hermesvm, React, ReactNativeDependencies) tienen el mismo tamaño arm64 en ambos builds, confirmando que el delta es atribuible solo a MapLibre. Advertencia: es un build de simulador sin firmar (Release, sin thinning de arquitectura única de dispositivo real ni post-procesado de App Store); el tamaño real de descarga en un dispositivo puede diferir. sizeBudgetBytes (15 MB) deja margen por esa incertidumbre sin ocultar el número medido.",
 };
 
 export interface OnlineMapRequest {

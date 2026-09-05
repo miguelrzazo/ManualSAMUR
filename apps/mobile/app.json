@@ -41,7 +41,8 @@
       "./plugins/with-ios-launch-screen",
       "./plugins/with-ios-podfile-safe-scripts",
       "./plugins/with-ios-attachment-assets",
-      "./plugins/with-android-attachment-assets"
+      "./plugins/with-android-attachment-assets",
+      "@maplibre/maplibre-react-native"
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",

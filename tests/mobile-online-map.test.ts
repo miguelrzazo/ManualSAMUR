@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
+  APPROVED_ONLINE_MAP_POLICY,
   DEFAULT_ONLINE_MAP_POLICY,
   disabledOnlineMapProvider,
   evaluateOnlineMapRelease,
@@ -15,6 +16,7 @@ import {
   type OnlineMapReleasePolicy,
 } from "../apps/mobile/src/online-map-logic.ts";
 import { locationRecords } from "../apps/mobile/src/location-logic.ts";
+import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider, MAPLIBRE_CARTO_STYLE_URLS } from "../apps/mobile/src/online-map-runtime.ts";
 
 const appRoot = path.join(process.cwd(), "apps/mobile");
 const snapshot = JSON.parse(readFileSync(path.join(appRoot, "src/data/snapshot.json"), "utf8")) as { content: { hospitals: Array<Record<string, unknown>>; bases: Array<Record<string, unknown>> } };
@@ -114,18 +116,85 @@ test("the disabled adapter cannot accidentally make an unapproved network reques
   await assert.rejects(disabledOnlineMapProvider.fetch({ query: "", filter: "all" }), /no está configurado ni aprobado/);
 });
 
-test("policy JSON keeps provider selection and approval off until owner evidence exists", () => {
-  const policy = JSON.parse(readFileSync(path.join(appRoot, "online-map-provider-policy.json"), "utf8")) as OnlineMapReleasePolicy;
-  assert.deepEqual(policy.provider, null);
-  assert.equal(policy.approved, false);
-  assert.equal(evaluateOnlineMapRelease(policy).ready, false);
+test("owner has approved the MapLibre + CARTO stack, and the JSON policy matches the TS constant", () => {
+  const jsonPolicy = JSON.parse(readFileSync(path.join(appRoot, "online-map-provider-policy.json"), "utf8")) as OnlineMapReleasePolicy;
+  assert.equal(jsonPolicy.approved, true);
+  assert.ok(jsonPolicy.provider);
+  assert.equal(jsonPolicy.provider!.id, "maplibre-carto-osm");
+  assert.match(jsonPolicy.provider!.attribution, /OpenStreetMap/);
+  assert.match(jsonPolicy.provider!.attribution, /CARTO/);
+  assert.equal(evaluateOnlineMapRelease(jsonPolicy).ready, true);
+  assert.equal(onlineMapPolicyReady(jsonPolicy), true);
+  // Field-for-field equality with the runtime constant App.tsx actually imports, so the
+  // release-gate evidence file and the code the app ships can never drift apart.
+  assert.deepEqual(jsonPolicy, APPROVED_ONLINE_MAP_POLICY);
+  // The size budget gate must stay a real, measured comparison, not two equal
+  // placeholders — the budget must leave headroom above the measured estimate.
+  assert.ok(jsonPolicy.provider!.estimatedInstalledBytes > 0);
+  assert.ok(jsonPolicy.sizeBudgetBytes >= jsonPolicy.provider!.estimatedInstalledBytes);
 });
 
-test("map UI exposes the feature-off boundary and offline fallbacks", () => {
+test("the approved policy resolves to zero unmet gates and an idle (not disabled) initial state", () => {
+  assert.deepEqual(onlineMapPolicyGates(APPROVED_ONLINE_MAP_POLICY), []);
+  assert.equal(initialOnlineMapState(APPROVED_ONLINE_MAP_POLICY).status, "idle");
+});
+
+test("map UI exposes the online map activation, attribution, and offline fallbacks", () => {
   const source = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  // The disabled-state copy stays in the source as a defensive fallback even though the
+  // approved policy means it is not the state reached in normal operation.
   assert.match(source, /Mapa online no habilitado/);
   assert.match(source, /directorio y el esquema accesible siguen disponibles/);
   assert.match(source, /onlineMapFallbackLabel/);
   assert.match(source, /requestForegroundPermissionsAsync/);
   assert.match(source, /Abrir en Mapas/);
+  // The map only activates after an explicit tap, never on screen load.
+  assert.match(source, /Mostrar mapa online/);
+  assert.match(source, /APPROVED_ONLINE_MAP_POLICY/);
+  assert.match(source, /OnlineMapView/);
+  assert.match(source, /ONLINE_MAP_ATTRIBUTION_TEXT/);
+  assert.match(source, /classifyOnlineMapFailure/);
+});
+
+test("the online map style URLs match the web app's CARTO basemaps exactly", () => {
+  assert.equal(MAPLIBRE_CARTO_STYLE_URLS.light, "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json");
+  assert.equal(MAPLIBRE_CARTO_STYLE_URLS.dark, "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json");
+});
+
+test("the MapLibre provider adapter probes the style URL and returns pins sourced as online", async () => {
+  const locations = locationRecords(snapshot.content);
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = (async () => ({ ok: true, status: 200 })) as typeof fetch;
+    const provider = createMapLibreOnlineMapProvider(locations);
+    assert.equal(provider.providerId, "maplibre-carto-osm");
+    const result = await provider.fetch({ query: "", filter: "all" });
+    assert.equal(result.pins.length, locations.length);
+    assert.equal(result.pins[0].source, "online");
+    assert.equal(typeof result.fetchedAt, "string");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("the MapLibre provider adapter rejects when the style response is not ok", async () => {
+  const locations = locationRecords(snapshot.content);
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = (async () => ({ ok: false, status: 503 })) as typeof fetch;
+    const provider = createMapLibreOnlineMapProvider(locations);
+    await assert.rejects(provider.fetch({ query: "", filter: "all" }), /503/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("failure classification prefers stale-data over the raw error once a snapshot already loaded", () => {
+  assert.equal(classifyOnlineMapFailure(new Error("Network request failed"), true), "stale-data");
+  assert.equal(classifyOnlineMapFailure(new Error("Network request failed"), false), "network-unavailable");
+  assert.equal(classifyOnlineMapFailure(new TypeError("boom"), false), "network-unavailable");
+  const abort = new Error("Aborted");
+  abort.name = "AbortError";
+  assert.equal(classifyOnlineMapFailure(abort, false), "network-unavailable");
+  assert.equal(classifyOnlineMapFailure(new Error("El estilo de mapa respondió con estado 503"), false), "provider-error");
 });
