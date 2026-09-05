@@ -5,6 +5,10 @@ import path from "node:path";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, adaptivePalette, contrastRatio, resolveAdaptivePalette, routeAccessibilityLabels } from "../apps/mobile/src/accessibility.ts";
 
 const appSource = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), "utf8");
+// Códigos (T5c) was extracted out of App.tsx into its own module so the grouping/filter/jump
+// UI wouldn't balloon the already-huge App.tsx file further; its accessibility contract is
+// checked against that module instead of the inline `function CodesScreen` App.tsx used to have.
+const codigosScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/CodigosScreen.tsx"), "utf8");
 
 test("route accessibility contracts provide stable, speakable names", () => {
   for (const [route, label] of Object.entries(routeAccessibilityLabels)) {
@@ -39,13 +43,16 @@ test("adaptive layout reflows controls at large text and separates tablet list/d
 });
 
 test("core routes expose accessibility semantics and adaptive behavior", () => {
-  for (const route of ["HomeScreen", "SearchScreen", "SavedScreen", "MapScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "CodesScreen", "AbbreviationsScreen"]) {
+  for (const route of ["HomeScreen", "SearchScreen", "SavedScreen", "MapScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
     const start = appSource.indexOf(`function ${route}`);
     assert.ok(start >= 0, `${route} must remain a route-level surface`);
     const end = appSource.indexOf("\nfunction ", start + 10);
     const source = appSource.slice(start, end < 0 ? undefined : end);
     assert.match(source, /accessibility(Label|Role|State)/, `${route} needs an accessibility contract`);
   }
+  // CodigosScreen lives in its own module (see comment above) — check it there instead.
+  assert.match(codigosScreenSource, /export function CodigosScreen/, "CodigosScreen must remain a route-level surface");
+  assert.match(codigosScreenSource, /accessibility(Label|Role|State)/, "CodigosScreen needs an accessibility contract");
   assert.match(appSource, /AccessibilityInfo\.isReduceMotionEnabled/);
   assert.match(appSource, /reduceMotion \? "none"/);
   assert.match(appSource, /useColorScheme/);

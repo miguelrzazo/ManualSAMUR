@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { NavigationContainer, type NavigatorScreenParams } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
@@ -71,27 +71,15 @@ import {
 } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, resolveAdaptivePalette, routeAccessibilityLabels } from "./src/accessibility";
 import { GlassTabBar } from "./src/nav-shell";
-
+import { CodigosScreen } from "./src/screens/CodigosScreen";
+import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
+import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar: the new IA
 // (see T5a) drops it as a destination and a later ticket relocates its content into
 // Inicio. `SavedScreen` below is kept alive, unrouted, for that migration.
-type TabsParamList = {
-  Inicio: undefined;
-  Codigos: { query?: string } | undefined;
-  VademecumList: undefined;
-  Mapa: undefined;
-};
-
-type RootStackParamList = {
-  Tabs: NavigatorScreenParams<TabsParamList> | undefined;
-  Search: undefined;
-  Procedure: { id: string };
-  Drug: { id: string };
-  Vademecum: { routeKey: string };
-  Code: { routeKey: string };
-  Abbreviations: { query?: string } | undefined;
-  Location: { routeKey: string };
-};
+// Both param lists live in ./src/navigation-types so screen modules under src/screens/
+// (e.g. CodigosScreen) can type their own navigation/route props against the same lists.
+import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -765,14 +753,19 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const category = typeof details.category === "string" ? details.category : "";
   const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
   const extraFields = Object.entries(details).filter(([key, value]) => !["code", "name", "title", "category", "description"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 8);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? activePalette.amber : activePalette.ink} /></Pressable></View><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={activePalette.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}<View style={styles.infoBlock}><Text style={styles.infoLabel}>Ruta estable</Text><Text style={styles.infoValue}>{reference.routeKey}</Text></View></ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? activePalette.amber : activePalette.ink} /></Pressable></View><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={activePalette.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
 }
 
-function CodesScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
+// Status 4 is a reusable component (src/components/Status4Cheatsheet.tsx) so a later
+// ticket can mount it from the Mapa screen unchanged. This stack screen is Códigos'
+// entry point — reached from the Hospitales subtab — satisfying T5c's requirement
+// that the cheatsheet (9 records, previously rendered nowhere) be reachable now.
+function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList, "Status4">) {
   const { content } = useContent();
-  const [query, setQuery] = useState(route.params?.query ?? "");
-  const codes = useMemo(() => searchCodes(content.codes, query, 2000), [content.codes, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={codes} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Text style={styles.pageTitle}>Códigos y claves</Text><Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el código, nombre, categoría o descripción." />} renderItem={({ item }) => <Pressable onPress={() => navigation.getParent()?.navigate("Code", { routeKey: item.routeKey })} style={styles.codeRow} accessibilityRole="button" accessibilityLabel={`Abrir código ${item.badge ?? item.title}`}><Text style={styles.codeValue}>{item.badge ?? "—"}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text></View><MaterialCommunityIcons name="chevron-right" size={20} color={activePalette.inkMuted} /></Pressable>} /></SafeAreaView>;
+  const hospitals = useMemo(() => asCodigosHospitals(content.hospitals), [content.hospitals]);
+  const status4 = useMemo(() => asStatus4Entries(content.status4), [content.status4]);
+  const entries = useMemo(() => buildHospitalList(hospitals, status4), [hospitals, status4]);
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · HOSPITALES</Text><View style={styles.minimumTarget} /></View><Status4Cheatsheet status4={status4} hospitals={entries} palette={activePalette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
 }
 
 function VademecumListScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
@@ -914,7 +907,7 @@ function MainTabs() {
     screenOptions={{ headerShown: false }}
   >
     <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
-    <Tabs.Screen name="Codigos" component={CodesScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
+    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
     <Tabs.Screen name="VademecumList" component={VademecumListScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
     <Tabs.Screen name="Mapa" component={MapScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
   </Tabs.Navigator>;
@@ -925,7 +918,7 @@ function AppNavigation() {
   const { width, fontScale } = useWindowDimensions();
   const layout = adaptiveLayout(width, fontScale);
   const tablet = layout.isTablet;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Search" component={SearchScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card" }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Search" component={SearchScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card" }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card" }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card" }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card" }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card" }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {
