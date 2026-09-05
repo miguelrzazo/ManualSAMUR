@@ -32,3 +32,16 @@ test("managed Expo config registers only supported Expo plugins", () => {
   assert.equal(appConfig.expo?.plugins?.includes("expo-crypto") ?? false, false);
   assert.equal(appConfig.expo?.plugins?.includes("./plugins/with-ios-deployment-target") ?? false, false);
 });
+
+test("managed Expo config carries the iOS scene lifecycle boundary", () => {
+  const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as { expo?: { plugins?: unknown[] } };
+  assert.equal(appConfig.expo?.plugins?.includes("./plugins/with-ios-scene-lifecycle") ?? false, true);
+  const scenePlugin = require(path.join(process.cwd(), "apps/mobile/plugins/with-ios-scene-lifecycle.js")) as {
+    sceneManifest: { UISceneConfigurations: Record<string, Array<Record<string, string>>> };
+    sceneDelegate: string;
+  };
+  const configuration = scenePlugin.sceneManifest.UISceneConfigurations.UIWindowSceneSessionRoleApplication[0];
+  assert.equal(configuration.UISceneDelegateClassName, "$(PRODUCT_MODULE_NAME).SceneDelegate");
+  assert.match(scenePlugin.sceneDelegate, /class SceneDelegate: UIResponder, UIWindowSceneDelegate/);
+  assert.match(scenePlugin.sceneDelegate, /factory\.startReactNative/);
+});
