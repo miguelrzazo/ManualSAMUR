@@ -81,3 +81,9 @@ npm --prefix apps/mobile run attachments:check-release # expected to remain bloc
 ```
 
 The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`).
+- The packaged location directory is guarded by `location-source-policy.json`. Its current
+  source, hospital scope, source date, and freshness window are provisional and explicitly
+  unapproved/unfrozen; owner approval is required before production content can be frozen.
+  Location permission is requested only after tapping “Usar mi ubicación”, and denial keeps
+  the searchable directory and accessible schematic available. Distances are on-device
+  straight-line estimates only; a selected point is handed to the platform Maps app.

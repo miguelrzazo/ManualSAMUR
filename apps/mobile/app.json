@@ -15,7 +15,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
-        "CFBundleDisplayName": "Pulso abierto"
+        "CFBundleDisplayName": "Pulso abierto",
+        "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
       },
       "deploymentTarget": "16.4"
     },
@@ -29,7 +30,13 @@
     },
     "plugins": [
       "expo-status-bar",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
+        }
+      ]
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",

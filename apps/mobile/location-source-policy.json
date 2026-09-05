@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "approved": false,
+  "frozen": false,
+  "sourceUrl": "https://servpub.madrid.es/manualsamur/bin/view/Menu/Cabecera%20principal/",
+  "sourceDate": "2026-09-01",
+  "hospitalScope": "Paquete local content/data/hospitals.json; alcance pendiente de aprobación del propietario",
+  "freshnessDays": 30,
+  "notes": "Los registros actuales se muestran offline para validación de producto, pero no son una fuente operativa congelada. El propietario debe aprobar la fuente canónica, el alcance hospitalario y la política de frescura antes de una release de producción."
+}
