@@ -45,6 +45,13 @@ import {
   type LocationFilter,
   type LocationRecord,
 } from "./src/location-logic";
+import {
+  canRecordRecent,
+  savedReferenceIcon,
+  selectSavedReferences,
+  type ResolvedSavedReference,
+  type SavedReference,
+} from "./src/saved-logic";
 
 type TabsParamList = {
   Inicio: undefined;
@@ -140,7 +147,8 @@ function ActionCard({ icon, label, detail, tone = "red", onPress }: { icon: keyo
 
 function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure: MobileProcedure; onPress: () => void; showFavorite?: boolean }) {
   const { favorites, toggleFavorite } = useContent();
-  const favorite = favorites.includes(procedure.id);
+  const routeKey = procedureRouteKey(procedure);
+  const favorite = favorites.includes(routeKey);
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRow, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${procedure.id}, ${procedure.title}`}>
       <View style={styles.resourceCode}><Text style={styles.resourceCodeText}>{procedure.id}</Text></View>
@@ -148,7 +156,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure:
         <Text style={styles.resourceTitle} numberOfLines={2}>{procedure.title}</Text>
         <Text style={styles.resourceMeta}>{procedure.section} · {procedure.attachments.length ? `${procedure.attachments.length} anexos` : "consulta offline"}</Text>
       </View>
-      {showFavorite && <Pressable onPress={() => toggleFavorite(procedure.id)} hitSlop={12} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de guardados" : "Guardar procedimiento"}>
+      {showFavorite && <Pressable onPress={() => toggleFavorite(routeKey)} hitSlop={12} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de guardados" : "Guardar procedimiento"}>
         <MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={22} color={favorite ? colors.amber : colors.inkMuted} />
       </Pressable>}
       <MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} />
@@ -264,12 +272,16 @@ function SearchScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
 }
 
 function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: MobileReferenceSearchResult; onCode: (routeKey: string) => void; onVademecum: (routeKey: string) => void; onDrug: (id: string) => void }) {
+  const { favorites, toggleFavorite } = useContent();
   const icon = reference.kind === "code" ? "radio-handheld" : reference.kind === "abbreviation" ? "format-letter-case" : "pill";
   const targetId = reference.targetId;
   const onPress = reference.kind === "code" ? () => onCode(reference.routeKey) : reference.kind === "drug" && targetId ? () => onDrug(targetId) : () => onVademecum(reference.routeKey);
+  const favorite = favorites.includes(reference.routeKey);
+  const supportsFavorites = reference.kind !== "abbreviation";
   return <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRow, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${reference.title}. ${reference.subtitle}`}>
     <View style={[styles.resourceCode, reference.kind === "code" ? styles.codeResultCode : reference.kind === "abbreviation" ? styles.abbreviationResultCode : styles.drugCode]}><MaterialCommunityIcons name={icon} size={17} color={colors.ink} /></View>
     <View style={styles.resourceCopy}><Text style={styles.resourceTitle} numberOfLines={2}>{reference.title}</Text><Text style={styles.resourceMeta}>{reference.badge ? `${reference.badge} · ` : ""}{reference.subtitle}</Text></View>
+    {supportsFavorites && <Pressable onPress={() => toggleFavorite(reference.routeKey)} hitSlop={12} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de guardados" : "Guardar en guardados"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={21} color={favorite ? colors.amber : colors.inkMuted} /></Pressable>}
     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} />
   </Pressable>;
 }
@@ -282,16 +294,40 @@ function DrugRow({ drug, onPress }: { drug: Record<string, unknown>; onPress: ()
   </Pressable>;
 }
 
+function SavedRow({ item, isFavorite, onPress, onToggleFavorite, onRemove }: { item: ResolvedSavedReference; isFavorite: boolean; onPress?: () => void; onToggleFavorite: () => void; onRemove?: () => void }) {
+  const stale = item.kind === "stale";
+  const row = <View style={styles.resourceRow} accessibilityRole={stale ? "text" : "button"} accessibilityLabel={`${item.title}. ${item.subtitle}`}>
+    <View style={[styles.resourceCode, stale ? styles.staleResourceCode : item.kind === "drug" || item.kind === "perfusion" || item.kind === "fluid" || item.kind === "commercialName" ? styles.drugCode : item.kind === "code" ? styles.codeResultCode : item.kind === "hospital" ? styles.locationIcon : item.kind === "base" ? styles.locationIconBase : undefined]}><MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={18} color={stale ? colors.red : colors.ink} /></View>
+    <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.title}</Text><Text style={styles.resourceMeta}>{item.subtitle}</Text>{stale && <Text style={styles.staleResourceText}>Paquete local actualizado: revisa esta referencia o elimínala.</Text>}</View>
+    {!stale && <Pressable onPress={onToggleFavorite} hitSlop={12} accessibilityRole="button" accessibilityLabel={isFavorite ? "Quitar de guardados" : "Guardar en guardados"}><MaterialCommunityIcons name={isFavorite ? "star" : "star-outline"} size={21} color={isFavorite ? colors.amber : colors.inkMuted} /></Pressable>}
+    {stale && onRemove && <Pressable onPress={onRemove} hitSlop={12} accessibilityRole="button" accessibilityLabel="Quitar referencia no disponible"><MaterialCommunityIcons name="trash-can-outline" size={20} color={colors.red} /></Pressable>}
+    {!stale && <MaterialCommunityIcons name="chevron-right" size={20} color={colors.inkMuted} />}
+  </View>;
+  return onPress && !stale ? <Pressable onPress={onPress}>{row}</Pressable> : row;
+}
+
+function openSavedReference(navigation: BottomTabScreenProps<TabsParamList, "Guardados">["navigation"], item: SavedReference) {
+  if (item.kind === "procedure") navigation.getParent()?.navigate("Procedure", { id: item.id });
+  else if (item.kind === "drug") navigation.getParent()?.navigate("Drug", { id: item.id });
+  else if (item.kind === "code") navigation.getParent()?.navigate("Code", { routeKey: item.routeKey });
+  else if (item.kind === "hospital" || item.kind === "base") navigation.getParent()?.navigate("Location", { routeKey: item.routeKey });
+  else navigation.getParent()?.navigate("Vademecum", { routeKey: item.routeKey });
+}
+
 function SavedScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Guardados">) {
-  const { content, favorites, recents } = useContent();
-  const saved = favorites.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
-  const recent = recents.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
+  const { content, favorites, recents, toggleFavorite, removeRecent } = useContent();
+  const [segment, setSegment] = useState<"favorites" | "recents">("favorites");
+  const routeKeys = segment === "favorites" ? favorites : recents;
+  const items = selectSavedReferences(content, routeKeys);
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.scrollContent}>
-    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Guardados</Text><Text style={styles.pageKicker}>TU TURNO</Text></View>
-    <SectionHeading eyebrow="ACCESO DIRECTO" title="Favoritos" />
-    {saved.length ? <View style={styles.cardList}>{saved.map((item) => <ProcedureRow key={item.id} procedure={item} showFavorite onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.id })} />)}</View> : <EmptyState title="Aún no hay favoritos" detail="Guarda una ficha con la estrella para encontrarla aquí." />}
-    <SectionHeading eyebrow="HISTORIAL LOCAL" title="Recientes" />
-    {recent.length ? <View style={styles.cardList}>{recent.map((item) => <ProcedureRow key={item.id} procedure={item} onPress={() => navigation.getParent()?.navigate("Procedure", { id: item.id })} />)}</View> : <EmptyState title="Sin historial" detail="Las fichas que consultes aparecerán aquí durante tu sesión." />}
+    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Guardados</Text><Text style={styles.pageKicker}>TU TURNO · SOLO EN ESTE DISPOSITIVO</Text></View>
+    <View style={styles.filterRow} accessibilityRole="tablist">
+      <Pressable onPress={() => setSegment("favorites")} style={[styles.filterChip, segment === "favorites" && styles.filterChipActive]} accessibilityRole="tab" accessibilityState={{ selected: segment === "favorites" }}><Text style={[styles.filterText, segment === "favorites" && styles.filterTextActive]}>Favoritos</Text></Pressable>
+      <Pressable onPress={() => setSegment("recents")} style={[styles.filterChip, segment === "recents" && styles.filterChipActive]} accessibilityRole="tab" accessibilityState={{ selected: segment === "recents" }}><Text style={[styles.filterText, segment === "recents" && styles.filterTextActive]}>Recientes</Text></Pressable>
+    </View>
+    <SectionHeading eyebrow={segment === "favorites" ? "ACCESO DIRECTO" : "HISTORIAL LOCAL"} title={segment === "favorites" ? "Favoritos" : "Recientes"} />
+    {items.length ? <View style={styles.cardList}>{items.map((item) => <SavedRow key={item.routeKey} item={item} isFavorite={favorites.includes(item.routeKey)} onToggleFavorite={() => toggleFavorite(item.routeKey)} onRemove={segment === "favorites" ? () => toggleFavorite(item.routeKey) : () => removeRecent(item.routeKey)} onPress={item.kind === "stale" ? undefined : () => openSavedReference(navigation, item)} />)}</View> : <EmptyState title={segment === "favorites" ? "Aún no hay favoritos" : "Sin historial"} detail={segment === "favorites" ? "Guarda una ficha con la estrella para encontrarla aquí." : "Las fichas que consultes aparecerán aquí después de abrirlas."} />}
+    <Text style={styles.disclaimer}>Tus favoritos y recientes permanecen en este dispositivo. No se sincronizan con una cuenta.</Text>
   </ScrollView></SafeAreaView>;
 }
 
@@ -371,14 +407,18 @@ function MapScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) 
 }
 
 function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Location">) {
-  const { content } = useContent();
+  const { content, favorites, toggleFavorite, remember } = useContent();
   const policy = locationSourcePolicy;
   const locations = useMemo(() => locationRecords(content, policy), [content, policy]);
   const location = resolveLocationRoute(locations, route.params.routeKey);
+  const favorite = favorites.includes(route.params.routeKey);
+  useEffect(() => {
+    if (location && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
+  }, [content, location, remember, route.params.routeKey]);
   if (!location) return <MissingResource title="Punto no disponible" detail="La ruta de ubicación no coincide con el paquete local actual. Vuelve al directorio para consultar otro punto." onRecover={() => navigation.goBack()} />;
   const openMaps = () => { void Linking.openURL(platformMapsUrl(location, Platform.OS === "ios" ? "ios" : Platform.OS === "android" ? "android" : "web")); };
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}>
-    <View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"} · OFFLINE</Text><View style={{ width: 24 }} /></View>
+    <View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"} · OFFLINE</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View>
     <Text style={styles.detailSection}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"}</Text><Text style={styles.detailTitle}>{location.shortName}</Text><Text style={styles.detailMeta}>{location.name} · {location.address} · {location.district}</Text>
     <View style={styles.sourceNotice} accessibilityLabel="Fuente y frescura de la ubicación"><MaterialCommunityIcons name="clock-alert-outline" size={19} color={colors.amber} /><Text style={styles.sourceNoticeText}>{locationFreshnessLabel(location, new Date(), policy)}. No es una fuente operativa congelada.</Text></View>
     <View style={styles.infoBlock}><Text style={styles.infoLabel}>Identificador estable</Text><Text style={styles.infoValue}>{locationFavoriteId(location)}</Text></View>
@@ -403,8 +443,8 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const sectionOffsets = useRef<Record<string, number>>({});
   const markdownOrigin = useRef(0);
   useEffect(() => {
-    if (procedure) remember(procedure.id);
-  }, [procedure, remember]);
+    if (procedure && canRecordRecent(content, routeKey)) remember(routeKey);
+  }, [content, procedure, remember, routeKey]);
   useEffect(() => {
     if (!procedure) return;
     const offset = readingPositions.get(routeKey);
@@ -423,7 +463,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     Object.values(attachmentControllers.current).forEach((controller) => controller.abort());
   }, []);
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
-  const favorite = favorites.includes(procedure.id);
+  const favorite = favorites.includes(routeKey);
   const relatedIds = [...new Set([
     ...procedure.related,
     ...procedure.backlinks,
@@ -472,7 +512,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     onScroll={(event) => readingPositions.set(routeKey, event.nativeEvent.contentOffset.y)}
     scrollEventThrottle={100}
   >
-    <View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>PROCEDIMIENTO {procedure.id}</Text><Pressable onPress={() => toggleFavorite(procedure.id)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View>
+    <View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>PROCEDIMIENTO {procedure.id}</Text><Pressable onPress={() => toggleFavorite(routeKey)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View>
     <Text style={styles.detailSection}>{procedure.section.toUpperCase()}</Text><Text style={styles.detailTitle}>{procedure.title}</Text><Text style={styles.detailMeta}>Actualizado {procedure.updated || "sin fecha"} · {procedure.attachments.length} anexos</Text>
     <View style={styles.sourceNotice}><MaterialCommunityIcons name="information-outline" size={19} color={colors.red} /><Text style={styles.sourceNoticeText}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text></View>
     {headings.length > 0 && <View style={styles.contentsCard} accessibilityLabel="Contenido del procedimiento"><Text style={styles.contentsTitle}>CONTENIDO</Text>{headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - spacing.md), animated: true }); }} style={styles.contentsRow} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`}><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text><MaterialCommunityIcons name="chevron-down" size={16} color={colors.inkMuted} /></Pressable>)}</View>}
@@ -547,36 +587,49 @@ function auditValueSummary(values: Record<string, unknown>): string {
 }
 
 function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Drug">) {
-  const { content, snapshot } = useContent();
+  const { content, snapshot, favorites, toggleFavorite, remember } = useContent();
   const drug = content.drugs.find((item) => String(item.id) === route.params.id);
+  const routeKey = `vademecum:drug:${route.params.id}`;
+  const favorite = favorites.includes(routeKey);
+  useEffect(() => {
+    if (drug && canRecordRecent(content, routeKey)) remember(routeKey);
+  }, [content, drug, remember, routeKey]);
   if (!drug) return <MissingResource title="Fármaco no disponible" />;
   const fields = [["Función", "funcion"], ["Indicación", "indication"], ["Presentación publicada", "presentation"], ["Vía", "route"], ["Dosis publicada", "dose"], ["Contraindicaciones", "contraindications"], ["Efectos secundarios", "efectos_secundarios"], ["Notas", "notes"]] as const;
   const relatedIds = relatedProcedureIdsForDrug(content, drug).slice(0, 12);
   const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
   const sourceUrl = typeof content.links.officialWebUrl === "string" && content.links.officialWebUrl ? content.links.officialWebUrl : content.links.sourceUrl;
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>VADEMÉCUM · FÁRMACO</Text><Text style={styles.detailTitle}>{String(drug.name ?? "Fármaco")}</Text><Text style={styles.detailMeta}>{String(drug.category ?? "")} · {String(drug.subcategory ?? "")}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia publicada en el paquete local {packageRevision}{sourceUrl ? ` · Fuente: ${sourceUrl}` : ""}</Text></View>{fields.map(([label, key]) => { const value = drug[key]; const display = Array.isArray(value) ? value.join(" · ") : value; return typeof display === "string" && display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null; })}<DoseUtilityCard drug={drug} />{relatedIds.length > 0 && <><SectionHeading eyebrow="CONTEXTO DEL MANUAL" title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedIds.map((id) => { const procedure = findProcedure(content, id); return procedure ? <ProcedureRow key={id} procedure={procedure} onPress={() => navigation.push("Procedure", { id })} /> : null; })}</View></>}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>VADEMÉCUM · FÁRMACO</Text><Pressable onPress={() => toggleFavorite(routeKey)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View><Text style={styles.detailSection}>VADEMÉCUM · FÁRMACO</Text><Text style={styles.detailTitle}>{String(drug.name ?? "Fármaco")}</Text><Text style={styles.detailMeta}>{String(drug.category ?? "")} · {String(drug.subcategory ?? "")}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia publicada en el paquete local {packageRevision}{sourceUrl ? ` · Fuente: ${sourceUrl}` : ""}</Text></View>{fields.map(([label, key]) => { const value = drug[key]; const display = Array.isArray(value) ? value.join(" · ") : value; return typeof display === "string" && display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null; })}<DoseUtilityCard drug={drug} />{relatedIds.length > 0 && <><SectionHeading eyebrow="CONTEXTO DEL MANUAL" title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedIds.map((id) => { const procedure = findProcedure(content, id); return procedure ? <ProcedureRow key={id} procedure={procedure} onPress={() => navigation.push("Procedure", { id })} /> : null; })}</View></>}</ScrollView></SafeAreaView>;
 }
 
 function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Vademecum">) {
-  const { content, snapshot } = useContent();
+  const { content, snapshot, favorites, toggleFavorite, remember } = useContent();
   const reference = resolveVademecumReference(content, route.params.routeKey);
+  const favorite = favorites.includes(route.params.routeKey);
+  useEffect(() => {
+    if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
+  }, [content, reference?.routeKey, remember, route.params.routeKey]);
   if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
   const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>VADEMÉCUM · {reference.kind.toUpperCase()}</Text><Text style={styles.detailTitle}>{reference.title}</Text><Text style={styles.detailMeta}>{reference.subtitle}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia local · revisión {packageRevision}</Text></View>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key.replace(/([A-Z])/g, " $1")}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>VADEMÉCUM · {reference.kind.toUpperCase()}</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View><Text style={styles.detailSection}>VADEMÉCUM · {reference.kind.toUpperCase()}</Text><Text style={styles.detailTitle}>{reference.title}</Text><Text style={styles.detailMeta}>{reference.subtitle}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="database-check-outline" size={19} color={colors.green} /><Text style={styles.sourceNoticeText}>Referencia local · revisión {packageRevision}</Text></View>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key.replace(/([A-Z])/g, " $1")}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
 }
 
 function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Code">) {
-  const { content, snapshot } = useContent();
+  const { content, snapshot, favorites, toggleFavorite, remember } = useContent();
   const reference = resolveCodeReference(content.codes, route.params.routeKey);
+  const favorite = favorites.includes(route.params.routeKey);
+  useEffect(() => {
+    if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
+  }, [content, reference?.routeKey, remember, route.params.routeKey]);
   if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const description = typeof details.description === "string" ? details.description : "";
   const category = typeof details.category === "string" ? details.category : "";
   const packageRevision = typeof content.manual.manualVersionCurrent === "string" ? content.manual.manualVersionCurrent : snapshot.packageHash?.slice(0, 12) ?? "paquete local";
   const extraFields = Object.entries(details).filter(([key, value]) => !["code", "name", "title", "category", "description"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 8);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={colors.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}<View style={styles.infoBlock}><Text style={styles.infoLabel}>Ruta estable</Text><Text style={styles.infoValue}>{reference.routeKey}</Text></View></ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={colors.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? colors.amber : colors.ink} /></Pressable></View><Text style={styles.detailSection}>CÓDIGOS · {reference.sourceGroup?.toUpperCase() ?? "LOCAL"}</Text><Text style={styles.detailTitle}>{reference.badge ?? reference.title}</Text><Text style={styles.detailMeta}>{reference.title}</Text><View style={styles.sourceNotice}><MaterialCommunityIcons name="radio-handheld" size={19} color={colors.amber} /><Text style={styles.sourceNoticeText}>Taxonomía {reference.sourceGroup ?? "local"}{category ? ` · ${category}` : ""} · revisión {packageRevision}</Text></View>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{key}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}<View style={styles.infoBlock}><Text style={styles.infoLabel}>Ruta estable</Text><Text style={styles.infoValue}>{reference.routeKey}</Text></View></ScrollView></SafeAreaView>;
 }
 
 function CodesScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Codes">) {
@@ -747,7 +800,7 @@ const styles = StyleSheet.create({
   actionLabel: { fontSize: 15, fontWeight: "800", color: colors.ink }, actionDetail: { fontSize: 11, color: colors.inkMuted, marginTop: 3 },
   cardList: { backgroundColor: colors.surface, borderRadius: radii.md, borderWidth: 1, borderColor: colors.line, overflow: "hidden", marginBottom: spacing.xl },
   resourceRow: { minHeight: 70, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.line },
-  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: colors.redWash, alignItems: "center", justifyContent: "center" }, resourceCodeText: { fontSize: 11, fontWeight: "900", color: colors.red },
+  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: colors.redWash, alignItems: "center", justifyContent: "center" }, resourceCodeText: { fontSize: 11, fontWeight: "900", color: colors.red }, staleResourceCode: { backgroundColor: colors.redWash }, staleResourceText: { color: colors.redDark, fontSize: 10, lineHeight: 14, marginTop: 3 },
   drugCode: { backgroundColor: "#E7ECF5" }, resourceCopy: { flex: 1 }, resourceTitle: { color: colors.ink, fontSize: 14, lineHeight: 18, fontWeight: "700" }, resourceMeta: { color: colors.inkMuted, fontSize: 11, lineHeight: 16, marginTop: 3 },
   pressed: { opacity: 0.72 },
   syncCard: { backgroundColor: colors.greenWash, borderRadius: radii.md, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.lg }, syncIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.white, alignItems: "center", justifyContent: "center" }, syncCopy: { flex: 1 }, syncTitle: { color: colors.green, fontWeight: "800", fontSize: 13 }, syncDetail: { color: colors.inkMuted, fontSize: 11, marginTop: 2 }, syncAction: { color: colors.green, fontSize: 12, fontWeight: "800" }, progressTrack: { height: 4, borderRadius: 2, backgroundColor: colors.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: colors.green },

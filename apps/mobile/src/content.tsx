@@ -33,10 +33,14 @@ import {
   throwIfCancelled,
   type StagedPackage,
 } from "./content-transaction";
-
-const FAVORITES_KEY = "manualsamur.preferences.favorites";
-const RECENTS_KEY = "manualsamur.preferences.recents";
-const MAX_RECENTS = 12;
+import {
+  FAVORITES_STORAGE_KEY,
+  RECENTS_STORAGE_KEY,
+  parseSavedRouteKeys,
+  pushRecentRouteKey,
+  serializeSavedRouteKeys,
+  toggleSavedRouteKey,
+} from "./saved-logic";
 
 type ContentContextValue = {
   content: MobileContent;
@@ -49,8 +53,9 @@ type ContentContextValue = {
   syncState: SyncState;
   syncProgress: SyncProgress;
   stagedPackage?: StagedPackage;
-  toggleFavorite: (id: string) => void;
-  remember: (id: string) => void;
+  toggleFavorite: (routeKey: string) => void;
+  remember: (routeKey: string) => void;
+  removeRecent: (routeKey: string) => void;
   refresh: () => Promise<void>;
   cancelRefresh: () => void;
   resumeStaged: () => Promise<void>;
@@ -125,8 +130,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     (async () => {
       const [storedFavorites, storedRecents, transaction] = await Promise.all([
-        AsyncStorage.getItem(FAVORITES_KEY),
-        AsyncStorage.getItem(RECENTS_KEY),
+        AsyncStorage.getItem(FAVORITES_STORAGE_KEY),
+        AsyncStorage.getItem(RECENTS_STORAGE_KEY),
         readTransaction(AsyncStorage, snapshotIsValid),
       ]);
       if (cancelled) return;
@@ -153,28 +158,42 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         setSyncState("failure");
       }
       if (storedFavorites) {
-        try { setFavorites(JSON.parse(storedFavorites)); } catch { /* ignore */ }
+        const migratedFavorites = parseSavedRouteKeys(storedFavorites);
+        setFavorites(migratedFavorites);
+        const normalized = serializeSavedRouteKeys(migratedFavorites);
+        if (normalized !== storedFavorites) void AsyncStorage.setItem(FAVORITES_STORAGE_KEY, normalized);
       }
       if (storedRecents) {
-        try { setRecents(JSON.parse(storedRecents)); } catch { /* ignore */ }
+        const migratedRecents = parseSavedRouteKeys(storedRecents);
+        setRecents(migratedRecents);
+        const normalized = serializeSavedRouteKeys(migratedRecents);
+        if (normalized !== storedRecents) void AsyncStorage.setItem(RECENTS_STORAGE_KEY, normalized);
       }
       setIsHydrated(true);
     })();
     return () => { cancelled = true; };
   }, []);
 
-  const toggleFavorite = useCallback((id: string) => {
+  const toggleFavorite = useCallback((routeKey: string) => {
     setFavorites((current) => {
-      const next = current.includes(id) ? current.filter((item) => item !== id) : [id, ...current];
-      void AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(next));
+      const next = toggleSavedRouteKey(current, routeKey);
+      void AsyncStorage.setItem(FAVORITES_STORAGE_KEY, serializeSavedRouteKeys(next));
       return next;
     });
   }, []);
 
-  const remember = useCallback((id: string) => {
+  const remember = useCallback((routeKey: string) => {
     setRecents((current) => {
-      const next = [id, ...current.filter((item) => item !== id)].slice(0, MAX_RECENTS);
-      void AsyncStorage.setItem(RECENTS_KEY, JSON.stringify(next));
+      const next = pushRecentRouteKey(current, routeKey);
+      void AsyncStorage.setItem(RECENTS_STORAGE_KEY, serializeSavedRouteKeys(next));
+      return next;
+    });
+  }, []);
+
+  const removeRecent = useCallback((routeKey: string) => {
+    setRecents((current) => {
+      const next = current.filter((item) => item !== routeKey);
+      void AsyncStorage.setItem(RECENTS_STORAGE_KEY, serializeSavedRouteKeys(next));
       return next;
     });
   }, []);
@@ -276,11 +295,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     stagedPackage,
     toggleFavorite,
     remember,
+    removeRecent,
     refresh,
     cancelRefresh,
     resumeStaged,
     discardStaged,
-  }), [cancelRefresh, discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
+  }), [cancelRefresh, discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }
