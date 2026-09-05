@@ -16,6 +16,7 @@ const sceneManifest = {
 };
 
 const sceneDelegate = `internal import Expo
+import React
 
 @objc(SceneDelegate)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -32,14 +33,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       return
     }
 
+    // Under the scene lifecycle, a cold launch's opening URL (deep link, or the
+    // Expo Dev Launcher's own "connect to this server" link) arrives via
+    // connectionOptions.urlContexts instead of application(_:didFinishLaunchingWithOptions:).
+    // Forward it through launchOptions so RN's Linking.getInitialURL() still sees it.
+    var launchOptions: [UIApplication.LaunchOptionsKey: Any] = [:]
+    if let url = connectionOptions.urlContexts.first?.url {
+      launchOptions[.url] = url
+    }
+
     let window = UIWindow(windowScene: windowScene)
     factory.startReactNative(
       withModuleName: "main",
       in: window,
-      launchOptions: nil
+      launchOptions: launchOptions.isEmpty ? nil : launchOptions
     )
     self.window = window
     appDelegate.window = window
+  }
+
+  // Handles URLs opened while the scene is already running (deep links, and the
+  // Expo Dev Launcher / expo-updates reconnect flow), which the scene lifecycle
+  // delivers here instead of application(_:open:options:).
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    guard let url = URLContexts.first?.url else { return }
+    RCTLinkingManager.application(UIApplication.shared, open: url, options: [:])
   }
 }
 `;

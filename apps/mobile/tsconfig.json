@@ -3,14 +3,23 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "paths": {
-      "@mobile/*": ["./src/*"],
-      "@tokens/*": ["../../packages/design-tokens/src/*"]
+      "@mobile/*": [
+        "./src/*"
+      ],
+      "@tokens/*": [
+        "../../packages/design-tokens/src/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

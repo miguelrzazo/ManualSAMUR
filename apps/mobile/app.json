@@ -37,7 +37,9 @@
           "locationWhenInUsePermission": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
         }
       ],
-      "./plugins/with-ios-scene-lifecycle"
+      "./plugins/with-ios-scene-lifecycle",
+      "./plugins/with-ios-launch-screen",
+      "./plugins/with-ios-podfile-safe-scripts"
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",

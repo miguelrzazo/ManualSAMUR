@@ -55,3 +55,6 @@ HistoricoActualizaciones_abril 2026.pdf.pdf
 apps/mobile/.expo/
 apps/mobile/ios/
 apps/mobile/android/
+
+# Simulator/device screenshots captured while manually verifying mobile builds.
+/.claude-screenshots/
