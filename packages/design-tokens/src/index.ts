@@ -5,6 +5,7 @@ export const colors = {
   surface: "#FFFFFF",
   surfaceMuted: "#EEF1F5",
   red: "#D92732",
+  redAction: "#D92732",
   redDark: "#AC1C27",
   redWash: "#FCEBED",
   amber: "#C77916",
