@@ -75,6 +75,23 @@ export function isExpectedAttachmentMetadata(attachment: MobileAttachment): bool
     && /^[a-f0-9]{64}$/.test(attachment.sha256);
 }
 
+/**
+ * An attachment with no approved byteLength/sha256 can never be verified locally or
+ * safely downloaded (see `markAttachmentAvailable`, which throws without them). For
+ * this manifest that is a permanent state, not a transient one: 8 of 318 attachments
+ * were confirmed 404 upstream (gone from servpub.madrid.es) and cannot be re-synced.
+ * The UI must never present these as pending/downloadable — only as an external link
+ * to the official, possibly-stale `sourceUrl`.
+ */
+export function isAttachmentUnavailableUpstream(attachment: MobileAttachment): boolean {
+  return !isExpectedAttachmentMetadata(attachment);
+}
+
+/** Spanish copy for the permanently-unresolvable case above; safe to show verbatim. */
+export function attachmentUnavailableUpstreamNotice(attachment: MobileAttachment): string {
+  return `Este anexo ya no está disponible en la fuente oficial de SAMUR y no puede incluirse en la app. Puedes intentar consultar "${attachment.filename}" directamente en la web oficial, si el enlace original sigue accesible.`;
+}
+
 export function attachmentStorageKey(id: string): string {
   return `manualsamur.attachments.v1.${id}`;
 }

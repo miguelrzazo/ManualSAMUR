@@ -230,7 +230,12 @@ export function validateReleaseEvidence(evidence: Partial<ReleaseEvidence>, stri
   return { ready: issues.length === 0, issues: strict ? issues : issues.filter((issue) => !issue.startsWith("Falta la gate") && !issue.startsWith("Falta completar")) };
 }
 
-export function createReleaseEvidence(snapshot: MobileSnapshot, provenance: ReleaseEvidenceProvenance, generatedAt: string): ReleaseEvidence {
+export function createReleaseEvidence(
+  snapshot: MobileSnapshot,
+  provenance: ReleaseEvidenceProvenance,
+  generatedAt: string,
+  ownerGateDefaults: Partial<ReleaseEvidence["ownerGates"]> = {},
+): ReleaseEvidence {
   return {
     schema: RELEASE_EVIDENCE_SCHEMA,
     version: RELEASE_EVIDENCE_VERSION,
@@ -252,7 +257,7 @@ export function createReleaseEvidence(snapshot: MobileSnapshot, provenance: Rele
     },
     gates: emptyReleaseGates(),
     fieldValidation: { status: "pending", checklist: "apps/mobile/release/field-validation-checklist.md", phiProhibited: true, completedBy: null, completedAt: null },
-    ownerGates: { attachments: "pending", locations: "pending", onlineMap: "pending", accessibility: "pending" },
+    ownerGates: { attachments: "pending", locations: "pending", onlineMap: "pending", accessibility: "pending", ...ownerGateDefaults },
     humanReview: { status: "pending", checklist: "apps/mobile/release/human-review-checklist.md", completedBy: null, completedAt: null },
     internalTestDecision: { status: "required", decidedBy: null, decidedAt: null },
     productionDecision: { submission: "required", rollout: "required", halt: "required", rollback: "required" },

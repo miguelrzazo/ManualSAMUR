@@ -1,14 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   DEFAULT_ATTACHMENT_RELEASE_POLICY,
   ESSENTIAL_ATTACHMENT_CAP_BYTES,
   V1_INSTALLED_ATTACHMENT_CAP_BYTES,
   attachmentDownloadFilename,
   attachmentStatusLabel,
+  attachmentUnavailableUpstreamNotice,
   assertAttachmentReleaseReady,
   createAttachmentRecord,
   evaluateAttachmentRelease,
+  isAttachmentUnavailableUpstream,
   isExpectedAttachmentMetadata,
   isLocallyAvailable,
   markAttachmentAvailable,
@@ -16,9 +21,24 @@ import {
   recoverAttachment,
   startAttachmentDownload,
   updateAttachmentProgress,
+  type AttachmentReleasePolicy,
   type AttachmentRecord,
 } from "../apps/mobile/src/attachment-logic.ts";
-import type { MobileManifestAttachment } from "../apps/mobile/src/data/schema.ts";
+import type { MobileAttachmentManifest, MobileManifestAttachment } from "../apps/mobile/src/data/schema.ts";
+
+const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const mobileAppRoot = path.join(repositoryRoot, "apps/mobile");
+const realManifest: MobileAttachmentManifest = JSON.parse(
+  fs.readFileSync(path.join(mobileAppRoot, "src/data/attachment-manifest.json"), "utf8"),
+);
+const realPolicy: AttachmentReleasePolicy = JSON.parse(
+  fs.readFileSync(path.join(mobileAppRoot, "attachment-release-policy.json"), "utf8"),
+);
+const realResolvableIds = realManifest.attachments
+  .filter((candidate) => isExpectedAttachmentMetadata(candidate))
+  .map((candidate) => candidate.id)
+  .sort();
+const realUnresolvableAttachments = realManifest.attachments.filter((candidate) => !isExpectedAttachmentMetadata(candidate));
 
 const sha256 = "a".repeat(64);
 const attachment: MobileManifestAttachment = {
@@ -81,4 +101,63 @@ test("release policy enforces the approved size caps", () => {
   const second = { ...attachment, id: "second", byteLength: 1 };
   const totalReport = evaluateAttachmentRelease([first, second], { version: 1, approved: true, essentialAttachmentIds: [] }, { first: { bundled: true }, second: { downloaded: true } });
   assert.equal(totalReport.issues.some((issue) => issue.code === "installed-cap-exceeded"), true);
+});
+
+test("an attachment with no approved byteLength/sha256 is permanently unavailable, never locally reportable", () => {
+  const unresolved = { ...attachment, byteLength: undefined, sha256: undefined };
+  assert.equal(isAttachmentUnavailableUpstream(unresolved), true);
+  assert.equal(isAttachmentUnavailableUpstream(attachment), false);
+  assert.match(attachmentUnavailableUpstreamNotice(unresolved), /fuente oficial/);
+  assert.match(attachmentUnavailableUpstreamNotice(unresolved), new RegExp(unresolved.filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  // No matter what a corrupted/legacy record claims, it can never read back as locally available.
+  const bogusAvailableRecord: AttachmentRecord = {
+    id: unresolved.id,
+    sourceUrl: unresolved.sourceUrl,
+    localPath: unresolved.localPath,
+    filename: unresolved.filename,
+    kind: unresolved.kind,
+    status: "available",
+    localUri: "file:///should-not-exist",
+    byteLength: 999,
+    sha256: "b".repeat(64),
+    updatedAt: "2026-09-05T00:00:00.000Z",
+  };
+  assert.equal(isLocallyAvailable(bogusAvailableRecord, unresolved), false);
+});
+
+test("real attachment-release-policy.json (issue #62): owner approved bundling all resolvable attachments", () => {
+  assert.equal(realPolicy.approved, true, "the owner decision to bundle every resolvable attachment must be recorded as approved");
+  assert.equal(realPolicy.version, 1);
+  assert.ok(realPolicy.essentialAttachmentIds.length > 0);
+  assert.match(realPolicy.notes ?? "", /esencial/i);
+  assert.match(realPolicy.notes ?? "", /404/);
+});
+
+test("real essential allowlist matches exactly the manifest's resolvable attachments", () => {
+  assert.deepEqual([...realPolicy.essentialAttachmentIds].sort(), realResolvableIds);
+  // Nothing in the allowlist may lack the metadata required to ever be marked available.
+  const byId = new Map(realManifest.attachments.map((candidate) => [candidate.id, candidate]));
+  for (const id of realPolicy.essentialAttachmentIds) {
+    assert.equal(isExpectedAttachmentMetadata(byId.get(id)!), true, `essential attachment ${id} is missing byteLength/sha256`);
+  }
+});
+
+test("real manifest: exactly 8 attachments are excluded as gone upstream, and none of them can ever read back as local", () => {
+  assert.equal(realUnresolvableAttachments.length, 8);
+  for (const candidate of realUnresolvableAttachments) {
+    assert.equal(realPolicy.essentialAttachmentIds.includes(candidate.id), false, `${candidate.id} must not be in the essential allowlist`);
+    assert.equal(isAttachmentUnavailableUpstream(candidate), true);
+    assert.equal(isLocallyAvailable({ ...createAttachmentRecord(candidate, "2026-09-05T00:00:00.000Z"), status: "available", localUri: "file:///anything", byteLength: 1, sha256: "c".repeat(64) }, candidate), false);
+  }
+});
+
+test("real essential set (bundled offline attachments) stays under the 75 MB essential cap", () => {
+  const byId = new Map(realManifest.attachments.map((candidate) => [candidate.id, candidate]));
+  const availability = Object.fromEntries(realPolicy.essentialAttachmentIds.map((id) => [id, { bundled: true }]));
+  const report = evaluateAttachmentRelease(realManifest.attachments, realPolicy, availability);
+  assert.equal(report.ready, true, report.issues.map((issue) => issue.detail).join(" "));
+  assert.ok(report.essentialBytes <= ESSENTIAL_ATTACHMENT_CAP_BYTES, `essential bytes ${report.essentialBytes} exceed the ${ESSENTIAL_ATTACHMENT_CAP_BYTES} cap`);
+  assert.ok(report.installedBytes <= V1_INSTALLED_ATTACHMENT_CAP_BYTES);
+  const expectedTotal = realPolicy.essentialAttachmentIds.reduce((total, id) => total + (byId.get(id)?.byteLength ?? 0), 0);
+  assert.equal(report.essentialBytes, expectedTotal);
 });

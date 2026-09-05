@@ -50,15 +50,38 @@ target.
   existing `/api/mobile/content/v2` contract. Every snapshot carries a content hash and
   package hash; the generator and runtime also verify canonical bytes, stable route keys,
   a matching attachment manifest, and safe `/docs` or `/images` paths.
-- Attachment delivery is independent from snapshot activation: optional attachments download
-  on demand into a persistent, identity-keyed directory and are opened offline only after
-  byte length and SHA-256 match the manifest. Interrupted, cancelled, failed, missing, or
-  corrupt files remain retryable/unavailable and never appear as local content.
-- Essential attachment release policy is intentionally unfrozen in
-  `attachment-release-policy.json`. The empty, unapproved allowlist is a safety boundary;
-  the owner must approve the future allowlist and provide every bundled asset before a
-  release may be frozen. The 75 MB essential and 150 MB installed V1 caps are enforced by
-  `npm run attachments:check-release`.
+- **All attachments are essential** (owner decision, issue #62): every attachment the
+  content sync could resolve is bundled offline inside the app at build time, not
+  downloaded on demand. `attachment-release-policy.json` is approved with all 310
+  resolvable attachment ids as `essentialAttachmentIds`; the `notes` field records the
+  owner decision, the byte total, and the 8 exclusions in Spanish. The iOS
+  (`plugins/with-ios-attachment-assets.js`) and Android
+  (`plugins/with-android-attachment-assets.js`) config plugins copy those 310 files
+  from `public/docs` and `public/images` into the native project during
+  `expo prebuild`, preserving each attachment's `localPath` layout so
+  `attachment-runtime.ts`'s bundle lookup (`Paths.bundle` + `localPath`) resolves them.
+  Nothing is downloaded at runtime for these; `downloadOptionalAttachment` remains as a
+  defensive fallback path, not the primary delivery mechanism.
+  - **8 of 318 manifest attachments cannot be bundled.** Their source files were never
+    recovered by content sync (no `byteLength`/`sha256`), and every one of their
+    `sourceUrl`s was confirmed to return HTTP 404 against servpub.madrid.es — they are
+    gone from the upstream wiki, not merely slow to sync. They are one image
+    (procedure 606_03a) and seven PDFs (procedure 314_05's intranasal medication sheet,
+    and procedure 509's six `509.1`–`509.6` documents). `attachment-runtime.ts` treats
+    any attachment lacking that metadata as permanently unavailable
+    (`isAttachmentUnavailableUpstream`): `reconcileAttachmentRecord` pins it to `failed`
+    with a fixed Spanish notice pointing at the (possibly stale) official `sourceUrl`,
+    and `downloadOptionalAttachment` refuses to attempt a network fetch for it. They
+    never render as pending, broken, or "available on demand" — only as an explicit
+    external link.
+  - **Deviation from the issue #26 spec, accepted knowingly.** The spec's initial-download
+    target is 50 MB; bundling the 310 resolvable attachments adds ~56.5 MB (59,243,267
+    bytes measured from the manifest), which exceeds that target. It stays comfortably
+    under both the 75 MB essential and 150 MB installed V1 caps in `attachment-logic.ts`
+    (neither cap was changed for this). The owner chose full offline coverage of the
+    manual over the 50 MB target; this is recorded here and in the policy's `notes`
+    rather than hidden. `npm run attachments:check-release` enforces the caps and that
+    every essential id is bundled and metadata-complete on every run.
 - There are no accounts, user analytics, or cross-device synchronization paths.
 
 ## Acceptance checklist
@@ -77,7 +100,7 @@ Run these without invoking the web app build:
 npm run mobile:content
 npm run mobile:content:validate
 npm run mobile:typecheck
-npm --prefix apps/mobile run attachments:check-release # expected to remain blocked until owner approval
+npm --prefix apps/mobile run attachments:check-release # approved; expected to pass (see "All attachments are essential" above)
 ```
 
 ## Release readiness and internal-test handoff
@@ -103,9 +126,12 @@ promotion, pause, halt, rollback, or production approval. See `release/evidence-
 required evidence and unresolved owner decisions.
 
 The initial evidence keeps the unresolved owner gates from the Wayfinder work visible:
-attachment allowlist/asset approval (issue 62), location source approval (issue 64),
-online-map provider/licence/scope/size approval (issue 65), and the manual accessibility
-review/device evidence (issue 66). None of these statuses is inferred from a passing CI run.
+location source approval (issue 64), online-map provider/licence/scope/size approval
+(issue 65), and the manual accessibility review/device evidence (issue 66). Attachment
+allowlist/asset approval (issue 62) is resolved — the collector reads
+`attachment-release-policy.json`'s `approved` flag and records `ownerGates.attachments`
+as `"approved"` accordingly; it is not inferred from a passing CI run, only from that
+policy file.
 
 The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`).
 - The packaged location directory is guarded by `location-source-policy.json`. Its current

@@ -4,7 +4,9 @@ import * as Crypto from "expo-crypto";
 import {
   attachmentDownloadFilename,
   attachmentStorageKey,
+  attachmentUnavailableUpstreamNotice,
   createAttachmentRecord,
+  isAttachmentUnavailableUpstream,
   isLocallyAvailable,
   markAttachmentAvailable,
   markAttachmentCancelled,
@@ -99,6 +101,15 @@ export async function readAttachmentRecord(attachment: MobileAttachment, storage
 /** Reconcile state after an interrupted or killed download before rendering it. */
 export async function reconcileAttachmentRecord(attachment: MobileAttachment, storage: AttachmentRecordStorage = AsyncStorage, now = new Date().toISOString()): Promise<AttachmentRecord> {
   const record = await loadRecord(storage, attachment, now);
+  // Permanently unresolvable (no approved byteLength/sha256, e.g. confirmed 404 upstream):
+  // never leave this pending/"available on demand" — pin it as failed with a clear,
+  // stable Spanish reason so the UI can offer the external sourceUrl link instead.
+  if (isAttachmentUnavailableUpstream(attachment)) {
+    if (record.status === "failed" && record.error === attachmentUnavailableUpstreamNotice(attachment)) return record;
+    const failed = markAttachmentFailed(record, attachmentUnavailableUpstreamNotice(attachment), now);
+    await saveRecord(storage, failed);
+    return failed;
+  }
   const bundledFile = new File(Paths.bundle, attachment.localPath.slice(1));
   if (bundledFile.exists && attachment.byteLength !== undefined && attachment.sha256) {
     try {
@@ -138,8 +149,8 @@ export async function downloadOptionalAttachment(
   const storage = options.storage ?? AsyncStorage;
   const now = () => nowIso(options);
   let record = await loadRecord(storage, attachment, now());
-  if (attachment.byteLength === undefined || !attachment.sha256) {
-    const failed = markAttachmentFailed(record, "Este anexo no tiene metadatos SHA-256 aprobados para descarga segura.", now());
+  if (isAttachmentUnavailableUpstream(attachment)) {
+    const failed = markAttachmentFailed(record, attachmentUnavailableUpstreamNotice(attachment), now());
     await saveRecord(storage, failed);
     return failed;
   }
@@ -148,7 +159,8 @@ export async function downloadOptionalAttachment(
     const keys = await storage.getAllKeys();
     const installed = await Promise.all(keys.filter((key) => key.startsWith("manualsamur.attachments.v1.") && key !== recordsKey(attachment)).map(async (key) => parseRecord(await storage.getItem(key))));
     const installedBytes = installed.reduce((total, candidate) => total + (candidate?.status === "available" ? candidate.byteLength ?? 0 : 0), 0);
-    if (installedBytes + attachment.byteLength > V1_INSTALLED_ATTACHMENT_CAP_BYTES) {
+    // isAttachmentUnavailableUpstream already returned above when metadata is missing.
+    if (installedBytes + (attachment.byteLength as number) > V1_INSTALLED_ATTACHMENT_CAP_BYTES) {
       const failed = markAttachmentFailed(record, "Se alcanzó el límite V1 de anexos instalados (150 MB).", now());
       await saveRecord(storage, failed);
       return failed;

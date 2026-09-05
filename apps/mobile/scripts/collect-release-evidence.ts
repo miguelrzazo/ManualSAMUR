@@ -27,6 +27,11 @@ function writeJson(filePath: string, value: unknown): void {
 }
 
 const snapshot = readJson<MobileSnapshot>(path.join(appRoot, "src/data/snapshot.json"));
+// Issue #62: the attachment allowlist/asset owner gate is resolved once the policy
+// file itself records owner approval — evidence should reflect that rather than
+// hardcode "pending" forever after the decision has actually been made.
+const attachmentPolicy = readJson<{ approved?: boolean }>(path.join(appRoot, "attachment-release-policy.json"));
+const ownerGateDefaults = { attachments: attachmentPolicy.approved ? ("approved" as const) : ("pending" as const) };
 const mobilePackage = readJson<{ packages?: Record<string, { version?: string }>; dependencies?: { expo?: string } }>(path.join(appRoot, "package-lock.json"));
 const expoVersion = String(mobilePackage.packages?.["node_modules/expo"]?.version ?? mobilePackage.dependencies?.expo ?? "unknown");
 const commitSha = process.env.GITHUB_SHA || gitValue("rev-parse", "HEAD");
@@ -53,7 +58,7 @@ const handoffOutput = path.resolve(repositoryRoot, argument("handoff-output") ||
 const inputPath = argument("input") || process.env.MOBILE_EVIDENCE_INPUT;
 const evidence = inputPath
   ? readJson<ReleaseEvidence>(path.resolve(repositoryRoot, inputPath))
-  : createReleaseEvidence(snapshot, provenance, generatedAt);
+  : createReleaseEvidence(snapshot, provenance, generatedAt, ownerGateDefaults);
 const evidenceFile = path.relative(repositoryRoot, evidenceOutput);
 const strict = process.argv.includes("--strict");
 const provenanceIssues = inputPath ? compareCurrentProvenance(evidence.provenance, provenance) : [];
