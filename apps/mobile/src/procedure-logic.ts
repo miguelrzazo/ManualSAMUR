@@ -181,6 +181,74 @@ export type MarkdownRow =
   | { kind: "bullet" }
   | { kind: "ordered"; ordinal: number };
 
+export interface MarkdownTable {
+  headers: string[];
+  rows: string[][];
+}
+
+export type MarkdownBlock =
+  | { kind: "line"; index: number; line: string; row: MarkdownRow }
+  | { kind: "table"; startIndex: number; table: MarkdownTable };
+
+function splitPipeTableRow(line: string): string[] | undefined {
+  const trimmed = line.trim();
+  if (!trimmed.includes("|")) return undefined;
+
+  const cells: string[] = [];
+  let cell = "";
+  let escaped = false;
+  const body = trimmed.replace(/^\|/, "").replace(/\|$/, "");
+  for (const character of body) {
+    if (escaped) {
+      cell += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (character === "|") {
+      cells.push(cell.trim());
+      cell = "";
+    } else {
+      cell += character;
+    }
+  }
+  if (escaped) cell += "\\";
+  cells.push(cell.trim());
+  return cells.length >= 2 ? cells : undefined;
+}
+
+function isTableSeparatorRow(cells: readonly string[]): boolean {
+  return cells.length >= 2 && cells.every((cell) => /^:?-{3,}:?$/.test(cell.trim()));
+}
+
+function padTableRow(row: readonly string[], columnCount: number): string[] {
+  return Array.from({ length: columnCount }, (_, index) => row[index] ?? "");
+}
+
+/** Parse one normalized GFM table and return the first line after it. */
+export function parseMarkdownTableAt(lines: readonly string[], startIndex: number): { table: MarkdownTable; nextIndex: number } | undefined {
+  const headers = splitPipeTableRow(lines[startIndex] ?? "");
+  const separator = splitPipeTableRow(lines[startIndex + 1] ?? "");
+  if (!headers || !separator || !isTableSeparatorRow(separator)) return undefined;
+
+  const rawRows: string[][] = [];
+  let index = startIndex + 2;
+  while (index < lines.length) {
+    const row = splitPipeTableRow(lines[index]);
+    if (!row || isTableSeparatorRow(row)) break;
+    rawRows.push(row);
+    index += 1;
+  }
+
+  const columnCount = Math.max(headers.length, separator.length, ...rawRows.map((row) => row.length));
+  return {
+    table: {
+      headers: padTableRow(headers, columnCount),
+      rows: rawRows.map((row) => padTableRow(row, columnCount)),
+    },
+    nextIndex: index,
+  };
+}
+
 /**
  * Classifies the lines of one section for the native renderer, which draws markdown a
  * line at a time rather than parsing it.
@@ -195,22 +263,49 @@ export type MarkdownRow =
 export function classifyMarkdownRows(lines: readonly string[]): MarkdownRow[] {
   let ordinal = 0;
   return lines.map((line) => {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("🖨️") || /^#{2,6}\s/.test(trimmed)) {
-      // A blank line separates the items of a loose list, so it must not restart the
-      // numbering; a heading ends the list outright.
-      if (trimmed) ordinal = 0;
-      return { kind: "skip" };
-    }
-    if (/^(\*|-|•)\s/.test(trimmed)) {
-      ordinal = 0;
-      return { kind: "bullet" };
-    }
-    if (/^\d+[.)]\s/.test(trimmed)) {
-      ordinal += 1;
-      return { kind: "ordered", ordinal };
-    }
-    ordinal = 0;
-    return { kind: "text" };
+    const result = classifyMarkdownLine(line, ordinal);
+    ordinal = result.nextOrdinal;
+    return result.row;
   });
+}
+
+function classifyMarkdownLine(line: string, previousOrdinal: number): { row: MarkdownRow; nextOrdinal: number } {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith("🖨️") || /^#{2,6}\s/.test(trimmed)) {
+    // A blank line separates the items of a loose list, so it must not restart the
+    // numbering; a heading ends the list outright.
+    return { row: { kind: "skip" }, nextOrdinal: trimmed ? 0 : previousOrdinal };
+  }
+  if (/^(\*|-|•)\s/.test(trimmed)) return { row: { kind: "bullet" }, nextOrdinal: 0 };
+  if (/^\d+[.)]\s/.test(trimmed)) {
+    const ordinal = previousOrdinal + 1;
+    return { row: { kind: "ordered", ordinal }, nextOrdinal: ordinal };
+  }
+  return { row: { kind: "text" }, nextOrdinal: 0 };
+}
+
+/** Split a section into renderable lines and table blocks without losing order. */
+export function splitMarkdownBlocks(lines: readonly string[]): MarkdownBlock[] {
+  const blocks: MarkdownBlock[] = [];
+  let ordinal = 0;
+
+  for (let index = 0; index < lines.length;) {
+    const table = parseMarkdownTableAt(lines, index);
+    if (table) {
+      blocks.push({ kind: "table", startIndex: index, table: table.table });
+      ordinal = 0;
+      index = table.nextIndex;
+      continue;
+    }
+
+    const classified = classifyMarkdownLine(lines[index], ordinal);
+    const row = classified.row;
+    // A blank line is allowed inside a loose ordered list, matching the existing
+    // classifyMarkdownRows contract. Every other non-list line ends numbering.
+    ordinal = classified.nextOrdinal;
+    blocks.push({ kind: "line", index, line: lines[index], row });
+    index += 1;
+  }
+
+  return blocks;
 }

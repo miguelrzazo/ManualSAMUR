@@ -5,10 +5,12 @@ import path from "node:path";
 import {
   classifyMarkdownRows,
   createReadingPositionStore,
+  parseMarkdownTableAt,
   procedureHeadings,
   procedureRouteKey,
   resolveProcedureReference,
   searchProcedures,
+  splitMarkdownBlocks,
   splitProcedureSections,
 } from "../apps/mobile/src/procedure-logic.ts";
 import type { MobileProcedure } from "../apps/mobile/src/data/schema.ts";
@@ -106,4 +108,38 @@ test("classifyMarkdownRows keeps loose lists numbered and restarts after a parag
 test("classifyMarkdownRows separates bullets from ordered items", () => {
   const rows = classifyMarkdownRows(["* Una vinieta.", "1. Un paso.", "### Encabezado", "1. Otro paso."]);
   assert.deepEqual(rows.map((row) => (row.kind === "ordered" ? row.ordinal : row.kind)), ["bullet", 1, "skip", 1]);
+});
+
+test("parseMarkdownTableAt preserves empty, multiline, and escaped-pipe cells", () => {
+  const parsed = parseMarkdownTableAt([
+    "**Criterio** | **Resultado** | **Puntuación**",
+    "| :--- | ---: | --- |",
+    "| Edad | >65 | |",
+    "| Signos | <br />• Convulsiones<br />• Déficit | 1\\|2 |",
+    "",
+    "Texto posterior",
+  ], 0);
+
+  assert.deepEqual(parsed, {
+    table: {
+      headers: ["**Criterio**", "**Resultado**", "**Puntuación**"],
+      rows: [
+        ["Edad", ">65", ""],
+        ["Signos", "<br />• Convulsiones<br />• Déficit", "1|2"],
+      ],
+    },
+    nextIndex: 4,
+  });
+});
+
+test("splitMarkdownBlocks emits tables in document order and restarts list numbering", () => {
+  const blocks = splitMarkdownBlocks([
+    "1. Primer paso.",
+    "| Criterio | Valor |",
+    "| --- | --- |",
+    "| Edad | >65 |",
+    "1. Segundo paso.",
+  ]);
+
+  assert.deepEqual(blocks.map((block) => block.kind === "table" ? "table" : block.row.kind === "ordered" ? `ordered-${block.row.ordinal}` : block.row.kind), ["ordered-1", "table", "ordered-1"]);
 });

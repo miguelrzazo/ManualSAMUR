@@ -8,3 +8,4 @@ export { Disclosure } from "./Disclosure.tsx";
 export { PageHeader } from "./PageHeader.tsx";
 export { Screen, ListGroup, contentInset } from "./Screen.tsx";
 export { LocationDirectory } from "./LocationDirectory.tsx";
+export { MarkdownTable } from "./MarkdownTable.tsx";
