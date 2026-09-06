@@ -196,3 +196,20 @@ test("the anexo viewer never renders a remote url — it renders the local file 
   assert.match(viewer, /Linking\.openURL\(attachment\.sourceUrl\)/);
   assert.match(viewer, /accessibilityRole="link"/);
 });
+
+test("a figure that is not bundled stays reachable instead of disappearing from the procedure", () => {
+  // 167 of the 168 figures ship in the binary. The one that does not must still be
+  // offered: an inline image that silently renders nothing would delete an anexo from
+  // the procedure with no way left to ask for it.
+  const bundled = new Set(realPolicy.essentialAttachmentIds);
+  const unbundledImages = realManifest.attachments.filter((candidate) => rendersInline(candidate) && !bundled.has(candidate.id));
+  assert.ok(unbundledImages.length > 0, "this guard is pointless if every figure is bundled");
+
+  const appSource = fs.readFileSync(path.join(mobileAppRoot, "App.tsx"), "utf8");
+  const start = appSource.indexOf("function ProcedureFigure");
+  const figure = appSource.slice(start, appSource.indexOf("\nfunction ", start + 10));
+  assert.ok(start >= 0, "ProcedureFigure must remain the inline figure surface");
+  assert.doesNotMatch(figure, /if \(!uri \|\| failed\) return null;/, "an unavailable figure must not render nothing");
+  assert.match(figure, /figurePlaceholder/);
+  assert.match(figure, /accessibilityLabel=\{`Ver figura \$\{attachment\.filename\}`\}/);
+});

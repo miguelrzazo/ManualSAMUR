@@ -518,7 +518,22 @@ function ProcedureFigure({ attachment, record, onOpen }: { attachment: MobilePro
   const [ratio, setRatio] = useState(4 / 3);
   const [failed, setFailed] = useState(false);
   const uri = isLocallyAvailable(record, attachment) ? record?.localUri : undefined;
-  if (!uri || failed) return null;
+  // 167 of the 168 figures are bundled and render immediately. The odd one out — and any
+  // figure whose bytes fail to verify — must still be reachable: returning null here
+  // would delete it from the procedure with no way to ask for it, which is worse than the
+  // download row this replaced.
+  if (!uri || failed) {
+    return (
+      <Press onPress={onOpen} style={styles.figurePlaceholder} accessibilityRole="button" accessibilityLabel={`Ver figura ${attachment.filename}`} accessibilityHint="Se descarga y se abre dentro de la app.">
+        <MaterialCommunityIcons name="image-outline" size={22} color={palette.inkMuted} />
+        <View style={styles.resourceCopy}>
+          <Text style={styles.resourceTitle} numberOfLines={2}>{attachment.filename}</Text>
+          <Text style={styles.resourceMeta}>{failed ? "No se pudo mostrar aquí · toca para abrirla" : "Toca para verla"}</Text>
+        </View>
+        <MaterialCommunityIcons name="chevron-right" size={18} color={palette.inkMuted} />
+      </Press>
+    );
+  }
   return (
     <Press onPress={onOpen} noScale accessibilityRole="button" accessibilityLabel={`Ampliar figura ${attachment.filename}`} accessibilityHint={accessibilityHints.openDetail}>
       <Image
@@ -1027,6 +1042,7 @@ function createStyles(palette: AdaptivePalette) {
   coordinates: { ...typography.footnote, color: palette.inkMuted, marginTop: spacing.lg },
   figureList: { gap: spacing.lg, marginBottom: spacing.xl },
   figure: { width: "100%", borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line },
+  figurePlaceholder: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 60, paddingHorizontal: spacing.md, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line },
   figureCaption: { ...typography.caption, color: palette.inkMuted, marginTop: spacing.xs },
   figureZoom: { position: "absolute", top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: palette.ink, opacity: 0.72 },
   detailDisclaimer: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: spacing.xl, marginBottom: spacing.md },
