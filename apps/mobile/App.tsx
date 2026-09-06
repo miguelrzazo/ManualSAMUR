@@ -36,8 +36,8 @@ import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, type MobileReferenceSearchResult } from "./src/reference-search-logic";
 import { calculateDoseConversion, doseUtilityEligibility, type DoseOperation, type DoseConversionResult } from "./src/dose-logic";
-import { attachmentStatusLabel, isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
-import { downloadOptionalAttachment, readAttachmentRecord, reconcileAttachmentRecord } from "./src/attachment-runtime";
+import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
+import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
   locationRecords,
   locationRouteKey,
@@ -52,7 +52,9 @@ import { mapCameraTargetFor } from "./src/mapa-logic";
 import { OnlineMapView } from "./src/online-map-view";
 import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type ResolvedSavedReference, type SavedReference } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels } from "./src/accessibility";
+import { Image } from "expo-image";
 import { GlassTabBar } from "./src/nav-shell";
+import { AnexoScreen } from "./src/screens/AnexoScreen";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
 import { InicioScreen } from "./src/screens/InicioScreen";
 import { VademecumScreen } from "./src/screens/VademecumScreen";
@@ -498,6 +500,44 @@ function LocationMapPreview({ location, label }: { location: LocationRecord; lab
   );
 }
 
+/**
+ * An image anexo, drawn where it belongs: in the body of the procedure it illustrates.
+ *
+ * The package carries 168 of these — algorithms, dosage tables, airway diagrams — and
+ * every one of them used to be a row saying "descargar" under a heading called "Anexos",
+ * indistinguishable from a 2 MB PDF. A figure that has to be requested is a figure nobody
+ * looks at during a shift.
+ *
+ * The intrinsic size is unknown until the file is measured, so the frame starts at 4:3 and
+ * corrects itself once the image reports its dimensions — the alternative is a page that
+ * jumps as each figure lands.
+ */
+function ProcedureFigure({ attachment, record, onOpen }: { attachment: MobileProcedure["attachments"][number]; record?: AttachmentRecord; onOpen: () => void }) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  const [ratio, setRatio] = useState(4 / 3);
+  const [failed, setFailed] = useState(false);
+  const uri = isLocallyAvailable(record, attachment) ? record?.localUri : undefined;
+  if (!uri || failed) return null;
+  return (
+    <Press onPress={onOpen} noScale accessibilityRole="button" accessibilityLabel={`Ampliar figura ${attachment.filename}`} accessibilityHint={accessibilityHints.openDetail}>
+      <Image
+        source={{ uri }}
+        style={[styles.figure, { aspectRatio: ratio }]}
+        contentFit="contain"
+        onLoad={(event) => { const { width, height } = event.source; if (width > 0 && height > 0) setRatio(width / height); }}
+        onError={() => setFailed(true)}
+        alt={attachment.filename}
+        accessibilityLabel={attachment.filename}
+      />
+      <Text style={styles.figureCaption} numberOfLines={2}>{attachment.filename}</Text>
+      <View style={styles.figureZoom} pointerEvents="none">
+        <MaterialCommunityIcons name="magnify-plus-outline" size={16} color={palette.paper} />
+      </View>
+    </Press>
+  );
+}
+
 function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Procedure">) {
   const palette = useTheme();
   const styles = useAppStyles();
@@ -506,8 +546,6 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const [attachmentError, setAttachmentError] = useState<string>();
   const [attachmentRecovery, setAttachmentRecovery] = useState<MobileProcedure["attachments"][number]>();
   const [attachmentRecords, setAttachmentRecords] = useState<Record<string, AttachmentRecord>>({});
-  const [activeAttachmentId, setActiveAttachmentId] = useState<string>();
-  const attachmentControllers = useRef<Record<string, AbortController>>({});
   const procedure = findProcedure(content, route.params.id);
   const scrollRef = useRef<ScrollView>(null);
   const routeKey = procedure ? procedureRouteKey(procedure) : `procedure:${route.params.id}`;
@@ -532,9 +570,6 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     })();
     return () => { cancelled = true; };
   }, [procedure]);
-  useEffect(() => () => {
-    Object.values(attachmentControllers.current).forEach((controller) => controller.abort());
-  }, []);
   const procedureFavorite = favorites.includes(routeKey);
   const onToggleProcedureFavorite = useCallback(() => toggleFavorite(routeKey), [toggleFavorite, routeKey]);
   // The header carries the procedure id, not its name: at large-title size a
@@ -553,41 +588,31 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   ])].filter((id) => id !== procedure.id);
   const related = relatedIds.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
   const unresolvedRelatedIds = relatedIds.filter((id) => !findProcedure(content, id));
-  const openAttachment = async (attachment: MobileProcedure["attachments"][number]) => {
-    const current = attachmentRecords[attachment.id] ?? await readAttachmentRecord(attachment);
-    if (current.status === "downloading") {
-      attachmentControllers.current[attachment.id]?.abort();
-      return;
-    }
-    if (isLocallyAvailable(current, attachment) && current.localUri) {
-      await Linking.openURL(current.localUri);
-      return;
-    }
+  // Figures belong to the reading; documents belong in a list. See `rendersInline`.
+  const imageAttachments = procedure.attachments.filter(rendersInline);
+  const documentAttachments = procedure.attachments.filter((attachment) => !rendersInline(attachment));
+  /**
+   * Opening an anexo is now a navigation, not a download-then-hand-off-to-the-OS.
+   *
+   * This used to `Linking.openURL` the local file, which throws the reader out of the app
+   * into Preview — and it did so *after* waiting for a download that, for every anexo in
+   * the approved essential allowlist, had already happened at install time. The viewer
+   * screen handles the whole lifecycle instead, including the download and its progress.
+   *
+   * The one case that still leaves the app is an anexo with no verifiable metadata: there
+   * is nothing safe to render, so the official source is genuinely the only route.
+   */
+  const openAttachment = (attachment: MobileProcedure["attachments"][number]) => {
     if (attachment.byteLength === undefined || !attachment.sha256) {
       setAttachmentRecovery(attachment);
       setAttachmentError(`${attachment.filename} no está validado para guardarse en el dispositivo. Se mantiene disponible la fuente oficial externa.`);
-      try { if (await Linking.canOpenURL(attachment.sourceUrl)) await Linking.openURL(attachment.sourceUrl); } catch { /* source recovery remains visible below */ }
       return;
     }
     setAttachmentError(undefined);
     setAttachmentRecovery(undefined);
-    const controller = new AbortController();
-    attachmentControllers.current[attachment.id] = controller;
-    setActiveAttachmentId(attachment.id);
-    setAttachmentRecords((records) => ({ ...records, [attachment.id]: { ...current, status: "downloading", error: undefined } }));
-    try {
-      const next = await downloadOptionalAttachment(attachment, { signal: controller.signal });
-      setAttachmentRecords((records) => ({ ...records, [attachment.id]: next }));
-      if (next.status === "available" && next.localUri) await Linking.openURL(next.localUri);
-      else if (next.status === "failed") {
-        setAttachmentRecovery(attachment);
-        setAttachmentError(`${attachment.filename}: ${next.error ?? "No se pudo descargar"}. Puedes intentar la fuente oficial.`);
-      }
-    } finally {
-      if (attachmentControllers.current[attachment.id] === controller) delete attachmentControllers.current[attachment.id];
-      setActiveAttachmentId(undefined);
-    }
+    navigation.push("Anexo", { attachmentId: attachment.id });
   };
+
   return <SafeAreaView style={styles.screen} edges={[]}><ScrollView
     ref={scrollRef}
     contentContainerStyle={styles.detailContent}
@@ -614,7 +639,8 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     {related.length > 0 && <><SectionHeading title="Referencias relacionadas" /><View style={styles.cardList}>{related.map((item) => <ProcedureRow key={`related-${item.id}`} procedure={item} onPress={() => navigation.push("Procedure", { id: item.id })} />)}</View></>}
     {unresolvedRelatedIds.length > 0 && <View style={styles.sourceNotice}><MaterialCommunityIcons name="link-variant-off" size={19} color={palette.danger} /><Text style={styles.sourceNoticeText}>Algunas referencias ({unresolvedRelatedIds.join(", ")}) no están incluidas en este paquete local.</Text></View>}
     {procedure.updates.length > 0 && <><SectionHeading title="Actualizaciones" /><View style={styles.updateList} accessibilityLiveRegion="polite" accessibilityLabel={`${procedure.updates.length} actualizaciones editoriales`}>{procedure.updates.map((update, index) => <ProcedureUpdate key={index} update={update} />)}</View></>}
-    {procedure.attachments.length > 0 && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{procedure.attachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const status = record?.status ?? "not-downloaded"; const isActive = activeAttachmentId === attachment.id; const canOpen = isLocallyAvailable(record, attachment) && Boolean(record?.localUri); return <Pressable key={attachment.id} onPress={() => void openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`${canOpen ? "Abrir" : status === "downloading" ? "Cancelar descarga de" : "Descargar"} anexo ${attachment.filename}`} accessibilityHint={canOpen ? "Abre el anexo guardado en este dispositivo." : "Descarga y valida el anexo antes de abrirlo."} accessibilityState={{ busy: isActive }}><MaterialCommunityIcons name={attachment.kind === "pdf" ? "file-pdf-box" : "image-outline"} size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachmentKindLabel(attachment.kind)} · {isActive ? "descargando…" : canOpen ? attachmentStatusLabel("available") : attachmentStatusLabel(status)}</Text></View><MaterialCommunityIcons name={canOpen ? "open-in-new" : status === "downloading" ? "close-circle-outline" : status === "failed" || status === "cancelled" ? "refresh" : "download-outline"} size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
+    {imageAttachments.length > 0 && <><SectionHeading title="Figuras" /><View style={styles.figureList}>{imageAttachments.map((attachment) => <ProcedureFigure key={attachment.id} attachment={attachment} record={attachmentRecords[attachment.id]} onOpen={() => openAttachment(attachment)} />)}</View></>}
+    {(documentAttachments.length > 0 || attachmentError) && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{documentAttachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const local = isLocallyAvailable(record, attachment); return <Pressable key={attachment.id} onPress={() => openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`Abrir anexo ${attachment.filename}`} accessibilityHint="Se abre dentro de la app."><MaterialCommunityIcons name="file-pdf-box" size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachmentKindLabel(attachment.kind)}{local ? "" : " · se descarga al abrirlo"}</Text></View><MaterialCommunityIcons name="chevron-right" size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
     <Text style={styles.detailDisclaimer}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text>
   </ScrollView></SafeAreaView>;
 }
@@ -920,7 +946,7 @@ function AppNavigation() {
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
   } as const;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {
@@ -999,6 +1025,10 @@ function createStyles(palette: AdaptivePalette) {
   locationMapPreview: { height: 180, borderRadius: radii.lg, overflow: "hidden", borderWidth: 1, borderColor: palette.lineStrong, marginBottom: spacing.lg },
   addressValue: { ...typography.headline, color: palette.ink },
   coordinates: { ...typography.footnote, color: palette.inkMuted, marginTop: spacing.lg },
+  figureList: { gap: spacing.lg, marginBottom: spacing.xl },
+  figure: { width: "100%", borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line },
+  figureCaption: { ...typography.caption, color: palette.inkMuted, marginTop: spacing.xs },
+  figureZoom: { position: "absolute", top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: palette.ink, opacity: 0.72 },
   detailDisclaimer: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: spacing.xl, marginBottom: spacing.md },
   infoBlock: { borderTopWidth: 1, borderTopColor: palette.line, paddingVertical: spacing.md }, infoLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: 4 }, infoValue: { color: palette.ink, fontSize: 15, lineHeight: 22 }, codeRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, codeValue: { minWidth: 55, color: palette.primary, fontSize: 15, fontWeight: "900" }, codeResultCode: { backgroundColor: palette.amberWash }, abbreviationResultCode: { backgroundColor: palette.greenWash }, abbreviationRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, abbreviation: { width: 70, color: palette.primary, fontWeight: "900", fontSize: 13 },
   doseCard: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.lg, marginTop: spacing.lg, marginBottom: spacing.xl }, doseHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, doseTitle: { color: palette.ink, fontSize: 16, fontWeight: "800" }, doseLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginTop: spacing.md, marginBottom: spacing.sm }, doseChoiceRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.sm }, doseChoice: { flex: 1, minWidth: 120, minHeight: 44, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center" }, doseChoiceActive: { backgroundColor: palette.ink }, doseChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, doseChoiceTextActive: { color: palette.paper }, doseInputRow: { flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: palette.lineStrong, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md }, doseInput: { flex: 1, color: palette.ink, fontSize: 17, paddingVertical: 8 }, doseInputStandalone: { borderWidth: 1, borderColor: palette.lineStrong, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md, color: palette.ink, fontSize: 16, marginBottom: spacing.sm }, doseUnit: { color: palette.inkMuted, fontWeight: "800", fontSize: 12 }, doseUnitChoice: { minHeight: 44, borderRadius: radii.pill, paddingVertical: 7, paddingHorizontal: 11, backgroundColor: palette.surfaceMuted, justifyContent: "center" }, doseUnitChoiceActive: { backgroundColor: palette.ink }, doseUnitChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, doseUnitChoiceTextActive: { color: palette.paper }, doseCheckRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 }, doseCheckText: { color: palette.ink, fontSize: 12, lineHeight: 17, flex: 1 }, doseCalculateButton: { backgroundColor: palette.primaryAction, borderRadius: radii.md, padding: spacing.md, alignItems: "center", marginTop: spacing.md }, doseAudit: { marginTop: spacing.md }, doseResult: { backgroundColor: palette.greenWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseResultLabel: { color: palette.green, fontSize: 13, fontWeight: "600", letterSpacing: -0.08 }, doseResultValue: { color: palette.ink, fontSize: 27, fontWeight: "900", marginVertical: 3 }, doseResultDetail: { color: palette.inkMuted, fontSize: 11, lineHeight: 16 }, doseWarning: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: spacing.sm }, doseError: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseErrorText: { color: palette.dangerDark, flex: 1, fontSize: 12, lineHeight: 17 }, doseUnavailable: { color: palette.ink, fontSize: 13, lineHeight: 18 }, doseDisclaimer: { color: palette.inkMuted, fontSize: 10, lineHeight: 15, marginTop: spacing.md },

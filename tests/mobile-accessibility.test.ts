@@ -119,7 +119,11 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   assert.match(appSource, /findNodeHandle/);
   assert.match(appSource, /setAccessibilityFocus/);
   assert.match(appSource, /accessibilityLiveRegion="polite"/);
-  assert.match(appSource, /accessibilityState=\{\{ busy: isActive \}\}/);
+  // The busy state for an anexo download moved with the download itself into the viewer
+  // screen, which is now what waits — App.tsx no longer downloads anything inline.
+  const anexoSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/AnexoScreen.tsx"), "utf8");
+  assert.match(anexoSource, /accessibilityLiveRegion="polite"/);
+  assert.match(anexoSource, /Descarga al \$\{percentage\} por ciento/);
   assert.match(appSource, /accessibilityLabel="Auditoría completa del resultado de dosis"/);
   // Location permission requests moved with Mapa into its own module (T5e).
   assert.match(mapaScreenSource, /requestForegroundPermissionsAsync/);
@@ -137,7 +141,11 @@ test("route contracts expose the important stateful workflows", () => {
   assert.match(procedure, /actualizaciones editoriales/);
   assert.match(procedure, /accessibilityLiveRegion="polite"/);
   assert.match(procedure, /anexo \$\{attachment\.filename\}/);
-  assert.match(procedure, /busy: isActive/);
+  // An anexo opens in-app. `Linking.openURL` on a local file hands the reader to Preview
+  // and out of the app, losing the procedure they were reading.
+  assert.match(procedure, /navigation\.push\("Anexo", \{ attachmentId: attachment\.id \}\)/);
+  assert.doesNotMatch(procedure, /Linking\.openURL\(current\.localUri\)/);
+  assert.doesNotMatch(procedure, /Linking\.openURL\(next\.localUri\)/);
 
   const drug = sourceFor("DrugScreen");
   assert.match(drug, /DoseUtilityCard/);

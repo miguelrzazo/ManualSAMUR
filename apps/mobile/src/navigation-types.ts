@@ -24,5 +24,7 @@ export type RootStackParamList = {
   Code: { routeKey: string };
   Abbreviations: { query?: string } | undefined;
   Location: { routeKey: string };
+  /** One anexo, rendered in-app: a PDF page view or a zoomable image. */
+  Anexo: { attachmentId: string };
   Status4: undefined;
 };

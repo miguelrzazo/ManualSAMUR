@@ -225,3 +225,24 @@ export function evaluateAttachmentRelease(
 export function assertAttachmentReleaseReady(report: AttachmentReleaseReport): void {
   if (!report.ready) throw new Error(`La release de anexos está bloqueada: ${report.issues.map((issue) => issue.detail).join(" ")}`);
 }
+
+/**
+ * Whether an attachment should be shown inline in the procedure body rather than listed
+ * as a file to open.
+ *
+ * The package carries 168 images and 150 PDFs. A figure that belongs to a procedure is
+ * part of reading it — a diagram, an algorithm, a table — and putting it behind a row
+ * labelled "descargar" hid it from the person the procedure is for. PDFs stay as rows:
+ * they are multi-page documents, not illustrations, and they open in the viewer.
+ */
+export function rendersInline(attachment: MobileAttachment): boolean {
+  return attachment.kind === "image";
+}
+
+/**
+ * Whether this attachment can be shown in-app at all. Anything else keeps the external
+ * "fuente oficial" link as its only route, which is what a confirmed-gone anexo needs.
+ */
+export function isViewableInApp(attachment: MobileAttachment): boolean {
+  return (attachment.kind === "pdf" || attachment.kind === "image") && !isAttachmentUnavailableUpstream(attachment);
+}

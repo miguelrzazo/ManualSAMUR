@@ -16,7 +16,9 @@ import {
   isAttachmentUnavailableUpstream,
   isExpectedAttachmentMetadata,
   isLocallyAvailable,
+  isViewableInApp,
   markAttachmentAvailable,
+  rendersInline,
   markAttachmentFailed,
   recoverAttachment,
   startAttachmentDownload,
@@ -160,4 +162,37 @@ test("real essential set (bundled offline attachments) stays under the 75 MB ess
   assert.ok(report.installedBytes <= V1_INSTALLED_ATTACHMENT_CAP_BYTES);
   const expectedTotal = realPolicy.essentialAttachmentIds.reduce((total, id) => total + (byId.get(id)?.byteLength ?? 0), 0);
   assert.equal(report.essentialBytes, expectedTotal);
+});
+
+test("images render inline in the procedure; PDFs stay a list that opens in the viewer", () => {
+  const images = realManifest.attachments.filter(rendersInline);
+  const documents = realManifest.attachments.filter((candidate) => !rendersInline(candidate));
+  // Both halves are substantial — this split is not theoretical.
+  assert.ok(images.length > 100, `expected the package to carry many figures, got ${images.length}`);
+  assert.ok(documents.length > 100, `expected the package to carry many documents, got ${documents.length}`);
+  assert.equal(images.length + documents.length, realManifest.attachments.length, "every anexo lands on exactly one side");
+  for (const image of images) assert.equal(image.kind, "image");
+  for (const document of documents) assert.notEqual(document.kind, "image");
+});
+
+test("only anexos that still exist upstream are offered to the in-app viewer", () => {
+  // The eight confirmed-gone anexos keep the external official source as their only route:
+  // there is nothing local to render, and pretending otherwise would show an empty viewer.
+  for (const gone of realManifest.attachments.filter(isAttachmentUnavailableUpstream)) {
+    assert.equal(isViewableInApp(gone), false, `${gone.filename} has no local bytes to show`);
+  }
+  const viewable = realManifest.attachments.filter(isViewableInApp);
+  assert.ok(viewable.length > 0);
+  for (const candidate of viewable) assert.ok(candidate.kind === "pdf" || candidate.kind === "image");
+});
+
+test("the anexo viewer never renders a remote url — it renders the local file or nothing", () => {
+  const viewer = fs.readFileSync(path.join(mobileAppRoot, "src/screens/AnexoScreen.tsx"), "utf8");
+  // `record.localUri` is the only thing handed to <Pdf> and <Image>; `sourceUrl` appears
+  // exactly once, behind the error branch, as an explicit "abrir fuente oficial" link.
+  assert.match(viewer, /source=\{\{ uri \}\}/);
+  assert.match(viewer, /const uri = record\?\.localUri/);
+  assert.equal((viewer.match(/attachment\.sourceUrl/g) ?? []).length, 1);
+  assert.match(viewer, /Linking\.openURL\(attachment\.sourceUrl\)/);
+  assert.match(viewer, /accessibilityRole="link"/);
 });
