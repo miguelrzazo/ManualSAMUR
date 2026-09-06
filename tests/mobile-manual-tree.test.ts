@@ -109,6 +109,17 @@ test("expanding a flat section lists its procedures directly, without a Listado 
   assert.equal(rows.some((row) => row.kind === "group" || row.kind === "subgroup"), false);
 });
 
+test("Psicologicos expands straight to 501-509 with no Intervencion psicologica tier", () => {
+  const tree = buildManualTree(procedures);
+  const psicologicos = tree.find((section) => section.section === "Psicológicos")!;
+  const rows = flattenManualTree([psicologicos], new Set([manualSectionKey("Psicológicos")]));
+
+  const procedureRows = rows.filter((row) => row.kind === "procedure");
+  assert.equal(procedureRows.length, 9);
+  assert.equal(rows.some((row) => row.kind === "group" || row.kind === "subgroup"), false);
+  assert.deepEqual(procedureRows.map((row) => row.procedure!.id), ["501", "502", "503", "504", "505", "506", "507", "508", "509"]);
+});
+
 // ─── Update history ──────────────────────────────────────────────────────────
 
 function makeEvent(overrides: Partial<ReturnType<typeof asManualUpdateEvents>[number]> & { eventId: string; summary: string }) {

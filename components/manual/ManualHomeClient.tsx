@@ -117,7 +117,7 @@ const SECTION_META: Record<string, { dot: string; badge: string; card: string }>
 const HISTORY_PAGE_SIZE = 50;
 
 const FALLBACK = SECTION_META.General;
-const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes"]);
+const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes", "Psicológicos"]);
 
 interface Props {
   sidebarSections: ProcedureSidebarSection[];

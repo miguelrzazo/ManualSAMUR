@@ -32,13 +32,19 @@ export const MANUAL_SECTIONS_PRIORITY = [
 ] as const;
 
 /**
- * These 4 sections carry a single "Listado" group/subgroup on the web (see
- * `getProcedureSidebarMeta`), so the web's `ExplorerTree` and `ProcedureSidebar`
- * skip the group/subgroup accordion for them and list procedures directly,
- * sorted numerically. Mirror that here so the native tree doesn't show a
- * pointless single "Procedimientos › Listado" accordion level.
+ * These sections resolve to a single group/subgroup in `getProcedureSidebarMeta`, so the
+ * web's `ExplorerTree` and `ProcedureSidebar` skip the group/subgroup accordion for them
+ * and list procedures directly, sorted numerically. Mirror that here so the native tree
+ * doesn't show a pointless single accordion level.
+ *
+ * Psicológicos belongs here for the same reason the first four do — its whole section is
+ * hardcoded to `Intervención psicológica › Activación de guardia` — but was missing, so
+ * the 9 procedures sat behind a middle tier that never had a sibling. Its subgroup label
+ * was also plainly wrong for 502-509 (duelo, suicidio, Código 9, violencia de género),
+ * and the sidebar renders the subgroup rather than the group, so flattening removes that
+ * mislabel too.
  */
-export const MANUAL_FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes"]);
+export const MANUAL_FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes", "Psicológicos"]);
 
 /** Identity colour per section, matching the dots in ProcedureSidebar/ManualHomeClient. */
 export const MANUAL_SECTION_COLORS: Record<string, string> = {
