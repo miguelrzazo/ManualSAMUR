@@ -1079,32 +1079,32 @@
   },
   {
     "code": "T.8.0",
-    "name": "Traumatismo de Facial (incluye cuello)",
+    "name": "Traumatismo Facial (incluye cuello)",
     "category": "Trauma"
   },
   {
     "code": "T.8.1",
-    "name": "Traumatismo de Torácico",
+    "name": "Traumatismo Torácico",
     "category": "Trauma"
   },
   {
     "code": "T.8.2",
-    "name": "Traumatismo de Abdominal",
+    "name": "Traumatismo Abdominal",
     "category": "Trauma"
   },
   {
     "code": "T.8.3",
-    "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+    "name": "Traumatismo Pélvico (incluye cadera y muslo)",
     "category": "Trauma"
   },
   {
     "code": "T.8.4",
-    "name": "Traumatismo de Medular",
+    "name": "Traumatismo Medular",
     "category": "Trauma"
   },
   {
     "code": "T.8.5",
-    "name": "Traumatismo de Mayor / Politrauma",
+    "name": "Traumatismo Mayor / Politrauma",
     "category": "Trauma"
   },
   {
