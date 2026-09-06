@@ -174,3 +174,113 @@ export function createReadingPositionStore(): ReadingPositionStore {
 
 /** Session-local offsets survive a detail screen being popped and revisited. */
 export const readingPositions = createReadingPositionStore();
+
+export type MarkdownRow =
+  | { kind: "skip" }
+  | { kind: "text" }
+  | { kind: "bullet" }
+  | { kind: "ordered"; ordinal: number };
+
+export interface MarkdownTable {
+  headers: string[];
+  rows: string[][];
+}
+
+export type MarkdownBlock =
+  | { kind: "line"; index: number; line: string; row: MarkdownRow }
+  | { kind: "table"; startIndex: number; table: MarkdownTable };
+
+function splitPipeTableRow(line: string): string[] | undefined {
+  const trimmed = line.trim();
+  if (!trimmed.includes("|")) return undefined;
+  const cells: string[] = [];
+  let cell = "";
+  let escaped = false;
+  const body = trimmed.replace(/^\|/, "").replace(/\|$/, "");
+  for (const character of body) {
+    if (escaped) { cell += character; escaped = false; }
+    else if (character === "\\") escaped = true;
+    else if (character === "|") { cells.push(cell.trim()); cell = ""; }
+    else cell += character;
+  }
+  if (escaped) cell += "\\";
+  cells.push(cell.trim());
+  return cells.length >= 2 ? cells : undefined;
+}
+
+function isTableSeparatorRow(cells: readonly string[]): boolean {
+  return cells.length >= 2 && cells.every((cell) => /^:?-{3,}:?$/.test(cell.trim()));
+}
+
+function padTableRow(row: readonly string[], columnCount: number): string[] {
+  return Array.from({ length: columnCount }, (_, index) => row[index] ?? "");
+}
+
+export function parseMarkdownTableAt(lines: readonly string[], startIndex: number): { table: MarkdownTable; nextIndex: number } | undefined {
+  const headers = splitPipeTableRow(lines[startIndex] ?? "");
+  const separator = splitPipeTableRow(lines[startIndex + 1] ?? "");
+  if (!headers) return undefined;
+
+  if (separator && isTableSeparatorRow(separator)) {
+    const rawRows: string[][] = [];
+    let index = startIndex + 2;
+    while (index < lines.length) {
+      const row = splitPipeTableRow(lines[index]);
+      if (!row || isTableSeparatorRow(row)) break;
+      rawRows.push(row);
+      index += 1;
+    }
+    const columnCount = Math.max(headers.length, separator.length, ...rawRows.map((row) => row.length));
+    return { table: { headers: padTableRow(headers, columnCount), rows: rawRows.map((row) => padTableRow(row, columnCount)) }, nextIndex: index };
+  }
+
+  // The synced SAMUR corpus also contains legacy tables with no GFM separator.
+  // Require consecutive leading-pipe rows so an isolated malformed row remains text.
+  if (!lines[startIndex].trim().startsWith("|") || !lines[startIndex + 1]?.trim().startsWith("|")) return undefined;
+  const rawRows: string[][] = [];
+  let index = startIndex + 1;
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) break;
+    if (line.trim().startsWith("|")) {
+      const row = splitPipeTableRow(line);
+      if (!row || isTableSeparatorRow(row)) break;
+      rawRows.push(row);
+    } else if (rawRows.length) {
+      const lastRow = rawRows[rawRows.length - 1];
+      lastRow[lastRow.length - 1] = `${lastRow[lastRow.length - 1]}\n${line.trim()}`;
+    } else {
+      break;
+    }
+    index += 1;
+  }
+  const columnCount = Math.max(headers.length, ...rawRows.map((row) => row.length));
+  return { table: { headers: padTableRow(headers, columnCount), rows: rawRows.map((row) => padTableRow(row, columnCount)) }, nextIndex: index };
+}
+
+function classifyMarkdownLine(line: string, previousOrdinal: number): { row: MarkdownRow; nextOrdinal: number } {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith("🖨️") || /^#{2,6}\s/.test(trimmed)) return { row: { kind: "skip" }, nextOrdinal: trimmed ? 0 : previousOrdinal };
+  if (/^(\*|-|•)\s/.test(trimmed)) return { row: { kind: "bullet" }, nextOrdinal: 0 };
+  if (/^\d+[.)]\s/.test(trimmed)) { const ordinal = previousOrdinal + 1; return { row: { kind: "ordered", ordinal }, nextOrdinal: ordinal }; }
+  return { row: { kind: "text" }, nextOrdinal: 0 };
+}
+
+export function classifyMarkdownRows(lines: readonly string[]): MarkdownRow[] {
+  let ordinal = 0;
+  return lines.map((line) => { const result = classifyMarkdownLine(line, ordinal); ordinal = result.nextOrdinal; return result.row; });
+}
+
+export function splitMarkdownBlocks(lines: readonly string[]): MarkdownBlock[] {
+  const blocks: MarkdownBlock[] = [];
+  let ordinal = 0;
+  for (let index = 0; index < lines.length;) {
+    const table = parseMarkdownTableAt(lines, index);
+    if (table) { blocks.push({ kind: "table", startIndex: index, table: table.table }); ordinal = 0; index = table.nextIndex; continue; }
+    const classified = classifyMarkdownLine(lines[index], ordinal);
+    ordinal = classified.nextOrdinal;
+    blocks.push({ kind: "line", index, line: lines[index], row: classified.row });
+    index += 1;
+  }
+  return blocks;
+}
