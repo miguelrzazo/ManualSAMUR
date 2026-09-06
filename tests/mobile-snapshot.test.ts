@@ -94,3 +94,18 @@ test("v2 snapshots carry canonical relation, editorial, update and attachment da
   assert.ok(Array.isArray(procedure.updates));
   assert.ok(procedure.attachments.every((attachment) => attachment.id && attachment.filename));
 });
+
+test("the packaged bodies are normalized, not raw XWiki", async () => {
+  // The corpus is raw XWiki markdown and the web normalizes on read. The package used to
+  // ship the raw body, so every artifact the web strips reached the native reader.
+  const { readFileSync } = await import("node:fs");
+  const path = (await import("node:path")).default;
+  const packaged = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as MobileContentSnapshot;
+  assert.ok(packaged.content.procedures.length > 200);
+
+  for (const procedure of packaged.content.procedures) {
+    assert.ok(!procedure.content.includes("((("), `${procedure.id} ships an xwiki cell wrapper`);
+    assert.ok(!procedure.content.includes(")))"), `${procedure.id} ships an xwiki cell wrapper`);
+    assert.ok(!/\bimage:/.test(procedure.content), `${procedure.id} ships an xwiki image macro`);
+  }
+});
