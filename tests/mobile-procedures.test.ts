@@ -13,6 +13,7 @@ import {
   splitMarkdownBlocks,
   splitProcedureSections,
 } from "../apps/mobile/src/procedure-logic.ts";
+import { buildSearchSnippet, readableSnippetSource, snippetText } from "../apps/mobile/src/search-snippet-logic.ts";
 import type { MobileProcedure } from "../apps/mobile/src/data/schema.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as {
@@ -137,4 +138,89 @@ test("all bundled table-bearing procedures produce a native table block", () => 
     assert.ok(procedure, `missing fixture procedure ${id}`);
     assert.ok(splitProcedureSections(procedure.content).some((section) => splitMarkdownBlocks(section.lines).some((block) => block.kind === "table")), `no table block for ${id}`);
   }
+});
+
+// ─── Full-text search snippets ──────────────────────────────────────────────
+
+test("a body match is explained with the sentence it was found in", () => {
+  const snippet = buildSearchSnippet(
+    "Ante un accidente de tráfico, valore la escena. En el atropello de más de tres víctimas active el operativo de múltiples víctimas y comunique por TETRA.",
+    "atropello",
+  );
+  assert.ok(snippet, "a body match must produce an excerpt");
+  const text = snippetText(snippet);
+  assert.match(text, /atropello/);
+  assert.deepEqual(snippet.segments.filter((segment) => segment.match).map((segment) => segment.text), ["atropello"]);
+  // Context on both sides, and ellipses where the excerpt was cut.
+  assert.match(text, /^…/);
+  assert.match(text, /…$/);
+});
+
+test("the excerpt is accent- and case-insensitive, and marks every occurrence in view", () => {
+  const snippet = buildSearchSnippet("Valoración de la Vía aérea. Mantenga la via aérea permeable en todo momento.", "via");
+  assert.ok(snippet);
+  const matched = snippet.segments.filter((segment) => segment.match).map((segment) => segment.text);
+  // The original casing and accents are preserved in what is shown.
+  assert.deepEqual(matched, ["Vía", "via"]);
+});
+
+test("an excerpt never cuts a word in half", () => {
+  const snippet = buildSearchSnippet(`${"palabra ".repeat(40)}atropello ${"otra ".repeat(40)}`, "atropello");
+  assert.ok(snippet);
+  const text = snippetText(snippet).replace(/^…|…$/g, "").trim();
+  for (const word of text.split(/\s+/)) {
+    assert.ok(["palabra", "atropello", "otra"].includes(word), `truncated word: ${word}`);
+  }
+});
+
+test("markdown line breaks and table pipes collapse instead of shredding the excerpt", () => {
+  const snippet = buildSearchSnippet("| Edad |\n| --- |\n\nEl   atropello\nleve", "atropello");
+  assert.ok(snippet);
+  assert.doesNotMatch(snippetText(snippet), /\n/);
+  assert.doesNotMatch(snippetText(snippet), /  /);
+});
+
+test("table scaffolding is flattened before the excerpt is cut, not left in it", () => {
+  // The real shape this was written for: an excerpt from a code table read
+  // "…víctimas confirmadas | | 1.4 | Atropello | | 1.5 | Accidente…".
+  const table = "## Códigos\n\n| Código | Nombre |\n| --- | --- |\n| 1.3 | Accidente con más de 3 víctimas confirmadas |\n| 1.4 | Atropello |\n| 1.5 | Accidente de motocicleta |\n";
+  const readable = readableSnippetSource(table);
+  assert.doesNotMatch(readable, /\|/);
+  assert.doesNotMatch(readable, /---/);
+  assert.doesNotMatch(readable, /· ·/, "empty cells must not stack up separators");
+  assert.match(readable, /1\.4 · Atropello · 1\.5/);
+
+  const snippet = buildSearchSnippet(readable, "atropello");
+  assert.ok(snippet);
+  assert.doesNotMatch(snippetText(snippet), /\|/);
+});
+
+test("list bullets, headings and emphasis do not survive into an excerpt", () => {
+  const readable = readableSnippetSource("### Mecanismo\n\n* Colisión.\n* **Atropello**.\n- _Vuelco_.\n> Nota final.\n");
+  assert.equal(readable, "Mecanismo Colisión. Atropello. Vuelco. Nota final.");
+});
+
+test("no excerpt where there is nothing to explain", () => {
+  assert.equal(buildSearchSnippet("texto cualquiera", ""), null);
+  assert.equal(buildSearchSnippet("", "atropello"), null);
+  assert.equal(buildSearchSnippet("nada que ver aquí", "atropello"), null);
+  // Single characters are not a full-text query.
+  assert.equal(buildSearchSnippet("un atropello", "a"), null);
+});
+
+test("searchProcedures explains body hits but not title hits", () => {
+  const base = {
+    section: "SVA", slug: "", routeKey: "", tags: [], synonyms: [], related: [], backlinks: [],
+    relations: [], editorialBlocks: [], updates: [], attachments: [], sourceUpdated: "", source: "", updated: "",
+  };
+  const procedures = [
+    { ...base, id: "1", title: "Atropello", content: "Cualquier cosa.", searchText: "" },
+    { ...base, id: "2", title: "Accidente de tráfico", content: "En el atropello de más de tres víctimas active el operativo.", searchText: "" },
+  ] as unknown as Parameters<typeof searchProcedures>[0];
+
+  const results = searchProcedures(procedures, "atropello");
+  const byId = Object.fromEntries(results.map((result) => [result.procedure.id, result]));
+  assert.equal(byId["1"].snippet, undefined, "a title that already says it needs no excerpt");
+  assert.ok(byId["2"].snippet, "a body-only match must be explained");
+  assert.match(snippetText(byId["2"].snippet!), /atropello/);
 });

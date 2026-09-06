@@ -9,3 +9,5 @@ export { PageHeader } from "./PageHeader.tsx";
 export { Screen, ListGroup, contentInset } from "./Screen.tsx";
 export { LocationDirectory } from "./LocationDirectory.tsx";
 export { MarkdownTable } from "./MarkdownTable.tsx";
+export { BackToTop } from "./BackToTop.tsx";
+export { CompactHeader } from "./CompactHeader.tsx";

@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -19,17 +19,20 @@ import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } fr
 import { useTheme } from "../theme";
 import { displayTitle } from "../title-case";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
+import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
 import { selectionTick } from "../hooks/haptics";
-import { Chip, Press } from "../components";
+import { BackToTop, Chip, CompactHeader, Press } from "../components";
 import { useContent } from "../content";
 import { buildVademecumReferences, searchMobileReferences, type MobileReferenceSearchResult } from "../reference-search-logic";
 import {
+  activeSectionKey,
   buildAlphabetSections,
   buildCategorySections,
   categoryAccent,
   categoryOf,
   filterByCategory,
   filterByTab,
+  resolveActiveLetter,
   supportsAlphabetNav,
   uniqueCategories,
   VADEMECUM_TABS,
@@ -61,6 +64,8 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const sectionListRef = useRef<SectionList<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection>>(null);
+  const searchListRef = useRef<FlatList<MobileReferenceSearchResult>>(null);
+  const chrome = useScrollChrome();
 
   const references = useMemo(() => buildVademecumReferences(content), [content]);
   const tabCounts = useMemo(
@@ -72,7 +77,9 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
     setActiveTab(key);
     setActiveCategory(null);
     sectionListRef.current?.scrollToLocation?.({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: false });
-  }, []);
+    // The new domain starts at its own top, so the chrome comes back with it.
+    chrome.reset();
+  }, [chrome]);
 
   const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -96,6 +103,12 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
+      {/* Title, search and the domain switcher give way to the list on a downward
+          scroll, collapsing into the compact bar; the sticky letter/category header
+          stays behind it. */}
+      {chrome.collapsed && <CompactHeader title="Vademécum" onExpand={chrome.expand} />}
+      {!chrome.collapsed && (
+      <>
       <View style={styles.header}>
         <Text style={styles.pageTitle}>Vademécum</Text>
         <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
@@ -127,11 +140,16 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
           }}
         />
       </View>
+      </>
+      )}
 
       {searching ? (
         <FlatList
+          ref={searchListRef}
           data={searchResults}
           keyExtractor={(item) => item.routeKey}
+          onScroll={chrome.onScroll}
+          scrollEventThrottle={chrome.scrollEventThrottle}
           contentContainerStyle={styles.sectionListContent}
           ListEmptyComponent={
             <EmptyState title="Sin coincidencias" detail="Prueba con el nombre, un sinónimo o la categoría publicada." palette={palette} styles={styles} />
@@ -148,8 +166,18 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
           palette={palette}
           styles={styles}
           sectionListRef={sectionListRef}
+          chrome={chrome}
         />
       )}
+
+      <BackToTop
+        visible={chrome.showBackToTop}
+        onPress={() => {
+          if (searching) searchListRef.current?.scrollToOffset({ offset: 0, animated: true });
+          else sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: true });
+          chrome.reset();
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -165,6 +193,7 @@ function DomainContent({
   palette,
   styles,
   sectionListRef,
+  chrome,
 }: {
   tab: VademecumTabKey;
   references: MobileReferenceSearchResult[];
@@ -174,6 +203,7 @@ function DomainContent({
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
   sectionListRef: React.RefObject<SectionList<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> | null>;
+  chrome: ScrollChrome;
 }) {
   // Fármacos filters by category *and* shows an A-Z index (mirrors the web:
   // both controls are visible together for this domain only). Comerciales
@@ -193,16 +223,42 @@ function DomainContent({
     [filtered, showAlphabetIndex],
   );
 
+  const alphabetRef = useRef<FlatList<VademecumAlphabetSection | VademecumCategorySection>>(null);
+  // What the list says we are looking at…
+  const [observedKey, setObservedKey] = useState<string | null>(null);
+  // …and what a tap says we asked for, which wins until the jump settles.
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const activeKey = resolveActiveLetter(pendingKey, observedKey);
+
+  // `onViewableItemsChanged` is read once by the list and must never change
+  // identity afterwards, or RN throws "Changing onViewableItemsChanged on the
+  // fly is not supported".
+  const [onViewableItemsChanged] = useState(() => ({ viewableItems }: { viewableItems: { section?: { key?: string } }[] }) => {
+    setObservedKey(activeSectionKey(viewableItems.map((entry) => ({ sectionKey: entry.section?.key }))));
+  });
+  const [viewabilityConfig] = useState(() => ({ itemVisiblePercentThreshold: 0 }));
+
   const scrollToSection = useCallback(
     (sectionIndex: number) => {
+      const key = sections[sectionIndex]?.key ?? null;
+      setPendingKey(key);
       sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex: 0, viewPosition: 0, animated: true });
     },
-    [sectionListRef],
+    [sectionListRef, sections],
   );
+
+  // Keep the highlighted pill on screen: on fármacos the row is twenty-odd
+  // letters long, so the active one is usually scrolled out of the index itself.
+  useEffect(() => {
+    if (!activeKey) return;
+    const index = sections.findIndex((section) => section.key === activeKey);
+    if (index < 0) return;
+    alphabetRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+  }, [activeKey, sections]);
 
   return (
     <View style={styles.flexFill}>
-      {showCategoryChips && categories.length > 1 && (
+      {!chrome.collapsed && showCategoryChips && categories.length > 1 && (
         <View style={styles.categoryRow}>
           <Press
             onPress={() => { selectionTick(); animateNextLayout(reduceMotion); setCategoriesOpen((open) => !open); }}
@@ -224,7 +280,7 @@ function DomainContent({
           )}
         </View>
       )}
-      {showCategoryChips && categories.length > 1 && categoriesOpen && (
+      {!chrome.collapsed && showCategoryChips && categories.length > 1 && categoriesOpen && (
         <View style={styles.categoryListRow} accessibilityRole="tablist" accessibilityLabel="Filtrar por categoría">
           <FlatList
             horizontal
@@ -244,24 +300,30 @@ function DomainContent({
         </View>
       )}
 
-      {showAlphabetIndex && sections.length > 1 && (
+      {!chrome.collapsed && showAlphabetIndex && sections.length > 1 && (
         <View style={styles.alphabetRow} accessibilityRole="tablist" accessibilityLabel="Ir a una letra">
           <FlatList
+            ref={alphabetRef}
             horizontal
             data={sections}
             keyExtractor={(section) => section.key}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.alphabetContent}
-            renderItem={({ item: section, index }) => (
-              <Pressable
-                onPress={() => scrollToSection(index)}
-                style={[styles.alphabetChip, accessibilityTargetStyle(32)]}
-                accessibilityRole="button"
-                accessibilityLabel={`Ir a la letra ${section.key}`}
-              >
-                <Text style={styles.alphabetChipText}>{section.key}</Text>
-              </Pressable>
-            )}
+            onScrollToIndexFailed={() => undefined}
+            renderItem={({ item: section, index }) => {
+              const selected = section.key === activeKey;
+              return (
+                <Pressable
+                  onPress={() => { selectionTick(); scrollToSection(index); }}
+                  style={[styles.alphabetChip, selected && styles.alphabetChipActive, accessibilityTargetStyle(32)]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`Ir a la letra ${section.key}`}
+                >
+                  <Text style={[styles.alphabetChipText, selected && styles.alphabetChipTextActive]}>{section.key}</Text>
+                </Pressable>
+              );
+            }}
           />
         </View>
       )}
@@ -272,6 +334,13 @@ function DomainContent({
         keyExtractor={(item) => item.routeKey}
         stickySectionHeadersEnabled
         contentContainerStyle={styles.sectionListContent}
+        onScroll={chrome.onScroll}
+        scrollEventThrottle={chrome.scrollEventThrottle}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        // A tapped letter stops overriding the scrollspy once the jump has landed.
+        onMomentumScrollEnd={() => setPendingKey(null)}
+        onScrollEndDrag={() => setPendingKey(null)}
         onScrollToIndexFailed={() => undefined}
         ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
@@ -319,8 +388,6 @@ function VademecumRow({
 }) {
   const category = categoryOf(reference);
   const accent = reference.kind === "drug" || reference.kind === "perfusion" ? categoryAccent(category) : palette.amber;
-  const icon =
-    reference.kind === "drug" ? "pill" : reference.kind === "perfusion" ? "iv-bag" : reference.kind === "fluid" ? "water-outline" : "tag-multiple-outline";
 
   if (reference.kind === "fluid") {
     const stats: [string, string][] = [
@@ -401,8 +468,11 @@ function VademecumRow({
       accessibilityLabel={`${reference.title}. ${reference.subtitle}`}
       accessibilityHint={accessibilityHints.openDetail}
     >
+      {/* No leading glyph. Every row in a domain carried the same one — `pill` on
+          all of fármacos, `iv-bag` on all of perfusiones — so it identified the tab
+          the reader had already chosen, not the row. The accent bar stays: it
+          carries the category, which does vary inside a tab. */}
       <View style={[styles.rowAccentBar, { backgroundColor: accent }]} />
-      <MaterialCommunityIcons name={icon} size={18} color={palette.ink} style={styles.rowIcon} />
       <View style={styles.rowCopy}>
         <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
         <Text style={styles.rowMeta} numberOfLines={reference.kind === "perfusion" ? 1 : 2}>
@@ -533,7 +603,10 @@ function createStyles(palette: AdaptivePalette) {
       alignItems: "center",
       justifyContent: "center",
     },
+    alphabetChipActive: { backgroundColor: palette.ink },
     alphabetChipText: { color: palette.ink, fontSize: 12, fontWeight: "700" },
+    // `paper`, not `white`: in dark mode the active fill is `ink`, which is near-white.
+    alphabetChipTextActive: { color: palette.paper },
     sectionListContent: { paddingBottom: TAB_BAR_INSET },
     sectionHeader: {
       flexDirection: "row",
@@ -559,7 +632,6 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomColor: palette.line,
     },
     rowAccentBar: { width: 3, alignSelf: "stretch", borderRadius: 2 },
-    rowIcon: { marginRight: -spacing.xs },
     rowCopy: { flex: 1 },
     rowTitle: { color: palette.ink, fontSize: 14, fontWeight: "700" },
     rowMeta: { color: palette.inkMuted, fontSize: 11, marginTop: 2, lineHeight: 15 },

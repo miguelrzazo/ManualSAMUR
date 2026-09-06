@@ -14,6 +14,7 @@ import {
   mobilePackageHashPayload,
   isValidAttachment,
   isValidManifestAttachment,
+  isValidMobileUpdateEvent,
   stableRouteKey,
   type MobileAttachmentManifest,
   type MobileContent,
@@ -87,6 +88,8 @@ async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAtta
   if (!/^[a-f0-9]{64}$/.test(snapshot.packageHash ?? "")) return false;
   const content = snapshot.content as MobileContent;
   if (!Array.isArray(content.procedures)) return false;
+  if (!Array.isArray(content.updates) || content.updates.some((event) => !isValidMobileUpdateEvent(event))) return false;
+  if (content.procedures.some((procedure) => !Array.isArray(procedure.updates) || procedure.updates.some((event) => !isValidMobileUpdateEvent(event)))) return false;
   if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
   if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
   if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;

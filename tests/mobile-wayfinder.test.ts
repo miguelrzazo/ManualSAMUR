@@ -50,8 +50,12 @@ test("mobile shell keeps the required five-tab order, with Buscar among the dest
   assert.match(source, /SearchStartingPoints/);
 
   assert.match(source, /FirstUseDisclosure/);
-  assert.match(source, /Información y ajustes/);
-  assert.match(source, /Sin cuenta y sin datos de pacientes/);
+  assert.match(source, /<SettingsModal /);
+  // The settings sheet and the "no account, no patient data" promise moved into
+  // `SettingsModal`; both still have to exist, just not in App.tsx.
+  const settings = readFileSync(path.join(appRoot, "src", "components", "SettingsModal.tsx"), "utf8");
+  assert.match(settings, /Información y ajustes/);
+  assert.match(settings, /no se recogen datos de pacientes|registrar datos de pacientes/);
 });
 
 test("the tab bar and search capsule use Liquid Glass with an honest, palette-based fallback", () => {

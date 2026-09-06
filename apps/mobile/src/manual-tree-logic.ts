@@ -16,6 +16,8 @@
  * (see tests/mobile-manual-tree.test.ts).
  */
 
+import type { MobileUpdateEvent } from "./data/schema.ts";
+
 // ─── Section ordering and grouping rules (mirrors lib/content.ts + lib/manual-data.ts) ──
 
 /** The 9 section values every procedure carries, in the order the web pins them. */
@@ -297,19 +299,7 @@ export function flattenManualTree(sections: readonly ManualTreeSection[], openKe
 
 export type ManualUpdateChangeKind = "nuevo" | "actualizado" | "revisado" | "eliminado" | string;
 
-export interface ManualUpdateEvent {
-  eventId: string;
-  origin?: string;
-  officialUrl?: string;
-  procedureIds: string[];
-  changeKind: ManualUpdateChangeKind;
-  summary: string;
-  effectiveDate: string;
-  approvedAt?: string;
-  isRecent?: boolean;
-  category?: string;
-  diff?: string;
-}
+export type ManualUpdateEvent = MobileUpdateEvent & { changeKind: ManualUpdateChangeKind };
 
 function record(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;

@@ -1,9 +1,16 @@
 import { stableRouteKey, type MobileProcedure } from "./data/schema.ts";
+import { buildSearchSnippet, readableSnippetSource, type SearchSnippet } from "./search-snippet-logic.ts";
 
 export interface ProcedureSearchResult {
   procedure: MobileProcedure;
   /** Lower values are better. Exact identifiers and titles always win. */
   rank: number;
+  /**
+   * Where in the body the query was found, when that is not already obvious
+   * from the title. A result whose own name contains the query needs no
+   * explanation; one matched three paragraphs down does.
+   */
+  snippet?: SearchSnippet;
 }
 
 export interface ProcedureHeading {
@@ -96,7 +103,23 @@ export function searchProcedures(procedures: MobileProcedure[], query: string, l
     .map((procedure, index) => ({ procedure, rank: rankProcedure(procedure, query), index }))
     .filter((result): result is { procedure: MobileProcedure; rank: number; index: number } => result.rank !== undefined)
     .sort((left, right) => left.rank - right.rank || left.procedure.id.localeCompare(right.procedure.id, "es", { numeric: true }) || left.index - right.index);
-  return results.slice(0, limit).map(({ procedure, rank }) => ({ procedure, rank }));
+  return results.slice(0, limit).map(({ procedure, rank }) => ({ procedure, rank, snippet: bodySnippet(procedure, query) }));
+}
+
+/**
+ * A snippet only for hits the title cannot explain.
+ *
+ * `content` is the readable markdown; `searchText` is the flattened index,
+ * which is what actually gets matched but reads as one run-on line — so the
+ * excerpt is cut from `content` when there is one, and only falls back to the
+ * index for procedures that ship as an attachment with no body.
+ */
+function bodySnippet(procedure: MobileProcedure, query: string): SearchSnippet | undefined {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return undefined;
+  if (normalize(procedure.title).includes(normalizedQuery)) return undefined;
+  const source = procedure.content?.trim() ? procedure.content : procedure.searchText;
+  return buildSearchSnippet(readableSnippetSource(source ?? ""), query) ?? undefined;
 }
 
 /** Resolve every supported link form to the one stable native route identity. */

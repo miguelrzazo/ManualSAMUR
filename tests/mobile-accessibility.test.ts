@@ -138,7 +138,13 @@ test("route contracts expose the important stateful workflows", () => {
   };
 
   const procedure = sourceFor("ProcedureScreen");
-  assert.match(procedure, /actualizaciones editoriales/);
+  // The per-procedure update history moved into its own component; the screen
+  // still has to mount it, and the component still has to announce changes.
+  assert.match(procedure, /<ProcedureHistorySection /);
+  assert.match(
+    readFileSync(path.join(process.cwd(), "apps/mobile/src/components/ProcedureHistorySection.tsx"), "utf8"),
+    /accessibilityLiveRegion="polite"/,
+  );
   assert.match(procedure, /accessibilityLiveRegion="polite"/);
   assert.match(procedure, /anexo \$\{attachment\.filename\}/);
   // An anexo opens in-app. `Linking.openURL` on a local file hands the reader to Preview

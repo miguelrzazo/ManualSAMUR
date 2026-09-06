@@ -44,8 +44,15 @@ target.
 
 - Procedures, vademecum, codes, abbreviations, favorites, recents, and official attachment
   manifests resolve from the local package.
-- The map tab provides an offline directory and schematic locations. Full offline tiles and
-  routing are deliberately not claimed until provider feasibility is resolved.
+- Procedure Markdown tables render as native, horizontally scrollable and accessible tables.
+  The parser supports GFM tables and the legacy pipe-table form found in the synced corpus,
+  including escaped separators, empty cells, multiline cells, and surrounding ordered lists.
+- The map tab keeps the searchable offline directory and accessible schematic, and can activate
+  the approved online map: MapLibre GL Native renders CARTO Positron/Dark Matter styles over
+  OpenStreetMap data with the required attribution. Network, provider, stale-data, and location
+  failures fall back to the local directory/schematic; location is requested only after the
+  person explicitly asks to use it. The approved optional Madrid offline pack is managed through
+  MapLibre's native offline support. The app does not claim traffic-aware routing or live capacity.
 - Updates are local-only and transactional at the snapshot level. The API endpoint is the
   existing `/api/mobile/content/v2` contract. Every snapshot carries a content hash and
   package hash; the generator and runtime also verify canonical bytes, stable route keys,
@@ -83,6 +90,13 @@ target.
     rather than hidden. `npm run attachments:check-release` enforces the caps and that
     every essential id is bundled and metadata-complete on every run.
 - There are no accounts, user analytics, or cross-device synchronization paths.
+- The production procedure screen includes an accessible, procedure-scoped update history with
+  newest-first events and expandable source diffs. The Inicio-wide history remains a development
+  prototype behind `__DEV__`.
+- The production Settings sheet exposes content health and recovery, appearance, abbreviations,
+  privacy/location/independence/medical notices, and legal/support metadata. Publisher, privacy,
+  and support values are intentionally marked pending for now; they are non-clickable and the
+  strict release command rejects them until real store-ready values are supplied.
 
 ## Acceptance checklist
 
@@ -92,16 +106,25 @@ and rollback on both an iPhone and representative Android device. VoiceOver/Talk
 Dynamic Type, reduced motion, touch targets, and the final launcher/splash exports need
 human validation before store submission.
 
-## Isolated checks
+## Verification commands
 
-Run these without invoking the web app build:
+Run the mobile generators and release-policy gates first, then the shared repository checks:
 
 ```bash
 npm run mobile:content
 npm run mobile:content:validate
 npm run mobile:typecheck
-npm --prefix apps/mobile run attachments:check-release # approved; expected to pass (see "All attachments are essential" above)
+npm --prefix apps/mobile run attachments:check-release
+npm --prefix apps/mobile run locations:check-release
+npm --prefix apps/mobile run online-map:check-release
+npm test
+npm run lint
+npm run build
 ```
+
+The attachment, location, and online-map checks validate approved policy files and should pass for
+the committed release configuration. `.maestro/procedure-tables.yaml` is the native smoke flow for
+procedure tables; run it against the development client on the available iOS and Android targets.
 
 ## Release readiness and internal-test handoff
 
@@ -125,25 +148,25 @@ promotion, pause, halt, rollback, or production approval. See `release/evidence-
 `release/field-validation-checklist.md`, and `release/human-review-checklist.md` for the
 required evidence and unresolved owner decisions.
 
-The initial evidence keeps the unresolved owner gates from the Wayfinder work visible:
-location source approval (issue 64), online-map provider/licence/scope/size approval
-(issue 65), and the manual accessibility review/device evidence (issue 66). Attachment
-allowlist/asset approval (issue 62) is resolved — the collector reads
-`attachment-release-policy.json`'s `approved` flag and records `ownerGates.attachments`
-as `"approved"` accordingly; it is not inferred from a passing CI run, only from that
-policy file.
+The attachment allowlist/assets, packaged location source, and online-map provider, attribution,
+scope, OS floor, and size budget are approved in their committed policy files. The evidence
+collector reads those explicit approvals; it does not infer owner approval from a passing CI run.
+Accessibility/device review remains human-owned.
 
 The web checks remain separate (`npm test`, `npm run lint`, and `npm run build`).
 - The packaged location directory is guarded by `location-source-policy.json`. Its current
-  source, hospital scope, source date, and freshness window are provisional and explicitly
-  unapproved/unfrozen; owner approval is required before production content can be frozen.
+  source, 21-hospital scope, source date, and 30-day freshness window are approved and frozen.
   Location permission is requested only after tapping “Usar mi ubicación”, and denial keeps
   the searchable directory and accessible schematic available. Distances are on-device
   straight-line estimates only; a selected point is handed to the platform Maps app.
-- The online map seam is provider-neutral and disabled by `online-map-provider-policy.json`.
-  No SDK, tile endpoint, or provider is selected until the owner records approval for the
-  provider, license/attribution, offline scope, OS floor, and installed-size budget. A future
-  adapter must use `OnlineMapRequest`/`OnlineMapSnapshot`; network, provider, stale-data, and
-  location-permission failures transition to the same offline directory and accessible schematic.
-  Run `npm --prefix apps/mobile run online-map:check-release` as a release gate; it is expected
-  to fail until those owner decisions are evidenced.
+- `online-map-provider-policy.json` approves MapLibre GL Native 11.3.8 with CARTO Positron/Dark
+  Matter and OpenStreetMap attribution, iOS 16.4/Android 24 floors, the measured native size, and
+  the Madrid offline-pack scope. The runtime uses `OnlineMapRequest`/`OnlineMapSnapshot`; network,
+  provider, stale-data, and permission failures transition to the same local fallback.
+
+Passing automated checks does not authorize a store release. A named human owner must complete
+the field-validation and human-review checklists, validate privacy/support URLs and store metadata,
+review accessibility and reference-device evidence, provide signed iOS and Android candidates with
+hash/size/signing provenance, and explicitly approve TestFlight and Google Play internal testing.
+App Store and Play submission, production rollout, pause/halt, and rollback remain separate human
+decisions; the repository's release tooling never performs those actions.

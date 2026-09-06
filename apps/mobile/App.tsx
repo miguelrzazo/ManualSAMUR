@@ -2,10 +2,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
+import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
+  Animated,
   FlatList,
   findNodeHandle,
   Linking,
@@ -18,23 +20,25 @@ import {
   View,
   useColorScheme,
   useWindowDimensions,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   type PressableProps,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { ContentProvider, findProcedure, useContent, type SyncProgress, type SyncState } from "./src/content";
-import { contentFreshness, type ContentFreshness } from "./src/content-transaction";
-import type { StagedPackage } from "./src/content-transaction";
-import { PreferencesProvider, usePreferences, type AppearancePreference } from "./src/preferences";
+import { ContentProvider, findProcedure, useContent } from "./src/content";
+import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { useReduceMotion } from "./src/hooks/motion";
+import { useScrollChrome } from "./src/hooks/use-scroll-chrome";
 import { successNotice, warningNotice } from "./src/hooks/haptics";
-import { Chip, Disclosure, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
+import { BackToTop, Chip, CompactHeader, Disclosure, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
 import type { MobileAttachment, MobileProcedure } from "./src/data/schema";
 import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
-import { activeVademecumScope, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, showsVademecumCategories, SEARCH_SCOPES, VADEMECUM_SCOPES, type MobileReferenceSearchResult, type SearchScope, type VademecumScope } from "./src/reference-search-logic";
+import { snippetText, type SearchSnippet } from "./src/search-snippet-logic";
+import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { calculateDoseConversion, doseUtilityEligibility, type DoseOperation, type DoseConversionResult } from "./src/dose-logic";
 import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
@@ -60,6 +64,8 @@ import { InicioScreen } from "./src/screens/InicioScreen";
 import { VademecumScreen } from "./src/screens/VademecumScreen";
 import { MapaScreen } from "./src/screens/MapaScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
+import { ProcedureHistorySection } from "./src/components/ProcedureHistorySection";
+import { SettingsModal } from "./src/components/SettingsModal";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 import { HistoryPrototypeScreen } from "./src/screens/HistoryPrototypeScreen";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
@@ -176,13 +182,20 @@ function fieldLabel(key: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeTitle = true }: {
+function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeTitle = true, headerTitle }: {
   navigation: { setOptions: (options: Record<string, unknown>) => void };
   title: string;
   favorite?: boolean;
   onToggleFavorite?: () => void;
   /** Off for a screen whose body already carries the same name as its own heading. */
   largeTitle?: boolean;
+  /**
+   * Renders the title instead of letting the platform draw the `title` string.
+   * Used by the procedure reader, whose header title fades in only once the
+   * body's own heading has scrolled away. The string is still set, because it is
+   * what the back button on the *next* screen and VoiceOver both read.
+   */
+  headerTitle?: () => React.ReactNode;
 }) {
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -190,11 +203,12 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
       // mixes shouted and sentence-cased entries — `displayTitle` levels them.
       title: displayTitle(title),
       headerLargeTitle: largeTitle,
+      headerTitle,
       headerRight: onToggleFavorite
         ? () => <FavoriteToggle favorite={Boolean(favorite)} onToggle={onToggleFavorite} size={24} />
         : undefined,
     });
-  }, [navigation, title, favorite, onToggleFavorite, largeTitle]);
+  }, [navigation, title, favorite, onToggleFavorite, largeTitle, headerTitle]);
 }
 
 function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
@@ -209,7 +223,7 @@ function SectionHeading({ title, action, onAction }: { title: string; action?: s
   );
 }
 
-function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure: MobileProcedure; onPress: () => void; showFavorite?: boolean }) {
+function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { procedure: MobileProcedure; onPress: () => void; showFavorite?: boolean; snippet?: SearchSnippet }) {
   const palette = useTheme();
   const styles = useAppStyles();
   const { favorites, toggleFavorite } = useContent();
@@ -217,31 +231,31 @@ function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure:
   const favorite = favorites.includes(routeKey);
   return (
     <View style={styles.resourceRow}>
-      <Pressable testID={`procedure-row-${procedure.id}`} onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${procedure.id}, ${displayTitle(procedure.title)}`} accessibilityHint={accessibilityHints.openDetail}>
-        <View style={styles.resourceCode}><Text style={styles.resourceCodeText}>{procedure.id}</Text></View>
+      <Pressable testID={`procedure-row-${procedure.id}`} onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${procedure.id}, ${displayTitle(procedure.title)}${snippet ? `. Coincidencia: ${snippetText(snippet)}` : ""}`} accessibilityHint={accessibilityHints.openDetail}>
+        {/* A kind icon, not the id. The id was set in a 42pt tile at weight 900,
+            which gave "304_02" the same visual weight as the name and still broke
+            across two lines as "304_0 / 2" — an identifier rendered as a word
+            hyphenated in the wrong place. It reads perfectly well on the meta line,
+            and the tile now answers the question a mixed result list actually
+            raises: is this a procedure, a drug or a code? */}
+        <View style={styles.resourceCode}><MaterialCommunityIcons name="clipboard-text-outline" size={17} color={palette.primary} /></View>
         <View style={styles.resourceCopy}>
           <Text style={styles.resourceTitle}>{displayTitle(procedure.title)}</Text>
-          <Text style={styles.resourceMeta}>{procedure.attachments.length ? `${procedure.section} · ${procedure.attachments.length} anexos` : procedure.section}</Text>
+          <Text style={styles.resourceMeta}>{procedure.id} · {procedure.attachments.length ? `${procedure.section} · ${procedure.attachments.length} anexos` : procedure.section}</Text>
+          {/* Why this result is here, when the title does not say so. */}
+          {snippet && (
+            <Text style={styles.resourceSnippet} numberOfLines={2}>
+              {snippet.segments.map((segment, index) => (
+                <Text key={index} style={segment.match ? styles.resourceSnippetMatch : undefined}>{segment.text}</Text>
+              ))}
+            </Text>
+          )}
         </View>
       </Pressable>
       {showFavorite && <FavoriteToggle favorite={favorite} onToggle={() => toggleFavorite(routeKey)} title={displayTitle(procedure.title)} />}
       <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />
     </View>
   );
-}
-
-type SyncPresentation = { title: string; detail: string; icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; color: string };
-
-function syncPresentation(palette: AdaptivePalette, state: ReturnType<typeof useContent>["syncState"], freshness: ContentFreshness, progress: ReturnType<typeof useContent>["syncProgress"], stagedHash?: string): SyncPresentation {
-  const progressText = progress.totalBytes && progress.downloadedBytes !== undefined
-    ? `${Math.round((progress.downloadedBytes / progress.totalBytes) * 100)}% en curso`
-    : "paquete verificado";
-  if (state === "checking" || state === "downloading" || state === "validating" || state === "activating") return { title: "Actualizando contenido", detail: progressText, icon: "cloud-sync-outline", color: palette.green };
-  if (state === "success") return { title: "Contenido actualizado", detail: "última activación correcta", icon: "cloud-check-outline", color: palette.green };
-  if (state === "failure") return { title: "Actualización no aplicada", detail: stagedHash ? "paquete pendiente; contenido anterior intacto" : "contenido anterior intacto", icon: "cloud-alert-outline", color: palette.primary };
-  if (state === "recovery") return { title: "Actualización pendiente", detail: stagedHash ? `recuperable · ${stagedHash.slice(0, 8)}` : "recuperación disponible", icon: "history", color: palette.amber };
-  if (freshness !== "fresh" || state === "stale" || state === "offline") return { title: "Contenido sin actualizar", detail: "busca una actualización cuando puedas", icon: "clock-alert-outline", color: palette.amber };
-  return { title: "Contenido al día", detail: "listo para la guardia", icon: "database-check-outline", color: palette.green };
 }
 
 // Inicio's actual content (the manual tree, favoritos, recientes and the
@@ -259,6 +273,8 @@ function syncPresentation(palette: AdaptivePalette, state: ReturnType<typeof use
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
   const styles = useAppStyles();
   const { snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
+  const { appearance, setAppearance } = usePreferences();
+  const reduceMotion = useReduceMotion();
   const settingsTriggerRef = useRef<View>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -266,7 +282,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
-      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} />
+      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "0.1.0"} />
     </SafeAreaView>
   );
 }
@@ -291,24 +307,27 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchScope>("Todo");
-  const [vademecumCategory, setVademecumCategory] = useState<VademecumScope>("Todos");
-  const activeCategory = activeVademecumScope(filter, vademecumCategory);
+  const chrome = useScrollChrome();
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
   const vademecumResults = useMemo(() => searchVademecum(content, query), [content, query]);
   const codeResults = useMemo(() => searchCodes(content.codes, query), [content.codes, query]);
-  const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults.map(({ procedure }) => procedure);
-  const visibleVademecum = (filter === "Todo" || filter === "Vademécum")
-    ? vademecumResults.filter((item) => activeCategory === "Todos" || (activeCategory === "Fármacos" && item.kind === "drug") || (activeCategory === "Comerciales" && item.kind === "commercialName") || (activeCategory === "Perfusiones" && item.kind === "perfusion") || (activeCategory === "Fluidos" && item.kind === "fluid"))
-    : [];
+  const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults;
+  const visibleVademecum = filter === "Todo" || filter === "Vademécum" ? vademecumResults : [];
   const visibleCodes = filter === "Todo" || filter === "Códigos" ? codeResults : [];
   const rows = [
-    ...visibleProcedures.map((item) => ({ kind: "procedure" as const, item })),
-    ...visibleVademecum.map((item) => ({ kind: "reference" as const, item })),
-    ...visibleCodes.map((item) => ({ kind: "reference" as const, item })),
+    ...visibleProcedures.map((result) => ({ kind: "procedure" as const, item: result.procedure, snippet: result.snippet })),
+    ...visibleVademecum.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
+    ...visibleCodes.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
   ];
+  const resultsRef = useRef<FlatList<(typeof rows)[number]>>(null);
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
+      {/* Title, field and scope chips give way to the results on a downward
+          scroll, collapsing into the compact bar — see `useScrollChrome`. */}
+      {chrome.collapsed && <CompactHeader title="Buscar" onExpand={chrome.expand} />}
+      {!chrome.collapsed && (
+      <>
       <PageHeader title="Buscar" />
       {/* No `autoFocus`: a tab that raises the keyboard every time it is selected cannot
           be used to glance at recent searches, which is most of what this screen is for. */}
@@ -325,25 +344,26 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
         accessibilityRole="tablist"
         renderItem={({ item }) => <Chip label={item} selected={filter === item} onPress={() => setFilter(item)} role="tab" />}
       />
-      {showsVademecumCategories(filter) && <FlatList
-        horizontal
-        data={VADEMECUM_SCOPES}
-        keyExtractor={(item) => item}
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScroller}
-        contentContainerStyle={styles.filterScrollerContent}
-        accessibilityRole="tablist"
-        renderItem={({ item }) => <Chip label={item} selected={vademecumCategory === item} onPress={() => setVademecumCategory(item)} role="tab" />}
-      />}
+      {/* No second chip row here. Choosing "Vademécum" above used to open
+          "Todos · Fármacos · Comerciales · Perfusiones · Fluidos" underneath it —
+          the same taxonomy the Vademécum tab already puts on screen as its domain
+          switcher, stacked as a second row of pills on the one screen whose job is
+          to search across all of them. Narrowing to a single domain is what that
+          tab is for; global search stays global. */}
+      </>
+      )}
       {query.trim() ? (
         <FlatList
+          ref={resultsRef}
           data={rows}
           keyExtractor={(item, index) => `${item.kind}-${item.item.id}-${index}`}
           contentContainerStyle={styles.listContent}
           keyboardShouldPersistTaps="handled"
+          onScroll={chrome.onScroll}
+          scrollEventThrottle={chrome.scrollEventThrottle}
           onScrollBeginDrag={() => rememberQuery(query)}
           ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con un código, un nombre, un sinónimo o una palabra del contenido." />}
-          renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => { rememberQuery(query); openProcedure(item.item.id); }} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => { rememberQuery(query); stack?.navigate("Code", { routeKey }); }} onVademecum={(routeKey) => { rememberQuery(query); stack?.navigate("Vademecum", { routeKey }); }} onDrug={(id) => { rememberQuery(query); stack?.navigate("Drug", { id }); }} />}
+          renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite snippet={item.snippet} onPress={() => { rememberQuery(query); openProcedure(item.item.id); }} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => { rememberQuery(query); stack?.navigate("Code", { routeKey }); }} onVademecum={(routeKey) => { rememberQuery(query); stack?.navigate("Vademecum", { routeKey }); }} onDrug={(id) => { rememberQuery(query); stack?.navigate("Drug", { id }); }} />}
         />
       ) : (
         <SearchStartingPoints
@@ -354,6 +374,13 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
           onOpen={(item) => openSavedReference(stack, item)}
         />
       )}
+      <BackToTop
+        visible={chrome.showBackToTop}
+        onPress={() => {
+          resultsRef.current?.scrollToOffset({ offset: 0, animated: true });
+          chrome.reset();
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -433,7 +460,17 @@ function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: M
   return <View style={styles.resourceRow}>
     <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${reference.title}. ${reference.subtitle}`} accessibilityHint={accessibilityHints.openDetail}>
     <View style={[styles.resourceCode, reference.kind === "code" ? styles.codeResultCode : reference.kind === "abbreviation" ? styles.abbreviationResultCode : styles.drugCode]}><MaterialCommunityIcons name={icon} size={17} color={palette.ink} /></View>
-    <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{reference.title}</Text><Text style={styles.resourceMeta}>{reference.badge ? `${reference.badge} · ` : ""}{reference.subtitle}</Text></View>
+    {/* A code's number is half of its name — "11" and "Accidente de tráfico" are
+        the two things you look one up by — so it belongs on the title line rather
+        than greyed out at 11pt in the meta. Every other kind keeps its badge in
+        the meta, where "PERF" or "MARCA" is a classification, not an identifier. */}
+    <View style={styles.resourceCopy}>
+      <Text style={styles.resourceTitle}>
+        {reference.kind === "code" && reference.badge ? <Text style={styles.resourceInlineCode}>{reference.badge}  </Text> : null}
+        {reference.title}
+      </Text>
+      <Text style={styles.resourceMeta}>{reference.kind !== "code" && reference.badge ? `${reference.badge} · ` : ""}{reference.subtitle}</Text>
+    </View>
     </Pressable>
     {supportsFavorites && <FavoriteToggle favorite={favorite} onToggle={() => toggleFavorite(reference.routeKey)} title={reference.title} />}
     <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />
@@ -566,6 +603,21 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const [attachmentRecords, setAttachmentRecords] = useState<Record<string, AttachmentRecord>>({});
   const procedure = findProcedure(content, route.params.id);
   const scrollRef = useRef<ScrollView>(null);
+  const chrome = useScrollChrome();
+  /**
+   * The reader's scroll position, on the native driver, so the title handoff
+   * below runs on the UI thread and cannot stutter behind a busy JS frame.
+   */
+  const [scrollY] = useState(() => new Animated.Value(0));
+  /** Where the body's own heading ends, in content coordinates. */
+  const [titleBottom, setTitleBottom] = useState(0);
+  /**
+   * `contentInsetAdjustmentBehavior="automatic"` means `contentOffset.y` starts
+   * *negative* by the height of the navigation bar, so the handoff thresholds
+   * have to be expressed in the same frame of reference. iOS reports the inset
+   * on every scroll event; it is read once rather than assumed.
+   */
+  const [insetTop, setInsetTop] = useState(0);
   const routeKey = procedure ? procedureRouteKey(procedure) : `procedure:${route.params.id}`;
   const sections = useMemo(() => procedure ? splitProcedureSections(procedure.content) : [], [procedure]);
   const headings = useMemo(() => procedureHeadings(procedure?.content ?? ""), [procedure]);
@@ -590,16 +642,80 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   }, [procedure]);
   const procedureFavorite = favorites.includes(routeKey);
   const onToggleProcedureFavorite = useCallback(() => toggleFavorite(routeKey), [toggleFavorite, routeKey]);
+
+  /**
+   * Title handoff.
+   *
+   * The screen used to render the procedure's name twice at once: truncated in
+   * the navigation bar and again, full size, as the first line of the body — the
+   * same words twice, forty points apart, competing for the top of the screen.
+   * The bar's copy now starts invisible and only fades and rises into place over
+   * the ~36pt in which the body's copy is leaving, so the two read as one title
+   * moving rather than two titles disagreeing.
+   */
+  const handoff = useMemo(() => {
+    const start = Math.max(0, (titleBottom || 72) - insetTop - 28);
+    return { start, end: start + 36 };
+  }, [titleBottom, insetTop]);
+  const headerTitleOpacity = useMemo(
+    () => scrollY.interpolate({ inputRange: [handoff.start, handoff.end], outputRange: [0, 1], extrapolate: "clamp" }),
+    [handoff.end, handoff.start, scrollY],
+  );
+  const headerTitleShift = useMemo(
+    () => scrollY.interpolate({ inputRange: [handoff.start, handoff.end], outputRange: [10, 0], extrapolate: "clamp" }),
+    [handoff.end, handoff.start, scrollY],
+  );
+  const bodyTitleOpacity = useMemo(
+    () => scrollY.interpolate({ inputRange: [handoff.start, handoff.end], outputRange: [1, 0], extrapolate: "clamp" }),
+    [handoff.end, handoff.start, scrollY],
+  );
+  const headerTitle = useCallback(
+    () => (
+      <Animated.Text
+        style={[styles.headerHandoffTitle, { opacity: headerTitleOpacity, transform: [{ translateY: headerTitleShift }] }]}
+        numberOfLines={1}
+        // The bar and the body say the same thing, so only one of them should be
+        // read aloud; `useDetailHeader` still sets the plain string for the back
+        // button and the screen's accessible name.
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        {displayTitle(procedure ? procedure.title : "Procedimiento")}
+      </Animated.Text>
+    ),
+    [headerTitleOpacity, headerTitleShift, procedure, styles.headerHandoffTitle],
+  );
+
+  const onProcedureScroll = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+        useNativeDriver: true,
+        listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+          readingPositions.set(routeKey, event.nativeEvent.contentOffset.y);
+          chrome.onScroll(event);
+          const top = event.nativeEvent.contentInset?.top ?? 0;
+          setInsetTop((current) => (current === top ? current : top));
+        },
+      }),
+    [chrome, routeKey, scrollY, setInsetTop],
+  );
   // The header carries the procedure's name. It used to carry the raw id
   // ("Procedimiento 601_01") because a 60-character name wraps to four lines at
-  // large-title size — so the large title is off here instead, which also stops the
-  // header duplicating the name the body already renders as its own heading. The id
-  // stays on the meta line below, where support calls can still read it.
+  // large-title size — so the large title is off here, and the id stays on the
+  // meta line below where support calls can still read it. The name itself is
+  // handed over from the body rather than printed twice: see `handoff` above.
   // No `onToggleFavorite` here on purpose. On the other detail screens the favourite is a
   // fine `headerRight`, but this screen also renders the procedure's own name as the first
   // line of the body (see below), so the star ended up as an unlabelled glyph competing
   // with a collapsing large title. It moves next to that title instead, with a word on it.
-  useDetailHeader({ navigation, title: procedure ? procedure.title : "Procedimiento", largeTitle: false });
+  // Under Reduce Motion there is no handoff to run, so the platform draws the
+  // title itself and it is simply always there.
+  useDetailHeader({
+    navigation,
+    title: procedure ? procedure.title : "Procedimiento",
+    largeTitle: false,
+    headerTitle: reduceMotion ? undefined : headerTitle,
+  });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const relatedIds = [...new Set([
     ...procedure.related,
@@ -633,14 +749,18 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     navigation.push("Anexo", { attachmentId: attachment.id });
   };
 
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView
+  return <SafeAreaView style={styles.screen} edges={[]}><Animated.ScrollView
     ref={scrollRef}
     contentContainerStyle={styles.detailContent}
     contentInsetAdjustmentBehavior="automatic"
-    onScroll={(event) => readingPositions.set(routeKey, event.nativeEvent.contentOffset.y)}
-    scrollEventThrottle={100}
+    onScroll={onProcedureScroll}
+    scrollEventThrottle={16}
   >
-    <Text style={styles.detailTitle} accessibilityRole="header">{displayTitle(procedure.title)}</Text>
+    <Animated.Text
+      style={[styles.detailTitle, reduceMotion ? null : { opacity: bodyTitleOpacity }]}
+      onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTitleBottom(y + height); }}
+      accessibilityRole="header"
+    >{displayTitle(procedure.title)}</Animated.Text>
     <Press
       onPress={onToggleProcedureFavorite}
       style={[styles.favoriteAction, procedureFavorite && styles.favoriteActionOn]}
@@ -658,11 +778,20 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     <ProcedureEditorialBlocks blocks={procedure.editorialBlocks} onProcedure={(id) => navigation.push("Procedure", { id })} />
     {related.length > 0 && <><SectionHeading title="Referencias relacionadas" /><View style={styles.cardList}>{related.map((item) => <ProcedureRow key={`related-${item.id}`} procedure={item} onPress={() => navigation.push("Procedure", { id: item.id })} />)}</View></>}
     {unresolvedRelatedIds.length > 0 && <View style={styles.sourceNotice}><MaterialCommunityIcons name="link-variant-off" size={19} color={palette.danger} /><Text style={styles.sourceNoticeText}>Algunas referencias ({unresolvedRelatedIds.join(", ")}) no están incluidas en este paquete local.</Text></View>}
-    {procedure.updates.length > 0 && <><SectionHeading title="Actualizaciones" /><View style={styles.updateList} accessibilityLiveRegion="polite" accessibilityLabel={`${procedure.updates.length} actualizaciones editoriales`}>{procedure.updates.map((update, index) => <ProcedureUpdate key={index} update={update} />)}</View></>}
+    <ProcedureHistorySection procedureId={procedure.id} updates={content.updates} />
     {imageAttachments.length > 0 && <><SectionHeading title="Figuras" /><View style={styles.figureList}>{imageAttachments.map((attachment) => <ProcedureFigure key={attachment.id} attachment={attachment} record={attachmentRecords[attachment.id]} onOpen={() => openAttachment(attachment)} />)}</View></>}
     {(documentAttachments.length > 0 || attachmentError) && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{documentAttachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const local = isLocallyAvailable(record, attachment); return <Pressable key={attachment.id} onPress={() => openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`Abrir anexo ${attachment.filename}`} accessibilityHint="Se abre dentro de la app."><MaterialCommunityIcons name="file-pdf-box" size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachmentKindLabel(attachment.kind)}{local ? "" : " · se descarga al abrirlo"}</Text></View><MaterialCommunityIcons name="chevron-right" size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
     <Text style={styles.detailDisclaimer}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text>
-  </ScrollView></SafeAreaView>;
+  </Animated.ScrollView>
+  {/* No tab bar under a pushed screen, so the control sits lower than it does on
+      the list destinations — clear of the home indicator and nothing else. */}
+  <BackToTop
+    visible={chrome.showBackToTop}
+    onPress={() => { scrollRef.current?.scrollTo({ y: 0, animated: !reduceMotion }); chrome.reset(); }}
+    label="Volver al principio del procedimiento"
+    bottom={spacing.xl}
+  />
+  </SafeAreaView>;
 }
 
 function DoseUtilityCard({ drug }: { drug: Record<string, unknown> }) {
@@ -865,66 +994,12 @@ function ProcedureEditorialBlocks({ blocks, onProcedure }: { blocks: unknown[]; 
   return <><SectionHeading title="Puntos destacados" /><View style={styles.editorialList}>{usable.map((block, index) => { const items = Array.isArray(block.items) ? block.items : []; const assets = Array.isArray(block.assets) ? block.assets : []; return <View key={String(block.id ?? index)} style={styles.editorialBlock}><Text style={styles.infoLabel}>{String(block.label ?? block.type ?? "Nota")}</Text>{typeof block.title === "string" && <Text style={styles.editorialTitle}>{block.title}</Text>}{typeof block.content === "string" && <Text style={styles.infoValue}>{block.content}</Text>}{items.map((item, itemIndex) => { const itemId = typeof item === "string" && /^\d/.test(item) ? item : undefined; const itemText = typeof item === "string" ? item : String((item as Record<string, unknown>)?.label ?? (item as Record<string, unknown>)?.title ?? "Referencia"); return itemId && onProcedure ? <Pressable key={itemIndex} onPress={() => onProcedure(itemId)} style={styles.editorialLink} accessibilityRole="button" accessibilityLabel={`Abrir procedimiento ${itemId}`}><Text style={styles.markdownText}>• {itemText}</Text><MaterialCommunityIcons name="chevron-right" size={17} color={palette.inkMuted} /></Pressable> : <Text key={itemIndex} style={styles.markdownText}>• {itemText}</Text>; })}{assets.map((asset, assetIndex) => <Text key={assetIndex} style={styles.resourceMeta}>{String((asset as Record<string, unknown>)?.title ?? (asset as Record<string, unknown>)?.src ?? "Material editorial")}</Text>)}</View>; })}</View></>;
 }
 
-function ProcedureUpdate({ update }: { update: unknown }) {
-  const styles = useAppStyles();
-  const value = update && typeof update === "object" ? update as Record<string, unknown> : {};
-  const date = String(value.date ?? value.updatedAt ?? value.createdAt ?? "Fecha no indicada");
-  const label = String(value.title ?? value.label ?? value.type ?? "Actualización del contenido");
-  const detail = String(value.summary ?? value.description ?? value.message ?? "");
-  return <View style={styles.updateRow} accessible accessibilityRole="text" accessibilityLabel={`${label}. ${date.slice(0, 10)}${detail ? `. ${detail}` : ""}`}><Text style={styles.infoLabel}>{date.slice(0, 10)}</Text><Text style={styles.resourceTitle}>{label}</Text>{detail && <Text style={styles.resourceMeta}>{detail}</Text>}</View>;
-}
-
 function EmptyState({ title, detail }: { title: string; detail: string }) {
   const palette = useTheme();
   const styles = useAppStyles(); return <View style={styles.emptyState}><MaterialCommunityIcons name="bookmark-off-outline" size={28} color={palette.inkMuted} /><Text style={styles.emptyTitle}>{title}</Text><Text style={styles.emptyDetail}>{detail}</Text></View>; }
 function MissingResource({ title, detail, onRecover }: { title: string; detail?: string; onRecover?: () => void }) {
   const palette = useTheme();
   const styles = useAppStyles(); return <SafeAreaView style={styles.screen}><View style={styles.emptyState}><MaterialCommunityIcons name="file-alert-outline" size={30} color={palette.primary} /><Text style={styles.emptyTitle}>{title}</Text>{detail && <Text style={styles.emptyDetail}>{detail}</Text>}{onRecover && <Pressable onPress={onRecover} style={styles.primaryButton} accessibilityRole="button"><Text style={styles.primaryButtonText}>Buscar otro procedimiento</Text></Pressable>}</View></SafeAreaView>; }
-
-function SettingsModal({ visible, onClose, onRefresh, onCancelRefresh, onResumeStaged, onDiscardStaged, onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState, syncProgress, stagedPackage }: { visible: boolean; onClose: () => void; onRefresh: () => Promise<void>; onCancelRefresh: () => void; onResumeStaged: () => Promise<void>; onDiscardStaged: () => Promise<void>; onOpenAbbreviations: () => void; generatedAt: string; packageHash?: string; isRefreshing: boolean; lastError?: string; syncState: SyncState; syncProgress: SyncProgress; stagedPackage?: StagedPackage }) {
-  const palette = useTheme();
-  const styles = useAppStyles();
-  const { appearance, setAppearance } = usePreferences();
-  const reduceMotion = useReduceMotion();
-  const { width, fontScale } = useWindowDimensions();
-  const layout = adaptiveLayout(width, fontScale);
-  const appearanceLabels: Record<AppearancePreference, string> = { system: "Sistema", light: "Claro", dark: "Oscuro" };
-  const presentation = syncPresentation(palette, syncState, contentFreshness(generatedAt), syncProgress, stagedPackage?.packageHash);
-  const progressPercent = syncProgress.totalBytes && syncProgress.downloadedBytes !== undefined ? Math.min(100, Math.round((syncProgress.downloadedBytes / syncProgress.totalBytes) * 100)) : undefined;
-  return <Modal visible={visible} animationType={reduceMotion ? "none" : "slide"} presentationStyle="pageSheet" allowSwipeDismissal onRequestClose={onClose}>
-    <SafeAreaView style={styles.modal} edges={["top", "bottom"]}>
-      <ScrollView contentContainerStyle={styles.modalContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.modalHeader} accessibilityRole="header"><View><Text style={styles.modalTitle}>Información y ajustes</Text></View><Pressable onPress={onClose} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar información y ajustes" accessibilityHint={accessibilityHints.dismiss}><Text style={styles.modalClose}>Cerrar</Text></Pressable></View>
-        <Text style={styles.settingsSectionTitle}>Contenido y sincronización</Text>
-        <View style={styles.settingsCard} accessibilityLabel="Estado del contenido local">
-          <MaterialCommunityIcons name={presentation.icon} size={25} color={presentation.color} />
-          <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{presentation.title}</Text><Text style={styles.resourceMeta}>{lastError ?? `${generatedAt.slice(0, 10)} · rev ${packageHash?.slice(0, 10) ?? "—"} · ${presentation.detail}`}</Text>{progressPercent !== undefined && <View style={styles.progressTrack} accessibilityLabel={`Progreso de actualización ${progressPercent}%`}><View style={[styles.progressFill, { width: `${progressPercent}%` }]} /></View>}</View>
-        </View>
-        {isRefreshing ? <Pressable onPress={onCancelRefresh} disabled={syncState === "activating"} style={[styles.primaryButton, syncState === "activating" && styles.disabledButton]} accessibilityRole="button" accessibilityLabel={syncState === "activating" ? "Aplicando actualización" : "Cancelar actualización"}><Text style={styles.primaryButtonText}>{syncState === "activating" ? "Aplicando actualización…" : "Cancelar actualización"}</Text></Pressable> : <Pressable onPress={() => void onRefresh()} style={styles.primaryButton} accessibilityRole="button" accessibilityLabel="Buscar actualización"><Text style={styles.primaryButtonText}>Buscar actualización</Text></Pressable>}
-        {stagedPackage && <View style={styles.recoveryActions} accessibilityLiveRegion="polite"><Text style={styles.resourceMeta}>Hay un paquete descargado que no llegó a activarse. El contenido anterior sigue protegido.</Text><View style={styles.recoveryButtons}><Pressable onPress={() => void onResumeStaged()} disabled={isRefreshing} style={styles.recoveryButton} accessibilityRole="button" accessibilityLabel="Reanudar actualización pendiente"><Text style={styles.recoveryButtonText}>Reanudar</Text></Pressable><Pressable onPress={() => void onDiscardStaged()} disabled={isRefreshing} style={styles.recoveryButtonSecondary} accessibilityRole="button" accessibilityLabel="Descartar actualización pendiente"><Text style={styles.recoveryButtonSecondaryText}>Descartar</Text></Pressable></View></View>}
-
-        <Text style={styles.settingsSectionTitle}>Consulta rápida</Text>
-        <Pressable onPress={onOpenAbbreviations} style={styles.settingsCard} accessibilityRole="button" accessibilityLabel="Abrir abreviaturas">
-          <MaterialCommunityIcons name="format-letter-case" size={25} color={palette.green} />
-          <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>Abreviaturas</Text><Text style={styles.resourceMeta}>Búsqueda local por abreviatura o significado</Text></View>
-          <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} />
-        </Pressable>
-
-        <Text style={styles.settingsSectionTitle}>Apariencia</Text>
-        <View style={[styles.appearanceControl, layout.singleColumn && styles.appearanceControlStacked]} accessibilityRole="radiogroup" accessibilityLabel="Apariencia de la aplicación">
-          {(Object.keys(appearanceLabels) as AppearancePreference[]).map((option) => <Pressable key={option} onPress={() => setAppearance(option)} style={[styles.appearanceOption, appearance === option && styles.appearanceOptionActive]} accessibilityRole="radio" accessibilityState={{ selected: appearance === option }}><MaterialCommunityIcons name={option === "system" ? "theme-light-dark" : option === "light" ? "white-balance-sunny" : "weather-night"} size={17} color={appearance === option ? palette.white : palette.inkMuted} /><Text style={[styles.appearanceText, appearance === option && styles.appearanceTextActive]}>{appearanceLabels[option]}</Text></Pressable>)}
-        </View>
-
-        <Text style={styles.settingsSectionTitle}>Aviso y alcance</Text>
-        <Text style={styles.disclaimer}>Adaptación digital no oficial. No sustituye instrucciones, protocolos ni criterio profesional. Verifica la versión operativa vigente con SAMUR-Protección Civil Madrid.</Text>
-        <Text style={styles.settingsSectionTitle}>Privacidad y funcionamiento</Text>
-        <Text style={styles.disclaimer}>Sin cuenta y sin datos de pacientes. Tus favoritos, recientes y preferencias se quedan en este dispositivo.</Text>
-        <Pressable onPress={() => void Linking.openURL("https://servpub.madrid.es/manualsamur/bin/view/Main/")} style={styles.linkRow} accessibilityRole="link"><Text style={styles.linkText}>Abrir fuente oficial del manual</Text><MaterialCommunityIcons name="open-in-new" size={17} color={palette.primary} /></Pressable>
-        <Text style={styles.legalText}>ManualSAMUR y SAMUR-Protección Civil son referencias de sus titulares. Manual de procedimientos SAMUR PC no implica afiliación, aprobación ni representación institucional.</Text>
-      </ScrollView>
-    </SafeAreaView>
-  </Modal>;
-}
 
 function LaunchScreen() {
   const styles = useAppStyles();
@@ -1046,8 +1121,8 @@ function createStyles(palette: AdaptivePalette) {
   sectionAction: { color: palette.primary, fontSize: 12, fontWeight: "800", paddingBottom: 2 },
   cardList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl },
   resourceRow: { minHeight: 70, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderBottomWidth: 1, borderBottomColor: palette.line }, resourceRowMain: { flex: 1, minHeight: 44, flexDirection: "row", alignItems: "center", gap: spacing.md },
-  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" }, resourceCodeText: { fontSize: 11, fontWeight: "900", color: palette.primary },
-  drugCode: { backgroundColor: palette.surfaceMuted }, resourceCopy: { flex: 1 }, resourceTitle: { color: palette.ink, fontSize: 14, lineHeight: 18, fontWeight: "700" }, resourceMeta: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: 3 },
+  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" },
+  drugCode: { backgroundColor: palette.surfaceMuted }, resourceCopy: { flex: 1 }, resourceTitle: { color: palette.ink, fontSize: 14, lineHeight: 18, fontWeight: "700" }, resourceInlineCode: { color: palette.primary, fontWeight: "800" }, resourceMeta: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: 3 }, resourceSnippet: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 5 }, resourceSnippetMatch: { color: palette.ink, fontWeight: "700", backgroundColor: palette.amberWash },
   pressed: { opacity: 0.72 },
   progressTrack: { height: 4, borderRadius: 2, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
   disclaimer: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginVertical: spacing.md },
@@ -1058,7 +1133,7 @@ function createStyles(palette: AdaptivePalette) {
   onlineMapContainer: { height: 300, borderRadius: radii.lg, overflow: "hidden", position: "relative", marginBottom: spacing.md, borderWidth: 1, borderColor: palette.line }, onlineMapAttribution: { position: "absolute", right: 6, bottom: 6, backgroundColor: "rgba(255,255,255,0.82)", borderRadius: radii.sm, paddingHorizontal: 6, paddingVertical: 2 }, onlineMapAttributionText: { fontSize: 10, color: "#13233D" }, onlineMapRefresh: { position: "absolute", top: 8, right: 8, width: 32, height: 32, borderRadius: 16, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" }, retryLinkText: { color: palette.ink, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: 4 },
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: palette.surfaceMuted, overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: palette.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: palette.paper, transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: palette.paper, transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: palette.paper, transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPin: { position: "absolute", width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: palette.white }, mapPinRed: { backgroundColor: palette.primary }, mapPinNavy: { backgroundColor: palette.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: palette.ink, fontWeight: "900" }, mapNote: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl },
   locationRow: { minHeight: 66, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, locationIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" }, locationIconBase: { backgroundColor: palette.amberWash }, locationAddress: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: 2 }, locationDistance: { color: palette.green, fontSize: 11, fontWeight: "800", lineHeight: 16, marginTop: 2 }, locationFreshness: { color: palette.inkMuted, fontSize: 10, lineHeight: 14, marginTop: 2 },
-  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: spacing.sm }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, orderedMarker: { color: palette.primary, fontSize: 15, lineHeight: 23, fontWeight: "800", minWidth: 22 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
+  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, headerHandoffTitle: { color: palette.ink, fontSize: 17, fontWeight: "600", letterSpacing: -0.4, maxWidth: 240, textAlign: "center" }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: spacing.sm }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, orderedMarker: { color: palette.primary, fontSize: 15, lineHeight: 23, fontWeight: "800", minWidth: 22 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
   favoriteAction: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.xs + 2, minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, marginTop: spacing.md },
   favoriteActionOn: { backgroundColor: palette.primaryWash },
   favoriteActionText: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },

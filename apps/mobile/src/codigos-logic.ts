@@ -378,6 +378,56 @@ export function hasTetraCodes(codes: CodigosCode[]): boolean {
   return codes.some((c) => c.tetra);
 }
 
+/**
+ * The two annotations a code list can carry, as data.
+ *
+ * They used to be two hand-built rows in a `legendBlock` rendered *above* the
+ * list, immediately under the category pills — a caveat about a handful of codes
+ * occupying the same fold as the screen's primary navigation, on every tab, read
+ * once and then in the way forever. They are footnotes, so they are rendered as
+ * footnotes now (`ListFooterComponent`), and both share one icon+text treatment
+ * rather than reading as two unrelated notices.
+ *
+ * `icon` names a MaterialCommunityIcons glyph and matches the marker shown on the
+ * individual rows the note is about, which is the only thing that connects them.
+ */
+export interface CodigosLegendNote {
+  key: "tetra" | "noReport";
+  icon: "radio-handheld" | "file-remove-outline";
+  /** Text before the emphasised span. */
+  lead: string;
+  strong: string;
+  /** Text after it. */
+  trail: string;
+  /** `true` when the note's icon is the app's primary colour on the rows it describes. */
+  accented: boolean;
+}
+
+export function codeLegendNotes(tabKey: TopTabKey, codes: CodigosCode[]): CodigosLegendNote[] {
+  const notes: CodigosLegendNote[] = [];
+  if (tabKey === "incidente" && hasTetraCodes(codes)) {
+    notes.push({
+      key: "tetra",
+      icon: "radio-handheld",
+      lead: "Transmitir por ",
+      strong: "TETRA y llamada de voz",
+      trail: ", salvo levedad contrastada",
+      accented: true,
+    });
+  }
+  if (usesFamilyColor(tabKey) && hasNoReportCodes(codes)) {
+    notes.push({
+      key: "noReport",
+      icon: "file-remove-outline",
+      lead: "Los códigos marcados con este icono ",
+      strong: "no generan informe asistencial",
+      trail: "",
+      accented: false,
+    });
+  }
+  return notes;
+}
+
 // ─── Otros: ICAO / Indicativos / Claves / Lima ──────────────────────────────
 
 export interface CodigosIndicativo {

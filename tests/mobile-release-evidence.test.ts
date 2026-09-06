@@ -171,7 +171,16 @@ test("collector accepts a completed current input and rejects stale provenance i
   delete env.GITHUB_RUN_ID;
   const script = path.join(root, "apps/mobile/scripts/collect-release-evidence.ts");
   const fresh = spawnSync(process.execPath, ["--experimental-strip-types", script, "--strict", `--input=${input}`, `--output=${output}`, `--handoff-output=${handoff}`], { cwd: root, env, encoding: "utf8" });
-  assert.equal(fresh.status, 0, fresh.stdout + fresh.stderr);
+  // Complete evidence and fresh provenance are no longer enough on their own:
+  // `--strict` also gates on the four App Store legal fields, which are still
+  // `PENDING_SETTINGS_LEGAL_METADATA` placeholders. Until a human fills them in,
+  // strict mode is *meant* to block — this asserts that gate, and the two lines
+  // below still prove the provenance half of the check works.
+  assert.equal(fresh.status, 1, fresh.stdout + fresh.stderr);
+  assert.match(fresh.stdout, /Falta la URL de la política de privacidad/);
+  assert.equal(JSON.parse(readFileSync(handoff, "utf8")).status, "blocked");
+  const nonStrict = spawnSync(process.execPath, ["--experimental-strip-types", script, `--input=${input}`, `--output=${output}`, `--handoff-output=${handoff}`], { cwd: root, env, encoding: "utf8" });
+  assert.equal(nonStrict.status, 0, nonStrict.stdout + nonStrict.stderr);
   const completedHandoff = JSON.parse(readFileSync(handoff, "utf8"));
   assert.equal(completedHandoff.status, "ready-for-human-upload");
   assert.equal(completedHandoff.productionDecision.submission, "required");

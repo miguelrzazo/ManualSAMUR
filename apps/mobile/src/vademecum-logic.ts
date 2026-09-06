@@ -155,3 +155,36 @@ export function buildCategorySections(references: MobileReferenceSearchResult[])
     data: sortByTitle(filterByCategory(references, category)),
   }));
 }
+
+// ─── A-Z scrollspy ───────────────────────────────────────────────────────────
+
+/**
+ * Which letter the reader is currently in, from a `SectionList`'s viewable
+ * items.
+ *
+ * The A-Z row used to be write-only: it could send you to a letter but never
+ * told you where you were, so after two swipes the index and the list disagreed
+ * about the answer to the same question. `onViewableItemsChanged` reports items
+ * in list order, so the first one still on screen is the section the reader is
+ * reading; entries without a section (section headers themselves, on some RN
+ * versions) are ignored rather than treated as a gap.
+ */
+export function activeSectionKey(viewable: { sectionKey: string | null | undefined }[]): string | null {
+  for (const entry of viewable) {
+    if (typeof entry.sectionKey === "string" && entry.sectionKey.length > 0) return entry.sectionKey;
+  }
+  return null;
+}
+
+/**
+ * A tap has to win over the scrollspy until the jump lands.
+ *
+ * `scrollToLocation` animates through every letter between here and there, and
+ * each one is briefly the viewable section — so without this the pill row
+ * strobes through the alphabet on every tap and settles last, which reads as the
+ * control fighting the user. `pending` is set on tap and cleared when the scroll
+ * comes to rest.
+ */
+export function resolveActiveLetter(pending: string | null, observed: string | null): string | null {
+  return pending ?? observed;
+}

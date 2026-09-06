@@ -16,6 +16,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
+import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
+import { BACK_TO_TOP_PLACEMENT } from "../scroll-chrome-logic";
 import { useTheme } from "../theme";
 import {
   asCheatsheetSections,
@@ -28,29 +30,40 @@ import {
   buildCodeSections,
   buildHospitalList,
   buildJumpTargets,
+  codeLegendNotes,
   COMUNICACIONES_SECTION_KEYS,
   filterIndicativos,
   getCheatsheetSection,
   groupByCategoryField,
   groupBasesByDistrict,
   groupIndicativos,
-  hasNoReportCodes,
-  hasTetraCodes,
   isCodeTab,
   OTROS_TABS,
   TOP_TABS,
-  usesFamilyColor,
   type CodigosCode,
+  type CodigosLegendNote,
   type CodigosRow,
   type CodigosSection,
   type OtrosTabKey,
   type TopTabKey,
 } from "../codigos-logic";
 import { useContent } from "../content";
-import { Chip, EmptyState, PageHeader, SearchField } from "../components";
+import { BackToTop, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
 import { displayTitle } from "../title-case";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
+
+/**
+ * The narrow slice of a list instance the back-to-top control needs. Códigos
+ * renders nine different lists across its tabs — `FlatList`s that scroll by
+ * offset and `SectionList`s that scroll by location — and every one of them can
+ * register here through a callback ref without the screen having to name nine
+ * element types.
+ */
+interface ScrollToTopHandle {
+  scrollToOffset?(params: { offset: number; animated?: boolean }): void;
+  scrollToLocation?(params: { sectionIndex: number; itemIndex: number; viewPosition?: number; animated?: boolean }): void;
+}
 
 export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
   const { content } = useContent();
@@ -60,8 +73,22 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
   const [activeTab, setActiveTab] = useState<TopTabKey>("incidente");
   const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>("icao");
   const [query, setQuery] = useState(route.params?.query ?? "");
-  const sectionListRef = useRef<SectionList<CodigosRow, CodigosSection>>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
+  const listHandle = useRef<ScrollToTopHandle | null>(null);
+  // One scroll stream drives the collapsing chrome and the back-to-top control for
+  // whichever list is mounted; see `src/scroll-chrome-logic.ts` for the rules.
+  const chrome = useScrollChrome();
+
+  /** Whichever list is currently mounted registers itself here. */
+  const registerList = useCallback((instance: ScrollToTopHandle | null) => {
+    listHandle.current = instance;
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    const list = listHandle.current;
+    if (list?.scrollToOffset) list.scrollToOffset({ offset: 0, animated: true });
+    else if (list?.scrollToLocation) list.scrollToLocation({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: true });
+    chrome.reset();
+  }, [chrome]);
 
   const codeDataByTab = useMemo(
     () => ({
@@ -78,7 +105,11 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
 
   const switchTab = useCallback((key: TopTabKey) => {
     setActiveTab(key);
-  }, []);
+    // A new tab renders its own list from the top, so the chrome must come back
+    // with it — otherwise switching tabs while scrolled down lands you on a
+    // headerless screen whose scroll position is already at zero.
+    chrome.reset();
+  }, [chrome]);
 
   const openCode = useCallback(
     (routeKey: string) => {
@@ -96,13 +127,22 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
   if (query.trim()) {
     return (
       <SafeAreaView style={styles.screen} edges={["top"]}>
-        <PageHeader title="Códigos y claves" />
-        <View style={styles.header}>
-          <SearchField value={query} onChangeText={setQuery} placeholder="Buscar código, nombre o categoría" />
-        </View>
+        {chrome.collapsed ? (
+          <CompactHeader title="Códigos y claves" onExpand={chrome.expand} />
+        ) : (
+          <>
+            <PageHeader title="Códigos y claves" />
+            <View style={styles.header}>
+              <SearchField value={query} onChangeText={setQuery} placeholder="Buscar código, nombre o categoría" />
+            </View>
+          </>
+        )}
         <FlatList
+          ref={registerList}
           data={searchResults}
           keyExtractor={(item) => item.id}
+          onScroll={chrome.onScroll}
+          scrollEventThrottle={chrome.scrollEventThrottle}
           contentContainerStyle={styles.sectionListContent}
           ListEmptyComponent={
             <EmptyState
@@ -127,12 +167,20 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             </Pressable>
           )}
         />
+        <BackToTop visible={chrome.showBackToTop} onPress={scrollToTop} />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
+      {/* The large title, the search field and both filter rows give way to the
+          list on a downward scroll, collapsing into the compact bar — the standard
+          large-title behaviour on both platforms. The bar itself never leaves, and
+          neither does the list's own sticky group header. */}
+      {chrome.collapsed && <CompactHeader title="Códigos y claves" onExpand={chrome.expand} />}
+      {!chrome.collapsed && (
+      <>
       <PageHeader title="Códigos y claves" />
       <View style={styles.header}>
         <SearchField value={query} onChangeText={setQuery} placeholder="Buscar código, nombre o categoría" />
@@ -176,10 +224,12 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             contentContainerStyle={styles.otrosContent}
             renderItem={({ item: tab }) => {
               const focused = activeOtrosTab === tab.key;
-              return <Chip label={tab.label} selected={focused} onPress={() => setActiveOtrosTab(tab.key)} role="tab" />;
+              return <Chip label={tab.label} selected={focused} onPress={() => { setActiveOtrosTab(tab.key); chrome.reset(); }} role="tab" />;
             }}
           />
         </View>
+      )}
+      </>
       )}
 
       {activeTab === "otros" ? (
@@ -190,6 +240,8 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
           styles={styles}
           onOpenCode={openCode}
           onOpenStatus4={openStatus4}
+          chrome={chrome}
+          registerList={registerList}
         />
       ) : (
         <CodeGroupList
@@ -198,11 +250,12 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
           onOpenCode={openCode}
           palette={palette}
           styles={styles}
-          sectionListRef={sectionListRef}
-          showBackToTop={showBackToTop}
-          onShowBackToTopChange={setShowBackToTop}
+          chrome={chrome}
+          registerList={registerList}
         />
       )}
+
+      <BackToTop visible={chrome.showBackToTop} onPress={scrollToTop} />
     </SafeAreaView>
   );
 }
@@ -215,39 +268,32 @@ function CodeGroupList({
   onOpenCode,
   palette,
   styles,
-  sectionListRef,
-  showBackToTop,
-  onShowBackToTopChange,
+  chrome,
+  registerList,
 }: {
   tabKey: TopTabKey;
   codes: CodigosCode[];
   onOpenCode: (routeKey: string) => void;
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
-  sectionListRef: React.RefObject<SectionList<CodigosRow, CodigosSection> | null>;
-  showBackToTop: boolean;
-  onShowBackToTopChange: (visible: boolean) => void;
+  chrome: ScrollChrome;
+  registerList: (instance: ScrollToTopHandle | null) => void;
 }) {
+  const sectionListRef = useRef<SectionList<CodigosRow, CodigosSection>>(null);
   const sections = useMemo(() => buildCodeSections(tabKey, codes), [tabKey, codes]);
   const jumpTargets = useMemo(() => buildJumpTargets(sections), [sections]);
-  const showNoReportLegend = usesFamilyColor(tabKey) && hasNoReportCodes(codes);
-  const showTetraLegend = tabKey === "incidente" && hasTetraCodes(codes);
+  const legendNotes = useMemo(() => codeLegendNotes(tabKey, codes), [tabKey, codes]);
 
   const scrollToSection = useCallback(
     (sectionIndex: number) => {
       sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex: 0, viewPosition: 0, animated: true });
     },
-    [sectionListRef],
+    [],
   );
-
-  const scrollToTop = useCallback(() => {
-    if (sections.length === 0) return;
-    sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: true });
-  }, [sectionListRef, sections.length]);
 
   return (
     <View style={styles.flexFill}>
-      {jumpTargets.length > 1 && (
+      {!chrome.collapsed && jumpTargets.length > 1 && (
         // The one pill row on this screen. It used to sit under a second, uncoloured row
         // built from `uniqueCategories`, whose labels were near-duplicates of these — two
         // treatments and two behaviours for what read as the same list.
@@ -271,40 +317,22 @@ function CodeGroupList({
         </View>
       )}
 
-      {(showNoReportLegend || showTetraLegend) && (
-        <View style={styles.legendBlock}>
-          {showTetraLegend && (
-            <View style={styles.legendRow}>
-              <MaterialCommunityIcons name="radio-handheld" size={14} color={palette.primary} />
-              <Text style={styles.legendText}>
-                Transmitir por <Text style={styles.legendStrong}>TETRA y llamada de voz</Text>, salvo levedad
-                contrastada
-              </Text>
-            </View>
-          )}
-          {showNoReportLegend && (
-            <View style={styles.legendRow}>
-              <MaterialCommunityIcons name="file-remove-outline" size={14} color={palette.inkMuted} />
-              <Text style={styles.legendText}>
-                Los códigos marcados con este icono <Text style={styles.legendStrong}>no generan informe asistencial</Text>
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
-
       <SectionList
-        ref={sectionListRef}
+        ref={(instance) => {
+          sectionListRef.current = instance;
+          registerList(instance);
+        }}
         sections={sections}
         keyExtractor={(row) => row.id}
         stickySectionHeadersEnabled
         contentContainerStyle={styles.sectionListContent}
-        onScroll={(event) => onShowBackToTopChange(event.nativeEvent.contentOffset.y > 400)}
-        scrollEventThrottle={32}
+        onScroll={chrome.onScroll}
+        scrollEventThrottle={chrome.scrollEventThrottle}
         onScrollToIndexFailed={() => undefined}
         ListEmptyComponent={
           <EmptyState title="Sin resultados" detail="No hay códigos para este filtro." />
         }
+        ListFooterComponent={<AnnotationFooter notes={legendNotes} palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<CodigosRow, CodigosSection> }) => (
           <View style={styles.sectionHeader} accessibilityRole="header">
             <View
@@ -365,16 +393,35 @@ function CodeGroupList({
         }}
       />
 
-      {showBackToTop && (
-        <Pressable
-          onPress={scrollToTop}
-          style={[styles.backToTop, accessibilityTargetStyle()]}
-          accessibilityRole="button"
-          accessibilityLabel="Volver arriba"
-        >
-          <MaterialCommunityIcons name="arrow-up" size={20} color={palette.white} />
-        </Pressable>
-      )}
+    </View>
+  );
+}
+
+/**
+ * The TETRA and "no genera informe asistencial" notes, at the foot of the list
+ * they annotate. See `codeLegendNotes` for why they are no longer at the top.
+ */
+function AnnotationFooter({ notes, palette, styles }: {
+  notes: CodigosLegendNote[];
+  palette: AdaptivePalette;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  if (notes.length === 0) return null;
+  return (
+    // No grouping label on the container: an `accessibilityLabel` here would
+    // replace the notes with a summary of them, which is the one thing a reader
+    // who needs the caveat must not get. Each note reads itself.
+    <View style={styles.legendBlock}>
+      {notes.map((note) => (
+        <View key={note.key} style={styles.legendRow}>
+          <MaterialCommunityIcons name={note.icon} size={14} color={note.accented ? palette.primary : palette.inkMuted} />
+          <Text style={styles.legendText}>
+            {note.lead}
+            <Text style={styles.legendStrong}>{note.strong}</Text>
+            {note.trail}
+          </Text>
+        </View>
+      ))}
     </View>
   );
 }
@@ -388,6 +435,8 @@ function OtrosContent({
   styles,
   onOpenCode,
   onOpenStatus4,
+  chrome,
+  registerList,
 }: {
   tab: OtrosTabKey;
   content: { codes: Record<string, unknown[]>; hospitals: unknown[]; bases: unknown[]; status4: unknown[] };
@@ -395,8 +444,16 @@ function OtrosContent({
   styles: ReturnType<typeof createStyles>;
   onOpenCode: (routeKey: string) => void;
   onOpenStatus4: () => void;
+  chrome: ScrollChrome;
+  registerList: (instance: ScrollToTopHandle | null) => void;
 }) {
   const [showPrivate, setShowPrivate] = useState(false);
+  // Every subtab renders a different list; they all report to the same chrome.
+  const scrollProps = {
+    onScroll: chrome.onScroll,
+    scrollEventThrottle: chrome.scrollEventThrottle,
+    ref: registerList,
+  };
 
   const icao = useMemo(() => asSimpleCodes(content.codes.icao), [content.codes.icao]);
   const indicativos = useMemo(
@@ -423,6 +480,7 @@ function OtrosContent({
         data={icao}
         keyExtractor={(item, index) => `${item.code}-${index}`}
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderItem={({ item }) => (
           <Pressable
             onPress={() => onOpenCode(codeRouteKey("icao", item.code))}
@@ -446,6 +504,7 @@ function OtrosContent({
         keyExtractor={(item, index) => `${item.code}-${index}`}
         stickySectionHeadersEnabled
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader} accessibilityRole="header">
             <Text style={styles.sectionHeaderLabel}>{section.label}</Text>
@@ -474,6 +533,7 @@ function OtrosContent({
         data={claves}
         keyExtractor={(item, index) => `${item.code}-${index}`}
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderItem={({ item }) => (
           <Pressable
             onPress={() => onOpenCode(codeRouteKey("claves", item.code))}
@@ -496,6 +556,7 @@ function OtrosContent({
         data={bases}
         keyExtractor={(base) => base.id}
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderItem={({ item: base }) => (
           <Pressable
             onPress={() => void Linking.openURL(`https://www.google.com/maps?q=${base.lat},${base.lng}`)}
@@ -539,6 +600,7 @@ function OtrosContent({
           data={filteredHospitals}
           keyExtractor={(h) => h.id}
           contentContainerStyle={styles.sectionListContent}
+          {...scrollProps}
           ListEmptyComponent={
             <EmptyState title="Sin hospitales" detail="No hay hospitales para este filtro." />
           }
@@ -577,6 +639,7 @@ function OtrosContent({
         keyExtractor={(item, index) => `${item.code}-${index}`}
         stickySectionHeadersEnabled
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader} accessibilityRole="header">
             <Text style={styles.sectionHeaderLabel}>{section.label}</Text>
@@ -605,6 +668,7 @@ function OtrosContent({
         data={districts}
         keyExtractor={(d) => String(d.num)}
         contentContainerStyle={styles.sectionListContent}
+        {...scrollProps}
         renderItem={({ item: district }) => (
           <View style={styles.districtRow} accessible accessibilityLabel={`Distrito ${district.num}, ${district.name}`}>
             <Text style={styles.districtNum}>{district.num}</Text>
@@ -720,7 +784,18 @@ function createStyles(palette: AdaptivePalette) {
     otrosContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, gap: spacing.xs },
     jumpRow: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line },
     jumpContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
-    legendBlock: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, gap: 4, borderBottomWidth: 1, borderBottomColor: palette.line },
+    // A footer now, not a banner: no bottom rule (there is nothing below it) and
+    // more air above, so it reads as a note about the list rather than a row in it.
+    // The bottom margin clears the back-to-top control, which is at its most
+    // useful exactly here, at the end of a long list — and was landing on the
+    // first word of the note.
+    legendBlock: {
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.lg,
+      paddingBottom: spacing.sm,
+      marginBottom: BACK_TO_TOP_PLACEMENT.size + spacing.md,
+      gap: 6,
+    },
     legendRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
     legendText: { flex: 1, color: palette.inkMuted, fontSize: 11, lineHeight: 15 },
     legendStrong: { fontWeight: "800", color: palette.ink },
@@ -830,21 +905,6 @@ function createStyles(palette: AdaptivePalette) {
     comunicacionesCardLine: { color: palette.inkMuted, fontSize: 12, lineHeight: 17 },
     comunicacionesTableRow: { flexDirection: "row", gap: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line },
     comunicacionesTableCell: { flex: 1, color: palette.ink, fontSize: 12 },
-    backToTop: {
-      // Left, well above the bottom bar: the glass tab bar's floating search
-      // capsule sits bottom-right (see nav-shell.tsx), and a first version of
-      // this button placed bottom-right there landed exactly on top of it —
-      // confirmed by manual testing where "Volver arriba" opened Search instead.
-      position: "absolute",
-      left: spacing.lg,
-      bottom: TAB_BAR_INSET + spacing.sm,
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: palette.ink,
-      alignItems: "center",
-      justifyContent: "center",
-    },
     emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm },
     emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 15 },
     emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 12, lineHeight: 17 },

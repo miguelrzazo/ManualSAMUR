@@ -14,6 +14,7 @@ import {
   categoryAccentColor,
   buildHospitalList,
   buildJumpTargets,
+  codeLegendNotes,
   COMUNICACIONES_SECTION_KEYS,
   DISTRICT_NUM,
   extractCodeFamily,
@@ -227,4 +228,50 @@ test("no code group is silently dropped: asCodigosCodes preserves every entry wi
     const parsed: CodigosCode[] = asCodigosCodes(raw);
     assert.equal(parsed.length, raw.length, `${key} lost entries during parsing`);
   }
+});
+
+test("the TETRA note is offered only where TETRA codes exist, and only on Incidente", () => {
+  const tetra: CodigosCode[] = [{ code: "11", name: "Accidente", tetra: true }];
+  const plain: CodigosCode[] = [{ code: "11", name: "Accidente" }];
+
+  assert.deepEqual(codeLegendNotes("incidente", tetra).map((n) => n.key), ["tetra"]);
+  assert.deepEqual(codeLegendNotes("incidente", plain), []);
+  // The other tabs never carry it, even if a code somehow claims the flag.
+  assert.deepEqual(codeLegendNotes("sva", tetra), []);
+});
+
+test("the informe-asistencial note follows the marker, which only the family-coloured tabs draw", () => {
+  const noReport: CodigosCode[] = [{ code: "3.1", name: "Traslado", noReport: true }];
+  for (const tab of ["sva", "svb"] as const) {
+    assert.deepEqual(codeLegendNotes(tab, noReport).map((n) => n.key), ["noReport"], tab);
+  }
+  for (const tab of ["incidente", "upsi", "upsq", "otros"] as const) {
+    assert.deepEqual(codeLegendNotes(tab, noReport), [], tab);
+  }
+});
+
+test("both notes carry the same shape, so one footer treatment renders either", () => {
+  const notes = [
+    ...codeLegendNotes("incidente", [{ code: "11", name: "Accidente", tetra: true }]),
+    ...codeLegendNotes("sva", [{ code: "3.1", name: "Traslado", noReport: true }]),
+  ];
+  assert.equal(notes.length, 2);
+  for (const note of notes) {
+    assert.ok(note.icon.length > 0);
+    assert.ok(note.strong.length > 0, "each note emphasises the phrase that matters");
+    assert.equal(typeof note.accented, "boolean");
+  }
+  // The icons must be the same glyphs the annotated rows carry, or the note
+  // points at nothing.
+  assert.deepEqual(notes.map((n) => n.icon), ["radio-handheld", "file-remove-outline"]);
+});
+
+test("the códigos annotations render under the list, never above it", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/CodigosScreen.tsx"), "utf8");
+  assert.match(source, /ListFooterComponent=\{<AnnotationFooter/);
+  const listStart = source.indexOf("<SectionList");
+  const footer = source.indexOf("AnnotationFooter");
+  assert.ok(listStart >= 0 && footer > listStart, "the annotation must not be rendered before the list");
+  // And the old always-on banner is gone for good.
+  assert.doesNotMatch(source, /showTetraLegend|showNoReportLegend/);
 });

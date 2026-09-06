@@ -3,6 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
+  SEARCH_SCOPES,
   buildAbbreviationReferences,
   buildCodeReferences,
   buildVademecumReferences,
@@ -13,8 +14,6 @@ import {
   searchAbbreviations,
   searchCodes,
   searchVademecum,
-  activeVademecumScope,
-  showsVademecumCategories,
 } from "../apps/mobile/src/reference-search-logic.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
 
@@ -79,7 +78,11 @@ test("abbreviations stay out of global search while remaining in the information
   const globalSearch = source.slice(searchStart, searchEnd);
   assert.doesNotMatch(globalSearch, /searchAbbreviations|Abreviaturas/);
   assert.match(source, /onOpenAbbreviations/);
-  assert.match(source, /Abrir abreviaturas/);
+  // The hub itself is `SettingsModal`; App.tsx only wires the callback into it.
+  assert.match(
+    readFileSync(path.join(process.cwd(), "apps/mobile/src/components/SettingsModal.tsx"), "utf8"),
+    /Abrir abreviaturas/,
+  );
   assert.match(source, /Fármacos/);
   assert.match(source, /Comerciales/);
   assert.match(source, /Perfusiones/);
@@ -89,15 +92,14 @@ test("abbreviations stay out of global search while remaining in the information
   assert.match(source, /function CodeScreen/);
 });
 
-test("the Vademecum category row shows under its own scope only, so the pills never render twice", () => {
-  assert.equal(showsVademecumCategories("Vademécum"), true);
-  assert.equal(showsVademecumCategories("Todo"), false);
-  assert.equal(showsVademecumCategories("Procedimientos"), false);
-  assert.equal(showsVademecumCategories("Códigos"), false);
-});
-
-test("a category left behind under another scope is remembered but not applied", () => {
-  assert.equal(activeVademecumScope("Vademécum", "Perfusiones"), "Perfusiones");
-  assert.equal(activeVademecumScope("Todo", "Perfusiones"), "Todos");
-  assert.equal(activeVademecumScope("Códigos", "Fármacos"), "Todos");
+test("global search offers one scope row, not a second tier of the same taxonomy", () => {
+  assert.deepEqual([...SEARCH_SCOPES], ["Todo", "Procedimientos", "Vademécum", "Códigos"]);
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), "utf8");
+  const start = source.indexOf("function BuscarScreen");
+  const end = source.indexOf("function SearchStartingPoints", start);
+  const buscar = source.slice(start, end);
+  // Exactly one chip row: the second one duplicated the Vademécum tab's own
+  // domain switcher, chip for chip, on the screen that searches across all of them.
+  assert.equal((buscar.match(/accessibilityRole="tablist"/g) ?? []).length, 1);
+  assert.doesNotMatch(buscar, /VADEMECUM_SCOPES/);
 });

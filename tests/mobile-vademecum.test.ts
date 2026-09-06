@@ -3,12 +3,14 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
+  activeSectionKey,
   buildAlphabetSections,
   buildCategorySections,
   categoryAccent,
   categoryOf,
   filterByCategory,
   filterByTab,
+  resolveActiveLetter,
   kindForTab,
   sortByTitle,
   supportsAlphabetNav,
@@ -128,4 +130,38 @@ test("the mobile app exposes a real Vademécum screen with the four domains, not
   const app = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), "utf8");
   assert.match(app, /VademecumScreen/);
   assert.doesNotMatch(app, /function VademecumListScreen/);
+});
+
+test("the A-Z index follows the list: the first still-visible row names the active letter", () => {
+  assert.equal(activeSectionKey([{ sectionKey: "C" }, { sectionKey: "C" }, { sectionKey: "D" }]), "C");
+  assert.equal(activeSectionKey([]), null);
+  // Section headers arrive without a section on some RN versions — a gap, not an answer.
+  assert.equal(activeSectionKey([{ sectionKey: undefined }, { sectionKey: "M" }]), "M");
+  assert.equal(activeSectionKey([{ sectionKey: null }, { sectionKey: "" }]), null);
+});
+
+test("a tapped letter wins until the jump lands, so the index does not strobe through the alphabet", () => {
+  // Mid-flight: the list is passing through B on its way to the tapped S.
+  assert.equal(resolveActiveLetter("S", "B"), "S");
+  // Settled: the tap is cleared and the list is the only source again.
+  assert.equal(resolveActiveLetter(null, "S"), "S");
+  assert.equal(resolveActiveLetter(null, null), null);
+});
+
+test("the alphabet index reports its selection and highlights it, rather than being write-only", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8");
+  assert.match(source, /onViewableItemsChanged/);
+  assert.match(source, /alphabetChipActive/);
+  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+});
+
+test("domain rows drop the per-row glyph that only repeated the tab the reader already picked", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8");
+  const start = source.indexOf("function VademecumRow");
+  const end = source.indexOf("function SearchField");
+  assert.ok(start >= 0 && end > start);
+  const row = source.slice(start, end);
+  assert.doesNotMatch(row, /name=\{icon\}/);
+  // The category accent bar stays: unlike the glyph, it varies within a tab.
+  assert.match(row, /rowAccentBar/);
 });

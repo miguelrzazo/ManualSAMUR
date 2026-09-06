@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { compareCurrentProvenance, createInternalTestHandoff, createReleaseEvidence, validateReleaseEvidence, type ReleaseEvidence, type ReleaseEvidenceProvenance } from "../src/release-evidence.ts";
 import type { MobileSnapshot } from "../src/data/schema.ts";
+import { PENDING_SETTINGS_LEGAL_METADATA, validateSettingsReleaseMetadata } from "../src/settings-legal.ts";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(appRoot, "..", "..");
@@ -63,15 +64,18 @@ const evidenceFile = path.relative(repositoryRoot, evidenceOutput);
 const strict = process.argv.includes("--strict");
 const provenanceIssues = inputPath ? compareCurrentProvenance(evidence.provenance, provenance) : [];
 const validation = validateReleaseEvidence(evidence, strict);
-const issues = [...validation.issues, ...provenanceIssues];
+const settingsIssues = strict
+  ? validateSettingsReleaseMetadata(PENDING_SETTINGS_LEGAL_METADATA).map((issue) => issue.message)
+  : [];
+const issues = [...validation.issues, ...provenanceIssues, ...settingsIssues];
 const handoff = createInternalTestHandoff(evidence, evidenceFile);
-if (strict && provenanceIssues.length > 0) handoff.status = "blocked";
+if (strict && (provenanceIssues.length > 0 || settingsIssues.length > 0)) handoff.status = "blocked";
 writeJson(evidenceOutput, evidence);
 writeJson(handoffOutput, handoff);
 
 console.log(`[mobile-release] evidence: ${evidenceFile}`);
 console.log(`[mobile-release] handoff: ${path.relative(repositoryRoot, handoffOutput)}`);
-console.log(`[mobile-release] status: ${validation.ready && provenanceIssues.length === 0 ? "ready" : "blocked"}`);
+console.log(`[mobile-release] status: ${validation.ready && provenanceIssues.length === 0 && settingsIssues.length === 0 ? "ready" : "blocked"}`);
 if (issues.length > 0) {
   for (const issue of issues) console.log(`[mobile-release] pending: ${issue}`);
   if (strict) process.exitCode = 1;

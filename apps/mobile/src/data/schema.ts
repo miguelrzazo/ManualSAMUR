@@ -32,6 +32,20 @@ export interface MobileAttachmentManifest {
   attachments: MobileManifestAttachment[];
 }
 
+export interface MobileUpdateEvent {
+  eventId: string;
+  origin?: string;
+  officialUrl?: string;
+  procedureIds: string[];
+  changeKind: string;
+  summary: string;
+  effectiveDate: string;
+  approvedAt?: string;
+  isRecent?: boolean;
+  category?: string;
+  diff?: string;
+}
+
 export interface MobileProcedure {
   id: string;
   title: string;
@@ -44,7 +58,7 @@ export interface MobileProcedure {
   backlinks: string[];
   relations: Array<{ id: string; direction: string; kind: string; strength: string }>;
   editorialBlocks: unknown[];
-  updates: unknown[];
+  updates: MobileUpdateEvent[];
   updated: string;
   sourceUpdated: string;
   source?: string;
@@ -76,7 +90,19 @@ export interface MobileContent {
   status4: Array<Record<string, unknown>>;
   manual: Record<string, unknown>;
   links: MobileLinks;
-  updates: unknown[];
+  updates: MobileUpdateEvent[];
+}
+
+export function isValidMobileUpdateEvent(value: unknown): value is MobileUpdateEvent {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const event = value as Record<string, unknown>;
+  if (typeof event.eventId !== "string" || !event.eventId) return false;
+  if (!Array.isArray(event.procedureIds) || event.procedureIds.some((id) => typeof id !== "string" || !id)) return false;
+  if (typeof event.changeKind !== "string" || typeof event.summary !== "string" || typeof event.effectiveDate !== "string") return false;
+  for (const key of ["origin", "officialUrl", "approvedAt", "category", "diff"] as const) {
+    if (event[key] !== undefined && typeof event[key] !== "string") return false;
+  }
+  return event.isRecent === undefined || typeof event.isRecent === "boolean";
 }
 
 export interface MobileSnapshot {
