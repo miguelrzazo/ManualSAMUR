@@ -175,22 +175,25 @@ function fieldLabel(key: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function useDetailHeader({ navigation, title, favorite, onToggleFavorite }: {
+function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeTitle = true }: {
   navigation: { setOptions: (options: Record<string, unknown>) => void };
   title: string;
   favorite?: boolean;
   onToggleFavorite?: () => void;
+  /** Off for a screen whose body already carries the same name as its own heading. */
+  largeTitle?: boolean;
 }) {
   useLayoutEffect(() => {
     navigation.setOptions({
       // Titles here come from the corpus (a drug name, a location's short name), which
       // mixes shouted and sentence-cased entries — `displayTitle` levels them.
       title: displayTitle(title),
+      headerLargeTitle: largeTitle,
       headerRight: onToggleFavorite
         ? () => <FavoriteToggle favorite={Boolean(favorite)} onToggle={onToggleFavorite} size={24} />
         : undefined,
     });
-  }, [navigation, title, favorite, onToggleFavorite]);
+  }, [navigation, title, favorite, onToggleFavorite, largeTitle]);
 }
 
 function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
@@ -587,14 +590,16 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   }, [procedure]);
   const procedureFavorite = favorites.includes(routeKey);
   const onToggleProcedureFavorite = useCallback(() => toggleFavorite(routeKey), [toggleFavorite, routeKey]);
-  // The header carries the procedure id, not its name: at large-title size a
-  // 60-character procedure name wraps to four lines and pushes the content off
-  // screen. The name is the body's first line instead, where it can wrap freely.
+  // The header carries the procedure's name. It used to carry the raw id
+  // ("Procedimiento 601_01") because a 60-character name wraps to four lines at
+  // large-title size — so the large title is off here instead, which also stops the
+  // header duplicating the name the body already renders as its own heading. The id
+  // stays on the meta line below, where support calls can still read it.
   // No `onToggleFavorite` here on purpose. On the other detail screens the favourite is a
   // fine `headerRight`, but this screen also renders the procedure's own name as the first
   // line of the body (see below), so the star ended up as an unlabelled glyph competing
   // with a collapsing large title. It moves next to that title instead, with a word on it.
-  useDetailHeader({ navigation, title: procedure ? `Procedimiento ${procedure.id}` : "Procedimiento" });
+  useDetailHeader({ navigation, title: procedure ? procedure.title : "Procedimiento", largeTitle: false });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const relatedIds = [...new Set([
     ...procedure.related,
@@ -647,7 +652,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       <MaterialCommunityIcons name={procedureFavorite ? "star" : "star-outline"} size={18} color={procedureFavorite ? palette.primaryDark : palette.inkMuted} />
       <Text style={[styles.favoriteActionText, procedureFavorite && styles.favoriteActionTextOn]}>{procedureFavorite ? "Guardado" : "Guardar"}</Text>
     </Press>
-    <Text style={styles.detailMeta}>{procedure.section}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
+    <Text style={styles.detailMeta}>{procedure.section} · {procedure.id}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
     {headings.length > 0 && <View style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Text style={styles.contentsTitle}>Contenido</Text>{headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - spacing.md), animated: !reduceMotion }); }} style={styles.contentsRow} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text><MaterialCommunityIcons name="chevron-down" size={16} color={palette.inkMuted} /></Pressable>)}</View>}
     <MarkdownContent sections={sections} onContainerLayout={(offset) => { markdownOrigin.current = offset; }} onSectionLayout={(id, offset) => { sectionOffsets.current[id] = markdownOrigin.current + offset; }} />
     <ProcedureEditorialBlocks blocks={procedure.editorialBlocks} onProcedure={(id) => navigation.push("Procedure", { id })} />
