@@ -70,7 +70,7 @@ test("adaptive layout reflows controls at large text and separates tablet list/d
 });
 
 test("core routes expose accessibility semantics and adaptive behavior", () => {
-  for (const route of ["SearchScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
+  for (const route of ["BuscarScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
     const start = appSource.indexOf(`function ${route}`);
     assert.ok(start >= 0, `${route} must remain a route-level surface`);
     const end = appSource.indexOf("\nfunction ", start + 10);

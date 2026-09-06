@@ -37,7 +37,11 @@ import {
   FAVORITES_STORAGE_KEY,
   RECENTS_STORAGE_KEY,
   parseSavedRouteKeys,
+  parseRecentQueries,
+  pushRecentQuery,
   pushRecentRouteKey,
+  RECENT_QUERIES_STORAGE_KEY,
+  removeRecentQuery,
   serializeSavedRouteKeys,
   toggleSavedRouteKey,
 } from "./saved-logic";
@@ -47,6 +51,8 @@ type ContentContextValue = {
   snapshot: MobileSnapshot;
   favorites: string[];
   recents: string[];
+  /** What the user last searched for, so Buscar has something to show before they type. */
+  recentQueries: string[];
   isHydrated: boolean;
   isRefreshing: boolean;
   lastError?: string;
@@ -56,6 +62,8 @@ type ContentContextValue = {
   toggleFavorite: (routeKey: string) => void;
   remember: (routeKey: string) => void;
   removeRecent: (routeKey: string) => void;
+  rememberQuery: (query: string) => void;
+  forgetQuery: (query: string) => void;
   refresh: () => Promise<void>;
   cancelRefresh: () => void;
   resumeStaged: () => Promise<void>;
@@ -118,6 +126,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [snapshot, setSnapshot] = useState<MobileSnapshot>(bundledSnapshot as MobileSnapshot);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
+  const [recentQueries, setRecentQueries] = useState<string[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastError, setLastError] = useState<string>();
@@ -129,12 +138,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [storedFavorites, storedRecents, transaction] = await Promise.all([
+      const [storedFavorites, storedRecents, storedQueries, transaction] = await Promise.all([
         AsyncStorage.getItem(FAVORITES_STORAGE_KEY),
         AsyncStorage.getItem(RECENTS_STORAGE_KEY),
+        AsyncStorage.getItem(RECENT_QUERIES_STORAGE_KEY),
         readTransaction(AsyncStorage, snapshotIsValid),
       ]);
       if (cancelled) return;
+      setRecentQueries(parseRecentQueries(storedQueries));
       if (transaction.snapshot) {
         setSnapshot(transaction.snapshot);
       } else {
@@ -186,6 +197,22 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setRecents((current) => {
       const next = pushRecentRouteKey(current, routeKey);
       void AsyncStorage.setItem(RECENTS_STORAGE_KEY, serializeSavedRouteKeys(next));
+      return next;
+    });
+  }, []);
+
+  const rememberQuery = useCallback((query: string) => {
+    setRecentQueries((current) => {
+      const next = pushRecentQuery(current, query);
+      void AsyncStorage.setItem(RECENT_QUERIES_STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const forgetQuery = useCallback((query: string) => {
+    setRecentQueries((current) => {
+      const next = removeRecentQuery(current, query);
+      void AsyncStorage.setItem(RECENT_QUERIES_STORAGE_KEY, JSON.stringify(next));
       return next;
     });
   }, []);
@@ -287,6 +314,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     snapshot,
     favorites,
     recents,
+    recentQueries,
     isHydrated,
     isRefreshing,
     lastError,
@@ -296,11 +324,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     toggleFavorite,
     remember,
     removeRecent,
+    rememberQuery,
+    forgetQuery,
     refresh,
     cancelRefresh,
     resumeStaged,
     discardStaged,
-  }), [cancelRefresh, discardStaged, favorites, isHydrated, isRefreshing, lastError, recents, refresh, remember, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
+  }), [cancelRefresh, discardStaged, favorites, forgetQuery, isHydrated, isRefreshing, lastError, recentQueries, recents, refresh, remember, rememberQuery, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

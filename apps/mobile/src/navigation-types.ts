@@ -12,11 +12,12 @@ export type TabsParamList = {
   Codigos: { query?: string } | undefined;
   VademecumList: undefined;
   Mapa: undefined;
+  /** Buscar is a tab now, not a modal opened from a capsule beside the tab bar. */
+  Buscar: undefined;
 };
 
 export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabsParamList> | undefined;
-  Search: undefined;
   Procedure: { id: string };
   Drug: { id: string };
   Vademecum: { routeKey: string };

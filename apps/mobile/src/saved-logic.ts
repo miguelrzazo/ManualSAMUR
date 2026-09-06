@@ -91,6 +91,66 @@ export function pushRecentRouteKey(values: readonly string[], routeKey: string, 
   return [normalized, ...uniqueSavedRouteKeys(values).filter((key) => key !== normalized)].slice(0, limit);
 }
 
+// ─── Recent search queries ───────────────────────────────────────────────────
+
+export const RECENT_QUERIES_STORAGE_KEY = "manualsamur.preferences.recentQueries";
+export const MAX_RECENT_QUERIES = 8;
+/** One or two characters is a keystroke on the way somewhere, not a search worth keeping. */
+const MIN_RECORDED_QUERY_LENGTH = 3;
+
+/**
+ * Recent *queries*, as distinct from recent *routes* above. Buscar is a destination now,
+ * so it has to show something before the user types; what they searched for last is the
+ * only thing it can honestly offer.
+ *
+ * Deduplication is accent- and case-insensitive because the corpus is Spanish and nobody
+ * types "vía aérea" and "via aerea" meaning two different things — but the string kept is
+ * the one the user actually typed, accents and all.
+ */
+function queryFingerprint(value: string): string {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es");
+}
+
+export function normalizeRecentQuery(value: unknown): string | undefined {
+  const query = clean(value).replace(/\s+/g, " ");
+  return query.length >= MIN_RECORDED_QUERY_LENGTH ? query : undefined;
+}
+
+export function uniqueRecentQueries(values: readonly unknown[], limit = MAX_RECENT_QUERIES): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const query = normalizeRecentQuery(value);
+    if (!query) continue;
+    const fingerprint = queryFingerprint(query);
+    if (seen.has(fingerprint)) continue;
+    seen.add(fingerprint);
+    result.push(query);
+  }
+  return result.slice(0, limit);
+}
+
+export function parseRecentQueries(serialized: string | null | undefined, limit = MAX_RECENT_QUERIES): string[] {
+  if (!serialized) return [];
+  try {
+    const parsed: unknown = JSON.parse(serialized);
+    return Array.isArray(parsed) ? uniqueRecentQueries(parsed, limit) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function pushRecentQuery(values: readonly string[], query: string, limit = MAX_RECENT_QUERIES): string[] {
+  const normalized = normalizeRecentQuery(query);
+  if (!normalized) return uniqueRecentQueries(values, limit);
+  return uniqueRecentQueries([normalized, ...values], limit);
+}
+
+export function removeRecentQuery(values: readonly string[], query: string, limit = MAX_RECENT_QUERIES): string[] {
+  const fingerprint = queryFingerprint(clean(query));
+  return uniqueRecentQueries(values.filter((value) => queryFingerprint(value) !== fingerprint), limit);
+}
+
 function referenceToSaved(reference: MobileReferenceSearchResult): SavedReference {
   if (reference.kind === "abbreviation") throw new Error("Abbreviations are not saveable references");
   return {

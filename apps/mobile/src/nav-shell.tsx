@@ -1,11 +1,10 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
 import React, { useEffect, useMemo, useState } from "react";
 import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radii, spacing } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
+import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "./accessibility";
 import { selectionTick } from "./hooks/haptics";
 
 /**
@@ -33,19 +32,20 @@ export function useReduceTransparency(): boolean {
 
 type GlassTabBarProps = BottomTabBarProps & {
   palette: AdaptivePalette;
-  onOpenSearch: () => void;
 };
 
 /**
  * Custom `tabBar` for the bottom Tab.Navigator. `@react-navigation/bottom-tabs` v7 draws
- * its default bar in JS, so it can never receive real Liquid Glass — this renders two
- * independent capsules instead: the four-destination tab pill and a detached search
- * button, laid out on the same line per the GitHub Copilot mobile reference. Both use
- * `GlassView` on iOS 26/27 when available and not overridden by Reduce
+ * its default bar in JS, so it can never receive real Liquid Glass — this renders the tab
+ * pill itself, using `GlassView` on iOS 26/27 when available and not overridden by Reduce
  * Transparency; every other path (Android, pre-iOS-26, Reduce Transparency on) gets a
  * deliberate opaque capsule using the existing palette, not a degraded glass imitation.
+ *
+ * There used to be a second, detached capsule here holding a search button, because
+ * Buscar was a modal rather than a destination. Buscar is the fifth tab now, so the
+ * search icon lives in the pill with everything else and the capsule is gone.
  */
-export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSearch }: GlassTabBarProps) {
+export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTabBarProps) {
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme();
   const reduceTransparency = useReduceTransparency();
@@ -94,38 +94,14 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
     </View>
   );
 
-  const searchButton = (
-    <Pressable
-      onPress={() => { selectionTick(); onOpenSearch(); }}
-      style={[styles.searchButton, accessibilityTargetStyle()]}
-      accessibilityRole="search"
-      accessibilityLabel={routeAccessibilityLabels.Buscar}
-      accessibilityHint={accessibilityHints.search}
-    >
-      <MaterialCommunityIcons name="magnify" size={24} color={palette.ink} />
-    </Pressable>
-  );
-
-  // The two capsules are deliberately NOT wrapped in a GlassContainer: that component
-  // exists to let neighbouring glass elements merge, and it drew a visible bridge
-  // between the tab bar and the search button even at spacing 0. They are separate
-  // controls and must read as separate objects.
   return (
     <View pointerEvents="box-none" style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
       {glassReady ? (
-        <View style={styles.row}>
-          <GlassView glassEffectStyle="regular" isInteractive colorScheme={scheme === "dark" ? "dark" : "light"} style={styles.tabCapsule}>
-            {tabButtons}
-          </GlassView>
-          <GlassView glassEffectStyle="regular" isInteractive colorScheme={scheme === "dark" ? "dark" : "light"} style={styles.searchCapsule}>
-            {searchButton}
-          </GlassView>
-        </View>
+        <GlassView glassEffectStyle="regular" isInteractive colorScheme={scheme === "dark" ? "dark" : "light"} style={styles.tabCapsule}>
+          {tabButtons}
+        </GlassView>
       ) : (
-        <View style={styles.row}>
-          <View style={[styles.tabCapsule, fallbackCapsule, styles.fallbackShadow]}>{tabButtons}</View>
-          <View style={[styles.searchCapsule, fallbackCapsule, styles.fallbackShadow]}>{searchButton}</View>
-        </View>
+        <View style={[styles.tabCapsule, fallbackCapsule, styles.fallbackShadow]}>{tabButtons}</View>
       )}
     </View>
   );
@@ -133,13 +109,10 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
 
 const styles = StyleSheet.create({
   wrapper: { position: "absolute", left: 0, right: 0, bottom: 0, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "center", columnGap: spacing.xl },
   tabCapsule: { flex: 1, borderRadius: radii.pill, overflow: "hidden" },
-  tabRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingVertical: spacing.sm, paddingHorizontal: spacing.sm },
-  tabItem: { flex: 1, alignItems: "center", justifyContent: "center", gap: 2, paddingVertical: 2 },
+  tabRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingVertical: spacing.sm, paddingHorizontal: spacing.xs },
+  tabItem: { flex: 1, alignItems: "center", justifyContent: "center", gap: 2, paddingVertical: 2, paddingHorizontal: 2 },
   tabItemLabel: { fontSize: 11, fontWeight: "500" },
-  searchCapsule: { borderRadius: radii.pill, width: 56, height: 56, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  searchButton: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
   fallbackShadow: Platform.select({
     ios: { shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } },
     android: { elevation: 4 },

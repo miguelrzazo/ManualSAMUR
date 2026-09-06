@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator, type NativeStackScreenProps } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -50,7 +50,7 @@ import {
 import { APPROVED_ONLINE_MAP_POLICY, mapPinsFromLocations } from "./src/online-map-logic";
 import { mapCameraTargetFor } from "./src/mapa-logic";
 import { OnlineMapView } from "./src/online-map-view";
-import { canRecordRecent } from "./src/saved-logic";
+import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type ResolvedSavedReference, type SavedReference } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels } from "./src/accessibility";
 import { GlassTabBar } from "./src/nav-shell";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
@@ -268,10 +268,23 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
 const SEARCH_SCOPES = ["Todo", "Procedimientos", "Vademécum", "Códigos"] as const;
 const VADEMECUM_SCOPES = ["Todos", "Fármacos", "Comerciales", "Perfusiones", "Fluidos"] as const;
 
-function SearchScreen({ navigation }: NativeStackScreenProps<RootStackParamList, "Search">) {
-  const palette = useTheme();
+/**
+ * Buscar. A destination, not a modal.
+ *
+ * It used to be a `formSheet` opened from a detached capsule beside the tab pill, which
+ * meant it had no place in the tab bar, no back stack of its own, and nothing at all to
+ * show until the user typed — it opened onto a keyboard and an empty list.
+ *
+ * Now it is the fifth tab, and before a query is entered it shows what it actually knows:
+ * the scope chips (so the user can see what is searchable at a glance) and the last
+ * queries and references they opened.
+ */
+function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
   const styles = useAppStyles();
-  const { content } = useContent();
+  const { content, recents, recentQueries, rememberQuery, forgetQuery } = useContent();
+  const stack = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+  const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
+  const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<(typeof SEARCH_SCOPES)[number]>("Todo");
   const [vademecumCategory, setVademecumCategory] = useState<(typeof VADEMECUM_SCOPES)[number]>("Todos");
@@ -291,11 +304,10 @@ function SearchScreen({ navigation }: NativeStackScreenProps<RootStackParamList,
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
-      <PageHeader
-        title="Buscar"
-        leading={<Press onPress={() => navigation.goBack()} accessibilityRole="button" accessibilityLabel="Cerrar" accessibilityHint={accessibilityHints.dismiss}><MaterialCommunityIcons name="chevron-down" size={26} color={palette.ink} /></Press>}
-      />
-      <View style={styles.searchPadding}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar procedimientos, fármacos o códigos" autoFocus /></View>
+      <PageHeader title="Buscar" />
+      {/* No `autoFocus`: a tab that raises the keyboard every time it is selected cannot
+          be used to glance at recent searches, which is most of what this screen is for. */}
+      <View style={styles.searchPadding}><SearchField value={query} onChangeText={setQuery} onSubmitEditing={() => rememberQuery(query)} placeholder="Buscar procedimientos, fármacos o códigos" /></View>
       {/* The scope chips wrapped onto three lines on a phone. A horizontal
           scroller keeps them on one row and keeps the results above the fold. */}
       <FlatList
@@ -318,16 +330,90 @@ function SearchScreen({ navigation }: NativeStackScreenProps<RootStackParamList,
         accessibilityRole="tablist"
         renderItem={({ item }) => <Chip label={item} selected={vademecumCategory === item && filter === "Vademécum"} onPress={() => { setFilter("Vademécum"); setVademecumCategory(item); }} role="tab" />}
       />}
-      <FlatList
-        data={rows}
-        keyExtractor={(item, index) => `${item.kind}-${item.item.id}-${index}`}
-        contentContainerStyle={styles.listContent}
-        keyboardShouldPersistTaps="handled"
-        ListEmptyComponent={<EmptyState title={query.trim() ? "Sin coincidencias" : "Procedimientos no disponibles"} detail={query.trim() ? "Prueba con un código, un nombre, un sinónimo o una palabra del contenido." : "El paquete local no contiene procedimientos utilizables. Revisa una actualización cuando tengas conexión."} />}
-        renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => navigation.navigate("Procedure", { id: item.item.id })} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => navigation.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.navigate("Drug", { id })} />}
-      />
+      {query.trim() ? (
+        <FlatList
+          data={rows}
+          keyExtractor={(item, index) => `${item.kind}-${item.item.id}-${index}`}
+          contentContainerStyle={styles.listContent}
+          keyboardShouldPersistTaps="handled"
+          onScrollBeginDrag={() => rememberQuery(query)}
+          ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con un código, un nombre, un sinónimo o una palabra del contenido." />}
+          renderItem={({ item }) => item.kind === "procedure" ? <ProcedureRow procedure={item.item} showFavorite onPress={() => { rememberQuery(query); openProcedure(item.item.id); }} /> : <ReferenceRow reference={item.item} onCode={(routeKey) => { rememberQuery(query); stack?.navigate("Code", { routeKey }); }} onVademecum={(routeKey) => { rememberQuery(query); stack?.navigate("Vademecum", { routeKey }); }} onDrug={(id) => { rememberQuery(query); stack?.navigate("Drug", { id }); }} />}
+        />
+      ) : (
+        <SearchStartingPoints
+          recentQueries={recentQueries}
+          onPickQuery={setQuery}
+          onForgetQuery={forgetQuery}
+          recents={recentReferences}
+          onOpen={(item) => openSavedReference(stack, item)}
+        />
+      )}
     </SafeAreaView>
   );
+}
+
+/**
+ * What Buscar shows before a query. Two lists, both of them things the user themselves
+ * put there — no suggestions, no promoted content, no explanation of the app.
+ */
+function SearchStartingPoints({ recentQueries, onPickQuery, onForgetQuery, recents, onOpen }: {
+  recentQueries: string[];
+  onPickQuery: (query: string) => void;
+  onForgetQuery: (query: string) => void;
+  recents: ResolvedSavedReference[];
+  onOpen: (item: SavedReference) => void;
+}) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  if (recentQueries.length === 0 && recents.length === 0) {
+    return <EmptyState title="Busca en todo el manual" detail="Procedimientos, fármacos, nombres comerciales, perfusiones, fluidos y códigos." />;
+  }
+  return (
+    <ScrollView contentContainerStyle={styles.listContent} keyboardShouldPersistTaps="handled">
+      {recentQueries.length > 0 && <>
+        <SectionHeading title="Búsquedas recientes" />
+        <View style={styles.cardList}>
+          {recentQueries.map((item) => (
+            <View key={item} style={styles.resourceRow}>
+              <Press onPress={() => onPickQuery(item)} style={styles.resourceRowMain} accessibilityRole="button" accessibilityLabel={`Repetir la búsqueda ${item}`} accessibilityHint={accessibilityHints.search}>
+                <MaterialCommunityIcons name="history" size={19} color={palette.inkMuted} />
+                <Text style={styles.resourceTitle} numberOfLines={1}>{item}</Text>
+              </Press>
+              <Press onPress={() => onForgetQuery(item)} accessibilityRole="button" accessibilityLabel={`Quitar ${item} de las búsquedas recientes`}>
+                <MaterialCommunityIcons name="close" size={18} color={palette.inkMuted} />
+              </Press>
+            </View>
+          ))}
+        </View>
+      </>}
+      {recents.length > 0 && <>
+        <SectionHeading title="Consultado recientemente" />
+        <View style={styles.cardList}>
+          {recents.map((item) => item.kind === "stale" ? null : (
+            <View key={item.routeKey} style={styles.resourceRow}>
+              <Press onPress={() => onOpen(item)} style={styles.resourceRowMain} accessibilityRole="button" accessibilityLabel={`${displayTitle(item.title)}. ${item.subtitle}`} accessibilityHint={accessibilityHints.openDetail}>
+                <MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={19} color={palette.ink} />
+                <View style={styles.resourceCopy}>
+                  <Text style={styles.resourceTitle} numberOfLines={1}>{displayTitle(item.title)}</Text>
+                  <Text style={styles.resourceMeta} numberOfLines={1}>{item.subtitle}</Text>
+                </View>
+              </Press>
+            </View>
+          ))}
+        </View>
+      </>}
+    </ScrollView>
+  );
+}
+
+/** Mirrors `openSavedReference` in InicioScreen: one route per saved kind. */
+function openSavedReference(stack: NativeStackNavigationProp<RootStackParamList> | undefined, item: SavedReference) {
+  if (item.kind === "procedure") stack?.navigate("Procedure", { id: item.id });
+  else if (item.kind === "drug") stack?.navigate("Drug", { id: item.id });
+  else if (item.kind === "code") stack?.navigate("Code", { routeKey: item.routeKey });
+  else if (item.kind === "hospital" || item.kind === "base") stack?.navigate("Location", { routeKey: item.routeKey });
+  else stack?.navigate("Vademecum", { routeKey: item.routeKey });
 }
 
 function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: MobileReferenceSearchResult; onCode: (routeKey: string) => void; onVademecum: (routeKey: string) => void; onDrug: (id: string) => void }) {
@@ -459,7 +545,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   // line of the body (see below), so the star ended up as an unlabelled glyph competing
   // with a collapsing large title. It moves next to that title instead, with a word on it.
   useDetailHeader({ navigation, title: procedure ? `Procedimiento ${procedure.id}` : "Procedimiento" });
-  if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Search")} />;
+  if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const relatedIds = [...new Set([
     ...procedure.related,
     ...procedure.backlinks,
@@ -627,7 +713,7 @@ function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<
   }, [content, reference?.routeKey, remember, route.params.routeKey]);
   const onToggleFavorite = useCallback(() => toggleFavorite(route.params.routeKey), [toggleFavorite, route.params.routeKey]);
   useDetailHeader({ navigation, title: reference?.title ?? "Referencia", favorite, onToggleFavorite });
-  if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Search")} />;
+  if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
   return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{reference.subtitle}</Text>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
@@ -643,7 +729,7 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   }, [content, reference?.routeKey, remember, route.params.routeKey]);
   const onToggleFavorite = useCallback(() => toggleFavorite(route.params.routeKey), [toggleFavorite, route.params.routeKey]);
   useDetailHeader({ navigation, title: reference?.badge ?? reference?.title ?? "Código", favorite, onToggleFavorite });
-  if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Search")} />;
+  if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const description = typeof details.description === "string" ? details.description : "";
   const category = typeof details.category === "string" ? details.category : "";
@@ -795,18 +881,19 @@ function TabIcon({ name, color }: { name: keyof typeof MaterialCommunityIcons.gl
 
 function MainTabs() {
   const palette = useTheme();
-  // Search deliberately isn't a Tabs.Screen: it lives in its own capsule beside the tab
-  // pill (see GlassTabBar) and opens the top-level "Search" stack route. Exactly four
-  // destinations remain in the tab bar, matching the revised information architecture.
+  // Five destinations. Buscar used to be the odd one out: a detached capsule beside the
+  // tab pill opening a modal, which is the only part of the app you could not get back to
+  // by looking at the tab bar.
   return <Tabs.Navigator
     backBehavior="history"
-    tabBar={(props) => <GlassTabBar {...props} palette={palette} onOpenSearch={() => props.navigation.getParent()?.navigate("Search")} />}
+    tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
     screenOptions={{ headerShown: false }}
   >
     <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
     <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
     <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
     <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
+    <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color }) => <TabIcon name="magnify" color={color} /> }} />
   </Tabs.Navigator>;
 }
 
@@ -833,7 +920,7 @@ function AppNavigation() {
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
   } as const;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Search" component={SearchScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {

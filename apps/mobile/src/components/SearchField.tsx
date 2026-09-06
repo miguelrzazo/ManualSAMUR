@@ -17,10 +17,12 @@ import { Press } from "./Press.tsx";
  * label or legend anywhere in the app. It is gone: an offline-first app does not
  * need to announce that it is working.
  */
-export function SearchField({ value, onChangeText, onPress, placeholder, readOnly = false, autoFocus = false }: {
+export function SearchField({ value, onChangeText, onPress, onSubmitEditing, placeholder, readOnly = false, autoFocus = false }: {
   value?: string;
   onChangeText?: (value: string) => void;
   onPress?: () => void;
+  /** Fired on the keyboard's search key — where Buscar records the query as recent. */
+  onSubmitEditing?: () => void;
   placeholder: string;
   readOnly?: boolean;
   autoFocus?: boolean;
@@ -47,6 +49,7 @@ export function SearchField({ value, onChangeText, onPress, placeholder, readOnl
         placeholderTextColor={palette.inkMuted}
         style={styles.input}
         returnKeyType="search"
+        onSubmitEditing={onSubmitEditing}
         autoFocus={autoFocus}
         clearButtonMode="while-editing"
         autoCorrect={false}

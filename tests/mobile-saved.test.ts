@@ -4,7 +4,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
   canRecordRecent,
+  MAX_RECENT_QUERIES,
+  parseRecentQueries,
   parseSavedRouteKeys,
+  pushRecentQuery,
+  removeRecentQuery,
   pushRecentRouteKey,
   savedReferenceIndex,
   selectSavedReferences,
@@ -60,3 +64,32 @@ test("only resolvable detail routes qualify for recents; stale saved records rem
   assert.equal(selected[1].stale, true);
 });
 
+
+test("recent queries dedupe by fingerprint, keep what the user typed, and drop keystrokes", () => {
+  // Accent- and case-insensitive dedupe, because nobody means two different things by
+  // "vía aérea" and "via aerea" — but the stored string is the one actually typed.
+  const afterFirst = pushRecentQuery([], "Vía aérea");
+  assert.deepEqual(afterFirst, ["Vía aérea"]);
+  const afterRepeat = pushRecentQuery(["intubación", "Vía aérea"], "via aerea");
+  assert.deepEqual(afterRepeat, ["via aerea", "intubación"], "a repeat moves to the front, it does not duplicate");
+
+  // One or two characters is a keystroke on the way somewhere, not a search.
+  assert.deepEqual(pushRecentQuery(["pcr"], "vi"), ["pcr"]);
+  assert.deepEqual(pushRecentQuery(["pcr"], "   "), ["pcr"]);
+  assert.deepEqual(pushRecentQuery([], " sca   grave "), ["sca grave"], "whitespace is collapsed, not preserved");
+
+  // Most recent first, bounded.
+  let queries: string[] = [];
+  for (let index = 0; index < MAX_RECENT_QUERIES + 4; index += 1) queries = pushRecentQuery(queries, `consulta ${index}`);
+  assert.equal(queries.length, MAX_RECENT_QUERIES);
+  assert.equal(queries[0], `consulta ${MAX_RECENT_QUERIES + 3}`);
+
+  assert.deepEqual(removeRecentQuery(["Vía aérea", "pcr"], "VIA AEREA"), ["pcr"]);
+});
+
+test("recent queries survive a bad or missing storage payload without throwing", () => {
+  assert.deepEqual(parseRecentQueries(null), []);
+  assert.deepEqual(parseRecentQueries("not json"), []);
+  assert.deepEqual(parseRecentQueries('{"nope":1}'), []);
+  assert.deepEqual(parseRecentQueries('["pcr", 7, null, "pcr", "sca"]'), ["pcr", "sca"]);
+});
