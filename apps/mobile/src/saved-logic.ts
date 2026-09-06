@@ -217,6 +217,18 @@ export function selectSavedReferences(content: MobileContent, routeKeys: readonl
   return uniqueSavedRouteKeys(routeKeys).map((routeKey) => resolveSavedReference(content, routeKey));
 }
 
+/**
+ * The procedure-only slice of a saved list.
+ *
+ * Recents are recorded across every domain on purpose (see the Guardados tab), but the
+ * Inicio card sits directly above the procedure tree and reads as a shortcut back into
+ * the manual, so a drug or a radio code landing there is noise. Stale keys are dropped
+ * too: an unresolvable reference is not a procedure to return to.
+ */
+export function selectProcedureReferences(content: MobileContent, routeKeys: readonly string[]): SavedReference[] {
+  return selectSavedReferences(content, routeKeys).filter((reference): reference is SavedReference => reference.kind === "procedure");
+}
+
 export function savedReferenceIcon(kind: SavedRouteKind | "stale"): "clipboard-text-outline" | "pill" | "radio-handheld" | "hospital-building" | "ambulance" | "alert-circle-outline" {
   if (kind === "procedure") return "clipboard-text-outline";
   if (kind === "drug" || kind === "perfusion" || kind === "fluid" || kind === "commercialName") return "pill";

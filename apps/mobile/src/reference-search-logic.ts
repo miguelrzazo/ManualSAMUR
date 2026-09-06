@@ -204,3 +204,29 @@ export function relatedProcedureIdsForDrug(content: Pick<MobileContent, "procedu
 export function searchAbbreviations(abbreviations: MobileContent["abbreviations"], query: string, limit = 60): MobileReferenceSearchResult[] {
   return searchMobileReferences(buildAbbreviationReferences(abbreviations), query, limit);
 }
+
+export const SEARCH_SCOPES = ["Todo", "Procedimientos", "Vademécum", "Códigos"] as const;
+export type SearchScope = (typeof SEARCH_SCOPES)[number];
+
+export const VADEMECUM_SCOPES = ["Todos", "Fármacos", "Comerciales", "Perfusiones", "Fluidos"] as const;
+export type VademecumScope = (typeof VADEMECUM_SCOPES)[number];
+
+/**
+ * The Vademécum category row is a second tier under one scope, not a peer of the scope
+ * row. It used to render under "Todo" as well, which put two identically styled chip
+ * rows on screen at once — the first chips reading "Todo" and "Todos" — and gave the
+ * screen two `tablist` roles. Worse, the second row rendered wholly unselected there,
+ * and tapping any of its chips silently flipped the scope to Vademécum.
+ */
+export function showsVademecumCategories(scope: SearchScope): boolean {
+  return scope === "Vademécum";
+}
+
+/**
+ * The category only narrows results while its row is on screen. A category chosen under
+ * Vademécum and left behind must not keep filtering "Todo" from a control the reader can
+ * no longer see; it is remembered, not applied, until they come back.
+ */
+export function activeVademecumScope(scope: SearchScope, category: VademecumScope): VademecumScope {
+  return showsVademecumCategories(scope) ? category : "Todos";
+}

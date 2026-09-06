@@ -211,3 +211,18 @@ test("failure classification prefers stale-data over the raw error once a snapsh
   assert.equal(classifyOnlineMapFailure(abort, false), "network-unavailable");
   assert.equal(classifyOnlineMapFailure(new Error("El estilo de mapa respondió con estado 503"), false), "provider-error");
 });
+
+test("the centre-on-me control asks for permission on tap and never on mount", () => {
+  const source = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
+
+  assert.match(source, /accessibilityLabel="Centrar en mi ubicación"/);
+  assert.match(source, /onPressCenterOnMe/);
+  // The handler reuses the one permission request on the screen; there is no second path.
+  assert.equal(source.match(/requestForegroundPermissionsAsync/g)?.length, 1);
+  // The mount effect activates the basemap only — Madrid needs no permission.
+  assert.doesNotMatch(source, /useEffect\([^)]*requestLocation/);
+  // Declining leaves the map up: only `onPressNearest` trades it for the directory.
+  assert.equal(source.match(/reason: "permission-denied"/g)?.length, 1);
+  // The reader's own position is plotted only once it exists.
+  assert.match(source, /userLocation=\{origin \?/);
+});

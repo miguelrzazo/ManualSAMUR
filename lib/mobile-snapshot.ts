@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import type { ProcedureEditorialBlock, ProcedureRelation } from "./manual-data.ts";
+import { normalizeProcedureContent, type ProcedureEditorialBlock, type ProcedureRelation } from "./manual-data.ts";
 import type { ManualUpdateEvent } from "./manual-sync.ts";
 import {
   MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
@@ -121,8 +121,19 @@ function localAttachmentIntegrity(cwd: string, localPath: string): Pick<MobileAt
 function readProceduresLegacy(cwd: string): MobileProcedure[] {
   const procedures = walkMarkdownFiles(path.join(cwd, "content/procedures"))
     .map((filePath) => {
-      const { data, content } = matter(readFileSync(filePath, "utf8"));
+      const { data, content: rawContent } = matter(readFileSync(filePath, "utf8"));
       const id = String(data.id ?? path.basename(filePath, ".md"));
+      // The corpus is raw XWiki markdown — the sync writes it verbatim and the web
+      // normalizes on read (lib/content.ts). The package used to ship the raw body, so
+      // every artifact the web strips (cell wrappers, image macros, print buttons, the
+      // page footer) reached the native reader intact. Share the same pass.
+      //
+      // No href resolvers are handed in: the native app resolves `/manual/<slug>` links
+      // itself further down, and has no browser URL to resolve against.
+      const content = normalizeProcedureContent(rawContent, new Map(), typeof data.source === "string" ? data.source : undefined, {
+        currentProcedureId: id,
+        procedureTitle: String(data.title ?? id),
+      });
       return {
         id,
         title: String(data.title ?? id),

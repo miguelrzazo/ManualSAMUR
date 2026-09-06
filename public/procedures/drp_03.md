@@ -28,8 +28,7 @@ attachments: []
 Este CECOR se desarrolla en las instalaciones de la Central de Comunicaciones de SAMUR-Protección Civil, El CICOIN (Centro Integral de Coordinación e Información) u otra localización donde se pueda establecer un centro de comunicaciones con operadores del servicio.
 
 ### **Funciones del responsable del CECOR INTERNO:**
-
-Es el responsable de la gestión de las comunicaciones en el/los dispositivos de riesgo previsible que se encuentre participando.
+* Es el responsable de la gestión de las comunicaciones en el/los dispositivos de riesgo previsible que se encuentre participando.
 
 * Coordinará al personal que tenga asignado a su cargo (funcionario y voluntario) para cumplir con las responsabilidades asumidas.
 * Solicitará al Lima de Guardia o al Encargado de la Central de Comunicaciones:
@@ -139,8 +138,7 @@ Se realizarán dos informes en caso de coexistencia de macroservicio y multiserv
 ### **Cecor interno macroservicio**
 Se trata de aquel servicio en el que se produzca una gran ocupación de la vía pública por masificación de personas; que haga necesario la participación de un elevado número de unidades/personal para su cobertura, seguimiento y coordinación.
 
-1. 
-**Apertura informática de la aplicación DRP.**
+1. **Apertura informática de la aplicación DRP.**
 Se abrirá la aplicación, distribuyendo las unidades en función de la orden de servicio, para lo que se podrán utilizar diferentes zonas.
 
 1. **número de identificación de servicio en un DRP.**

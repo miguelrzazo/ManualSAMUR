@@ -465,15 +465,28 @@ test("communications datasets exist with minimum expected sections", () => {
   assert.ok(cheatsheet.every((section) => Array.isArray(section.items) && section.items.length > 0));
 });
 
-test("procedure content uses stable SAMUR ids without slug-generated ids", () => {
+/**
+ * Procedures live in section subfolders since the migration, so a non-recursive
+ * readdirSync returns only directories and every corpus assertion below silently
+ * passes over an empty list. Walk the tree instead.
+ */
+function procedureFiles(): string[] {
   const procedureDir = path.join(process.cwd(), "content/procedures");
-  const files = fs.readdirSync(procedureDir).filter((file) => file.endsWith(".md"));
+  return fs
+    .readdirSync(procedureDir, { recursive: true, encoding: "utf8" })
+    .filter((entry) => entry.endsWith(".md"))
+    .map((entry) => path.join(procedureDir, entry));
+}
+
+test("procedure content uses stable SAMUR ids without slug-generated ids", () => {
+  const files = procedureFiles();
+  assert.ok(files.length > 200, `expected the full corpus, walked ${files.length} files`);
   const ids = new Map<string, string[]>();
 
   for (const file of files) {
-    const raw = fs.readFileSync(path.join(procedureDir, file), "utf8");
+    const raw = fs.readFileSync(file, "utf8");
     const id = raw.match(/^id:\s*["']?(.+?)["']?\s*$/m)?.[1] ?? "";
-    assert.match(id, /^[0-9]{3}(?:[_a-z0-9]*)?$/i, `${file} has unstable id ${id}`);
+    assert.match(id, /^(?:[0-9]{3}|drp)(?:[_a-z0-9]*)?$/i, `${file} has unstable id ${id}`);
     ids.set(id, [...(ids.get(id) ?? []), file]);
   }
 
@@ -482,15 +495,59 @@ test("procedure content uses stable SAMUR ids without slug-generated ids", () =>
 });
 
 test("procedure content has no unresolved XWiki attachment options", () => {
-  const procedureDir = path.join(process.cwd(), "content/procedures");
-  const files = fs.readdirSync(procedureDir).filter((file) => file.endsWith(".md"));
+  const files = procedureFiles();
+  assert.ok(files.length > 200, `expected the full corpus, walked ${files.length} files`);
 
   for (const file of files) {
-    const raw = fs.readFileSync(path.join(procedureDir, file), "utf8");
+    const raw = fs.readFileSync(file, "utf8");
     assert.ok(!raw.includes("%7C%7C"), `${file} has encoded XWiki link options`);
     assert.ok(!raw.includes("-target-_blank-"), `${file} has target flag in local attachment path`);
-    assert.ok(!/\bimage:/.test(raw), `${file} has unresolved XWiki image syntax`);
+    // `image:` is deliberately NOT asserted on the raw body: the sync writes raw XWiki
+    // markdown by design, and three files legitimately carry the macro. What must be
+    // clean is the normalized output — see "no normalized procedure body leaks an xwiki
+    // artifact" below.
     assert.ok(!/\(%[\s\S]*?%\)/.test(raw), `${file} has unresolved XWiki style syntax`);
     assert.ok(!/<(?!\/?DrugLink\b)/.test(raw), `${file} has raw less-than syntax that can break MDX`);
+  }
+});
+
+test("xwiki cell wrappers fold back into their list item instead of blanking it", () => {
+  const folded = normalizeProcedureContent(
+    "### **El paciente tiene derecho a:**\n* (((\nNo ser discriminado por razon.\n\n* La confidencialidad.\n* Recibir informacion.",
+  );
+
+  assert.ok(folded.includes("* No ser discriminado por razon."), folded);
+  assert.ok(!/^\s*[*-]\s*$/m.test(folded), "an orphan bullet survived the fold");
+  assert.equal(folded.match(/^\* /gm)?.length, 3);
+});
+
+test("xwiki cell wrappers fold on ordered items and drop when they wrap a heading", () => {
+  const ordered = normalizeProcedureContent("#### **Procedimiento**\n1. (((\nTrasmitir la informacion (ISOBAR)\n\n1. Segundo paso.");
+  assert.ok(ordered.includes("1. Trasmitir la informacion (ISOBAR)"), ordered);
+  assert.ok(!/^\s*\d+[.)]\s*$/m.test(ordered), "an empty ordered item survived the fold");
+
+  const heading = normalizeProcedureContent("* ** (((\n##### **Detenido solicita**\n* El detenido sera trasladado.");
+  assert.ok(heading.startsWith("##### **Detenido solicita**"), heading);
+  assert.ok(!heading.includes("* **\n"), heading);
+});
+
+test("xwiki image macros resolve instead of reaching the page verbatim", () => {
+  assert.equal(
+    normalizeProcedureContent('image:/images/procedures/210/deplecion.jpg||alt="Parametros" width="450px"').trim(),
+    "![Parametros](/images/procedures/210/deplecion.jpg)",
+  );
+  assert.equal(normalizeProcedureContent("image:data:image/gif;base64,R0lGODlhAQABAA==||height=\"15\"").trim(), "");
+});
+
+test("no normalized procedure body leaks an xwiki artifact", async () => {
+  const { getAllProcedures } = await import("../lib/content.ts");
+  const procedures = getAllProcedures();
+  assert.ok(procedures.length > 200, `expected the full corpus, loaded ${procedures.length}`);
+
+  for (const procedure of procedures) {
+    assert.ok(!procedure.content.includes("((("), `${procedure.id} leaks an xwiki cell wrapper`);
+    assert.ok(!procedure.content.includes(")))"), `${procedure.id} leaks an xwiki cell wrapper`);
+    assert.ok(!/\bimage:/.test(procedure.content), `${procedure.id} leaks an xwiki image macro`);
+    assert.ok(!/^\s*(?:[*-]|\d+[.)])\s*$/m.test(procedure.content), `${procedure.id} has an emptied list item`);
   }
 });

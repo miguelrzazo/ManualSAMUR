@@ -181,6 +181,17 @@ export type MarkdownRow =
   | { kind: "bullet" }
   | { kind: "ordered"; ordinal: number };
 
+/**
+ * Classifies the lines of one section for the native renderer, which draws markdown a
+ * line at a time rather than parsing it.
+ *
+ * Ordered items are numbered by a counter owned here, never by the marker in the source.
+ * The corpus is scraped from a MediaWiki `#` list, so it writes every item as `1.` (590
+ * lines) and occasionally as `11.` (procedure 103, items 10-24) — printing the literal
+ * prefix is why the app showed a list of "1." with a stray "11." in the middle. The
+ * counter runs while list items are adjacent, tolerates the blank lines of a loose list,
+ * and restarts at a paragraph or a heading.
+ */
 export interface MarkdownTable {
   headers: string[];
   rows: string[][];

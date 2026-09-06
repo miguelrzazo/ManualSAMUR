@@ -24,6 +24,12 @@ export interface OnlineMapViewProps {
   bounds?: [west: number, south: number, east: number, north: number];
   minZoom?: number;
   maxZoom?: number;
+  /**
+   * The reader's own position, `[longitude, latitude]`, once they have granted permission
+   * from the "Mi ubicación" control. Undefined until then — the map never plots a dot the
+   * reader did not ask for.
+   */
+  userLocation?: [longitude: number, latitude: number];
   onPinPress: (pin: OnlineMapPin) => void;
   onLoadError: () => void;
   markerColor: string;
@@ -44,6 +50,7 @@ export interface OnlineMapViewRef {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   markerDot: { width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: "#FFFFFF" },
+  userDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 3, borderColor: "#FFFFFF", backgroundColor: "#1D4ED8" },
 });
 
 /**
@@ -53,7 +60,7 @@ const styles = StyleSheet.create({
  * turn-by-turn, no travel-time claims, no offline cartography — the online map only
  * ever shows the same offline location directory as pins on a live basemap.
  */
-export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, onPinPress, onLoadError, markerColor, markerColorBase, ref }: OnlineMapViewProps) {
+export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, userLocation, onPinPress, onLoadError, markerColor, markerColorBase, ref }: OnlineMapViewProps) {
   const cameraRef = useRef<CameraRef>(null);
   useImperativeHandle(ref, () => ({
     moveTo(coordinate, targetZoom) {
@@ -69,6 +76,11 @@ export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, 
             <View style={[styles.markerDot, { backgroundColor: pin.kind === "hospital" ? markerColor : markerColorBase }]} />
           </Marker>
         ))}
+        {userLocation && (
+          <Marker id="user-location" lngLat={userLocation}>
+            <View style={styles.userDot} accessibilityLabel="Tu ubicación" />
+          </Marker>
+        )}
       </Map>
     </View>
   );

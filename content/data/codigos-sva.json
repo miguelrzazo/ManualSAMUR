@@ -2002,37 +2002,37 @@
   },
   {
     "code": "T.8.0",
-    "name": "Traumatismo de Facial (incluye cuello)",
+    "name": "Traumatismo Facial (incluye cuello)",
     "category": "Trauma",
     "description": "Trauma abdominal cerrado con afectación esplénica"
   },
   {
     "code": "T.8.1",
-    "name": "Traumatismo de Torácico",
+    "name": "Traumatismo Torácico",
     "category": "Trauma",
     "description": "Trauma abdominal con afectación renal"
   },
   {
     "code": "T.8.2",
-    "name": "Traumatismo de Abdominal",
+    "name": "Traumatismo Abdominal",
     "category": "Trauma",
     "description": "Neumotórax traumático simple"
   },
   {
     "code": "T.8.3",
-    "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+    "name": "Traumatismo Pélvico (incluye cadera y muslo)",
     "category": "Trauma",
     "description": "Neumotórax a tensión"
   },
   {
     "code": "T.8.4",
-    "name": "Traumatismo de Medular",
+    "name": "Traumatismo Medular",
     "category": "Trauma",
     "description": "Hemotórax traumático"
   },
   {
     "code": "T.8.5",
-    "name": "Traumatismo de Mayor / Politrauma",
+    "name": "Traumatismo Mayor / Politrauma",
     "category": "Trauma"
   },
   {

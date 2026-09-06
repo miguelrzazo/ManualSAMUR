@@ -77,8 +77,37 @@ test("malformed local references do not crash lookup and remain unavailable", ()
   assert.equal(resolveProcedureReference([malformed], "999"), undefined);
 });
 
-test("classifyMarkdownRows numbers ordered items and separates bullets", () => {
-  assert.deepEqual(classifyMarkdownRows(["1. Primer paso.", "1. Segundo paso.", "* Una viñeta.", "1. Nueva lista."]).map((row) => row.kind === "ordered" ? row.ordinal : row.kind), [1, 2, "bullet", 1]);
+test("classifyMarkdownRows numbers ordered items itself instead of trusting the source marker", () => {
+  const rows = classifyMarkdownRows([
+    "1. Primer paso.",
+    "1. Segundo paso.",
+    "1. Tercer paso.",
+    "11. Cuarto paso.",
+  ]);
+
+  assert.deepEqual(rows, [
+    { kind: "ordered", ordinal: 1 },
+    { kind: "ordered", ordinal: 2 },
+    { kind: "ordered", ordinal: 3 },
+    { kind: "ordered", ordinal: 4 },
+  ]);
+});
+
+test("classifyMarkdownRows keeps loose lists numbered and restarts after a paragraph", () => {
+  const rows = classifyMarkdownRows([
+    "1. Primer paso.",
+    "",
+    "1. Segundo paso.",
+    "Un parrafo intermedio.",
+    "1. Nueva lista.",
+  ]);
+
+  assert.deepEqual(rows.map((row) => (row.kind === "ordered" ? row.ordinal : row.kind)), [1, "skip", 2, "text", 1]);
+});
+
+test("classifyMarkdownRows separates bullets from ordered items", () => {
+  const rows = classifyMarkdownRows(["* Una vinieta.", "1. Un paso.", "### Encabezado", "1. Otro paso."]);
+  assert.deepEqual(rows.map((row) => (row.kind === "ordered" ? row.ordinal : row.kind)), ["bullet", 1, "skip", 1]);
 });
 
 test("parseMarkdownTableAt preserves empty, multiline, and escaped-pipe cells", () => {
