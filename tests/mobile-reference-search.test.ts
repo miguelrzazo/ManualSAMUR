@@ -13,6 +13,8 @@ import {
   searchAbbreviations,
   searchCodes,
   searchVademecum,
+  activeVademecumScope,
+  showsVademecumCategories,
 } from "../apps/mobile/src/reference-search-logic.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
 
@@ -85,4 +87,17 @@ test("abbreviations stay out of global search while remaining in the information
   assert.match(source, /Presentación publicada/);
   assert.match(source, /Procedimientos relacionados/);
   assert.match(source, /function CodeScreen/);
+});
+
+test("the Vademecum category row shows under its own scope only, so the pills never render twice", () => {
+  assert.equal(showsVademecumCategories("Vademécum"), true);
+  assert.equal(showsVademecumCategories("Todo"), false);
+  assert.equal(showsVademecumCategories("Procedimientos"), false);
+  assert.equal(showsVademecumCategories("Códigos"), false);
+});
+
+test("a category left behind under another scope is remembered but not applied", () => {
+  assert.equal(activeVademecumScope("Vademécum", "Perfusiones"), "Perfusiones");
+  assert.equal(activeVademecumScope("Todo", "Perfusiones"), "Todos");
+  assert.equal(activeVademecumScope("Códigos", "Fármacos"), "Todos");
 });

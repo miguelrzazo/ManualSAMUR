@@ -34,7 +34,7 @@ import { Chip, Disclosure, FavoriteToggle, PageHeader, Press, SearchField } from
 import type { MobileAttachment, MobileProcedure } from "./src/data/schema";
 import { displayTitle } from "./src/title-case";
 import { classifyMarkdownRows, procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
-import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, type MobileReferenceSearchResult } from "./src/reference-search-logic";
+import { activeVademecumScope, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, showsVademecumCategories, SEARCH_SCOPES, VADEMECUM_SCOPES, type MobileReferenceSearchResult, type SearchScope, type VademecumScope } from "./src/reference-search-logic";
 import { calculateDoseConversion, doseUtilityEligibility, type DoseOperation, type DoseConversionResult } from "./src/dose-logic";
 import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
@@ -270,8 +270,6 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
   );
 }
 
-const SEARCH_SCOPES = ["Todo", "Procedimientos", "Vademécum", "Códigos"] as const;
-const VADEMECUM_SCOPES = ["Todos", "Fármacos", "Comerciales", "Perfusiones", "Fluidos"] as const;
 
 /**
  * Buscar. A destination, not a modal.
@@ -291,14 +289,15 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
   const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<(typeof SEARCH_SCOPES)[number]>("Todo");
-  const [vademecumCategory, setVademecumCategory] = useState<(typeof VADEMECUM_SCOPES)[number]>("Todos");
+  const [filter, setFilter] = useState<SearchScope>("Todo");
+  const [vademecumCategory, setVademecumCategory] = useState<VademecumScope>("Todos");
+  const activeCategory = activeVademecumScope(filter, vademecumCategory);
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
   const vademecumResults = useMemo(() => searchVademecum(content, query), [content, query]);
   const codeResults = useMemo(() => searchCodes(content.codes, query), [content.codes, query]);
   const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults.map(({ procedure }) => procedure);
   const visibleVademecum = (filter === "Todo" || filter === "Vademécum")
-    ? vademecumResults.filter((item) => vademecumCategory === "Todos" || (vademecumCategory === "Fármacos" && item.kind === "drug") || (vademecumCategory === "Comerciales" && item.kind === "commercialName") || (vademecumCategory === "Perfusiones" && item.kind === "perfusion") || (vademecumCategory === "Fluidos" && item.kind === "fluid"))
+    ? vademecumResults.filter((item) => activeCategory === "Todos" || (activeCategory === "Fármacos" && item.kind === "drug") || (activeCategory === "Comerciales" && item.kind === "commercialName") || (activeCategory === "Perfusiones" && item.kind === "perfusion") || (activeCategory === "Fluidos" && item.kind === "fluid"))
     : [];
   const visibleCodes = filter === "Todo" || filter === "Códigos" ? codeResults : [];
   const rows = [
@@ -325,7 +324,7 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
         accessibilityRole="tablist"
         renderItem={({ item }) => <Chip label={item} selected={filter === item} onPress={() => setFilter(item)} role="tab" />}
       />
-      {(filter === "Todo" || filter === "Vademécum") && <FlatList
+      {showsVademecumCategories(filter) && <FlatList
         horizontal
         data={VADEMECUM_SCOPES}
         keyExtractor={(item) => item}
@@ -333,7 +332,7 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
         style={styles.filterScroller}
         contentContainerStyle={styles.filterScrollerContent}
         accessibilityRole="tablist"
-        renderItem={({ item }) => <Chip label={item} selected={vademecumCategory === item && filter === "Vademécum"} onPress={() => { setFilter("Vademécum"); setVademecumCategory(item); }} role="tab" />}
+        renderItem={({ item }) => <Chip label={item} selected={vademecumCategory === item} onPress={() => setVademecumCategory(item)} role="tab" />}
       />}
       {query.trim() ? (
         <FlatList
