@@ -3,6 +3,7 @@ import { SectionList, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { spacing, typography, TAB_BAR_INSET, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { accessibilityHints } from "../accessibility.ts";
+import { displayTitle } from "../title-case.ts";
 import { formatDistanceLabel, type LocationWithDistance } from "../mapa-logic.ts";
 import { locationStaleNotice, type LocationSourcePolicy } from "../location-logic.ts";
 import { Chip } from "./Chip.tsx";
@@ -96,7 +97,7 @@ export function LocationDirectory({ locations, query, onQueryChange, filter, onF
                 <MaterialCommunityIcons name={item.kind === "hospital" ? "hospital-building" : "ambulance"} size={18} color={item.kind === "hospital" ? palette.primaryDark : palette.ink} />
               </View>
               <View style={styles.copy}>
-                <Text style={styles.title} numberOfLines={2}>{item.shortName}</Text>
+                <Text style={styles.title} numberOfLines={2}>{displayTitle(item.shortName)}</Text>
                 <Text style={styles.meta} numberOfLines={1}>{item.address}</Text>
                 {stale ? <Text style={styles.stale}>{stale}</Text> : null}
               </View>

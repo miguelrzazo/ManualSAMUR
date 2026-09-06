@@ -228,7 +228,8 @@ function mergePerfusions(
       id: recordId,
       drug: importedPerfusion.drug,
       drugId,
-      category: drugCategory ?? "Pendiente de clasificar",
+      // See lib/vademecum-sync.ts: the placeholder buckets used to render as filter chips.
+      category: drugCategory ?? "Otros",
       indication: `Dosis anexo: ${importedPerfusion.dose}`,
       recipe: importedPerfusion.dilution,
       recipeAlt: undefined,

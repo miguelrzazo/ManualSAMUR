@@ -33,10 +33,10 @@ import {
   type ListRenderItemInfo,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
+import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
-import { displayTitle } from "../title-case";
+import { displayLabel, displayTitle } from "../title-case";
 import { FavoriteToggle } from "../components";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { lightImpact } from "../hooks/haptics";
@@ -421,7 +421,7 @@ function HistoryEventRow({
   const badgeColor = badgeColorKey === "green" ? palette.green : badgeColorKey === "amber" ? palette.amber : badgeColorKey === "red" ? palette.danger : palette.ink;
   const body = (
     <>
-      <Text style={[styles.historyBadge, { color: badgeColor }]}>{event.changeKind.toUpperCase()}</Text>
+      <Text style={[styles.historyBadge, { color: badgeColor }]}>{displayLabel(event.changeKind)}</Text>
       <View style={styles.resourceCopy}>
         <Text style={styles.historySummary}>{event.summary}</Text>
         {showDate && <Text style={styles.historyDate}>{(event.approvedAt ?? event.effectiveDate).slice(0, 10)}</Text>}
@@ -498,7 +498,7 @@ function createStyles(palette: AdaptivePalette) {
     resourceCopy: { flex: 1, minWidth: 0 },
 
     treeHeading: { marginBottom: spacing.xs, marginTop: spacing.xs },
-    treeHeadingText: { fontSize: 11, fontWeight: "800", color: palette.inkMuted, letterSpacing: 0.5 },
+    treeHeadingText: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
     treeHeadingCount: { fontSize: 11, color: palette.inkMuted, marginTop: 2 },
 
     sectionHeaderRow: {

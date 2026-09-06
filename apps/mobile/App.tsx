@@ -31,7 +31,7 @@ import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { useReduceMotion } from "./src/hooks/motion";
 import { successNotice, warningNotice } from "./src/hooks/haptics";
 import { Chip, Disclosure, FavoriteToggle, PageHeader, Press, SearchField } from "./src/components";
-import type { MobileProcedure } from "./src/data/schema";
+import type { MobileAttachment, MobileProcedure } from "./src/data/schema";
 import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, type MobileReferenceSearchResult } from "./src/reference-search-logic";
@@ -45,7 +45,11 @@ import {
   locationStaleNotice,
   platformMapsUrl,
   resolveLocationRoute,
+  type LocationRecord,
 } from "./src/location-logic";
+import { APPROVED_ONLINE_MAP_POLICY, mapPinsFromLocations } from "./src/online-map-logic";
+import { mapCameraTargetFor } from "./src/mapa-logic";
+import { OnlineMapView } from "./src/online-map-view";
 import { canRecordRecent } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels } from "./src/accessibility";
 import { GlassTabBar } from "./src/nav-shell";
@@ -177,7 +181,9 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite }: {
 }) {
   useLayoutEffect(() => {
     navigation.setOptions({
-      title,
+      // Titles here come from the corpus (a drug name, a location's short name), which
+      // mixes shouted and sentence-cased entries — `displayTitle` levels them.
+      title: displayTitle(title),
       headerRight: onToggleFavorite
         ? () => <FavoriteToggle favorite={Boolean(favorite)} onToggle={onToggleFavorite} size={24} />
         : undefined,
@@ -212,9 +218,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure:
           <Text style={styles.resourceMeta}>{procedure.attachments.length ? `${procedure.section} · ${procedure.attachments.length} anexos` : procedure.section}</Text>
         </View>
       </Pressable>
-      {showFavorite && <Pressable onPress={() => toggleFavorite(routeKey)} hitSlop={12} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de guardados" : "Guardar procedimiento"} accessibilityHint={accessibilityHints.toggleFavorite} accessibilityState={{ selected: favorite }}>
-        <MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={22} color={favorite ? palette.amber : palette.inkMuted} />
-      </Pressable>}
+      {showFavorite && <FavoriteToggle favorite={favorite} onToggle={() => toggleFavorite(routeKey)} title={displayTitle(procedure.title)} />}
       <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />
     </View>
   );
@@ -340,7 +344,7 @@ function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: M
     <View style={[styles.resourceCode, reference.kind === "code" ? styles.codeResultCode : reference.kind === "abbreviation" ? styles.abbreviationResultCode : styles.drugCode]}><MaterialCommunityIcons name={icon} size={17} color={palette.ink} /></View>
     <View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{reference.title}</Text><Text style={styles.resourceMeta}>{reference.badge ? `${reference.badge} · ` : ""}{reference.subtitle}</Text></View>
     </Pressable>
-    {supportsFavorites && <Pressable onPress={() => toggleFavorite(reference.routeKey)} hitSlop={12} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de guardados" : "Guardar en guardados"} accessibilityHint={accessibilityHints.toggleFavorite} accessibilityState={{ selected: favorite }}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={21} color={favorite ? palette.amber : palette.inkMuted} /></Pressable>}
+    {supportsFavorites && <FavoriteToggle favorite={favorite} onToggle={() => toggleFavorite(reference.routeKey)} title={reference.title} />}
     <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />
   </View>;
 }
@@ -364,12 +368,48 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
   useDetailHeader({ navigation, title: location?.shortName ?? "Ubicación", favorite, onToggleFavorite });
   if (!location) return <MissingResource title="Punto no disponible" detail="La ruta de ubicación no coincide con el paquete local actual. Vuelve al directorio para consultar otro punto." onRecover={() => navigation.goBack()} />;
   const openMaps = () => { void Linking.openURL(platformMapsUrl(location, Platform.OS === "ios" ? "ios" : Platform.OS === "android" ? "android" : "web")); };
+  // Order matters here. The address is what a responder reads out, types into a
+  // navigator or gives over the radio; the coordinates are a fallback nobody dictates
+  // to five decimal places. They used to be the only block on the screen with a label
+  // and a heading, above nothing, while the address was a grey meta line.
   return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
-    <Text style={styles.detailMeta}>{location.name}</Text><Text style={styles.detailMeta}>{location.address} · {location.district}</Text>
+    <LocationMapPreview location={location} label={"Mapa de " + location.name} />
+    <Text style={styles.detailMeta}>{displayTitle(location.name)}</Text>
     {locationStaleNotice(location, new Date(), policy) && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-outline" size={19} color={palette.amber} /><Text style={styles.locationFallbackText}>{locationStaleNotice(location, new Date(), policy)}</Text></View>}
-    <View style={styles.infoBlock}><Text style={styles.infoLabel}>Coordenadas</Text><Text style={styles.infoValue}>{location.lat.toFixed(5)}, {location.lng.toFixed(5)}</Text></View>
+    <View style={styles.infoBlock}><Text style={styles.infoLabel}>Dirección</Text><Text style={styles.addressValue}>{location.address}</Text><Text style={styles.infoValue}>{location.district}</Text></View>
     <Pressable onPress={openMaps} style={styles.primaryButton} accessibilityRole="link" accessibilityLabel={"Abrir " + location.name + " en Mapas"}><Text style={styles.primaryButtonText}>Abrir en Mapas</Text></Pressable>
+    <Text style={styles.coordinates} accessibilityLabel={`Coordenadas ${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}`}>Coordenadas {location.lat.toFixed(5)}, {location.lng.toFixed(5)}</Text>
   </ScrollView></SafeAreaView>;
+}
+
+/**
+ * A boxed, non-interactive map of one point, shown above its address.
+ *
+ * Deliberately not a second live map surface with its own controls: it answers "where is
+ * this, roughly" at a glance and hands the actual navigation to the system Maps app just
+ * below it. Falls back to nothing at all when the basemap is not approved — a placeholder
+ * rectangle pretending to be a map is what this screen already removed once.
+ */
+function LocationMapPreview({ location, label }: { location: LocationRecord; label: string }) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  const scheme = useColorScheme();
+  const [failed, setFailed] = useState(false);
+  if (!APPROVED_ONLINE_MAP_POLICY.approved || failed) return null;
+  return (
+    <View style={styles.locationMapPreview} accessible accessibilityRole="image" accessibilityLabel={label}>
+      <OnlineMapView
+        dark={scheme === "dark"}
+        pins={mapPinsFromLocations([location], "offline")}
+        center={mapCameraTargetFor(location)}
+        zoom={14}
+        onPinPress={() => undefined}
+        onLoadError={() => setFailed(true)}
+        markerColor={palette.primary}
+        markerColorBase={palette.ink}
+      />
+    </View>
+  );
 }
 
 function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Procedure">) {
@@ -414,7 +454,11 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   // The header carries the procedure id, not its name: at large-title size a
   // 60-character procedure name wraps to four lines and pushes the content off
   // screen. The name is the body's first line instead, where it can wrap freely.
-  useDetailHeader({ navigation, title: procedure ? `Procedimiento ${procedure.id}` : "Procedimiento", favorite: procedureFavorite, onToggleFavorite: onToggleProcedureFavorite });
+  // No `onToggleFavorite` here on purpose. On the other detail screens the favourite is a
+  // fine `headerRight`, but this screen also renders the procedure's own name as the first
+  // line of the body (see below), so the star ended up as an unlabelled glyph competing
+  // with a collapsing large title. It moves next to that title instead, with a word on it.
+  useDetailHeader({ navigation, title: procedure ? `Procedimiento ${procedure.id}` : "Procedimiento" });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Search")} />;
   const relatedIds = [...new Set([
     ...procedure.related,
@@ -466,6 +510,17 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     scrollEventThrottle={100}
   >
     <Text style={styles.detailTitle} accessibilityRole="header">{displayTitle(procedure.title)}</Text>
+    <Press
+      onPress={onToggleProcedureFavorite}
+      style={[styles.favoriteAction, procedureFavorite && styles.favoriteActionOn]}
+      accessibilityRole="button"
+      accessibilityLabel={procedureFavorite ? `Quitar ${displayTitle(procedure.title)} de favoritos` : `Guardar ${displayTitle(procedure.title)} en favoritos`}
+      accessibilityHint={accessibilityHints.toggleFavorite}
+      accessibilityState={{ selected: procedureFavorite }}
+    >
+      <MaterialCommunityIcons name={procedureFavorite ? "star" : "star-outline"} size={18} color={procedureFavorite ? palette.primaryDark : palette.inkMuted} />
+      <Text style={[styles.favoriteActionText, procedureFavorite && styles.favoriteActionTextOn]}>{procedureFavorite ? "Guardado" : "Guardar"}</Text>
+    </Press>
     <Text style={styles.detailMeta}>{procedure.section}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
     {headings.length > 0 && <View style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Text style={styles.contentsTitle}>Contenido</Text>{headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - spacing.md), animated: !reduceMotion }); }} style={styles.contentsRow} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text><MaterialCommunityIcons name="chevron-down" size={16} color={palette.inkMuted} /></Pressable>)}</View>}
     <MarkdownContent sections={sections} onContainerLayout={(offset) => { markdownOrigin.current = offset; }} onSectionLayout={(id, offset) => { sectionOffsets.current[id] = markdownOrigin.current + offset; }} />
@@ -473,7 +528,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     {related.length > 0 && <><SectionHeading title="Referencias relacionadas" /><View style={styles.cardList}>{related.map((item) => <ProcedureRow key={`related-${item.id}`} procedure={item} onPress={() => navigation.push("Procedure", { id: item.id })} />)}</View></>}
     {unresolvedRelatedIds.length > 0 && <View style={styles.sourceNotice}><MaterialCommunityIcons name="link-variant-off" size={19} color={palette.danger} /><Text style={styles.sourceNoticeText}>Algunas referencias ({unresolvedRelatedIds.join(", ")}) no están incluidas en este paquete local.</Text></View>}
     {procedure.updates.length > 0 && <><SectionHeading title="Actualizaciones" /><View style={styles.updateList} accessibilityLiveRegion="polite" accessibilityLabel={`${procedure.updates.length} actualizaciones editoriales`}>{procedure.updates.map((update, index) => <ProcedureUpdate key={index} update={update} />)}</View></>}
-    {procedure.attachments.length > 0 && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{procedure.attachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const status = record?.status ?? "not-downloaded"; const isActive = activeAttachmentId === attachment.id; const canOpen = isLocallyAvailable(record, attachment) && Boolean(record?.localUri); return <Pressable key={attachment.id} onPress={() => void openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`${canOpen ? "Abrir" : status === "downloading" ? "Cancelar descarga de" : "Descargar"} anexo ${attachment.filename}`} accessibilityHint={canOpen ? "Abre el anexo guardado en este dispositivo." : "Descarga y valida el anexo antes de abrirlo."} accessibilityState={{ busy: isActive }}><MaterialCommunityIcons name={attachment.kind === "pdf" ? "file-pdf-box" : "image-outline"} size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachment.kind.toUpperCase()} · {isActive ? "descargando…" : canOpen ? attachmentStatusLabel("available") : attachmentStatusLabel(status)}</Text></View><MaterialCommunityIcons name={canOpen ? "open-in-new" : status === "downloading" ? "close-circle-outline" : status === "failed" || status === "cancelled" ? "refresh" : "download-outline"} size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
+    {procedure.attachments.length > 0 && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{procedure.attachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const status = record?.status ?? "not-downloaded"; const isActive = activeAttachmentId === attachment.id; const canOpen = isLocallyAvailable(record, attachment) && Boolean(record?.localUri); return <Pressable key={attachment.id} onPress={() => void openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`${canOpen ? "Abrir" : status === "downloading" ? "Cancelar descarga de" : "Descargar"} anexo ${attachment.filename}`} accessibilityHint={canOpen ? "Abre el anexo guardado en este dispositivo." : "Descarga y valida el anexo antes de abrirlo."} accessibilityState={{ busy: isActive }}><MaterialCommunityIcons name={attachment.kind === "pdf" ? "file-pdf-box" : "image-outline"} size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachmentKindLabel(attachment.kind)} · {isActive ? "descargando…" : canOpen ? attachmentStatusLabel("available") : attachmentStatusLabel(status)}</Text></View><MaterialCommunityIcons name={canOpen ? "open-in-new" : status === "downloading" ? "close-circle-outline" : status === "failed" || status === "cancelled" ? "refresh" : "download-outline"} size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
     <Text style={styles.detailDisclaimer}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text>
   </ScrollView></SafeAreaView>;
 }
@@ -530,7 +585,7 @@ function DoseUtilityCard({ drug }: { drug: Record<string, unknown> }) {
       {(["amount-to-volume", "dose-rate-to-pump-rate"] as const).map((item) => <Pressable key={item} onPress={() => { setOperation(item); setResult(undefined); }} style={[styles.doseChoice, operation === item && styles.doseChoiceActive]} accessibilityRole="tab" accessibilityLabel={item === "amount-to-volume" ? "Convertir cantidad a volumen" : "Convertir dosis a velocidad de bomba"} accessibilityState={{ selected: operation === item }}><Text style={[styles.doseChoiceText, operation === item && styles.doseChoiceTextActive]}>{item === "amount-to-volume" ? "Cantidad → volumen" : "Dosis → bomba"}</Text></Pressable>)}
     </View>
     {operation === "amount-to-volume" ? <><Text style={styles.doseLabel}>Cantidad de dosis</Text><View style={styles.doseInputRow}><TextInput value={amount} onChangeText={(value) => { setAmount(value); setResult(undefined); }} style={styles.doseInput} keyboardType="decimal-pad" accessibilityLabel="Cantidad de dosis"/><Text style={styles.doseUnit}>{amountUnit}</Text></View><View style={styles.doseChoiceRow}>{["mg", "g", "mcg", "mEq", "UI"].map((item) => <Pressable key={item} onPress={() => setAmountUnit(item)} style={[styles.doseUnitChoice, amountUnit === item && styles.doseUnitChoiceActive]} accessibilityRole="button"><Text style={[styles.doseUnitChoiceText, amountUnit === item && styles.doseUnitChoiceTextActive]}>{item}</Text></Pressable>)}</View></> : <><Text style={styles.doseLabel}>Dosis por tiempo</Text><View style={styles.doseInputRow}><TextInput value={doseRate} onChangeText={(value) => { setDoseRate(value); setResult(undefined); }} style={styles.doseInput} keyboardType="decimal-pad" accessibilityLabel="Dosis por tiempo"/><Text style={styles.doseUnit}>{doseRateUnit} / {timeUnit}</Text></View><View style={styles.doseChoiceRow}>{["mg", "g", "mcg", "mEq", "UI"].map((item) => <Pressable key={item} onPress={() => setDoseRateUnit(item)} style={[styles.doseUnitChoice, doseRateUnit === item && styles.doseUnitChoiceActive]} accessibilityRole="button"><Text style={[styles.doseUnitChoiceText, doseRateUnit === item && styles.doseUnitChoiceTextActive]}>{item}</Text></Pressable>)}{["min", "h", "day"].map((item) => <Pressable key={item} onPress={() => setTimeUnit(item)} style={[styles.doseUnitChoice, timeUnit === item && styles.doseUnitChoiceActive]} accessibilityRole="button"><Text style={[styles.doseUnitChoiceText, timeUnit === item && styles.doseUnitChoiceTextActive]}>{item}</Text></Pressable>)}</View><Pressable onPress={() => { setPerKg((value) => !value); setResult(undefined); }} style={styles.doseCheckRow} accessibilityRole="checkbox" accessibilityState={{ checked: perKg }}><MaterialCommunityIcons name={perKg ? "checkbox-marked" : "checkbox-blank-outline"} size={20} color={perKg ? palette.primary : palette.inkMuted} /><Text style={styles.doseCheckText}>Dosis por kg de peso</Text></Pressable>{perKg && <TextInput value={weightKg} onChangeText={(value) => { setWeightKg(value); setResult(undefined); }} style={styles.doseInputStandalone} keyboardType="decimal-pad" placeholder="Peso (kg)" placeholderTextColor={palette.inkMuted} accessibilityLabel="Peso en kilogramos"/>}</>}
-    <Text style={styles.doseLabel} accessibilityRole="header">VÍA PUBLICADA</Text>
+    <Text style={styles.doseLabel} accessibilityRole="header">Vía publicada</Text>
     <View style={styles.doseChoiceRow}>{routes.map((item) => <Pressable key={item} onPress={() => { setEnteredRoute(item); setRouteConfirmed(false); setResult(undefined); }} style={[styles.doseUnitChoice, enteredRoute === item && styles.doseUnitChoiceActive]} accessibilityRole="button"><Text style={[styles.doseUnitChoiceText, enteredRoute === item && styles.doseUnitChoiceTextActive]}>{item}</Text></Pressable>)}</View>
     <Pressable onPress={() => { setPresentationConfirmed((value) => !value); setResult(undefined); }} style={styles.doseCheckRow} accessibilityRole="checkbox" accessibilityLabel="Confirmar la presentación publicada" accessibilityState={{ checked: presentationConfirmed }}><MaterialCommunityIcons name={presentationConfirmed ? "checkbox-marked" : "checkbox-blank-outline"} size={20} color={presentationConfirmed ? palette.primary : palette.inkMuted} /><Text style={styles.doseCheckText}>Confirmo la presentación publicada</Text></Pressable>
     <Pressable onPress={() => { setRouteConfirmed((value) => !value); setResult(undefined); }} style={styles.doseCheckRow} accessibilityRole="checkbox" accessibilityLabel="Confirmar la vía seleccionada" accessibilityState={{ checked: routeConfirmed }}><MaterialCommunityIcons name={routeConfirmed ? "checkbox-marked" : "checkbox-blank-outline"} size={20} color={routeConfirmed ? palette.primary : palette.inkMuted} /><Text style={styles.doseCheckText}>Confirmo la vía seleccionada</Text></Pressable>
@@ -623,6 +678,11 @@ function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootS
   const [query, setQuery] = useState(route.params?.query ?? "");
   const entries = useMemo(() => searchAbbreviations(content.abbreviations, query, 1000), [content.abbreviations, query]);
   return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
+}
+
+/** "PDF" is an acronym; "IMAGE" was the enum shouted at the reader. */
+function attachmentKindLabel(kind: MobileAttachment["kind"]): string {
+  return kind === "pdf" ? "PDF" : kind === "image" ? "Imagen" : "Documento";
 }
 
 function readableMarkdownLine(line: string): string {
@@ -845,6 +905,13 @@ function createStyles(palette: AdaptivePalette) {
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: palette.surfaceMuted, overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: palette.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: palette.paper, transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: palette.paper, transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: palette.paper, transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPin: { position: "absolute", width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: palette.white }, mapPinRed: { backgroundColor: palette.primary }, mapPinNavy: { backgroundColor: palette.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: palette.ink, fontWeight: "900" }, mapNote: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl },
   locationRow: { minHeight: 66, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, locationIcon: { width: 38, height: 38, borderRadius: 12, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" }, locationIconBase: { backgroundColor: palette.amberWash }, locationAddress: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: 2 }, locationDistance: { color: palette.green, fontSize: 11, fontWeight: "800", lineHeight: 16, marginTop: 2 }, locationFreshness: { color: palette.inkMuted, fontSize: 10, lineHeight: 14, marginTop: 2 },
   detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: spacing.sm }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
+  favoriteAction: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.xs + 2, minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, marginTop: spacing.md },
+  favoriteActionOn: { backgroundColor: palette.primaryWash },
+  favoriteActionText: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
+  favoriteActionTextOn: { color: palette.primaryDark },
+  locationMapPreview: { height: 180, borderRadius: radii.lg, overflow: "hidden", borderWidth: 1, borderColor: palette.lineStrong, marginBottom: spacing.lg },
+  addressValue: { ...typography.headline, color: palette.ink },
+  coordinates: { ...typography.footnote, color: palette.inkMuted, marginTop: spacing.lg },
   detailDisclaimer: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: spacing.xl, marginBottom: spacing.md },
   infoBlock: { borderTopWidth: 1, borderTopColor: palette.line, paddingVertical: spacing.md }, infoLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: 4 }, infoValue: { color: palette.ink, fontSize: 15, lineHeight: 22 }, codeRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, codeValue: { minWidth: 55, color: palette.primary, fontSize: 15, fontWeight: "900" }, codeResultCode: { backgroundColor: palette.amberWash }, abbreviationResultCode: { backgroundColor: palette.greenWash }, abbreviationRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, abbreviation: { width: 70, color: palette.primary, fontWeight: "900", fontSize: 13 },
   doseCard: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.lg, marginTop: spacing.lg, marginBottom: spacing.xl }, doseHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, doseTitle: { color: palette.ink, fontSize: 16, fontWeight: "800" }, doseLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginTop: spacing.md, marginBottom: spacing.sm }, doseChoiceRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.sm }, doseChoice: { flex: 1, minWidth: 120, minHeight: 44, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center" }, doseChoiceActive: { backgroundColor: palette.ink }, doseChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, doseChoiceTextActive: { color: palette.paper }, doseInputRow: { flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: palette.lineStrong, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md }, doseInput: { flex: 1, color: palette.ink, fontSize: 17, paddingVertical: 8 }, doseInputStandalone: { borderWidth: 1, borderColor: palette.lineStrong, borderRadius: radii.sm, backgroundColor: palette.paper, minHeight: 48, paddingHorizontal: spacing.md, color: palette.ink, fontSize: 16, marginBottom: spacing.sm }, doseUnit: { color: palette.inkMuted, fontWeight: "800", fontSize: 12 }, doseUnitChoice: { minHeight: 44, borderRadius: radii.pill, paddingVertical: 7, paddingHorizontal: 11, backgroundColor: palette.surfaceMuted, justifyContent: "center" }, doseUnitChoiceActive: { backgroundColor: palette.ink }, doseUnitChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, doseUnitChoiceTextActive: { color: palette.paper }, doseCheckRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44 }, doseCheckText: { color: palette.ink, fontSize: 12, lineHeight: 17, flex: 1 }, doseCalculateButton: { backgroundColor: palette.primaryAction, borderRadius: radii.md, padding: spacing.md, alignItems: "center", marginTop: spacing.md }, doseAudit: { marginTop: spacing.md }, doseResult: { backgroundColor: palette.greenWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseResultLabel: { color: palette.green, fontSize: 13, fontWeight: "600", letterSpacing: -0.08 }, doseResultValue: { color: palette.ink, fontSize: 27, fontWeight: "900", marginVertical: 3 }, doseResultDetail: { color: palette.inkMuted, fontSize: 11, lineHeight: 16 }, doseWarning: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: spacing.sm }, doseError: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.md }, doseErrorText: { color: palette.dangerDark, flex: 1, fontSize: 12, lineHeight: 17 }, doseUnavailable: { color: palette.ink, fontSize: 13, lineHeight: 18 }, doseDisclaimer: { color: palette.inkMuted, fontSize: 10, lineHeight: 15, marginTop: spacing.md },

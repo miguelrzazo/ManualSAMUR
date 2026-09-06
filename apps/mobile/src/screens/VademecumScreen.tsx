@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
+import { displayTitle } from "../title-case";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { selectionTick } from "../hooks/haptics";
 import { Chip, Press } from "../components";
@@ -341,7 +342,7 @@ function VademecumRow({
       >
         <View style={styles.fluidCardHeader}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>{reference.title}</Text>
+            <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
             <Text style={styles.rowMeta}>{stringDetail(reference, "presentation")}</Text>
           </View>
           <View style={styles.fluidTypeBadge}>
@@ -379,7 +380,7 @@ function VademecumRow({
         accessibilityLabel={`${reference.title}, nombres comerciales`}
         accessibilityHint={accessibilityHints.openDetail}
       >
-        <Text style={styles.rowTitle}>{reference.title}</Text>
+        <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
         <Text style={styles.rowMeta}>{stringDetail(reference, "presentation")}</Text>
         <View style={styles.fluidChipsRow}>
           {brandNames.map((brand) => (
@@ -403,7 +404,7 @@ function VademecumRow({
       <View style={[styles.rowAccentBar, { backgroundColor: accent }]} />
       <MaterialCommunityIcons name={icon} size={18} color={palette.ink} style={styles.rowIcon} />
       <View style={styles.rowCopy}>
-        <Text style={styles.rowTitle}>{reference.title}</Text>
+        <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
         <Text style={styles.rowMeta} numberOfLines={reference.kind === "perfusion" ? 1 : 2}>
           {reference.kind === "perfusion" ? stringDetail(reference, "recipe") || reference.subtitle : reference.subtitle}
         </Text>

@@ -1,3 +1,4 @@
+import { displayLabel } from "./title-case.ts";
 import type { MobileContent } from "./data/schema";
 
 export type MobileReferenceKind = "drug" | "perfusion" | "fluid" | "commercialName" | "code" | "abbreviation";
@@ -123,7 +124,7 @@ export function buildCodeReferences(codes: MobileContent["codes"]): MobileRefere
     return result("code", item, {
       id: `${group}:${code || title}`,
       title,
-      subtitle: [group.toUpperCase(), stringValue(item, "category", "group")].filter(Boolean).join(" · "),
+      subtitle: [displayLabel(group), stringValue(item, "category", "group")].filter(Boolean).join(" · "),
       badge: code || undefined,
       sourceGroup: group,
       routeKey: codeRouteKey(group, code || title),

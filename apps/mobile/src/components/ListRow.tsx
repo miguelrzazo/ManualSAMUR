@@ -6,6 +6,7 @@ import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/
 import { accessibilityHints } from "../accessibility.ts";
 import { lightImpact } from "../hooks/haptics.ts";
 import { useTheme } from "../theme.tsx";
+import { displayTitle } from "../title-case.ts";
 import { FavoriteToggle } from "./FavoriteToggle.tsx";
 import { Press } from "./Press.tsx";
 
@@ -40,11 +41,16 @@ export type ListRowProps = {
 };
 
 export function ListRow({
-  title, meta, code, icon, accent, onPress, favorite, onToggleFavorite,
+  title: rawTitle, meta, code, icon, accent, onPress, favorite, onToggleFavorite,
   chevron = true, accessibilityLabel, trailing, numberOfLines = 2,
 }: ListRowProps) {
   const palette = useTheme();
   const styles = useStyles(palette);
+  // The corpus shouts: "PARADA CARDIORRESPIRATORIA" sits next to "Cuidados postparada"
+  // in the same list. Normalising here rather than at each call site is why the two
+  // screens that remembered to call `displayTitle` no longer differ from the four that
+  // did not. `displayTitle` is a no-op on anything already deliberately cased.
+  const title = displayTitle(rawTitle);
 
   const row = (
     <View style={styles.row}>

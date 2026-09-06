@@ -67,3 +67,24 @@ export function displayTitle(title: string): string {
     })
     .join("");
 }
+
+/**
+ * Display form for a short label that comes from a data key rather than from prose:
+ * a code group (`sva`, `incidente`), a change kind (`nuevo`, `revisado`).
+ *
+ * These were rendered with `.toUpperCase()`, which is right for `sva` and wrong for
+ * `indicativos` — one is an acronym, the other is a word being shouted at the reader.
+ * The explicit map settles the acronyms; everything else gets sentence case. A map,
+ * not a length heuristic, because `lima` and `icao` are both four letters and only one
+ * of them is an acronym.
+ */
+const LABEL_ACRONYMS = new Set(["sva", "svb", "upsi", "upsq", "icao", "uro", "pcr", "tetra", "drp"]);
+
+export function displayLabel(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  if (LABEL_ACRONYMS.has(trimmed.toLocaleLowerCase("es"))) return trimmed.toLocaleUpperCase("es");
+  if (!isUppercaseWord(trimmed) && trimmed !== trimmed.toLocaleLowerCase("es")) return trimmed;
+  const lower = trimmed.toLocaleLowerCase("es");
+  return lower.charAt(0).toLocaleUpperCase("es") + lower.slice(1);
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { useTheme } from "../theme.tsx";
+import { displayTitle } from "../title-case.ts";
 
 /**
  * The tab-screen header.
@@ -30,7 +31,7 @@ export function PageHeader({ title, trailing, leading }: {
   return (
     <View style={styles.header}>
       {leading}
-      <Text style={styles.title} numberOfLines={1} accessibilityRole="header">{title}</Text>
+      <Text style={styles.title} numberOfLines={2} accessibilityRole="header">{displayTitle(title)}</Text>
       <View style={styles.trailing}>{trailing}</View>
     </View>
   );

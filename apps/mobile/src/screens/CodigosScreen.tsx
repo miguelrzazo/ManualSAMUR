@@ -49,6 +49,7 @@ import {
 import { useContent } from "../content";
 import { Chip, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
+import { displayTitle } from "../title-case";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
 
 export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
@@ -119,7 +120,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             >
               <Text style={styles.codeBadge}>{item.badge ?? "—"}</Text>
               <View style={styles.rowCopy}>
-                <Text style={styles.rowTitle}>{item.title}</Text>
+                <Text style={styles.rowTitle}>{displayTitle(item.title)}</Text>
                 <Text style={styles.rowMeta}>{item.subtitle}</Text>
               </View>
               <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} />
@@ -356,7 +357,7 @@ function CodeGroupList({
                       accessibilityLabel="Transmitir por TETRA y llamada de voz"
                     />
                   )}
-                  <Text style={styles.rowTitle}>{code.name}</Text>
+                  <Text style={styles.rowTitle}>{displayTitle(code.name)}</Text>
                 </View>
               </View>
             </Pressable>
@@ -431,7 +432,7 @@ function OtrosContent({
             accessibilityHint={accessibilityHints.openDetail}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
-            <Text style={styles.rowTitle}>{item.name}</Text>
+            <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>
           </Pressable>
         )}
       />
@@ -482,7 +483,7 @@ function OtrosContent({
             accessibilityHint={accessibilityHints.openDetail}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
-            <Text style={styles.rowTitle}>{item.name}</Text>
+            <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>
           </Pressable>
         )}
       />
@@ -505,7 +506,7 @@ function OtrosContent({
           >
             <Text style={styles.baseNumber}>{base.number}</Text>
             <View style={styles.rowCopy}>
-              <Text style={styles.rowTitle}>{base.name}</Text>
+              <Text style={styles.rowTitle}>{displayTitle(base.name)}</Text>
               <Text style={styles.rowMeta}>
                 {base.address} · {base.district}
               </Text>
@@ -558,7 +559,7 @@ function OtrosContent({
                 {hospital.status4 !== null && <Text style={styles.hospitalStatus4}>4+{hospital.status4}</Text>}
               </View>
               <View style={styles.rowCopy}>
-                <Text style={styles.rowTitle}>{hospital.name}</Text>
+                <Text style={styles.rowTitle}>{displayTitle(hospital.name)}</Text>
                 <Text style={styles.rowMeta}>{hospital.address}</Text>
               </View>
               {hospital.lat && <MaterialCommunityIcons name="map-marker-outline" size={18} color={palette.inkMuted} />}
@@ -591,7 +592,7 @@ function OtrosContent({
             accessibilityHint={accessibilityHints.openDetail}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
-            <Text style={styles.rowTitle}>{item.name}</Text>
+            <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>
           </Pressable>
         )}
       />
@@ -608,7 +609,7 @@ function OtrosContent({
           <View style={styles.districtRow} accessible accessibilityLabel={`Distrito ${district.num}, ${district.name}`}>
             <Text style={styles.districtNum}>{district.num}</Text>
             <View style={styles.rowCopy}>
-              <Text style={styles.rowTitle}>{district.name}</Text>
+              <Text style={styles.rowTitle}>{displayTitle(district.name)}</Text>
               {district.bases.length > 0 ? (
                 <View style={styles.districtBaseChips}>
                   {district.bases.map((base) => (

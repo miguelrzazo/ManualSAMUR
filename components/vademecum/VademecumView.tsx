@@ -90,7 +90,6 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }>
   "Fluidos IV": { bg: "bg-blue-100 dark:bg-blue-900/20", text: "text-blue-700 dark:text-blue-300", dot: "bg-blue-500" },
   "Vasoactivos": { bg: "bg-red-100 dark:bg-red-900/20", text: "text-red-700 dark:text-red-300", dot: "bg-red-500" },
   "Antiarrítmicos": { bg: "bg-orange-100 dark:bg-orange-900/20", text: "text-orange-700 dark:text-orange-300", dot: "bg-orange-500" },
-  "Pendiente de clasificar": { bg: "bg-amber-100 dark:bg-amber-900/20", text: "text-amber-800 dark:text-amber-300", dot: "bg-amber-500" },
   "Otros": { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-600 dark:text-slate-300", dot: "bg-slate-400" },
 };
 

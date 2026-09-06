@@ -56,7 +56,6 @@ export const CATEGORY_ACCENTS: Record<string, string> = {
   "Fluidos IV": "#3b82f6",
   "Vasoactivos": "#ef4444",
   "Antiarrítmicos": "#f97316",
-  "Pendiente de clasificar": "#f59e0b",
   "Otros": "#94a3b8",
 };
 

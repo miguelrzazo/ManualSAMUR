@@ -366,8 +366,14 @@ export function mergeImportedDrugs(
       id: resolvedId,
       name: importedDrug.name,
       synonyms: existingDrug?.synonyms ?? [],
-      category: existingDrug?.category ?? "Pendiente de clasificar",
-      subcategory: existingDrug?.subcategory ?? "Revisar manualmente",
+      // A newly imported drug has no local taxonomy yet. It used to be filed under
+      // "Pendiente de clasificar" / "Revisar manualmente", which are not categories —
+      // they are a note to the maintainer, and they surfaced to responders as two
+      // filter chips in the vademécum alongside "Cardiovascular" and "Antídotos".
+      // `Otros` is a real category that already exists in the dataset; the fact that a
+      // drug is new is visible in the sync PR diff, which is where a maintainer reads it.
+      category: existingDrug?.category ?? "Otros",
+      subcategory: existingDrug?.subcategory ?? "",
       presentation: importedDrug.presentation || existingDrug?.presentation || "",
       funcion: importedDrug.funcion || existingDrug?.funcion,
       indication: importedDrug.indication || existingDrug?.indication || "",
