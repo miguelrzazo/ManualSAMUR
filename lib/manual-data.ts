@@ -6,6 +6,13 @@ const BARE_PROCEDURE_LINK_RE = /(?:^|[\s(])(?:https?:\/\/[^\s)]+\/)?([0-9][A-Za-
 const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
 const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(((?:\.\.\/|\.\/)?images\/[^)]+)\)\s*$/gim;
 const STANDALONE_BANG_RE = /^!\s*$/gm;
+/**
+ * XWiki's own image macro, `image:<src>||attr="…" attr="…"`, which the scrape leaves
+ * verbatim when the source used it outside a link. A real `/images/...` path becomes a
+ * markdown image (alt text recovered from the options); a base64 spacer GIF is layout
+ * padding with nothing to show, so it is dropped.
+ */
+const XWIKI_IMAGE_MACRO_RE = /^\s*image:(\S+?)(?:\|\|(.*))?$/gim;
 const ÚLTIMA_MODIFICACIÓN_RE = /^\*\*Última modificación[^\n*]*\*\*\s*\.?\s*$/gim;
 const PRINT_EMOJI_RE = /^🖨️?\s*Imprimir\s+esta\s+página\s*$/gim;
 const CONTENIDO_STANDALONE_RE = /^Contenido\s*$/gm;
@@ -986,13 +993,51 @@ export function filterTableOfContentsHeadings(
   });
 }
 
+/**
+ * XWiki wraps the body of a list item in `(((` … `)))` when the item was authored as a
+ * multi-block cell. The scrape keeps those wrappers, so a list item arrives split across
+ * two lines: the marker alone (`* (((`) and its text underneath.
+ *
+ * The blanket `(((`/`)))` strip further down used to delete the wrapper and leave a bare
+ * `* `, which `/^[*\-]\s*$/gm` then blanked out — silently demoting the item's text to a
+ * paragraph and dropping the first entry of 375 lists across the corpus. Fold the wrapper
+ * back into its marker instead, so the item survives as an item.
+ *
+ * Only lines that already carry a list marker are touched; `normalizeXWikiTables` owns
+ * everything starting with `|`. When the wrapped block opens with a heading (or nothing at
+ * all) there is no text to fold up, so the orphan marker is dropped outright.
+ */
+function foldXWikiCellWrappers(text: string): string {
+  const MARKER_WRAPPER_RE = /^(\s*)((?:[*-]|\d+[.)])\s+)(\*\*\s*)?\(\(\(\s*$/;
+  const lines = text.split("\n");
+  const out: string[] = [];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const match = MARKER_WRAPPER_RE.exec(lines[i]);
+    if (!match) {
+      out.push(lines[i]);
+      continue;
+    }
+
+    const [, indent, marker, bold = ""] = match;
+    const next = lines[i + 1] ?? "";
+    const foldable = next.trim().length > 0 && !/^#{1,6}\s/.test(next.trim()) && !next.startsWith("|");
+    if (!foldable) continue;
+
+    out.push(`${indent}${marker}${bold}${next.trim()}`);
+    i += 1;
+  }
+
+  return out.join("\n");
+}
+
 export function normalizeProcedureContent(
   content: string,
   idToSlug = new Map<string, string>(),
   sourceUrl?: string,
   options: ProcedureContentNormalizationOptions = {},
 ): string {
-  const normalized = normalizeXWikiTables(content.replace(/\r\n/g, "\n"))
+  const normalized = foldXWikiCellWrappers(normalizeXWikiTables(content.replace(/\r\n/g, "\n")))
     .replace(/\{\{box[\s\S]*?\}\}/g, "")
     .replace(/^(=+)\s+(.+?)\s+=*\s*$/gm, (_m, eq: string, text: string) => "#".repeat(Math.min(eq.length + 1, 6)) + " " + text.trim())
     .replace(/^# /gm, "## ")
@@ -1014,6 +1059,11 @@ export function normalizeProcedureContent(
     .replace(XWIKI_EXTERNAL_LINK_RE, (_match, label: string, url: string) => {
       const cleanLabel = label.replace(/!\[[^\]]*\]\([^)]+\)/g, "").replace(/~\[[^\]]*~\]/g, "").trim();
       return cleanLabel ? `[${cleanLabel}](${url})` : url;
+    })
+    .replace(XWIKI_IMAGE_MACRO_RE, (_match, src: string, options = "") => {
+      if (/^data:/i.test(src)) return "";
+      const alt = /alt="([^"]*)"/i.exec(options ?? "")?.[1] ?? "";
+      return `![${alt}](${resolveRelativeUrl(src, sourceUrl)})`;
     })
     .replace(STANDALONE_BANG_RE, "")
     .replace(/^[*\-]\s*$/gm, "")
