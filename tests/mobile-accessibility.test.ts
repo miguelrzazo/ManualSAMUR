@@ -16,6 +16,10 @@ const codigosScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/s
 // (settingsTriggerRef/restoreAccessibilityFocus) is still checked against App.tsx
 // below, but the tree/favorites/history accessibility contract lives here instead.
 const inicioScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/InicioScreen.tsx"), "utf8");
+// Mapa (T5e) was extracted the same way: the owner's redirect to a full-screen map
+// with floating controls needed its own module rather than growing the inline
+// `function MapScreen` App.tsx used to have — see src/screens/MapaScreen.tsx.
+const mapaScreenSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/MapaScreen.tsx"), "utf8");
 
 test("route accessibility contracts provide stable, speakable names", () => {
   for (const [route, label] of Object.entries(routeAccessibilityLabels)) {
@@ -50,7 +54,7 @@ test("adaptive layout reflows controls at large text and separates tablet list/d
 });
 
 test("core routes expose accessibility semantics and adaptive behavior", () => {
-  for (const route of ["SearchScreen", "MapScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
+  for (const route of ["SearchScreen", "LocationDetailScreen", "ProcedureScreen", "DrugScreen", "VademecumReferenceScreen", "CodeScreen", "AbbreviationsScreen"]) {
     const start = appSource.indexOf(`function ${route}`);
     assert.ok(start >= 0, `${route} must remain a route-level surface`);
     const end = appSource.indexOf("\nfunction ", start + 10);
@@ -64,6 +68,8 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   assert.match(inicioScreenSource, /export function InicioScreen/, "InicioScreen must remain a route-level surface");
   assert.match(inicioScreenSource, /accessibility(Label|Role|State)/, "InicioScreen needs an accessibility contract");
   assert.match(inicioScreenSource, /accessibilityState=\{\{ expanded: item\.expanded \}\}/, "InicioScreen must announce tree expansion state");
+  assert.match(mapaScreenSource, /export function MapaScreen/, "MapaScreen must remain a route-level surface");
+  assert.match(mapaScreenSource, /accessibility(Label|Role|State)/, "MapaScreen needs an accessibility contract");
   assert.doesNotMatch(appSource, /function SavedScreen/, "the old unrouted Guardados screen must not linger in App.tsx");
   assert.match(appSource, /AccessibilityInfo\.isReduceMotionEnabled/);
   assert.match(appSource, /reduceMotion \? "none"/);
@@ -76,7 +82,8 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   assert.match(appSource, /accessibilityLiveRegion="polite"/);
   assert.match(appSource, /accessibilityState=\{\{ busy: isActive \}\}/);
   assert.match(appSource, /accessibilityLabel="Auditoría completa del resultado de dosis"/);
-  assert.match(appSource, /requestForegroundPermissionsAsync/);
+  // Location permission requests moved with Mapa into its own module (T5e).
+  assert.match(mapaScreenSource, /requestForegroundPermissionsAsync/);
 });
 
 test("route contracts expose the important stateful workflows", () => {
@@ -99,10 +106,9 @@ test("route contracts expose the important stateful workflows", () => {
   assert.match(dose, /Auditoría completa del resultado de dosis/);
   assert.match(dose, /accessibilityLiveRegion="polite"/);
 
-  const map = sourceFor("MapScreen");
-  assert.match(map, /requestForegroundPermissionsAsync/);
-  assert.match(map, /Permiso de ubicación denegado/);
-  assert.match(map, /accessibilityLiveRegion="polite"/);
+  assert.match(mapaScreenSource, /requestForegroundPermissionsAsync/);
+  assert.match(mapaScreenSource, /Permiso de ubicación denegado/);
+  assert.match(mapaScreenSource, /accessibilityLiveRegion="polite"/);
 
   const home = sourceFor("HomeScreen");
   assert.match(home, /settingsTriggerRef/);

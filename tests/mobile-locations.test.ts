@@ -104,10 +104,19 @@ test("maps handoff uses platform URL schemes without embedding routing", () => {
 });
 
 test("location screen requests permission only from an explicit action and keeps fallback surfaces", () => {
-  const source = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
-  assert.match(source, /Usar mi ubicación/);
-  assert.match(source, /requestForegroundPermissionsAsync/);
-  assert.match(source, /Permiso de ubicación denegado/);
-  assert.match(source, /Vista accesible/);
-  assert.match(source, /Abrir en Mapas/);
+  // T5e: the Mapa directory (search, filters, "Usar mi ubicación", offline fallback
+  // copy) moved out of App.tsx into its own full-screen-map module.
+  const mapaSource = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
+  assert.match(mapaSource, /Usar mi ubicación/);
+  assert.match(mapaSource, /requestForegroundPermissionsAsync/);
+  assert.match(mapaSource, /Permiso de ubicación denegado/);
+  assert.match(mapaSource, /Vista accesible/);
+  const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  assert.match(appSource, /Abrir en Mapas/);
+});
+
+test("location detail no longer narrates freshness in the normal case, only when a record is genuinely stale", () => {
+  const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  assert.doesNotMatch(appSource, /vigente según/);
+  assert.match(appSource, /locationStaleNotice/);
 });

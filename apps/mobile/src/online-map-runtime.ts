@@ -46,11 +46,24 @@ async function probeStyleReachable(styleUrl: string): Promise<void> {
  * Any failure — network unavailable, CARTO error response, timeout — rejects, so the
  * caller can classify it into a fallback reason and drop back to the offline directory.
  */
-export function createMapLibreOnlineMapProvider(locations: readonly LocationRecord[], styleUrl: string = MAPLIBRE_CARTO_STYLE_URLS.light): OnlineMapProviderAdapter {
+/**
+ * `isOfflinePackReady` lets a caller (the Mapa screen) skip the live network probe once
+ * the Madrid offline pack (see offline-map-pack-runtime.ts) has already downloaded the
+ * tiles for this exact style — MapLibre's native layer then serves them from its local
+ * database with no network request at all. Defaults to "never ready" so every existing
+ * caller (and every test in tests/mobile-online-map.test.ts) keeps probing exactly as
+ * before; only the Mapa screen wires the real offline-pack check in.
+ */
+export function createMapLibreOnlineMapProvider(
+  locations: readonly LocationRecord[],
+  styleUrl: string = MAPLIBRE_CARTO_STYLE_URLS.light,
+  isOfflinePackReady: () => Promise<boolean> = async () => false,
+): OnlineMapProviderAdapter {
   return {
     providerId: "maplibre-carto-osm",
     async fetch(): Promise<OnlineMapSnapshot> {
-      await probeStyleReachable(styleUrl);
+      const offlineReady = await isOfflinePackReady().catch(() => false);
+      if (!offlineReady) await probeStyleReachable(styleUrl);
       return {
         fetchedAt: new Date().toISOString(),
         pins: mapPinsFromLocations([...locations], "online"),

@@ -155,11 +155,16 @@ export function isLocationStale(sourceDate: string, now = new Date(), policy: Lo
   return age < 0 || age > policy.freshnessDays * 24 * 60 * 60 * 1000;
 }
 
-export function locationFreshnessLabel(location: Pick<LocationRecord, "sourceDate" | "sourcePolicyApproved">, now = new Date(), policy: LocationSourcePolicy = locationSourcePolicy): string {
-  const stale = isLocationStale(location.sourceDate, now, policy);
-  const status = stale ? "desactualizado" : "vigente según la política local";
-  const approval = location.sourcePolicyApproved ? "fuente oficial del SAMUR" : "fuente pendiente de aprobación";
-  return `${status} · ${approval} · fecha ${location.sourceDate}`;
+/**
+ * Freshness is a silent property: the normal case says nothing, because a location
+ * record either is or isn't current and repeating "vigente según política local" on
+ * every single row taught nobody anything. This only produces text once the record is
+ * actually stale (`isLocationStale`), so the UI can surface a real warning instead of
+ * routine noise. Returns `undefined` in the normal case — callers should render nothing.
+ */
+export function locationStaleNotice(location: Pick<LocationRecord, "sourceDate">, now = new Date(), policy: LocationSourcePolicy = locationSourcePolicy): string | undefined {
+  if (!isLocationStale(location.sourceDate, now, policy)) return undefined;
+  return `Datos desactualizados (paquete del ${location.sourceDate}). Confirma con la fuente oficial del SAMUR antes de usarlos.`;
 }
 
 export function haversineDistanceMeters(origin: LocationCoordinate, destination: LocationCoordinate): number {

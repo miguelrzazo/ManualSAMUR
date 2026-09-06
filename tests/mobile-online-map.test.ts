@@ -140,20 +140,33 @@ test("the approved policy resolves to zero unmet gates and an idle (not disabled
 });
 
 test("map UI exposes the online map activation, attribution, and offline fallbacks", () => {
-  const source = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  // T5e moved Mapa from a directory-first screen inline in App.tsx to a full-screen map
+  // with floating controls in its own module — see src/screens/MapaScreen.tsx.
+  const source = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
   // The disabled-state copy stays in the source as a defensive fallback even though the
   // approved policy means it is not the state reached in normal operation.
   assert.match(source, /Mapa online no habilitado/);
   assert.match(source, /directorio y el esquema accesible siguen disponibles/);
   assert.match(source, /onlineMapFallbackLabel/);
   assert.match(source, /requestForegroundPermissionsAsync/);
-  assert.match(source, /Abrir en Mapas/);
   // The map only activates after an explicit tap, never on screen load.
   assert.match(source, /Mostrar mapa online/);
   assert.match(source, /APPROVED_ONLINE_MAP_POLICY/);
   assert.match(source, /OnlineMapView/);
   assert.match(source, /ONLINE_MAP_ATTRIBUTION_TEXT/);
   assert.match(source, /classifyOnlineMapFailure/);
+  // T5e: floating controls over the full-screen map, per the owner's revised destination.
+  assert.match(source, /Hospital más cercano/);
+  assert.match(source, /Status4/);
+  assert.match(source, /Lista y filtro/);
+  // The Madrid offline pack is what makes the full-screen map safe with no signal.
+  assert.match(source, /downloadMadridOfflinePack/);
+  assert.match(source, /isMadridOfflinePackReady/);
+});
+
+test("the location detail screen and the location sheet do not display internal identifiers", () => {
+  const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  assert.doesNotMatch(appSource, /Identificador estable/);
 });
 
 test("the online map style URLs match the web app's CARTO basemaps exactly", () => {

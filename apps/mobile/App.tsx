@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import * as ExpoLocation from "expo-location";
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
@@ -21,7 +20,6 @@ import {
   View,
   useColorScheme,
   useWindowDimensions,
-  type DimensionValue,
   type PressableProps,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -37,37 +35,21 @@ import { calculateDoseConversion, doseUtilityEligibility, type DoseOperation, ty
 import { attachmentStatusLabel, isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { downloadOptionalAttachment, readAttachmentRecord, reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
-  filterLocations,
-  locationFavoriteId,
-  locationFreshnessLabel,
   locationRecords,
   locationRouteKey,
   locationSourcePolicy,
+  locationStaleNotice,
   platformMapsUrl,
   resolveLocationRoute,
-  schematicNodes,
-  sortLocationsByDistance,
-  type LocationCoordinate,
-  type LocationFilter,
   type LocationRecord,
 } from "./src/location-logic";
-import {
-  APPROVED_ONLINE_MAP_POLICY,
-  initialOnlineMapState,
-  onlineMapFallbackLabel,
-  transitionOnlineMapState,
-  type OnlineMapPin,
-  type OnlineMapRequest,
-  type OnlineMapState,
-} from "./src/online-map-logic";
-import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider } from "./src/online-map-runtime";
-import { OnlineMapView, ONLINE_MAP_ATTRIBUTION_TEXT } from "./src/online-map-view";
 import { canRecordRecent } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, resolveAdaptivePalette, routeAccessibilityLabels } from "./src/accessibility";
 import { GlassTabBar } from "./src/nav-shell";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
 import { InicioScreen } from "./src/screens/InicioScreen";
 import { VademecumScreen } from "./src/screens/VademecumScreen";
+import { MapaScreen } from "./src/screens/MapaScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
@@ -323,134 +305,6 @@ function DrugRow({ drug, onPress }: { drug: Record<string, unknown>; onPress: ()
 
 type LocationWithDistance = LocationRecord & { distanceMeters?: number };
 
-function formatDistance(distanceMeters?: number): string | undefined {
-  if (distanceMeters === undefined) return undefined;
-  return distanceMeters < 1000 ? String(Math.round(distanceMeters)) + " m en línea recta" : (distanceMeters / 1000).toFixed(1) + " km en línea recta";
-}
-
-function mapPercent(value: number): DimensionValue {
-  return (String(value) + "%") as DimensionValue;
-}
-
-/** Geographic center of Madrid, used as the online map's default camera when no user location is available. */
-const MADRID_MAP_CENTER: [longitude: number, latitude: number] = [-3.7038, 40.4168];
-
-function MapScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) {
-  const { content } = useContent();
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<LocationFilter>("all");
-  const [nearestKind, setNearestKind] = useState<"hospital" | "base">("hospital");
-  const [origin, setOrigin] = useState<LocationCoordinate>();
-  const [permission, setPermission] = useState<"idle" | "requesting" | "granted" | "denied" | "unavailable">("idle");
-  const scheme = useColorScheme();
-  const policy = locationSourcePolicy;
-  const mapPolicy = APPROVED_ONLINE_MAP_POLICY;
-  const [mapState, setMapState] = useState<OnlineMapState>(() => initialOnlineMapState(mapPolicy));
-  const lastSnapshotRef = useRef<boolean>(false);
-  const locations = useMemo(() => locationRecords(content, policy), [content, policy]);
-  const mapProvider = useMemo(() => createMapLibreOnlineMapProvider(locations), [locations]);
-  const visibleLocations = useMemo(() => {
-    const filtered = filterLocations(locations, query, filter);
-    return origin ? sortLocationsByDistance(filtered, origin) : filtered as LocationWithDistance[];
-  }, [filter, locations, origin, query]);
-  const activeNearestKind = filter === "all" ? nearestKind : filter;
-  const nearestLocations = useMemo(() => sortLocationsByDistance(filterLocations(locations, query, activeNearestKind), origin), [activeNearestKind, locations, origin, query]);
-  const displayLocations = origin ? nearestLocations : visibleLocations;
-  const schematic = useMemo(() => schematicNodes(displayLocations), [displayLocations]);
-
-  const requestLocation = async (): Promise<"granted" | "denied" | "unavailable" | "requesting"> => {
-    if (permission === "requesting") return "requesting";
-    setPermission("requesting");
-    try {
-      const response = await ExpoLocation.requestForegroundPermissionsAsync();
-      if (response.status !== ExpoLocation.PermissionStatus.GRANTED) {
-        setOrigin(undefined);
-        setPermission("denied");
-        return "denied";
-      }
-      const position = await ExpoLocation.getCurrentPositionAsync({ accuracy: ExpoLocation.Accuracy.Low });
-      setOrigin({ lat: position.coords.latitude, lng: position.coords.longitude });
-      setPermission("granted");
-      return "granted";
-    } catch {
-      setOrigin(undefined);
-      setPermission("unavailable");
-      return "unavailable";
-    }
-  };
-
-  const loadOnlineMap = async (request: OnlineMapRequest) => {
-    setMapState((previous) => transitionOnlineMapState(previous, { type: "request", request }, mapPolicy));
-    try {
-      const snapshot = await mapProvider.fetch(request);
-      lastSnapshotRef.current = true;
-      setMapState((previous) => transitionOnlineMapState(previous, { type: "success", snapshot }, mapPolicy));
-    } catch (error) {
-      const reason = classifyOnlineMapFailure(error, lastSnapshotRef.current);
-      setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason }, mapPolicy));
-    }
-  };
-
-  // Explicit user action only: nothing here fires on mount. Pressing "Mostrar mapa
-  // online" is what may first ask for location permission (to center the map), and
-  // only then fetches the online basemap. A denial stops before any network request.
-  const activateOnlineMap = async () => {
-    let effectivePermission = permission;
-    if (permission === "idle") effectivePermission = await requestLocation();
-    if (effectivePermission === "denied") {
-      setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "permission-denied" }, mapPolicy));
-      return;
-    }
-    await loadOnlineMap({ query, filter, currentLocation: origin });
-  };
-
-  const retryOnlineMap = () => { void loadOnlineMap({ query, filter, currentLocation: origin }); };
-
-  const openLocationFromMap = (pin: OnlineMapPin) => { navigation.getParent()?.navigate("Location", { routeKey: pin.locationRouteKey }); };
-
-  return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.scrollContent}>
-    <View style={styles.searchScreenHeader}><Text style={styles.pageTitle}>Mapa</Text><Text style={styles.pageKicker}>MADRID · OFFLINE + ONLINE</Text></View>
-    <View style={styles.locationPolicyNotice} accessibilityLabel="Estado de la fuente de ubicaciones"><MaterialCommunityIcons name="check-decagram-outline" size={20} color={activePalette.green} /><Text style={styles.sourceNoticeText}>Fuente oficial del SAMUR · paquete del {policy.sourceDate}. El directorio funciona sin red.</Text></View>
-    {mapState.status === "disabled" && <View style={styles.onlineMapDisabled} accessibilityLiveRegion="polite" accessibilityLabel="Mapa online desactivado"><MaterialCommunityIcons name="map-marker-off-outline" size={20} color={activePalette.amber} /><View style={styles.resourceCopy}><Text style={styles.onlineMapDisabledTitle}>Mapa online no habilitado</Text><Text style={styles.onlineMapDisabledCopy}>La cartografía online está desactivada hasta aprobar proveedor, licencia, alcance offline, OS floor y presupuesto de tamaño. El directorio y el esquema accesible siguen disponibles.</Text></View></View>}
-    {mapState.status === "idle" && <Pressable onPress={() => void activateOnlineMap()} style={styles.locationActionButton} accessibilityRole="button" accessibilityLabel="Mostrar mapa online" accessibilityHint="Activa el mapa en vivo con MapLibre y CARTO sobre OpenStreetMap. Puede solicitar permiso de ubicación."><MaterialCommunityIcons name="map-outline" size={18} color={activePalette.white} /><Text style={styles.locationActionText}>Mostrar mapa online</Text></Pressable>}
-    {mapState.status === "loading" && <View style={styles.onlineMapDisabled} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-clock-outline" size={20} color={activePalette.inkMuted} /><Text style={styles.onlineMapDisabledCopy}>Cargando mapa online…</Text></View>}
-    {mapState.status === "online" && <View style={styles.onlineMapContainer} accessibilityLabel={"Mapa online con " + mapState.snapshot.pins.length + " puntos; el directorio y el esquema accesible siguen disponibles más abajo"}>
-      <OnlineMapView
-        dark={scheme === "dark"}
-        pins={mapState.snapshot.pins}
-        center={origin ? [origin.lng, origin.lat] : MADRID_MAP_CENTER}
-        onPinPress={openLocationFromMap}
-        onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
-        markerColor={activePalette.red}
-        markerColorBase={activePalette.ink}
-      />
-      <View style={styles.onlineMapAttribution} pointerEvents="none"><Text style={styles.onlineMapAttributionText}>{ONLINE_MAP_ATTRIBUTION_TEXT}</Text></View>
-      <Pressable onPress={retryOnlineMap} style={styles.onlineMapRefresh} accessibilityRole="button" accessibilityLabel="Actualizar mapa online"><MaterialCommunityIcons name="refresh" size={16} color={activePalette.white} /></Pressable>
-    </View>}
-    {mapState.status === "fallback" && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-marker-path" size={20} color={activePalette.amber} /><Text style={styles.locationFallbackText}>{onlineMapFallbackLabel(mapState.reason)}</Text><Pressable onPress={() => void activateOnlineMap()} accessibilityRole="button" accessibilityLabel="Reintentar mapa online"><Text style={styles.retryLinkText}>Reintentar</Text></Pressable></View>}
-    <View style={styles.searchPadding}><SearchBar value={query} onChangeText={setQuery} placeholder="Buscar hospitales, bases o direcciones" /></View>
-    <View style={styles.filterRow} accessibilityRole="tablist">
-      {(["all", "hospital", "base"] as const).map((item) => <Pressable key={item} onPress={() => setFilter(item)} style={[styles.filterChip, filter === item && styles.filterChipActive]} accessibilityRole="tab" accessibilityLabel={`Filtrar por ${item === "all" ? "todos" : item === "hospital" ? "hospitales" : "bases"}`} accessibilityState={{ selected: filter === item }}><Text style={[styles.filterText, filter === item && styles.filterTextActive]}>{item === "all" ? "Todos" : item === "hospital" ? "Hospitales" : "Bases"}</Text></Pressable>)}
-    </View>
-    <View style={styles.locationActions}>
-      <Pressable onPress={() => void requestLocation()} disabled={permission === "requesting"} style={styles.locationActionButton} accessibilityRole="button" accessibilityLabel="Usar mi ubicación para ordenar lugares cercanos" accessibilityHint="Solicita permiso de ubicación solo después de activar esta acción." accessibilityState={{ busy: permission === "requesting" }}><MaterialCommunityIcons name="crosshairs-gps" size={18} color={activePalette.white} /><Text style={styles.locationActionText}>{permission === "requesting" ? "Solicitando…" : "Usar mi ubicación"}</Text></Pressable>
-      {origin && filter === "all" && <View style={styles.nearestToggle} accessibilityRole="radiogroup" accessibilityLabel="Tipo de punto para ordenar por cercanía">{(["hospital", "base"] as const).map((item) => <Pressable key={item} onPress={() => setNearestKind(item)} style={[styles.nearestChoice, nearestKind === item && styles.nearestChoiceActive]} accessibilityRole="radio" accessibilityLabel={item === "hospital" ? "Hospitales cercanos" : "Bases cercanas"} accessibilityState={{ selected: nearestKind === item }}><Text style={[styles.nearestChoiceText, nearestKind === item && styles.nearestChoiceTextActive]}>{item === "hospital" ? "Hospitales cercanos" : "Bases cercanas"}</Text></Pressable>)}</View>}
-    </View>
-    {permission === "denied" && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="map-marker-off-outline" size={20} color={activePalette.amber} /><Text style={styles.locationFallbackText}>Permiso de ubicación denegado. El directorio y la Vista accesible siguen disponibles; puedes abrir un punto en Mapas.</Text></View>}
-    {permission === "unavailable" && <View style={styles.locationFallback}><MaterialCommunityIcons name="crosshairs-off" size={20} color={activePalette.amber} /><Text style={styles.locationFallbackText}>La ubicación no está disponible en este dispositivo. El directorio local no necesita permiso.</Text></View>}
-    <View style={styles.mapLegend}><View style={styles.mapLegendDot} /><Text style={styles.mapLegendText}>Esquema local · sin cartografía, rutas ni tiempos de viaje</Text></View>
-    <View style={styles.schematicMap} accessible={false} accessibilityLabel={"Esquema offline con " + schematic.length + " puntos; consulta también la Vista accesible"}>
-      <View style={styles.mapRoadOne} /><View style={styles.mapRoadTwo} /><View style={styles.mapRoadThree} />
-      {schematic.map((item, index) => <Pressable key={item.kind + "-" + item.id} onPress={() => navigation.getParent()?.navigate("Location", { routeKey: locationRouteKey(item) })} style={[styles.mapPin, item.kind === "hospital" ? styles.mapPinRed : styles.mapPinNavy, { left: mapPercent(8 + ((index * 31) % 82)), top: mapPercent(10 + ((index * 47) % 75)) }]} accessibilityRole="button" accessibilityLabel={(item.kind === "hospital" ? "Hospital " : "Base ") + item.name} accessibilityHint={accessibilityHints.openDetail}><MaterialCommunityIcons name={item.kind === "hospital" ? "hospital-building" : "ambulance"} size={13} color={activePalette.white} /></Pressable>)}
-      <View style={styles.mapCompass}><Text style={styles.mapCompassN}>N</Text><MaterialCommunityIcons name="navigation" size={18} color={activePalette.red} /></View>
-    </View>
-    <SectionHeading eyebrow={String(displayLocations.length) + " PUNTOS LOCALES"} title={origin ? (activeNearestKind === "hospital" ? "Hospitales más cercanos" : "Bases más cercanas") : "Bases y hospitales"} />
-    <View style={styles.accessibleEquivalent} accessible accessibilityLabel="Vista accesible del esquema y directorio"><Text style={styles.accessibleEquivalentTitle}>Vista accesible</Text><Text style={styles.accessibleEquivalentCopy}>La lista siguiente contiene los mismos puntos, nombres, direcciones, identificadores y fechas que el esquema.</Text></View>
-    <View style={styles.cardList}>{displayLocations.map((item) => <Pressable key={item.kind + "-" + item.id} onPress={() => navigation.getParent()?.navigate("Location", { routeKey: locationRouteKey(item) })} style={styles.locationRow} accessibilityRole="button" accessibilityLabel={(item.kind === "hospital" ? "Hospital " : "Base ") + item.name + ". " + item.address + ", " + item.district + ". " + locationFreshnessLabel(item, new Date(), policy) + (formatDistance(item.distanceMeters) ? ". " + formatDistance(item.distanceMeters) : "")}><View style={[styles.locationIcon, item.kind === "base" && styles.locationIconBase]}><MaterialCommunityIcons name={item.kind === "hospital" ? "hospital-building" : "ambulance"} size={18} color={activePalette.ink} /></View><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.shortName}</Text><Text style={styles.resourceMeta}>{item.kind === "hospital" ? "Hospital" : "Base"} · {item.district} · {item.id}</Text><Text style={styles.locationAddress}>{item.address}</Text>{formatDistance(item.distanceMeters) && <Text style={styles.locationDistance}>{formatDistance(item.distanceMeters)}</Text>}<Text style={styles.locationFreshness}>{locationFreshnessLabel(item, new Date(), policy)}</Text></View><MaterialCommunityIcons name="chevron-right" size={20} color={activePalette.inkMuted} /></Pressable>)}</View>
-    <Text style={styles.mapNote}>Selecciona un punto para ver su ficha y transferirlo a la aplicación Mapas del dispositivo. No se calculan rutas ni tiempos de viaje dentro de Pulso abierto.</Text>
-  </ScrollView></SafeAreaView>;
-}
-
 function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Location">) {
   const { content, favorites, toggleFavorite, remember } = useContent();
   const policy = locationSourcePolicy;
@@ -465,8 +319,7 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}>
     <View style={styles.detailTopbar} accessibilityRole="header"><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver" accessibilityHint="Vuelve a la lista anterior."><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"} · OFFLINE</Text><Pressable onPress={() => toggleFavorite(route.params.routeKey)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel={favorite ? "Quitar de favoritos" : "Guardar en favoritos"} accessibilityHint={accessibilityHints.toggleFavorite} accessibilityState={{ selected: favorite }}><MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={25} color={favorite ? activePalette.amber : activePalette.ink} /></Pressable></View>
     <Text style={styles.detailSection}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"}</Text><Text style={styles.detailTitle}>{location.shortName}</Text><Text style={styles.detailMeta}>{location.name} · {location.address} · {location.district}</Text>
-    <View style={styles.sourceNotice} accessibilityLabel="Fuente y frescura de la ubicación"><MaterialCommunityIcons name="check-decagram-outline" size={19} color={activePalette.green} /><Text style={styles.sourceNoticeText}>{locationFreshnessLabel(location, new Date(), policy)}.</Text></View>
-    <View style={styles.infoBlock}><Text style={styles.infoLabel}>Identificador estable</Text><Text style={styles.infoValue}>{locationFavoriteId(location)}</Text></View>
+    {locationStaleNotice(location, new Date(), policy) && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-outline" size={19} color={activePalette.amber} /><Text style={styles.locationFallbackText}>{locationStaleNotice(location, new Date(), policy)}</Text></View>}
     <View style={styles.infoBlock}><Text style={styles.infoLabel}>Coordenadas</Text><Text style={styles.infoValue}>{location.lat.toFixed(5)}, {location.lng.toFixed(5)} · solo distancia geométrica</Text></View>
     <Pressable onPress={openMaps} style={styles.primaryButton} accessibilityRole="link" accessibilityLabel={"Abrir " + location.name + " en Mapas"}><Text style={styles.primaryButtonText}>Abrir en Mapas</Text></Pressable>
     <Text style={styles.mapNote}>Se transfiere el punto a la aplicación Mapas del sistema. Pulso abierto no incorpora webviews, rutas ni tiempos de viaje.</Text>
@@ -804,7 +657,7 @@ function LocationModal({ location, onClose, onOpenMaps, policy = locationSourceP
   return <Modal visible animationType={reduceMotion ? "none" : "slide"} transparent onRequestClose={onClose}><View style={styles.modalBackdrop}>
     <Pressable style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }} onPress={onClose} accessibilityElementsHidden accessibilityLabel="Cerrar ficha de ubicación" />
     <ScrollView style={[styles.locationSheet, { maxHeight: "85%", padding: 0 }]} contentContainerStyle={{ padding: spacing.xl }} showsVerticalScrollIndicator={false} accessibilityViewIsModal>
-      <View style={styles.sheetHandle} accessibilityElementsHidden /><View accessibilityRole="header" accessibilityLabel={`${title}, ficha de ubicación`}><Text style={styles.detailSection}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"}</Text><Text style={styles.sheetTitle}>{title}</Text><Text style={styles.resourceMeta}>{location.name} · {location.address} · {location.district}</Text></View><View style={styles.locationDetailBlock}><Text style={styles.infoLabel}>Identificador estable</Text><Text style={styles.infoValue}>{locationFavoriteId(location)} · ruta {locationRouteKey(location)}</Text><Text style={styles.infoLabel}>Fuente y frescura</Text><Text style={styles.infoValue}>{locationFreshnessLabel(location, new Date(), policy)}</Text><Text style={styles.infoLabel}>Coordenadas</Text><Text style={styles.infoValue}>{location.lat.toFixed(5)}, {location.lng.toFixed(5)} · distancia geométrica, sin ruta</Text></View>{onOpenMaps && <Pressable onPress={() => onOpenMaps(location)} style={styles.primaryButton} accessibilityRole="link" accessibilityLabel={"Abrir " + title + " en Mapas"} accessibilityHint={accessibilityHints.openMap}><Text style={styles.primaryButtonText}>Abrir en Mapas</Text></Pressable>}<Pressable onPress={onClose} style={styles.secondaryButton} accessibilityRole="button" accessibilityLabel="Hecho, cerrar ficha de ubicación" accessibilityHint={accessibilityHints.dismiss}><Text style={styles.secondaryButtonText}>Hecho</Text></Pressable>
+      <View style={styles.sheetHandle} accessibilityElementsHidden /><View accessibilityRole="header" accessibilityLabel={`${title}, ficha de ubicación`}><Text style={styles.detailSection}>{location.kind === "hospital" ? "HOSPITAL" : "BASE"}</Text><Text style={styles.sheetTitle}>{title}</Text><Text style={styles.resourceMeta}>{location.name} · {location.address} · {location.district}</Text></View><View style={styles.locationDetailBlock}>{locationStaleNotice(location, new Date(), policy) ? <Text style={styles.infoValue}>{locationStaleNotice(location, new Date(), policy)}</Text> : null}<Text style={styles.infoLabel}>Coordenadas</Text><Text style={styles.infoValue}>{location.lat.toFixed(5)}, {location.lng.toFixed(5)} · distancia geométrica, sin ruta</Text></View>{onOpenMaps && <Pressable onPress={() => onOpenMaps(location)} style={styles.primaryButton} accessibilityRole="link" accessibilityLabel={"Abrir " + title + " en Mapas"} accessibilityHint={accessibilityHints.openMap}><Text style={styles.primaryButtonText}>Abrir en Mapas</Text></Pressable>}<Pressable onPress={onClose} style={styles.secondaryButton} accessibilityRole="button" accessibilityLabel="Hecho, cerrar ficha de ubicación" accessibilityHint={accessibilityHints.dismiss}><Text style={styles.secondaryButtonText}>Hecho</Text></Pressable>
     </ScrollView>
   </View></Modal>;
 }
@@ -823,7 +676,7 @@ function MainTabs() {
     <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
     <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
     <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
-    <Tabs.Screen name="Mapa" component={MapScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
+    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
   </Tabs.Navigator>;
 }
 
