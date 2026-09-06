@@ -43,6 +43,7 @@ import { lightImpact } from "../hooks/haptics";
 import { useContent } from "../content";
 import { procedureRouteKey } from "../procedure-logic";
 import {
+  selectProcedureReferences,
   selectSavedReferences,
   savedReferenceIcon,
   type ResolvedSavedReference,
@@ -123,7 +124,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   const historialEvents = useMemo(() => sortManualHistorial(updateEvents), [updateEvents]);
 
   const favoriteItems = useMemo(() => selectSavedReferences(content, favorites).slice(0, 8), [content, favorites]);
-  const recentItems = useMemo(() => selectSavedReferences(content, recents).slice(0, 8), [content, recents]);
+  const recentItems = useMemo(() => selectProcedureReferences(content, recents).slice(0, 8), [content, recents]);
 
   const openHistory = () => { setHistoryPage(1); setHistoryOpen(true); };
 

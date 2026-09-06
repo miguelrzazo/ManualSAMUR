@@ -11,6 +11,7 @@ import {
   removeRecentQuery,
   pushRecentRouteKey,
   savedReferenceIndex,
+  selectProcedureReferences,
   selectSavedReferences,
   serializeSavedRouteKeys,
   toggleSavedRouteKey,
@@ -92,4 +93,19 @@ test("recent queries survive a bad or missing storage payload without throwing",
   assert.deepEqual(parseRecentQueries("not json"), []);
   assert.deepEqual(parseRecentQueries('{"nope":1}'), []);
   assert.deepEqual(parseRecentQueries('["pcr", 7, null, "pcr", "sca"]'), ["pcr", "sca"]);
+});
+
+test("selectProcedureReferences keeps the Inicio card on procedures while storage stays cross-domain", () => {
+  const procedureKey = `procedure:${content.procedures[0].id}`;
+  const drugKey = [...index.keys()].find((key) => key.startsWith("vademecum:drug:"))!;
+  const codeKey = [...index.keys()].find((key) => key.startsWith("code:"))!;
+  const mixed = [drugKey, procedureKey, codeKey, "procedure:no-existe"];
+
+  const procedures = selectProcedureReferences(content, mixed);
+  assert.deepEqual(procedures.map((reference) => reference.routeKey), [procedureKey]);
+  assert.ok(procedures.every((reference) => reference.kind === "procedure"));
+
+  // The store itself is untouched: Guardados still resolves every domain.
+  assert.equal(selectSavedReferences(content, mixed).length, 4);
+  assert.equal(pushRecentRouteKey([procedureKey], drugKey)[0], drugKey);
 });
