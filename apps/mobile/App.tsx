@@ -67,6 +67,7 @@ import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, resolveAd
 import { GlassTabBar } from "./src/nav-shell";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
 import { InicioScreen } from "./src/screens/InicioScreen";
+import { VademecumScreen } from "./src/screens/VademecumScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
@@ -689,19 +690,11 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
   return <SafeAreaView style={styles.screen} edges={["top"]}><ScrollView contentContainerStyle={styles.detailContent}><View style={styles.detailTopbar}><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={activePalette.ink} /></Pressable><Text style={styles.detailTopbarLabel}>CÓDIGOS · HOSPITALES</Text><View style={styles.minimumTarget} /></View><Status4Cheatsheet status4={status4} hospitals={entries} palette={activePalette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
 }
 
-function VademecumListScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
-  const { content } = useContent();
-  const [query, setQuery] = useState("");
-  const results = useMemo(() => searchVademecum(content, query, 2000), [content, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList
-    data={results}
-    keyExtractor={(item) => item.id}
-    contentContainerStyle={styles.listContent}
-    ListHeaderComponent={<><Text style={styles.pageTitle}>Vademécum</Text><Text style={styles.pageKicker}>FÁRMACOS · CONSULTA LOCAL</Text><View style={styles.detailSearch}><SearchBar value={query} onChangeText={setQuery} placeholder="Buscar fármacos, comerciales, perfusiones o fluidos" /></View></>}
-    ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con el nombre del fármaco, comercial, perfusión o fluido." />}
-    renderItem={({ item }) => <ReferenceRow reference={item} onCode={(routeKey) => navigation.getParent()?.navigate("Code", { routeKey })} onVademecum={(routeKey) => navigation.getParent()?.navigate("Vademecum", { routeKey })} onDrug={(id) => navigation.getParent()?.navigate("Drug", { id })} />}
-  /></SafeAreaView>;
-}
+// The placeholder flat/searchable list (T5a) that used to live here is gone:
+// the Vademécum tab is now VademecumScreen (src/screens/VademecumScreen.tsx),
+// a real destination organising the four domains the way the web's
+// VademecumView does, with the dose calculator reachable through it via
+// DrugScreen (see T5d).
 
 function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Abbreviations">) {
   const { content } = useContent();
@@ -829,7 +822,7 @@ function MainTabs() {
   >
     <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
     <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
-    <Tabs.Screen name="VademecumList" component={VademecumListScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
     <Tabs.Screen name="Mapa" component={MapScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
   </Tabs.Navigator>;
 }
