@@ -17,7 +17,7 @@ import { Press } from "./Press.tsx";
  * label or legend anywhere in the app. It is gone: an offline-first app does not
  * need to announce that it is working.
  */
-export function SearchField({ value, onChangeText, onPress, onSubmitEditing, placeholder, readOnly = false, autoFocus = false }: {
+export function SearchField({ value, onChangeText, onPress, onSubmitEditing, placeholder, readOnly = false, autoFocus = false, testID }: {
   value?: string;
   onChangeText?: (value: string) => void;
   onPress?: () => void;
@@ -26,6 +26,7 @@ export function SearchField({ value, onChangeText, onPress, onSubmitEditing, pla
   placeholder: string;
   readOnly?: boolean;
   autoFocus?: boolean;
+  testID?: string;
 }) {
   const palette = useTheme();
   const styles = useStyles(palette);
@@ -44,6 +45,7 @@ export function SearchField({ value, onChangeText, onPress, onSubmitEditing, pla
       <MaterialCommunityIcons name="magnify" size={20} color={palette.inkMuted} />
       <TextInput
         value={value}
+        testID={testID}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={palette.inkMuted}

@@ -205,6 +205,17 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
                   {novedades.length > 0 ? `${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial"}
                 </Text>
               </Pressable>
+              {__DEV__ && (
+                <Pressable
+                  onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("HistoryPrototype")}
+                  style={styles.prototypeChip}
+                  accessibilityRole="button"
+                  accessibilityLabel="Abrir prototipo del historial de actualizaciones"
+                >
+                  <MaterialCommunityIcons name="flask-outline" size={16} color={palette.primary} />
+                  <Text style={styles.prototypeChipText}>Prototipo</Text>
+                </Pressable>
+              )}
             </View>
 
             {favoriteItems.length > 0 && (
@@ -480,6 +491,8 @@ function createStyles(palette: AdaptivePalette) {
     secondaryChipHighlight: { backgroundColor: palette.primaryWash },
     secondaryChipText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
     secondaryChipTextHighlight: { color: palette.primary },
+    prototypeChip: { flexDirection: "row", alignItems: "center", gap: 6, minHeight: 36, paddingHorizontal: spacing.md, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.primary, backgroundColor: palette.primaryWash },
+    prototypeChipText: { fontSize: 12, fontWeight: "700", color: palette.primary },
 
     collectionSection: {
       backgroundColor: palette.surface,

@@ -30,10 +30,10 @@ import { PreferencesProvider, usePreferences, type AppearancePreference } from "
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { useReduceMotion } from "./src/hooks/motion";
 import { successNotice, warningNotice } from "./src/hooks/haptics";
-import { Chip, Disclosure, FavoriteToggle, PageHeader, Press, SearchField } from "./src/components";
+import { Chip, Disclosure, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
 import type { MobileAttachment, MobileProcedure } from "./src/data/schema";
 import { displayTitle } from "./src/title-case";
-import { classifyMarkdownRows, procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
+import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 import { activeVademecumScope, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, showsVademecumCategories, SEARCH_SCOPES, VADEMECUM_SCOPES, type MobileReferenceSearchResult, type SearchScope, type VademecumScope } from "./src/reference-search-logic";
 import { calculateDoseConversion, doseUtilityEligibility, type DoseOperation, type DoseConversionResult } from "./src/dose-logic";
 import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
@@ -61,6 +61,7 @@ import { VademecumScreen } from "./src/screens/VademecumScreen";
 import { MapaScreen } from "./src/screens/MapaScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
+import { HistoryPrototypeScreen } from "./src/screens/HistoryPrototypeScreen";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
 // Its favorites/recents content now lives inside Inicio (src/screens/InicioScreen.tsx,
 // T5b) rather than a separate, unrouted `SavedScreen`.
@@ -216,7 +217,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false }: { procedure:
   const favorite = favorites.includes(routeKey);
   return (
     <View style={styles.resourceRow}>
-      <Pressable onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${procedure.id}, ${displayTitle(procedure.title)}`} accessibilityHint={accessibilityHints.openDetail}>
+      <Pressable testID={`procedure-row-${procedure.id}`} onPress={onPress} style={({ pressed }) => [styles.resourceRowMain, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`${procedure.id}, ${displayTitle(procedure.title)}`} accessibilityHint={accessibilityHints.openDetail}>
         <View style={styles.resourceCode}><Text style={styles.resourceCodeText}>{procedure.id}</Text></View>
         <View style={styles.resourceCopy}>
           <Text style={styles.resourceTitle}>{displayTitle(procedure.title)}</Text>
@@ -311,7 +312,7 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
       <PageHeader title="Buscar" />
       {/* No `autoFocus`: a tab that raises the keyboard every time it is selected cannot
           be used to glance at recent searches, which is most of what this screen is for. */}
-      <View style={styles.searchPadding}><SearchField value={query} onChangeText={setQuery} onSubmitEditing={() => rememberQuery(query)} placeholder="Buscar procedimientos, fármacos o códigos" /></View>
+      <View style={styles.searchPadding}><SearchField testID="manual-search-input" value={query} onChangeText={setQuery} onSubmitEditing={() => rememberQuery(query)} placeholder="Buscar procedimientos, fármacos o códigos" /></View>
       {/* The scope chips wrapped onto three lines on a phone. A horizontal
           scroller keeps them on one row and keeps the results above the fold. */}
       <FlatList
@@ -830,9 +831,17 @@ function readableMarkdownLine(line: string): string {
     .trim();
 }
 
+function readableMarkdownCell(cell: string): string {
+  return cell.replace(/<br\s*\/?\s*>/gi, "\n").split("\n").map((line) => {
+    const bullet = /^\s*(?:[-*•])\s+/.test(line);
+    const text = readableMarkdownLine(line);
+    return bullet && text ? `• ${text}` : text;
+  }).filter(Boolean).join("\n");
+}
+
 function MarkdownContent({ sections, onContainerLayout, onSectionLayout }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void }) {
   const styles = useAppStyles();
-  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{classifyMarkdownRows(section.lines).map((row, index) => { if (row.kind === "skip") return null; const text = readableMarkdownLine(section.lines[index].trim()); if (!text) return null; if (row.kind === "bullet") return <View key={`${section.key}-${index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{text}</Text></View>; if (row.kind === "ordered") return <View key={`${section.key}-${index}`} style={styles.markdownBullet}><Text style={styles.orderedMarker}>{row.ordinal}.</Text><Text style={styles.markdownText}>{text}</Text></View>; return <Text key={`${section.key}-${index}`} style={styles.markdownText}>{text}</Text>; })}</View>)}</View>;
+  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{splitMarkdownBlocks(section.lines).map((block) => { if (block.kind === "table") return <MarkdownTable key={`${section.key}-table-${block.startIndex}`} table={block.table} formatCell={readableMarkdownCell} />; if (block.row.kind === "skip") return null; const text = readableMarkdownLine(block.line.trim()); if (!text) return null; if (block.row.kind === "bullet") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{text}</Text></View>; if (block.row.kind === "ordered") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.orderedMarker}>{block.row.ordinal}.</Text><Text style={styles.markdownText}>{text}</Text></View>; return <Text key={`${section.key}-${block.index}`} style={styles.markdownText}>{text}</Text>; })}</View>)}</View>;
 }
 
 function ProcedureEditorialBlocks({ blocks, onProcedure }: { blocks: unknown[]; onProcedure?: (id: string) => void }) {
@@ -965,7 +974,7 @@ function AppNavigation() {
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
   } as const;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="HistoryPrototype" component={HistoryPrototypeScreen} options={{ presentation: "card", title: "Prototipo historial" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {
