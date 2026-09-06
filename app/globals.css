@@ -298,16 +298,18 @@
   list-style-type: circle;
 }
 
-/* Protocol step lists: numbered circles on ol > li inside MDX body */
+/* Protocol step lists: numbered circles on ol > li inside MDX body.
+   The marker is drawn from the built-in `list-item` counter rather than a custom one:
+   a custom counter has to be reset on every <ol>, which silently discarded the `start`
+   attribute CommonMark emits when a list is split across sections, so every fragment
+   restarted at "1.". `list-item` is seeded from `start` by the browser. */
 [data-manual-body] ol {
   list-style: none;
   padding-left: 0;
-  counter-reset: protocol-step;
   margin: 0.75rem 0;
 }
 
 [data-manual-body] ol > li {
-  counter-increment: protocol-step;
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -320,7 +322,7 @@
 }
 
 [data-manual-body] ol > li::before {
-  content: counter(protocol-step);
+  content: counter(list-item);
   flex-shrink: 0;
   width: 1.5rem;
   height: 1.5rem;
@@ -346,7 +348,6 @@
   display: list-item;
   border-bottom: none;
   padding: 0.1rem 0;
-  counter-increment: none;
 }
 
 [data-manual-body] ol > li ol > li::before {

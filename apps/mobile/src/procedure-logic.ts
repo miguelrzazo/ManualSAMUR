@@ -174,3 +174,43 @@ export function createReadingPositionStore(): ReadingPositionStore {
 
 /** Session-local offsets survive a detail screen being popped and revisited. */
 export const readingPositions = createReadingPositionStore();
+
+export type MarkdownRow =
+  | { kind: "skip" }
+  | { kind: "text" }
+  | { kind: "bullet" }
+  | { kind: "ordered"; ordinal: number };
+
+/**
+ * Classifies the lines of one section for the native renderer, which draws markdown a
+ * line at a time rather than parsing it.
+ *
+ * Ordered items are numbered by a counter owned here, never by the marker in the source.
+ * The corpus is scraped from a MediaWiki `#` list, so it writes every item as `1.` (590
+ * lines) and occasionally as `11.` (procedure 103, items 10-24) — printing the literal
+ * prefix is why the app showed a list of "1." with a stray "11." in the middle. The
+ * counter runs while list items are adjacent, tolerates the blank lines of a loose list,
+ * and restarts at a paragraph or a heading.
+ */
+export function classifyMarkdownRows(lines: readonly string[]): MarkdownRow[] {
+  let ordinal = 0;
+  return lines.map((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("🖨️") || /^#{2,6}\s/.test(trimmed)) {
+      // A blank line separates the items of a loose list, so it must not restart the
+      // numbering; a heading ends the list outright.
+      if (trimmed) ordinal = 0;
+      return { kind: "skip" };
+    }
+    if (/^(\*|-|•)\s/.test(trimmed)) {
+      ordinal = 0;
+      return { kind: "bullet" };
+    }
+    if (/^\d+[.)]\s/.test(trimmed)) {
+      ordinal += 1;
+      return { kind: "ordered", ordinal };
+    }
+    ordinal = 0;
+    return { kind: "text" };
+  });
+}
