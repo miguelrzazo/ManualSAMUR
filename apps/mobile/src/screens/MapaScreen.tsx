@@ -190,6 +190,23 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
     navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Location", { routeKey });
   };
 
+  /**
+   * "Centrar en mi ubicación". The permission is requested here and nowhere else on
+   * mount: the camera opens on Madrid, which needs no permission, so nothing asks until
+   * the reader taps a control that genuinely needs to know where they are.
+   *
+   * A refusal does NOT fire the state machine's `permission-denied` failure the way
+   * `onPressNearest` does. That transition drops the map for the offline directory, which
+   * is the right answer when the whole point of the tap was a distance calculation, but
+   * here it would take the map away as a punishment for declining. The denied banner
+   * above says what happened and the list sheet keeps the offline directory one tap away.
+   */
+  const onPressCenterOnMe = async () => {
+    const result = origin ? ({ status: "granted", coordinate: origin } as const) : await requestLocation();
+    if (result.status !== "granted") return;
+    focusLocation(result.coordinate);
+  };
+
   const onPressNearest = async (kind: LocationKind) => {
     // The coordinate comes back from the request itself. It used to be read out of
     // `origin` by an effect watching for the state to land, which meant a setState
@@ -243,6 +260,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           bounds={MADRID_CAMERA_BOUNDS}
           minZoom={MADRID_OFFLINE_PACK_MIN_ZOOM}
           maxZoom={MADRID_OFFLINE_PACK_MAX_ZOOM}
+          userLocation={origin ? [origin.lng, origin.lat] : undefined}
           onPinPress={(pin) => openLocationDetail(pin.locationRouteKey)}
           onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
           markerColor={palette.primary}
@@ -325,6 +343,10 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
       )}
 
       {online && <View pointerEvents="box-none" style={styles.controlsRow}>
+        <Pressable onPress={() => void onPressCenterOnMe()} disabled={permission === "requesting"} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Centrar en mi ubicación" accessibilityHint="Solicita permiso de ubicación solo al pulsar y centra el mapa en tu posición." accessibilityState={{ busy: permission === "requesting", disabled: permission === "requesting" }}>
+          <MaterialCommunityIcons name="crosshairs-gps" size={20} color={permission === "granted" ? palette.primary : palette.ink} />
+          <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Mi ubicación</Text>
+        </Pressable>
         <Pressable onPress={() => void onPressNearest("hospital")} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
           <MaterialCommunityIcons name="hospital-building" size={20} color={palette.ink} />
           <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Hospital cercano</Text>
