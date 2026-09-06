@@ -5,6 +5,10 @@ import path from "node:path";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, adaptivePalette, contrastRatio, resolveAdaptivePalette, routeAccessibilityLabels } from "../apps/mobile/src/accessibility.ts";
 
 const appSource = readFileSync(path.join(process.cwd(), "apps/mobile/App.tsx"), "utf8");
+// `useReduceMotion` moved out of App.tsx into src/hooks/motion.ts so the shared
+// components under src/components/ can gate their own animations on the same
+// signal instead of each re-querying AccessibilityInfo.
+const motionHookSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/hooks/motion.ts"), "utf8");
 // Códigos (T5c) was extracted out of App.tsx into its own module so the grouping/filter/jump
 // UI wouldn't balloon the already-huge App.tsx file further; its accessibility contract is
 // checked against that module instead of the inline `function CodesScreen` App.tsx used to have.
@@ -38,11 +42,23 @@ test("adaptive palette maintains readable light and dark foreground/background p
   for (const palette of [adaptivePalette.light, adaptivePalette.dark]) {
     for (const [foreground, background] of [
       [palette.ink, palette.paper], [palette.ink, palette.surface], [palette.inkMuted, palette.paper],
-      [palette.inkMuted, palette.surface], [palette.red, palette.paper], [palette.redDark, palette.redWash],
-      [palette.amber, palette.amberWash], [palette.green, palette.greenWash], [palette.white, palette.redAction],
+      [palette.inkMuted, palette.surface], [palette.inkMuted, palette.surfaceMuted],
+      // The identity blue has to survive on all three grounds, not just the lightest one.
+      [palette.primary, palette.paper], [palette.primary, palette.surface], [palette.primary, palette.surfaceMuted],
+      [palette.primaryDark, palette.primaryWash], [palette.white, palette.primaryAction],
+      // `danger` is a separate role from `primary` precisely so an error still reads as one.
+      [palette.danger, palette.paper], [palette.dangerDark, palette.dangerWash],
+      [palette.amber, palette.amberWash], [palette.green, palette.greenWash],
+      [palette.amber, palette.paper], [palette.green, palette.paper],
     ] as const) {
       assert.ok(contrastRatio(foreground, background) >= 4.5, `${foreground} on ${background} must meet WCAG AA`);
     }
+    // Not text: `lineStrong` draws the boundary of a control, so WCAG 1.4.11's 3:1 applies.
+    // `line` is decorative hairline separation and is deliberately exempt.
+    for (const background of [palette.paper, palette.surface, palette.surfaceMuted]) {
+      assert.ok(contrastRatio(palette.lineStrong, background) >= 3, `lineStrong on ${background} must meet WCAG 1.4.11`);
+    }
+    assert.notEqual(palette.primary, palette.danger);
   }
 });
 
@@ -59,8 +75,29 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
     assert.ok(start >= 0, `${route} must remain a route-level surface`);
     const end = appSource.indexOf("\nfunction ", start + 10);
     const source = appSource.slice(start, end < 0 ? undefined : end);
-    assert.match(source, /accessibility(Label|Role|State)/, `${route} needs an accessibility contract`);
+    // A route satisfies its contract either by declaring one inline or by
+    // installing the platform header via `useDetailHeader`, which supplies the
+    // accessible back button and the labelled favourite control. The header path
+    // is checked on its own below so this is not a way to opt out of coverage.
+    assert.match(
+      source,
+      /accessibility(Label|Role|State)|useDetailHeader\(/,
+      `${route} needs an accessibility contract`,
+    );
   }
+
+  // Contracts that moved into the shared components must still exist somewhere.
+  const componentSource = ["Press", "FavoriteToggle", "ListRow", "SearchField", "EmptyState", "Chip", "Disclosure", "PageHeader", "LocationDirectory"]
+    .map((name) => readFileSync(path.join(process.cwd(), `apps/mobile/src/components/${name}.tsx`), "utf8"));
+  for (const [index, source] of componentSource.entries()) {
+    assert.match(source, /accessibility(Label|Role|State)|accessibilityTargetStyle/, `shared component ${index} needs an accessibility contract`);
+  }
+  const favoriteToggle = componentSource[1];
+  assert.match(favoriteToggle, /accessibilityState=\{\{ selected: favorite \}\}/, "the favourite control must announce its state");
+  assert.match(favoriteToggle, /Quitar\$\{subject\} de favoritos/, "one phrasing for the favourite control, not three");
+  const disclosure = componentSource[6];
+  assert.match(disclosure, /accessibilityState=\{\{ expanded: open \}\}/, "collapsed clinical copy must announce that it is collapsed");
+  assert.match(appSource, /useDetailHeader\(/, "pushed screens use the platform header");
   // CodigosScreen and InicioScreen live in their own modules (see comments above) —
   // check them there instead.
   assert.match(codigosScreenSource, /export function CodigosScreen/, "CodigosScreen must remain a route-level surface");
@@ -71,7 +108,9 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   assert.match(mapaScreenSource, /export function MapaScreen/, "MapaScreen must remain a route-level surface");
   assert.match(mapaScreenSource, /accessibility(Label|Role|State)/, "MapaScreen needs an accessibility contract");
   assert.doesNotMatch(appSource, /function SavedScreen/, "the old unrouted Guardados screen must not linger in App.tsx");
-  assert.match(appSource, /AccessibilityInfo\.isReduceMotionEnabled/);
+  assert.match(motionHookSource, /AccessibilityInfo\.isReduceMotionEnabled/);
+  assert.match(motionHookSource, /reduceMotionChanged/);
+  assert.match(motionHookSource, /if \(reduceMotion\) return;/, "layout animations must be skipped under Reduce Motion");
   assert.match(appSource, /reduceMotion \? "none"/);
   assert.match(appSource, /useColorScheme/);
   assert.match(appSource, /useWindowDimensions/);
@@ -120,15 +159,49 @@ test("route contracts expose the important stateful workflows", () => {
   assert.match(firstUse, /contentContainerStyle=\{\{[^}]*justifyContent: "space-between"/);
   assert.doesNotMatch(firstUse, /SafeAreaView[^>]+\baccessible(?:=|\s|>)/);
 
-  const locationModal = sourceFor("LocationModal");
-  assert.match(locationModal, /accessibilityViewIsModal/);
-  assert.match(locationModal, /accessibilityElementsHidden/);
-  assert.match(locationModal, /<ScrollView style=\{\[styles\.locationSheet, \{ maxHeight: "85%"/);
-  assert.doesNotMatch(locationModal, /modalBackdrop[^>]+accessibilityElementsHidden/);
-  assert.doesNotMatch(locationModal, /locationSheet[^>]+\baccessible(?:=|\s|>)/);
+  // `LocationModal` was a full sheet duplicating `LocationDetailScreen` with no
+  // callers left. It stays deleted; the route is the one place a location opens.
+  assert.doesNotMatch(appSource, /function LocationModal/, "the unrouted location sheet must not come back");
+  const locationDetail = sourceFor("LocationDetailScreen");
+  assert.match(locationDetail, /Abrir en Mapas/);
+  assert.match(locationDetail, /accessibilityLiveRegion="polite"/);
 
-  const searchBar = sourceFor("SearchBar");
-  assert.match(searchBar, /accessible=\{!onChangeText\}/);
+  // App.tsx's own `SearchBar` (and the unexplained green "offline" dot it drew inside the
+  // field) is gone; the shared component is the only search field left, and it is the one
+  // that has to carry the read-only/button distinction.
+  assert.doesNotMatch(appSource, /function SearchBar/, "the duplicate search field must not come back");
+  const searchField = readFileSync(path.join(process.cwd(), "apps/mobile/src/components/SearchField.tsx"), "utf8");
+  assert.match(searchField, /accessibilityRole="button"/);
+  assert.match(searchField, /accessibilityHint=\{accessibilityHints\.search\}/);
   assert.match(appSource, /forwardRef<View, PressableProps>/);
   assert.match(appSource, /styles\.minimumTarget/);
+});
+
+// `palette.ink` is a foreground token: in dark mode it resolves to a near-white
+// (#F5F7FB). Filling a control with it and labelling that fill `palette.white`
+// therefore renders white on white — which is what the map's "Mostrar mapa
+// online" pill did until dark mode was actually walked. `palette.paper` is ink's
+// counterpart and inverts with it, so an ink fill always takes paper text.
+test("an ink fill is never labelled with a fixed white, in any screen module", () => {
+  const modules: Array<[string, string]> = [
+    ["App.tsx", appSource],
+    ["CodigosScreen.tsx", codigosScreenSource],
+    ["InicioScreen.tsx", inicioScreenSource],
+    ["MapaScreen.tsx", mapaScreenSource],
+    ["VademecumScreen.tsx", readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8")],
+    ["LocationDirectory.tsx", readFileSync(path.join(process.cwd(), "apps/mobile/src/components/LocationDirectory.tsx"), "utf8")],
+    ["Chip.tsx", readFileSync(path.join(process.cwd(), "apps/mobile/src/components/Chip.tsx"), "utf8")],
+  ];
+  for (const [name, source] of modules) {
+    // Every style object that fills with ink must pair with paper, never white.
+    const inkFills = source.match(/\{[^{}]*backgroundColor: palette\.ink[^{}]*\}/g) ?? [];
+    for (const style of inkFills) {
+      assert.doesNotMatch(style, /color: palette\.white/, `${name}: an ink fill must use palette.paper for its label, not palette.white`);
+    }
+  }
+
+  // And the pairing itself has to survive the contrast bar in both schemes.
+  for (const palette of [adaptivePalette.light, adaptivePalette.dark]) {
+    assert.ok(contrastRatio(palette.paper, palette.ink) >= 4.5, "paper on ink must meet WCAG AA");
+  }
 });

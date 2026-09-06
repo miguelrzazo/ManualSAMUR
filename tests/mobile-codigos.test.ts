@@ -11,6 +11,7 @@ import {
   asSimpleCodes,
   asStatus4Entries,
   buildCodeSections,
+  categoryAccentColor,
   buildHospitalList,
   buildJumpTargets,
   COMUNICACIONES_SECTION_KEYS,
@@ -135,9 +136,15 @@ test("UPSI and UPSQ group by category, not by family", () => {
   const sections = buildCodeSections("upsi", upsi);
   const categories = new Set(upsi.map((c) => c.category));
   assert.equal(sections.length, categories.size);
+  // Every section carries an identity colour, including these. The jump chips are now the
+  // screen's only pill row, so a section without an accent renders as an uncoloured chip
+  // beside coloured ones — which is the inconsistency that made the row look duplicated.
   for (const section of sections) {
-    assert.ok(!section.accentColor, "UPSI/UPSQ groups are not colour-coded like SVA/SVB families");
+    assert.match(section.accentColor ?? "", /^#[0-9a-f]{6}$/i, `${section.key} needs an accent colour`);
   }
+  // Derived, not random: the same category must resolve to the same colour every launch.
+  assert.equal(categoryAccentColor("Accidentes"), "#dc2626");
+  assert.equal(categoryAccentColor("Una categoría inventada"), categoryAccentColor("Una categoría inventada"));
 });
 
 test("category filter narrows by the raw `category` field, independent of family grouping", () => {

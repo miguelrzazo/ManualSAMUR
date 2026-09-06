@@ -17,6 +17,13 @@ export interface OnlineMapViewProps {
   pins: OnlineMapPin[];
   center: [longitude: number, latitude: number];
   zoom?: number;
+  /**
+   * Camera clamp, `[west, south, east, north]`. The directory only covers Madrid, so a
+   * map that pans to the Atlantic is a map showing nothing this app can answer for.
+   */
+  bounds?: [west: number, south: number, east: number, north: number];
+  minZoom?: number;
+  maxZoom?: number;
   onPinPress: (pin: OnlineMapPin) => void;
   onLoadError: () => void;
   markerColor: string;
@@ -46,7 +53,7 @@ const styles = StyleSheet.create({
  * turn-by-turn, no travel-time claims, no offline cartography — the online map only
  * ever shows the same offline location directory as pins on a live basemap.
  */
-export function OnlineMapView({ dark, pins, center, zoom = 11, onPinPress, onLoadError, markerColor, markerColorBase, ref }: OnlineMapViewProps) {
+export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, onPinPress, onLoadError, markerColor, markerColorBase, ref }: OnlineMapViewProps) {
   const cameraRef = useRef<CameraRef>(null);
   useImperativeHandle(ref, () => ({
     moveTo(coordinate, targetZoom) {
@@ -56,7 +63,7 @@ export function OnlineMapView({ dark, pins, center, zoom = 11, onPinPress, onLoa
   return (
     <View style={styles.fill}>
       <Map style={styles.fill} mapStyle={dark ? MAPLIBRE_CARTO_STYLE_URLS.dark : MAPLIBRE_CARTO_STYLE_URLS.light} attribution attributionPosition={{ bottom: 6, left: 6 }} logo={false} onDidFailLoadingMap={onLoadError}>
-        <Camera ref={cameraRef} initialViewState={{ center, zoom }} />
+        <Camera ref={cameraRef} initialViewState={{ center, zoom }} maxBounds={bounds} minZoom={minZoom} maxZoom={maxZoom} />
         {pins.map((pin) => (
           <Marker key={pin.id} id={pin.id} lngLat={[pin.coordinate.lng, pin.coordinate.lat]} onPress={() => onPinPress(pin)}>
             <View style={[styles.markerDot, { backgroundColor: pin.kind === "hospital" ? markerColor : markerColorBase }]} />

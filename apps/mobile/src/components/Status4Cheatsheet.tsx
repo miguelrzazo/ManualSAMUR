@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Disclosure } from "./Disclosure.tsx";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { radii, spacing } from "@manual-samur/design-tokens";
@@ -36,15 +37,14 @@ export function Status4Cheatsheet({ status4, hospitals, palette, onSelectHospita
         </Text>
       </View>
 
-      <View style={styles.notice} accessibilityRole="text">
-        <MaterialCommunityIcons name="alert-outline" size={19} color={palette.amber} />
+      <Disclosure label="Cuándo hay que comunicar por voz" tone="caution">
         <Text style={styles.noticeText}>
           Cuando el traslado se realice a la Maternidad o al Hospital Infantil de alguno de estos hospitales, se
           informará por voz y por canal 1 a continuación de enviar la clave 4 y el status correspondiente. Cuando las
           unidades hagan clave 4 a cualquier otro hospital que no esté en este listado, se comunicará por voz (canal
           3).
         </Text>
-      </View>
+      </Disclosure>
 
       <FlatList
         data={status4}

@@ -6,6 +6,7 @@ import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, useColo
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radii, spacing } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
+import { selectionTick } from "./hooks/haptics";
 
 /**
  * Mirrors `useReduceMotion` in App.tsx (the app's established pattern for honouring a
@@ -65,10 +66,15 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
         const { options } = descriptors[route.key];
         const focused = state.index === index;
         const label = typeof options.tabBarLabel === "string" ? options.tabBarLabel : route.name;
-        const color = focused ? palette.red : palette.inkMuted;
+        const color = focused ? palette.primary : palette.inkMuted;
         const onPress = () => {
           const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
-          if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
+          if (focused || event.defaultPrevented) return;
+          // The tab pill is glass: at a glance the selected tab is a colour change
+          // on a translucent surface, which is the weakest state cue in the app.
+          // The tick confirms the tap landed even when the eye has not caught up.
+          selectionTick();
+          navigation.navigate(route.name);
         };
         return (
           <Pressable
@@ -81,7 +87,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
             accessibilityState={{ selected: focused }}
           >
             {options.tabBarIcon?.({ focused, color, size: 23 })}
-            <Text style={[styles.tabItemLabel, { color }]}>{label}</Text>
+            <Text style={[styles.tabItemLabel, { color }]} numberOfLines={1} maxFontSizeMultiplier={1.4}>{label}</Text>
           </Pressable>
         );
       })}
@@ -90,7 +96,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette, onOpenSea
 
   const searchButton = (
     <Pressable
-      onPress={onOpenSearch}
+      onPress={() => { selectionTick(); onOpenSearch(); }}
       style={[styles.searchButton, accessibilityTargetStyle()]}
       accessibilityRole="search"
       accessibilityLabel={routeAccessibilityLabels.Buscar}
@@ -131,7 +137,7 @@ const styles = StyleSheet.create({
   tabCapsule: { flex: 1, borderRadius: radii.pill, overflow: "hidden" },
   tabRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingVertical: spacing.sm, paddingHorizontal: spacing.sm },
   tabItem: { flex: 1, alignItems: "center", justifyContent: "center", gap: 2, paddingVertical: 2 },
-  tabItemLabel: { fontSize: 10, fontWeight: "700" },
+  tabItemLabel: { fontSize: 11, fontWeight: "500" },
   searchCapsule: { borderRadius: radii.pill, width: 56, height: 56, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   searchButton: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
   fallbackShadow: Platform.select({

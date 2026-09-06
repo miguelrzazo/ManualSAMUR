@@ -62,13 +62,22 @@ export function offlineMapPackCanDownload(state: OfflineMapPackState): boolean {
   return state.status === "absent" || state.status === "error" || state.status === "unknown";
 }
 
+/**
+ * Diagnostic copy only.
+ *
+ * The pack used to be a card in the Mapa sheet asking the user to decide whether to
+ * download "el mapa offline de Madrid". Caching the city's tiles is the app's job, not
+ * a question to put to someone mid-shift, so the pack now downloads by itself the first
+ * time the map comes online and these strings survive for the settings/diagnostics
+ * surface and for tests — not as a decision the user has to make.
+ */
 export function offlineMapPackLabel(state: OfflineMapPackState): string {
   switch (state.status) {
-    case "unknown": return "Comprobando el mapa offline de Madrid…";
-    case "checking": return "Comprobando el mapa offline de Madrid…";
-    case "absent": return "Mapa offline de Madrid no descargado. El directorio y el esquema local funcionan sin él.";
-    case "downloading": return `Descargando el mapa offline de Madrid… ${Math.round(state.percentage)}%`;
-    case "ready": return "Mapa offline de Madrid listo: el mapa funciona sin cobertura.";
-    case "error": return `No se pudo descargar el mapa offline de Madrid${state.errorMessage ? `: ${state.errorMessage}` : "."}`;
+    case "unknown": return "Comprobando…";
+    case "checking": return "Comprobando…";
+    case "absent": return "Mapa de Madrid aún no guardado en el dispositivo.";
+    case "downloading": return `Guardando el mapa de Madrid… ${Math.round(state.percentage)}%`;
+    case "ready": return "Mapa de Madrid guardado en el dispositivo.";
+    case "error": return `No se pudo guardar el mapa${state.errorMessage ? `: ${state.errorMessage}` : "."}`;
   }
 }

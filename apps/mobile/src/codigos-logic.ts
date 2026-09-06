@@ -140,6 +140,22 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Especificos": "#7c3aed",
 };
 
+/**
+ * Identity colour for a category. `CATEGORY_COLORS` covers the categories the web app
+ * names explicitly; anything else (UPSI/UPSQ carry their own vocabulary) gets a stable
+ * colour derived from the name, so a chip is never left uncoloured and never changes
+ * colour between launches.
+ */
+const CATEGORY_FALLBACK_COLORS = ["#0d9488", "#4338ca", "#b45309", "#9333ea", "#0891b2", "#65a30d", "#be123c", "#475569"];
+
+export function categoryAccentColor(category: string): string {
+  const named = CATEGORY_COLORS[category];
+  if (named) return named;
+  let hash = 0;
+  for (const character of category) hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
+  return CATEGORY_FALLBACK_COLORS[hash % CATEGORY_FALLBACK_COLORS.length];
+}
+
 const FAMILY_LABELS: Partial<Record<TopTabKey, Record<string, string>>> = {
   incidente: {
     "1": "Accidentes de tráfico",
@@ -279,6 +295,10 @@ export function buildCodeSections(tabKey: TopTabKey, codes: CodigosCode[]): Codi
     if (groupByCategory) {
       key = code.category ?? "Sin categoría";
       label = key;
+      // UPSI/UPSQ group *by* category, so their sections are exactly the categories.
+      // They used to be the only sections with no accent, which left their jump chips
+      // grey while every other tab's were coloured.
+      accentColor = categoryAccentColor(key);
     } else if (tabKey === "incidente" && code.category === "Especificos") {
       key = "Especificos";
       label = "Especificos";

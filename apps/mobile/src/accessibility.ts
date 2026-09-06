@@ -1,4 +1,5 @@
 import type { ColorSchemeName } from "react-native";
+import { adaptivePalette as palette, type AdaptivePalette as AdaptivePaletteType } from "@manual-samur/design-tokens";
 
 export type MobileRoute = "Inicio" | "Codigos" | "VademecumList" | "Mapa" | "Buscar" | "Guardados" | "Procedimiento" | "Vademécum" | "Fármaco" | "Código" | "Ubicación" | "Ajustes";
 
@@ -7,7 +8,7 @@ export const routeAccessibilityLabels: Record<MobileRoute, string> = {
   Inicio: "Inicio",
   Codigos: "Códigos",
   VademecumList: "Vademécum",
-  Mapa: "Mapa offline",
+  Mapa: "Mapa",
   Buscar: "Buscar en el manual",
   Guardados: "Guardados",
   Procedimiento: "Procedimiento",
@@ -27,50 +28,15 @@ export const accessibilityHints = {
   switchTab: "Cambia a esta sección de la navegación principal.",
 } as const;
 
-/** Text colors deliberately stay dark enough on both the light and dark surfaces. */
-export const adaptivePalette = {
-  light: {
-    paper: "#F7F8FA",
-    surface: "#FFFFFF",
-    surfaceMuted: "#EEF1F5",
-    ink: "#13233D",
-    inkMuted: "#52627A",
-    line: "#C9D2DE",
-    red: "#B51F2A",
-    redDark: "#8E1720",
-    redAction: "#B51F2A",
-    redWash: "#FCEBED",
-    amber: "#8A5200",
-    amberWash: "#FFF1D6",
-    green: "#12633F",
-    greenWash: "#E4F3EB",
-    white: "#FFFFFF",
-    black: "#000000",
-  },
-  dark: {
-    paper: "#101827",
-    surface: "#172235",
-    surfaceMuted: "#223149",
-    ink: "#F5F7FB",
-    inkMuted: "#C1CCDC",
-    line: "#46556B",
-    red: "#FF8A91",
-    redDark: "#FFB4B8",
-    redAction: "#9D1A25",
-    redWash: "#4A202B",
-    amber: "#FFD18A",
-    amberWash: "#49391F",
-    green: "#7BE2B0",
-    greenWash: "#1D4032",
-    white: "#FFFFFF",
-    black: "#000000",
-  },
-} as const;
+/**
+ * The palette now lives in `@manual-samur/design-tokens` so the app has exactly
+ * one definition of each colour role. It is re-exported here because this module
+ * is the historical import site for accessibility checks and tests.
+ */
+export { adaptivePalette, type AdaptivePalette } from "@manual-samur/design-tokens";
 
-export type AdaptivePalette = (typeof adaptivePalette)[keyof typeof adaptivePalette];
-
-export function resolveAdaptivePalette(scheme: ColorSchemeName): AdaptivePalette {
-  return scheme === "dark" ? adaptivePalette.dark : adaptivePalette.light;
+export function resolveAdaptivePalette(scheme: ColorSchemeName): AdaptivePaletteType {
+  return scheme === "dark" ? palette.dark : palette.light;
 }
 
 export function accessibilityTargetStyle(minimum = 44) {

@@ -27,16 +27,20 @@ import {
   FlatList,
   Modal,
   Pressable,
+  StyleSheet,
   Text,
   View,
-  useColorScheme,
   type ListRenderItemInfo,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, resolveAdaptivePalette, type AdaptivePalette } from "../accessibility";
+import { radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
+import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
+import { useTheme } from "../theme";
+import { displayTitle } from "../title-case";
+import { FavoriteToggle } from "../components";
+import { animateNextLayout, useReduceMotion } from "../hooks/motion";
+import { lightImpact } from "../hooks/haptics";
 import { useContent } from "../content";
-import { usePreferences } from "../preferences";
 import { procedureRouteKey } from "../procedure-logic";
 import {
   selectSavedReferences,
@@ -61,12 +65,6 @@ import type { RootStackParamList, TabsParamList } from "../navigation-types";
 
 const HISTORY_PAGE_SIZE = 50;
 
-function useActivePalette(): AdaptivePalette {
-  const scheme = useColorScheme();
-  const { appearance } = usePreferences();
-  return resolveAdaptivePalette(appearance === "system" ? scheme : appearance);
-}
-
 type InicioNavigation = BottomTabScreenProps<TabsParamList, "Inicio">["navigation"];
 
 function openSavedReference(navigation: InicioNavigation, item: SavedReference) {
@@ -87,15 +85,24 @@ const KIND_BADGE_COLOR: Record<string, string> = {
 
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   const { content, favorites, recents, toggleFavorite } = useContent();
-  const palette = useActivePalette();
+  const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
-  const toggleKey = (key: string) => setOpenKeys((prev) => {
-    const next = new Set(prev);
-    if (next.has(key)) next.delete(key); else next.add(key);
-    return next;
-  });
+  const reduceMotion = useReduceMotion();
+  // Expanding a section used to swap the whole list contents between two frames:
+  // sixty rows appeared with no transition, so it read as a screen change rather
+  // than a section opening. `animateNextLayout` is a no-op under Reduce Motion,
+  // and the haptic is an accompaniment to the chevron flip, never a replacement.
+  const toggleKey = (key: string) => {
+    animateNextLayout(reduceMotion);
+    lightImpact();
+    setOpenKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
 
   const sections = useMemo(
     () => sortManualSections(buildManualTree(content.procedures)),
@@ -133,23 +140,18 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
             onPress={() => openProcedure(procedure.id)}
             style={({ pressed }) => [styles.procedureRowMain, pressed && styles.pressed]}
             accessibilityRole="button"
-            accessibilityLabel={`${procedure.id}, ${procedure.title}`}
+            accessibilityLabel={`${procedure.id}, ${displayTitle(procedure.title)}`}
             accessibilityHint={accessibilityHints.openDetail}
           >
             <Text style={styles.procedureId}>{procedure.id}</Text>
-            <Text style={styles.procedureTitle} numberOfLines={2}>{procedure.title}</Text>
+            <Text style={styles.procedureTitle} numberOfLines={2}>{displayTitle(procedure.title)}</Text>
           </Pressable>
-          <Pressable
-            onPress={() => toggleFavorite(routeKey)}
-            hitSlop={12}
-            style={styles.minimumTarget}
-            accessibilityRole="button"
-            accessibilityLabel={favorite ? `Quitar ${procedure.title} de favoritos` : `Guardar ${procedure.title} en favoritos`}
-            accessibilityHint={accessibilityHints.toggleFavorite}
-            accessibilityState={{ selected: favorite }}
-          >
-            <MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={19} color={favorite ? palette.amber : palette.inkMuted} />
-          </Pressable>
+          <FavoriteToggle
+            favorite={favorite}
+            onToggle={() => toggleFavorite(routeKey)}
+            title={displayTitle(procedure.title)}
+            size={19}
+          />
         </View>
       );
     }
@@ -186,19 +188,9 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
         keyExtractor={(item) => item.rowKey}
         contentContainerStyle={styles.listContent}
         renderItem={renderRow}
+        ItemSeparatorComponent={() => <View style={styles.treeSeparator} />}
         ListHeaderComponent={
           <>
-            <Pressable
-              onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Search")}
-              style={styles.searchBar}
-              accessibilityRole="button"
-              accessibilityLabel="Buscar en el manual"
-              accessibilityHint="Abre la búsqueda de procedimientos, fármacos y códigos."
-            >
-              <MaterialCommunityIcons name="magnify" size={20} color={palette.inkMuted} />
-              <Text style={styles.searchPlaceholder}>Buscar procedimientos, fármacos o códigos</Text>
-            </Pressable>
-
             <View style={styles.secondaryRow}>
               <Pressable
                 onPress={openHistory}
@@ -207,7 +199,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
                 accessibilityLabel={novedades.length > 0 ? `Historial de actualizaciones, ${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial de actualizaciones"}
                 accessibilityHint={accessibilityHints.openDetail}
               >
-                <MaterialCommunityIcons name="clock-outline" size={16} color={novedades.length > 0 ? palette.red : palette.inkMuted} />
+                <MaterialCommunityIcons name="clock-outline" size={16} color={novedades.length > 0 ? palette.primary : palette.inkMuted} />
                 <Text style={[styles.secondaryChipText, novedades.length > 0 && styles.secondaryChipTextHighlight]}>
                   {novedades.length > 0 ? `${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial"}
                 </Text>
@@ -241,7 +233,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
             )}
 
             <View style={styles.treeHeading}>
-              <Text style={styles.treeHeadingText}>MANUAL DE PROCEDIMIENTOS</Text>
+              <Text style={styles.treeHeadingText}>Manual de procedimientos</Text>
               <Text style={styles.treeHeadingCount}>{content.procedures.length} fichas · {sections.length} secciones</Text>
             </View>
           </>
@@ -298,9 +290,9 @@ function CollectionSection({
           <View key={item.routeKey} style={styles.collectionRow} accessible={false}>
             {stale ? (
               <View style={styles.collectionRowMain}>
-                <MaterialCommunityIcons name="alert-circle-outline" size={17} color={palette.red} />
+                <MaterialCommunityIcons name="alert-circle-outline" size={17} color={palette.danger} />
                 <View style={styles.resourceCopy}>
-                  <Text style={styles.procedureTitle} numberOfLines={1}>{item.title}</Text>
+                  <Text style={styles.procedureTitle} numberOfLines={1}>{displayTitle(item.title)}</Text>
                   <Text style={styles.staleText}>{item.subtitle}</Text>
                 </View>
               </View>
@@ -309,28 +301,23 @@ function CollectionSection({
                 onPress={() => onPress(item)}
                 style={({ pressed }) => [styles.collectionRowMain, pressed && styles.pressed]}
                 accessibilityRole="button"
-                accessibilityLabel={`${item.title}. ${item.subtitle}`}
+                accessibilityLabel={`${displayTitle(item.title)}. ${item.subtitle}`}
                 accessibilityHint={accessibilityHints.openDetail}
               >
                 <MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={17} color={palette.ink} />
                 <View style={styles.resourceCopy}>
-                  <Text style={styles.procedureTitle} numberOfLines={1}>{item.title}</Text>
+                  <Text style={styles.procedureTitle} numberOfLines={1}>{displayTitle(item.title)}</Text>
                   <Text style={styles.collectionSubtitle} numberOfLines={1}>{item.subtitle}</Text>
                 </View>
               </Pressable>
             )}
             {!stale && (
-              <Pressable
-                onPress={() => onToggleFavorite(item.routeKey)}
-                hitSlop={12}
-                style={styles.minimumTarget}
-                accessibilityRole="button"
-                accessibilityLabel={favorite ? `Quitar ${item.title} de favoritos` : `Guardar ${item.title} en favoritos`}
-                accessibilityHint={accessibilityHints.toggleFavorite}
-                accessibilityState={{ selected: favorite }}
-              >
-                <MaterialCommunityIcons name={favorite ? "star" : "star-outline"} size={18} color={favorite ? palette.amber : palette.inkMuted} />
-              </Pressable>
+              <FavoriteToggle
+                favorite={favorite}
+                onToggle={() => onToggleFavorite(item.routeKey)}
+                title={displayTitle(item.title)}
+                size={19}
+              />
             )}
           </View>
         );
@@ -431,7 +418,7 @@ function HistoryEventRow({
 }) {
   const procedureId = event.procedureIds[0];
   const badgeColorKey = KIND_BADGE_COLOR[event.changeKind] ?? "ink";
-  const badgeColor = badgeColorKey === "green" ? palette.green : badgeColorKey === "amber" ? palette.amber : badgeColorKey === "red" ? palette.red : palette.ink;
+  const badgeColor = badgeColorKey === "green" ? palette.green : badgeColorKey === "amber" ? palette.amber : badgeColorKey === "red" ? palette.danger : palette.ink;
   const body = (
     <>
       <Text style={[styles.historyBadge, { color: badgeColor }]}>{event.changeKind.toUpperCase()}</Text>
@@ -457,15 +444,17 @@ function HistoryEventRow({
 }
 
 function createStyles(palette: AdaptivePalette) {
-  return {
+  return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
-    listContent: { padding: spacing.lg, paddingBottom: 140, gap: 2 },
+    listContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET },
+    tree: { borderRadius: radii.md, overflow: "hidden", backgroundColor: palette.surface },
+    treeSeparator: { height: StyleSheet.hairlineWidth, backgroundColor: palette.line, marginLeft: spacing.lg },
     minimumTarget: accessibilityTargetStyle(),
     pressed: { opacity: 0.6 },
 
     searchBar: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: "row",
+      alignItems: "center",
       gap: spacing.sm,
       backgroundColor: palette.surface,
       borderRadius: radii.md,
@@ -477,19 +466,19 @@ function createStyles(palette: AdaptivePalette) {
     },
     searchPlaceholder: { flex: 1, color: palette.inkMuted, fontSize: 14 },
 
-    secondaryRow: { flexDirection: "row" as const, gap: spacing.sm, marginBottom: spacing.md },
+    secondaryRow: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.md },
     secondaryChip: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: "row",
+      alignItems: "center",
       gap: 6,
       minHeight: 36,
       paddingHorizontal: spacing.md,
       borderRadius: radii.pill,
       backgroundColor: palette.surfaceMuted,
     },
-    secondaryChipHighlight: { backgroundColor: palette.redWash },
-    secondaryChipText: { fontSize: 12, fontWeight: "700" as const, color: palette.inkMuted },
-    secondaryChipTextHighlight: { color: palette.red },
+    secondaryChipHighlight: { backgroundColor: palette.primaryWash },
+    secondaryChipText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
+    secondaryChipTextHighlight: { color: palette.primary },
 
     collectionSection: {
       backgroundColor: palette.surface,
@@ -500,69 +489,65 @@ function createStyles(palette: AdaptivePalette) {
       marginBottom: spacing.md,
       gap: 2,
     },
-    collectionHeader: { flexDirection: "row" as const, alignItems: "center" as const, gap: 6, paddingHorizontal: spacing.xs, paddingBottom: spacing.xs },
-    collectionTitle: { fontSize: 11, fontWeight: "800" as const, color: palette.inkMuted, textTransform: "uppercase" as const, letterSpacing: 0.4 },
-    collectionRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, minHeight: 40 },
-    collectionRowMain: { flex: 1, flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, paddingVertical: 4 },
+    collectionHeader: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing.xs, paddingBottom: spacing.xs },
+    collectionTitle: { fontSize: 13, fontWeight: "600", color: palette.inkMuted, letterSpacing: -0.08 },
+    collectionRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 40 },
+    collectionRowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: 4 },
     collectionSubtitle: { fontSize: 11, color: palette.inkMuted, marginTop: 1 },
-    staleText: { fontSize: 11, color: palette.red, marginTop: 1 },
+    staleText: { fontSize: 11, color: palette.danger, marginTop: 1 },
     resourceCopy: { flex: 1, minWidth: 0 },
 
     treeHeading: { marginBottom: spacing.xs, marginTop: spacing.xs },
-    treeHeadingText: { fontSize: 11, fontWeight: "800" as const, color: palette.inkMuted, letterSpacing: 0.5 },
+    treeHeadingText: { fontSize: 11, fontWeight: "800", color: palette.inkMuted, letterSpacing: 0.5 },
     treeHeadingCount: { fontSize: 11, color: palette.inkMuted, marginTop: 2 },
 
     sectionHeaderRow: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: "row",
+      alignItems: "center",
       gap: spacing.sm,
       minHeight: 48,
       paddingRight: spacing.md,
       backgroundColor: palette.surface,
-      borderWidth: 1,
-      borderColor: palette.line,
-      borderRadius: radii.md,
-      marginTop: spacing.xs,
     },
     sectionDot: { width: 8, height: 8, borderRadius: 4 },
-    sectionHeaderLabel: { flex: 1, fontSize: 13, fontWeight: "800" as const, color: palette.ink, textTransform: "uppercase" as const, letterSpacing: 0.4 },
+    sectionHeaderLabel: { flex: 1, fontSize: 17, fontWeight: "600", color: palette.ink, letterSpacing: -0.43 },
 
-    groupHeaderRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, minHeight: 44, paddingRight: spacing.md },
-    groupHeaderLabel: { flex: 1, fontSize: 13, fontWeight: "700" as const, color: palette.ink },
+    groupHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44, paddingRight: spacing.md, backgroundColor: palette.surface },
+    groupHeaderLabel: { flex: 1, fontSize: 13, fontWeight: "700", color: palette.ink },
 
-    subgroupHeaderRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, minHeight: 40, paddingRight: spacing.md },
-    subgroupHeaderLabel: { flex: 1, fontSize: 12, fontWeight: "600" as const, color: palette.inkMuted, textTransform: "uppercase" as const },
+    subgroupHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 40, paddingRight: spacing.md, backgroundColor: palette.surface },
+    subgroupHeaderLabel: { flex: 1, fontSize: 15, fontWeight: "500", color: palette.inkMuted },
 
-    headerCount: { fontSize: 11, color: palette.inkMuted, fontVariant: ["tabular-nums" as const] },
+    headerCount: { fontSize: 13, color: palette.inkMuted, fontVariant: ["tabular-nums"] },
 
-    procedureRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, minHeight: 44, paddingRight: spacing.md },
-    procedureRowMain: { flex: 1, flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm, paddingVertical: spacing.xs },
-    procedureId: { minWidth: 40, color: palette.inkMuted, fontSize: 12, fontWeight: "700" as const, fontVariant: ["tabular-nums" as const] },
+    procedureRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44, paddingRight: spacing.md, backgroundColor: palette.surface },
+    procedureRowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs },
+    procedureId: { minWidth: 40, color: palette.inkMuted, fontSize: 12, fontWeight: "700", fontVariant: ["tabular-nums"] },
     procedureTitle: { flex: 1, fontSize: 13, color: palette.ink },
 
     historyModalSafeArea: { flex: 1, backgroundColor: palette.paper },
-    historyHeader: { flexDirection: "row" as const, alignItems: "center" as const, justifyContent: "space-between" as const, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-    historyTitle: { fontSize: 16, fontWeight: "800" as const, color: palette.ink },
-    historyTabs: { flexDirection: "row" as const, borderBottomWidth: 1, borderBottomColor: palette.line, paddingHorizontal: spacing.lg },
-    historyTab: { minHeight: 40, paddingHorizontal: spacing.md, justifyContent: "center" as const, borderBottomWidth: 2, borderBottomColor: "transparent" },
+    historyHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+    historyTitle: { fontSize: 16, fontWeight: "800", color: palette.ink },
+    historyTabs: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: palette.line, paddingHorizontal: spacing.lg },
+    historyTab: { minHeight: 40, paddingHorizontal: spacing.md, justifyContent: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
     historyTabActive: { borderBottomColor: palette.ink },
-    historyTabText: { fontSize: 12, fontWeight: "700" as const, color: palette.inkMuted },
+    historyTabText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
     historyTabTextActive: { color: palette.ink },
     historyContent: { padding: spacing.lg, gap: spacing.sm },
-    historyEmpty: { textAlign: "center" as const, color: palette.inkMuted, fontSize: 13, paddingVertical: spacing.xl },
+    historyEmpty: { textAlign: "center", color: palette.inkMuted, fontSize: 13, paddingVertical: spacing.xl },
     historyDateGroup: { marginBottom: spacing.md },
-    historyDateLabel: { fontSize: 11, fontWeight: "800" as const, color: palette.inkMuted, marginBottom: spacing.xs },
+    historyDateLabel: { fontSize: 11, fontWeight: "800", color: palette.inkMuted, marginBottom: spacing.xs },
     historyRow: {
-      flexDirection: "row" as const,
-      alignItems: "flex-start" as const,
+      flexDirection: "row",
+      alignItems: "flex-start",
       gap: spacing.sm,
       minHeight: 44,
       paddingVertical: spacing.sm,
       borderBottomWidth: 1,
       borderBottomColor: palette.line,
     },
-    historyBadge: { fontSize: 10, fontWeight: "800" as const, minWidth: 76 },
+    historyBadge: { fontSize: 12, fontWeight: "600", minWidth: 76 },
     historySummary: { fontSize: 13, color: palette.ink, lineHeight: 18 },
     historyDate: { fontSize: 11, color: palette.inkMuted, marginTop: 2 },
-  };
+  });
 }

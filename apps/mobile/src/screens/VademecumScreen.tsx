@@ -10,15 +10,17 @@ import {
   Text,
   TextInput,
   View,
-  useColorScheme,
   type ListRenderItemInfo,
   type SectionListData,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, resolveAdaptivePalette, type AdaptivePalette } from "../accessibility";
+import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
+import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
+import { useTheme } from "../theme";
+import { animateNextLayout, useReduceMotion } from "../hooks/motion";
+import { selectionTick } from "../hooks/haptics";
+import { Chip, Press } from "../components";
 import { useContent } from "../content";
-import { usePreferences } from "../preferences";
 import { buildVademecumReferences, searchMobileReferences, type MobileReferenceSearchResult } from "../reference-search-logic";
 import {
   buildAlphabetSections,
@@ -36,12 +38,6 @@ import {
 } from "../vademecum-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
 
-function useActivePalette(): AdaptivePalette {
-  const scheme = useColorScheme();
-  const { appearance } = usePreferences();
-  return resolveAdaptivePalette(appearance === "system" ? scheme : appearance);
-}
-
 /**
  * The Vademécum destination: four domains (fármacos, perfusiones, fluidos,
  * comerciales) organised and filterable the way `VademecumView.tsx` organises
@@ -57,7 +53,7 @@ function useActivePalette(): AdaptivePalette {
  */
 export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
   const { content } = useContent();
-  const palette = useActivePalette();
+  const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
   const [activeTab, setActiveTab] = useState<VademecumTabKey>("farmacos");
@@ -101,7 +97,6 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <View style={styles.header}>
         <Text style={styles.pageTitle}>Vademécum</Text>
-        <Text style={styles.pageKicker}>FÁRMACOS · PERFUSIONES · FLUIDOS · COMERCIALES</Text>
         <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
       </View>
 
@@ -123,8 +118,8 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
                 accessibilityLabel={`${tab.label}, ${tabCounts[tab.key]} referencias`}
                 accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
               >
-                <MaterialCommunityIcons name={tab.icon} size={15} color={focused ? palette.red : palette.inkMuted} />
-                <Text style={[styles.topTabLabel, focused && { color: palette.red }]}>{tab.label}</Text>
+                <MaterialCommunityIcons name={tab.icon} size={15} color={focused ? palette.primary : palette.inkMuted} />
+                <Text style={[styles.topTabLabel, focused && { color: palette.primary }]}>{tab.label}</Text>
                 <Text style={styles.topTabCount}>{tabCounts[tab.key]}</Text>
               </Pressable>
             );
@@ -183,6 +178,10 @@ function DomainContent({
   // both controls are visible together for this domain only). Comerciales
   // shows the A-Z index alone; perfusiones/fluidos show category chips alone.
   const showCategoryChips = tab === "farmacos" || tab === "perfusiones" || tab === "fluidos";
+  const reduceMotion = useReduceMotion();
+  // Open when a filter is already applied, so a narrowed list never looks
+  // unfiltered behind a collapsed control.
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const showAlphabetIndex = supportsAlphabetNav(tab);
 
   const categories = useMemo(() => uniqueCategories(references), [references]);
@@ -203,30 +202,43 @@ function DomainContent({
   return (
     <View style={styles.flexFill}>
       {showCategoryChips && categories.length > 1 && (
-        <View style={styles.categoryRow} accessibilityRole="tablist" accessibilityLabel="Filtrar por categoría">
+        <View style={styles.categoryRow}>
+          <Press
+            onPress={() => { selectionTick(); animateNextLayout(reduceMotion); setCategoriesOpen((open) => !open); }}
+            style={styles.categoryToggle}
+            accessibilityRole="button"
+            accessibilityLabel={activeCategory ? `Filtro: ${activeCategory}` : "Filtrar por categoría"}
+            accessibilityState={{ expanded: categoriesOpen }}
+          >
+            <MaterialCommunityIcons name="tune-variant" size={15} color={activeCategory ? categoryAccent(activeCategory) : palette.inkMuted} />
+            <Text style={[styles.categoryToggleText, activeCategory && { color: categoryAccent(activeCategory) }]} numberOfLines={1}>
+              {activeCategory ?? "Todas las categorías"}
+            </Text>
+            <MaterialCommunityIcons name={categoriesOpen ? "chevron-up" : "chevron-down"} size={16} color={palette.inkMuted} />
+          </Press>
+          {activeCategory && (
+            <Press onPress={() => { selectionTick(); onSelectCategory(null); }} style={styles.categoryClear} accessibilityRole="button" accessibilityLabel="Quitar el filtro de categoría">
+              <MaterialCommunityIcons name="close-circle" size={17} color={palette.inkMuted} />
+            </Press>
+          )}
+        </View>
+      )}
+      {showCategoryChips && categories.length > 1 && categoriesOpen && (
+        <View style={styles.categoryListRow} accessibilityRole="tablist" accessibilityLabel="Filtrar por categoría">
           <FlatList
             horizontal
             data={[null, ...categories]}
             keyExtractor={(category) => category ?? "__all__"}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.categoryContent}
-            renderItem={({ item: category }) => {
-              const focused = activeCategory === category;
-              const label = category ?? "Todas";
-              const accent = category ? categoryAccent(category) : palette.ink;
-              return (
-                <Pressable
-                  onPress={() => onSelectCategory(category)}
-                  style={[styles.categoryChip, focused && { backgroundColor: `${accent}22`, borderColor: accent }, accessibilityTargetStyle()]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filtrar por ${label}`}
-                  accessibilityState={{ selected: focused }}
-                >
-                  {category && <View style={[styles.categoryDot, { backgroundColor: accent }]} />}
-                  <Text style={[styles.categoryChipText, focused && { color: accent }]}>{label}</Text>
-                </Pressable>
-              );
-            }}
+            renderItem={({ item: category }) => (
+              <Chip
+                label={category ?? "Todas"}
+                selected={activeCategory === category}
+                onPress={() => onSelectCategory(category)}
+                dotColor={category ? categoryAccent(category) : undefined}
+              />
+            )}
           />
         </View>
       )}
@@ -420,7 +432,7 @@ function SearchField({
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder="Buscar en este dominio del vademécum"
+        placeholder="Buscar fármaco, perfusión o fluido"
         placeholderTextColor={palette.inkMuted}
         style={styles.searchInput}
         accessibilityLabel="Buscar en el vademécum"
@@ -462,8 +474,7 @@ function createStyles(palette: AdaptivePalette) {
     screen: { flex: 1, backgroundColor: palette.paper },
     flexFill: { flex: 1 },
     header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
-    pageTitle: { color: palette.ink, fontSize: 27, fontWeight: "800", letterSpacing: -0.8 },
-    pageKicker: { color: palette.red, fontSize: 10, fontWeight: "800", letterSpacing: 1.3, marginTop: 3 },
+    pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8 },
     searchBar: {
       minHeight: 46,
       borderRadius: radii.md,
@@ -488,10 +499,14 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomWidth: 2,
       borderBottomColor: "transparent",
     },
-    topTabActive: { borderBottomColor: palette.red },
+    topTabActive: { borderBottomColor: palette.primary },
     topTabLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "700" },
-    topTabCount: { color: palette.inkMuted, fontSize: 10, fontWeight: "600" },
-    categoryRow: { borderBottomWidth: 1, borderBottomColor: palette.line, paddingVertical: spacing.xs },
+    topTabCount: { color: palette.inkMuted, fontSize: 12, fontWeight: "500", fontVariant: ["tabular-nums"] },
+    categoryToggle: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, flexShrink: 1 },
+    categoryToggleText: { flexShrink: 1, fontSize: 13, fontWeight: "500", color: palette.inkMuted },
+    categoryClear: { alignItems: "center", justifyContent: "center" },
+    categoryListRow: { paddingBottom: spacing.sm },
+    categoryRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
     categoryContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
     categoryChip: {
       flexDirection: "row",
@@ -518,7 +533,7 @@ function createStyles(palette: AdaptivePalette) {
       justifyContent: "center",
     },
     alphabetChipText: { color: palette.ink, fontSize: 12, fontWeight: "700" },
-    sectionListContent: { paddingBottom: 140 },
+    sectionListContent: { paddingBottom: TAB_BAR_INSET },
     sectionHeader: {
       flexDirection: "row",
       alignItems: "center",
@@ -559,14 +574,14 @@ function createStyles(palette: AdaptivePalette) {
     },
     fluidCardHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.sm },
     fluidTypeBadge: { backgroundColor: palette.surfaceMuted, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
-    fluidTypeBadgeText: { color: palette.ink, fontSize: 10, fontWeight: "700" },
+    fluidTypeBadgeText: { color: palette.ink, fontSize: 12, fontWeight: "600" },
     fluidStatsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-    fluidStat: { minWidth: 74, borderRadius: radii.sm, borderWidth: 1, borderColor: palette.line, paddingHorizontal: spacing.sm, paddingVertical: 6 },
-    fluidStatLabel: { color: palette.inkMuted, fontSize: 9, fontWeight: "700", textTransform: "uppercase", letterSpacing: 0.4 },
+    fluidStat: { minWidth: 74, borderRadius: radii.sm, borderWidth: 1, borderColor: palette.lineStrong, paddingHorizontal: spacing.sm, paddingVertical: 6 },
+    fluidStatLabel: { color: palette.inkMuted, fontSize: 12, fontWeight: "500" },
     fluidStatValue: { color: palette.ink, fontSize: 12, fontWeight: "700", marginTop: 2 },
     fluidChipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
-    fluidWarningChip: { backgroundColor: palette.redWash, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
-    fluidWarningChipText: { color: palette.red, fontSize: 10, fontWeight: "700" },
+    fluidWarningChip: { backgroundColor: palette.dangerWash, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+    fluidWarningChipText: { color: palette.dangerDark, fontSize: 12, fontWeight: "600" },
     commercialCard: {
       marginHorizontal: spacing.lg,
       marginTop: spacing.md,

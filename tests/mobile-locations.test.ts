@@ -110,7 +110,12 @@ test("location screen requests permission only from an explicit action and keeps
   assert.match(mapaSource, /Usar mi ubicación/);
   assert.match(mapaSource, /requestForegroundPermissionsAsync/);
   assert.match(mapaSource, /Permiso de ubicación denegado/);
-  assert.match(mapaSource, /Vista accesible/);
+  // The offline branch used to be a schematic that placed every point at a
+  // position derived from its list index, with the real directory hidden behind
+  // "Vista accesible" inside the sheet. The directory is the offline view now, so
+  // there is no separate accessible equivalent to name.
+  assert.match(mapaSource, /<LocationDirectory/);
+  assert.doesNotMatch(mapaSource, /mapPercent/, "the fabricated pin positions must not come back");
   const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
   assert.match(appSource, /Abrir en Mapas/);
 });

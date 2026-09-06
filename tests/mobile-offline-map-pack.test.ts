@@ -76,5 +76,5 @@ test("pack labels are Spanish, human copy for every state", () => {
     assert.equal(typeof offlineMapPackLabel(state), "string");
     assert.ok(offlineMapPackLabel(state).length > 0);
   }
-  assert.match(offlineMapPackLabel(transitionOfflineMapPackState(initialOfflineMapPackState, { type: "check-found-ready" })), /sin cobertura/);
+  assert.match(offlineMapPackLabel(transitionOfflineMapPackState(initialOfflineMapPackState, { type: "check-found-ready" })), /guardado en el dispositivo/);
 });

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Pulso abierto",
+    "name": "Manual de procedimientos SAMUR PC",
     "slug": "manualsamur",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -9,13 +9,13 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#D92732"
+      "backgroundColor": "#1B4FA8"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
-        "CFBundleDisplayName": "Pulso abierto",
+        "CFBundleDisplayName": "Manual de procedimientos SAMUR PC",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
       },
       "deploymentTarget": "16.4"
@@ -23,10 +23,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
-        "backgroundColor": "#D92732"
+        "backgroundColor": "#1B4FA8"
       },
       "package": "es.madrid.samur.manual",
-      "label": "Pulso abierto"
+      "label": "Manual de procedimientos SAMUR PC"
     },
     "plugins": [
       "expo-status-bar",

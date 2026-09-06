@@ -9,15 +9,14 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  useColorScheme,
   type ListRenderItemInfo,
   type SectionListData,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, resolveAdaptivePalette, type AdaptivePalette } from "../accessibility";
+import { radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
+import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
+import { useTheme } from "../theme";
 import {
   asCheatsheetSections,
   asCodigosBases,
@@ -30,7 +29,6 @@ import {
   buildHospitalList,
   buildJumpTargets,
   COMUNICACIONES_SECTION_KEYS,
-  filterByCategory,
   filterIndicativos,
   getCheatsheetSection,
   groupByCategoryField,
@@ -41,7 +39,6 @@ import {
   isCodeTab,
   OTROS_TABS,
   TOP_TABS,
-  uniqueCategories,
   usesFamilyColor,
   type CodigosCode,
   type CodigosRow,
@@ -50,24 +47,17 @@ import {
   type TopTabKey,
 } from "../codigos-logic";
 import { useContent } from "../content";
-import { usePreferences } from "../preferences";
+import { Chip, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
 
-function useActivePalette(): AdaptivePalette {
-  const scheme = useColorScheme();
-  const { appearance } = usePreferences();
-  return resolveAdaptivePalette(appearance === "system" ? scheme : appearance);
-}
-
 export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
   const { content } = useContent();
-  const palette = useActivePalette();
+  const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
   const [activeTab, setActiveTab] = useState<TopTabKey>("incidente");
   const [activeOtrosTab, setActiveOtrosTab] = useState<OtrosTabKey>("icao");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [query, setQuery] = useState(route.params?.query ?? "");
   const sectionListRef = useRef<SectionList<CodigosRow, CodigosSection>>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -87,7 +77,6 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
 
   const switchTab = useCallback((key: TopTabKey) => {
     setActiveTab(key);
-    setActiveCategory(null);
   }, []);
 
   const openCode = useCallback(
@@ -106,10 +95,9 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
   if (query.trim()) {
     return (
       <SafeAreaView style={styles.screen} edges={["top"]}>
+        <PageHeader title="Códigos y claves" />
         <View style={styles.header}>
-          <Text style={styles.pageTitle}>Códigos y claves</Text>
-          <Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text>
-          <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
+          <SearchField value={query} onChangeText={setQuery} placeholder="Buscar código, nombre o categoría" />
         </View>
         <FlatList
           data={searchResults}
@@ -119,8 +107,6 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             <EmptyState
               title="Sin coincidencias"
               detail="Prueba con el código, nombre, categoría o descripción."
-              palette={palette}
-              styles={styles}
             />
           }
           renderItem={({ item }) => (
@@ -146,10 +132,9 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
+      <PageHeader title="Códigos y claves" />
       <View style={styles.header}>
-        <Text style={styles.pageTitle}>Códigos y claves</Text>
-        <Text style={styles.pageKicker}>RADIO · CONSULTA LOCAL</Text>
-        <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
+        <SearchField value={query} onChangeText={setQuery} placeholder="Buscar código, nombre o categoría" />
       </View>
 
       <View style={styles.topTabsRow} accessibilityRole="tablist" accessibilityLabel="Categorías de códigos">
@@ -190,18 +175,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             contentContainerStyle={styles.otrosContent}
             renderItem={({ item: tab }) => {
               const focused = activeOtrosTab === tab.key;
-              return (
-                <Pressable
-                  onPress={() => setActiveOtrosTab(tab.key)}
-                  style={[styles.otrosTab, focused && styles.otrosTabActive, accessibilityTargetStyle()]}
-                  accessibilityRole="tab"
-                  accessibilityState={{ selected: focused }}
-                  accessibilityLabel={tab.label}
-                  accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
-                >
-                  <Text style={[styles.otrosTabLabel, focused && styles.otrosTabLabelActive]}>{tab.label}</Text>
-                </Pressable>
-              );
+              return <Chip label={tab.label} selected={focused} onPress={() => setActiveOtrosTab(tab.key)} role="tab" />;
             }}
           />
         </View>
@@ -220,8 +194,6 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
         <CodeGroupList
           tabKey={activeTab}
           codes={codeDataByTab[activeTab]}
-          activeCategory={activeCategory}
-          onSelectCategory={setActiveCategory}
           onOpenCode={openCode}
           palette={palette}
           styles={styles}
@@ -239,8 +211,6 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
 function CodeGroupList({
   tabKey,
   codes,
-  activeCategory,
-  onSelectCategory,
   onOpenCode,
   palette,
   styles,
@@ -250,8 +220,6 @@ function CodeGroupList({
 }: {
   tabKey: TopTabKey;
   codes: CodigosCode[];
-  activeCategory: string | null;
-  onSelectCategory: (category: string | null) => void;
   onOpenCode: (routeKey: string) => void;
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
@@ -259,12 +227,10 @@ function CodeGroupList({
   showBackToTop: boolean;
   onShowBackToTopChange: (visible: boolean) => void;
 }) {
-  const categories = useMemo(() => uniqueCategories(codes), [codes]);
-  const filtered = useMemo(() => filterByCategory(codes, activeCategory), [codes, activeCategory]);
-  const sections = useMemo(() => buildCodeSections(tabKey, filtered), [tabKey, filtered]);
+  const sections = useMemo(() => buildCodeSections(tabKey, codes), [tabKey, codes]);
   const jumpTargets = useMemo(() => buildJumpTargets(sections), [sections]);
-  const showNoReportLegend = usesFamilyColor(tabKey) && hasNoReportCodes(filtered);
-  const showTetraLegend = tabKey === "incidente" && hasTetraCodes(filtered);
+  const showNoReportLegend = usesFamilyColor(tabKey) && hasNoReportCodes(codes);
+  const showTetraLegend = tabKey === "incidente" && hasTetraCodes(codes);
 
   const scrollToSection = useCallback(
     (sectionIndex: number) => {
@@ -280,60 +246,26 @@ function CodeGroupList({
 
   return (
     <View style={styles.flexFill}>
-      {categories.length > 1 && (
-        <View style={styles.categoryRow} accessibilityRole="tablist" accessibilityLabel="Filtrar por categoría">
-          <FlatList
-            horizontal
-            data={[null, ...categories]}
-            keyExtractor={(category) => category ?? "__all__"}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoryContent}
-            renderItem={({ item: category }) => {
-              const focused = activeCategory === category;
-              const label = category ?? "Todas";
-              return (
-                <Pressable
-                  onPress={() => onSelectCategory(category)}
-                  style={[styles.categoryChip, focused && styles.categoryChipActive, accessibilityTargetStyle()]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filtrar por ${label}`}
-                  accessibilityState={{ selected: focused }}
-                >
-                  <Text style={[styles.categoryChipText, focused && styles.categoryChipTextActive]}>{label}</Text>
-                </Pressable>
-              );
-            }}
-          />
-        </View>
-      )}
-
       {jumpTargets.length > 1 && (
-        <View style={styles.jumpRow} accessibilityRole="tablist" accessibilityLabel="Ir a un grupo">
+        // The one pill row on this screen. It used to sit under a second, uncoloured row
+        // built from `uniqueCategories`, whose labels were near-duplicates of these — two
+        // treatments and two behaviours for what read as the same list.
+        <View style={styles.jumpRow} accessibilityLabel="Ir a un grupo">
           <FlatList
             horizontal
             data={jumpTargets}
             keyExtractor={(target) => target.key}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.jumpContent}
-            renderItem={({ item: target }) => {
-              const sectionIndex = sections.findIndex((s) => s.key === target.key);
-              return (
-                <Pressable
-                  onPress={() => scrollToSection(sectionIndex)}
-                  style={[
-                    styles.jumpChip,
-                    target.accentColor ? { backgroundColor: `${target.accentColor}22` } : undefined,
-                    accessibilityTargetStyle(),
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Ir al grupo ${target.label}`}
-                >
-                  <Text style={[styles.jumpChipText, target.accentColor ? { color: target.accentColor } : undefined]}>
-                    {target.label}
-                  </Text>
-                </Pressable>
-              );
-            }}
+            renderItem={({ item: target }) => (
+              <Chip
+                label={target.label}
+                accent={target.accentColor}
+                onPress={() => scrollToSection(sections.findIndex((section) => section.key === target.key))}
+                accessibilityLabel={`Ir al grupo ${target.label}`}
+                accessibilityHint="Desplaza la lista hasta este grupo."
+              />
+            )}
           />
         </View>
       )}
@@ -342,7 +274,7 @@ function CodeGroupList({
         <View style={styles.legendBlock}>
           {showTetraLegend && (
             <View style={styles.legendRow}>
-              <MaterialCommunityIcons name="radio-handheld" size={14} color={palette.red} />
+              <MaterialCommunityIcons name="radio-handheld" size={14} color={palette.primary} />
               <Text style={styles.legendText}>
                 Transmitir por <Text style={styles.legendStrong}>TETRA y llamada de voz</Text>, salvo levedad
                 contrastada
@@ -370,7 +302,7 @@ function CodeGroupList({
         scrollEventThrottle={32}
         onScrollToIndexFailed={() => undefined}
         ListEmptyComponent={
-          <EmptyState title="Sin resultados" detail="No hay códigos para este filtro." palette={palette} styles={styles} />
+          <EmptyState title="Sin resultados" detail="No hay códigos para este filtro." />
         }
         renderSectionHeader={({ section }: { section: SectionListData<CodigosRow, CodigosSection> }) => (
           <View style={styles.sectionHeader} accessibilityRole="header">
@@ -420,7 +352,7 @@ function CodeGroupList({
                     <MaterialCommunityIcons
                       name="radio-handheld"
                       size={13}
-                      color={palette.red}
+                      color={palette.primary}
                       accessibilityLabel="Transmitir por TETRA y llamada de voz"
                     />
                   )}
@@ -589,24 +521,8 @@ function OtrosContent({
     return (
       <View style={styles.flexFill}>
         <View style={styles.hospitalFilterRow}>
-          <Pressable
-            onPress={() => setShowPrivate(false)}
-            style={[styles.otrosTab, !showPrivate && styles.otrosTabActive, accessibilityTargetStyle()]}
-            accessibilityRole="button"
-            accessibilityLabel="Mostrar hospitales públicos"
-            accessibilityState={{ selected: !showPrivate }}
-          >
-            <Text style={[styles.otrosTabLabel, !showPrivate && styles.otrosTabLabelActive]}>Públicos</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setShowPrivate(true)}
-            style={[styles.otrosTab, showPrivate && styles.otrosTabActive, accessibilityTargetStyle()]}
-            accessibilityRole="button"
-            accessibilityLabel="Mostrar hospitales privados"
-            accessibilityState={{ selected: showPrivate }}
-          >
-            <Text style={[styles.otrosTabLabel, showPrivate && styles.otrosTabLabelActive]}>Privados</Text>
-          </Pressable>
+          <Chip label="Públicos" selected={!showPrivate} onPress={() => setShowPrivate(false)} role="tab" accessibilityLabel="Mostrar hospitales públicos" />
+          <Chip label="Privados" selected={showPrivate} onPress={() => setShowPrivate(true)} role="tab" accessibilityLabel="Mostrar hospitales privados" />
           <Pressable
             onPress={onOpenStatus4}
             style={[styles.status4Button, accessibilityTargetStyle()]}
@@ -614,7 +530,7 @@ function OtrosContent({
             accessibilityLabel="Abrir hoja de referencia Status 4"
             accessibilityHint={accessibilityHints.openDetail}
           >
-            <MaterialCommunityIcons name="hospital-box-outline" size={16} color={palette.red} />
+            <MaterialCommunityIcons name="hospital-box-outline" size={16} color={palette.primary} />
             <Text style={styles.status4ButtonText}>Status 4</Text>
           </Pressable>
         </View>
@@ -623,7 +539,7 @@ function OtrosContent({
           keyExtractor={(h) => h.id}
           contentContainerStyle={styles.sectionListContent}
           ListEmptyComponent={
-            <EmptyState title="Sin hospitales" detail="No hay hospitales para este filtro." palette={palette} styles={styles} />
+            <EmptyState title="Sin hospitales" detail="No hay hospitales para este filtro." />
           }
           renderItem={({ item: hospital }) => (
             <Pressable
@@ -696,18 +612,13 @@ function OtrosContent({
               {district.bases.length > 0 ? (
                 <View style={styles.districtBaseChips}>
                   {district.bases.map((base) => (
-                    <Pressable
+                    <Chip
                       key={base.id}
+                      label={`B${base.number} · ${base.name}`}
                       onPress={() => void Linking.openURL(`https://www.google.com/maps?q=${base.lat},${base.lng}`)}
-                      style={styles.districtBaseChip}
-                      accessibilityRole="link"
                       accessibilityLabel={`Base ${base.number}, ${base.name}`}
                       accessibilityHint={accessibilityHints.openMap}
-                    >
-                      <Text style={styles.districtBaseChipText}>
-                        B{base.number} · {base.name}
-                      </Text>
-                    </Pressable>
+                    />
                   ))}
                 </View>
               ) : (
@@ -736,8 +647,6 @@ function OtrosContent({
         <EmptyState
           title="Contenido no disponible"
           detail="No se encontró el contenido de comunicaciones en el paquete local."
-          palette={palette}
-          styles={styles}
         />
       }
       renderItem={({ item: section }) => (
@@ -773,72 +682,11 @@ function OtrosContent({
 
 // ─── Shared bits ─────────────────────────────────────────────────────────────
 
-function SearchField({
-  value,
-  onChangeText,
-  palette,
-  styles,
-}: {
-  value: string;
-  onChangeText: (value: string) => void;
-  palette: AdaptivePalette;
-  styles: ReturnType<typeof createStyles>;
-}) {
-  return (
-    <View style={styles.searchBar}>
-      <MaterialCommunityIcons name="magnify" size={18} color={palette.inkMuted} />
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        placeholder="Buscar código, nombre o categoría"
-        placeholderTextColor={palette.inkMuted}
-        style={styles.searchInput}
-        accessibilityLabel="Buscar en códigos"
-        accessibilityHint={accessibilityHints.search}
-        autoCorrect={false}
-        returnKeyType="search"
-      />
-      {value.length > 0 && (
-        <Pressable
-          onPress={() => onChangeText("")}
-          style={accessibilityTargetStyle(32)}
-          accessibilityRole="button"
-          accessibilityLabel="Borrar búsqueda"
-        >
-          <MaterialCommunityIcons name="close-circle" size={18} color={palette.inkMuted} />
-        </Pressable>
-      )}
-    </View>
-  );
-}
-
-function EmptyState({
-  title,
-  detail,
-  palette,
-  styles,
-}: {
-  title: string;
-  detail: string;
-  palette: AdaptivePalette;
-  styles: ReturnType<typeof createStyles>;
-}) {
-  return (
-    <View style={styles.emptyState}>
-      <MaterialCommunityIcons name="text-search" size={26} color={palette.inkMuted} />
-      <Text style={styles.emptyTitle}>{title}</Text>
-      <Text style={styles.emptyDetail}>{detail}</Text>
-    </View>
-  );
-}
-
 function createStyles(palette: AdaptivePalette) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
     flexFill: { flex: 1 },
-    header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
-    pageTitle: { color: palette.ink, fontSize: 27, fontWeight: "800", letterSpacing: -0.8 },
-    pageKicker: { color: palette.red, fontSize: 10, fontWeight: "800", letterSpacing: 1.3, marginTop: 3 },
+    header: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
     searchBar: {
       minHeight: 46,
       borderRadius: radii.md,
@@ -866,28 +714,16 @@ function createStyles(palette: AdaptivePalette) {
     topTabActive: { borderBottomColor: palette.ink },
     topTabDot: { width: 7, height: 7, borderRadius: 4 },
     topTabLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "700" },
-    topTabCount: { color: palette.inkMuted, fontSize: 10, fontWeight: "600" },
+    topTabCount: { color: palette.inkMuted, fontSize: 12, fontWeight: "500", fontVariant: ["tabular-nums"] },
     otrosRow: { backgroundColor: palette.surfaceMuted, borderBottomWidth: 1, borderBottomColor: palette.line },
     otrosContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, gap: spacing.xs },
-    otrosTab: { minHeight: 36, paddingHorizontal: spacing.md, borderRadius: radii.pill, justifyContent: "center" },
-    otrosTabActive: { backgroundColor: palette.ink },
-    otrosTabLabel: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" },
-    otrosTabLabelActive: { color: palette.white },
-    categoryRow: { borderBottomWidth: 1, borderBottomColor: palette.line, paddingVertical: spacing.xs },
-    categoryContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
-    categoryChip: { minHeight: 36, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, justifyContent: "center" },
-    categoryChipActive: { backgroundColor: palette.ink },
-    categoryChipText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" },
-    categoryChipTextActive: { color: palette.white },
     jumpRow: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line },
     jumpContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
-    jumpChip: { minHeight: 32, paddingHorizontal: spacing.sm, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, justifyContent: "center" },
-    jumpChipText: { color: palette.inkMuted, fontSize: 11, fontWeight: "700" },
     legendBlock: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, gap: 4, borderBottomWidth: 1, borderBottomColor: palette.line },
     legendRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
     legendText: { flex: 1, color: palette.inkMuted, fontSize: 11, lineHeight: 15 },
     legendStrong: { fontWeight: "800", color: palette.ink },
-    sectionListContent: { paddingBottom: 140 },
+    sectionListContent: { paddingBottom: TAB_BAR_INSET },
     sectionHeader: {
       flexDirection: "row",
       alignItems: "center",
@@ -900,15 +736,14 @@ function createStyles(palette: AdaptivePalette) {
     },
     sectionHeaderBadge: { backgroundColor: palette.surfaceMuted, borderRadius: radii.sm, paddingHorizontal: 8, paddingVertical: 3 },
     sectionHeaderBadgeText: { fontSize: 11, fontWeight: "800", color: palette.ink },
-    sectionHeaderLabel: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
+    sectionHeaderLabel: { flex: 1, color: palette.ink, fontSize: 15, fontWeight: "600" },
     sectionHeaderCount: { color: palette.inkMuted, fontSize: 11, fontWeight: "600" },
     subgroupHeader: {
       backgroundColor: palette.paper,
       color: palette.inkMuted,
-      fontSize: 11,
-      fontWeight: "800",
-      letterSpacing: 0.6,
-      textTransform: "uppercase",
+      fontSize: 13,
+      fontWeight: "600",
+      letterSpacing: -0.08,
       paddingHorizontal: spacing.lg,
       paddingTop: spacing.sm,
       paddingBottom: 4,
@@ -924,7 +759,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomColor: palette.line,
     },
     codeRowIndented: { paddingLeft: spacing.xxl },
-    codeBadge: { minWidth: 56, textAlign: "center", color: palette.red, fontSize: 13, fontWeight: "800", fontVariant: ["tabular-nums"] },
+    codeBadge: { minWidth: 56, textAlign: "center", color: palette.primary, fontSize: 13, fontWeight: "800", fontVariant: ["tabular-nums"] },
     rowCopy: { flex: 1 },
     rowTitleLine: { flexDirection: "row", alignItems: "center", gap: 6 },
     rowTitle: { color: palette.ink, fontSize: 14, fontWeight: "600", flexShrink: 1 },
@@ -964,8 +799,8 @@ function createStyles(palette: AdaptivePalette) {
     hospitalBadgeStack: { alignItems: "center", gap: 3, minWidth: 46 },
     hospitalId: { fontSize: 11, fontWeight: "800", color: palette.ink, backgroundColor: palette.surfaceMuted, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
     hospitalStatus4: { fontSize: 10, fontWeight: "800", color: palette.ink, backgroundColor: palette.amberWash, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 },
-    status4Button: { flexDirection: "row", alignItems: "center", gap: 4, marginLeft: "auto", paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.redWash },
-    status4ButtonText: { color: palette.red, fontSize: 12, fontWeight: "800" },
+    status4Button: { flexDirection: "row", alignItems: "center", gap: 4, marginLeft: "auto", paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.primaryWash },
+    status4ButtonText: { color: palette.primary, fontSize: 12, fontWeight: "800" },
     districtRow: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -987,10 +822,8 @@ function createStyles(palette: AdaptivePalette) {
       fontSize: 12,
     },
     districtBaseChips: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: spacing.sm },
-    districtBaseChip: { minHeight: 30, paddingHorizontal: 10, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.line, justifyContent: "center" },
-    districtBaseChipText: { fontSize: 11, color: palette.inkMuted, fontWeight: "700" },
     comunicacionesSection: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg },
-    comunicacionesSectionTitle: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: spacing.sm },
+    comunicacionesSectionTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: spacing.sm },
     comunicacionesCard: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm },
     comunicacionesCardTitle: { color: palette.ink, fontSize: 13, fontWeight: "800", marginBottom: 4 },
     comunicacionesCardLine: { color: palette.inkMuted, fontSize: 12, lineHeight: 17 },
@@ -1003,7 +836,7 @@ function createStyles(palette: AdaptivePalette) {
       // confirmed by manual testing where "Volver arriba" opened Search instead.
       position: "absolute",
       left: spacing.lg,
-      bottom: 100,
+      bottom: TAB_BAR_INSET + spacing.sm,
       width: 44,
       height: 44,
       borderRadius: 22,

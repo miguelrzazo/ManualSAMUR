@@ -25,7 +25,15 @@ export function nearestLocationOfKind(locations: LocationRecord[], origin: Locat
   return sortLocationsByDistance(candidates, origin)[0];
 }
 
+/**
+ * Distances are still straight-line — `sortLocationsByDistance` has no routing and this
+ * app deliberately makes no travel-time claim. The phrase "en línea recta" is gone from
+ * the label because it repeated on every row of a sixty-row directory to qualify a number
+ * nobody was reading as a driving distance. The qualification now lives once, in the
+ * accessibility hint of the control that computes it.
+ */
 export function formatDistanceLabel(distanceMeters?: number): string | undefined {
   if (distanceMeters === undefined || !Number.isFinite(distanceMeters)) return undefined;
-  return distanceMeters < 1000 ? `${Math.round(distanceMeters)} m en línea recta` : `${(distanceMeters / 1000).toFixed(1)} km en línea recta`;
+  if (distanceMeters < 1000) return `${Math.round(distanceMeters)} m`;
+  return `${(distanceMeters / 1000).toFixed(1).replace(".", ",")} km`;
 }
