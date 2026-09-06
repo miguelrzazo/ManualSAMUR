@@ -36,10 +36,12 @@ test("mobile shell keeps the required five-tab order, with Buscar among the dest
   // The old standalone Guardados tab stays absorbed into Inicio.
   assert.doesNotMatch(tabsSource, /<Tabs\.Screen name="Guardados"/);
 
-  // ...and the stack route and the capsule that used to reach it are both gone.
+  // The modal it used to be is gone: no Search stack route, and nothing opens one.
   assert.doesNotMatch(source, /<Stack\.Screen name="Search"/);
   assert.doesNotMatch(source, /onOpenSearch/);
   assert.match(source, /GlassTabBar/);
+  // It is still drawn as a detached bubble beside the pill rather than inside it —
+  // see the tab bar test below for how the route is split out.
 
   // Buscar has to show something before a query is typed, or a tab that opens on an
   // empty list and a keyboard is worse than the modal it replaced.
@@ -52,15 +54,16 @@ test("mobile shell keeps the required five-tab order, with Buscar among the dest
   assert.match(source, /Sin cuenta y sin datos de pacientes/);
 });
 
-test("the tab bar uses Liquid Glass with an honest, palette-based fallback", () => {
+test("the tab bar and search capsule use Liquid Glass with an honest, palette-based fallback", () => {
   const source = readFileSync(path.join(appRoot, "src", "nav-shell.tsx"), "utf8");
   assert.match(source, /from "expo-glass-effect"/);
   assert.match(source, /isGlassEffectAPIAvailable\(\)/);
   assert.match(source, /isLiquidGlassAvailable\(\)/);
   assert.match(source, /useReduceTransparency/);
   assert.match(source, /AccessibilityInfo\.isReduceTransparencyEnabled/);
-  // Still not a GlassContainer: it makes neighbouring glass elements merge, which drew a
-  // visible bridge back when there were two capsules. There is one capsule now.
+  // Deliberately NOT wrapped in a GlassContainer: that component makes neighbouring glass
+  // elements merge, and it drew a visible bridge between the two capsules even at spacing
+  // 0. The tab pill and the search button must read as two separate objects.
   assert.doesNotMatch(source, /<GlassContainer/);
   assert.match(source, /glassEffectStyle="regular"/);
   assert.match(source, /isInteractive/);
@@ -69,8 +72,18 @@ test("the tab bar uses Liquid Glass with an honest, palette-based fallback", () 
   assert.match(source, /palette\.surface, borderColor: palette\.line/);
   assert.match(source, /accessibilityRole="tablist"/);
   assert.match(source, /accessibilityTargetStyle\(\)/);
-  // The detached search capsule is gone with the modal it opened.
-  assert.doesNotMatch(source, /searchCapsule/);
+
+  // Buscar is a real Tabs.Screen, but it is drawn in its own bubble rather than inside the
+  // pill: `SEARCH_ROUTE` is split out of `state.routes`, so navigating to it, its selected
+  // state and its back behaviour stay ordinary tab behaviour while the bar keeps its shape.
+  assert.match(source, /const SEARCH_ROUTE = "Buscar"/);
+  assert.match(source, /state\.routes\.filter\(\(route\) => route\.name !== SEARCH_ROUTE\)/);
+  assert.match(source, /state\.routes\.find\(\(route\) => route\.name === SEARCH_ROUTE\)/);
+  assert.match(source, /searchCapsule/);
+  assert.match(source, /accessibilityLabel=\{routeAccessibilityLabels\.Buscar\}/);
+  // The bubble is a tab, not a button that opens a modal — it carries a selected state.
+  assert.match(source, /accessibilityState=\{\{ selected: searchFocused \}\}/);
+  assert.doesNotMatch(source, /onOpenSearch/);
 });
 
 test("platform identity uses the manual's own name without changing the package identifier", () => {
