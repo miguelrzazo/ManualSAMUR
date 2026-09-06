@@ -832,16 +832,29 @@ function readableMarkdownLine(line: string): string {
 }
 
 function readableMarkdownCell(cell: string): string {
-  return cell.replace(/<br\s*\/?\s*>/gi, "\n").split("\n").map((line) => {
-    const bullet = /^\s*(?:[-*•])\s+/.test(line);
-    const text = readableMarkdownLine(line);
-    return bullet && text ? `• ${text}` : text;
-  }).filter(Boolean).join("\n");
+  return cell
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .split("\n")
+    .map((line) => {
+      const bullet = /^\s*(?:[-*•])\s+/.test(line);
+      const text = readableMarkdownLine(line);
+      return bullet && text ? `• ${text}` : text;
+    })
+    .filter(Boolean)
+    .join("\n");
 }
 
 function MarkdownContent({ sections, onContainerLayout, onSectionLayout }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void }) {
   const styles = useAppStyles();
-  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{splitMarkdownBlocks(section.lines).map((block) => { if (block.kind === "table") return <MarkdownTable key={`${section.key}-table-${block.startIndex}`} table={block.table} formatCell={readableMarkdownCell} />; if (block.row.kind === "skip") return null; const text = readableMarkdownLine(block.line.trim()); if (!text) return null; if (block.row.kind === "bullet") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{text}</Text></View>; if (block.row.kind === "ordered") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.orderedMarker}>{block.row.ordinal}.</Text><Text style={styles.markdownText}>{text}</Text></View>; return <Text key={`${section.key}-${block.index}`} style={styles.markdownText}>{text}</Text>; })}</View>)}</View>;
+  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{splitMarkdownBlocks(section.lines).map((block) => {
+    if (block.kind === "table") return <MarkdownTable key={`${section.key}-table-${block.startIndex}`} table={block.table} formatCell={readableMarkdownCell} />;
+    if (block.row.kind === "skip") return null;
+    const text = readableMarkdownLine(block.line.trim());
+    if (!text) return null;
+    if (block.row.kind === "bullet") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.markdownText}>{text}</Text></View>;
+    if (block.row.kind === "ordered") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.orderedMarker}>{block.row.ordinal}.</Text><Text style={styles.markdownText}>{text}</Text></View>;
+    return <Text key={`${section.key}-${block.index}`} style={styles.markdownText}>{text}</Text>;
+  })}</View>)}</View>;
 }
 
 function ProcedureEditorialBlocks({ blocks, onProcedure }: { blocks: unknown[]; onProcedure?: (id: string) => void }) {
