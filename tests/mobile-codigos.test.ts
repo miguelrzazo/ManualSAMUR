@@ -275,3 +275,26 @@ test("the códigos annotations render under the list, never above it", () => {
   // And the old always-on banner is gone for good.
   assert.doesNotMatch(source, /showTetraLegend|showNoReportLegend/);
 });
+
+// El campo `description` de SVA/SVB venía de una extracción del PDF que quedó
+// desalineada: describía un código distinto del que nombra `name`. C.0.1 "Dolor
+// torácico de probable origen cardiaco" se describía como "Parada
+// cardiorrespiratoria sin recuperación", A.0.0 "Urticaria generalizada" como una
+// anafilaxia con compromiso hemodinámico, y C.6.1 arrastraba "seralucsavoidraC"
+// —"Cardiovasculares" del revés— del propio extractor. `CodeScreen` lo pintaba
+// tal cual bajo "Descripción", así que el campo se retiró entero: `name` es la
+// etiqueta oficial y es la correcta. Los demás datasets sí conservan el suyo.
+test("los códigos SVA y SVB no llevan descripción", () => {
+  for (const dataset of ["codigos-sva", "codigos-svb"]) {
+    const codes = JSON.parse(
+      readFileSync(path.join(process.cwd(), "content/data", `${dataset}.json`), "utf8"),
+    ) as Array<Record<string, unknown>>;
+    assert.ok(codes.length > 0, `${dataset} no puede quedarse vacío`);
+    for (const code of codes) {
+      assert.ok(!("description" in code), `${dataset}: ${String(code.code)} sigue llevando descripción`);
+      // Retirar la descripción no puede llevarse por delante la identidad del código.
+      assert.equal(typeof code.code, "string");
+      assert.equal(typeof code.name, "string");
+    }
+  }
+});
