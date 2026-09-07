@@ -14,6 +14,7 @@ import {
 } from "../settings-legal.ts";
 import { useTheme } from "../theme.tsx";
 import { Press } from "./Press.tsx";
+import { academySlot, shouldShowAcademyEntry } from "../academy-slot.ts";
 
 const OFFICIAL_MANUAL_URL = "https://servpub.madrid.es/manualsamur/bin/view/Main/";
 
@@ -133,6 +134,25 @@ export function SettingsModal({
             <View style={styles.copy}><Text style={styles.rowTitle}>Abreviaturas</Text><Text style={styles.meta}>Consulta local por abreviatura o significado</Text></View>
             <MaterialCommunityIcons name="chevron-right" size={21} color={palette.inkMuted} />
           </Press>
+
+          {academySlot && shouldShowAcademyEntry(academySlot) && (
+            <>
+              {/* El hueco de la academia (#98). Sin creatividad configurada no se
+                  dibuja nada, asi que hoy esta seccion no existe en pantalla. */}
+              <SectionTitle>Formación</SectionTitle>
+              <Press
+                onPress={() => void Linking.openURL(String(academySlot?.url))}
+                style={styles.card}
+                accessibilityRole="link"
+                accessibilityLabel={academySlot.title}
+                accessibilityHint="Se abre en el navegador."
+              >
+                <MaterialCommunityIcons name="school-outline" size={25} color={palette.primary} />
+                <View style={styles.copy}><Text style={styles.rowTitle}>{academySlot.title}</Text><Text style={styles.meta}>{academySlot.detail}</Text></View>
+                <MaterialCommunityIcons name="open-in-new" size={19} color={palette.inkMuted} />
+              </Press>
+            </>
+          )}
 
           <SectionTitle>Privacidad y alcance</SectionTitle>
           <Notice icon="lock-outline" title="Datos en el dispositivo">No necesita cuenta ni está diseñada para registrar datos de pacientes. Favoritos, recientes y preferencias se guardan localmente.</Notice>

@@ -15,8 +15,8 @@ import {
   Platform,
   Pressable as NativePressable,
   ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
   View,
   useColorScheme,
   useWindowDimensions,
@@ -26,14 +26,13 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { ContentProvider, findProcedure, useContent } from "./src/content";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
-import { useReduceMotion } from "./src/hooks/motion";
+import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
 import { useScrollChrome } from "./src/hooks/use-scroll-chrome";
-import { successNotice, warningNotice } from "./src/hooks/haptics";
-import { BackToTop, Chip, CompactHeader, Disclosure, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
+import { BackToTop, Chip, CompactHeader, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
 import type { MobileAttachment, MobileProcedure } from "../../packages/manual-content/src/index.ts";
 import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
@@ -742,9 +741,8 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   // Figures belong to the reading; documents belong in a list. See `rendersInline`.
   // Una figura que el cuerpo ya dibuja no se repite abajo: antes de que el lector
   // pintara las imagenes inline, "Figuras" era el unico sitio donde aparecian.
-  const inlineImageSources = useMemo(
-    () => new Set((procedure.content.match(/!\[[^\]]*\]\(([^)\s]+)\)/g) ?? []).map((match) => match.replace(/^!\[[^\]]*\]\(|\)$/g, ""))),
-    [procedure.content],
+  const inlineImageSources = new Set(
+    (procedure.content.match(/!\[[^\]]*\]\(([^)\s]+)\)/g) ?? []).map((match) => match.replace(/^!\[[^\]]*\]\(|\)$/g, "")),
   );
   const imageAttachments = procedure.attachments.filter((attachment) => rendersInline(attachment) && !inlineImageSources.has(attachment.localPath));
   const documentAttachments = procedure.attachments.filter((attachment) => !rendersInline(attachment));
@@ -794,7 +792,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       <Text style={[styles.favoriteActionText, procedureFavorite && styles.favoriteActionTextOn]}>{procedureFavorite ? "Guardado" : "Guardar"}</Text>
     </Press>
     <Text style={styles.detailMeta}>{procedure.section} · {procedure.id}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
-    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => setTocExpanded((expanded) => !expanded)} style={styles.contentsHeader} accessibilityRole="button" accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
+    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => { animateNextLayout(reduceMotion); setTocExpanded((expanded) => !expanded); }} style={styles.contentsHeader} accessibilityRole="button" accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
     <MarkdownContent
       sections={sections}
       onContainerLayout={(offset) => { markdownOrigin.current = offset; }}
@@ -1006,7 +1004,47 @@ function FirstUseDisclosure({ onContinue }: { onContinue: () => Promise<void> })
   </SafeAreaView></Modal>;
 }
 
-function TabIcon({ name, color }: { name: keyof typeof MaterialCommunityIcons.glyphMap; color: string }) { return <MaterialCommunityIcons name={name} size={23} color={color} />; }
+/**
+ * El icono de una pestaña: contorno cuando no esta activa, relleno cuando lo esta.
+ *
+ * Cambiar de pestaña es de lo que mas se hace en la app, asi que la transicion se
+ * queda en un fundido corto de opacidad: nada de escalas ni rebotes, que a la
+ * decima vez cansan. El color sigue siendo la señal principal —cambia siempre,
+ * tambien con Reduce Motion— y el fundido solo suaviza el relevo entre los dos
+ * trazos. Ambos iconos estan montados a la vez, uno encima del otro, para que no
+ * haya un salto de layout al cambiarlos.
+ *
+ * Codigos y Vademecum no tienen variante de contorno en el set, asi que reciben el
+ * mismo nombre en los dos estados y solo cambian de color.
+ */
+function TabIcon({ name, activeName, color, focused }: { name: keyof typeof MaterialCommunityIcons.glyphMap; activeName?: keyof typeof MaterialCommunityIcons.glyphMap; color: string; focused?: boolean }) {
+  const reduceMotion = useReduceMotion();
+  const filled = activeName ?? name;
+  const [progress] = useState(() => new Animated.Value(focused ? 1 : 0));
+
+  useEffect(() => {
+    if (reduceMotion) { progress.setValue(focused ? 1 : 0); return; }
+    Animated.timing(progress, { toValue: focused ? 1 : 0, duration: motion.instant, useNativeDriver: true }).start();
+  }, [focused, progress, reduceMotion]);
+
+  if (filled === name) return <MaterialCommunityIcons name={name} size={23} color={color} />;
+
+  return (
+    <View style={styles_tabIcon.stack}>
+      <Animated.View style={{ opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) }}>
+        <MaterialCommunityIcons name={name} size={23} color={color} />
+      </Animated.View>
+      <Animated.View style={[styles_tabIcon.overlay, { opacity: progress }]}>
+        <MaterialCommunityIcons name={filled} size={23} color={color} />
+      </Animated.View>
+    </View>
+  );
+}
+
+const styles_tabIcon = StyleSheet.create({
+  stack: { width: 23, height: 23 },
+  overlay: { position: "absolute", top: 0, left: 0 },
+});
 
 function MainTabs() {
   const palette = useTheme();
@@ -1018,10 +1056,10 @@ function MainTabs() {
     tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
     screenOptions={{ headerShown: false }}
   >
-    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color }) => <TabIcon name="home-variant-outline" color={color} /> }} />
-    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color }) => <TabIcon name="radio-handheld" color={color} /> }} />
-    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color }) => <TabIcon name="pill" color={color} /> }} />
-    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color }) => <TabIcon name="map-outline" color={color} /> }} />
+    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} /> }} />
+    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused }) => <TabIcon name="radio-handheld" color={color} focused={focused} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused }) => <TabIcon name="pill" color={color} focused={focused} /> }} />
+    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} /> }} />
     <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color }) => <TabIcon name="magnify" color={color} /> }} />
   </Tabs.Navigator>;
 }

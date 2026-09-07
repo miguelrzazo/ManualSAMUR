@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-native";
+import { useReduceMotion } from "./hooks/motion.ts";
 import { useImperativeHandle, useRef, type Ref } from "react";
 import { StyleSheet, View } from "react-native";
 import type { AdaptivePalette } from "@manual-samur/design-tokens";
@@ -62,13 +63,23 @@ const styles = StyleSheet.create({
  * turn-by-turn, no travel-time claims, no offline cartography — the online map only
  * ever shows the same offline location directory as pins on a live basemap.
  */
+/**
+ * Mas largo que cualquier duracion de `motion`, y a proposito: la camara recorre
+ * kilometros de mapa y el usuario necesita ver por donde va para no perder el
+ * sitio. Un salto de 240 ms desorienta.
+ */
+const CAMERA_EASE_MS = 650;
+
 export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, userLocation, palette, onPinPress, onLoadError, ref }: OnlineMapViewProps) {
   const cameraRef = useRef<CameraRef>(null);
+  const reduceMotion = useReduceMotion();
   useImperativeHandle(ref, () => ({
     moveTo(coordinate, targetZoom) {
-      cameraRef.current?.easeTo({ center: coordinate, zoom: targetZoom ?? 15, duration: 650 });
+      // El vuelo de camara tambien es movimiento: con Reduce Motion la camara salta
+      // al destino en vez de recorrer el mapa. El resultado es el mismo encuadre.
+      cameraRef.current?.easeTo({ center: coordinate, zoom: targetZoom ?? 15, duration: reduceMotion ? 0 : CAMERA_EASE_MS });
     },
-  }), []);
+  }), [reduceMotion]);
   return (
     <View style={styles.fill}>
       <Map style={styles.fill} mapStyle={dark ? MAPLIBRE_CARTO_STYLE_URLS.dark : MAPLIBRE_CARTO_STYLE_URLS.light} attribution attributionPosition={{ bottom: 6, left: 6 }} logo={false} onDidFailLoadingMap={onLoadError}>
