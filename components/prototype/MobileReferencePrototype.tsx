@@ -54,7 +54,7 @@ const QUICK_ACTIONS = [
 ];
 
 const SAMPLE_DRUGS: CatalogItem[] = [
-  { id: "aspirina", title: "Ácido acetilsalicílico", kind: "Fármaco", detail: "SCA · 300 mg VO masticado", tone: "rose" },
+  { id: "acido-acetilsalicilico", title: "Ácido acetilsalicílico", kind: "Fármaco", detail: "SCA · 300 mg VO masticado", tone: "rose" },
   { id: "adenosina", title: "Adenosina", kind: "Fármaco", detail: "Antiarrítmico · IV", tone: "violet" },
 ];
 

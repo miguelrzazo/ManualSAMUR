@@ -85,9 +85,10 @@ test("solo son candidatos a baja los procedimientos sincronizados del wiki", () 
   // Caso normal: viene del wiki y se sincronizó de él.
   assert.equal(isDeletionCandidate(wiki, "abc123", HOST), true);
 
-  // Importado de otra fuente: el scraper del wiki no lo descubre nunca, así que
-  // su ausencia no significa que lo hayan retirado.
-  assert.equal(isDeletionCandidate("https://www.samurpc.net/data/218.htm", "abc123", HOST), false);
+  // De cualquier otro origen: el scraper del wiki no lo descubre nunca, así que
+  // su ausencia no significa que lo hayan retirado. Hoy el corpus es solo del
+  // wiki, pero el guarda debe seguir distinguiendo el origen igualmente.
+  assert.equal(isDeletionCandidate("https://otro-origen.example/data/218.htm", "abc123", HOST), false);
 
   // Del wiki pero nunca sincronizado (source truncado, sin hash): no hay
   // constancia de que llegara a existir ahí.
@@ -98,6 +99,10 @@ test("solo son candidatos a baja los procedimientos sincronizados del wiki", () 
   assert.equal(isDeletionCandidate("", "abc123", HOST), false);
 });
 
+// Registro histórico de la primera ejecución real, cuando el corpus todavía
+// mezclaba importaciones de samurpc.net con el wiki. Esas importaciones ya se
+// retiraron (el corpus es 100% servpub), pero el caso se conserva porque es la
+// única prueba con datos reales de que el filtro separa bajas de falsos positivos.
 test("el filtro de bajas reproduce el resultado de la primera ejecucion real", () => {
   const HOST = "servpub.madrid.es";
   const wiki = `https://${HOST}/manualsamur/bin/view/x`;

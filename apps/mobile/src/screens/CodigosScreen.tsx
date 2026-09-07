@@ -50,6 +50,7 @@ import {
 import { useContent } from "../content";
 import { BackToTop, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
+import { codeRouteHasDetail } from "../codigos-logic";
 import { displayTitle } from "../title-case";
 import { hasHospitalOwnership, locationVisual, normalizeHospitalOwnership } from "../location-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
@@ -120,6 +121,12 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
     [navigation],
   );
 
+  /** Ver codeRouteHasDetail: la mayoría de los códigos no llevan a ningún sitio. */
+  const hasDetail = useCallback(
+    (routeKey: string) => codeRouteHasDetail(content.relationsIndex, routeKey),
+    [content.relationsIndex],
+  );
+
   const openStatus4 = useCallback(() => {
     const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
     parentNavigation?.navigate("Status4");
@@ -151,22 +158,25 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
               detail="Prueba con el código, nombre, categoría o descripción."
             />
           }
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => openCode(item.routeKey)}
-              style={[styles.codeRow, accessibilityTargetStyle()]}
-              accessibilityRole="button"
-              accessibilityLabel={`Abrir código ${item.badge ?? item.title}`}
-              accessibilityHint={accessibilityHints.openDetail}
-            >
-              <Text style={styles.codeBadge}>{item.badge ?? "—"}</Text>
-              <View style={styles.rowCopy}>
-                <Text style={styles.rowTitle}>{displayTitle(item.title)}</Text>
-                <Text style={styles.rowMeta}>{item.subtitle}</Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} />
-            </Pressable>
-          )}
+          renderItem={({ item }) => {
+            const detail = hasDetail(item.routeKey);
+            return (
+              <Pressable
+                onPress={detail ? () => openCode(item.routeKey) : undefined}
+                style={[styles.codeRow, accessibilityTargetStyle()]}
+                accessibilityRole={detail ? "button" : "text"}
+                accessibilityLabel={detail ? `Abrir código ${item.badge ?? item.title}` : `Código ${item.badge ?? item.title}`}
+                accessibilityHint={detail ? accessibilityHints.openDetail : undefined}
+              >
+                <Text style={styles.codeBadge}>{item.badge ?? "—"}</Text>
+                <View style={styles.rowCopy}>
+                  <Text style={styles.rowTitle}>{displayTitle(item.title)}</Text>
+                  <Text style={styles.rowMeta}>{item.subtitle}</Text>
+                </View>
+                {detail && <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} />}
+              </Pressable>
+            );
+          }}
         />
         <BackToTop visible={chrome.showBackToTop} onPress={scrollToTop} />
       </SafeAreaView>
@@ -240,6 +250,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
           palette={palette}
           styles={styles}
           onOpenCode={openCode}
+          hasCodeDetail={hasDetail}
           onOpenStatus4={openStatus4}
           chrome={chrome}
           registerList={registerList}
@@ -249,6 +260,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
           tabKey={activeTab}
           codes={codeDataByTab[activeTab]}
           onOpenCode={openCode}
+          hasCodeDetail={hasDetail}
           palette={palette}
           styles={styles}
           chrome={chrome}
@@ -267,6 +279,7 @@ function CodeGroupList({
   tabKey,
   codes,
   onOpenCode,
+  hasCodeDetail,
   palette,
   styles,
   chrome,
@@ -275,6 +288,7 @@ function CodeGroupList({
   tabKey: TopTabKey;
   codes: CodigosCode[];
   onOpenCode: (routeKey: string) => void;
+  hasCodeDetail: (routeKey: string) => boolean;
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
   chrome: ScrollChrome;
@@ -359,13 +373,15 @@ function CodeGroupList({
             );
           }
           const code = item.item!;
+          const routeKey = `code:${tabKey}:${code.code}`;
+          const detail = hasCodeDetail(routeKey);
           return (
             <Pressable
-              onPress={() => onOpenCode(`code:${tabKey}:${code.code}`)}
+              onPress={detail ? () => onOpenCode(routeKey) : undefined}
               style={[styles.codeRow, item.indented && styles.codeRowIndented, accessibilityTargetStyle()]}
-              accessibilityRole="button"
+              accessibilityRole={detail ? "button" : "text"}
               accessibilityLabel={`Código ${code.code}, ${code.name}`}
-              accessibilityHint={accessibilityHints.openDetail}
+              accessibilityHint={detail ? accessibilityHints.openDetail : undefined}
             >
               <Text style={[styles.codeBadge, item.accentColor ? { color: item.accentColor } : undefined]}>{code.code}</Text>
               <View style={styles.rowCopy}>
@@ -435,6 +451,7 @@ function OtrosContent({
   palette,
   styles,
   onOpenCode,
+  hasCodeDetail,
   onOpenStatus4,
   chrome,
   registerList,
@@ -444,6 +461,7 @@ function OtrosContent({
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
   onOpenCode: (routeKey: string) => void;
+  hasCodeDetail: (routeKey: string) => boolean;
   onOpenStatus4: () => void;
   chrome: ScrollChrome;
   registerList: (instance: ScrollToTopHandle | null) => void;
@@ -487,11 +505,11 @@ function OtrosContent({
         {...scrollProps}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onOpenCode(codeRouteKey("icao", item.code))}
+            onPress={hasCodeDetail(codeRouteKey("icao", item.code)) ? () => onOpenCode(codeRouteKey("icao", item.code)) : undefined}
             style={[styles.simpleRow, accessibilityTargetStyle()]}
-            accessibilityRole="button"
+            accessibilityRole={hasCodeDetail(codeRouteKey("icao", item.code)) ? "button" : "text"}
             accessibilityLabel={`Código ICAO ${item.code}, ${item.name}`}
-            accessibilityHint={accessibilityHints.openDetail}
+            accessibilityHint={hasCodeDetail(codeRouteKey("icao", item.code)) ? accessibilityHints.openDetail : undefined}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
             <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>
@@ -517,11 +535,11 @@ function OtrosContent({
         )}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onOpenCode(codeRouteKey("indicativos", item.code))}
+            onPress={hasCodeDetail(codeRouteKey("indicativos", item.code)) ? () => onOpenCode(codeRouteKey("indicativos", item.code)) : undefined}
             style={[styles.simpleRow, accessibilityTargetStyle()]}
-            accessibilityRole="button"
+            accessibilityRole={hasCodeDetail(codeRouteKey("indicativos", item.code)) ? "button" : "text"}
             accessibilityLabel={`Indicativo ${item.code}, ${item.name}`}
-            accessibilityHint={accessibilityHints.openDetail}
+            accessibilityHint={hasCodeDetail(codeRouteKey("indicativos", item.code)) ? accessibilityHints.openDetail : undefined}
           >
             <Text style={styles.indicativoCode}>{item.code}</Text>
             <Text style={styles.rowMeta}>{item.name}</Text>
@@ -540,11 +558,11 @@ function OtrosContent({
         {...scrollProps}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onOpenCode(codeRouteKey("claves", item.code))}
+            onPress={hasCodeDetail(codeRouteKey("claves", item.code)) ? () => onOpenCode(codeRouteKey("claves", item.code)) : undefined}
             style={[styles.simpleRow, accessibilityTargetStyle()]}
-            accessibilityRole="button"
+            accessibilityRole={hasCodeDetail(codeRouteKey("claves", item.code)) ? "button" : "text"}
             accessibilityLabel={`Clave ${item.code}, ${item.name}`}
-            accessibilityHint={accessibilityHints.openDetail}
+            accessibilityHint={hasCodeDetail(codeRouteKey("claves", item.code)) ? accessibilityHints.openDetail : undefined}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
             <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>
@@ -659,11 +677,11 @@ function OtrosContent({
         )}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onOpenCode(codeRouteKey("lima", item.code))}
+            onPress={hasCodeDetail(codeRouteKey("lima", item.code)) ? () => onOpenCode(codeRouteKey("lima", item.code)) : undefined}
             style={[styles.simpleRow, accessibilityTargetStyle()]}
-            accessibilityRole="button"
+            accessibilityRole={hasCodeDetail(codeRouteKey("lima", item.code)) ? "button" : "text"}
             accessibilityLabel={`Código Lima ${item.code}, ${item.name}`}
-            accessibilityHint={accessibilityHints.openDetail}
+            accessibilityHint={hasCodeDetail(codeRouteKey("lima", item.code)) ? accessibilityHints.openDetail : undefined}
           >
             <Text style={styles.codeBadge}>{item.code}</Text>
             <Text style={styles.rowTitle}>{displayTitle(item.name)}</Text>

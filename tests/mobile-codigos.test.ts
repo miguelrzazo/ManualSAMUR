@@ -298,3 +298,19 @@ test("los códigos SVA y SVB no llevan descripción", () => {
     }
   }
 });
+
+/**
+ * Solo 48 de los 1079 códigos tienen un procedimiento relacionado. El resto
+ * abrían una ficha que repetía el número y el nombre de la fila y nada más, así
+ * que dejan de ser pulsables.
+ */
+test("un codigo solo abre ficha si tiene un procedimiento relacionado", async () => {
+  const { codeRouteHasDetail } = await import("../apps/mobile/src/codigos-logic.ts");
+  const index = { codes: { "incidente:9": [{ procedureId: "212" }], "sva:1.1": [] } };
+
+  assert.equal(codeRouteHasDetail(index, "code:incidente:9"), true);
+  assert.equal(codeRouteHasDetail(index, "code:sva:1.1"), false, "una lista vacia no es una relacion");
+  assert.equal(codeRouteHasDetail(index, "code:icao:99"), false, "un codigo ausente del indice no abre nada");
+  // La clave se lee igual con y sin el prefijo de ruta.
+  assert.equal(codeRouteHasDetail(index, "incidente:9"), true);
+});

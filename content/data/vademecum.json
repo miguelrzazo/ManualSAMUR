@@ -39,38 +39,25 @@
     "interacciones": "Potencia el efecto de los anticoagulantes orales. No administrar junto a fármacos potencialmente ulcerogénicos."
   },
   {
-    "id": "acido-acetil-salicilico",
-    "name": "Ácido Acetil salicílico",
-    "synonyms": [],
-    "category": "Cardiovascular",
-    "subcategory": "Antiagregantes",
-    "presentation": "comprimidos de 125 mg (infantil) y 500 mg (adultos).",
-    "funcion": "Antipirético, analgésico, antiinflamatorio y antiagregante plaquetario.",
-    "indication": "Dolor leve o moderado, cuadros febriles, profilaxis de trastornos tromboembólicos.",
-    "dose": "- Adultos:\n- Dosis habituales: hasta 650 mg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.\n- Profilaxis primaria del infarto agudo de miocardio: 150 - 250 mg / 24 h [1 - 2 aspirinas infantiles].\n- Niños:\n- Dosis habituales: hasta 10 mg / kg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.",
-    "route": [],
-    "contraindications": "úlcera gastroduodenal o molestias gástricas de repetición, alergia a salicilatos, historia de broncoespasmos en uso previo de otros antiinflamatorios, hemofilia, problemas de coagulación sanguínea, terapia con anticoagulantes, insuficiencia renal o hepática, embarazo. Precaución en niños con viriasis por el Sd. de Reye.",
-    "efectos_secundarios": "irritación gastrointestinal, erupciones cutáneas, dificultad respiratoria por broncoespasmo paroxístico, somnolencia, vértigo, sordera o tinnitus."
-  },
-  {
-    "id": "aspirina",
+    "id": "acido-acetilsalicilico",
     "name": "Ácido Acetilsalicílico",
     "synonyms": [
       "AAS",
-      "Aspirina"
+      "Aspirina",
+      "Ácido Acetil salicílico"
     ],
     "category": "Cardiovascular",
     "subcategory": "Antiagregantes",
-    "presentation": "Comp 300 mg / 500 mg",
-    "indication": "SCA (SCASEST y SCACEST). ACV isquémico agudo.",
-    "dose": "SCA: 300 mg VO masticado (dosis única de carga)\nDosis de mantenimiento: 100 mg/24h (hospitalaria)",
+    "presentation": "Comprimidos de 125 mg (infantil), 300 mg y 500 mg (adultos).",
+    "funcion": "Antipirético, analgésico, antiinflamatorio y antiagregante plaquetario.",
+    "indication": "SCA (SCASEST y SCACEST). ACV isquémico agudo. Dolor leve o moderado, cuadros febriles, profilaxis de trastornos tromboembólicos.",
+    "dose": "- SCA: 300 mg VO masticado (dosis única de carga).\n- Dosis de mantenimiento: 100 mg/24h (hospitalaria).\n- Adultos, dosis habituales: hasta 650 mg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.\n- Profilaxis primaria del infarto agudo de miocardio: 150 - 250 mg / 24 h [1 - 2 aspirinas infantiles].\n- Niños, dosis habituales: hasta 10 mg / kg / 4h en función de los síntomas. La dosis antiinflamatoria puede ser mayor.",
     "route": [
       "VO"
     ],
-    "contraindications": "Alergia a AINEs. Hemorragia activa. Úlcera péptica activa. Hemofilia.",
-    "notes": "Masticar (no tragar entero) para absorción más rápida. Dar siempre en el SCA salvo contraindicación absoluta.",
-    "funcion": "Antipirético, analgésico, antiinflamatorio y antiagregante plaquetario.",
-    "efectos_secundarios": "irritación gastrointestinal, erupciones cutáneas, dificultad respiratoria por broncoespasmo paroxístico, somnolencia, vértigo, sordera o tinnitus."
+    "contraindications": "Alergia a salicilatos o a AINEs. Hemorragia activa. Úlcera gastroduodenal o péptica activa o molestias gástricas de repetición. Historia de broncoespasmo con otros antiinflamatorios. Hemofilia y otros problemas de coagulación. Terapia con anticoagulantes. Insuficiencia renal o hepática. Embarazo. Precaución en niños con viriasis por el Sd. de Reye.",
+    "efectos_secundarios": "irritación gastrointestinal, erupciones cutáneas, dificultad respiratoria por broncoespasmo paroxístico, somnolencia, vértigo, sordera o tinnitus.",
+    "notes": "Masticar (no tragar entero) para absorción más rápida. Dar siempre en el SCA salvo contraindicación absoluta."
   },
   {
     "id": "adenosina",

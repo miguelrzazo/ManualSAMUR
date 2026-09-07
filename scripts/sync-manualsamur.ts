@@ -26,6 +26,7 @@ import {
   readManualSyncMetadata,
   readManualUpdatesDataset,
   resolveStableProcedureIdForSource,
+  isContainerSpace,
   rewriteAttachmentLinks,
   markAttachmentUnavailable,
   stableContentHash,
@@ -62,7 +63,7 @@ const ROOT_DIR = path.join(__dirname, "..");
 const WIKI_BASE = "https://servpub.madrid.es/manualsamur";
 const REST_BASE = `${WIKI_BASE}/rest/wikis/xwiki`;
 // Host del wiki, para distinguir los procedimientos que este sync puede dar de baja
-// de los importados de otras fuentes (p. ej. samurpc.net), que nunca descubre.
+// de los que nunca descubre por no venir de él. Hoy el corpus es 100% de este wiki.
 const WIKI_BASE_HOST = "servpub.madrid.es";
 const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
 const METADATA_PATH = path.join(ROOT_DIR, "content/data/manual-sync.json");
@@ -221,8 +222,9 @@ function loadExistingTitleMap() {
  * no por haber sido dado de baja.
  *
  * Sin este filtro, la primera ejecución real marcaba 11 bajas de las que 7 eran
- * importaciones antiguas de samurpc.net —que el scraper del wiki jamás puede
- * encontrar— y 2 fichas que nunca llegaron a sincronizarse (source truncado,
+ * importaciones del manual retirado —que el scraper del wiki jamás puede
+ * encontrar, y que ya se han dado de baja— y 2 fichas que nunca llegaron a
+ * sincronizarse (source truncado,
  * contentHash vacío). Solo 2 eran reales, y ambas responden 404 en origen.
  * Un 64% de falsos positivos, por debajo del suelo del 20%, así que el guarda
  * no habría llegado a saltar.
@@ -245,8 +247,41 @@ function loadDeletionCandidates() {
   return map;
 }
 
-function resolveProcedureId(space: ProcedureSpace, existingTitleMap: Map<string, string>) {
-  return resolveStableProcedureIdForSource(space.title, space.url) ?? existingTitleMap.get(normalizeTitle(space.title)) ?? slugify(space.title);
+/**
+ * El identificador tiene que respetar el estándar `NNN` / `NNN_NN`, porque es a
+ * la vez el nombre del fichero, la clave de la URL y el ancla de los enlaces
+ * internos. Antes, una página nueva que no estuviera en `STABLE_PROCEDURE_IDS`
+ * ni coincidiera de título con ninguna ficha local caía en `slugify(title)`, que
+ * devuelve texto ("disturbios-urbanos"), no un número: entraba en el corpus un id
+ * que ningún validador acepta y que había que arreglar a mano después.
+ *
+ * Ahora se para el sync y se pide número explícito. Es deliberadamente ruidoso:
+ * numerar una ficha nueva es una decisión editorial, no algo que deba improvisar
+ * un scraper a las tres de la mañana del día 1.
+ */
+function resolveProcedureId(space: ProcedureSpace, existingTitleMap: Map<string, string>): string | null {
+  return resolveStableProcedureIdForSource(space.title, space.url) ?? existingTitleMap.get(normalizeTitle(space.title)) ?? null;
+}
+
+/**
+ * Se listan TODAS las páginas sin id de una vez, no la primera.
+ *
+ * Abortar en la primera obliga a un ciclo de "arregla una, vuelve a recorrer el
+ * wiki entero" que cuesta varios minutos por vuelta, con 650 ms de espera por
+ * página. Casi siempre son espacios contenedores nuevos (una carpeta del wiki que
+ * agrupa fichas, no una ficha), y aparecen en tandas.
+ */
+function assertEveryProcedureHasId(spaces: ProcedureSpace[], existingTitleMap: Map<string, string>) {
+  const unassigned = spaces.filter((space) => !resolveProcedureId(space, existingTitleMap));
+  if (unassigned.length === 0) return;
+
+  const list = unassigned.map((space) => `  - "${space.title}"\n    ${space.url}`).join("\n");
+  throw new Error(
+    `${unassigned.length} página(s) del wiki sin identificador asignado:\n${list}\n\n` +
+    `Si es una ficha, añádela a STABLE_PROCEDURE_IDS en lib/manual-sync.ts con un id ` +
+    `del estándar NNN o NNN_NN. Si es una carpeta que solo agrupa fichas, añádela a ` +
+    `CATEGORY_SPACE_RE para que el descubrimiento la ignore.`,
+  );
 }
 
 function findProcedureFilePath(id: string): string | null {
@@ -524,8 +559,15 @@ async function downloadAttachments(attachments: ManualAttachment[], dryRun: bool
 async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>): Promise<DomainResult> {
   fs.mkdirSync(PROCEDURES_DIR, { recursive: true });
 
-  const spaces = await discoverProcedureSpaces();
+  const discovered = await discoverProcedureSpaces();
   const existingTitleMap = loadExistingTitleMap();
+  // Las carpetas del wiki no son fichas: se descartan antes de nada (ver
+  // isContainerSpace). Lo que queda tiene que tener id, o se para el sync: antes
+  // se inventaba `slugify(titulo)` y metía un identificador de texto en el corpus.
+  const spaces = discovered.filter(
+    (space) => !isContainerSpace(space, discovered, (candidate) => resolveProcedureId(candidate, existingTitleMap) !== null),
+  );
+  assertEveryProcedureHasId(spaces, existingTitleMap);
   const changes: SyncChange[] = [];
   const errors: string[] = [];
   const attachmentFailuresForReport: AttachmentDownloadFailure[] = [];
@@ -536,7 +578,8 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     await sleep(DELAY_MS);
 
     try {
-      const id = resolveProcedureId(space, existingTitleMap);
+      // No puede ser null: assertEveryProcedureHasId ya lo ha comprobado para todas.
+      const id = resolveProcedureId(space, existingTitleMap)!;
       if (allowedProcedureIds && !allowedProcedureIds.has(id)) {
         skipped++;
         continue;
@@ -640,7 +683,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
 
   // Detect procedures that existed locally but were not discovered in this sync run
   if (!allowedProcedureIds) {
-    const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)));
+    const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)!));
     // Antes esto era Object.entries(loadExistingTitleMap()), y ese helper devuelve
     // un Map: Object.entries() sobre un Map da [], así que el bloque nunca llegó a
     // ejecutarse y ninguna baja real se detectaba. Además el destructuring estaba

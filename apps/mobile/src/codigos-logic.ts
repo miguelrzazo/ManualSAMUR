@@ -698,3 +698,24 @@ export function getCheatsheetSection(sections: CheatsheetSection[], key: string)
  * (see `lib/mobile-snapshot.ts`) — these are the section keys that make up the tab.
  */
 export const COMUNICACIONES_SECTION_KEYS = ["tetra", "plantillas", "grupos", "estatus"] as const;
+
+/**
+ * ¿Merece este código una ficha propia?
+ *
+ * Casi ningún código la merece: 48 de 1079 tienen algún procedimiento
+ * relacionado. Para el resto, la pantalla de detalle repetía el número y el
+ * nombre que la fila ya enseñaba y nada más — un toque, una transición y una
+ * pantalla que no añade nada, multiplicado por mil filas.
+ *
+ * Solo se abre cuando hay un procedimiento cerca al que saltar, que es lo único
+ * que el detalle aporta. Las demás filas se quedan como texto: sin chevrón, sin
+ * rol de botón y sin respuesta al toque, para que se vea que no llevan a ningún
+ * sitio en lugar de llevar a una pantalla vacía.
+ */
+export function codeRouteHasDetail(
+  relationsIndex: { codes: Record<string, unknown[]> },
+  routeKey: string,
+): boolean {
+  // Misma clave que usa CodeScreen para leer el índice: "grupo:codigo".
+  return (relationsIndex.codes[routeKey.replace(/^code:/, "")]?.length ?? 0) > 0;
+}

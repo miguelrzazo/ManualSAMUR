@@ -4,6 +4,7 @@
     "number": 0,
     "name": "Sede Central",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "address": "Ronda de las Provincias, 7",
     "lat": 40.4118,
     "lng": -3.7431
@@ -13,6 +14,7 @@
     "number": 1,
     "name": "El Espinillo",
     "district": "Villaverde",
+    "districtNumber": 17,
     "address": "Av. de Orovilla, 50",
     "lat": 40.3587,
     "lng": -3.689
@@ -22,6 +24,7 @@
     "number": 2,
     "name": "Centro",
     "district": "Centro",
+    "districtNumber": 1,
     "address": "C/ San Bernardo, 68",
     "lat": 40.4258,
     "lng": -3.7069
@@ -31,6 +34,7 @@
     "number": 3,
     "name": "Chamartín",
     "district": "Chamartín",
+    "districtNumber": 5,
     "address": "C/ Federico Salmón, 8",
     "lat": 40.4633,
     "lng": -3.6675
@@ -40,6 +44,7 @@
     "number": 4,
     "name": "Ciudad Lineal",
     "district": "Ciudad Lineal",
+    "districtNumber": 15,
     "address": "C/ Peloponeso, 10",
     "lat": 40.4155,
     "lng": -3.6243
@@ -49,6 +54,7 @@
     "number": 5,
     "name": "Carabanchel",
     "district": "Carabanchel",
+    "districtNumber": 11,
     "address": "C/ Eugenia de Montijo, 90",
     "lat": 40.3782,
     "lng": -3.7486
@@ -58,6 +64,7 @@
     "number": 6,
     "name": "Francos Rodríguez",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "address": "C/ Pirineos, 1",
     "lat": 40.4582,
     "lng": -3.716
@@ -67,6 +74,7 @@
     "number": 7,
     "name": "Casa de Campo",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "address": "Travesía del Vino, 1",
     "lat": 40.4111,
     "lng": -3.7397
@@ -76,6 +84,7 @@
     "number": 8,
     "name": "Pacífico",
     "district": "Retiro",
+    "districtNumber": 3,
     "address": "C/ Hoyuelo, 7",
     "lat": 40.4012,
     "lng": -3.6757
@@ -85,6 +94,7 @@
     "number": 9,
     "name": "Usera",
     "district": "Usera",
+    "districtNumber": 12,
     "address": "C/ Antonio López, 142",
     "lat": 40.3907,
     "lng": -3.7031
@@ -94,6 +104,7 @@
     "number": 10,
     "name": "Tetuán",
     "district": "Tetuán",
+    "districtNumber": 6,
     "address": "C/ Infanta Mercedes, 34",
     "lat": 40.4569,
     "lng": -3.6979
@@ -103,6 +114,7 @@
     "number": 11,
     "name": "Hortaleza",
     "district": "Hortaleza",
+    "districtNumber": 16,
     "address": "C/ Arequipa, 8",
     "lat": 40.4689,
     "lng": -3.6415
@@ -112,6 +124,7 @@
     "number": 12,
     "name": "Moratalaz",
     "district": "Moratalaz",
+    "districtNumber": 14,
     "address": "C/ Brujas, 28",
     "lat": 40.3998,
     "lng": -3.628
@@ -121,6 +134,7 @@
     "number": 13,
     "name": "Avenida Valladolid",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "address": "Av. Valladolid, 6",
     "lat": 40.4298,
     "lng": -3.7299
@@ -130,6 +144,7 @@
     "number": 14,
     "name": "Las Águilas",
     "district": "Latina",
+    "districtNumber": 10,
     "address": "C/ Casuarina, 10",
     "lat": 40.3801,
     "lng": -3.7655
@@ -139,6 +154,7 @@
     "number": 15,
     "name": "Colón",
     "district": "Salamanca",
+    "districtNumber": 4,
     "address": "Pl. de Colón (subterráneo)",
     "lat": 40.425,
     "lng": -3.6897
@@ -148,6 +164,7 @@
     "number": 16,
     "name": "Fuencarral",
     "district": "Fuencarral-El Pardo",
+    "districtNumber": 8,
     "address": "C/ Dr. Ramón Castroviejo, 47",
     "lat": 40.4783,
     "lng": -3.7165
@@ -157,6 +174,7 @@
     "number": 17,
     "name": "Vicálvaro",
     "district": "Vicálvaro",
+    "districtNumber": 19,
     "address": "C/ Las Santeras, 39",
     "lat": 40.3916,
     "lng": -3.5886
@@ -166,6 +184,7 @@
     "number": 19,
     "name": "Las Rosas",
     "district": "San Blas-Canillejas",
+    "districtNumber": 20,
     "address": "C/ María Sevilla de Diago, 40",
     "lat": 40.4336,
     "lng": -3.6042
@@ -175,6 +194,7 @@
     "number": 20,
     "name": "Vallecas",
     "district": "Villa de Vallecas",
+    "districtNumber": 18,
     "address": "Travesía Puerto de Reinosa, 4",
     "lat": 40.3788,
     "lng": -3.6151
@@ -184,6 +204,7 @@
     "number": 21,
     "name": "Barajas",
     "district": "Barajas",
+    "districtNumber": 21,
     "address": "C/ Playa de América, 34",
     "lat": 40.4748,
     "lng": -3.5859
@@ -193,6 +214,7 @@
     "number": 22,
     "name": "Ventas",
     "district": "Salamanca",
+    "districtNumber": 4,
     "address": "C/ Pedro Heredia, 34",
     "lat": 40.4301,
     "lng": -3.6625
@@ -202,6 +224,7 @@
     "number": 23,
     "name": "Legazpi",
     "district": "Arganzuela",
+    "districtNumber": 2,
     "address": "Pl. de Legazpi, 7",
     "lat": 40.3904,
     "lng": -3.6954
@@ -211,15 +234,17 @@
     "number": 25,
     "name": "Chamberí",
     "district": "Chamberí",
+    "districtNumber": 7,
     "address": "C/ del Monte Esquinza, 41",
     "lat": 40.4294,
-    "lng": -3.6920
+    "lng": -3.692
   },
   {
     "id": "B26",
     "number": 26,
     "name": "Puente de Vallecas",
     "district": "Puente de Vallecas",
+    "districtNumber": 13,
     "address": "Av. de Buenos Aires, 17",
     "lat": 40.3887,
     "lng": -3.6526

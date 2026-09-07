@@ -24,8 +24,10 @@ export const MAX_DELETION_RATIO = 0.2;
  * sido retirado.
  *
  * En la primera ejecución real esto separaba 2 bajas verdaderas (ambas 404 en
- * origen) de 9 falsos positivos: 7 importaciones de samurpc.net y 2 fichas con
- * source truncado que nunca se sincronizaron.
+ * origen) de 9 falsos positivos: 7 importaciones del manual retirado y 2 fichas
+ * con source truncado que nunca se sincronizaron. Esas 7 ya no existen —el corpus
+ * es solo del wiki—, pero el guarda sigue siendo necesario: una ficha del wiki
+ * que falte del descubrimiento por un fallo de red no es una baja.
  */
 export function isDeletionCandidate(source: string, contentHash: string, wikiHost: string): boolean {
   return source.includes(wikiHost) && contentHash.trim().length > 0;

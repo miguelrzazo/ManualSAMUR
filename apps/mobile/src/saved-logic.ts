@@ -180,7 +180,7 @@ export function savedReferenceIndex(content: MobileContent): Map<string, SavedRe
       kind: "procedure",
       id: procedure.id,
       title: procedure.title,
-      subtitle: `${procedure.section} · Procedimiento`,
+      subtitle: procedure.section,
     });
   }
   for (const reference of [...buildVademecumReferences(content), ...buildCodeReferences(content.codes)]) {

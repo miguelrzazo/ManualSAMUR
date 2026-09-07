@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
  * Validates the whole procedure corpus: numeric IDs, matching filename stems,
- * globally unique IDs, and unique canonical slugs.
+ * globally unique IDs, unique canonical slugs, and that every ficha and every
+ * image comes from the official wiki (servpub.madrid.es) and nowhere else.
  *
- * A valid ID matches /^\d+([a-z]|_\d+)*$/ — e.g. "219", "412_01", "214a".
+ * A valid ID matches /^\d{3}(_\d{2})?$/ — e.g. "219", "412_01", "700_03".
  * A valid file is named `{id}.md`.
  *
  * Also prints the next available sequential ID per section for reference.
@@ -18,12 +19,11 @@ import { findProcedureCorpusViolations, readProcedureCorpus } from "../lib/proce
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROCEDURES_DIR = path.join(__dirname, "..", "content", "procedures");
 
-// Numeric IDs: "219", "412_01", "214a", "126a"
-// DRP section uses a letter-prefixed scheme: "drp_01", "drp_02", "drp_03"
-const NUMERIC_ID_RE = /^(\d+([a-z]|_\d+)*|drp_\d+)$/;
+// Tres dígitos de sección y, opcionalmente, un ordinal de dos dígitos.
+const NUMERIC_ID_RE = /^\d{3}(_\d{2})?$/;
 
 // Extract the leading numeric component of an ID for max-tracking purposes.
-// "412_01" → 412, "214a" → 214, "219" → 219
+// "412_01" → 412, "219" → 219
 function numericBase(id: string): number {
   const m = id.match(/^(\d+)/);
   return m ? parseInt(m[1], 10) : -1;

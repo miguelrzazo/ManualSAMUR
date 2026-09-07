@@ -40,10 +40,10 @@ interface Perfusion {
   drugId?: string;
   category: string;
   indication: string;
-  recipe: string;
-  recipeAlt?: string;
+  dilucion: string;
+  dilucionAlt?: string;
   rate: string;
-  preparation: string;
+  preparacion: string;
   notes: string;
 }
 
@@ -279,7 +279,7 @@ function PerfusionCard({ perf, onOpen }: { perf: Perfusion; onOpen: (id: string)
           <Droplets className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
         </div>
         <p className="text-xs font-mono text-blue-600 dark:text-blue-400 mt-1 font-semibold">
-          {perf.recipe}
+          {perf.dilucion}
         </p>
         <p className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-1">
           {perf.indication}
@@ -303,9 +303,9 @@ function PerfusionDetailBody({ perf }: { perf: Perfusion }) {
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Dilución</p>
         <div className="bg-background rounded-lg px-3 py-2.5 border border-border/50 space-y-1">
-          <p className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">{perf.recipe}</p>
-          {perf.recipeAlt && (
-            <p className="text-xs font-mono text-muted-foreground">{perf.recipeAlt}</p>
+          <p className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400">{perf.dilucion}</p>
+          {perf.dilucionAlt && (
+            <p className="text-xs font-mono text-muted-foreground">{perf.dilucionAlt}</p>
           )}
         </div>
       </div>
@@ -317,7 +317,7 @@ function PerfusionDetailBody({ perf }: { perf: Perfusion }) {
           ))}
         </div>
       </div>
-      <InfoRow label="Preparación" value={perf.preparation} />
+      <InfoRow label="Preparación" value={perf.preparacion} />
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Notas</p>
         <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{perf.notes}</p>
@@ -822,7 +822,7 @@ export function VademecumView({
         onClose={() => setParam("perfusion", null)}
         accent={getColor(selectedPerfusion?.category ?? "")}
         title={selectedPerfusion?.drug ?? ""}
-        subtitle={selectedPerfusion?.recipe}
+        subtitle={selectedPerfusion?.dilucion}
         badge={selectedPerfusion?.category}
       >
         {selectedPerfusion && <PerfusionDetailBody perf={selectedPerfusion} />}

@@ -20,6 +20,10 @@ export interface LocationRecord {
   shortName: string;
   address: string;
   district: string;
+  /** Número oficial del distrito de Madrid (1 Centro … 21 Barajas). Ausente fuera del municipio. */
+  districtNumber?: number;
+  /** Número de base SAMUR. 0 es la Sede Central, que no se llama "Base 0". */
+  baseNumber?: number;
   lat: number;
   lng: number;
   hospitalOwnership?: HospitalOwnership;
@@ -103,6 +107,39 @@ export function locationVisual(location: Pick<LocationRecord, "kind" | "hospital
   return { label: "Hospital", icon: "hospital-building", color: palette.inkMuted, wash: palette.surfaceMuted };
 }
 
+function numberValue(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+/**
+ * Cómo se llama una base en la lista.
+ *
+ * Las bases se conocen por su número —"Base 12"—, no por el barrio donde están.
+ * La lista enseñaba el barrio ("El Espinillo"), que es justo lo que nadie usa por
+ * radio. El barrio no se pierde: baja al subtítulo.
+ *
+ * La base 0 es la Sede Central y no se llama "Base 0", así que conserva su nombre.
+ */
+export function locationDisplayName(location: Pick<LocationRecord, "kind" | "shortName" | "baseNumber">): string {
+  if (location.kind !== "base") return location.shortName;
+  return location.baseNumber ? `Base ${location.baseNumber}` : location.shortName;
+}
+
+/**
+ * Subtítulo de una fila: dirección, y el distrito con su número oficial.
+ *
+ * Para una base se antepone el barrio, que es lo que el título acaba de dejar
+ * libre. Getafe no es distrito de Madrid y no tiene número: se escribe sin él en
+ * lugar de inventar uno.
+ */
+export function locationSubtitle(
+  location: Pick<LocationRecord, "kind" | "shortName" | "baseNumber" | "address" | "district" | "districtNumber">,
+): string {
+  const district = location.districtNumber ? `${location.district} (${location.districtNumber})` : location.district;
+  const named = location.kind === "base" && location.baseNumber ? [location.shortName] : [];
+  return [...named, location.address, district].filter(Boolean).join(" · ");
+}
+
 function normalizeText(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es");
 }
@@ -121,6 +158,7 @@ export function locationRecords(content: Pick<MobileContent, "hospitals" | "base
       shortName: stringValue(item.shortName, stringValue(item.name, id)),
       address: stringValue(item.address, "Dirección no indicada"),
       district: stringValue(item.district, "Madrid"),
+      districtNumber: numberValue(item.districtNumber),
       lat,
       lng,
       hospitalOwnership: normalizeHospitalOwnership(item.type),
@@ -143,6 +181,8 @@ export function locationRecords(content: Pick<MobileContent, "hospitals" | "base
       shortName: stringValue(item.name, id),
       address: stringValue(item.address, "Dirección no indicada"),
       district: stringValue(item.district, "Madrid"),
+      districtNumber: numberValue(item.districtNumber),
+      baseNumber: numberValue(item.number),
       lat,
       lng,
       sourceDate: policy.sourceDate,

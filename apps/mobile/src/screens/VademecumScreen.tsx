@@ -476,7 +476,7 @@ function VademecumRow({
       <View style={styles.rowCopy}>
         <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
         <Text style={styles.rowMeta} numberOfLines={reference.kind === "perfusion" ? 1 : 2}>
-          {reference.kind === "perfusion" ? stringDetail(reference, "recipe") || reference.subtitle : reference.subtitle}
+          {reference.kind === "perfusion" ? stringDetail(reference, "dilucion") || reference.subtitle : reference.subtitle}
         </Text>
       </View>
       <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />

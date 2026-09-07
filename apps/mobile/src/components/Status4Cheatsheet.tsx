@@ -28,15 +28,6 @@ export function Status4Cheatsheet({ status4, hospitals, palette, onSelectHospita
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title} accessibilityRole="header">
-          Hoja de referencia Status 4
-        </Text>
-        <Text style={styles.subtitle}>
-          Tras enviar Status 4, el siguiente status determina el hospital de destino automático.
-        </Text>
-      </View>
-
       <Disclosure label="Cuándo hay que comunicar por voz" tone="caution">
         <Text style={styles.noticeText}>
           Cuando el traslado se realice a la Maternidad o al Hospital Infantil de alguno de estos hospitales, se
@@ -102,9 +93,6 @@ export function Status4Cheatsheet({ status4, hospitals, palette, onSelectHospita
 function createStyles(palette: AdaptivePalette) {
   return StyleSheet.create({
     container: { paddingVertical: spacing.md },
-    header: { marginBottom: spacing.lg },
-    title: { color: palette.ink, fontSize: 18, fontWeight: "800" },
-    subtitle: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 4 },
     notice: {
       flexDirection: "row",
       gap: spacing.sm,

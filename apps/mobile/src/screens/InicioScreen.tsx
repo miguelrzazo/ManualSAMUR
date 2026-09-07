@@ -216,7 +216,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
 
             <View style={styles.treeHeading}>
               <Text style={styles.treeHeadingText}>Manual de procedimientos</Text>
-              <Text style={styles.treeHeadingCount}>{content.procedures.length} fichas · {sections.length} secciones</Text>
+              <Text style={styles.treeHeadingCount}>{content.procedures.length} fichas</Text>
             </View>
           </>
         }

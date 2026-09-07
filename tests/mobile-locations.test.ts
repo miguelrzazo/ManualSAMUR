@@ -12,6 +12,8 @@ import {
   locationPolicyStatus,
   locationRecords,
   locationVisual,
+  locationDisplayName,
+  locationSubtitle,
   normalizeHospitalOwnership,
   locationSourcePolicy,
   locationRouteKey,
@@ -200,4 +202,57 @@ test("location detail no longer narrates freshness in the normal case, only when
   const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
   assert.doesNotMatch(appSource, /vigente según/);
   assert.match(appSource, /locationStaleNotice/);
+});
+
+/**
+ * Una base se conoce por su número, no por el barrio. La lista enseñaba
+ * "El Espinillo", que es justo lo que nadie dice por radio; ahora el título es
+ * "Base 1" y el barrio baja al subtítulo, sin perderse.
+ */
+test("una base se titula por su numero y conserva el barrio en el subtitulo", () => {
+  const base = {
+    kind: "base" as const, shortName: "El Espinillo", baseNumber: 1,
+    address: "Av. de Orovilla, 50", district: "Villaverde", districtNumber: 17,
+  };
+  assert.equal(locationDisplayName(base), "Base 1");
+  assert.equal(locationSubtitle(base), "El Espinillo · Av. de Orovilla, 50 · Villaverde (17)");
+});
+
+test("la base 0 es la Sede Central y no se llama 'Base 0'", () => {
+  const sede = {
+    kind: "base" as const, shortName: "Sede Central", baseNumber: 0,
+    address: "Ronda de las Provincias, 7", district: "Moncloa-Aravaca", districtNumber: 9,
+  };
+  assert.equal(locationDisplayName(sede), "Sede Central");
+  // Sin número de base no se repite el nombre en el subtítulo.
+  assert.equal(locationSubtitle(sede), "Ronda de las Provincias, 7 · Moncloa-Aravaca (9)");
+});
+
+test("un hospital mantiene su nombre y lleva el numero de distrito", () => {
+  const hospital = {
+    kind: "hospital" as const, shortName: "La Paz",
+    address: "P.º de la Castellana, 261", district: "Fuencarral-El Pardo", districtNumber: 8,
+  };
+  assert.equal(locationDisplayName(hospital), "La Paz");
+  assert.equal(locationSubtitle(hospital), "P.º de la Castellana, 261 · Fuencarral-El Pardo (8)");
+});
+
+test("fuera de Madrid no se inventa un numero de distrito", () => {
+  const getafe = {
+    kind: "hospital" as const, shortName: "Getafe",
+    address: "Ctra. de Toledo, km 12,500", district: "Getafe",
+  };
+  assert.equal(locationSubtitle(getafe), "Ctra. de Toledo, km 12,500 · Getafe");
+});
+
+test("los datos reales traen numero de distrito en Madrid y no fuera", () => {
+  const bases = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/bases.json"), "utf8")) as Array<Record<string, unknown>>;
+  const hospitals = JSON.parse(readFileSync(path.join(process.cwd(), "content/data/hospitals.json"), "utf8")) as Array<Record<string, unknown>>;
+
+  for (const base of bases) {
+    assert.equal(typeof base.districtNumber, "number", `la base ${base.id} no tiene numero de distrito`);
+    assert.ok((base.districtNumber as number) >= 1 && (base.districtNumber as number) <= 21);
+  }
+  const sinNumero = hospitals.filter((hospital) => hospital.districtNumber === undefined);
+  assert.deepEqual(sinNumero.map((hospital) => hospital.district), ["Getafe"], "solo Getafe queda sin numero: no es distrito de Madrid");
 });

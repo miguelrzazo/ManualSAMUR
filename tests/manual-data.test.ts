@@ -235,21 +235,22 @@ test("normalizeProcedureContent links only safe plain code mentions and preserve
     `
     Active Código 13 si procede.
     Considere Código 16.1 y Código infarto.
-    Mantenga [Código 100](214d.htm) como enlace explícito.
+    Mantenga [Código 19](214_04.htm) como enlace explícito.
     Código 33 no debe enlazarse.
     `,
     new Map([
       ["214", "214-reperfusion-precoz-en-el-ictus-agudo"],
       ["213", "213-codigo-infarto"],
-      ["213a", "213a-codigo-16"],
-      ["214d", "214d-codigo-100"],
+      ["213_01", "213_01-codigo-16"],
+      ["214_04", "214_04-codigo-19"],
     ]),
   );
 
   assert.match(normalized, /\[Código 13]\(\/manual\/214-reperfusion-precoz-en-el-ictus-agudo\)/);
-  assert.match(normalized, /\[Código 16\.1]\(\/manual\/213a-codigo-16\)/);
+  assert.match(normalized, /\[Código 16\.1]\(\/manual\/213_01-codigo-16\)/);
   assert.match(normalized, /\[Código infarto]\(\/manual\/213-codigo-infarto\)/);
-  assert.match(normalized, /\[Código 100]\(\/manual\/214d-codigo-100\)/);
+  // Un enlace explícito .htm se reescribe a /manual/ y no se vuelve a enlazar por dentro.
+  assert.match(normalized, /\[Código 19]\(\/manual\/214_04-codigo-19\)/);
   assert.match(normalized, /Código 33 no debe enlazarse\./);
   assert.doesNotMatch(normalized, /\[Código 33]/);
 });

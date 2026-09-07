@@ -199,7 +199,7 @@ test("the back-to-top control animates in and out instead of popping", () => {
 test("the procedure reader hands its title to the top bar instead of showing it twice", () => {
   const source = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
   const start = source.indexOf("function ProcedureScreen");
-  const end = source.indexOf("function DoseUtilityCard");
+  const end = source.indexOf("function DrugScreen");
   assert.ok(start >= 0 && end > start);
   const procedureScreen = source.slice(start, end);
   assert.match(procedureScreen, /headerTitle:/, "the header title must be rendered, not just set as a string");

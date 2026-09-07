@@ -17,6 +17,7 @@ import {
   rewriteAttachmentLinks,
   resolveStableProcedureId,
   resolveStableProcedureIdForSource,
+  isContainerSpace,
   stableContentHash,
 } from "../lib/manual-sync.ts";
 import { assertCodeDatasetIsPlausible, diffCodeDataset, CodeDatasetImplausibleError } from "../lib/codigos-sync-logic.ts";
@@ -347,13 +348,13 @@ test("markAttachmentUnavailable retains the local path and official source", () 
 });
 
 test("resolveStableProcedureId prefers known SAMUR procedure codes over title slugs", () => {
-  assert.equal(resolveStableProcedureId("Código Crisis"), "214g");
-  assert.equal(resolveStableProcedureId("Código VISNNA"), "214h");
-  assert.equal(resolveStableProcedureId("Código 18: Código SEPSIS"), "214f");
-  assert.equal(resolveStableProcedureId("Hiponatremia"), "312_02b");
+  assert.equal(resolveStableProcedureId("Código Crisis"), "214_06");
+  assert.equal(resolveStableProcedureId("Código VISNNA"), "214_07");
+  assert.equal(resolveStableProcedureId("Código 18: Código SEPSIS"), "214_05");
+  assert.equal(resolveStableProcedureId("Hiponatremia"), "312_03");
   assert.equal(resolveStableProcedureId("Manejo avanzado de vía aérea"), "302");
-  assert.equal(resolveStableProcedureId("Síndrome Coronario Agudo sin elevación del SR (SCACEST)"), "309_02b");
-  assert.equal(resolveStableProcedureId("Código 15.1"), "214c");
+  assert.equal(resolveStableProcedureId("Síndrome Coronario Agudo sin elevación del SR (SCACEST)"), "309_03");
+  assert.equal(resolveStableProcedureId("Código 15.1"), "214_03");
   assert.equal(resolveStableProcedureId("Procedimiento desconocido"), null);
 });
 
@@ -377,6 +378,39 @@ test("resolveStableProcedureIdForSource disambiguates repeated SVA and SVB title
       "Valoración del niño grave",
       "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVB/Valoraci%C3%B3n%20del%20ni%C3%B1o%20grave/",
     ),
-    "402b",
+    "402_01",
   );
+});
+
+/**
+ * El wiki devuelve 244 espacios y solo 224 son fichas: el resto son carpetas
+ * ("Urgencias cardiovasculares", "Vasculares", "Sondajes"...). La regla para
+ * distinguirlas no puede ser solo "tiene hijos", porque "Actuaciones conjuntas"
+ * tiene hijos (217_01..217_10) y además ES el procedimiento 217. Por eso la
+ * condición lleva las dos mitades: tener hijos y no tener id.
+ */
+const space = (title: string, url: string) => ({ title, url, section: "SVA", depth: 3 });
+const WIKI = "https://servpub.madrid.es/manualsamur/bin/view";
+
+test("una carpeta del wiki no se confunde con una ficha, ni al reves", () => {
+  const carpeta = space("Urgencias cardiovasculares", `${WIKI}/Procedimientos%20SVA/Urgencias%20cardiovasculares/`);
+  const hija = space("Crisis hipertensivas", `${WIKI}/Procedimientos%20SVA/Urgencias%20cardiovasculares/Crisis%20hipertensivas/`);
+  const hoja = space("Disturbios urbanos", `${WIKI}/Procedimientos%20Operativos/Disturbios%20urbanos/`);
+  const all = [carpeta, hija, hoja];
+  const sinId = () => false;
+
+  assert.equal(isContainerSpace(carpeta, all, sinId), true, "tiene hijos y no tiene id: es carpeta");
+  assert.equal(isContainerSpace(hija, all, sinId), false, "no tiene hijos: es ficha");
+  assert.equal(isContainerSpace(hoja, all, sinId), false, "sin hijos ni id: sigue siendo ficha");
+
+  // La mitad que importa: un espacio con id es ficha aunque tenga hijos.
+  const conId = (candidate: { title: string }) => candidate.title === "Urgencias cardiovasculares";
+  assert.equal(isContainerSpace(carpeta, all, conId), false, "217 tiene hijos y aun asi es un procedimiento");
+});
+
+test("el prefijo de url se compara por segmento, no por texto", () => {
+  const a = space("Trauma", `${WIKI}/T%C3%A9cnicas/Trauma/`);
+  const b = space("Traumatismos", `${WIKI}/T%C3%A9cnicas/Traumatismos/`);
+  // "Traumatismos" empieza por "Trauma" como texto, pero no es hijo suyo.
+  assert.equal(isContainerSpace(a, [a, b], () => false), false);
 });

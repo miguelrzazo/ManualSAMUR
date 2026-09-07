@@ -33,10 +33,10 @@ interface PerfusionRecord {
   drugId?: string;
   category: string;
   indication: string;
-  recipe: string;
-  recipeAlt?: string;
+  dilucion: string;
+  dilucionAlt?: string;
   rate: string;
-  preparation: string;
+  preparacion: string;
   notes: string;
 }
 
@@ -231,10 +231,10 @@ function mergePerfusions(
       // See lib/vademecum-sync.ts: the placeholder buckets used to render as filter chips.
       category: drugCategory ?? "Otros",
       indication: `Dosis anexo: ${importedPerfusion.dose}`,
-      recipe: importedPerfusion.dilution,
-      recipeAlt: undefined,
+      dilucion: importedPerfusion.dilution,
+      dilucionAlt: undefined,
       rate: importedPerfusion.infusionRate,
-      preparation: `Presentación del anexo: ${importedPerfusion.presentation}`,
+      preparacion: `Presentación del anexo: ${importedPerfusion.presentation}`,
       notes: `Dosis anexo: ${importedPerfusion.dose}`,
     });
   }

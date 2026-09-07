@@ -30,11 +30,11 @@ interface Props {
 export function Status4Cheatsheet({ status4, hospitals, onSelectHospital }: Props) {
   return (
     <div className="p-4">
-            <div className="mb-4">
+      {/* El h2 se queda: en web esto vive en una barra lateral que no tiene ninguna
+          otra cabecera. La frase explicativa que lo acompañaba sí se ha quitado, igual
+          que en la app, porque repetía lo que la propia tabla ya enseña. */}
+      <div className="mb-4">
         <h2 className="font-semibold text-sm">Hoja de Referencia Status 4</h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          Tras enviar Status 4, el siguiente status determina el hospital de destino automático.
-        </p>
       </div>
 
       <div className="mb-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/50 rounded-xl p-4 ring-1 ring-foreground/10">

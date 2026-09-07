@@ -5,7 +5,7 @@ import { spacing, typography, TAB_BAR_INSET, type AdaptivePalette } from "@manua
 import { accessibilityHints } from "../accessibility.ts";
 import { displayTitle } from "../title-case.ts";
 import { formatDistanceLabel, type LocationWithDistance } from "../mapa-logic.ts";
-import { locationStaleNotice, locationVisual, type LocationSourcePolicy } from "../location-logic.ts";
+import { locationDisplayName, locationStaleNotice, locationSubtitle, locationVisual, type LocationSourcePolicy } from "../location-logic.ts";
 import { Chip } from "./Chip.tsx";
 import { EmptyState } from "./EmptyState.tsx";
 import { Press } from "./Press.tsx";
@@ -86,20 +86,22 @@ export function LocationDirectory({ locations, query, onQueryChange, filter, onF
           const stale = locationStaleNotice(item, new Date(), policy);
           const distance = formatDistanceLabel(item.distanceMeters);
           const visual = locationVisual(item, palette);
+          const name = locationDisplayName(item);
+          const subtitle = locationSubtitle(item);
           return (
             <Press
               onPress={() => onOpen(item)}
               style={styles.row}
               accessibilityRole="button"
-              accessibilityLabel={`${visual.label} ${item.name}. ${item.address}, ${item.district}${distance ? `. ${distance}` : ""}`}
+              accessibilityLabel={`${visual.label} ${name}. ${subtitle}${distance ? `. ${distance}` : ""}`}
               accessibilityHint={accessibilityHints.openDetail}
             >
               <View style={[styles.icon, { backgroundColor: visual.wash }]}>
                 <MaterialCommunityIcons name={visual.icon} size={18} color={visual.color} />
               </View>
               <View style={styles.copy}>
-                <Text style={styles.title} numberOfLines={2}>{displayTitle(item.shortName)}</Text>
-                <Text style={styles.meta} numberOfLines={1}>{item.address}</Text>
+                <Text style={styles.title} numberOfLines={2}>{displayTitle(name)}</Text>
+                <Text style={styles.meta} numberOfLines={2}>{subtitle}</Text>
                 {stale ? <Text style={styles.stale}>{stale}</Text> : null}
               </View>
               {distance ? <Text style={styles.distance}>{distance}</Text> : null}

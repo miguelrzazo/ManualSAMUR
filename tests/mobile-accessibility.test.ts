@@ -124,7 +124,6 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   const anexoSource = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/AnexoScreen.tsx"), "utf8");
   assert.match(anexoSource, /accessibilityLiveRegion="polite"/);
   assert.match(anexoSource, /Descarga al \$\{percentage\} por ciento/);
-  assert.match(appSource, /accessibilityLabel="Auditoría completa del resultado de dosis"/);
   // Location permission requests moved with Mapa into its own module (T5e).
   assert.match(mapaScreenSource, /requestForegroundPermissionsAsync/);
 });
@@ -154,10 +153,8 @@ test("route contracts expose the important stateful workflows", () => {
   assert.doesNotMatch(procedure, /Linking\.openURL\(next\.localUri\)/);
 
   const drug = sourceFor("DrugScreen");
-  assert.match(drug, /DoseUtilityCard/);
-  const dose = sourceFor("DoseUtilityCard");
-  assert.match(dose, /Auditoría completa del resultado de dosis/);
-  assert.match(dose, /accessibilityLiveRegion="polite"/);
+  // La calculadora de dosis se retiró: la ficha del fármaco ya no la monta.
+  assert.doesNotMatch(drug, /DoseUtilityCard/);
 
   assert.match(mapaScreenSource, /requestForegroundPermissionsAsync/);
   assert.match(mapaScreenSource, /Permiso de ubicación denegado/);

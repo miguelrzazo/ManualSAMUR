@@ -131,7 +131,7 @@ test("splitMarkdownBlocks emits tables in document order and restarts list numbe
 });
 
 test("all bundled table-bearing procedures produce a native table block", () => {
-  const tableProcedures = ["304_02", "410a", "214f", "314_06", "309_02b"];
+  const tableProcedures = ["304_03", "410_01", "214_05", "314_06", "309_03"];
   for (const id of tableProcedures) {
     const procedure = snapshot.content.procedures.find((item) => item.id === id);
     assert.ok(procedure, `missing fixture procedure ${id}`);
