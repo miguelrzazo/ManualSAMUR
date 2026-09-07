@@ -22,7 +22,7 @@ tags:
     text: "Historial"
 - extendedWaitUntil:
     visible:
-      text: "Historial de actualizaciones"
+      text: "Novedades"
     timeout: 5000
 - assertVisible: "Novedades"
 - assertVisible: "Historial"

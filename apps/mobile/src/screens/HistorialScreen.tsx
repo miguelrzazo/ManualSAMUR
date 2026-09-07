@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { radii, spacing, typography } from "@manual-samur/design-tokens";
+import { radii, spacing } from "@manual-samur/design-tokens";
 import { Press } from "../components/Press.tsx";
 import { UpdateDiff } from "../components/UpdateDiff.tsx";
 import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
@@ -24,7 +24,6 @@ export function HistorialScreen({ navigation }: Props) {
   const historyEvents = useMemo(() => sortManualHistorial(events), [events]);
   const groups = useMemo(() => groupManualEventsByDate(recentEvents), [recentEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
-  const unreadCount = recentEvents.filter((event) => !seen.has(event.eventId)).length;
 
   const openEvent = (event: ManualUpdateEvent) => {
     markEventSeen(event.eventId);
@@ -34,19 +33,11 @@ export function HistorialScreen({ navigation }: Props) {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} contentInsetAdjustmentBehavior="automatic">
-      <View style={styles.headingRow}>
-        <View style={styles.headingCopy}>
-          <Text style={styles.eyebrow}>ACTUALIZACIONES</Text>
-          <Text style={styles.title}>Historial de actualizaciones</Text>
-          <Text style={styles.subtitle}>Cambios relevantes del manual y sus códigos.</Text>
-        </View>
-        <View style={styles.inboxCount}><Text style={styles.inboxNumber}>{unreadCount}</Text><Text style={styles.inboxLabel}>sin leer</Text></View>
-      </View>
       <View style={styles.tabs} accessibilityRole="tablist">
         <Press onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
         <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}</Text></Press>
       </View>
-      {tab === "novedades" ? groups.map((group) => <View key={group.date} style={styles.group}><Text style={styles.date}>{group.date}</Text>{group.events.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />)}</View>) : historyEvents.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} showDate />)}
+      {tab === "novedades" ? groups.map((group) => <View key={group.date} style={styles.group}><Text style={styles.date}>{formatDate(group.date)}</Text>{group.events.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />)}</View>) : historyEvents.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} showDate />)}
       {((tab === "novedades" && groups.length === 0) || (tab === "historial" && historyEvents.length === 0)) && <Text style={styles.empty}>No hay cambios relevantes para mostrar.</Text>}
     </ScrollView>
   );
@@ -54,39 +45,49 @@ export function HistorialScreen({ navigation }: Props) {
 
 function HistoryEvent({ event, unread, onOpen, palette, styles, showDate = false }: { event: ManualUpdateEvent; unread: boolean; onOpen: () => void; palette: ReturnType<typeof useTheme>; styles: ReturnType<typeof createStyles>; showDate?: boolean }) {
   const kindColor = event.changeKind === "nuevo" ? palette.green : event.changeKind === "eliminado" ? palette.danger : palette.primary;
-  const body = <><View style={[styles.kindDot, { backgroundColor: kindColor }]} /><View style={styles.eventCopy}><View style={styles.eventHeader}><Text style={[styles.kind, { color: kindColor }]}>{event.category === "codigo" ? "Código" : event.changeKind}</Text>{showDate && <Text style={styles.eventDate}>{(event.approvedAt ?? event.effectiveDate).slice(0, 10)}</Text>}</View><Text style={styles.summary}>{event.summary}</Text>{event.diff ? <UpdateDiff diff={event.diff} palette={palette} compact /> : null}</View></>;
+  const kindLabel = event.category === "codigo" ? "Código" : displayChangeKind(event.changeKind);
+  const affectedTitle = event.summary.includes(":") ? event.summary.slice(event.summary.indexOf(":") + 1).trim() : event.summary;
+  const body = <View style={styles.eventCopy}>
+    <View style={styles.eventHeader}>
+      {showDate && <Text style={styles.eventDate}>{formatDate(event.approvedAt ?? event.effectiveDate)}</Text>}
+      <Text style={[styles.kindPill, { color: kindColor, backgroundColor: event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash }]}>{kindLabel}</Text>
+    </View>
+    <Text style={styles.summary}>{affectedTitle}</Text>
+    {event.diff ? <UpdateDiff diff={event.diff} palette={palette} compact /> : null}
+  </View>;
   return <Press onPress={onOpen} style={[styles.event, unread && styles.eventUnread]} accessibilityRole="button" accessibilityLabel={`${event.summary}${unread ? ", sin leer" : ""}`}>
     {body}
   </Press>;
 }
 
+function formatDate(value: string): string {
+  const dateValue = value.slice(0, 10);
+  const parsed = new Date(`${dateValue}T12:00:00`);
+  return Number.isNaN(parsed.getTime()) ? dateValue : parsed.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function displayChangeKind(value: string): string {
+  return value ? `${value[0].toLocaleUpperCase("es")}${value.slice(1)}` : "Cambio";
+}
+
 function createStyles(palette: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
-    content: { padding: spacing.lg, paddingBottom: 120, gap: spacing.md },
-    headingRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md },
-    headingCopy: { flex: 1 },
-    eyebrow: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.2 },
-    title: { ...typography.title1, color: palette.ink, marginTop: spacing.sm },
-    subtitle: { ...typography.subheadline, color: palette.inkMuted, marginTop: spacing.xs },
-    inboxCount: { alignItems: "flex-end" },
-    inboxNumber: { color: palette.danger, fontSize: 30, lineHeight: 32, fontWeight: "900" },
-    inboxLabel: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" },
+    content: { padding: spacing.lg, paddingBottom: 120, gap: spacing.lg },
     tabs: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: palette.line },
     tab: { flex: 1, minHeight: 44, alignItems: "center", justifyContent: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
     tabActive: { borderBottomColor: palette.primary },
     tabText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" },
     tabTextActive: { color: palette.primary },
     group: { gap: spacing.sm },
-    date: { color: palette.inkMuted, fontSize: 12, fontWeight: "800" },
-    event: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md },
+    date: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "900", letterSpacing: -0.2, marginTop: spacing.sm },
+    event: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md },
     eventUnread: { borderColor: palette.danger, backgroundColor: palette.dangerWash },
-    kindDot: { width: 9, height: 9, borderRadius: 5, marginTop: 5 },
-    eventCopy: { flex: 1, gap: spacing.xs },
+    eventCopy: { gap: spacing.sm },
     eventHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
-    kind: { fontSize: 10, fontWeight: "900", letterSpacing: 0.7, textTransform: "uppercase" },
-    eventDate: { color: palette.inkMuted, fontSize: 11 },
-    summary: { color: palette.ink, fontSize: 14, lineHeight: 19 },
+    kindPill: { borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, fontSize: 11, fontWeight: "900", letterSpacing: 0.6, textTransform: "uppercase" },
+    eventDate: { color: palette.ink, fontSize: 16, lineHeight: 20, fontWeight: "900", flex: 1 },
+    summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },
     empty: { color: palette.inkMuted, fontSize: 14, paddingVertical: spacing.lg },
   });
 }
