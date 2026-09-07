@@ -80,12 +80,18 @@ xcodebuild -quiet \
   -exportPath "$BUILD_DIR/export"
 
 mkdir -p "$OUT"
-IPA_SRC="$(find "$BUILD_DIR/export" -name '*.ipa' | head -1)"
+IPA_SRC="$(find "$BUILD_DIR/export" -name '*.ipa' -print -quit)"
 IPA="$OUT/$SCHEME-$VERSION-$BUILD_NUMBER.ipa"
 cp "$IPA_SRC" "$IPA"
 
-APP="$(find "$BUILD_DIR/$SCHEME.xcarchive/Products/Applications" -maxdepth 1 -name '*.app' | head -1)"
-AUTHORITY="$(codesign -dv --verbose=2 "$APP" 2>&1 | awk -F'=' '/^Authority=/{print $2; exit}')"
+# Sin tuberias con salida temprana: bajo `set -o pipefail`, un `awk ... exit` o un
+# `head -1` cierran el descriptor antes de que el productor termine, este recibe
+# SIGPIPE y el script entero muere con 141 —despues de haber archivado y exportado
+# correctamente, que es la peor forma de fallar. Se captura primero y se filtra
+# despues, sobre una variable.
+APP="$(find "$BUILD_DIR/$SCHEME.xcarchive/Products/Applications" -maxdepth 1 -name '*.app' -print -quit)"
+CODESIGN_OUT="$(codesign -dv --verbose=2 "$APP" 2>&1 || true)"
+AUTHORITY="$(printf '%s\n' "$CODESIGN_OUT" | awk -F'=' '/^Authority=/{print $2}' | sed -n 1p)"
 security cms -D -i "$APP/embedded.mobileprovision" > "$BUILD_DIR/profile.plist" 2>/dev/null
 PROFILE="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$BUILD_DIR/profile.plist")"
 BETA="$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:beta-reports-active' "$BUILD_DIR/profile.plist" 2>/dev/null || echo false)"
@@ -107,7 +113,7 @@ cat > "$OUT/$SCHEME-$VERSION-$BUILD_NUMBER.provenance.json" <<JSON
   "provisioningProfile": "$PROFILE",
   "betaReportsActive": $BETA,
   "builtAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "builtWith": { "node": "$(node -v)", "xcode": "$(xcodebuild -version | head -1)" }
+  "builtWith": { "node": "$(node -v)", "xcode": "$(xcodebuild -version | sed -n 1p)" }
 }
 JSON
 
