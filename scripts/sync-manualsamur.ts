@@ -21,6 +21,7 @@ import {
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
+  xwikiToMarkdown,
   getSectionFromXWikiUrl,
   parseProcedureSpacesXml,
   readManualSyncMetadata,
@@ -365,36 +366,6 @@ function extractSourceUpdated(rawMarkup: string) {
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
-function xwikiToMarkdown(raw: string) {
-  return raw
-    .replace(/\r\n/g, "\n")
-    .replace(/\{\{html[\s\S]*?\{\{\/html\}\}/gi, "")
-    .replace(/\(%[\s\S]*?%\)/g, "")
-    .replace(/^\s*\(%[^)]*%\)\s*$/gm, "")
-    .replace(/^\s*\(\(\(\s*$/gm, "")
-    .replace(/^\s*\)\)\)\s*$/gm, "")
-    .replace(/^======\s*(.+?)\s*======\s*$/gm, "##### $1")
-    .replace(/^=====\s*(.+?)\s*=====\s*$/gm, "##### $1")
-    .replace(/^====\s*(.+?)\s*====\s*$/gm, "#### $1")
-    .replace(/^===\s*(.+?)\s*===\s*$/gm, "### $1")
-    .replace(/^==\s*(.+?)\s*==\s*$/gm, "## $1")
-    .replace(/^=\s*(.+?)\s*=\s*$/gm, "# $1")
-    .replace(/^(\*+)\s+(.+)$/gm, (_match, stars: string, text: string) => `${"  ".repeat(stars.length - 1)}* ${text}`)
-    .replace(/\/\/([^/\n]+?)\/\//g, "*$1*")
-    .replace(/__([^_\n]+?)__/g, "*$1*")
-    .replace(/,,([^,\n]*?),,/g, "$1")
-    .replace(/\^\^([^\^\n]*?)\^\^/g, "$1")
-    .replace(/\{\{popoverV[^}]*?(?:anchorId|link)="([^"]+)"[^}]*?\}\}\{\{\/popoverV\}\}/g, (_match, drugName: string) => `<DrugLink name="${drugName}" />`)
-    .replace(/\[\[([^\]]+?)>>url:([^\]]+?)\]\]/g, "[$1]($2)")
-    .replace(/\[\[([^\]]+?)>>(https?:[^\]]+?)\]\]/g, "[$1]($2)")
-    .replace(/\[\[([^\]]+?)>>doc:[^\]]+?\]\]/g, "$1")
-    .replace(/\[\[([^\]]+?)\]\]/g, "$1")
-    .replace(/\{\{[^}]+\}\}/g, "")
-    .replace(/<(?!\/?DrugLink\b)/g, "&lt;")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 function htmlToMarkdown(html: string): string {
   const td = new TurndownService({ headingStyle: "atx", bulletListMarker: "-", hr: "---" }) as TurndownService & { use: (plugin: unknown) => void };
   td.use(gfm);
@@ -670,10 +641,17 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         }
 
         const slug = `${id}-${slugify(space.title)}`.slice(0, 90);
-        const subfolder = sectionToSubfolder(space.section);
-        const procedureDir = path.join(PROCEDURES_DIR, subfolder);
-        fs.mkdirSync(procedureDir, { recursive: true });
-        fs.writeFileSync(path.join(procedureDir, `${id}.md`), buildProcedureFile(snapshot, space.section, slug, markdown), "utf8");
+        // Una ficha que ya existe se reescribe donde esta. El sync no reorganiza el
+        // corpus: la carpeta la decidimos nosotros, no el wiki.
+        //
+        // Escribir siempre en la carpeta de la seccion deducida creaba un segundo
+        // fichero con el mismo id cuando esa deduccion cambiaba —salieron a la vez
+        // `tecnicas/123.md` y `comunicaciones/123.md`—, y el paquete movil deja de
+        // validar en cuanto hay ids duplicados.
+        const existingPath = findProcedureFilePath(id);
+        const targetPath = existingPath ?? path.join(PROCEDURES_DIR, sectionToSubfolder(space.section), `${id}.md`);
+        fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+        fs.writeFileSync(targetPath, buildProcedureFile(snapshot, space.section, slug, markdown), "utf8");
       }
     } catch (error) {
       failed++;

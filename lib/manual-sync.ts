@@ -716,17 +716,45 @@ export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): Manua
 // componentes cliente puedan usarlo sin arrastrar node:fs al bundle del navegador.
 export { applyRecencyWindow, RECENT_WINDOW_MS, isTickerWithinWindow } from "./manual-updates-logic.ts";
 
+/**
+ * La seccion sale de la carpeta raiz del wiki, no de cualquier parte de la URL.
+ *
+ * Antes se comprobaban los patrones contra la URL entera y por orden, asi que
+ * "Central de Comunicaciones/Tecnicas de comunicacion/" casaba con /Técnicas/ —
+ * que va antes— y el procedimiento 123 se archivaba en Tecnicas. Como el fichero
+ * se escribia en la carpeta de su seccion, aparecia un `tecnicas/123.md` junto al
+ * `comunicaciones/123.md` que ya existia: dos ficheros con el mismo id, y el
+ * paquete movil dejaba de validar por ids duplicados.
+ *
+ * Solo SVA y SVB necesitan mirar el segundo segmento, porque cuelgan de la misma
+ * raiz ("Procedimientos asistenciales").
+ */
 export function getSectionFromXWikiUrl(url: string): string {
   const decoded = decodeURIComponent(url);
-  if (/Dispositivos de Riesgo Previsible|DRP/i.test(decoded)) return "DRP";
-  if (/Procedimientos SVA|SVA/i.test(decoded)) return "SVA";
-  if (/Procedimientos SVB|SVB/i.test(decoded)) return "SVB";
-  if (/Técnicas/i.test(decoded)) return "Técnicas";
-  if (/Procedimientos Operativos/i.test(decoded)) return "Operativos";
-  if (/Procedimientos Administrativos/i.test(decoded)) return "Administrativos";
-  if (/Central de Comunicaciones|Comunicaciones/i.test(decoded)) return "Comunicaciones";
-  if (/\/Intervinientes\//i.test(decoded)) return "Intervinientes";
-  if (/Psicol/i.test(decoded)) return "Psicológicos";
+  const pathMatch = decoded.match(/\/bin\/view\/(.+?)\/?$/);
+  const segments = (pathMatch ? pathMatch[1] : decoded)
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter((segment) => segment && segment !== "WebHome");
+  const root = segments[0] ?? "";
+  const rest = segments.slice(1).join("/");
+
+  if (/Dispositivos de Riesgo Previsible|DRP/i.test(root)) return "DRP";
+  // El wiki tambien expone SVA y SVB como raiz, sin colgar de "asistenciales".
+  if (/Procedimientos SVA|\bSVA\b/i.test(root)) return "SVA";
+  if (/Procedimientos SVB|\bSVB\b/i.test(root)) return "SVB";
+  if (/Procedimientos asistenciales/i.test(root)) {
+    if (/Procedimientos SVA|\bSVA\b/i.test(rest)) return "SVA";
+    if (/Procedimientos SVB|\bSVB\b/i.test(rest)) return "SVB";
+    if (/Psicol/i.test(rest)) return "Psicológicos";
+    return "General";
+  }
+  if (/^Técnicas$/i.test(root)) return "Técnicas";
+  if (/Procedimientos Operativos/i.test(root)) return "Operativos";
+  if (/Procedimientos Administrativos/i.test(root)) return "Administrativos";
+  if (/Central de Comunicaciones|Comunicaciones/i.test(root)) return "Comunicaciones";
+  if (/Intervinientes/i.test(root)) return "Intervinientes";
+  if (/Psicol/i.test(root)) return "Psicológicos";
   return "General";
 }
 
@@ -761,6 +789,101 @@ export function parseProcedureSpacesXml(xml: string): ProcedureSpace[] {
     seen.add(space.url);
     return true;
   });
+}
+
+/**
+ * Marcado de XWiki a markdown.
+ *
+ * Vive aqui, y no en el script del sync, porque es logica pura y es donde las
+ * pruebas pueden alcanzarla: el script ejecuta `main()` al importarlo.
+ *
+ * Tres formas se le escapaban y llegaban al lector como texto:
+ *
+ *  - `[[etiqueta>>attach:fichero||target="_blank"]]` perdia los corchetes y se
+ *    quedaba en `etiqueta>>/docs/...`, con el `>>` a la vista. Eran 440.
+ *  - `[[⇧ Inicio pagina>>doc:]]` trae el destino vacio, y el patron de `doc:`
+ *    exigia al menos un caracter detras. Eran 262, una al pie de casi cada ficha.
+ *  - `(((` y `)))` solo se quitaban solos en su linea, y en el corpus casi
+ *    siempre vienen dentro de una viñeta (`* (((`). Eran 600.
+ *
+ * Los anexos salen como `attach:fichero` y las imagenes como `image:fichero` a
+ * proposito: `rewriteAttachmentLinks` es quien los convierte despues en la ruta
+ * local, y hacerlo aqui duplicaria esa decision.
+ */
+export function xwikiToMarkdown(raw: string) {
+  return raw
+    .replace(/\r\n/g, "\n")
+    // XWiki escapa un caracter poniendole `~` delante. Se aparta antes de tocar
+    // los enlaces y se restaura al final: si no, un `~]` dentro de una etiqueta
+    // cuenta como el `]` que cierra el enlace y el patron corta donde no debe,
+    // que es como "Ver Anexo I (... ~[NNA~])" se quedaba sin convertir.
+    .replace(/~\[/g, "\u0001").replace(/~\]/g, "\u0002").replace(/~\|/g, "\u0003")
+    // Los gif transparentes de 1x1 que el wiki usa para separar. No son contenido.
+    .replace(/image:data:image\/[a-z]+;base64,[A-Za-z0-9+/=]+(?:\|\|[^\n]*)?/gi, "")
+    .replace(/\{\{html[\s\S]*?\{\{\/html\}\}/gi, "")
+    .replace(/\(%[\s\S]*?%\)/g, "")
+    .replace(/^\s*\(%[^)]*%\)\s*$/gm, "")
+    // Los marcadores de grupo de XWiki. Antes solo se quitaban cuando estaban
+    // solos en su linea, y en el corpus casi siempre vienen dentro de una viñeta
+    // ("* ((("), asi que 600 de ellos llegaban al lector como texto literal.
+    .replace(/^(\s*\*+\s+)?\(\(\(\s*$/gm, "")
+    .replace(/^(\s*\*+\s+)?\)\)\)\s*$/gm, "")
+    .replace(/\(\(\(\s*/g, "")
+    .replace(/\s*\)\)\)/g, "")
+    .replace(/^======\s*(.+?)\s*======\s*$/gm, "##### $1")
+    .replace(/^=====\s*(.+?)\s*=====\s*$/gm, "##### $1")
+    .replace(/^====\s*(.+?)\s*====\s*$/gm, "#### $1")
+    .replace(/^===\s*(.+?)\s*===\s*$/gm, "### $1")
+    .replace(/^==\s*(.+?)\s*==\s*$/gm, "## $1")
+    .replace(/^=\s*(.+?)\s*=\s*$/gm, "# $1")
+    .replace(/^(\*+)\s+(.+)$/gm, (_match, stars: string, text: string) => `${"  ".repeat(stars.length - 1)}* ${text}`)
+    .replace(/\/\/([^/\n]+?)\/\//g, "*$1*")
+    .replace(/__([^_\n]+?)__/g, "*$1*")
+    .replace(/,,([^,\n]*?),,/g, "$1")
+    .replace(/\^\^([^\^\n]*?)\^\^/g, "$1")
+    .replace(/\{\{popoverV[^}]*?(?:anchorId|link)="([^"]+)"[^}]*?\}\}\{\{\/popoverV\}\}/g, (_match, drugName: string) => `<DrugLink name="${drugName}" />`)
+    .replace(/\[\[([^\]]+?)>>url:([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    .replace(/\[\[([^\]]+?)>>(https?:[^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    // El destino de un enlace `doc:` puede venir vacio —asi es el "Inicio pagina"
+    // que remata casi todas las fichas—, y el `+` de antes no casaba con eso: 262
+    // enlaces se quedaban en el texto como "Inicio pagina>>doc:".
+    .replace(/\[\[([^\]]+?)>>doc:[^\]]*?\]\]/g, "$1")
+    // Un anexo conserva su enlace en lugar de perder los corchetes y quedarse en
+    // "etiqueta>>attach:fichero". `rewriteAttachmentLinks` convierte despues
+    // `attach:fichero` en la ruta local, con lo que sale un enlace de verdad.
+    .replace(/\[\[([^\]]+?)>>(attach:[^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    // Una imagen se queda como `image:fichero`, que es lo que rewriteAttachmentLinks
+    // sabe convertir en `![](ruta)`. Aqui solo se le quitan corchetes y parametros.
+    // El salto de linea no es cosmetico: dos imagenes seguidas se pegaban en
+    // "image:aimage:b", y el extractor de adjuntos leia eso como un solo fichero
+    // con un nombre imposible que despues daba 404 al descargarlo.
+    .replace(/\[\[image:([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "\nimage:$1\n")
+    // Cualquier otro esquema: se conserva como enlace en vez de dejar el ">>" suelto.
+    .replace(/\[\[([^\]]+?)>>([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    .replace(/\[\[([^\]]+?)(?:\|\|[^\]]*)?\]\]/g, "$1")
+    // "Inicio pagina" es la navegacion del wiki, no contenido de la ficha. Puede
+    // venir partida en varias lineas dentro de los corchetes, asi que se limpia
+    // sobre el texto completo y no linea a linea.
+    .replace(/\[?\[?\s*[⇧↑]?\s*Inicio p[aá]gina\s*(?:>>doc:[^\]\n]*)?\s*\]?\]?/gi, "")
+    // Una imagen que solo existe como URL remota: `rewriteAttachmentLinks` no la
+    // sustituye si la descarga falla, y se quedaba como texto "image:https://...".
+    // Como markdown al menos es una imagen, y el linter admite origen servpub.
+    .replace(/image:(https?:\/\/[^\s|)\]]+)(?:\|\|[^\n]*)?/gi, "![]($1)")
+    .replace(/^\s*\[\[\s*$/gm, "")
+    .replace(/\{\{[^}]+\}\}/g, "")
+    .replace(/<(?!\/?DrugLink\b)/g, "&lt;")
+    // Red de seguridad. El marcado del wiki no siempre viene bien formado —hay
+    // enlaces partidos en dos lineas y corchetes de apertura que no existen— y lo
+    // que quede suelto no significa nada en markdown, solo se ve como ruido.
+    .replace(/^\s*Inicio p[aá]gina.*$/gim, "")
+    .replace(/>>doc:[^\s\]]*/g, "")
+    .replace(/\[\[|\]\]/g, "")
+    // Una viñeta que se ha quedado sin contenido. Pasa cuando lo unico que
+    // contenia era una imagen y esta se ha separado a su propia linea.
+    .replace(/^\s*(?:[*-]|\d+[.)])\s*$\n?/gm, "")
+    .replace(/\u0001/g, "[").replace(/\u0002/g, "]").replace(/\u0003/g, "|")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export function extractAttachmentLinks(

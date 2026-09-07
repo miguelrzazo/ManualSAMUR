@@ -18,6 +18,7 @@ import {
   resolveStableProcedureId,
   resolveStableProcedureIdForSource,
   isContainerSpace,
+  xwikiToMarkdown,
   stableContentHash,
 } from "../lib/manual-sync.ts";
 import { assertCodeDatasetIsPlausible, diffCodeDataset, CodeDatasetImplausibleError } from "../lib/codigos-sync-logic.ts";
@@ -413,4 +414,39 @@ test("el prefijo de url se compara por segmento, no por texto", () => {
   const b = space("Traumatismos", `${WIKI}/T%C3%A9cnicas/Traumatismos/`);
   // "Traumatismos" empieza por "Trauma" como texto, pero no es hijo suyo.
   assert.equal(isContainerSpace(a, [a, b], () => false), false);
+});
+
+/**
+ * Las tres formas de marcado de XWiki que llegaban al lector como texto literal.
+ * El fragmento es marcado real de «Valoración del niño grave».
+ */
+test("el marcado de XWiki no se cuela en el texto de la ficha", () => {
+  const raw = [
+    "* (((",
+    "[[image:314_00.jpg||alt=\"Triángulo de evaluación pediátrica\"]]",
+    ")))",
+    "[[Ver anexo - Medicación intranasal pediátrica>>attach:314_MedicacionIntranasal.pdf||target=\"_blank\"]]",
+    "[[⇧ Inicio página>>doc:]]",
+  ].join("\n");
+
+  const markdown = xwikiToMarkdown(raw);
+
+  for (const leak of [">>", "(((", ")))", "[[", "]]", "||", "Inicio página"]) {
+    assert.ok(!markdown.includes(leak), `"${leak}" no puede llegar al texto: ${JSON.stringify(markdown)}`);
+  }
+  // El anexo conserva su enlace; `attach:` lo resuelve despues rewriteAttachmentLinks.
+  assert.match(markdown, /\[Ver anexo - Medicación intranasal pediátrica\]\(attach:314_MedicacionIntranasal\.pdf\)/);
+  // La imagen se queda en la forma que rewriteAttachmentLinks sabe convertir.
+  assert.match(markdown, /image:314_00\.jpg/);
+});
+
+test("un enlace de anexo acaba apuntando a la ruta local, no a attach:", () => {
+  const raw = '[[Ver anexo>>attach:x.pdf||target="_blank"]]';
+  const url = "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20Operativos/Algo/";
+  const markdown = xwikiToMarkdown(raw);
+  const attachments = extractAttachmentLinks(raw + "\n" + markdown, url, "301");
+  const finalBody = rewriteAttachmentLinks(markdown, attachments);
+
+  assert.match(finalBody, /\[Ver anexo\]\(\/docs\/procedures\/301\/x\.pdf\)/);
+  assert.ok(!finalBody.includes("attach:"), "no debe quedar el esquema attach: en el cuerpo");
 });
