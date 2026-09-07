@@ -1,20 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View, type LayoutChangeEvent } from "react-native";
 import { radii, spacing } from "@manual-samur/design-tokens";
-import type { MarkdownTable } from "../procedure-logic.ts";
+import { columnWidthFor, type MarkdownTable } from "../procedure-logic.ts";
 import { useThemedStyles } from "../theme.tsx";
 
-const MIN_COLUMN_WIDTH = 72;
-const MAX_COLUMN_WIDTH = 300;
-const CHARACTER_WIDTH = 7;
-
-function longestLine(value: string): number {
-  return Math.max(...value.split("\n").map((line) => line.length), 1);
-}
-
-function clampColumnWidth(value: number): number {
-  return Math.min(MAX_COLUMN_WIDTH, Math.max(MIN_COLUMN_WIDTH, value));
-}
 
 function useStyles() {
   return useThemedStyles((palette) => ({
@@ -61,10 +50,10 @@ export function MarkdownTable({
   const format = formatCell ?? ((value: string) => value);
   const headers = table.headers.map(format);
   const rows = table.rows.map((row) => row.map(format));
-  const columnWidths = useMemo(() => headers.map((header, index) => {
-    const maxLength = Math.max(longestLine(header), ...rows.map((row) => longestLine(row[index] ?? "")));
-    return clampColumnWidth(maxLength * CHARACTER_WIDTH + spacing.lg);
-  }), [headers, rows]);
+  const columnWidths = useMemo(
+    () => headers.map((header, index) => columnWidthFor(header, rows.map((row) => row[index] ?? ""))),
+    [headers, rows],
+  );
   const tableWidth = columnWidths.reduce((total, width) => total + width, 0);
   const showScrollHint = viewportWidth > 0 && tableWidth > viewportWidth;
   const onLayout = (event: LayoutChangeEvent) => setViewportWidth(event.nativeEvent.layout.width);

@@ -80,3 +80,19 @@ export function contrastRatio(foreground: string, background: string): number {
   const darker = Math.min(foregroundLuminance, backgroundLuminance);
   return (lighter + 0.05) / (darker + 0.05);
 }
+
+/**
+ * ¿Se justifica el cuerpo del procedimiento?
+ *
+ * React Native no parte palabras: al justificar, reparte el hueco sobrante entre
+ * los espacios de la línea. Con el texto a tamaño normal apenas se nota, pero
+ * cuando el sistema agranda la letra caben menos palabras por línea y esos huecos
+ * se juntan formando ríos blancos que bajan por el párrafo. En una ficha clínica
+ * que alguien lee con prisa, eso cuesta más de lo que aporta el borde recto.
+ *
+ * El umbral es 1.3 —el primer paso de Dynamic Type que estrecha la línea de
+ * verdad— y por debajo se justifica.
+ */
+export function procedureTextAlign(fontScale: number): "justify" | "left" {
+  return fontScale >= 1.3 ? "left" : "justify";
+}

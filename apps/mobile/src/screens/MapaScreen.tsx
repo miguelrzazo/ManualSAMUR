@@ -446,8 +446,11 @@ function createStyles(palette: AdaptivePalette) {
     // at bottom 136 the credit was drawn over the "Status 4" and "Lista y filtro"
     // buttons and made both unreadable. Attribution is a licensing obligation, so it
     // has to stay legible, and so do the controls it was covering.
-    onlineMapAttribution: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + 52, backgroundColor: "rgba(255,255,255,0.82)", borderRadius: radii.sm, paddingHorizontal: 6, paddingVertical: 2 },
-    onlineMapAttributionText: { fontSize: 10, color: "#13233D" },
+    // La atribucion va sobre las teselas, y hay basemap oscuro (dark-matter) ademas
+    // del claro: con la chapa blanca y el azul fijos que tenia, en modo oscuro se
+    // quedaba como una pegatina blanca encima de un mapa negro.
+    onlineMapAttribution: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + 52, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
+    onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
     onlineMapRefresh: { position: "absolute", top: 60, right: spacing.lg, width: 36, height: 36, borderRadius: 18, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
     sheetTop: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },

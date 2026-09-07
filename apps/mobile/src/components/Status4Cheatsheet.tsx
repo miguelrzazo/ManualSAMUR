@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Disclosure } from "./Disclosure.tsx";
+import { Badge } from "./Badge.tsx";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { radii, spacing } from "@manual-samur/design-tokens";
@@ -49,9 +50,9 @@ export function Status4Cheatsheet({ status4, hospitals, palette, onSelectHospita
           const content = (
             <View style={styles.row}>
               <View style={styles.codePair}>
-                <Text style={styles.codeFour}>4</Text>
+                <Badge label="4" />
                 <Text style={styles.codePlus}>+</Text>
-                <Text style={styles.codeStatus}>{item.status}</Text>
+                <Badge label={String(item.status)} tone="accent" color={palette.amber} background={palette.amberWash} />
               </View>
               <MaterialCommunityIcons name="arrow-right" size={16} color={palette.inkMuted} style={styles.arrow} />
               {hospital ? (
@@ -105,26 +106,7 @@ function createStyles(palette: AdaptivePalette) {
     pressableRow: { minHeight: 44, justifyContent: "center", borderRadius: radii.sm },
     row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
     codePair: { flexDirection: "row", alignItems: "center", gap: 4, minWidth: 52 },
-    codeFour: {
-      fontFamily: "System",
-      fontWeight: "800",
-      fontSize: 12,
-      color: palette.ink,
-      backgroundColor: palette.surfaceMuted,
-      borderRadius: 6,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-    },
     codePlus: { color: palette.inkMuted, fontSize: 11 },
-    codeStatus: {
-      fontWeight: "800",
-      fontSize: 12,
-      color: palette.amber,
-      backgroundColor: palette.amberWash,
-      borderRadius: 6,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-    },
     arrow: { flexShrink: 0 },
     destination: { flex: 1 },
     destinationTitle: { color: palette.ink, fontSize: 14, fontWeight: "700" },

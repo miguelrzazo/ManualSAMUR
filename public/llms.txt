@@ -95,7 +95,7 @@ Total procedimientos: 223
 - [216] Accidente laboral con riesgo biológico: https://manual-samur.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
 - [216_01] Contacto con meningitis bacteriana: https://manual-samur.vercel.app/manual/216_01-contacto-con-meningitis-bacteriana
 
-## SVA (66 procedimientos)
+## SVA (65 procedimientos)
 
 - [301] PARADA CARDIORRESPIRATORIA: https://manual-samur.vercel.app/manual/301-parada-cardiorrespiratoria
 - [301_01] Cuidados postparada: https://manual-samur.vercel.app/manual/301_01-cuidados-postparada
@@ -162,9 +162,8 @@ Total procedimientos: 223
 - [315_02] Intoxicación por humo: https://manual-samur.vercel.app/manual/315_02-intoxicacion-por-humo
 - [315_03] Intoxicaciones más frecuentes: https://manual-samur.vercel.app/manual/315_03-intoxicaciones-mas-frecuentes
 - [316] Reacción alérgica: https://manual-samur.vercel.app/manual/316-reaccion-alergica
-- [414] Solicitud de USVA: https://manual-samur.vercel.app/manual/414-solicitud-de-usva
 
-## SVB (20 procedimientos)
+## SVB (21 procedimientos)
 
 - [401] Valoración de la escena: https://manual-samur.vercel.app/manual/401-valoracion-de-la-escena
 - [402] Valoración del paciente adulto: https://manual-samur.vercel.app/manual/402-valoracion-del-paciente-adulto
@@ -185,6 +184,7 @@ Total procedimientos: 223
 - [412_03] Torácico: https://manual-samur.vercel.app/manual/412_03-toracico
 - [412_04] Abdominal: https://manual-samur.vercel.app/manual/412_04-abdominal
 - [413] Atención y traslado al paciente psiquiátrico: https://manual-samur.vercel.app/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
+- [414] Solicitud de USVA: https://manual-samur.vercel.app/manual/414-solicitud-de-usva
 - [415] Paciente con posible alteración de niveles de glucemia capilar: https://manual-samur.vercel.app/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
 
 ## Psicológicos (9 procedimientos)

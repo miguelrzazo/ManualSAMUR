@@ -221,7 +221,25 @@ export interface MarkdownTable {
 
 export type MarkdownBlock =
   | { kind: "line"; index: number; line: string; row: MarkdownRow }
+  | { kind: "image"; index: number; src: string; alt: string }
   | { kind: "table"; startIndex: number; table: MarkdownTable };
+
+/**
+ * Una figura del procedimiento: `![alto](/images/procedures/301/x.jpg)`.
+ *
+ * El lector no las dibujaba. `readableMarkdownLine` quita `[texto](destino)`,
+ * pero la admiracion de la imagen queda fuera de ese patron: con texto alternativo
+ * salia "!Casilla nuevo", y sin el —que es el caso de casi todas— el patron ni
+ * siquiera casaba y se leia la linea entera de markdown, ruta incluida. Son 169
+ * figuras en 40 procedimientos.
+ *
+ * Solo se reconoce cuando la imagen es toda la linea. Una imagen en medio de un
+ * parrafo tendria que partir el texto en tres, y en el corpus no hay ninguna.
+ */
+export function parseImageLine(line: string): { src: string; alt: string } | undefined {
+  const match = line.trim().match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+  return match ? { alt: match[1].trim(), src: match[2] } : undefined;
+}
 
 function splitPipeTableRow(line: string): string[] | undefined {
   const trimmed = line.trim();
@@ -310,10 +328,43 @@ export function splitMarkdownBlocks(lines: readonly string[]): MarkdownBlock[] {
   for (let index = 0; index < lines.length;) {
     const table = parseMarkdownTableAt(lines, index);
     if (table) { blocks.push({ kind: "table", startIndex: index, table: table.table }); ordinal = 0; index = table.nextIndex; continue; }
+    const image = parseImageLine(lines[index]);
+    if (image) { blocks.push({ kind: "image", index, ...image }); ordinal = 0; index += 1; continue; }
     const classified = classifyMarkdownLine(lines[index], ordinal);
     ordinal = classified.nextOrdinal;
     blocks.push({ kind: "line", index, line: lines[index], row: classified.row });
     index += 1;
   }
   return blocks;
+}
+
+
+// ─── Anchos de columna de una tabla ─────────────────────────────────────────
+
+const MIN_COLUMN_WIDTH = 72;
+const MAX_COLUMN_WIDTH = 300;
+const TABLE_CHARACTER_WIDTH = 7;
+/**
+ * La cabecera va en negrita (fontWeight 800) y ocupa mas por caracter que el
+ * cuerpo. Se medía con el mismo 7 que las celdas, y el ancho resultante dejaba
+ * justo el hueco del relleno: una cabecera de una sola palabra como "Puntuación"
+ * se pasaba por unos pocos pixeles y se partia en dos lineas.
+ */
+const HEADER_CHARACTER_WIDTH = 8;
+/** Holgura para que un redondeo a la baja no vuelva a partir la palabra. */
+const COLUMN_SLACK = 8;
+
+function longestTableLine(value: string): number {
+  return Math.max(...value.split("\n").map((line) => line.length), 1);
+}
+
+/**
+ * Ancho de una columna: lo que pida su contenido, pero nunca menos de lo que
+ * necesita su cabecera para caber en una sola linea.
+ */
+export function columnWidthFor(header: string, cells: readonly string[]): number {
+  const bodyLength = Math.max(1, ...cells.map((cell) => longestTableLine(cell)));
+  const body = bodyLength * TABLE_CHARACTER_WIDTH + 16;
+  const headerWidth = longestTableLine(header) * HEADER_CHARACTER_WIDTH + 16 + COLUMN_SLACK;
+  return Math.min(MAX_COLUMN_WIDTH, Math.max(MIN_COLUMN_WIDTH, body, headerWidth));
 }

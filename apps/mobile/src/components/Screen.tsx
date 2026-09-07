@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TAB_BAR_INSET } from "@manual-samur/design-tokens";
+import { TAB_BAR_INSET, radii } from "@manual-samur/design-tokens";
 import { useTheme } from "../theme.tsx";
 
 /**
@@ -36,5 +36,5 @@ export function ListGroup({ children }: { children: React.ReactNode }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  group: { borderRadius: 12, overflow: "hidden" },
+  group: { borderRadius: radii.md, overflow: "hidden" },
 });

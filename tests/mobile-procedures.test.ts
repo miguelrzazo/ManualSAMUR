@@ -223,3 +223,53 @@ test("searchProcedures explains body hits but not title hits", () => {
   assert.ok(byId["2"].snippet, "a body-only match must be explained");
   assert.match(snippetText(byId["2"].snippet!), /atropello/);
 });
+
+/**
+ * Las figuras del procedimiento no se dibujaban.
+ *
+ * `readableMarkdownLine` quita `[texto](destino)`, pero la admiracion de una
+ * imagen se queda fuera de ese patron: con texto alternativo salia "!Casilla
+ * nuevo" y sin el —que es el caso de casi todas— el patron ni casaba y se leia la
+ * linea entera de markdown, ruta incluida. Son 169 figuras en 40 procedimientos.
+ */
+test("una imagen sola en su linea es un bloque de figura, no texto", async () => {
+  const { parseImageLine, splitMarkdownBlocks } = await import("../apps/mobile/src/procedure-logic.ts");
+
+  assert.deepEqual(parseImageLine("![](/images/procedures/121/Codigo-ICAO.png)"), { alt: "", src: "/images/procedures/121/Codigo-ICAO.png" });
+  assert.deepEqual(parseImageLine("![Casilla nuevo](/images/x.jpg)"), { alt: "Casilla nuevo", src: "/images/x.jpg" });
+  // Un enlace normal no es una figura.
+  assert.equal(parseImageLine("[Ver anexo](/docs/procedures/301/a.pdf)"), undefined);
+  // Una imagen dentro de un parrafo tendria que partir el texto en tres: no se toca.
+  assert.equal(parseImageLine("Antes ![x](/images/y.jpg) despues"), undefined);
+
+  const blocks = splitMarkdownBlocks(["Texto.", "![](/images/procedures/121/a.png)", "* Punto"]);
+  assert.deepEqual(blocks.map((block) => block.kind), ["line", "image", "line"]);
+  assert.equal(blocks[1].kind === "image" && blocks[1].src, "/images/procedures/121/a.png");
+});
+
+test("una figura no interrumpe la numeracion de la lista que la rodea", async () => {
+  const { splitMarkdownBlocks } = await import("../apps/mobile/src/procedure-logic.ts");
+  const blocks = splitMarkdownBlocks(["1. Primero", "![](/images/a.png)", "1. Segundo"]);
+  const ordinals = blocks.flatMap((block) => (block.kind === "line" && block.row.kind === "ordered" ? [block.row.ordinal] : []));
+  // La figura corta la serie, igual que un parrafo: la lista vuelve a empezar.
+  assert.deepEqual(ordinals, [1, 1]);
+});
+
+/**
+ * "Puntuación" se partia en dos lineas en la cabecera de la tabla: se medía con
+ * el mismo ancho por caracter que las celdas, y la cabecera va en negrita.
+ */
+test("la cabecera de una tabla cabe en una linea aunque las celdas sean cortas", async () => {
+  const { columnWidthFor } = await import("../apps/mobile/src/procedure-logic.ts");
+
+  const conCabeceraLarga = columnWidthFor("Puntuación", ["3", "4", "5"]);
+  const soloCeldas = columnWidthFor("", ["3", "4", "5"]);
+  assert.ok(conCabeceraLarga > soloCeldas, "la cabecera tiene que ensanchar su columna");
+  // 10 caracteres en negrita no caben en el minimo de 72.
+  assert.ok(conCabeceraLarga >= 10 * 8, `ancho insuficiente: ${conCabeceraLarga}`);
+
+  // Una celda larga sigue mandando cuando pide mas que la cabecera.
+  assert.ok(columnWidthFor("Nº", ["texto bastante mas largo que la cabecera"]) > conCabeceraLarga);
+  // Y nada se pasa del maximo.
+  assert.ok(columnWidthFor("x", ["y".repeat(500)]) <= 300);
+});

@@ -48,7 +48,7 @@ import {
   type TopTabKey,
 } from "../codigos-logic";
 import { useContent } from "../content";
-import { BackToTop, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
+import { BackToTop, Badge, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
 import { codeRouteHasDetail } from "../codigos-logic";
 import { displayTitle } from "../title-case";
@@ -646,8 +646,8 @@ function OtrosContent({
                 <MaterialCommunityIcons name={visual.icon} size={17} color={visual.color} />
               </View>
               <View style={styles.hospitalBadgeStack}>
-                <Text style={styles.hospitalId}>{hospital.id}</Text>
-                {hospital.status4 !== null && <Text style={styles.hospitalStatus4}>4+{hospital.status4}</Text>}
+                <Badge label={hospital.id} />
+                {hospital.status4 !== null && <Badge label={`4+${hospital.status4}`} tone="accent" color={palette.amber} background={palette.amberWash} />}
               </View>
               <View style={styles.rowCopy}>
                 <Text style={styles.rowTitle}>{displayTitle(hospital.name)}</Text>
@@ -903,8 +903,6 @@ function createStyles(palette: AdaptivePalette) {
     },
     hospitalFilterRow: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, alignItems: "center" },
     hospitalBadgeStack: { alignItems: "center", gap: 3, minWidth: 46 },
-    hospitalId: { fontSize: 11, fontWeight: "800", color: palette.ink, backgroundColor: palette.surfaceMuted, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-    hospitalStatus4: { fontSize: 10, fontWeight: "800", color: palette.ink, backgroundColor: palette.amberWash, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 },
     status4Button: { flexDirection: "row", alignItems: "center", gap: 4, marginLeft: "auto", paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.primaryWash },
     status4ButtonText: { color: palette.primary, fontSize: 12, fontWeight: "800" },
     districtRow: {
@@ -919,7 +917,7 @@ function createStyles(palette: AdaptivePalette) {
     districtNum: {
       width: 28,
       height: 28,
-      borderRadius: 14,
+      borderRadius: radii.md,
       textAlign: "center",
       lineHeight: 28,
       backgroundColor: palette.surfaceMuted,

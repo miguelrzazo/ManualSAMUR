@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { radii, spacing } from "@manual-samur/design-tokens";
+import { TAB_BAR_INSET, radii, spacing } from "@manual-samur/design-tokens";
 import { Press } from "../components/Press.tsx";
+import { Badge } from "../components/Badge.tsx";
 import { UpdateDiff } from "../components/UpdateDiff.tsx";
 import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
 import { useContent } from "../content.tsx";
@@ -22,7 +23,11 @@ export function HistorialScreen({ navigation }: Props) {
   const events = useMemo(() => asManualUpdateEvents(content.updates), [content.updates]);
   const recentEvents = useMemo(() => manualNovedades(applyManualRecencyWindow(events)), [events]);
   const historyEvents = useMemo(() => sortManualHistorial(events), [events]);
+  // Las dos pestañas se agrupan por fecha. «Historial» era una lista plana en la
+  // que cada fila repetía su fecha, así que la misma fecha salía escrita veinte
+  // veces seguidas en lugar de una vez encima de su grupo.
   const groups = useMemo(() => groupManualEventsByDate(recentEvents), [recentEvents]);
+  const historyGroups = useMemo(() => groupManualEventsByDate(historyEvents), [historyEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
 
   const openEvent = (event: ManualUpdateEvent) => {
@@ -37,20 +42,26 @@ export function HistorialScreen({ navigation }: Props) {
         <Press onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
         <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}</Text></Press>
       </View>
-      {tab === "novedades" ? groups.map((group) => <View key={group.date} style={styles.group}><Text style={styles.date}>{formatDate(group.date)}</Text>{group.events.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />)}</View>) : historyEvents.map((event) => <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} showDate />)}
-      {((tab === "novedades" && groups.length === 0) || (tab === "historial" && historyEvents.length === 0)) && <Text style={styles.empty}>No hay cambios relevantes para mostrar.</Text>}
+      {(tab === "novedades" ? groups : historyGroups).map((group) => (
+        <View key={group.date} style={styles.group}>
+          <Text style={styles.date}>{formatDate(group.date)}</Text>
+          {group.events.map((event) => (
+            <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />
+          ))}
+        </View>
+      ))}
+      {((tab === "novedades" && groups.length === 0) || (tab === "historial" && historyGroups.length === 0)) && <Text style={styles.empty}>No hay cambios relevantes para mostrar.</Text>}
     </ScrollView>
   );
 }
 
-function HistoryEvent({ event, unread, onOpen, palette, styles, showDate = false }: { event: ManualUpdateEvent; unread: boolean; onOpen: () => void; palette: ReturnType<typeof useTheme>; styles: ReturnType<typeof createStyles>; showDate?: boolean }) {
+function HistoryEvent({ event, unread, onOpen, palette, styles }: { event: ManualUpdateEvent; unread: boolean; onOpen: () => void; palette: ReturnType<typeof useTheme>; styles: ReturnType<typeof createStyles> }) {
   const kindColor = event.changeKind === "nuevo" ? palette.green : event.changeKind === "eliminado" ? palette.danger : palette.primary;
   const kindLabel = event.category === "codigo" ? "Código" : displayChangeKind(event.changeKind);
   const affectedTitle = event.summary.includes(":") ? event.summary.slice(event.summary.indexOf(":") + 1).trim() : event.summary;
   const body = <View style={styles.eventCopy}>
     <View style={styles.eventHeader}>
-      {showDate && <Text style={styles.eventDate}>{formatDate(event.approvedAt ?? event.effectiveDate)}</Text>}
-      <Text style={[styles.kindPill, { color: kindColor, backgroundColor: event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash }]}>{kindLabel}</Text>
+      <Badge label={kindLabel} tone="accent" color={kindColor} background={event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash} />
     </View>
     <Text style={styles.summary}>{affectedTitle}</Text>
     {event.diff ? <UpdateDiff diff={event.diff} palette={palette} compact /> : null}
@@ -73,7 +84,7 @@ function displayChangeKind(value: string): string {
 function createStyles(palette: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
-    content: { padding: spacing.lg, paddingBottom: 120, gap: spacing.lg },
+    content: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, gap: spacing.lg },
     tabs: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: palette.line },
     tab: { flex: 1, minHeight: 44, alignItems: "center", justifyContent: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
     tabActive: { borderBottomColor: palette.primary },
@@ -82,11 +93,11 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     group: { gap: spacing.sm },
     date: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "900", letterSpacing: -0.2, marginTop: spacing.sm },
     event: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md },
-    eventUnread: { borderColor: palette.danger, backgroundColor: palette.dangerWash },
+    // «Sin leer» va en el color de identidad, no en el de error. Con danger, una
+    // ficha que solo estaba sin abrir se leia como un cambio problematico.
+    eventUnread: { borderColor: palette.primary, backgroundColor: palette.primaryWash },
     eventCopy: { gap: spacing.sm },
     eventHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
-    kindPill: { borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, fontSize: 11, fontWeight: "900", letterSpacing: 0.6, textTransform: "uppercase" },
-    eventDate: { color: palette.ink, fontSize: 16, lineHeight: 20, fontWeight: "900", flex: 1 },
     summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },
     empty: { color: palette.inkMuted, fontSize: 14, paddingVertical: spacing.lg },
   });

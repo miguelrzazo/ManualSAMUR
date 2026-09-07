@@ -216,3 +216,17 @@ test("an ink fill is never labelled with a fixed white, in any screen module", (
     assert.ok(contrastRatio(palette.paper, palette.ink) >= 4.5, "paper on ink must meet WCAG AA");
   }
 });
+
+/**
+ * React Native no parte palabras: al justificar reparte el hueco entre los
+ * espacios de la linea. A tamaño normal no se nota; con la letra agrandada caben
+ * menos palabras, los huecos se juntan y bajan rios blancos por el parrafo.
+ */
+test("el cuerpo del procedimiento se justifica salvo con la letra agrandada", async () => {
+  const { procedureTextAlign } = await import("../apps/mobile/src/accessibility.ts");
+
+  assert.equal(procedureTextAlign(1), "justify");
+  assert.equal(procedureTextAlign(1.2), "justify");
+  assert.equal(procedureTextAlign(1.3), "left", "a partir de aqui la linea es demasiado corta para justificar");
+  assert.equal(procedureTextAlign(2), "left");
+});
