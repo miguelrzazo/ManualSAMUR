@@ -23,6 +23,7 @@ import {
   getCheatsheetSection,
   groupByCategoryField,
   groupBasesByDistrict,
+  groupCodigosSearchResults,
   groupIndicativos,
   hasNoReportCodes,
   hasTetraCodes,
@@ -35,6 +36,8 @@ import {
   groupsByCategory,
   type CodigosCode,
 } from "../apps/mobile/src/codigos-logic.ts";
+import { searchCodes } from "../apps/mobile/src/reference-search-logic.ts";
+import { displayLabel } from "../apps/mobile/src/title-case.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as {
@@ -313,4 +316,49 @@ test("un codigo solo abre ficha si tiene un procedimiento relacionado", async ()
   assert.equal(codeRouteHasDetail(index, "code:icao:99"), false, "un codigo ausente del indice no abre nada");
   // La clave se lee igual con y sin el prefijo de ruta.
   assert.equal(codeRouteHasDetail(index, "incidente:9"), true);
+});
+
+test("local search results are grouped by type, in tab order, with nothing dropped", () => {
+  // Con una consulta escrita, la pantalla mostraba una lista plana: un código de
+  // Incidente, uno de SVA y un indicativo se dibujaban idénticos y sólo los separaba
+  // un subtítulo gris de once puntos.
+  const results = searchCodes(snapshot.content.codes, "2", 500);
+  assert.ok(results.length > 5, "la consulta de prueba debe devolver bastantes filas");
+
+  const sections = groupCodigosSearchResults(results);
+  assert.ok(sections.length > 1, "debe haber más de un tipo entre los resultados");
+
+  // Ninguna fila se pierde por el camino, y ninguna se duplica.
+  assert.equal(sections.reduce((total, section) => total + section.data.length, 0), results.length);
+
+  // El orden es el de las pestañas: los cinco tipos de código antes que las familias
+  // de "Otros".
+  const codeTabKeys = TOP_TABS.filter((tab) => isCodeTab(tab.key)).map((tab) => tab.key);
+  const present = sections.map((section) => section.key);
+  const codePositions = codeTabKeys.filter((key) => present.includes(key)).map((key) => present.indexOf(key));
+  assert.deepEqual(codePositions, [...codePositions].sort((a, b) => a - b), "los tipos de código van en el orden de las pestañas");
+
+  // Cada sección lleva la etiqueta de su pestaña —"SVA", no "sva"— y los cinco tipos
+  // de código llevan además su color de identidad, que es el de la chapa de cada fila.
+  // "Status 4" incluido: `content.codes` trae un grupo `cheatsheet` que tiene pantalla
+  // propia en vez de subpestaña, y sin nombre salía como "Cheatsheet".
+  const knownLabels = new Set([...[...TOP_TABS, ...OTROS_TABS].map((tab) => tab.label), "Status 4"]);
+  for (const section of sections) {
+    assert.ok(knownLabels.has(section.label), `etiqueta desconocida: ${section.label}`);
+    if (codeTabKeys.includes(section.key as (typeof codeTabKeys)[number])) {
+      assert.equal(section.accentColor, TOP_TABS.find((tab) => tab.key === section.key)?.color);
+    }
+  }
+});
+
+test("a group the packaged content has but the tabs do not still shows up in search", () => {
+  // Un grupo nuevo en el contenido no puede desaparecer de los resultados sólo por no
+  // tener pestaña todavía.
+  const sections = groupCodigosSearchResults([
+    { kind: "code", id: "nuevo:1", title: "Algo", subtitle: "Nuevo · x", routeKey: "code:nuevo:1", searchText: "algo", rank: 0, sourceGroup: "grupoNuevo" },
+    { kind: "code", id: "sva:1", title: "Otra", subtitle: "SVA · y", routeKey: "code:sva:1", searchText: "otra", rank: 0, sourceGroup: "sva" },
+  ]);
+  assert.deepEqual(sections.map((section) => section.key), ["sva", "grupoNuevo"]);
+  // Y se etiqueta de forma legible en vez de con la clave en crudo.
+  assert.equal(sections[1].label, displayLabel("grupoNuevo"));
 });

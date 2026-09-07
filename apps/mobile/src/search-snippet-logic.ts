@@ -177,3 +177,40 @@ export function readableSnippetSource(markdown: string): string {
 export function snippetText(snippet: SearchSnippet): string {
   return snippet.segments.map((segment) => segment.text).join("");
 }
+
+/**
+ * The same match marking as `buildSearchSnippet`, but over the *whole* text and
+ * with no excerpting.
+ *
+ * A snippet answers "why is this row in my results"; this answers "where in this
+ * paragraph is the word I searched for". The reader's find bar needs the second:
+ * it highlights matches in place, in a body it is already showing, so cutting the
+ * text down to 130 characters around the hit would delete the paragraph.
+ *
+ * Returns a single unmatched segment when there is nothing to mark, so callers can
+ * render the result unconditionally instead of branching on null.
+ */
+export function highlightSegments(sourceText: string, query: string): SnippetSegment[] {
+  const text = String(sourceText ?? "");
+  const terms = snippetQueryTerms(query);
+  if (terms.length === 0 || !text) return [{ text, match: false }];
+  const ranges = mergeRanges(collectRanges(text, terms));
+  if (ranges.length === 0) return [{ text, match: false }];
+
+  const segments: SnippetSegment[] = [];
+  let cursor = 0;
+  for (const [start, end] of ranges) {
+    if (start > cursor) segments.push({ text: text.slice(cursor, start), match: false });
+    segments.push({ text: text.slice(start, end), match: true });
+    cursor = end;
+  }
+  if (cursor < text.length) segments.push({ text: text.slice(cursor), match: false });
+  return segments;
+}
+
+/** How many times the query occurs in `sourceText`, counted the same way as the highlight. */
+export function countMatches(sourceText: string, query: string): number {
+  const terms = snippetQueryTerms(query);
+  if (terms.length === 0) return 0;
+  return mergeRanges(collectRanges(String(sourceText ?? ""), terms)).length;
+}

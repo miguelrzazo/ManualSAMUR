@@ -2,8 +2,9 @@
   "expo": {
     "name": "Manual SAMUR",
     "slug": "manualsamur",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
     "scheme": "manualsamur",
     "icon": "./assets/icon.png",
     "splash": {
@@ -12,7 +13,7 @@
       "backgroundColor": "#1B4FA8"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
@@ -20,7 +21,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "deploymentTarget": "16.4",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "icon": {
         "light": "./assets/icon-ios-light.png",
         "dark": "./assets/icon-ios-dark.png",
@@ -34,7 +35,7 @@
       },
       "package": "es.madrid.samur.manual",
       "label": "Manual SAMUR",
-      "versionCode": 2
+      "versionCode": 3
     },
     "plugins": [
       "expo-status-bar",

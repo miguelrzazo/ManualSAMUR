@@ -29,4 +29,9 @@ export type RootStackParamList = {
   Status4: undefined;
   /** Full-screen update timeline for the manual and its code datasets. */
   Historial: undefined;
+  /**
+   * Novedades de la *aplicación*, no del contenido: `Historial` cuenta lo que cambia en
+   * el manual cada mes, esto cuenta lo que cambia en la app entre versiones.
+   */
+  Changelog: undefined;
 };

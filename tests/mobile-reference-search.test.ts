@@ -81,13 +81,20 @@ test("abbreviations stay out of global search while remaining in the information
   // The hub itself is `SettingsModal`; App.tsx only wires the callback into it.
   assert.match(
     readFileSync(path.join(process.cwd(), "apps/mobile/src/components/SettingsModal.tsx"), "utf8"),
-    /Abrir abreviaturas/,
+    /title="Abreviaturas"/,
   );
   assert.match(source, /Fármacos/);
   assert.match(source, /Comerciales/);
   assert.match(source, /Perfusiones/);
   assert.match(source, /Fluidos/);
-  assert.match(source, /Presentación publicada/);
+  // Las etiquetas de la ficha de fármaco viven ahora en `drug-detail-logic.ts`: App.tsx
+  // dibuja vía y dosis aparte y recorre `DRUG_DETAIL_FIELDS` para el resto.
+  assert.match(source, /DRUG_DETAIL_FIELDS/);
+  assert.match(
+    readFileSync(path.join(process.cwd(), "apps/mobile/src/drug-detail-logic.ts"), "utf8"),
+    /Presentación publicada/,
+  );
+  assert.match(source, /Dosis publicada/);
   assert.match(source, /Procedimientos relacionados/);
   assert.match(source, /function CodeScreen/);
 });

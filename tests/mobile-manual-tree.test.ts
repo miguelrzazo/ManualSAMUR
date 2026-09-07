@@ -13,6 +13,7 @@ import {
   MANUAL_FLAT_SECTIONS,
   manualSectionColor,
   manualSectionKey,
+  manualTreeRowCorners,
   manualSectionProcedureCount,
   MANUAL_SECTIONS_PRIORITY,
   manualSidebarMeta,
@@ -237,4 +238,37 @@ test("no procedure lands in the phantom 'Sin clasificar' fallback", () => {
     [],
     `Procedimientos sin clasificar explícitamente en manualSidebarMeta (revisar la rama "SVA" en apps/mobile/src/manual-tree-logic.ts): ${offenders.join(", ")}`,
   );
+});
+
+test("cada seccion del arbol se dibuja como una tarjeta con sus dos esquinas", () => {
+  // `InicioScreen` tenia un estilo `tree` con `borderRadius` que no se aplicaba a
+  // ninguna vista: el arbol salia como una losa cuadrada de borde a borde mientras
+  // Favoritos y Recientes, tres filas mas arriba, si eran tarjetas. El arbol es una
+  // lista plana, asi que el radio lo declara cada fila.
+  const sections = buildManualTree(procedures);
+  const collapsed = flattenManualTree(sections, new Set());
+  // Todo contraido: cada fila es una seccion, y por tanto primera y ultima a la vez.
+  for (let index = 0; index < collapsed.length; index += 1) {
+    assert.deepEqual(manualTreeRowCorners(collapsed, index), { first: true, last: true }, `fila ${index}`);
+  }
+
+  // Con la primera seccion abierta, solo su cabecera redondea por arriba y solo su
+  // ultimo descendiente por abajo.
+  const firstKey = manualSectionKey(sections[0].section);
+  const expanded = flattenManualTree(sections, new Set([firstKey]));
+  assert.ok(expanded.length > collapsed.length, "abrir una seccion debe anadir filas");
+
+  const nextSectionAt = expanded.findIndex((row, index) => index > 0 && row.kind === "section");
+  assert.ok(nextSectionAt > 1, "debe haber una segunda seccion despues de las filas abiertas");
+
+  assert.deepEqual(manualTreeRowCorners(expanded, 0), { first: true, last: false });
+  for (let index = 1; index < nextSectionAt - 1; index += 1) {
+    assert.deepEqual(manualTreeRowCorners(expanded, index), { first: false, last: false }, `fila interior ${index}`);
+  }
+  assert.deepEqual(manualTreeRowCorners(expanded, nextSectionAt - 1), { first: false, last: true });
+
+  // La ultima fila de la lista siempre cierra su tarjeta.
+  assert.equal(manualTreeRowCorners(expanded, expanded.length - 1).last, true);
+  // Un indice fuera de rango no redondea nada en vez de reventar.
+  assert.deepEqual(manualTreeRowCorners(expanded, expanded.length), { first: false, last: false });
 });

@@ -34,10 +34,20 @@ export function isWithinMadridBounds(coordinate: LocationCoordinate): boolean {
  * nearest match of the given kind, or `undefined` when there is no origin yet or the
  * directory has no location of that kind. Never falls back to a different kind — a
  * responder pressing "hospital más cercano" must never silently receive a base.
+ *
+ * Y, para hospitales, tampoco cualquier hospital. La cercanía en línea recta ordenaba
+ * los veintiún registros del directorio sin distinguir: el más próximo a una
+ * intervención podía ser una clínica privada, el Niño Jesús (pediátrico) o Getafe
+ * (fuera del municipio), y ninguno de los tres es el destino. `autoDestination` marca
+ * en `content/data/hospitals.json` cuáles sí lo son.
+ *
+ * El directorio completo no se toca: se sigue pudiendo buscar y abrir cualquiera de
+ * los veintiuno. Lo que se acota es a dónde te manda un botón sin preguntarte.
  */
 export function nearestLocationOfKind(locations: LocationRecord[], origin: LocationCoordinate | undefined, kind: LocationKind): LocationWithDistance | undefined {
   if (!origin) return undefined;
-  const candidates = filterLocations(locations, "", kind);
+  const candidates = filterLocations(locations, "", kind)
+    .filter((location) => kind !== "hospital" || location.autoDestination === true);
   return sortLocationsByDistance(candidates, origin)[0];
 }
 

@@ -145,3 +145,49 @@ export function rectsOverlap(a: ScreenRect, b: ScreenRect): boolean {
 export function backToTopOverlapsSearchCapsule(screenWidth: number, safeAreaBottom: number): boolean {
   return rectsOverlap(backToTopRect(), searchCapsuleRect(screenWidth, safeAreaBottom));
 }
+
+// ─── The reader's minimizing nav capsule ─────────────────────────────────────
+
+/**
+ * The procedure reader is a pushed screen: it has no tab bar under it, so for the
+ * length of a long protocol there is no way back to a destination without first
+ * going back. iOS 26 answers this with `TabBarMinimizeBehavior` — the bar shrinks
+ * to a single capsule in the leading corner and grows back on tap or on a scroll
+ * to the top. `ReaderNavBar` draws that by hand, because this app's tab bar is a
+ * JS one and can never receive the native behaviour.
+ *
+ * The geometry lives here, next to the back-to-top placement, because the two
+ * controls share a corner and the whole point of `rectsOverlap` is that a control
+ * put in an occupied corner is a regression a test can catch — which is exactly
+ * how the back-to-top button once ended up on top of the Search capsule.
+ */
+export const READER_NAV_CAPSULE = {
+  left: spacing.lg,
+  bottom: spacing.xl,
+  size: SEARCH_CAPSULE_SIZE,
+} as const;
+
+export function readerNavCapsuleRect(): ScreenRect {
+  const { left, bottom, size } = READER_NAV_CAPSULE;
+  return { left, right: left + size, bottom, top: bottom + size };
+}
+
+/**
+ * Back-to-top stacks directly above the nav capsule, sharing its leading edge: one
+ * vertical column of two controls rather than two controls hunting for a free corner.
+ */
+export const READER_BACK_TO_TOP_PLACEMENT = {
+  left: READER_NAV_CAPSULE.left,
+  bottom: READER_NAV_CAPSULE.bottom + READER_NAV_CAPSULE.size + spacing.sm,
+  size: BACK_TO_TOP_SIZE,
+} as const;
+
+export function readerBackToTopRect(): ScreenRect {
+  const { left, bottom, size } = READER_BACK_TO_TOP_PLACEMENT;
+  return { left, right: left + size, bottom, top: bottom + size };
+}
+
+/** The two reader controls must stack, never overlap. */
+export function readerControlsOverlap(): boolean {
+  return rectsOverlap(readerBackToTopRect(), readerNavCapsuleRect());
+}

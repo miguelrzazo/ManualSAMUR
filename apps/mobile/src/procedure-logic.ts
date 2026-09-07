@@ -368,3 +368,42 @@ export function columnWidthFor(header: string, cells: readonly string[]): number
   const headerWidth = longestTableLine(header) * HEADER_CHARACTER_WIDTH + 16 + COLUMN_SLACK;
   return Math.min(MAX_COLUMN_WIDTH, Math.max(MIN_COLUMN_WIDTH, body, headerWidth));
 }
+
+/**
+ * El texto legible de una linea de markdown y de una celda de tabla.
+ *
+ * Vivian en `App.tsx`, junto al renderizador. Han bajado aqui porque la busqueda
+ * dentro del procedimiento tiene que buscar exactamente sobre lo que la pantalla
+ * dibuja: si la limpieza estuviera escrita dos veces, un termino podria aparecer
+ * en la cuenta de resultados y no verse en el cuerpo, o al reves.
+ */
+export function readableMarkdownLine(line: string): string {
+  return line
+    .replace(/^\s*(?:[-*•]|\d+[.)])\s+/, "")
+    .replace(/^\s*[*_~`]+|[*_~`]+\s*$/g, "")
+    .replace(/<DrugLink\s+name="([^"]+)"\s*\/>/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    // La imagen va antes que el enlace: `![alt](x)` con el patron de enlace deja
+    // una admiracion suelta, y sin texto alternativo ni siquiera casaba y se leia
+    // la linea entera de markdown, ruta incluida.
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/\*\*/g, "")
+    .replace(/__/g, "")
+    .replace(/>>\S+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function readableMarkdownCell(cell: string): string {
+  return cell
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .split("\n")
+    .map((line) => {
+      const bullet = /^\s*(?:[-*•])\s+/.test(line);
+      const text = readableMarkdownLine(line);
+      return bullet && text ? `• ${text}` : text;
+    })
+    .filter(Boolean)
+    .join("\n");
+}

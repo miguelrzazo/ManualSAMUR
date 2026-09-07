@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { circle, radii, shadows, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import React from "react";
 import { Linking, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,15 +8,42 @@ import type { SyncProgress, SyncState } from "../content.tsx";
 import { contentFreshness, type StagedPackage } from "../content-transaction.ts";
 import type { AppearancePreference } from "../preferences-logic.ts";
 import {
+  ABOUT_AUTHOR,
+  ADAPTATION_DISCLAIMER,
   SETTINGS_LEGAL_METADATA,
   isPendingSettingsMetadata,
   type SettingsLegalMetadata,
 } from "../settings-legal.ts";
 import { useTheme } from "../theme.tsx";
 import { Press } from "./Press.tsx";
+import { PageHeader } from "./PageHeader.tsx";
 import { academySlot, shouldShowAcademyEntry } from "../academy-slot.ts";
 
-const OFFICIAL_MANUAL_URL = "https://servpub.madrid.es/manualsamur/bin/view/Main/";
+/**
+ * Ajustes.
+ *
+ * Lo que había: una cabecera con el título a la izquierda y un "Cerrar" de texto a la
+ * derecha; y, bajo "Privacidad y alcance", cuatro tarjetas seguidas —"Datos en el
+ * dispositivo", "Ubicación bajo petición", "Referencia independiente", "Apoyo a la
+ * consulta"— que decían dos cosas repartidas en cuatro párrafos: los datos se quedan
+ * aquí, y esto no es oficial ni sustituye a nada. Cuatro avisos seguidos no se leen:
+ * se pasan.
+ *
+ * Lo que hay: cada cosa dicha una vez. El aviso de uso es el mismo texto que la web
+ * (`ADAPTATION_DISCLAIMER`), palabra por palabra, para que la app y el sitio no se
+ * presenten distinto. Los enlaces oficiales salen de `content.links` —el paquete ya los
+ * trae— en vez de una constante escrita a mano aquí, que era una quinta copia de la URL
+ * del manual. Y "Sobre mí", colaboradores y el contacto de feedback estaban sólo en la
+ * web; ahora también aquí, que es donde alguien los busca desde el teléfono.
+ */
+
+export interface SettingsLinks {
+  sourceUrl: string;
+  avisoImportanteUrl: string;
+  samurEmail: string;
+  officialWebUrl: string;
+  collaboratorsUrl: string;
+}
 
 export interface SettingsModalProps {
   visible: boolean;
@@ -26,6 +53,7 @@ export interface SettingsModalProps {
   onActivateStaged: () => Promise<void>;
   onDiscardStaged: () => Promise<void>;
   onOpenAbbreviations: () => void;
+  onOpenChangelog: () => void;
   generatedAt: string;
   packageHash?: string;
   isRefreshing: boolean;
@@ -36,6 +64,9 @@ export interface SettingsModalProps {
   appearance: AppearancePreference;
   setAppearance: (preference: AppearancePreference) => void;
   appVersion: string;
+  links: SettingsLinks;
+  /** Origen del sitio web, del que cuelgan la lista de colaboradores y las páginas legales. */
+  contentOrigin: string;
   legalMetadata?: SettingsLegalMetadata;
   reduceMotion?: boolean;
 }
@@ -66,8 +97,8 @@ function formattedDate(value: string): string {
 
 export function SettingsModal({
   visible, onClose, onRefresh, onCancelRefresh, onActivateStaged, onDiscardStaged,
-  onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState,
-  syncProgress, stagedPackage, appearance, setAppearance, appVersion,
+  onOpenAbbreviations, onOpenChangelog, generatedAt, packageHash, isRefreshing, lastError, syncState,
+  syncProgress, stagedPackage, appearance, setAppearance, appVersion, links, contentOrigin,
   legalMetadata = SETTINGS_LEGAL_METADATA, reduceMotion = false,
 }: SettingsModalProps) {
   const palette = useTheme();
@@ -76,19 +107,24 @@ export function SettingsModal({
   const progress = syncProgress.totalBytes && syncProgress.downloadedBytes !== undefined
     ? Math.min(100, Math.round((syncProgress.downloadedBytes / syncProgress.totalBytes) * 100))
     : undefined;
+  const open = (url: string) => void Linking.openURL(url);
 
   return (
     <Modal visible={visible} animationType={reduceMotion ? "none" : "slide"} presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView style={styles.screen} edges={["top", "bottom"]} accessibilityViewIsModal>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.header} accessibilityRole="header">
-            <Text style={styles.title}>Información y ajustes</Text>
-            <Press onPress={onClose} style={styles.closeButton} accessibilityRole="button" accessibilityLabel="Cerrar información y ajustes" accessibilityHint={accessibilityHints.dismiss}>
-              <Text style={styles.closeText}>Cerrar</Text>
+        {/* La misma cabecera que las pestañas, con el cierre como icono en su hueco
+            `trailing`. El "Cerrar" de texto era el único de la app y competía con el
+            título por el ancho. */}
+        <PageHeader
+          title="Ajustes"
+          trailing={
+            <Press onPress={onClose} style={styles.closeButton} accessibilityRole="button" accessibilityLabel="Cerrar ajustes" accessibilityHint={accessibilityHints.dismiss}>
+              <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
             </Press>
-          </View>
-
-          <SectionTitle>Contenido y actualización</SectionTitle>
+          }
+        />
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <SectionTitle>Contenido</SectionTitle>
           <View style={styles.card} accessible accessibilityLabel={`${status.title}. ${lastError ?? status.detail}`} accessibilityLiveRegion="polite">
             <MaterialCommunityIcons name={status.icon} size={26} color={palette[status.color]} />
             <View style={styles.copy}>
@@ -129,63 +165,110 @@ export function SettingsModal({
               return <Press key={option} onPress={() => setAppearance(option)} style={[styles.segmentOption, selected && styles.segmentOptionSelected]} accessibilityRole="radio" accessibilityState={{ selected }}><Text style={[styles.segmentText, selected && styles.segmentTextSelected]}>{label}</Text></Press>;
             })}
           </View>
-          <Press onPress={onOpenAbbreviations} style={styles.card} accessibilityRole="button" accessibilityLabel="Abrir abreviaturas">
-            <MaterialCommunityIcons name="format-letter-case" size={25} color={palette.green} />
-            <View style={styles.copy}><Text style={styles.rowTitle}>Abreviaturas</Text><Text style={styles.meta}>Consulta local por abreviatura o significado</Text></View>
-            <MaterialCommunityIcons name="chevron-right" size={21} color={palette.inkMuted} />
-          </Press>
+          <Row icon="format-letter-case" tint={palette.green} title="Abreviaturas" meta="Consulta local por abreviatura o significado" onPress={onOpenAbbreviations} />
 
           {academySlot && shouldShowAcademyEntry(academySlot) && (
             <>
               {/* El hueco de la academia (#98). Sin creatividad configurada no se
                   dibuja nada, asi que hoy esta seccion no existe en pantalla. */}
               <SectionTitle>Formación</SectionTitle>
-              <Press
-                onPress={() => void Linking.openURL(String(academySlot?.url))}
-                style={styles.card}
-                accessibilityRole="link"
-                accessibilityLabel={academySlot.title}
-                accessibilityHint="Se abre en el navegador."
-              >
-                <MaterialCommunityIcons name="school-outline" size={25} color={palette.primary} />
-                <View style={styles.copy}><Text style={styles.rowTitle}>{academySlot.title}</Text><Text style={styles.meta}>{academySlot.detail}</Text></View>
-                <MaterialCommunityIcons name="open-in-new" size={19} color={palette.inkMuted} />
-              </Press>
+              <Row icon="school-outline" tint={palette.primary} title={academySlot.title} meta={academySlot.detail} external onPress={() => open(String(academySlot?.url))} />
             </>
           )}
 
-          <SectionTitle>Privacidad y alcance</SectionTitle>
-          <Notice icon="lock-outline" title="Datos en el dispositivo">No necesita cuenta ni está diseñada para registrar datos de pacientes. Favoritos, recientes y preferencias se guardan localmente.</Notice>
-          <Notice icon="map-marker-radius-outline" title="Ubicación bajo petición">La ubicación se solicita al usar la función de cercanía del mapa. El directorio puede consultarse sin concederla.</Notice>
-          <Notice icon="shield-alert-outline" title="Referencia independiente">Adaptación digital no oficial. No implica afiliación, aprobación ni representación de SAMUR-Protección Civil.</Notice>
-          <Notice icon="medical-bag" title="Apoyo a la consulta">El contenido y los cálculos son material de referencia. No sustituyen protocolos vigentes, instrucciones operativas ni criterio profesional.</Notice>
-          <Press onPress={() => void Linking.openURL(OFFICIAL_MANUAL_URL)} style={styles.linkRow} accessibilityRole="link"><Text style={styles.linkText}>Abrir fuente oficial del manual</Text><MaterialCommunityIcons name="open-in-new" size={18} color={palette.primary} /></Press>
+          <SectionTitle>Aviso de uso</SectionTitle>
+          {/* Un aviso, no cuatro. Era "Referencia independiente" + "Apoyo a la consulta"
+              diciendo lo mismo en dos tarjetas seguidas; este es el texto que la web
+              lleva publicado desde el principio. */}
+          <Notice icon="shield-alert-outline">{ADAPTATION_DISCLAIMER}</Notice>
+          <Notice icon="medical-bag">El contenido y los cálculos son material de referencia: no sustituyen a los protocolos vigentes, a las instrucciones operativas ni al criterio profesional.</Notice>
 
-          <SectionTitle>Legal y soporte</SectionTitle>
-          <MetadataRow label="Entidad editora" value={legalMetadata.publisher} />
+          <SectionTitle>Enlaces oficiales</SectionTitle>
+          <Row icon="alert-outline" tint={palette.amber} title="Aviso importante" meta="Documento oficial en PDF" external onPress={() => open(links.avisoImportanteUrl)} />
+          <Row icon="book-open-variant" tint={palette.primary} title="Manual oficial" meta="Fuente de todo el contenido de esta app" external onPress={() => open(links.sourceUrl)} />
+          <Row icon="account-group-outline" tint={palette.primary} title="Colaboradores" meta="Quiénes escribieron el manual original" external onPress={() => open(`${contentOrigin}/colaboradores`)} />
+          <Row icon="web" tint={palette.primary} title="SAMUR-Protección Civil" meta="Web del Ayuntamiento de Madrid" external onPress={() => open(links.officialWebUrl)} />
+          <Row icon="email-outline" tint={palette.primary} title="Escribir a SAMUR" meta={links.samurEmail} external onPress={() => open(`mailto:${links.samurEmail}`)} />
+
+          <SectionTitle>Sobre mí</SectionTitle>
+          <View style={styles.card}>
+            <View style={styles.avatar}><Text style={styles.avatarText}>MR</Text></View>
+            <View style={styles.copy}>
+              <Text style={styles.rowTitle}>{ABOUT_AUTHOR.name}</Text>
+              <Text style={styles.meta}>{ABOUT_AUTHOR.blurb}</Text>
+            </View>
+          </View>
+          <Row icon="message-alert-outline" tint={palette.primary} title="Enviar comentarios" meta={legalMetadata.supportEmail || "Correo de contacto"} external onPress={() => open(`mailto:${legalMetadata.supportEmail}`)} />
+          <Row icon="github" tint={palette.ink} title="GitHub" meta="Código y seguimiento de incidencias" external onPress={() => open(ABOUT_AUTHOR.githubUrl)} />
+
+          <SectionTitle>Privacidad y soporte</SectionTitle>
+          {/* Dos tarjetas fundidas en una: la promesa es una sola —nada sale del
+              teléfono— y se leía repartida entre "Datos en el dispositivo" y
+              "Ubicación bajo petición". */}
+          <Notice icon="lock-outline">No necesita cuenta y no está diseñada para registrar datos de pacientes. Favoritos, recientes y preferencias se guardan en el dispositivo. La ubicación se pide solo al usar la cercanía del mapa; el directorio funciona sin concederla.</Notice>
           <MetadataLink label="Política de privacidad" value={legalMetadata.privacyPolicyUrl} />
           <MetadataLink label="Soporte" value={legalMetadata.supportUrl} />
-          {legalMetadata.supportEmail ? <MetadataLink label="Contacto" value={legalMetadata.supportEmail} email /> : null}
-          <View style={styles.versionRow}><Text style={styles.meta}>Versión de la app</Text><Text style={styles.rowTitle}>{appVersion}</Text></View>
+          <MetadataRow label="Entidad editora" value={legalMetadata.publisher} />
+
+          {/* La versión abre el registro de cambios. Era una línea de texto muerta al
+              final de la lista, y es lo primero que se mira cuando algo va raro. */}
+          <Press onPress={onOpenChangelog} style={styles.versionRow} accessibilityRole="button" accessibilityLabel={`Versión ${appVersion}. Ver novedades`} accessibilityHint="Abre el registro de cambios de la aplicación.">
+            <View style={styles.copy}>
+              <Text style={styles.meta}>Versión de la app</Text>
+              <Text style={styles.rowTitle}>{appVersion}</Text>
+            </View>
+            <Text style={styles.linkText}>Novedades</Text>
+            <MaterialCommunityIcons name="chevron-right" size={21} color={palette.inkMuted} />
+          </Press>
           <Text style={styles.legal}>ManualSAMUR y SAMUR-Protección Civil son referencias de sus titulares.</Text>
         </ScrollView>
       </SafeAreaView>
     </Modal>
   );
 
-  function MetadataLink({ label, value, email = false }: { label: string; value: string; email?: boolean }) {
-    const pending = isPendingSettingsMetadata(value);
-    if (pending) return <MetadataRow label={label} value={value} />;
-    return <Press onPress={() => void Linking.openURL(email ? `mailto:${value}` : value)} style={styles.metadataRow} accessibilityRole="link"><View style={styles.copy}><Text style={styles.meta}>{label}</Text><Text style={styles.linkText}>{value}</Text></View><MaterialCommunityIcons name="open-in-new" size={18} color={palette.primary} /></Press>;
+  /** Una fila de ajustes: icono, título, meta, y el chevrón o el icono de salida. */
+  function Row({ icon, tint, title, meta, onPress, external = false }: {
+    icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+    tint: string;
+    title: string;
+    meta: string;
+    onPress: () => void;
+    external?: boolean;
+  }) {
+    return (
+      <Press onPress={onPress} style={styles.card} accessibilityRole={external ? "link" : "button"} accessibilityLabel={title} accessibilityHint={external ? "Se abre fuera de la aplicación." : undefined}>
+        <MaterialCommunityIcons name={icon} size={25} color={tint} />
+        <View style={styles.copy}>
+          <Text style={styles.rowTitle}>{title}</Text>
+          <Text style={styles.meta} numberOfLines={2}>{meta}</Text>
+        </View>
+        <MaterialCommunityIcons name={external ? "open-in-new" : "chevron-right"} size={external ? 19 : 21} color={palette.inkMuted} />
+      </Press>
+    );
+  }
+
+  function MetadataLink({ label, value }: { label: string; value: string }) {
+    if (isPendingSettingsMetadata(value)) return <MetadataRow label={label} value={value} />;
+    return (
+      <Press onPress={() => open(value)} style={styles.metadataRow} accessibilityRole="link" accessibilityLabel={label}>
+        <View style={styles.copy}><Text style={styles.meta}>{label}</Text><Text style={styles.linkText} numberOfLines={1}>{value}</Text></View>
+        <MaterialCommunityIcons name="open-in-new" size={18} color={palette.primary} />
+      </Press>
+    );
   }
 
   function MetadataRow({ label, value }: { label: string; value: string }) {
     const pending = isPendingSettingsMetadata(value);
-    return <View style={styles.metadataRow} accessible accessibilityLabel={`${label}. ${pending ? "Pendiente de publicación" : value}`}><View style={styles.copy}><Text style={styles.meta}>{label}</Text><Text style={styles.rowTitle}>{pending ? "Pendiente de publicación" : value}</Text></View>{pending ? <View style={styles.pendingBadge}><Text style={styles.pendingText}>Pendiente</Text></View> : null}</View>;
+    return (
+      <View style={styles.metadataRow} accessible accessibilityLabel={`${label}. ${pending ? "Pendiente de publicación" : value}`}>
+        <View style={styles.copy}><Text style={styles.meta}>{label}</Text><Text style={styles.rowTitle}>{pending ? "Pendiente de publicación" : value}</Text></View>
+        {pending ? <View style={styles.pendingBadge}><Text style={styles.pendingText}>Pendiente</Text></View> : null}
+      </View>
+    );
   }
 
-  function Notice({ icon, title, children }: { icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; title: string; children: React.ReactNode }) {
-    return <View style={styles.notice}><MaterialCommunityIcons name={icon} size={22} color={palette.primary} /><View style={styles.copy}><Text style={styles.rowTitle}>{title}</Text><Text style={styles.meta}>{children}</Text></View></View>;
+  function Notice({ icon, children }: { icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; children: React.ReactNode }) {
+    return <View style={styles.notice}><MaterialCommunityIcons name={icon} size={22} color={palette.inkMuted} /><Text style={styles.noticeText}>{children}</Text></View>;
   }
 }
 
@@ -198,13 +281,10 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function useStyles(palette: AdaptivePalette) {
   return React.useMemo(() => StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
-    content: { width: "100%", maxWidth: 720, alignSelf: "center", padding: spacing.lg, paddingBottom: spacing.xxl, gap: spacing.md },
-    header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md, marginBottom: spacing.sm },
-    title: { ...typography.title2, color: palette.ink, flex: 1 },
-    closeButton: { justifyContent: "center", paddingHorizontal: spacing.sm },
-    closeText: { ...typography.headline, color: palette.primary },
-    sectionTitle: { ...typography.subheadline, fontWeight: "600", color: palette.inkMuted, marginTop: spacing.md, textTransform: "uppercase", letterSpacing: 0.3 },
-    card: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 64, padding: spacing.lg, borderRadius: radii.md, backgroundColor: palette.surface },
+    content: { width: "100%", maxWidth: 720, alignSelf: "center", paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl, gap: spacing.sm },
+    closeButton: { ...circle(44), alignItems: "center", justifyContent: "center" },
+    sectionTitle: { ...typography.subheadline, fontWeight: "600", color: palette.inkMuted, marginTop: spacing.lg, marginBottom: spacing.xs, textTransform: "uppercase", letterSpacing: 0.3 },
+    card: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 64, padding: spacing.lg, borderRadius: radii.md, backgroundColor: palette.surface, ...shadows.card, shadowColor: palette.black },
     copy: { flex: 1, gap: 2 },
     rowTitle: { ...typography.callout, fontWeight: "600", color: palette.ink },
     meta: { ...typography.footnote, color: palette.inkMuted },
@@ -223,13 +303,18 @@ function useStyles(palette: AdaptivePalette) {
     segmentOptionSelected: { backgroundColor: palette.primaryAction, borderColor: palette.primaryAction },
     segmentText: { ...typography.callout, fontWeight: "600", color: palette.ink },
     segmentTextSelected: { color: palette.white },
-    notice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md, padding: spacing.lg, borderRadius: radii.md, backgroundColor: palette.surface },
-    linkRow: { minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md, paddingHorizontal: spacing.lg, borderRadius: radii.md, backgroundColor: palette.surface },
+    // El aviso no es una tarjeta: es texto sobre el papel, con su icono al margen. Un
+    // aviso con la misma superficie y la misma sombra que una fila pulsable se lee como
+    // una fila pulsable que no responde.
+    notice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.xs },
+    noticeText: { flex: 1, ...typography.footnote, color: palette.inkMuted },
+    avatar: { ...circle(40), backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" },
+    avatarText: { ...typography.footnote, fontWeight: "700", color: palette.primary },
     linkText: { ...typography.callout, color: palette.primary, flexShrink: 1 },
     metadataRow: { minHeight: 58, flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.md, backgroundColor: palette.surface },
     pendingBadge: { borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, backgroundColor: palette.amberWash },
     pendingText: { ...typography.caption, fontWeight: "600", color: palette.amber },
-    versionRow: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+    versionRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 58, marginTop: spacing.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.md, backgroundColor: palette.surface },
     legal: { ...typography.caption, color: palette.inkMuted, textAlign: "center", marginTop: spacing.sm },
   }), [palette]);
 }

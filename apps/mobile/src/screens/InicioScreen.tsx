@@ -54,6 +54,7 @@ import {
   flattenManualTree,
   manualNovedades,
   manualSectionColor,
+  manualTreeRowCorners,
   sortManualSections,
   type ManualTreeRow,
 } from "../manual-tree-logic";
@@ -111,13 +112,21 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
 
   const openProcedure = (id: string) => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Procedure", { id });
 
-  const renderRow = ({ item }: ListRenderItemInfo<ManualTreeRow>) => {
+  const renderRow = ({ item, index }: ListRenderItemInfo<ManualTreeRow>) => {
+    // Las esquinas de la tarjeta de cada seccion. Ver `manualTreeRowCorners`: el
+    // arbol es una lista plana, asi que el radio lo lleva la primera y la ultima
+    // fila de cada seccion en vez de un contenedor que no existe.
+    const corners = manualTreeRowCorners(rows, index);
+    const cornerStyle = [
+      corners.first && styles.cardTop,
+      corners.last ? styles.cardBottom : styles.rowDivider,
+    ];
     if (item.kind === "procedure" && item.procedure) {
       const procedure = item.procedure;
       const routeKey = procedureRouteKey(procedure.id);
       const favorite = favorites.includes(routeKey);
       return (
-        <View style={[styles.procedureRow, { paddingLeft: spacing.lg + item.depth * spacing.lg }]}>
+        <View style={[styles.procedureRow, cornerStyle, { paddingLeft: spacing.lg + item.depth * spacing.lg }]}>
           <Pressable
             onPress={() => openProcedure(procedure.id)}
             style={({ pressed }) => [styles.procedureRowMain, pressed && styles.pressed]}
@@ -145,6 +154,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
         onPress={() => toggleKey(item.rowKey)}
         style={({ pressed }) => [
           isSection ? styles.sectionHeaderRow : item.kind === "group" ? styles.groupHeaderRow : styles.subgroupHeaderRow,
+          cornerStyle,
           { paddingLeft: spacing.lg + item.depth * spacing.lg },
           pressed && styles.pressed,
         ]}
@@ -170,7 +180,12 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
         keyExtractor={(item) => item.rowKey}
         contentContainerStyle={styles.listContent}
         renderItem={renderRow}
-        ItemSeparatorComponent={() => <View style={styles.treeSeparator} />}
+        // Sin `ItemSeparatorComponent`: cada fila lleva su propia linea inferior, y la
+        // ultima de cada seccion la cambia por el hueco entre tarjetas. El separador
+        // como componente aparte tendria que mirar cual es la fila siguiente para saber
+        // si esta a caballo entre dos secciones, y `leadingItem` no trae su indice: la
+        // unica forma seria un `indexOf` sobre las 900 filas del arbol, por separador y
+        // en cada fotograma de scroll.
         ListHeaderComponent={
           <>
             <View style={styles.secondaryRow}>
@@ -259,9 +274,9 @@ function CollectionSection({
           <View key={item.routeKey} style={styles.collectionRow} accessible={false}>
             {stale ? (
               <View style={styles.collectionRowMain}>
-                <MaterialCommunityIcons name="alert-circle-outline" size={17} color={palette.danger} />
+                <MaterialCommunityIcons name="alert-circle-outline" size={20} color={palette.danger} />
                 <View style={styles.resourceCopy}>
-                  <Text style={styles.procedureTitle} numberOfLines={1}>{displayTitle(item.title)}</Text>
+                  <Text style={styles.collectionTitleText} numberOfLines={1}>{displayTitle(item.title)}</Text>
                   <Text style={styles.staleText}>{item.subtitle}</Text>
                 </View>
               </View>
@@ -273,9 +288,9 @@ function CollectionSection({
                 accessibilityLabel={`${displayTitle(item.title)}. ${item.subtitle}`}
                 accessibilityHint={accessibilityHints.openDetail}
               >
-                <MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={17} color={palette.ink} />
+                <MaterialCommunityIcons name={savedReferenceIcon(item.kind)} size={20} color={palette.ink} />
                 <View style={styles.resourceCopy}>
-                  <Text style={styles.procedureTitle} numberOfLines={1}>{displayTitle(item.title)}</Text>
+                  <Text style={styles.collectionTitleText} numberOfLines={1}>{displayTitle(item.title)}</Text>
                   <Text style={styles.collectionSubtitle} numberOfLines={1}>{item.subtitle}</Text>
                 </View>
               </Pressable>
@@ -300,8 +315,16 @@ function createStyles(palette: AdaptivePalette) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
     listContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET },
-    tree: { borderRadius: radii.md, overflow: "hidden", backgroundColor: palette.surface },
-    treeSeparator: { height: StyleSheet.hairlineWidth, backgroundColor: palette.line, marginLeft: spacing.lg },
+    // Las esquinas de la tarjeta de seccion. `tree` —un estilo con `borderRadius`
+    // que no se aplicaba a ninguna vista— vivio aqui sin efecto hasta que se noto
+    // que el arbol salia cuadrado mientras Favoritos y Recientes eran tarjetas.
+    cardTop: { borderTopLeftRadius: radii.md, borderTopRightRadius: radii.md },
+    cardBottom: { borderBottomLeftRadius: radii.md, borderBottomRightRadius: radii.md, marginBottom: spacing.sm },
+    // La linea entre filas de una misma seccion. Se sangra `spacing.lg` por la
+    // izquierda para que no cruce toda la tarjeta de lado a lado.
+    rowDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.line },
+    // Y el hueco bajo la ultima fila de cada seccion, que es lo que separa una tarjeta
+    // de la siguiente.
     minimumTarget: accessibilityTargetStyle(),
     pressed: { opacity: 0.6 },
 
@@ -338,16 +361,20 @@ function createStyles(palette: AdaptivePalette) {
       borderRadius: radii.md,
       borderWidth: 1,
       borderColor: palette.line,
-      padding: spacing.sm,
+      padding: spacing.md,
       marginBottom: spacing.md,
       gap: 2,
     },
     collectionHeader: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing.xs, paddingBottom: spacing.xs },
     collectionTitle: { fontSize: 13, fontWeight: "600", color: palette.inkMuted, letterSpacing: -0.08 },
-    collectionRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 40 },
+    // 56, no 40. Favoritos y Recientes son los dos atajos de la pantalla —lo que se
+    // abre sin buscar— y se dibujaban mas pequenos que cualquier fila del arbol que
+    // tienen debajo, con el titulo a 13pt y el subtitulo a 11.
+    collectionRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 56 },
     collectionRowMain: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: 4 },
-    collectionSubtitle: { fontSize: 11, color: palette.inkMuted, marginTop: 1 },
-    staleText: { fontSize: 11, color: palette.danger, marginTop: 1 },
+    collectionTitleText: { ...typography.callout, color: palette.ink },
+    collectionSubtitle: { ...typography.footnote, color: palette.inkMuted, marginTop: 1 },
+    staleText: { ...typography.footnote, color: palette.danger, marginTop: 1 },
     resourceCopy: { flex: 1, minWidth: 0 },
 
     treeHeading: { marginBottom: spacing.xs, marginTop: spacing.xs },

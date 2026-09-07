@@ -16,7 +16,9 @@ export const routeAccessibilityLabels: Record<MobileRoute, string> = {
   "Fármaco": "Fármaco",
   "Código": "Código operativo",
   "Ubicación": "Ubicación",
-  Ajustes: "Información y ajustes",
+  // "Ajustes", no "Información y ajustes": es el título que lleva la pantalla, y el
+  // nombre hablado de un botón y el de su destino tienen que ser el mismo.
+  Ajustes: "Ajustes",
 };
 
 export const accessibilityHints = {

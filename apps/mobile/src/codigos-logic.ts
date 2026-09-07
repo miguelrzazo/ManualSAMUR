@@ -7,6 +7,9 @@
  * Kept free of React Native imports so it can run under plain Node in tests.
  */
 
+import { displayLabel } from "./title-case.ts";
+import type { MobileReferenceSearchResult } from "./reference-search-logic.ts";
+
 export type TopTabKey = "incidente" | "svb" | "sva" | "upsi" | "upsq" | "otros";
 export type OtrosTabKey =
   | "icao"
@@ -718,4 +721,81 @@ export function codeRouteHasDetail(
 ): boolean {
   // Misma clave que usa CodeScreen para leer el índice: "grupo:codigo".
   return (relationsIndex.codes[routeKey.replace(/^code:/, "")]?.length ?? 0) > 0;
+}
+
+// ─── Búsqueda local: agrupada por tipo ──────────────────────────────────────
+
+/**
+ * Los resultados de buscar dentro de Códigos y claves, agrupados por su tipo.
+ *
+ * Con una consulta escrita, la pantalla cambiaba a una lista plana en la que un
+ * código de Incidente, uno de SVA y un indicativo se dibujaban idénticos, y lo único
+ * que decía a cuál pertenecía cada uno era el subtítulo: once puntos, gris, debajo
+ * del nombre. Buscar "2" devolvía cuarenta filas indistinguibles.
+ *
+ * El grupo ya viaja en cada resultado (`sourceGroup`, lo pone `buildCodeReferences`),
+ * así que aquí sólo se ordena: primero los cinco tipos de código en el orden de las
+ * pestañas, después el resto de familias de "Otros" en el orden de sus subpestañas, y
+ * al final cualquier grupo que aparezca en el paquete y no esté en ninguna de las dos
+ * listas — un grupo nuevo del contenido no puede desaparecer de los resultados.
+ */
+export interface CodigosSearchSection {
+  key: string;
+  label: string;
+  /** El color de identidad del tipo, o `undefined` para las familias de "Otros". */
+  accentColor?: string;
+  data: MobileReferenceSearchResult[];
+}
+
+const SEARCH_GROUP_ORDER: readonly string[] = [
+  ...TOP_TABS.filter((tab) => isCodeTab(tab.key)).map((tab) => tab.key),
+  ...OTROS_TABS.map((tab) => tab.key),
+  "cheatsheet",
+];
+
+/**
+ * `content.codes` trae un grupo más que las pestañas: `cheatsheet`, que es la hoja de
+ * referencia de Status 4 y tiene pantalla propia en vez de subpestaña. Sin nombre
+ * propio, `displayLabel` lo dejaba en "Cheatsheet" —una palabra en inglés en una
+ * pantalla que no tiene ninguna— encabezando sus resultados.
+ */
+const EXTRA_SEARCH_GROUP_LABELS: readonly (readonly [string, string])[] = [["cheatsheet", "Status 4"]];
+
+const SEARCH_GROUP_LABELS = new Map<string, string>([
+  ...TOP_TABS.map((tab) => [tab.key, tab.label] as const),
+  ...OTROS_TABS.map((tab) => [tab.key, tab.label] as const),
+  ...EXTRA_SEARCH_GROUP_LABELS,
+]);
+
+const SEARCH_GROUP_COLORS = new Map<string, string>(TOP_TABS.map((tab) => [tab.key, tab.color] as const));
+
+/** La etiqueta y el color con los que se marca un resultado suelto. */
+export function codigosSearchGroupMeta(group: string | undefined): { label: string; accentColor?: string } {
+  const key = group ?? "";
+  return {
+    label: SEARCH_GROUP_LABELS.get(key) ?? displayLabel(key || "Otros"),
+    accentColor: SEARCH_GROUP_COLORS.get(key),
+  };
+}
+
+export function groupCodigosSearchResults(results: readonly MobileReferenceSearchResult[]): CodigosSearchSection[] {
+  const byGroup = new Map<string, MobileReferenceSearchResult[]>();
+  for (const item of results) {
+    const key = item.sourceGroup ?? "";
+    const bucket = byGroup.get(key);
+    if (bucket) bucket.push(item);
+    else byGroup.set(key, [item]);
+  }
+
+  const rank = (key: string) => {
+    const index = SEARCH_GROUP_ORDER.indexOf(key);
+    return index === -1 ? SEARCH_GROUP_ORDER.length : index;
+  };
+
+  return [...byGroup.entries()]
+    .sort(([left], [right]) => rank(left) - rank(right) || left.localeCompare(right, "es"))
+    .map(([key, data]) => {
+      const meta = codigosSearchGroupMeta(key);
+      return { key: key || "otros", label: meta.label, accentColor: meta.accentColor, data };
+    });
 }

@@ -173,5 +173,9 @@ export const motion = {
  * safe-area inset. Every scrollable surface must reserve it or its last row ends
  * up behind translucent glass — which is exactly what happened when six screens
  * each hardcoded their own guess (116 / 140 / 140 / 140 / 132 / 100).
+ *
+ * 118, not 112: the pill grew from ~58pt to 64 when the tab items got a real
+ * `minHeight: 48` (see `nav-shell.tsx`). The reservation has to grow with it, or
+ * the six screens that trust this number each lose six points of last row.
  */
-export const TAB_BAR_INSET = 112;
+export const TAB_BAR_INSET = 118;

@@ -20,12 +20,15 @@ import {
   Share,
   StyleSheet,
   Text,
+  TextInput,
   View,
   useColorScheme,
   useWindowDimensions,
+  type LayoutChangeEvent,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   type PressableProps,
+  type TextStyle,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -35,21 +38,27 @@ import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
 import { useScrollChrome } from "./src/hooks/use-scroll-chrome";
-import { BackToTop, Chip, CompactHeader, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField, Toast } from "./src/components";
+import { BackToTop, Badge, Chip, CompactHeader, FavoriteToggle, MarkdownTable, Menu, PageHeader, Press, ReaderNavBar, SearchField, Toast, type MenuAnchor } from "./src/components";
 import type { MobileAttachment, MobileProcedure } from "../../packages/manual-content/src/index.ts";
 import { displayTitle } from "./src/title-case";
-import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
+import { APP_CHANGELOG } from "./src/app-changelog";
+import { DRUG_DETAIL_FIELDS, drugFieldText, parseDoseLines, parseDrugRoutes } from "./src/drug-detail-logic";
+import { procedureHeadings, procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
-import { snippetText, type SearchSnippet } from "./src/search-snippet-logic";
+import { highlightSegments, snippetText, type SearchSnippet } from "./src/search-snippet-logic";
+import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
+import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
 import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
   locationRecords,
+  locationDisplayName,
   locationRouteKey,
   locationSourcePolicy,
   locationStaleNotice,
+  locationSubtitle,
   locationVisual,
   platformMapsUrl,
   resolveLocationRoute,
@@ -61,7 +70,7 @@ import { OnlineMapView } from "./src/online-map-view";
 import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type ResolvedSavedReference, type SavedReference } from "./src/saved-logic";
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
 import { Image } from "expo-image";
-import { GlassTabBar } from "./src/nav-shell";
+import { GlassTabBar, TAB_ICON_SIZE } from "./src/nav-shell";
 import { AnexoScreen } from "./src/screens/AnexoScreen";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
 import { InicioScreen } from "./src/screens/InicioScreen";
@@ -129,21 +138,31 @@ function restoreAccessibilityFocus(ref: React.RefObject<View | null>) {
   setTimeout(() => AccessibilityInfo.setAccessibilityFocus(node), 120);
 }
 
+/**
+ * La cabecera de Inicio.
+ *
+ * Ya no lleva el icono de la app. Un logo en la cabecera de la propia app dice algo
+ * que el usuario acaba de ver en la pantalla de inicio del teléfono y en la pantalla
+ * de carga, y lo dice ocupando el sitio del título: con el lockup dentro, el nombre
+ * quedaba en dos líneas de `title3` para que cupiera al lado. Sin él, es el mismo
+ * título grande que llevan Códigos, Vademécum, Mapa y Buscar (`PageHeader`), y la
+ * pestaña deja de ser la única con una cabecera propia.
+ *
+ * `LogoMark` sigue existiendo: lo dibujan la pantalla de carga y el aviso de primer
+ * uso, que son los dos sitios donde la app todavía no se ha presentado.
+ */
 function BrandHeader({ onSettings, settingsRef }: { onSettings?: () => void; settingsRef?: React.RefObject<View | null> }) {
   const palette = useTheme();
   const styles = useAppStyles();
   return (
-    <View style={styles.brandHeader}>
-      <View style={styles.brandLockup}>
-        <LogoMark small />
-        <Text style={styles.brandName} numberOfLines={2} maxFontSizeMultiplier={1.6}>Manual de procedimientos SAMUR PC</Text>
-      </View>
-      {onSettings && (
+    <PageHeader
+      title="Manual SAMUR"
+      trailing={onSettings ? (
         <Pressable ref={settingsRef} onPress={onSettings} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={routeAccessibilityLabels.Ajustes} accessibilityHint="Abre las preferencias, privacidad y estado del contenido.">
           <MaterialCommunityIcons name="tune-variant" size={21} color={palette.ink} />
         </Pressable>
-      )}
-    </View>
+      ) : undefined}
+    />
   );
 }
 
@@ -304,7 +323,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { p
 // full-screen during a shift.
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
   const styles = useAppStyles();
-  const { snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContent();
+  const { content, snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContent();
   const { appearance, setAppearance } = usePreferences();
   const reduceMotion = useReduceMotion();
   const settingsTriggerRef = useRef<View>(null);
@@ -314,7 +333,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
-      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onActivateStaged={activateStagedUpdate} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "0.1.0"} />
+      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onActivateStaged={activateStagedUpdate} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} onOpenChangelog={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Changelog"); }} links={content.links} contentOrigin={CONTENT_ORIGIN} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "1.0.0"} />
     </SafeAreaView>
   );
 }
@@ -525,7 +544,11 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
     if (location && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
   }, [content, location, remember, route.params.routeKey]);
   const onToggleFavorite = useCallback(() => toggleFavorite(route.params.routeKey), [toggleFavorite, route.params.routeKey]);
-  useDetailHeader({ navigation, title: location?.shortName ?? "Ubicación", favorite, onToggleFavorite });
+  // `locationDisplayName`/`locationSubtitle`, no `shortName`. Una base se llama "Base 1"
+  // y su barrio ("El Espinillo") es el subtítulo: es como la nombra la radio y como ya la
+  // dibuja el directorio (`LocationDirectory`). Esta pantalla las llamaba por el barrio,
+  // así que la misma base tenía dos nombres distintos a un toque de distancia.
+  useDetailHeader({ navigation, title: location ? locationDisplayName(location) : "Ubicación", favorite, onToggleFavorite });
   if (!location) return <MissingResource title="Punto no disponible" detail="La ruta de ubicación no coincide con el paquete local actual. Vuelve al directorio para consultar otro punto." onRecover={() => navigation.goBack()} />;
   const visual = locationVisual(location, palette);
   const openMaps = () => { void Linking.openURL(platformMapsUrl(location, Platform.OS === "ios" ? "ios" : Platform.OS === "android" ? "android" : "web")); };
@@ -534,12 +557,12 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
   // to five decimal places. They used to be the only block on the screen with a label
   // and a heading, above nothing, while the address was a grey meta line.
   return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
-    <LocationMapPreview location={location} label={visual.label + " " + location.name} />
+    <LocationMapPreview location={location} label={visual.label + " " + locationDisplayName(location)} />
     <View style={[styles.locationTypeBadge, { backgroundColor: visual.wash }]} accessibilityLabel={visual.label}>
       <MaterialCommunityIcons name={visual.icon} size={18} color={visual.color} />
       <Text style={[styles.locationTypeBadgeText, { color: visual.color }]}>{visual.label}</Text>
     </View>
-    <Text style={styles.detailMeta}>{displayTitle(location.name)}</Text>
+    <Text style={styles.detailMeta}>{locationSubtitle(location)}</Text>
     {locationStaleNotice(location, new Date(), policy) && <View style={styles.locationFallback} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-outline" size={19} color={palette.amber} /><Text style={styles.locationFallbackText}>{locationStaleNotice(location, new Date(), policy)}</Text></View>}
     <View style={styles.infoBlock}><Text style={styles.infoLabel}>Dirección</Text><Text style={styles.addressValue}>{location.address}</Text><Text style={styles.infoValue}>{location.district}</Text></View>
     <Pressable onPress={openMaps} style={styles.primaryButton} accessibilityRole="link" accessibilityLabel={"Abrir " + location.name + " en Mapas"}><Text style={styles.primaryButtonText}>Abrir en Mapas</Text></Pressable>
@@ -638,25 +661,48 @@ function ProcedureFigure({ attachment, record, onOpen, alt }: { attachment: Mobi
  * — compite con el título grande — y este no tiene ese problema porque no
  * lleva texto propio, solo el icono.
  */
-function ProcedureShareTrigger({ onPress, busy }: { onPress: () => void; busy: boolean }) {
+/**
+ * Un botón de la barra del lector: buscar, compartir.
+ *
+ * Mide su propio marco al pulsarse y lo entrega al que abre el menú. La alternativa
+ * —una ref levantada hasta `ProcedureScreen`— no funciona: `headerRight` lo dibuja
+ * `useDetailHeader` dentro de la barra nativa, así que la única forma fiable de saber
+ * dónde ha quedado el icono es preguntárselo a él.
+ */
+function ReaderHeaderButton({ icon, label, hint, onPress, busy = false, active = false }: {
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  label: string;
+  hint?: string;
+  onPress: (anchor: MenuAnchor) => void;
+  busy?: boolean;
+  active?: boolean;
+}) {
   const palette = useTheme();
+  const ref = useRef<View>(null);
   return (
     <Press
-      onPress={onPress}
+      ref={ref}
+      onPress={() => {
+        // `measureInWindow` es asíncrono; si falla (la vista ya no está montada) el
+        // menú se abre igual, anclado a la esquina, en vez de no abrirse.
+        const fallback: MenuAnchor = { x: 0, y: 0, width: 0, height: 0 };
+        if (!ref.current) { onPress(fallback); return; }
+        ref.current.measureInWindow((x, y, width, height) => onPress({ x, y, width, height }));
+      }}
       disabled={busy}
       hitSlop={12}
       accessibilityRole="button"
-      accessibilityLabel="Compartir procedimiento"
-      accessibilityHint={accessibilityHints.share}
-      accessibilityState={{ busy, disabled: busy }}
-      style={styles_shareTrigger.button}
+      accessibilityLabel={label}
+      accessibilityHint={hint}
+      accessibilityState={{ busy, disabled: busy, expanded: active }}
+      style={styles_readerHeaderButton.button}
     >
-      <MaterialCommunityIcons name="export-variant" size={22} color={busy ? palette.inkMuted : palette.ink} />
+      <MaterialCommunityIcons name={icon} size={22} color={busy ? palette.inkMuted : active ? palette.primary : palette.ink} />
     </Press>
   );
 }
 
-const styles_shareTrigger = {
+const styles_readerHeaderButton = {
   // Mismo patrón que `FavoriteToggle`: sin fondo propio, centrado sobre su
   // icono, el hit target lo da `Press` (44pt mínimo) y no un círculo dibujado.
   button: { alignItems: "center", justifyContent: "center" },
@@ -668,10 +714,11 @@ const styles_shareTrigger = {
  * no absorba también la máquina de estados de la generación del PDF.
  */
 function useProcedureShare(procedure: MobileProcedure | undefined) {
-  const [sheetOpen, setSheetOpen] = useState(false);
+  /** El marco del botón que abrió el menú; `undefined` mientras está cerrado. */
+  const [anchor, setAnchor] = useState<MenuAnchor | undefined>(undefined);
   // `undefined` mientras se comprueba; una vez resuelto no vuelve a cambiar
   // durante la vida de la pantalla, así que una sola comprobación al montar
-  // basta — no hace falta repetirla cada vez que se abre la hoja.
+  // basta — no hace falta repetirla cada vez que se abre el menú.
   const [pdfAvailable, setPdfAvailable] = useState<boolean | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
@@ -696,7 +743,7 @@ function useProcedureShare(procedure: MobileProcedure | undefined) {
     try {
       const url = buildProcedureShareUrl(CONTENT_ORIGIN, procedure);
       await Share.share(Platform.OS === "ios" ? { url, message: displayTitle(procedure.title) } : { message: url, title: displayTitle(procedure.title) });
-      setSheetOpen(false);
+      setAnchor(undefined);
     } catch {
       setError("No se ha podido abrir el panel para compartir el enlace.");
     } finally {
@@ -712,7 +759,7 @@ function useProcedureShare(procedure: MobileProcedure | undefined) {
       const html = buildProcedureShareHtml(procedure, CONTENT_ORIGIN);
       const { uri } = await Print.printToFileAsync({ html, base64: false });
       await Sharing.shareAsync(uri, { UTI: "com.adobe.pdf", mimeType: "application/pdf", dialogTitle: displayTitle(procedure.title) });
-      setSheetOpen(false);
+      setAnchor(undefined);
     } catch {
       setError("No se ha podido generar el PDF de este procedimiento.");
     } finally {
@@ -720,59 +767,62 @@ function useProcedureShare(procedure: MobileProcedure | undefined) {
     }
   }, [procedure]);
 
-  return { sheetOpen, setSheetOpen, pdfAvailable, busy, error, setError, shareLink, sharePdf };
+  return { anchor, setAnchor, pdfAvailable, busy, error, setError, shareLink, sharePdf };
 }
 
 /**
- * La hoja de opciones de "Compartir". Mismas filas de acción que la hoja de
- * Mapa (`sheetActions`/`sheetAction` en MapaScreen.tsx): icono, texto,
- * chevron — en vez de inventar un segundo lenguaje visual para elegir entre
- * dos acciones.
+ * La barra de "buscar en este procedimiento".
+ *
+ * Aparece bajo la cabecera al pulsar la lupa, no como pantalla ni como hoja: la
+ * pregunta ("¿dónde dice esto?") sólo tiene sentido con el texto delante, y una
+ * hoja lo taparía. Los dos chevrones recorren las coincidencias dando la vuelta
+ * por los extremos, como cualquier buscador de documento.
  */
-function ProcedureShareSheet({ visible, onClose, procedureTitle, pdfAvailable, busy, onShareLink, onSharePdf }: {
-  visible: boolean;
+function ProcedureFindBar({ query, onChangeQuery, total, index, onStep, onClose }: {
+  query: string;
+  onChangeQuery: (value: string) => void;
+  total: number;
+  index: number;
+  onStep: (direction: 1 | -1) => void;
   onClose: () => void;
-  procedureTitle: string;
-  pdfAvailable: boolean | undefined;
-  busy: boolean;
-  onShareLink: () => void;
-  onSharePdf: () => void;
 }) {
   const palette = useTheme();
   const styles = useAppStyles();
+  const hasMatches = total > 0;
+  const searching = isFindableQuery(query);
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <SafeAreaView style={styles.shareSheetScreen} edges={["top", "bottom"]}>
-        <PageHeader
-          title="Compartir"
-          trailing={
-            <Pressable onPress={onClose} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar opciones para compartir" accessibilityHint={accessibilityHints.dismiss}>
-              <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
-            </Pressable>
-          }
+    <View style={styles.findBar} accessibilityLabel="Buscar en este procedimiento">
+      <View style={styles.findField}>
+        <MaterialCommunityIcons name="magnify" size={19} color={palette.inkMuted} />
+        <TextInput
+          value={query}
+          onChangeText={onChangeQuery}
+          placeholder="Buscar en este procedimiento"
+          placeholderTextColor={palette.inkMuted}
+          style={styles.findInput}
+          autoFocus
+          autoCorrect={false}
+          returnKeyType="search"
+          onSubmitEditing={() => onStep(1)}
+          clearButtonMode="while-editing"
+          accessibilityLabel="Texto a buscar en este procedimiento"
         />
-        <View style={styles.shareSheetBody}>
-          <Text style={styles.shareSheetSubject} numberOfLines={2}>{displayTitle(procedureTitle)}</Text>
-          <View style={styles.sheetActions} accessibilityLabel="Formas de compartir">
-            <Pressable onPress={onShareLink} disabled={busy} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Compartir enlace" accessibilityHint="Abre la hoja para compartir el enlace web de este procedimiento." accessibilityState={{ disabled: busy }}>
-              <MaterialCommunityIcons name="link-variant" size={19} color={palette.ink} />
-              <Text style={styles.sheetActionText}>Compartir enlace</Text>
-              <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
-            </Pressable>
-            {pdfAvailable !== false && (
-              <Pressable onPress={onSharePdf} disabled={busy} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Compartir como PDF" accessibilityHint="Genera un PDF de este procedimiento y abre la hoja para compartirlo." accessibilityState={{ busy, disabled: busy }}>
-                <MaterialCommunityIcons name="file-pdf-box" size={19} color={palette.ink} />
-                <Text style={styles.sheetActionText}>{busy ? "Generando PDF…" : "Compartir como PDF"}</Text>
-                <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
-              </Pressable>
-            )}
-          </View>
-          {pdfAvailable === false && (
-            <Text style={styles.shareSheetNotice}>Este dispositivo no puede compartir archivos: solo está disponible el enlace.</Text>
-          )}
-        </View>
-      </SafeAreaView>
-    </Modal>
+        {searching && (
+          <Text style={styles.findCounter} accessibilityLiveRegion="polite" accessibilityLabel={hasMatches ? `${formatMatchCounter(index, total)} coincidencias` : "Sin coincidencias"}>
+            {formatMatchCounter(index, total)}
+          </Text>
+        )}
+      </View>
+      <Press onPress={() => onStep(-1)} disabled={!hasMatches} style={[styles.findStep, !hasMatches && styles.findStepDisabled]} accessibilityRole="button" accessibilityLabel="Coincidencia anterior" accessibilityState={{ disabled: !hasMatches }}>
+        <MaterialCommunityIcons name="chevron-up" size={22} color={palette.ink} />
+      </Press>
+      <Press onPress={() => onStep(1)} disabled={!hasMatches} style={[styles.findStep, !hasMatches && styles.findStepDisabled]} accessibilityRole="button" accessibilityLabel="Coincidencia siguiente" accessibilityState={{ disabled: !hasMatches }}>
+        <MaterialCommunityIcons name="chevron-down" size={22} color={palette.ink} />
+      </Press>
+      <Press onPress={onClose} style={styles.findStep} accessibilityRole="button" accessibilityLabel="Cerrar la búsqueda en el procedimiento" accessibilityHint={accessibilityHints.dismiss}>
+        <Text style={styles.findClose}>Listo</Text>
+      </Press>
+    </View>
   );
 }
 
@@ -812,7 +862,95 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const [pendingHeadingKey, setPendingHeadingKey] = useState<string | null>(null);
   const [tocFrame, setTocFrame] = useState({ y: 0, height: 0 });
   const share = useProcedureShare(procedure);
-  const shareTrigger = useCallback(() => <ProcedureShareTrigger onPress={() => share.setSheetOpen(true)} busy={share.busy} />, [share]);
+
+  /**
+   * La cápsula de navegación empieza minimizada y vuelve a minimizarse en cuanto el
+   * lector sigue bajando: expandida es una barra entera sobre el texto, y el texto es
+   * a lo que se ha venido. Quién decide eso es `onProcedureScroll`, con el mismo
+   * `COLLAPSE_TRIGGER` que usa el resto de la app.
+   */
+  const [navExpanded, setNavExpanded] = useState(false);
+  /**
+   * El punto contra el que se mide la bajada, y la posición actual.
+   *
+   * El ancla se recoloca al desplegar la cápsula: sin eso, seguiría midiendo desde el
+   * principio del procedimiento y el primer evento de scroll tras desplegarla la
+   * cerraría otra vez, porque a mitad de una ficha larga ya se han bajado cientos de
+   * puntos desde el origen.
+   */
+  const navAnchor = useRef(0);
+  const readerOffset = useRef(0);
+  const expandNav = useCallback((expanded: boolean) => {
+    navAnchor.current = readerOffset.current;
+    setNavExpanded(expanded);
+  }, []);
+  /**
+   * Buscar dentro del procedimiento. El estado vive aquí, en la pantalla, porque el
+   * salto a una coincidencia necesita `scrollRef` y el mapa de desplazamientos por
+   * bloque, que también son de aquí; la lógica de qué coincide está en
+   * `procedure-find-logic.ts` y se prueba sin montar nada.
+   */
+  const [findOpen, setFindOpen] = useState(false);
+  const [findQuery, setFindQuery] = useState("");
+  const [findIndex, setFindIndex] = useState(0);
+  const blockOffsets = useRef<Record<string, number>>({});
+  const findMatches = useMemo(() => findProcedureMatches(sections, findQuery), [sections, findQuery]);
+
+  const scrollToBlock = useCallback((blockKey: string) => {
+    const offset = blockOffsets.current[blockKey] ?? sectionOffsets.current[blockKey];
+    if (typeof offset !== "number") return;
+    // El mismo encuadre que el índice de contenidos: el bloque queda justo bajo la
+    // barra, no pegado al borde superior.
+    scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.xl), animated: !reduceMotion });
+  }, [insetTop, reduceMotion]);
+
+  const stepFind = useCallback((direction: 1 | -1) => {
+    if (findMatches.length === 0) return;
+    const next = stepMatchIndex(findIndex, findMatches.length, direction);
+    setFindIndex(next);
+    scrollToBlock(findMatches[next].blockKey);
+  }, [findIndex, findMatches, scrollToBlock]);
+
+  const onChangeFindQuery = useCallback((value: string) => {
+    setFindQuery(value);
+    setFindIndex(0);
+  }, []);
+
+  // Al escribir, saltar a la primera coincidencia sin esperar a que se pulse el
+  // chevrón: teclear "adrenalina" y quedarse donde estabas no responde la pregunta.
+  useEffect(() => {
+    if (!findOpen || findMatches.length === 0) return;
+    scrollToBlock(findMatches[Math.min(findIndex, findMatches.length - 1)].blockKey);
+    // `findIndex` queda fuera a propósito: moverlo ya desplaza desde `stepFind`, y
+    // volver a hacerlo aquí encadenaría dos scrolls sobre el mismo destino.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [findMatches, findOpen, scrollToBlock]);
+
+  const closeFind = useCallback(() => {
+    setFindOpen(false);
+    setFindQuery("");
+    setFindIndex(0);
+  }, []);
+
+  const headerActions = useCallback(() => (
+    <>
+      <ReaderHeaderButton
+        icon="magnify"
+        label="Buscar en este procedimiento"
+        hint="Muestra una barra para localizar un texto dentro del procedimiento."
+        active={findOpen}
+        onPress={() => setFindOpen((open) => !open)}
+      />
+      <ReaderHeaderButton
+        icon="export-variant"
+        label="Compartir procedimiento"
+        hint={accessibilityHints.share}
+        busy={share.busy}
+        active={Boolean(share.anchor)}
+        onPress={(anchor) => share.setAnchor(anchor)}
+      />
+    </>
+  ), [findOpen, share]);
   useEffect(() => {
     if (procedure && canRecordRecent(content, routeKey)) remember(routeKey);
   }, [content, procedure, remember, routeKey]);
@@ -878,6 +1016,15 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
 
   const onProcedureScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
+    // Seguir bajando vuelve a minimizar la cápsula de navegación. Se decide aquí, en el
+    // manejador, y no en un efecto que observe `chrome.collapsed`: un `setState` dentro
+    // de un efecto encadena un render extra por cada evento de scroll, y el umbral es
+    // el mismo `COLLAPSE_TRIGGER` que ya usa el resto de la app.
+    readerOffset.current = offsetY;
+    if (offsetY - navAnchor.current > COLLAPSE_TRIGGER) setNavExpanded(false);
+    // Subir arrastra el ancla consigo, para que una bajada posterior se mida desde donde
+    // el lector se paró y no desde el principio.
+    if (offsetY < navAnchor.current) navAnchor.current = offsetY;
     scrollY.setValue(offsetY);
     readingPositions.set(routeKey, offsetY);
     chrome.onScroll(event);
@@ -908,7 +1055,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     headerTitle: reduceMotion ? undefined : headerTitle,
     // Compartir sí cabe aquí: a diferencia del favorito no lleva palabra
     // propia junto al icono, así que no compite con el título grande.
-    trailing: procedure ? shareTrigger : undefined,
+    trailing: procedure ? headerActions : undefined,
   });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const outgoingIds = [...new Set(procedure.relations.filter((relation) => relation.direction === "outgoing" && relation.kind !== "suggested").map((relation) => relation.id))].filter((id) => id !== procedure.id);
@@ -946,7 +1093,18 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     navigation.push("Anexo", { attachmentId: attachment.id });
   };
 
-  return <SafeAreaView style={styles.screen} edges={[]}><Animated.ScrollView
+  return <SafeAreaView style={styles.screen} edges={[]}>
+  {findOpen && (
+    <ProcedureFindBar
+      query={findQuery}
+      onChangeQuery={onChangeFindQuery}
+      total={findMatches.length}
+      index={findIndex}
+      onStep={stepFind}
+      onClose={closeFind}
+    />
+  )}
+  <Animated.ScrollView
     ref={scrollRef}
     contentContainerStyle={styles.detailContent}
     contentInsetAdjustmentBehavior="automatic"
@@ -975,6 +1133,9 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       sections={sections}
       onContainerLayout={(offset) => { markdownOrigin.current = offset; }}
       onSectionLayout={(id, offset) => { sectionOffsets.current[id] = markdownOrigin.current + offset; }}
+      onBlockLayout={(key, sectionKey, offset) => { blockOffsets.current[key] = (sectionOffsets.current[sectionKey] ?? markdownOrigin.current) + offset; }}
+      highlightQuery={findOpen ? findQuery : undefined}
+      activeBlockKey={findOpen ? findMatches[findIndex]?.blockKey : undefined}
       renderImage={(src, alt) => {
         const attachment = procedure.attachments.find((candidate) => candidate.localPath === src);
         if (!attachment) return null;
@@ -990,23 +1151,37 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     {(documentAttachments.length > 0 || attachmentError) && <><SectionHeading title="Anexos" />{attachmentError && <View style={styles.sourceNotice} accessibilityLiveRegion="polite"><MaterialCommunityIcons name="alert-circle-outline" size={19} color={palette.danger} /><View style={styles.resourceCopy}><Text style={styles.sourceNoticeText}>{attachmentError}</Text>{attachmentRecovery && <Pressable onPress={() => void Linking.openURL(attachmentRecovery.sourceUrl)} style={styles.minimumTarget} accessibilityRole="link" accessibilityLabel="Abrir fuente oficial del anexo" accessibilityHint={accessibilityHints.openMap}><Text style={styles.sourceRecoveryLink}>Abrir fuente oficial</Text></Pressable>}</View></View>}<View style={styles.cardList} accessibilityRole="list">{documentAttachments.map((attachment) => { const record = attachmentRecords[attachment.id]; const local = isLocallyAvailable(record, attachment); return <Pressable key={attachment.id} onPress={() => openAttachment(attachment)} style={styles.attachmentRow} accessibilityRole="button" accessibilityLabel={`Abrir anexo ${attachment.filename}`} accessibilityHint="Se abre dentro de la app."><MaterialCommunityIcons name="file-pdf-box" size={23} color={palette.primary} /><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{attachment.filename}</Text><Text style={styles.resourceMeta}>{attachmentKindLabel(attachment.kind)}{local ? "" : " · se descarga al abrirlo"}</Text></View><MaterialCommunityIcons name="chevron-right" size={18} color={palette.inkMuted} /></Pressable>; })}</View></>}
     <Text style={styles.detailDisclaimer}>Consulta de referencia. Confirma siempre la versión operativa vigente.</Text>
   </Animated.ScrollView>
-  {tocPinned && headings.length > 0 && <Press onPress={() => { setTocExpanded(true); const target = tocFrame.y - insetTop - spacing.md; scrollRef.current?.scrollTo({ y: Math.max(0, target), animated: !reduceMotion }); }} style={styles.pinnedContents} accessibilityRole="button" accessibilityLabel={`Contenido, ${headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "sección actual"}`}><Text style={styles.pinnedContentsText}>{headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name="format-list-bulleted" size={17} color={palette.primary} /></Press>}
-  {/* No tab bar under a pushed screen, so the control sits lower than it does on
-      the list destinations — clear of the home indicator and nothing else. */}
+  {/* La píldora de contenido no se dibuja mientras la barra de buscar está abierta:
+      va en `position: absolute; top: 0` dentro de este mismo `SafeAreaView`, así que
+      se pintaba justo encima de la barra y la tapaba entera. Y mientras se busca, el
+      índice de secciones no es la herramienta que se está usando. */}
+  {!findOpen && tocPinned && headings.length > 0 && <Press onPress={() => { setTocExpanded(true); const target = tocFrame.y - insetTop - spacing.md; scrollRef.current?.scrollTo({ y: Math.max(0, target), animated: !reduceMotion }); }} style={styles.pinnedContents} accessibilityRole="button" accessibilityLabel={`Contenido, ${headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "sección actual"}`}><Text style={styles.pinnedContentsText}>{headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name="format-list-bulleted" size={17} color={palette.primary} /></Press>}
+  {/* Los dos controles del lector se apilan en la esquina inicial: la cápsula de
+      navegación abajo y "volver arriba" justo encima. `readerControlsOverlap()`
+      convierte esa relación en algo que una prueba puede afirmar — que es como se
+      detectó que el botón de volver arriba se había puesto sobre el de buscar. */}
   <BackToTop
     visible={chrome.showBackToTop}
     onPress={() => { scrollRef.current?.scrollTo({ y: 0, animated: !reduceMotion }); chrome.reset(); }}
     label="Volver al principio del procedimiento"
-    bottom={spacing.xl}
+    bottom={READER_BACK_TO_TOP_PLACEMENT.bottom}
   />
-  <ProcedureShareSheet
-    visible={share.sheetOpen}
-    onClose={() => share.setSheetOpen(false)}
-    procedureTitle={procedure.title}
-    pdfAvailable={share.pdfAvailable}
-    busy={share.busy}
-    onShareLink={() => void share.shareLink()}
-    onSharePdf={() => void share.sharePdf()}
+  <ReaderNavBar
+    expanded={navExpanded}
+    onToggle={expandNav}
+    onNavigate={(screen) => { expandNav(false); navigation.navigate("Tabs", { screen } as never); }}
+    palette={palette}
+  />
+  <Menu
+    visible={Boolean(share.anchor)}
+    anchor={share.anchor}
+    onClose={() => share.setAnchor(undefined)}
+    accessibilityLabel={`Compartir ${displayTitle(procedure.title)}`}
+    notice={share.pdfAvailable === false ? "Este dispositivo no puede compartir archivos: solo está disponible el enlace." : undefined}
+    items={[
+      { key: "link", label: "Compartir enlace", icon: "link-variant", onPress: () => void share.shareLink(), disabled: share.busy, accessibilityHint: "Abre la hoja para compartir el enlace web de este procedimiento." },
+      ...(share.pdfAvailable === false ? [] : [{ key: "pdf", label: share.busy ? "Generando PDF…" : "Compartir como PDF", icon: "file-pdf-box" as const, onPress: () => void share.sharePdf(), disabled: share.busy, accessibilityHint: "Genera un PDF de este procedimiento y abre la hoja para compartirlo." }]),
+    ]}
   />
   {share.error && <Toast message={share.error} tone="error" onDismiss={() => share.setError(undefined)} />}
   </SafeAreaView>;
@@ -1035,9 +1210,42 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const onToggleFavorite = useCallback(() => toggleFavorite(routeKey), [toggleFavorite, routeKey]);
   useDetailHeader({ navigation, title: String(drug?.name ?? "Fármaco"), favorite, onToggleFavorite });
   if (!drug) return <MissingResource title="Fármaco no disponible" />;
-  const fields = [["Función", "funcion"], ["Indicación", "indication"], ["Presentación publicada", "presentation"], ["Vía", "route"], ["Dosis publicada", "dose"], ["Contraindicaciones", "contraindications"], ["Efectos secundarios", "efectos_secundarios"], ["Notas", "notes"]] as const;
+  const routes = parseDrugRoutes(drug.route);
+  const doseLines = parseDoseLines(drug.dose);
   const relatedIds = relatedProcedureIdsForDrug(content, drug).slice(0, 12);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{[drug.category, drug.subcategory].filter(Boolean).join(" · ")}</Text>{fields.map(([label, key]) => { const value = drug[key]; const display = Array.isArray(value) ? value.join(" · ") : value; return typeof display === "string" && display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null; })}{relatedIds.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedIds.map((id) => { const procedure = findProcedure(content, id); return procedure ? <ProcedureRow key={id} procedure={procedure} onPress={() => navigation.push("Procedure", { id })} /> : null; })}</View></>}</ScrollView></SafeAreaView>;
+  // Orden: qué es → por dónde → cuánto → todo lo demás. Antes eran ocho bloques
+  // idénticos en los que "Vía" y "Dosis publicada" pesaban lo mismo que "Notas".
+  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+    <View style={styles.drugTaxonomy}>
+      {[drug.category, drug.subcategory].filter((value): value is string => typeof value === "string" && value.length > 0).map((value) => (
+        <Badge key={value} label={value} />
+      ))}
+    </View>
+    {routes.length > 0 && (
+      <View style={styles.drugRoutes} accessibilityLabel={`Vías de administración: ${routes.join(", ")}`}>
+        <Text style={styles.infoLabel}>Vía</Text>
+        <View style={styles.drugRouteChips}>
+          {routes.map((route) => <Badge key={route} label={route} tone="accent" />)}
+        </View>
+      </View>
+    )}
+    {doseLines.length > 0 && (
+      <View style={styles.doseCard} accessibilityLabel={`Dosis. ${doseLines.map((line) => line.text).join(". ")}`}>
+        <Text style={styles.doseLabel}>Dosis publicada</Text>
+        {/* Una línea por pauta. El campo del paquete es texto plano con guiones
+            dentro, y pintado de una pieza las cinco pautas de un antídoto salen como
+            un párrafo corrido en el que hay que buscar el guion con el dedo. */}
+        {doseLines.map((line, index) => line.bullet
+          ? <View key={index} style={styles.doseBulletRow}><Text style={styles.doseBulletDot}>•</Text><Text style={styles.doseValue}>{line.text}</Text></View>
+          : <Text key={index} style={styles.doseValue}>{line.text}</Text>)}
+      </View>
+    )}
+    {DRUG_DETAIL_FIELDS.map(([label, key]) => {
+      const display = drugFieldText(drug[key]);
+      return display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null;
+    })}
+    {relatedIds.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedIds.map((id) => { const procedure = findProcedure(content, id); return procedure ? <ProcedureRow key={id} procedure={procedure} onPress={() => navigation.push("Procedure", { id })} /> : null; })}</View></>}
+  </ScrollView></SafeAreaView>;
 }
 
 function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Vademecum">) {
@@ -1096,6 +1304,28 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
 // VademecumView does, with the dose calculator reachable through it via
 // DrugScreen (see T5d).
 
+/**
+ * Novedades de la app. `Historial` cuenta lo que cambia en el manual; esto, lo que
+ * cambia en la aplicación. Hoy no hay nada que contar y lo dice, en vez de inventarse
+ * una entrada de "versión inicial" que enseñaría que esta pantalla no sirve.
+ */
+function ChangelogScreen({ navigation }: NativeStackScreenProps<RootStackParamList, "Changelog">) {
+  const styles = useAppStyles();
+  useDetailHeader({ navigation, title: "Novedades" });
+  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+    {APP_CHANGELOG.length === 0
+      ? <EmptyState title="Sin novedades todavía" detail={`Estás en la versión ${Constants.expoConfig?.version ?? "1.0.0"}. Aquí aparecerá lo que cambie en la aplicación a partir de la siguiente.`} />
+      : APP_CHANGELOG.map((release) => (
+        <View key={release.version} style={styles.infoBlock}>
+          <Text style={styles.infoLabel}>{release.version} · {release.date}</Text>
+          {release.changes.map((change, index) => (
+            <View key={index} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={styles.infoValue}>{change}</Text></View>
+          ))}
+        </View>
+      ))}
+  </ScrollView></SafeAreaView>;
+}
+
 function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Abbreviations">) {
   const palette = useTheme();
   const styles = useAppStyles();
@@ -1110,52 +1340,41 @@ function attachmentKindLabel(kind: MobileAttachment["kind"]): string {
   return kind === "pdf" ? "PDF" : kind === "image" ? "Imagen" : "Documento";
 }
 
-function readableMarkdownLine(line: string): string {
-  return line
-    .replace(/^\s*(?:[-*•]|\d+[.)])\s+/, "")
-    .replace(/^\s*[*_~`]+|[*_~`]+\s*$/g, "")
-    .replace(/<DrugLink\s+name="([^"]+)"\s*\/>/g, "$1")
-    .replace(/<[^>]+>/g, "")
-    // La imagen va antes que el enlace: `![alt](x)` con el patron de enlace deja
-    // una admiracion suelta, y sin texto alternativo ni siquiera casaba y se leia
-    // la linea entera de markdown, ruta incluida.
-    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/\*\*/g, "")
-    .replace(/__/g, "")
-    .replace(/>>\S+/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function readableMarkdownCell(cell: string): string {
-  return cell
-    .replace(/<br\s*\/?\s*>/gi, "\n")
-    .split("\n")
-    .map((line) => {
-      const bullet = /^\s*(?:[-*•])\s+/.test(line);
-      const text = readableMarkdownLine(line);
-      return bullet && text ? `• ${text}` : text;
-    })
-    .filter(Boolean)
-    .join("\n");
-}
-
-function MarkdownContent({ sections, onContainerLayout, onSectionLayout, renderImage }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void; renderImage?: (src: string, alt: string) => React.ReactNode }) {
+function MarkdownContent({ sections, onContainerLayout, onSectionLayout, onBlockLayout, renderImage, highlightQuery, activeBlockKey }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void; onBlockLayout?: (key: string, sectionKey: string, offset: number) => void; renderImage?: (src: string, alt: string) => React.ReactNode; highlightQuery?: string; activeBlockKey?: string }) {
   const styles = useAppStyles();
   // Va aqui y no en el stylesheet porque depende de `fontScale`, y `useThemedStyles`
   // memoiza por paleta: un cambio de tamaño de letra no lo regeneraria.
   const { fontScale } = useWindowDimensions();
   const bodyText = [styles.markdownText, { textAlign: procedureTextAlign(fontScale) }];
-  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{section.heading.text}</Text>}{splitMarkdownBlocks(section.lines).map((block) => {
-    if (block.kind === "table") return <MarkdownTable key={`${section.key}-table-${block.startIndex}`} table={block.table} formatCell={readableMarkdownCell} />;
+  /**
+   * El desplazamiento de cada bloque, en coordenadas de la sección que lo contiene.
+   * El lector lo suma al de la sección y al del contenedor para saltar a una
+   * coincidencia. Sin esto sólo se podía saltar a un encabezado, que es justo lo que
+   * el índice de contenidos ya hacía.
+   */
+  const reportBlock = (sectionKey: string, blockKey: string) => (event: LayoutChangeEvent) => {
+    onBlockLayout?.(blockKey, sectionKey, event.nativeEvent.layout.y);
+  };
+  // Un tramo de texto con las coincidencias marcadas. Sin búsqueda activa devuelve la
+  // cadena tal cual, para no envolver cada párrafo del manual en `<Text>` anidados.
+  const marked = (text: string) => {
+    if (!highlightQuery || !isFindableQuery(highlightQuery)) return text;
+    return highlightSegments(text, highlightQuery).map((segment, index) =>
+      segment.match
+        ? <Text key={index} style={styles.markdownHighlight}>{segment.text}</Text>
+        : <Text key={index}>{segment.text}</Text>);
+  };
+  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{marked(section.heading.text)}</Text>}{splitMarkdownBlocks(section.lines).map((block) => {
+    if (block.kind === "table") { const key = `${section.key}-table-${block.startIndex}`; return <View key={key} onLayout={reportBlock(section.key, key)}><MarkdownTable table={block.table} formatCell={readableMarkdownCell} /></View>; }
     if (block.kind === "image") return <React.Fragment key={`${section.key}-img-${block.index}`}>{renderImage?.(block.src, block.alt)}</React.Fragment>;
     if (block.row.kind === "skip") return null;
     const text = readableMarkdownLine(block.line.trim());
     if (!text) return null;
-    if (block.row.kind === "bullet") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.bulletDot}>•</Text><Text style={bodyText}>{text}</Text></View>;
-    if (block.row.kind === "ordered") return <View key={`${section.key}-${block.index}`} style={styles.markdownBullet}><Text style={styles.orderedMarker}>{block.row.ordinal}.</Text><Text style={bodyText}>{text}</Text></View>;
-    return <Text key={`${section.key}-${block.index}`} style={bodyText}>{text}</Text>;
+    const key = `${section.key}-${block.index}`;
+    const active = activeBlockKey === key;
+    if (block.row.kind === "bullet") return <View key={key} onLayout={reportBlock(section.key, key)} style={[styles.markdownBullet, active && styles.markdownBlockActive]}><Text style={styles.bulletDot}>•</Text><Text style={bodyText}>{marked(text)}</Text></View>;
+    if (block.row.kind === "ordered") return <View key={key} onLayout={reportBlock(section.key, key)} style={[styles.markdownBullet, active && styles.markdownBlockActive]}><Text style={styles.orderedMarker}>{block.row.ordinal}.</Text><Text style={bodyText}>{marked(text)}</Text></View>;
+    return <View key={key} onLayout={reportBlock(section.key, key)} style={active ? styles.markdownBlockActive : undefined}><Text style={bodyText}>{marked(text)}</Text></View>;
   })}</View>)}</View>;
 }
 
@@ -1205,7 +1424,15 @@ function FirstUseDisclosure({ onContinue }: { onContinue: () => Promise<void> })
  * Codigos y Vademecum no tienen variante de contorno en el set, asi que reciben el
  * mismo nombre en los dos estados y solo cambian de color.
  */
-function TabIcon({ name, activeName, color, focused }: { name: keyof typeof MaterialCommunityIcons.glyphMap; activeName?: keyof typeof MaterialCommunityIcons.glyphMap; color: string; focused?: boolean }) {
+/**
+ * `size` viene de `GlassTabBar`, que lo pasa a `options.tabBarIcon`.
+ *
+ * Estaba fijado a 23 en los cuatro sitios de este componente y el argumento se
+ * ignoraba, así que subir el icono de la barra no lo subía: la cápsula crecía y el
+ * glifo se quedaba igual, con más aire alrededor. `TAB_ICON_SIZE` es el valor por
+ * defecto para el único otro sitio que lo dibuja, la cápsula del lector.
+ */
+function TabIcon({ name, activeName, color, focused, size = TAB_ICON_SIZE }: { name: keyof typeof MaterialCommunityIcons.glyphMap; activeName?: keyof typeof MaterialCommunityIcons.glyphMap; color: string; focused?: boolean; size?: number }) {
   const reduceMotion = useReduceMotion();
   const filled = activeName ?? name;
   const [progress] = useState(() => new Animated.Value(focused ? 1 : 0));
@@ -1215,22 +1442,22 @@ function TabIcon({ name, activeName, color, focused }: { name: keyof typeof Mate
     Animated.timing(progress, { toValue: focused ? 1 : 0, duration: motion.instant, useNativeDriver: true }).start();
   }, [focused, progress, reduceMotion]);
 
-  if (filled === name) return <MaterialCommunityIcons name={name} size={23} color={color} />;
+  if (filled === name) return <MaterialCommunityIcons name={name} size={size} color={color} />;
 
   return (
-    <View style={styles_tabIcon.stack}>
+    <View style={[styles_tabIcon.stack, { width: size, height: size }]}>
       <Animated.View style={{ opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) }}>
-        <MaterialCommunityIcons name={name} size={23} color={color} />
+        <MaterialCommunityIcons name={name} size={size} color={color} />
       </Animated.View>
       <Animated.View style={[styles_tabIcon.overlay, { opacity: progress }]}>
-        <MaterialCommunityIcons name={filled} size={23} color={color} />
+        <MaterialCommunityIcons name={filled} size={size} color={color} />
       </Animated.View>
     </View>
   );
 }
 
 const styles_tabIcon = StyleSheet.create({
-  stack: { width: 23, height: 23 },
+  stack: { alignItems: "center", justifyContent: "center" },
   overlay: { position: "absolute", top: 0, left: 0 },
 });
 
@@ -1244,11 +1471,11 @@ function MainTabs() {
     tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
     screenOptions={{ headerShown: false }}
   >
-    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} /> }} />
-    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused }) => <TabIcon name="radio-handheld" color={color} focused={focused} /> }} />
-    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused }) => <TabIcon name="pill" color={color} focused={focused} /> }} />
-    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} /> }} />
-    <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color }) => <TabIcon name="magnify" color={color} /> }} />
+    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused, size }) => <TabIcon name="pill" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused, size }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color, size }) => <TabIcon name="magnify" color={color} size={size} /> }} />
   </Tabs.Navigator>;
 }
 
@@ -1275,7 +1502,7 @@ function AppNavigation() {
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
   } as const;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Changelog" component={ChangelogScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
 }
 
 function AppGate() {
@@ -1308,6 +1535,13 @@ export default function App() {
 }
 
 
+/**
+ * `createStyles` cierra con `as const`, que congela también los arrays anidados; un
+ * `fontVariant: ["tabular-nums"]` escrito ahí dentro sale como tupla `readonly` y RN
+ * la rechaza. Declararlo fuera con su tipo lo deja como referencia y no como literal.
+ */
+const TABULAR_NUMS: TextStyle["fontVariant"] = ["tabular-nums"];
+
 function createStyles(palette: AdaptivePalette) {
   return {
   appSurface: { flex: 1 },
@@ -1316,12 +1550,12 @@ function createStyles(palette: AdaptivePalette) {
   scrollContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 960 },
   listContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, gap: 8, alignSelf: "center", width: "100%", maxWidth: 1040 },
   // Keep the reader centered on tablets and clear of the home indicator/floating controls.
-  detailContent: { padding: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 720 },
-  // El mismo margen lateral que `listContent` de Inicio (spacing.lg). Sin el, el
-  // logo y la rueda quedaban pegados al borde de la pantalla mientras cada fila de
-  // debajo empezaba 16pt mas adentro, y la cabecera no alineaba con nada.
-  brandHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: palette.paper },
-  brandLockup: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  // El margen lateral es `spacing.xl`, no `spacing.lg` como en las listas: el cuerpo del
+  // procedimiento va justificado (`procedureTextAlign`), y un texto justificado a 16pt del
+  // borde se lee pegado aunque mida lo mismo que una fila de lista alineada a la izquierda.
+  detailContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 720 },
+  // `brandHeader`/`brandLockup`/`brandName` ya no existen: la cabecera de Inicio es
+  // `PageHeader`, la misma que las demás pestañas, y ya no lleva el icono de la app.
   // Los radios del logo no salen de la escala a proposito: reproducen el squircle
   // del propio icono (rx 224 sobre un lienzo de 1024, es decir ~0,22 del lado), no
   // una esquina redondeada de superficie. circle() tampoco vale, porque un circulo
@@ -1333,7 +1567,6 @@ function createStyles(palette: AdaptivePalette) {
   logoSmallBar: { width: 6, height: 24 }, logoSmallHorizontal: { width: 24, height: 6 },
   logoArrow: { position: "absolute", width: 36, height: 36, backgroundColor: palette.ink, transform: [{ rotate: "45deg" }], left: 20, top: 16, borderRadius: 4 },
   logoArrowSmall: { width: 16, height: 16, left: 8, top: 7, borderRadius: 2 },
-  brandName: { flexShrink: 1, color: palette.ink, ...typography.title3, fontWeight: "700" },
   iconButton: { ...circle(44), alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },
   searchBar: { minHeight: 58, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
   searchInput: { flex: 1, color: palette.ink, fontSize: 14, paddingVertical: 0 }, searchPlaceholder: { flex: 1, color: palette.inkMuted, fontSize: 14 },
@@ -1347,12 +1580,25 @@ function createStyles(palette: AdaptivePalette) {
   pressed: { opacity: 0.72 },
   progressTrack: { height: 4, borderRadius: radii.pill, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
   disclaimer: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginVertical: spacing.md },
-  searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, searchScreenHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md }, pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8 }, searchPadding: { paddingHorizontal: spacing.lg }, filterScroller: { flexGrow: 0, marginTop: spacing.md, marginBottom: spacing.md }, filterScrollerContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, gap: spacing.sm }, detailSearch: { marginTop: spacing.lg },
+  searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, searchScreenHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md }, pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8 }, searchPadding: { paddingHorizontal: spacing.lg }, // Altura explicita, no `flexGrow: 0` a secas. Cada `Chip` va envuelto en `Press`, que
+  // le impone `minHeight: 44` *despues* del estilo del que llama (`MIN_TARGET` va al
+  // final del array en `Press.tsx`), asi que la pildora mide 44 aunque su estilo diga
+  // 36. Con solo `spacing.xs` arriba y abajo, el scroller horizontal se quedaba con la
+  // altura de su primer layout y recortaba los ultimos puntos de la pildora por abajo,
+  // mas aun al subir el cuerpo de letra.
+  filterScroller: { flexGrow: 0, flexShrink: 0, height: 44 + spacing.sm * 2, marginTop: spacing.sm, marginBottom: spacing.sm }, filterScrollerContent: { alignItems: "center", paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, gap: spacing.sm }, detailSearch: { marginTop: spacing.lg },
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }, filterChip: { minHeight: 44, justifyContent: "center", paddingVertical: 9, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted }, filterChipActive: { backgroundColor: palette.ink }, filterText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" }, filterTextActive: { color: palette.paper },
   emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm }, emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 16 }, emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 13, lineHeight: 18 },
   mapLegend: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, mapLegendText: { color: palette.inkMuted, fontSize: 12 }, locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabled: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surfaceMuted, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabledTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" }, onlineMapDisabledCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, locationActions: { gap: spacing.sm, marginBottom: spacing.md }, locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg }, locationActionText: { color: palette.white, fontSize: 13, fontWeight: "800" }, nearestToggle: { flexDirection: "row", gap: spacing.sm }, nearestChoice: { flex: 1, minHeight: 42, borderRadius: radii.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm }, nearestChoiceActive: { backgroundColor: palette.primaryWash, borderWidth: 1, borderColor: palette.primary }, nearestChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, nearestChoiceTextActive: { color: palette.primaryDark }, locationFallback: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }, locationFallbackText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 }, locationTypeBadge: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.sm, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, marginBottom: spacing.sm }, locationTypeBadgeText: { fontSize: 12, fontWeight: "800" }, accessibleEquivalent: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }, accessibleEquivalentTitle: { color: palette.ink, fontSize: 14, fontWeight: "800" }, accessibleEquivalentCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, onlineMapAttributionText: { fontSize: 10, color: "#13233D" }, retryLinkText: { color: palette.ink, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: 4 },
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: palette.surfaceMuted, overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: palette.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: palette.paper, transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: palette.paper, transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: palette.paper, transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPinRed: { backgroundColor: palette.primary }, mapPinNavy: { backgroundColor: palette.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: palette.ink, fontWeight: "900" }, mapNote: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl }, locationIconBase: { backgroundColor: palette.amberWash }, locationAddress: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: 2 }, locationDistance: { color: palette.green, fontSize: 11, fontWeight: "800", lineHeight: 16, marginTop: 2 }, locationFreshness: { color: palette.inkMuted, fontSize: 10, lineHeight: 14, marginTop: 2 },
   detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, headerHandoffTitle: { color: palette.ink, fontSize: 17, fontWeight: "600", letterSpacing: -0.4, maxWidth: 240, textAlign: "center" }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl, overflow: "hidden" }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08 }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, orderedMarker: { color: palette.primary, fontSize: 15, lineHeight: 23, fontWeight: "800" , minWidth: 22 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, contentsHeader: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, contentsRowActive: { backgroundColor: palette.surface }, contentsAccent: { width: 3, height: 24, borderRadius: radii.pill, backgroundColor: "transparent", marginRight: spacing.sm }, contentsAccentActive: { backgroundColor: palette.primary }, pinnedContents: { position: "absolute", top: 0, left: spacing.lg, right: spacing.lg, minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.pill }, pinnedContentsText: { color: palette.ink, fontSize: 12, fontWeight: "800" },
+  // La coincidencia se marca con el lavado ámbar, no con el azul de identidad: el azul
+  // ya significa "esto se puede pulsar" en todo el lector, y un párrafo resaltado no
+  // lleva a ninguna parte.
+  markdownHighlight: { backgroundColor: palette.amberWash, color: palette.ink, fontWeight: "600" },
+  // La coincidencia actual, además, lleva la superficie detrás para distinguirla de las
+  // otras once que también están marcadas en la pantalla.
+  markdownBlockActive: { backgroundColor: palette.surface, borderRadius: radii.sm, marginHorizontal: -spacing.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
   favoriteAction: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.xs + 2, minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, marginTop: spacing.md },
   favoriteActionOn: { backgroundColor: palette.primaryWash },
   favoriteActionText: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
@@ -1366,19 +1612,46 @@ function createStyles(palette: AdaptivePalette) {
   figureCaption: { ...typography.caption, color: palette.inkMuted, marginTop: spacing.xs },
   figureZoom: { position: "absolute", top: spacing.sm, right: spacing.sm, ...circle(28), alignItems: "center", justifyContent: "center", backgroundColor: palette.ink, opacity: 0.72 },
   detailDisclaimer: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: spacing.xl, marginBottom: spacing.md },
+  // ─── Ficha de fármaco ──────────────────────────────────────────────────────
+  // Taxonomía en chapas en vez de una línea gris de doce puntos: "Cardiovascular ·
+  // Antiagregantes" era la primera cosa de la pantalla y la más difícil de leer.
+  drugTaxonomy: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.lg },
+  drugRoutes: { marginBottom: spacing.lg, gap: spacing.sm },
+  drugRouteChips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  // La dosis, en su propia tarjeta y a cuerpo de lectura. Es lo que se consulta con el
+  // paciente delante; salía en el mismo bloque plano que "Notas".
+  doseCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.lg, gap: spacing.sm },
+  doseLabel: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
+  doseValue: { flex: 1, ...typography.body, color: palette.ink },
+  doseBulletRow: { flexDirection: "row", gap: spacing.sm },
+  doseBulletDot: { color: palette.primary, ...typography.body, lineHeight: typography.body.lineHeight },
   infoBlock: { borderTopWidth: 1, borderTopColor: palette.line, paddingVertical: spacing.md }, infoLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: 4 }, infoValue: { color: palette.ink, fontSize: 15, lineHeight: 22 }, codeRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, codeValue: { minWidth: 55, color: palette.primary, fontSize: 15, fontWeight: "900" }, codeResultCode: { backgroundColor: palette.amberWash }, abbreviationResultCode: { backgroundColor: palette.greenWash }, abbreviationRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, abbreviation: { width: 70, color: palette.primary, fontWeight: "900", fontSize: 13 },
   modal: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: palette.ink, fontSize: 24, fontWeight: "800" }, modalClose: { color: palette.primary, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: palette.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderColor: palette.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, recoveryActions: { backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.sm }, recoveryButtons: { flexDirection: "row", gap: spacing.sm }, recoveryButton: { marginTop: spacing.sm, backgroundColor: palette.ink, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonText: { color: palette.paper, fontSize: 12, fontWeight: "800" }, recoveryButtonSecondary: { marginTop: spacing.sm, borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonSecondaryText: { color: palette.ink, fontSize: 12, fontWeight: "800" }, primaryButton: { backgroundColor: palette.primaryAction, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, secondaryButton: { borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.sm }, secondaryButtonText: { color: palette.ink, fontWeight: "800", fontSize: 14 }, locationDetailBlock: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.lg }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: palette.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceControlStacked: { flexDirection: "column" }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: palette.ink }, appearanceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: palette.paper }, infoPanel: { backgroundColor: palette.dangerWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: palette.dangerDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: palette.dangerDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: palette.line }, linkText: { color: palette.primary, fontSize: 13, fontWeight: "800" }, legalText: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" },
   launchScreen: { flex: 1, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" }, launchTitle: { color: palette.white, ...typography.title1, textAlign: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl }, disclosureScreen: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: palette.primary, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: palette.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureBody: { color: palette.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
   // La hoja de "Compartir" del lector. Mismas filas de acción que la hoja de
   // Mapa (sheetActions/sheetAction en MapaScreen.tsx) — un único lenguaje
   // para elegir entre varias acciones, no uno por pantalla.
-  shareSheetScreen: { flex: 1, backgroundColor: palette.paper },
-  shareSheetBody: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: spacing.md },
-  shareSheetSubject: { color: palette.inkMuted, fontSize: 13, lineHeight: 18 },
-  shareSheetNotice: { color: palette.inkMuted, fontSize: 12, lineHeight: 17 },
-  sheetActions: { gap: spacing.sm },
-  sheetAction: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.surface, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md },
-  sheetActionText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
+  //
+  // Compartir ya no usa ninguno de los dos: dos acciones caben en un desplegable
+  // colgado del icono (`components/Menu.tsx`) y no necesitan una hoja a pantalla
+  // completa con su propia cabecera.
+
+  // ─── Buscar dentro del procedimiento ───────────────────────────────────────
+  // La barra se apoya en la cabecera nativa, con la que comparte fondo, y separa
+  // por una línea fina en lugar de por una sombra: es una extensión de la barra,
+  // no una tarjeta flotando sobre el texto.
+  findBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: palette.paper, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.line },
+  findField: { flex: 1, minHeight: 44, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, borderRadius: radii.md, backgroundColor: palette.surfaceMuted },
+  findInput: { flex: 1, color: palette.ink, ...typography.callout, paddingVertical: 0 },
+  // Cifras tabulares: el contador cambia en cada pulsación y sin ellas los chevrones
+  // se desplazan lateralmente al pasar de "9 de 12" a "10 de 12".
+  findCounter: { ...typography.footnote, color: palette.inkMuted, fontVariant: TABULAR_NUMS },
+  findStep: { alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.xs },
+  findStepDisabled: { opacity: 0.35 },
+  findClose: { ...typography.callout, fontWeight: "600", color: palette.primary },
+  // `sheetActions`/`sheetAction`/`sheetActionText` se han ido con la hoja de compartir:
+  // sus dos acciones son ahora un desplegable (`components/Menu.tsx`). La hoja del mapa
+  // conserva las suyas, declaradas en `MapaScreen.tsx`.
   // The default JS-drawn tab bar styles (tabBar/tabBarTablet/tabLabel/…) were removed here:
   // MainTabs now supplies a custom `tabBar` (GlassTabBar, src/nav-shell.tsx) so the system
   // can render real Liquid Glass, which `@react-navigation/bottom-tabs` can never draw itself.

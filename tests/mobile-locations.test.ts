@@ -25,6 +25,7 @@ import {
   type LocationRecord,
 } from "../apps/mobile/src/location-logic.ts";
 import { mapPinsFromLocations } from "../apps/mobile/src/online-map-logic.ts";
+import { nearestLocationOfKind } from "../apps/mobile/src/mapa-logic.ts";
 import { adaptivePalette } from "../packages/design-tokens/src/index.ts";
 
 const appRoot = path.join(process.cwd(), "apps/mobile");
@@ -255,4 +256,66 @@ test("los datos reales traen numero de distrito en Madrid y no fuera", () => {
   }
   const sinNumero = hospitals.filter((hospital) => hospital.districtNumber === undefined);
   assert.deepEqual(sinNumero.map((hospital) => hospital.district), ["Getafe"], "solo Getafe queda sin numero: no es distrito de Madrid");
+});
+
+test("hospital mas cercano solo propone destino publico de Madrid con urgencias generales", () => {
+  const locations = locationRecords(snapshot.content);
+  // Un punto junto al Nino Jesus: es el hospital fisicamente mas proximo y es publico,
+  // pero es pediatrico, asi que no puede ser el destino que propone el boton.
+  const ninoJesus = locations.find((location) => location.id === "HNJ");
+  assert.ok(ninoJesus);
+  const nearNinoJesus = nearestLocationOfKind(locations, { lat: ninoJesus.lat, lng: ninoJesus.lng }, "hospital");
+  assert.ok(nearNinoJesus);
+  assert.notEqual(nearNinoJesus.id, "HNJ");
+
+  // Lo mismo con Getafe, que ademas esta fuera del municipio.
+  const getafe = locations.find((location) => location.id === "HGE");
+  assert.ok(getafe);
+  const nearGetafe = nearestLocationOfKind(locations, { lat: getafe.lat, lng: getafe.lng }, "hospital");
+  assert.ok(nearGetafe);
+  assert.notEqual(nearGetafe.id, "HGE");
+
+  // Y con una clinica privada.
+  const privateHospital = locations.find((location) => location.kind === "hospital" && location.hospitalOwnership === "private");
+  assert.ok(privateHospital);
+  const nearPrivate = nearestLocationOfKind(locations, { lat: privateHospital.lat, lng: privateHospital.lng }, "hospital");
+  assert.ok(nearPrivate);
+  assert.equal(nearPrivate.hospitalOwnership, "public");
+
+  // La regla vive en el dato, no en una lista de identificadores en el codigo.
+  const eligible = locations.filter((location) => location.kind === "hospital" && location.autoDestination);
+  assert.ok(eligible.length > 0);
+  for (const hospital of eligible) {
+    assert.equal(hospital.hospitalOwnership, "public");
+    assert.equal(hospital.emergency, true);
+    assert.ok(!["HNJ", "HGE"].includes(hospital.id));
+  }
+  // Se cierra en falso: un hospital sin el campo no es destino automatico.
+  const [withoutField] = locationRecords({ bases: [], hospitals: [{ id: "X", name: "X", lat: 40.4, lng: -3.7, type: "public", emergency: true }] });
+  assert.equal(withoutField.autoDestination, false);
+});
+
+test("las bases se acotan por numero pero el directorio completo sigue siendo buscable", () => {
+  const locations = locationRecords(snapshot.content);
+  // "Base mas cercana" no filtra: todas las bases son destino valido.
+  const anyBase = locations.find((location) => location.kind === "base");
+  assert.ok(anyBase);
+  const nearestBase = nearestLocationOfKind(locations, { lat: anyBase.lat, lng: anyBase.lng }, "base");
+  assert.equal(nearestBase?.id, anyBase.id);
+
+  // Y los hospitales excluidos del destino automatico siguen apareciendo al buscarlos.
+  assert.equal(filterLocations(locations, "Getafe", "hospital").length, 1);
+  // La busqueda ignora acentos, asi que las dos grafias encuentran el mismo hospital.
+  assert.deepEqual(filterLocations(locations, "Nino Jesus", "hospital").map((h) => h.id), ["HNJ"]);
+  assert.deepEqual(filterLocations(locations, "Niño Jesús", "hospital").map((h) => h.id), ["HNJ"]);
+});
+
+test("el mapa etiqueta cada base por su numero, igual que el directorio y la radio", () => {
+  const locations = locationRecords(snapshot.content);
+  const base = locations.find((location) => location.kind === "base" && location.baseNumber === 1);
+  assert.ok(base);
+  const pin = mapPinsFromLocations([base])[0];
+  assert.equal(pin.title, "Base 1");
+  // El barrio no desaparece: sigue en el subtitulo del directorio.
+  assert.match(locationSubtitle(base), /Espinillo/);
 });

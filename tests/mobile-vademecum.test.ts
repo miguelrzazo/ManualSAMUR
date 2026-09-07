@@ -19,6 +19,7 @@ import {
   type VademecumTabKey,
 } from "../apps/mobile/src/vademecum-logic.ts";
 import { buildVademecumReferences } from "../apps/mobile/src/reference-search-logic.ts";
+import { DRUG_DETAIL_FIELDS, parseDoseLines, parseDrugRoutes } from "../apps/mobile/src/drug-detail-logic.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as {
@@ -164,4 +165,55 @@ test("domain rows drop the per-row glyph that only repeated the tab the reader a
   assert.doesNotMatch(row, /name=\{icon\}/);
   // The category accent bar stays: unlike the glyph, it varies within a tab.
   assert.match(row, /rowAccentBar/);
+});
+
+test("una via de administracion se lee como chapas, venga como lista o como cadena", () => {
+  // El corpus las trae de tres formas y la pantalla las unia con " · " en una linea
+  // gris. Las tres tienen que dar el mismo conjunto de chapas.
+  assert.deepEqual(parseDrugRoutes(["IV"]), ["IV"]);
+  assert.deepEqual(parseDrugRoutes(["IV", "IM"]), ["IV", "IM"]);
+  assert.deepEqual(parseDrugRoutes("IV,IM"), ["IV", "IM"]);
+  assert.deepEqual(parseDrugRoutes(["IV,IO,IM,SC"]), ["IV", "IO", "IM", "SC"]);
+  // Sin duplicados y sin huecos.
+  assert.deepEqual(parseDrugRoutes(["IV", "iv ", "", "IV"]), ["IV", "iv"]);
+  assert.deepEqual(parseDrugRoutes(undefined), []);
+  assert.deepEqual(parseDrugRoutes(""), []);
+
+  // Todo farmaco del paquete con via declarada produce al menos una chapa.
+  const withRoute = snapshot.content.drugs.filter((drug) => parseDrugRoutes(drug.route).length === 0 && drug.route);
+  for (const drug of withRoute) assert.deepEqual(String(drug.route).trim(), "", `${drug.name} pierde su via`);
+});
+
+test("la posologia se parte en pautas en vez de salir como un parrafo corrido", () => {
+  const lines = parseDoseLines("iv lenta.\n- Dosis de Ataque: 150 mg/kg\n- Dosis sucesivas: 50 mg/kg\n* Dilucion: ajustar por peso.");
+  assert.deepEqual(lines, [
+    { text: "iv lenta.", bullet: false },
+    { text: "Dosis de Ataque: 150 mg/kg", bullet: true },
+    { text: "Dosis sucesivas: 50 mg/kg", bullet: true },
+    { text: "Dilucion: ajustar por peso.", bullet: true },
+  ]);
+  assert.deepEqual(parseDoseLines(undefined), []);
+
+  // Contenido clinico: no se reescribe nada, solo se separa. El texto concatenado de
+  // vuelta tiene que contener cada palabra del original.
+  const source = snapshot.content.drugs.find((drug) => typeof drug.dose === "string" && drug.dose.includes("\n"));
+  assert.ok(source, "el paquete debe traer alguna posologia de varias lineas");
+  const rebuilt = parseDoseLines(source.dose).map((line) => line.text).join(" ");
+  for (const word of String(source.dose).split(/\s+/).filter((word) => word.length > 3 && !/^[-*•]$/.test(word))) {
+    assert.ok(rebuilt.includes(word), `la posologia pierde "${word}"`);
+  }
+});
+
+test("via y dosis salen del listado de campos secundarios de la ficha", () => {
+  // Estaban entre "Presentacion publicada" y "Contraindicaciones", con el mismo peso
+  // visual que "Notas". Ahora los dibuja la pantalla arriba y aparte.
+  const keys = DRUG_DETAIL_FIELDS.map(([, key]) => key);
+  assert.ok(!keys.includes("route"));
+  assert.ok(!keys.includes("dose"));
+  // Y ningun otro campo se ha caido por el camino.
+  assert.deepEqual(keys, ["indication", "funcion", "presentation", "contraindications", "efectos_secundarios", "notes"]);
+  // "publicada" se mantiene en las etiquetas que salen literales del manual: es lo que
+  // distingue el dato publicado de una lectura nuestra.
+  const labels = DRUG_DETAIL_FIELDS.map(([label]) => label);
+  assert.ok(labels.includes("Presentación publicada"));
 });

@@ -32,6 +32,16 @@ export interface LocationRecord {
   sourcePolicyApproved: boolean;
   emergency?: boolean;
   status4?: number;
+  /**
+   * Si "hospital más cercano" puede llevar aquí.
+   *
+   * La cercanía en línea recta no es criterio suficiente de destino: el Niño Jesús es
+   * pediátrico y Getafe está fuera del municipio, así que los dos pueden salir como el
+   * punto más próximo a una intervención y ninguno de los dos es el sitio. La regla vive
+   * en `content/data/hospitals.json`, un campo por hospital, y no como una lista de
+   * identificadores escondida en el código: quien mantiene el dato es quien decide.
+   */
+  autoDestination?: boolean;
 }
 
 export interface LocationCoordinate {
@@ -166,6 +176,9 @@ export function locationRecords(content: Pick<MobileContent, "hospitals" | "base
       sourcePolicyApproved: policy.approved,
       emergency: item.emergency === true,
       status4: typeof item.status4 === "number" ? item.status4 : undefined,
+      // Se cierra en falso: un hospital del paquete sin el campo no es destino
+      // automático hasta que el dato lo diga.
+      autoDestination: item.autoDestination === true,
     } satisfies LocationRecord];
   });
   const bases = content.bases.flatMap((raw) => {

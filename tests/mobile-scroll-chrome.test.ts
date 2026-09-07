@@ -12,6 +12,9 @@ import {
   backToTopOverlapsSearchCapsule,
   backToTopRect,
   nextScrollChromeState,
+  readerBackToTopRect,
+  readerControlsOverlap,
+  readerNavCapsuleRect,
   rectsOverlap,
   searchCapsuleRect,
   type ScrollChromeState,
@@ -229,4 +232,22 @@ test("a code result shows its number next to its name, not greyed out underneath
   assert.match(row, /reference\.kind === "code" && reference\.badge \? <Text style=\{styles\.resourceInlineCode\}/);
   // Non-code badges ("PERF", "MARCA") are classifications and stay in the meta line.
   assert.match(row, /reference\.kind !== "code" && reference\.badge/);
+});
+
+test("the reader's two floating controls stack in one column instead of fighting for a corner", () => {
+  // El lector no lleva barra de pestañas debajo, así que sus controles no pueden
+  // heredar `BACK_TO_TOP_PLACEMENT`: la cápsula de navegación ocupa ahora la esquina
+  // inicial y "volver arriba" tiene que quedar justo encima, no encima *de* ella.
+  assert.equal(readerControlsOverlap(), false);
+
+  const nav = readerNavCapsuleRect();
+  const backToTop = readerBackToTopRect();
+  // Misma columna: comparten el borde inicial.
+  assert.equal(nav.left, backToTop.left);
+  // Y "volver arriba" está por encima, no por debajo.
+  assert.ok(backToTop.bottom >= nav.top, "volver arriba debe empezar por encima de la cápsula");
+
+  // La cápsula tampoco puede solaparse con la de Buscar de la barra real, que es la
+  // regresión que `backToTopOverlapsSearchCapsule` ya vigila en las pestañas.
+  assert.equal(rectsOverlap(nav, searchCapsuleRect(390, 34)), false);
 });

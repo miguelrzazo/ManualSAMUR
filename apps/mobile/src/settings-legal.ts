@@ -13,6 +13,22 @@ export interface SettingsLegalMetadata {
   supportEmail: string;
 }
 
+/**
+ * Quién mantiene esto, tal y como lo dice la web.
+ *
+ * Las mismas palabras que `components/shared/AppMenu.tsx`: si la app y el sitio se
+ * presentan distinto, uno de los dos está desactualizado y no hay forma de saber cuál.
+ */
+export const ABOUT_AUTHOR = {
+  name: "Miguel Rosa (Vol. 15970)",
+  blurb: "Todo feedback es bienvenido: envía bugs o sugerencias al correo de contacto.",
+  githubUrl: "https://github.com/miguelrzazo",
+} as const;
+
+/** El aviso de uso, literal de la web. */
+export const ADAPTATION_DISCLAIMER =
+  "Esta es una adaptación NO oficial del Manual de Procedimientos de SAMUR-Protección Civil de la ciudad de Madrid, con el fin de hacer una lectura más cómoda, especialmente para dispositivos móviles. Todo el contenido clínico pertenece a SAMUR-PC, sus autores y al Ayuntamiento de Madrid.";
+
 export const PENDING_SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = {
   publisher: SETTINGS_METADATA_PENDING,
   privacyPolicyUrl: SETTINGS_METADATA_PENDING,
@@ -24,7 +40,10 @@ export const SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = {
   publisher: "Miguel Rosa Zazo",
   privacyPolicyUrl: "https://manual-proced-spc.vercel.app/privacidad",
   supportUrl: "https://manual-proced-spc.vercel.app/soporte",
-  supportEmail: "",
+  // El mismo buzón que la web publica en "Sobre mí". Estaba vacío, y `isPendingSettingsMetadata`
+  // trata la cadena vacía como pendiente, así que la app se declaraba sin contacto
+  // mientras el sitio sí lo daba.
+  supportEmail: "feedback_manual_proc.duchess916@passinbox.com",
 };
 
 export type SettingsLegalMetadataField = keyof SettingsLegalMetadata;

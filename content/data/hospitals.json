@@ -11,7 +11,8 @@
     "lng": -3.719,
     "type": "public",
     "status4": 1,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HGM",
@@ -25,7 +26,8 @@
     "lng": -3.671,
     "type": "public",
     "status4": 2,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HDO",
@@ -39,7 +41,8 @@
     "lng": -3.6966,
     "type": "public",
     "status4": 3,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HCL",
@@ -53,7 +56,8 @@
     "lng": -3.7194,
     "type": "public",
     "status4": 5,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HLP",
@@ -67,7 +71,8 @@
     "lng": -3.6872,
     "type": "public",
     "status4": 6,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HRC",
@@ -81,7 +86,8 @@
     "lng": -3.694,
     "type": "public",
     "status4": 7,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HPR",
@@ -95,7 +101,8 @@
     "lng": -3.6755,
     "type": "public",
     "status4": 8,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HIL",
@@ -109,7 +116,8 @@
     "lng": -3.616262,
     "type": "public",
     "status4": 9,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HGU",
@@ -123,7 +131,8 @@
     "lng": -3.748063,
     "type": "public",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HRB",
@@ -137,7 +146,8 @@
     "lng": -3.6761,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HVA",
@@ -151,7 +161,8 @@
     "lng": -3.652,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HLL",
@@ -165,7 +176,8 @@
     "lng": -3.7137,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HRI",
@@ -179,7 +191,8 @@
     "lng": -3.7156,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HCN",
@@ -193,7 +206,8 @@
     "lng": -3.6246,
     "type": "private",
     "status4": null,
-    "emergency": false
+    "emergency": false,
+    "autoDestination": false
   },
   {
     "id": "HMD",
@@ -207,7 +221,8 @@
     "lng": -3.6533,
     "type": "private",
     "status4": null,
-    "emergency": false
+    "emergency": false,
+    "autoDestination": false
   },
   {
     "id": "HNJ",
@@ -222,7 +237,8 @@
     "type": "public",
     "status4": null,
     "emergency": true,
-    "specialty": "pediatrics"
+    "specialty": "pediatrics",
+    "autoDestination": false
   },
   {
     "id": "HSR",
@@ -236,7 +252,8 @@
     "lng": -3.687,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HLM",
@@ -250,7 +267,8 @@
     "lng": -3.679,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HMS",
@@ -264,7 +282,8 @@
     "lng": -3.667,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HSM",
@@ -278,7 +297,8 @@
     "lng": -3.663,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HGE",
@@ -291,6 +311,7 @@
     "lng": -3.7419,
     "type": "public",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   }
 ]

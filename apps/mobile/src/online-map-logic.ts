@@ -1,3 +1,4 @@
+import { locationDisplayName } from "./location-logic.ts";
 import type { HospitalOwnership, LocationCoordinate, LocationFilter, LocationKind, LocationRecord } from "./location-logic";
 
 /** Provider-neutral seam. Keep online map policy and fallbacks free of SDK imports. */
@@ -176,7 +177,10 @@ export function mapPinsFromLocations(locations: LocationRecord[], source: Online
     id: location.id,
     kind: location.kind,
     hospitalOwnership: location.hospitalOwnership,
-    title: location.shortName || location.name,
+    // `locationDisplayName`, no `shortName`: en el mapa una base se etiquetaba con su
+    // barrio ("El Espinillo") mientras el directorio, la lista de Códigos y la propia
+    // radio la llaman "Base 1".
+    title: locationDisplayName(location),
     coordinate: { lat: location.lat, lng: location.lng },
     source,
     locationRouteKey: `location:${location.kind}:${location.id}`,

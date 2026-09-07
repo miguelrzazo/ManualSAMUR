@@ -297,6 +297,36 @@ export function flattenManualTree(sections: readonly ManualTreeSection[], openKe
   return rows;
 }
 
+/**
+ * Which rows carry the rounded corners of their section's card.
+ *
+ * El arbol se dibuja con un unico `FlatList` plano —una seccion contraida y sus
+ * cuarenta procedimientos desplegados son filas hermanas—, asi que no hay ningun
+ * contenedor al que ponerle el radio. `InicioScreen` tenia de hecho un estilo
+ * `tree` con `borderRadius: radii.md` que no se aplicaba a nada: la seccion se
+ * dibujaba como una losa de borde a borde con las esquinas en angulo recto,
+ * mientras Favoritos y Recientes, tres filas mas arriba, si eran tarjetas.
+ *
+ * En vez de envolver (que rompe la virtualizacion), cada fila declara si es la
+ * primera o la ultima de su seccion y se redondea por ese lado. Una seccion
+ * contraida es las dos cosas a la vez y sale como una pastilla completa.
+ */
+export interface ManualTreeRowCorners {
+  first: boolean;
+  last: boolean;
+}
+
+export function manualTreeRowCorners(rows: readonly ManualTreeRow[], index: number): ManualTreeRowCorners {
+  const row = rows[index];
+  if (!row) return { first: false, last: false };
+  const next = rows[index + 1];
+  return {
+    first: row.kind === "section",
+    // Ultima de su seccion: la siguiente fila abre otra seccion, o no hay siguiente.
+    last: !next || next.kind === "section",
+  };
+}
+
 // ─── Update history (mirrors lib/manual-updates-logic.ts's recency window) ──
 
 export type ManualUpdateChangeKind = "nuevo" | "actualizado" | "revisado" | "eliminado" | string;

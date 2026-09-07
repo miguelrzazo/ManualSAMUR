@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Linking,
@@ -12,11 +12,13 @@ import {
   View,
   type ListRenderItemInfo,
   type SectionListData,
+  type SectionListRenderItemInfo,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { circle, radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
+import { useSectionJump } from "../hooks/use-section-jump";
 import { BACK_TO_TOP_PLACEMENT } from "../scroll-chrome-logic";
 import { useTheme } from "../theme";
 import {
@@ -36,6 +38,7 @@ import {
   getCheatsheetSection,
   groupByCategoryField,
   groupBasesByDistrict,
+  groupCodigosSearchResults,
   groupIndicativos,
   isCodeTab,
   OTROS_TABS,
@@ -43,13 +46,14 @@ import {
   type CodigosCode,
   type CodigosLegendNote,
   type CodigosRow,
+  type CodigosSearchSection,
   type CodigosSection,
   type OtrosTabKey,
   type TopTabKey,
 } from "../codigos-logic";
 import { useContent } from "../content";
 import { BackToTop, Badge, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
-import { codeRouteKey, searchCodes } from "../reference-search-logic";
+import { codeRouteKey, searchCodes, type MobileReferenceSearchResult } from "../reference-search-logic";
 import { codeRouteHasDetail } from "../codigos-logic";
 import { displayTitle } from "../title-case";
 import { hasHospitalOwnership, locationVisual, normalizeHospitalOwnership } from "../location-logic";
@@ -104,6 +108,8 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
   );
 
   const searchResults = useMemo(() => (query.trim() ? searchCodes(content.codes, query, 500) : []), [content.codes, query]);
+  // Agrupados por tipo, no en una lista plana: ver `groupCodigosSearchResults`.
+  const searchSections = useMemo(() => groupCodigosSearchResults(searchResults), [searchResults]);
 
   const switchTab = useCallback((key: TopTabKey) => {
     setActiveTab(key);
@@ -145,10 +151,11 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
             </View>
           </>
         )}
-        <FlatList
+        <SectionList
           ref={registerList}
-          data={searchResults}
+          sections={searchSections}
           keyExtractor={(item) => item.id}
+          stickySectionHeadersEnabled
           onScroll={chrome.onScroll}
           scrollEventThrottle={chrome.scrollEventThrottle}
           contentContainerStyle={styles.sectionListContent}
@@ -158,21 +165,39 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
               detail="Prueba con el código, nombre, categoría o descripción."
             />
           }
-          renderItem={({ item }) => {
+          renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, CodigosSearchSection> }) => (
+            // Un punto de color, no una chapa con el mismo texto al lado: la cabecera
+            // del listado normal usa la chapa para el *número* de familia, que dice algo
+            // que la etiqueta no dice. Aquí decía "Incidente" dos veces seguidas.
+            <View style={styles.sectionHeader} accessibilityRole="header">
+              {section.accentColor ? <View style={[styles.sectionHeaderDot, { backgroundColor: section.accentColor }]} /> : null}
+              <Text style={styles.sectionHeaderLabel}>{section.label}</Text>
+              <Text style={styles.sectionHeaderCount}>{section.data.length}</Text>
+            </View>
+          )}
+          renderItem={({ item, section }: SectionListRenderItemInfo<MobileReferenceSearchResult, CodigosSearchSection>) => {
             const detail = hasDetail(item.routeKey);
+            // La familia dentro del tipo ("Traumáticos"), sin repetir el tipo: ese lo
+            // dice ya la cabecera de la sección y la chapa de la fila.
+            const family = item.subtitle.split(" · ").slice(1).join(" · ");
             return (
               <Pressable
                 onPress={detail ? () => openCode(item.routeKey) : undefined}
                 style={[styles.codeRow, accessibilityTargetStyle()]}
                 accessibilityRole={detail ? "button" : "text"}
-                accessibilityLabel={detail ? `Abrir código ${item.badge ?? item.title}` : `Código ${item.badge ?? item.title}`}
+                accessibilityLabel={`${section.label}. ${detail ? `Abrir código ${item.badge ?? item.title}` : `Código ${item.badge ?? item.title}`}`}
                 accessibilityHint={detail ? accessibilityHints.openDetail : undefined}
               >
-                <Text style={styles.codeBadge}>{item.badge ?? "—"}</Text>
+                <Text style={[styles.codeBadge, section.accentColor ? { color: section.accentColor } : undefined]}>{item.badge ?? "—"}</Text>
                 <View style={styles.rowCopy}>
                   <Text style={styles.rowTitle}>{displayTitle(item.title)}</Text>
-                  <Text style={styles.rowMeta}>{item.subtitle}</Text>
+                  {family ? <Text style={styles.rowMeta}>{family}</Text> : null}
                 </View>
+                {/* La chapa de tipo va en la fila además de en la cabecera: la cabecera
+                    es pegajosa, así que al desplazar una sección larga la única
+                    referencia del tipo se queda arriba y fuera del alcance de la vista
+                    de quien está mirando la fila. */}
+                <Badge label={section.label} tone={section.accentColor ? "accent" : "neutral"} color={section.accentColor} />
                 {detail && <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} />}
               </Pressable>
             );
@@ -299,16 +324,14 @@ function CodeGroupList({
   const jumpTargets = useMemo(() => buildJumpTargets(sections), [sections]);
   const legendNotes = useMemo(() => codeLegendNotes(tabKey, codes), [tabKey, codes]);
 
-  const scrollToSection = useCallback(
-    (sectionIndex: number) => {
-      sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex: 0, viewPosition: 0, animated: true });
-    },
-    [],
-  );
+  const jump = useSectionJump(sectionListRef);
+  // Un cambio de pestaña o de filtro cambia las secciones: las posiciones guardadas
+  // dejan de valer y se descartan antes de que nadie salte a una de ellas.
+  useEffect(() => { jump.resetSections(sections.map((section) => section.key)); }, [jump, sections]);
 
   return (
     <View style={styles.flexFill}>
-      {!chrome.collapsed && jumpTargets.length > 1 && (
+      {jumpTargets.length > 1 && (
         // The one pill row on this screen. It used to sit under a second, uncoloured row
         // built from `uniqueCategories`, whose labels were near-duplicates of these — two
         // treatments and two behaviours for what read as the same list.
@@ -323,7 +346,13 @@ function CodeGroupList({
               <Chip
                 label={target.label}
                 accent={target.accentColor}
-                onPress={() => scrollToSection(sections.findIndex((section) => section.key === target.key))}
+                onPress={() => {
+                  // La cabecera se despliega antes de saltar: si la lista se queda
+                  // colapsada, la fila de fichas desaparece justo cuando el lector
+                  // acaba de usarla, y la siguiente ya no está donde estaba.
+                  chrome.expand();
+                  jump.jumpTo(target.key, sections.findIndex((section) => section.key === target.key));
+                }}
                 accessibilityLabel={`Ir al grupo ${target.label}`}
                 accessibilityHint="Desplaza la lista hasta este grupo."
               />
@@ -343,13 +372,13 @@ function CodeGroupList({
         contentContainerStyle={styles.sectionListContent}
         onScroll={chrome.onScroll}
         scrollEventThrottle={chrome.scrollEventThrottle}
-        onScrollToIndexFailed={() => undefined}
+        onScrollToIndexFailed={jump.onScrollToIndexFailed}
         ListEmptyComponent={
           <EmptyState title="Sin resultados" detail="No hay códigos para este filtro." />
         }
         ListFooterComponent={<AnnotationFooter notes={legendNotes} palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<CodigosRow, CodigosSection> }) => (
-          <View style={styles.sectionHeader} accessibilityRole="header">
+          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} accessibilityRole="header">
             <View
               style={[
                 styles.sectionHeaderBadge,
@@ -584,7 +613,7 @@ function OtrosContent({
             onPress={() => void Linking.openURL(`https://www.google.com/maps?q=${base.lat},${base.lng}`)}
             style={[styles.locationRow, accessibilityTargetStyle()]}
             accessibilityRole="link"
-            accessibilityLabel={`Base ${base.number}, ${base.name}, ${base.district}`}
+            accessibilityLabel={`${base.number === 0 ? "Sede Central" : `Base ${base.number}`}, ${base.name}, ${base.district}`}
             accessibilityHint={accessibilityHints.openMap}
           >
             <View style={[styles.locationTypeIcon, { backgroundColor: baseVisual.wash }]}>
@@ -592,9 +621,15 @@ function OtrosContent({
             </View>
             <Text style={styles.baseNumber}>{base.number}</Text>
             <View style={styles.rowCopy}>
-              <Text style={styles.rowTitle}>{displayTitle(base.name)}</Text>
+              {/* "Base 1", con el barrio en el subtítulo. La fila se titulaba por el
+                  barrio ("El Espinillo"), que es como no la llama nadie por radio, y
+                  dejaba el número en una columna aparte a la izquierda. Es la misma
+                  regla que `locationDisplayName`/`locationSubtitle` aplican en el mapa;
+                  aquí no se pueden reutilizar tal cual porque `CodigosBase` es un
+                  registro más estrecho que `LocationRecord`. */}
+              <Text style={styles.rowTitle}>{base.number === 0 ? "Sede Central" : `Base ${base.number}`}</Text>
               <Text style={styles.rowMeta}>
-                {base.address} · {base.district}
+                {[displayTitle(base.name), base.address, base.district].filter(Boolean).join(" · ")}
               </Text>
             </View>
             <MaterialCommunityIcons name="map-marker-outline" size={18} color={palette.inkMuted} />
@@ -841,6 +876,8 @@ function createStyles(palette: AdaptivePalette) {
     },
     sectionHeaderBadge: { backgroundColor: palette.surfaceMuted, borderRadius: radii.sm, paddingHorizontal: 8, paddingVertical: 3 },
     sectionHeaderBadgeText: { fontSize: 11, fontWeight: "800", color: palette.ink },
+    // El mismo punto de categoría que usa la cabecera del Vademécum.
+    sectionHeaderDot: circle(8),
     sectionHeaderLabel: { flex: 1, color: palette.ink, fontSize: 15, fontWeight: "600" },
     sectionHeaderCount: { color: palette.inkMuted, fontSize: 11, fontWeight: "600" },
     subgroupHeader: {

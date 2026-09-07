@@ -54,7 +54,10 @@ test("mobile shell keeps the required five-tab order, with Buscar among the dest
   // The settings sheet and the "no account, no patient data" promise moved into
   // `SettingsModal`; both still have to exist, just not in App.tsx.
   const settings = readFileSync(path.join(appRoot, "src", "components", "SettingsModal.tsx"), "utf8");
-  assert.match(settings, /Información y ajustes/);
+  // La cabecera es la compartida (`PageHeader`), con el cierre como icono en su hueco
+  // `trailing`: el "Cerrar" de texto era el único de la app.
+  assert.match(settings, /title="Ajustes"/);
+  assert.match(settings, /<PageHeader/);
   assert.match(settings, /no se recogen datos de pacientes|registrar datos de pacientes/);
 });
 

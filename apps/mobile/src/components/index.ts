@@ -13,3 +13,5 @@ export { MarkdownTable } from "./MarkdownTable.tsx";
 export { BackToTop } from "./BackToTop.tsx";
 export { CompactHeader } from "./CompactHeader.tsx";
 export { Toast, type ToastProps, type ToastTone } from "./Toast.tsx";
+export { Menu, type MenuAnchor, type MenuItem } from "./Menu.tsx";
+export { ReaderNavBar, READER_NAV_CAPSULE, READER_NAV_DESTINATIONS, type ReaderNavDestination } from "./ReaderNavBar.tsx";

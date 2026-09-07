@@ -320,6 +320,11 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           <View style={styles.banner} accessibilityLiveRegion="polite">
             <MaterialCommunityIcons name="map-marker-path" size={18} color={palette.amber} />
             <Text style={styles.bannerText}>{onlineMapFallbackLabel(mapState.reason)}</Text>
+            {/* El reintento vive aquí, en el aviso que explica por qué haría falta, y no
+                en un botón permanente en la esquina superior del mapa. */}
+            <Pressable onPress={retryOnlineMap} style={[styles.bannerAction, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Reintentar el mapa online" accessibilityHint="Vuelve a comprobar el mapa online y sus datos.">
+              <Text style={styles.bannerActionText}>Reintentar</Text>
+            </Pressable>
           </View>
         )}
         {permission === "denied" && (
@@ -376,11 +381,11 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           <Text style={styles.onlineMapAttributionText} numberOfLines={1} maxFontSizeMultiplier={1.2}>{ONLINE_MAP_ATTRIBUTION_TEXT}</Text>
         </View>
       )}
-      {mapState.status === "online" && (
-        <Pressable onPress={retryOnlineMap} style={[styles.onlineMapRefresh, { top: insets.top + spacing.sm }, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Actualizar mapa online" accessibilityHint="Vuelve a comprobar el mapa online y sus datos.">
-          <MaterialCommunityIcons name="refresh" size={16} color={palette.white} />
-        </Pressable>
-      )}
+      {/* No hay botón de refrescar. El mapa online no tiene contenido que caduque
+          entre dos pulsaciones —las teselas de Madrid están cacheadas y el paquete de
+          datos lo actualiza Ajustes—, así que era un control permanente en la esquina
+          superior para un caso que sólo ocurre cuando el mapa ya ha fallado. Ese caso
+          sigue teniendo su reintento, en el aviso de respaldo que lo explica. */}
 
       <Modal visible={sheetOpen} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSheetOpen(false)}>
         <SafeAreaView style={styles.sheetScreen} edges={["top", "bottom"]}>
@@ -398,15 +403,19 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
               </Pressable>
             }
           />
+          {/*
+            Aquí ya no hay ni el aviso de "Fuente oficial del SAMUR · paquete del …" ni
+            el botón "Usar mi ubicación".
+
+            El aviso era una banda verde permanente que decía que el dato es el oficial
+            —lo es siempre— encima de la única lista que hay; la procedencia y la fecha
+            del paquete se consultan en Ajustes, que es donde se consulta el estado del
+            contenido. El botón pedía el permiso por adelantado para una función que ya
+            lo pide sola: `onPressNearest` llama a `requestLocation()` cuando no hay
+            origen, así que el sistema pregunta en el momento en que hace falta y con la
+            acción a la vista, en vez de al abrir la lista.
+          */}
           <View style={styles.sheetTop}>
-            <View style={styles.locationPolicyNotice} accessibilityLabel="Estado de la fuente de ubicaciones">
-              <MaterialCommunityIcons name="check-decagram-outline" size={20} color={palette.green} />
-              <Text style={styles.bannerText}>Fuente oficial del SAMUR · paquete del {policy.sourceDate}.</Text>
-            </View>
-            <Pressable onPress={() => void requestLocation()} disabled={permission === "requesting"} style={styles.locationActionButton} accessibilityRole="button" accessibilityLabel="Usar mi ubicación para ordenar lugares cercanos" accessibilityHint="Solicita permiso de ubicación solo después de activar esta acción." accessibilityState={{ busy: permission === "requesting" }}>
-              <MaterialCommunityIcons name="crosshairs-gps" size={18} color={palette.paper} />
-              <Text style={styles.locationActionText}>{permission === "requesting" ? "Solicitando…" : "Usar mi ubicación"}</Text>
-            </Pressable>
             {permission === "unavailable" && (
               <View style={styles.banner}>
                 <MaterialCommunityIcons name="crosshairs-off" size={18} color={palette.amber} />
@@ -414,12 +423,16 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
               </View>
             )}
             <View style={styles.sheetActions} accessibilityLabel="Acciones del mapa">
-              <Pressable onPress={() => void onPressNearest("hospital")} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
+              <Pressable onPress={() => { setSheetOpen(false); void onPressNearest("hospital"); }} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
                 <MaterialCommunityIcons name="hospital-building" size={19} color={palette.ink} />
                 <Text style={styles.sheetActionText}>Hospital más cercano</Text>
                 <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
               </Pressable>
-              <Pressable onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Status4")} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hoja de referencia Status 4" accessibilityHint="Abre la hoja de referencia Status 4 con los hospitales de destino automático.">
+              {/* La hoja se cierra ANTES de navegar. Un `Modal` de React Native es un
+                  view controller presentado aparte, así que la pantalla de Status 4 se
+                  apilaba detrás de él: se abría, pero no se veía. Lo mismo vale para
+                  "Hospital más cercano", que además centra el mapa que la hoja tapa. */}
+              <Pressable onPress={() => { setSheetOpen(false); navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Status4"); }} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hoja de referencia Status 4" accessibilityHint="Abre la hoja de referencia Status 4 con los hospitales de destino automático.">
                 <MaterialCommunityIcons name="alert-decagram-outline" size={19} color={palette.ink} />
                 <Text style={styles.sheetActionText}>Status 4</Text>
                 <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
@@ -460,6 +473,8 @@ function createStyles(palette: AdaptivePalette) {
     pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8, textShadowColor: palette.paper, textShadowRadius: 8, textShadowOffset: { width: 0, height: 0 } },
     banner: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md },
     bannerText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 },
+    bannerAction: { alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm },
+    bannerActionText: { ...typography.footnote, fontWeight: "600", color: palette.primary },
     primaryPill: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 48, borderRadius: radii.pill, backgroundColor: palette.ink, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
     primaryPillText: { color: palette.paper, fontSize: 13, fontWeight: "800" },
     secondaryPill: { alignSelf: "flex-start", minHeight: 48, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.ink, paddingHorizontal: spacing.lg, alignItems: "center", justifyContent: "center", marginTop: spacing.sm },
@@ -471,24 +486,23 @@ function createStyles(palette: AdaptivePalette) {
     topStack: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, gap: spacing.sm, alignItems: "flex-start" },
     trailingControls: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + spacing.lg, gap: spacing.sm, alignItems: "center" },
     compactMapControl: { width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, alignItems: "center", justifyContent: "center" },
-    // Sits above the compact trailing controls, keeping the credit legible without
-    // competing with the map actions.
+    // Abajo a la izquierda, justo encima del control de atribucion de MapLibre.
+    //
+    // Estaba a la derecha, a `TAB_BAR_INSET + 52`, que es exactamente encima de
+    // `trailingControls`: el credito y el boton de centrarme se pisaban. La esquina
+    // izquierda no la ocupa nada, y ahi la atribucion queda junto a la nativa en vez
+    // de flotando sola sobre el mapa.
+    //
     // La atribucion va sobre las teselas, y hay basemap oscuro (dark-matter) ademas
     // del claro: con la chapa blanca y el azul fijos que tenia, en modo oscuro se
     // quedaba como una pegatina blanca encima de un mapa negro.
-    onlineMapAttribution: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + 52, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
+    // `left` sin `right`: fijando los dos, la vista absoluta se estira de lado a lado y
+    // el credito sale como una banda blanca cruzando el mapa en vez de como una chapa
+    // del ancho de su texto. `maxWidth` la corta antes de llegar a los controles.
+    onlineMapAttribution: { position: "absolute", left: spacing.lg, maxWidth: "70%", bottom: TAB_BAR_INSET + spacing.lg, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
     onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
-    // `top` is set inline from `insets.top + spacing.sm` — the same formula `topOverlay`
-    // uses — instead of a hardcoded 60, so it clears the notch on every device. It sits at
-    // the same height as `pageTitle` (the first row of `topOverlay`), not below it: that
-    // title is short ("Mapa") and left-aligned, so it never reaches this control on the
-    // right, on any device this app supports.
-    onlineMapRefresh: { position: "absolute", right: spacing.lg, width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
     sheetTop: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
-    locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md },
-    locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg },
-    locationActionText: { color: palette.paper, fontSize: 13, fontWeight: "800" },
     sheetActions: { gap: spacing.sm },
     sheetAction: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.surface, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md },
     sheetActionText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },

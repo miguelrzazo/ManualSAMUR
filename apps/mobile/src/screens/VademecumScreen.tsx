@@ -20,6 +20,7 @@ import { useTheme } from "../theme";
 import { displayTitle } from "../title-case";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
+import { useSectionJump } from "../hooks/use-section-jump";
 import { selectionTick } from "../hooks/haptics";
 import { BackToTop, Chip, CompactHeader, Press } from "../components";
 import { useContent } from "../content";
@@ -46,14 +47,16 @@ import type { RootStackParamList, TabsParamList } from "../navigation-types";
  * The Vademécum destination: four domains (fármacos, perfusiones, fluidos,
  * comerciales) organised and filterable the way `VademecumView.tsx` organises
  * them on the web — category chips and an A-Z index for fármacos/comerciales,
- * category chips alone for perfusiones/fluidos — expressed as a SectionList
- * with sticky headers rather than a DOM port, the same shape `CodigosScreen`
- * established for the Códigos tab.
+ * category chips alone for perfusiones — expressed as a SectionList with sticky
+ * headers rather than a DOM port, the same shape `CodigosScreen` established for
+ * the Códigos tab. Fluidos se agrupa por tipo pero no lleva filtro: ver
+ * `showCategoryChips`.
  *
- * The dose calculator (`DoseUtilityCard` in App.tsx) lives inside the drug
- * detail screen (`DrugScreen`), which every fármaco row here opens: it is
- * reachable as part of this destination without any change to its maths or
- * its fail-closed eligibility check.
+ * Aquí ya no hay calculadora de dosis. `DoseUtilityCard` se retiró de `DrugScreen`
+ * (ver el comentario en App.tsx, sobre `DrugScreen`): pedía peso, unidad, vía y dos
+ * confirmaciones para devolver una conversión que su propio aviso llamaba
+ * orientativa. La posología sigue en la ficha, que es de donde salen las pautas
+ * reales. `dose-logic.ts` se queda por sus ayudantes de formato y su auditoría.
  */
 export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
   const { content } = useContent();
@@ -207,8 +210,14 @@ function DomainContent({
 }) {
   // Fármacos filters by category *and* shows an A-Z index (mirrors the web:
   // both controls are visible together for this domain only). Comerciales
-  // shows the A-Z index alone; perfusiones/fluidos show category chips alone.
-  const showCategoryChips = tab === "farmacos" || tab === "perfusiones" || tab === "fluidos";
+  // shows the A-Z index alone; perfusiones shows category chips alone.
+  //
+  // Fluidos, no. Son una lista corta que cabe entera en dos pantallas, y sus
+  // "categorías" son el propio `type` de cada fluido: el filtro dividía nueve filas
+  // en grupos de tres y añadía una fila de pastillas encima para no ahorrar ningún
+  // desplazamiento. La lista sigue agrupada por tipo con sus cabeceras; lo que se ha
+  // ido es el control para esconder parte de ella.
+  const showCategoryChips = tab === "farmacos" || tab === "perfusiones";
   const reduceMotion = useReduceMotion();
   // Open when a filter is already applied, so a narrowed list never looks
   // unfiltered behind a collapsed control.
@@ -238,13 +247,18 @@ function DomainContent({
   });
   const [viewabilityConfig] = useState(() => ({ itemVisiblePercentThreshold: 0 }));
 
+  const jump = useSectionJump(sectionListRef);
+  // Cambiar de pestaña o de categoría cambia las secciones: las posiciones guardadas
+  // dejan de valer.
+  useEffect(() => { jump.resetSections(sections.map((section) => section.key)); }, [jump, sections]);
+
   const scrollToSection = useCallback(
     (sectionIndex: number) => {
       const key = sections[sectionIndex]?.key ?? null;
       setPendingKey(key);
-      sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex: 0, viewPosition: 0, animated: true });
+      if (key) jump.jumpTo(key, sectionIndex);
     },
-    [sectionListRef, sections],
+    [jump, sections],
   );
 
   // Keep the highlighted pill on screen: on fármacos the row is twenty-odd
@@ -309,6 +323,10 @@ function DomainContent({
             keyExtractor={(section) => section.key}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.alphabetContent}
+            // La tira de letras es otra lista: si no consigue centrar la letra activa,
+            // eso es cosmético y se resuelve solo al siguiente render. Enchufarla al
+            // manejador del `SectionList` hacía que un fallo aquí desplazara *la otra*
+            // lista a un desplazamiento calculado con las medidas de esta.
             onScrollToIndexFailed={() => undefined}
             renderItem={({ item: section, index }) => {
               const selected = section.key === activeKey;
@@ -344,7 +362,7 @@ function DomainContent({
         onScrollToIndexFailed={() => undefined}
         ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
-          <View style={styles.sectionHeader} accessibilityRole="header">
+          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} accessibilityRole="header">
             {!showAlphabetIndex && <View style={[styles.sectionHeaderDot, { backgroundColor: categoryAccent(section.key) }]} />}
             <Text style={styles.sectionHeaderLabel}>{section.key}</Text>
             <Text style={styles.sectionHeaderCount}>{section.data.length}</Text>
