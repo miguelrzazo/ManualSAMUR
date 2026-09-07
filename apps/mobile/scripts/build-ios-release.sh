@@ -15,6 +15,13 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 SCHEME="ManualSAMUR"
 WORKSPACE="$MOBILE/ios/$SCHEME.xcworkspace"
 TEAM_ID="${SAMUR_TEAM_ID:-FC8DH72682}"
+# Firma manual y explicita. `expo prebuild --clean` rehace el proyecto sin equipo
+# de desarrollo, asi que el archive falla con "requires a development team" si no
+# se le dicen aqui. Se firma contra el perfil de App Store ya instalado en la
+# maquina; el certificado sale del llavero y no se guarda nada en el repositorio.
+PROFILE_NAME="${SAMUR_PROFILE:-Manual SAMUR App Store}"
+SIGN_IDENTITY="${SAMUR_SIGN_IDENTITY:-iPhone Distribution}"
+BUNDLE_ID="$(node -p "require('$MOBILE/app.json').expo.ios.bundleIdentifier")"
 
 VERSION="$(node -p "require('$MOBILE/app.json').expo.version")"
 BUILD_NUMBER="$(node -p "require('$MOBILE/app.json').expo.ios.buildNumber")"
@@ -43,7 +50,10 @@ cat > "$BUILD_DIR/ExportOptions.plist" <<PLIST
   <key>method</key><string>app-store-connect</string>
   <key>teamID</key><string>$TEAM_ID</string>
   <key>uploadSymbols</key><true/>
-  <key>signingStyle</key><string>automatic</string>
+  <key>signingStyle</key><string>manual</string>
+  <key>signingCertificate</key><string>$SIGN_IDENTITY</string>
+  <key>provisioningProfiles</key>
+  <dict><key>$BUNDLE_ID</key><string>$PROFILE_NAME</string></dict>
   <key>destination</key><string>export</string>
 </dict>
 </plist>
@@ -56,6 +66,10 @@ xcodebuild -quiet \
   -configuration Release \
   -destination "generic/platform=iOS" \
   -archivePath "$BUILD_DIR/$SCHEME.xcarchive" \
+  DEVELOPMENT_TEAM="$TEAM_ID" \
+  CODE_SIGN_STYLE=Manual \
+  CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
+  PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
   archive
 
 echo "==> Export"
