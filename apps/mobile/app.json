@@ -16,7 +16,8 @@
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
-        "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
+        "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "deploymentTarget": "16.4",
       "buildNumber": "2",
