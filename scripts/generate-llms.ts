@@ -26,6 +26,8 @@ const SECTIONS_ORDER = [
   "Administrativos",
   "Comunicaciones",
   "Operativos",
+  "DRP",
+  "Intervinientes",
   "SVA",
   "SVB",
   "Psicológicos",

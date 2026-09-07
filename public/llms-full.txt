@@ -7,689 +7,6 @@ Actualizado: 2026-09-01
 Total procedimientos: 230
 
 ---
-# [114] Autoprotección en casos sospechos de viruela del mono
-
-Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
-Markdown: https://manual-samur.vercel.app/procedures/114.md
-Actualizado: 2026-09-01
-
-Actuación ante posibles casos de pacientes infectados por Viruela del Mono
-
-Este procedimiento tiene como objetivo las indicaciones del manejo de los casos con sospecha o confirmación de viruela del mono en el escenario actual.
-
-La viruela del mono es una zoonosis vírica que fue declarada emergencia de salud pública de importancia internacional por la directora general de la OMS el 23 de junio de 2022 hasta mayo de 2023 y actualmente, desde el 14 de agosto de 2024.
-
-Las lesiones son firmes o gomosas, bien circunscritas, profundas y a menudo desarrollan umbilicación (se asemeja a un punto en la parte superior de la lesión). Se describen a menudo como dolorosas hasta la fase de curación, cuando se convierten en picor (costras). Suelen aparecer en las zonas genital y anorrectal o en la boca. Este exantema no siempre aparece en las palmas de las manos y las plantas de los pies.
-
-Las lesiones suelen desarrollarse simultáneamente y evolucionar juntas en cualquier parte del cuerpo. La evolución de las lesiones pasa por cuatro etapas: macular, papular, vesicular (elevadas y llenas de líquido claro) y pustular (llenas de líquido opaco), antes de la formación de costras y la descamación. Una vez que se han caído todas las costras y se ha formado una nueva capa de piel, la persona deja de ser contagiosa.
-
-En el brote actual también se han dado con frecuencia síntomas rectales (por ejemplo, heces purulentas o sanguinolentas, dolor rectal y/o sangrado rectal).
-
-La fiebre y otros síntomas prodrómicos (por ejemplo, escalofríos, linfadenopatías, malestar general, mialgia o cefalea) pueden aparecer antes de la erupción, pero se pueden dar después de la misma o no estar presentes en absoluto.
-
-Suelen presentan síntomas respiratorios (por ejemplo, dolor de garganta, congestión nasal o tos). El periodo de incubación es de 3 a 17 días. Durante este tiempo, la persona no tiene síntomas.
-
-La enfermedad suele durar entre 2 y 4 semanas.
-
-La transmisión de persona a persona del virus de la viruela del mono se produce por contacto directo con el material de la lesión o por exposición a las secreciones respiratorias. Los informes sobre la transmisión de persona a persona describen un contacto estrecho con una persona infectada. La transmisión en entornos sanitarios se ha descrito raramente.
-
-Existe riesgo alto de contagio si:
-
-* Hay un contacto sin protección entre la piel o las membranas mucosas de una persona y la piel, las lesiones o los fluidos corporales de un paciente (por ejemplo, cualquier contacto sexual, salpicaduras involuntarias de saliva del paciente a los ojos o a la cavidad oral de una persona, contacto sin guantes con el paciente), o materiales contaminados (por ejemplo, sábanas, ropa).
-* Se está dentro de un habitáculo cerrado a menos de 1,80 metros de un paciente durante cualquier procedimiento que pueda crear aerosoles de secreciones orales, lesiones cutáneas o suspensión de exudados secos (por ejemplo, sacudir la ropa de cama sucia), sin llevar mascarilla FFP2, guantes, bata / traje de protección y protección ocular.
-
-#### **Medidas de protección de intervinientes**
-En las atenciones a pacientes con sospecha o viruela del mono confirmada es obligatorio:
-
-* En todas las asistencias a pacientes o contacto con personas del entorno cercano se utilizarán como elementos de protección: mascarilla FFP2, protección ocular, guantes y batas o trajes antisalpicaduras (Nivel 1). Se le pondrá al paciente, de manera inmediata, una mascarilla quirúrgica, así como a personas del entorno cercano habitual.
-* En los casos en los que sea necesario el manejo avanzado de la vía aérea o técnicas en las que se creen aerosoles de secreciones orales, se utilizarán las mismas medidas.
-* Si se realiza traslado se mantendrán las medidas tomadas con respecto al personal. Se deberán cubrir las lesiones del paciente con una sábana evitando el contacto con superficies, no desvestirle y guardar todas sus pertenencias en una bolsa. Preavise al hospital sobre el traslado del caso sospechoso y la situación clínica del paciente.
-
-Con posterioridad a la asistencia se deben comunicar los siguientes datos al jefe de guardia para su notificación a:
-
-* Salud Pública: nombre, apellidos, DNI/pasaporte, fecha de nacimiento y hospital de traslado,
-* Unidad de RRHH: datos de los intervinientes.
-
-Una vez finalizado el aviso:
-
-* Si se ha usado bata o traje deséchela o desinfecte, según el caso, con Surfaclin, así como la protección ocular.
-* Retire las sábanas contaminadas.
-* Contenga y elimine los residuos contaminados, como apósitos, vendas o guantes desechables, mascarillas.
-* Desinfecte las superficies y los objetos del vehículo sanitario que haya tocado el paciente con Surfaclin.
-* Realice higiene de manos.
-
----
-
-# [115] Apoyo psicológico a intervinientes
-
-Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/115-apoyo-psicologico-a-intervinientes
-Markdown: https://manual-samur.vercel.app/procedures/115.md
-Actualizado: 2026-09-01
-
-### Procedimiento de apoyo psicológico inmediato a intervinientes tras incidentes críticos
-Este procedimiento regula la activación del Psicólogo de Guardia (indicativo Romeo) ante sucesos estresantes que produzcan o sean susceptibles de producir un impacto emocional negativo y significativo en el interviniente debido a sus características, causas y/o consecuencias.
-
-El **objetivo principal** del procedimiento es regular la intervención del Psicólogo de Guardia sobre las dotaciones operativas que hayan intervenido de forma directa e indirecta en los sucesos susceptibles (incluyendo responsables de guardia y TATS Central de comunicaciones) con la finalidad de reducir factores de riesgo, activar factores protectores y estrategias de afrontamiento adecuadas en los intervinientes en caso necesario.
-
-De este modo se consideran eventos susceptibles de intervención mediante este Procedimiento:
-
-* Sucesos de Gran Magnitud con múltiples víctimas graves (accidentes, catástrofes, desastres naturales).
-* Atentados terroristas.
-* Amenaza o agresión con riesgo de lesión y/o muerte.
-* Homicidio o asesinato de rehenes tras retenciones largas.
-* Asistencia a menores en situación crítica o fallecidos.
-* Tareas asistenciales en accidentes graves de intervinientes SAMUR – PC.
-* Asistencia a familiares graves de miembros de SAMUR- PC.
-* Sucesos en los que se ha usado violencia extrema (física o psíquica) contra la víctima.
-* Accidentes de tráfico de intervinientes en los que resulten leves y/o ilesos y existan daños importantes a otros.
-* Sucesos a criterio del Supervisor y/o Jefe de guardia que puedan afectar al interviniente. Otro suceso que por sus características pueda afectar al interviniente.
-
-Será susceptible de atención cualquier interviniente del Servicio de Emergencias SAMUR-Protección Civil.
-
- 1. **Sucesos en los que el Psicólogo de Guardia interviene como profesional atendiendo a victimas primarias y/o secundarias y en el que pudieran ser afectados a su vez intervinientes**:
-
-* El Psicólogo de Guardia (Indicativo ROMEO) será activado por la Central de Comunicaciones, según el Procedimiento de Activación General.
-* En estos casos el Psicólogo de Guardia atenderá en primer lugar a víctimas primarias y segundarias, y en segundo lugar a intervinientes.
-* El Psicólogo de Guardia deberá contar con la colaboración del Jefe de División de Guardia, el Jefe de División de Calidad y/o el Supervisor para detectar aquellos intervinientes con afectación emocional, especialmente en aquellos casos en los que debido a características de la situación el Romeo no pueda realizar una observación y valoración directa de todos los afectados. Dicho responsable informará a la Central de Comunicaciones pasando las unidades a clave 6.
-* El  Psicólogo de Guardia finalizará su actuación en el lugar del suceso y posteriormente atenderá a las dotaciones de forma grupal y/o individual  según necesidades en el lugar definido por el Jefe de Guardia y/o Supervisor. (1)
-* La Central de Comunicaciones asignará un número de informe al Psicólogo de Guardia con el **código 15.5** (Atención psicológica a intervinientes de SAMUR-Protección Civil).
-
-(1) *Si la unidad precisa clave 14 por clave 6 la intervención del Romeo se producirá en Base 0. En caso de que la unidad no precise clave 14, la intervención se producirá en su base operativa.*
-
- 2. **Sucesos en los que resultan afectados intervinientes sin actuación del Psicólogo de Guardia en el suceso**:
-
-El Psicólogo de Guardia será informado a través de la Central de Comunicaciones de la necesidad de atención inmediata a intervinientes, pasando la unidad a clave 6. Se asignará un número de informe con el código 15.5 y atenderá a las dotaciones de forma grupal y/o individual según necesidades en el lugar definido por el Jefe de Guardia y/o Supervisor.
-
- 3. **Resolución y Seguimiento**:
-
-Se comunicará al Jefe de Guardia y Supervisor de Guardia la finalización de la intervención valorando de forma conjunta la consideración de la continuidad del/los profesional/es en la guardia.
-
-El Romeo contactará telefónicamente de forma individual con los intervinientes atendiendo a criterios de seguimiento en un plazo no superior a 7 días, y en caso de ser necesario derivará a recurso externo.
-
----
-
-# [126a] Procedimiento de comunicaciones en un DRP
-
-Sección: DRP
-URL: https://manual-samur.vercel.app/manual/126a-procedimiento-de-comunicaciones-en-un-drp
-Markdown: https://manual-samur.vercel.app/procedures/126a.md
-Actualizado: 2026-09-01
-
-El **Centro Coordinador de Emergencias de SAMUR-Protección Civil (CCES)** es el responsable de las comunicaciones durante los dispositivos de riesgo previsible.
-
-* Atendiendo a criterios de ocupación, carga de trabajo y facilitación de las comunicaciones, el Encargado del CCES podrá delegar el control de las Comunicaciones de el/los canal/es asignados a los servicios preventivos en las siguientes figuras:
-  * **CECOR interno:** planificado en “Orden de Servicio” o sobrevenido.
-  * **Base de Comunicaciones.** Se trata de la estructura de comunicaciones conformada por uno o más miembros de SAMUR-Protección Civil con la capacidad de gestionar las comunicaciones de uno o varios canales de comunicación durante el desarrollo de DRP y/o cualquier otro evento sobrevenido. La localización de la Base de Comunicaciones puede ser en una estructura móvil (CICOIN, vehículos, personal a pie, etc.) o en estructuras fijas (base operativa, otra localización, etc.). No requiere de un responsable jerárquico específico, depende organizativamente del mando de la Central de Comunicaciones.
-  * **Coordinador o Jefe del DRP.**
-  * **CECOR externo/UCO:** como cometido adicional al descrito en el procedimiento de CECOR en un dispositivo de riesgo previsible.
-  * **Lima de Guardia.**
-* El Encargado del CCES puede decidir gestionar las comunicaciones a través de la herramienta informática “DRP”. Esta decisión llevará implícita la apertura de un “CECOR Interno” de SAMUR-Protección Civil de forma sobrevenida, cuyo responsable, salvo delegación expresa en otra persona, será el Encargado del CCES. En dicho caso se actuará conforme al procedimiento de “CECOR en un DRP” y se emitirá el informe correspondiente al cierre del mismo. Esta decisión será comunicada con antelación al Lima de Guardia y/o al Responsable del DRP.
-
-**En los DRP con CECOR interno** se actuará según el procedimiento de CECOR en un dispositivo de riesgo previsible. En el resto de casos se actuará como sigue:
-
-* Salvo decisión expresa por parte del Encargado del CCES, se asignará un número de informe a cada unidad o PSA que comunique su operatividad para comenzar su servicio en un servicio preventivo.
-* Podrá asignarse un canal de comunicación específico para uno o varios servicios preventivos de forma simultánea. Esta decisión debe autorizarse por el Encargado del CCES y deberá ser comunicada al Lima de guardia.
-* Tras recibir el cierre del servicio por parte de un recurso operativo en un DRP, se cerrarán todas las asistencias realizadas.
-
-* Las unidades asistenciales comunicarán su operatividad a la salida de Base 0 por canal “SAMUR 2” de forma general, salvo comunicación expresa de haberse asignado un canal específico para dicho preventivo.
-* Para cualquier otro comunicado, contactarán con el CCES por canal “SAMUR 1” salvo comunicación expresa de haberse asignado un canal específico para dicho preventivo.
-* Las unidades operativas cumplirán con el procedimiento radiotelefónico, desplazándose con diligencia hasta el lugar de despliegue, e indicando de forma correspondiente las diferentes claves de actuación.
-* En ausencia de un Responsable del DRP específicamente asignado a dicho evento, contactarán con el responsable del evento para informar de su presencia y localización.
-* Cada unidad tendrá asignado un único número de informe para todos los pacientes y cada paciente un número de paciente correlativo (“barra”).
-* En el caso de que hubiera un PSA actuará según lo descrito en el procedimiento de CECOR en un dispositivo de riesgo previsible.
-* Al finalizar el DRP comunicarán con el CCES para realizar el cierre de los informes realizados.
-* **Cierre del servicio en casos sin asistencias:**
-  * Desarrollado el DRP sin asistencias: código W.7.1.
-  * Cierre sin asistencias por suspensión de la actividad: código W.4.0.
-* **Traslados hospitalarios:**
-  * Las unidades no realizarán traslados sin la autorización del Responsable del DRP o, en su defecto, del CCES.
-  * Si la unidad del DRP realizara un traslado, al finalizar el mismo deberá comunicar con el CCES para cerrar todos los pacientes atendidos con ese número de informe hasta ese momento y, si se incorporan de nuevo al DRP, recibir un nuevo número de informe.
-
----
-
-# [216] Accidente laboral con riesgo biológico
-
-Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
-Markdown: https://manual-samur.vercel.app/procedures/216.md
-Actualizado: 2026-09-01
-
-Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, señalando las recomendaciones necesarias para el manejo de exposiciones accidentales a fluidos biológicos que contengan Virus Hepatitis B, Virus Hepatitis C y VIH, según la evidencia científica internacional actual.
-
-Ante accidentes de estas características con contaminación por fluidos corporales (sangre, LCR, líquido sinovial, pericárdico, amniótico, semen o fluidos vaginales) en el desarrollo de la actividad laboral, se debe:
-
-* Comunicar, inmediatamente, el accidente a la Central de Comunicaciones, haciendo constar que se trata de una exposición accidental a material biológico.
-* El personal accidentado realizará las pautas de manejo inicial ante exposiciones potencialmente contaminadas, consistentes en:
-  * Contaminación de heridas abiertas y exposición percutanea:
-    * Lávese lo antes posible con agua y jabón.
-    * Posteriormente irrigue con suero salino estéril y desinfecte con solución antiséptica.
-  * Contaminación de mucosas:
-    * Irrigue con agua o suero salino abundante.
-* El personal accidentado deberá acudir al centro sanitario de referencia para accidentes laborales (en la actualidad Hospital ASEPEYO de Coslada) concertado con la Mutua de Accidentes Laborales, para la 1ª extracción sanguínea de seguimiento para VHB, VHC y VIH, y pautas de profilaxis para VHB.
-* El personal accidentado deberá seguir los cauces establecidos por la Subdirección General de SAMUR-Protección Civil y la Mutua de Accidentes Laborales concertada, en el seguimiento del accidente laboral con riesgo biológico, así como el procedimiento administrativo correspondiente de notificación del accidente laboral a la Subdirección.
-* El jefe de División de Guardia o el Supervisor de Guardia se trasladará al lugar del incidente y evaluará el riesgo de transmisión de VHB, VHC y VIH. Para ello:
-  * Recogerá información sobre:
-    * tipo de exposición (contacto, salpicadura, exposición percutanea)
-    * integridad o no de la piel o mucosas
-    * volumen de fluidos
-    * tiempo de exposición
-    * En el caso de exposición percutanea: tipo de aguja, profundidad del pinchazo, técnica por la que se ha obtenido el fluido.
-  * Recogerá información sobre el paciente-fuente acerca del estadio de su enfermedad (clínica, carga viral, recuento de linfocitos CD4) y tratamientos actuales.
-  * Realizará un test de determinación rápida de VIH sobre la fuente y el trabajador accidentado (sistema de diagnóstico inmediato).
-  * Informará sobre las medidas más adecuadas a seguir, incluyendo las recomendaciones de profilaxis post-exposición para VIH, efectos secundarios y contraindicaciones.
-  * Si existe un riesgo considerable de transmisión de VIH, facilitará en las primeras dos horas tras exposición, el inicio de profilaxis antirretroviral, según pauta especificada a continuación. El trabajador, no obstante, podrá, a decisión propia, iniciar el tratamiento, aún con riesgo de transmisión insignificante.
-  * Facilitará un impreso oficial al trabajador en el que conste que éste ha recibido información sobre la quimioprofilaxis post-exposición, sus efectos secundarios, y su aceptación o no a la administración de esta terapia y posterior seguimiento.
-  * Informará y facilitará el acceso del trabajador afectado al Centro Sanitario donde se realizará la extracción de muestras basales de sangre y la obtención del tratamiento completo, así como la cita para posterior seguimiento (Hospital de Asepeyo en Coslada, Servicio de Urgencias)*
-  * Dejará constancia en el informe de guardia de la existencia del accidente laboral con riesgo biológico, adjuntando parte de asistencia médica del centro sanitario concertado y el impreso firmado por el trabajador.
-* La Unidad de Recursos Humanos se encargará del seguimiento del accidente laboral en el aspecto administrativo.
-
-### Pautas de quimioprofilaxis post-exposición accidental a sangre y/o fluidos contaminados
-Manejo inicial de exposiciones potencialmente contaminadas, según el esquema previo.
-
-Terapias **Básica** y **Expandida** de profilaxis post-exposición VIH. Debe ser administrada en la 1ª y 2ª hora tras la exposición y durante 4 semanas.
-
-* **Básica**: a aplicar cuando hay contaminación con fluidos o con posibilidad de existencia de sangre (aguja de pequeño calibre, sangre no visible, abundante sangrado sobre mucosas) o carga viral baja.
-  * Combivir (Lamivudina 150 mg /Zidovudina 300 mg): 1 comprimido/12 h.
-* **Expandida**: a aplicar cuando existe exposición de alto riesgo (volumen alto de sangre contaminada, carga viral alta en paciente terminal). Añadir a la pauta anterior.
-  * Kaletra (Lopinavir 100mg/ Ritonavir 25mg): 4 comprimidos/12 h.
-
-**(*) El responsable de coordinación y seguimiento de los casos será el Servicio de Medicina Preventiva concertado con la mutua de accidentes laborales.**
-
----
-
-# [216b] Contacto con meningitis bacteriana
-
-Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/216b-contacto-con-meningitis-bacteriana
-Markdown: https://manual-samur.vercel.app/procedures/216b.md
-Actualizado: 2026-09-01
-
-Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, por contacto con pacientes con posible Meningitis bacteriana.
-
-Sospecharemos paciente con posible meningitis bacteriana, cuando presente fiebre, cefalea y rigidez de nuca.
-
-* **Prevención**: Los métodos de prevención de las Meningitis bacterianas incluyen por un lado, el uso de mascarilla para el paciente y el personal sanitario como precaución de contacto con gotitas de pflugge y por otro la Quimioprofilaxis de los contactos cercanos.
-* **Definición de contacto cercano**: Aunque el "contacto cercano" no ha sido claramente definido, generalmente se refiere a las personas que han tenido contacto prolongado (más de 8 horas), cerca (menos de 3 metros) con el paciente, o que han estado directamente expuestos a las secreciones orales del paciente desde una semana antes de la aparición de los síntomas hasta 24 horas después del inicio del tratamiento antibiótico apropiado.
-* **En el caso de personal Sanitario** quedan excluidos los contactos transitorios breves, no íntimos, salvo que se haya participado en maniobras de reanimación Cardiopulmonar, [intubación endotraqueal](/manual/602_03-intubacion-endotraqueal) y/o aspiración de secreciones respiratorias.
-* **Momento de instauración de la quimioprofilaxis**: Debido a que la tasa de enfermedad secundaria para los contactos cercanos es más alta inmediatamente después de la aparición de la enfermedad en el caso índice, la Quimioprofilaxis antimicrobiana se debe administrar tan pronto como sea posible (idealmente menos de 24 horas después de la identificación del paciente índice). Por el contrario, la Quimioprofilaxis administrada más de 14 días después de la exposición al caso índice es probablemente un valor limitado o nulo.
-
-#### **Pautas de quimioprofilaxis**:
-![](/images/procedures/216b/Pautas-de-quimioprofilaxis.png)
-
-Se podrá optar por la pauta de Rifampicina o Ciprofloxacino en primera elección.
-
-En caso de Embarazo se utilizará Ceftriaxona.
-
-* En caso de sospecha de contacto con paciente con Meningitis bacteriana, el trabajador lo comunicará a la Central de comunicaciones. que a su vez informará al Jefe de División de Guardia.
-* El Jefe de División de guardia, recabará la información necesaria en el centro hospitalario, y en cualquier caso, informará al trabajador del posible riesgo y le ofertará el tratamiento antibiótico indicado (según pautas anteriores).
-* El trabajador deberá acudir al centro sanitario de referencia concertado con la Mutua de Accidentes Laborales en un plazo de 72 horas, para el seguimiento del accidente laboral y del tratamiento.
-* El personal accidentado deberá seguir los cauces establecidos por la Subdirección General de SAMUR-Protección Civil y la Mutua de Accidentes Laborales en el seguimiento del accidente laboral, así como el procedimiento administrativo correspondiente de notificación de accidente laboral a la Subdirección.
-* El Jefe de División de Guardia dejará constancia en el informe de guardia de la existencia del accidente laboral con riesgo biológico.
-* La Sección de Logística, se encargará del seguimiento del accidente laboral en el aspecto administrativo.
-
----
-
-# [drp_01] Procedimiento General de los DRP
-
-Sección: DRP
-URL: https://manual-samur.vercel.app/manual/drp_01-procedimiento-general-de-los-drp
-Markdown: https://manual-samur.vercel.app/procedures/drp_01.md
-Actualizado: 2026-09-01
-
-## Definición y objeto.
-Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
-
-Este procedimiento, y los que lo acompañan para los aspectos específicos, tienen como objeto establecer la operativa de SAMUR-Protección Civil en los DRP en los que participa.
-
-## Tipos de servicios.
-Se consideran los siguientes tipos de DRP:
-
-* **Servicios preventivos asistenciales convencionales**. Son servicios sencillos, con la misión de realizar una cobertura preventiva sanitaria o labores de protección civil que se resuelvan con un dispositivo menor. Como criterio general, serán los que tengan un máximo de tres unidades, lo que corresponde con los códigos 8.1, 8.2, 8.4, 8.5 y 8.7.
-* **Servicios preventivos asistenciales complejos.** Cobertura preventiva superior al servicio convencional, lo que se corresponde con los códigos 8.3, 8.4.1, 8.5.1 y 8.6. Dentro de este epígrafe también se incluyen los **grandes dispositivos**, que responden a una organización y despliegue de medios y/o recursos extraordinarios. Pueden requerir de relevos dentro de servicio y/o un despliegue previo, siquiera logístico, por sus dimensiones. Como criterio general, serán aquellos en los que se desplieguen más de 15 recursos.
-* **Servicios preventivos asistenciales de refuerzo.** Se constituyen como refuerzo del operativo ordinario en determinadas zonas y horarios con motivo de una mayor afluencia de personas. En función de sus dimensiones pueden ser convencionales o complejos y en función de su planificación pueden ser sobrevenidos (emergencia) o programados. Correspondería con los códigos 8.8 y 8.9
-* **Servicios preventivos no asistenciales con funciones de enlace o coordinación.** Constituyen una entidad específica de los DRP. Consisten en despliegue de personal de enlace en los centros de coordinación operativa (CECOR) y su funcionamiento se rige por lo dispuesto en el procedimiento de “CECOR” en un dispositivo de riesgo previsible. Correspondería a los códigos 8.10 y 8.11
-
-## Responsable del DRP.
-Cada servicio tendrá un responsable que será acorde al nivel de complejidad del dispositivo:
-
-* **Servicios convencionales y de refuerzo.** Esta función recaerá en el Lima de guardia, salvo nombramiento expreso de otro responsable. Esta función la ejercerá por delegación el componente de mayor categoría o antigüedad de las unidades desplegadas, que no se identificará con ningún indicativo específico y reportará al Lima de guardia cuantas circunstancias y decisiones sea necesario tomar.
-* **Servicios complejos** que así lo requieran. La figura de responsable recaerá, en función de la complejidad del mismo, en:
-  * **Coordinador del DRP. **Realizará esta función un voluntario de Protección Civil con categoría de jefe de equipo o jefe de escuadra.
-    * *Indicativo:* “Eco 0”.
-    * *Chaleco identificativo* de color naranja y cuadros amarillos en la zona superior, con el rótulo “COORDINADOR DRP”.
-    * *Funciones*:
-***1. Participará activamente en la organización del personal y asignación de unidades de voluntarios en colaboración con el Lima de guardia. En caso necesario, por ausencia sobrevenida de algún voluntario, podrá ajustar las dotaciones, con el visto bueno del Lima de guardia.
-***1. Responderá jerárquicamente ante el Lima de guardia y recabará su aprobación en aquellas decisiones que afecten a la operatividad o puedan afectar a la planificación recogida en la orden de servicio.
-***1. Contactará con el Lima de guardia para la toma de decisiones en relación con el personal funcionario que pudiera haber en el DRP.
-* **Jefe del DRP.** Realizará esta función un funcionario designado por el Servicio y con nivel acorde a la dimensión del dispositivo.
-  * *Indicativo:* indicativo propio del mando funcionario.
-  * *Chaleco identificativo* de color rojo y cuadros amarillos en la zona superior, con el rótulo “JEFE DRP”.
-  * *Funciones*:
-**1. Reunión previa con los otros responsables, si los hubiera.
-**1. Reunión previa al despliegue *(briefing).*
-**1. Contacto con organizador y otros servicios desplegados (sociales, seguridad, etc.).
-**1. Ajustes necesarios por causas sobrevenidas.
-**1. Supervisión del servicio. Prever la respuesta ante incidencias durante el servicio.
-**1. Previsión de descansos y relevos, en colaboración con el responsable del CECOR interno.
-**1. Comunicar los recursos y asistencias al Lima de guardia en la forma establecida para su registro, en colaboración con el responsable del CECOR interno.
-**1. Entregar los “Cuadernillos de PSA” a los responsables del PSA.
-**1. Establecer la forma de recogida de informes y asegurar su entrega a Archivo en la forma establecida en los grandes dispositivos.
-**1. Podrá apoyarse en el Coordinador del DRP para la gestión y coordinación de las unidades de voluntarios.
-* **Servicios no asistenciales con funciones de enlace o coordinación.** El responsable será el responsable de CECOR externo designado específicamente para dicho servicio, acorde al procedimiento de CECOR en un dispositivo de riesgo previsible.
-
-### El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos
-* Mantiene sus funciones de responsabilidad sobre el personal voluntario, por lo que prestará la asistencia que éstos puedan necesitar.
-* En los DRP con un Coordinador del DRP mantendrá la supervisión sobre el mismo y resolverá cualquier incidencia que pudiera presentarse, llegando a relevar al Eco 0 si así lo estima oportuno.
-* En los servicios con Jefe del DRP colaborará con el mismo en la recepción de personal voluntario y despliegue.
-* Es el responsable de rellenar la ficha del servicio existente en su informe de guardia o aplicación de gestión de servicios. Para ello, el responsable del DRP deberá facilitar al Lima de guardia los datos necesarios para su cumplimentación en colaboración con el responsable del CECOR interno.
-
-Todo responsable de un DRP, con independencia del tipo o complejidad del servicio preventivo, se pondrá en contacto con el responsable del evento (o persona designada) a su llegada al mismo para coordinarse en las actuaciones que fueran precisas, conocer con detalle cómo se va a desarrollar el mismo, informar de la ubicación de los recursos, confirmar las vías de evaluación o cualquier otra indicación mostrada en la orden de servicio.
-
-## Orden de servicio
-La orden de servicio es un documento en el que consta toda la información necesaria para el desarrollo de un DRP, centrada en la organización, planificación y cobertura del mismo. Estará disponible con la mayor antelación posible a la fecha de realización del servicio.
-
-La orden de servicio debe de constar, al menos, de los siguientes apartados:
-
-1. **Datos administrativos**
-1*. Nombre del servicio.
-1*. Nº del evento.
-1*. Fecha.
-1*. Horarios destacados de la actividad a desarrollar.
-1*. Descripción del evento y/o actividad.
-1*. Perfil de los participantes.
-1. **Horarios destacados del servicio**
-1*. Hora de cita para el servicio.
-1*. Opcional: Hora de briefing y localización del mismo.
-1*. Hora máxima de despliegue del servicio.
-1*. Hora de inicio de actividad y/o servicio.
-1*. Hora de fin de actividad y/o servicio.
-1*. Hora prevista de finalización.
-1. **Recursos y ubicaciones**
-1*. Unidades y/o recursos desplegados.
-1*. Localización de las unidades y/o recursos.
-1. **Planos y mapas**
-1*. Cualquier plano/mapa de recorrido, zona de influencia y/o cualquier otro detalle que se considere relevante relacionado con el servicio.
-1. **Planes de contingencia**
-1*. Previsión de riesgo especiales. Descripción de los mismos en su caso.
-1*. Puntos de encuentro en caso de necesidad de evacuación.
-1*. Vías de evacuación de referencia.
-1*. Planificación ante un IMV:
-1*. Puntos de ubicación de PSA.
-1*. Zonas recomendadas de acceso y/o espera de recursos.
-1. **Otra información de interés**
-1*. Actividades concretas o de especial riesgo durante el desarrollo del servicio (entrega de premios, eventos con pirotecnia, acceso de personal VIP, etc.).
-1*. Cualquier otra información de interés o indicación que se considere relevante para el desarrollo del servicio.
-
-## Informes asistenciales en un DRP.
-Todas las unidades cumplimentarán el informe asistencial para los pacientes atendidos ([ver procedimiento Cumplimentación de informes asistenciales](/manual/205-cumplimentacion-de-los-informes-de-asistencia)), reflejando la resolución* *del aviso. En el caso de realizar transferencia (al PSA del DRP, a otra unidad del DRP o a otra unidad procedente del operativo ordinario) se reflejará esta circunstancia y el nº de informe de la unidad receptora.
-
-* **Informes en un PSA.**
-  * De forma general se realizará un informe asistencial por cada paciente atendido en el PSA. Se asignará un número de paciente correlativo, con el número de informe del PSA, comenzando con el paciente número 1.
-  * En caso de que se encuentre activo un CECOR, se actuará conforme al procedimiento correspondiente .
-* **Informes de equipos sanitarios a pie (ECO, DEPA).**
-  * Se actuará conforme a lo descrito para equipos sanitarios a pie en el procedimiento de “CECOR” en un dispositivo de riesgo previsible.
-
-## Finalización del servicio.
-A la finalización del servicio, todos los informes cumplimentados deberán entregarse en Archivo o buzón específico, salvo que por indicación expresa se determine otra vía.
-
----
-
-# [drp_02] Procedimiento de despliege de un DRP
-
-Sección: DRP
-URL: https://manual-samur.vercel.app/manual/drp_02-procedimiento-de-despliege-de-un-drp
-Markdown: https://manual-samur.vercel.app/procedures/drp_02.md
-Actualizado: 2026-09-01
-
-## **Objeto**.
-Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).
-
-## **Despliege**
-### Servicios convencionales.
-* Con tiempo suficiente el Lima de guardia deberá comprobar la orden de servicio y la cobertura prestando especial atención a horarios, lugar y características del evento. Las posibles incidencias se transmitirán en la reunión de comienzo de la guardia.
-* El personal voluntario se entrevistará con el Lima de guardia para firmar la asistencia y confirmar la asignación de vehículo, posición, canal de trabajo, etc. Asimismo, verificarán junto al Lima y/o al Sierra de guardia la orden del servicio con los horarios y los detalles de la cobertura de éste. Posteriormente recogerán el vehículo según procedimiento de la Oficina del Parque así como el resto de material necesario.
-* En caso de que esté cubierto por personal funcionario, éste se entrevistará con el Charlie Bravo si acude específicamente a cubrir el servicio o será contactado a través de la Central de Comunicaciones si se encuentra prestando servicio en el operativo ordinario. En cualquier caso, se pondrán en contacto con el Responsable del DRP con la finalidad de informarse de los datos necesarios para la correcta cobertura y al finalizar el servicio para dar la información sobre asistencias realizadas.
-* Si, por causas sobrevenidas, fuera necesario reasignar la ubicación o prolongar el tiempo que la unidad de funcionarios está cubriendo el servicio preventivo, el Lima de guardia se coordinará con el Jefe de Supervisión de guardia.
-
-### Servicios complejos.
-* Con anterioridad al inicio de las reuniones previas al despliegue, tanto el Lima de guardia como el Responsable del DRP deberán comprobar la orden de servicio y la cobertura prevista, prestando especial atención a horarios, lugar y características del evento.
-* Con carácter general, los mandos designados para la gestión del DRP deberán incorporarse en Base 0 al menos 30 minutos antes de la hora de cita del resto del personal con el objeto de mantener una reunión previa en la que se comentarán los aspectos generales y posibles modificaciones sobrevenidas de último momento. En dicha reunión también participará el Lima de guardia.
-* El control de asistencia del personal voluntario se realizará en la oficina de personal voluntario salvo en los casos en que se decida realizarlo directamente en otro lugar (como el destinado al briefing inicial del servicio).
-* A la hora de cita general podrá realizarse una reunión previa informativa *(briefing) *con todos los intervinientes. Este briefing será obligatorio en caso de así indicarse en la orden de servicio, en el horario y localización correspondiente. El responsable del DRP (o del turno en los de larga duración) dirigirá el briefing, que deberá incluir:
-* Características del servicio preventivo y horarios relevantes.
-* Organización geográfica.
-* Canales de comunicación.
-* Asignación de vehículos.
-* Tipo de operatividad acordada del DRP para la asignación de informes (macroservicio/multiservicio).
-* Equipos de reacción.
-* Accesos y localización de los PSA si los hubiera.
-* Posibles lugares de descanso.
-* Relevos y horarios, en caso necesario.
-* Plan de contingencia y sus características.
-* El coordinador del DRP colaborará con el jefe del DRP en todas las tareas que sean necesarias, especialmente la asignación de zonas, vehículos, material de comunicaciones y el control de los recursos entregados a cada voluntario.
-* El Lima de guardia colaborará con el responsable del DRP en la recepción del personal, preparación del material, etc.
-
-### Despliegue en Grandes Dispositivos.
-* En el caso de un gran dispositivo, y siempre que así se determine, se establecerá una coordinación para la recepción del personal, preparación de material y asignación de vehículos específico.
-* En este caso se contará con la colaboración del Lima de guardia y/o personal de RRHH funcionario y/o voluntario, así como el personal de la Oficina del Parque, Electromedicina y Farmacia, según el tipo de servicio y las necesidades.
-* Con el objetivo de agilizar el despliegue, se tendrán en cuenta los siguientes aspectos:
-* El Responsable del DRP asignará las dotaciones de los equipos asistenciales, además de su ubicación y tarea designadas en el siguiente orden: ruedas pesadas (USVB, USVA), ruedas ligeras (UPR, Halcón, Lince), DEPA, Palma y equipos a pie (Eco).
-* El personal de la Oficina del Parque dispondrá de las carpetas y llaves de los vehículos en un lugar a la salida del *briefing* para su entrega a los equipos operativos.
-* Los vehículos estarán preparados para que el personal no tenga que pasar por farmacia o electromedicina, a excepción de medicación que precise firma de personal facultativo.
-* El material de los equipos Eco será gestionado por sus mandos directos (Eco 0 o jefes de sector).
-* Los responsables de los equipos Halcón, Lince y Palma gestionarán el material de acuerdo con su funcionamiento interno del equipo de especialidad.
-* El día previo al evento, el personal de Farmacia facilitará una relación de números de equipos Tetra portátiles y teléfonos asignados a cada vehículo. Enviará la información a los siguientes responsables:
-  * Responsable del DRP.
-  * Responsable del CECOR interno asignado al DRP.
-  * Encargado y Jefe de Equipo de la Central de Comunicaciones.
-  * Lima de guardia.
-* La Central de Comunicaciones asignará los números de dispositivos indicados a cada unidad, permitiendo que se comunique la operatividad de las mismas mediante el “status 9”. En caso de no recibir la confirmación de su operatividad por mensaje pasarán por el canal de comunicaciones asignado y facilitarán los datos por voz.
-
-### Servicio preventivo de refuerzo.
-* El despliegue y operatividad de las unidades se realizarán de forma análoga al operativo ordinario o retén, con la salvedad de poder establecer un canal de comunicación específico.
-
-### Servicios preventivos no asistenciales con funciones de enlace o coordinación.
-* El despliegue del CECOR externo e interno tendrá lugar acorde al procedimiento correspondiente ([ver procedimiento de CECOR en un dispositivo de riesgo previsible](/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible).
-
-## **Repliegue**
-### Finalización del servicio (clave 14).
-* **Servicios convencionales.**
-  * En caso de no estar presente el Lima de guardia y/o el responsable específico designado para el DRP, al finalizar el evento será la unidad (o unidades) quien contacte con la Central por el canal correspondiente para informar de esta circunstancia, solicitar clave 14 y dar cuenta de las asistencias realizadas.
-  * En los DRP con responsable específico asignado será éste quien decida el momento de clave 14 de las diferentes unidades y establezca la finalización del DRP, lo que comunicará a la Central o CECOR. Si las unidades tenían número de informe abierto deberán contactar con la Central o CECOR para el cierre.
-* **Servicios complejos. **Será el Responsable del DRP el encargado de autorizar las claves 14 de los diferentes recursos implicados.
-* **Servicios preventivos de refuerzo.** Será la Central quien autorice la clave 14 a las unidades.
-* **Servicios preventivos no asistenciales (CECOR):**
-  * CECOR externo. El Responsable del CECOR externo comunicará la finalización de su servicio a la Central de Comunicaciones, solicitando la clave 14.
-  * CECOR interno. El Responsable del CECOR será el responsable de autorizar la clave 14 a todos los componentes del CECOR una vez finalizadas sus funciones en el DRP.
-
-Tras recibir la clave 14 y hasta la llegada a Base 0 las unidades permanecerán atentas a las comunicaciones de radio. No es necesario dar la clave 12 a la llegada a Base 0.
-
-En los DRP en que hubiera PSA debe quedar una unidad asistencial en el punto hasta el completo desmontaje del PSA.
-
-### Devolución de material.
-La devolución de material se realizará de la siguiente manera, salvo indicación expresa en contra:
-
-* Las unidades móviles devolverán el material en las dependencias de Farmacia y Electromedicina, según corresponda.
-* Los conductores deberán acudir a la Oficina del Parque para la devolución de las llaves y documentación del vehículo.
-* Los mandos directos de los equipos Eco recogerán el material a la llegada a Base 0 y centralizarán su devolución según se haya establecido.
-* Los responsables de los equipos Halcón, Lince y Palma realizarán la devolución de acuerdo con su funcionamiento interno en el equipo de especialidad.
-
-### Cumplimentación de la ficha de servicio.
-El Lima de guardia recabará la información necesaria para la cumplimentación de la ficha del servicio, la cual debe de ser facilitada por las unidades o dotaciones implicadas:
-
-* Incidencias acontecidas.
-* Pacientes atendidos por recursos móviles, diferenciando los que son vistos por recurso avanzado o solo por recurso básico.
-* Pacientes trasladados, indicando el tipo de unidad que traslada.
-* El número de preavisos.
-* El número total de pacientes atendidos en PSA y, de éstos, los que son vistos sin informe específico.
-
----
-
-# [drp_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible
-
-Sección: DRP
-URL: https://manual-samur.vercel.app/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
-Markdown: https://manual-samur.vercel.app/procedures/drp_03.md
-Actualizado: 2026-05-05
-
-### Objetivos de este procedimiento
-* Establecerá la definición de CECOR y sus diferentes tipos.
-* Describir las obligaciones del Responsable del CECOR.
-* Unificar la actuación de las Unidades de Comunicación de SAMUR-Protección Civil durante el desarrollo de un dispositivo de riesgo previsible.
-* Estructurar la cumplimentación de los informes de CECOR que son emitidos por los responsables cuando finalizan los dispositivos de riesgo previsibles.
-
-### Definición y tipos
-* Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.).
-* Se denomina **“CECOR”** a todo aquel Centro de Coordinación Operativa, especialmente diseñado para la gestión de las comunicaciones y de las intervenciones, en los dispositivos de riesgo previsible. Tiene como objetivo la coordinación adecuada entre los diferentes servicios/dispositivos sanitarios. Puede estar formado por un solo DRP o por varios. Podemos diferenciar:
-  * **CECOR INTERNO:** Centro de Coordinación establecido por SAMUR-Protección Civil para la gestión de las unidades o intervenciones sanitarias durante uno o varios DRP.
-  * **CECOR EXTERNO:** Centro de Coordinación en el que un miembro de SAMUR-Protección ejerce funciones de enlace y coordinación con otros servicios de emergencias y/o instituciones para el correcto desarrollo de un DRP.
-* Se define **“UCO”** como **“Unidad de Control Organizativo”**. Es el centro de coordinación ubicado en las instalaciones deportivas, desde donde el Coordinador de seguridad del evento ejerce la dirección del dispositivo de seguridad, en todas sus fases, durante el acontecimiento deportivo, con la asistencia del responsable de seguridad del mismo, para facilitar su normal desarrollo. En ella un miembro de SAMUR-Protección Civil ejerce funciones de enlace y, en caso necesario, gestiona las unidades destinadas al DRP.
-
-## **Procedimiento de CECOR interno**
-Este CECOR se desarrolla en las instalaciones de la Central de Comunicaciones de SAMUR-Protección Civil, El CICOIN (Centro Integral de Coordinación e Información) u otra localización donde se pueda establecer un centro de comunicaciones con operadores del servicio.
-
-### **Funciones del responsable del CECOR INTERNO:**
-* Es el responsable de la gestión de las comunicaciones en el/los dispositivos de riesgo previsible que se encuentre participando.
-
-* Coordinará al personal que tenga asignado a su cargo (funcionario y voluntario) para cumplir con las responsabilidades asumidas.
-* Solicitará al Lima de Guardia o al Encargado de la Central de Comunicaciones:
-  * Orden de servicio de cada DRP. Tiene obligación de conocerla.
-  * Relación de unidades.
-  * Números de tetra portátil asignados a cada unidad.
-  * Número de los móviles asignados a cada unidad.
-* En los DRP en los que se establezca una reunión previa al comienzo del servicio, tendrá la obligación de participar en la misma con el objeto de informar de posibles cambios o resolver dudas sobre el desarrollo del dispositivo.
-* Solicitará un contaje periódico del número de asistencias.
-* Realizará cuantas labores sean necesarias para la correcta gestión y control de las comunicaciones/avisos/transferencias entre unidades/etc. durante el desarrollo del DRP.
-* Utilizará los medios y herramientas informáticas de SAMUR-Protección Civil para la gestión de los DRP (en especial la aplicación “DRP” de la Central de Comunicaciones).
-* Establecerá los periodos de descanso, con una duración variable, en la que se tendrán en cuenta (entre otros) los siguientes factores:
-  * Duración del DRP
-  * Tipo de DRP.
-  * Desarrollo del mismo y carga de trabajo.
-  * Cualquier otro factor que pueda influir en la toma de decisiones a criterio del responsable.
-* Informará al Supervisor de Guardia, el responsable del DRP y a cualquier otro responsable directamente implicado, de cualquier incidencia acontecida durante el desarrollo del mismo.
-* Cumplimentará el informe web de CECOR al finalizar el DRP.
-
-### El CECOR INTERNO puede gestionarse a través de la aplicación “DRP” atendiendo a los siguientes criterios
-1. Multiservicio.
-1. Macroservicio.
-
-### **Cecor interno multiservicio**
-Es aquel CECOR en el que se coordinan varios DRP con diferentes órdenes de servicio de manera simultánea. En la aplicación “DRP” se utiliza el modo “multiservicio” y se abren diferentes zonas para cada dispositivo de riesgo previsible.
-
-1. **Apertura informática de la aplicación DRP**.
-Se abrirán tantas zonas como DRP haya, nombrando cada zona según el nombre del dispositivo concreto.
-En este caso, en la aplicación DRP, cada zona corresponderá a cada uno de los servicios correspondientes.
-1. **Número de identificación del servicio en la aplicación DRP**.
-Se establece un código de cinco dígitos (MMDDT):
-* **Mes** (dos dígitos)
-* **Día** (dos dígitos)
-* **Turno de trabajo** (un dígito)
-  * Turno 1 de 07:00 a 15:00 horas.
-  * Turno 2 de 15:00 horas a 23:00 horas.
-  * Turno 3 de 23:00 a 7:00 horas.
-  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
-
-**Ejemplo:** para el 22 de diciembre de 2023, turno de mañana sería 12221, turno de tarde sería 12222, turno de noche sería 12223. Si comienza el evento a las 16:00 horas y finaliza a las 1:00 horas permanecerá en turno 2 (12222).
-
-1. **Aplicación Informática DRP: número de identificación del servicio.**
-Se establece un código de cinco dígitos continuos, seguido del año en curso, separado por una barra (MMDDT/AA)
-
-* **Mes** (dos dígitos)
-* **Día** (dos dígitos)
-* **Turno de trabajo** (un dígito)
-  * Turno 1 de 07:00 a 15:00 horas.
-  * Turno 2 de 15:00 horas a 23:00 horas.
-  * Turno 3 de 23:00 a 7:00 horas.
-  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
-* **Año en curso**(los dos dígitos finales del año en curso).
-
-**Ejemplo:** para el 19 de marzo de 2024. En turno de mañana sería **03191/24**, en turno de tarde sería **03192/24**.
-
-1. **Operatividad de las unidades.**
-
-Se realizará la carga (volcado) de las unidades en el sistema informático previo a la operatividad (salvo que lo impida alguna incidencia sobrevenida que deberá reflejarse como tal en el informe correspondiente) facilitando que ésta pueda ser comunicada de forma telemática desde el propio vehículo (enviando el “status 9” en la emisora del vehículo).
-\\Sin perjuicio de lo previo, las unidades que pasen a formar parte de los DRP comunicarán también su operatividad indicando su ubicación inicial exacta por canal 10 o canal reservado por la Central de Comunicaciones para ese Servicio.
-
-1. **Asignación de informes y códigos.**
-Según el procedimiento radiotelefónico, los códigos de incidente asignados a toda aquella unidad con capacidad asistencial que se encuentre en un servicio preventivo comenzarán por el número ocho (“8. SERVICIOS PROGRAMADOS”).
-
-1. **Códigos de incidente:**
-1*. Códigos 8.12 a 8.15: serán asignados a todas las unidades como clave 2.1 (“informe corto”).
-1*. Códigos 8.1 a 8.7:
-1**. Unidades de mando/apoyo: serán asignados como clave 2.1 (“informe corto”).
-1**. Unidades asistenciales: serán asignados como clave 2 (“informe largo”).
-1. **Unidades asistenciales.** Se les asignará un número de informe en clave 2 (“informe largo”). A la llegada al lugar indicado las unidades darán la clave 3 de forma telemática o, en su defecto, por voz. Usarán su número de informe para las diferentes asistencias que realicen. En el caso de que realicen más de una asistencia usarán números de pacientes correlativos (“barras”). Si hicieran un traslado y volvieran al preventivo recibirían un nuevo número de informe.
-1. **Unidades o equipos sanitarios a pie (ECO, DEPA). **Se les asignará un número de informe:
-1*. Cuando el equipo lo solicite porque se dispone a atender un paciente de forma autónoma, sin que se transfiera a otro recurso de SAMUR-Protección Civil. En caso de atender de forma autónoma a varios heridos en el mismo punto, utilizarán números de pacientes consecutivos (“barras”).
-1*. Cuando sea la Central o Base de Comunicaciones quien les asigne un suceso, por trazabilidad. Esta circunstancia se le hará saber expresamente al equipo para que actúen según el criterio general de realización de informes asistenciales.
-1*. En caso de realizar exclusivamente acompañamiento del paciente hasta otro tipo de recurso asistencial, el equipo receptor deberá reflejar en su informe (cuadernillo de PSA y/o informe asistencial) qué equipo ECO o DEPA ha hecho la transferencia del paciente y éstos no tendrán que realizar informe propio salvo indicación expresa del CECOR por haberles asignado número de informe.
-1*. De forma análoga a los PSA, si así se habilita, los ECO podrán tener su propio cuadernillo (o sistema de filiación digital alternativo) para situaciones de previsión de gran demanda.
-1. **Unidades de mando y/o apoyo.**Los códigos e informes asignados a toda aquella unidad que participe en un servicio preventivo y que desarrolle su función exclusivamente como unidad de apoyo o de mando serán asignados en Clave 2.1 (“informe corto”). En el caso de que cualquiera de estos indicativos se encontrara con una asistencia sobrevenida, comunicarán dicha situación al CECOR y solicitarán un número de informe para realizar el informe de la asistencia correspondiente (dando por cerrado el informe previo en clave 2.1).
-1. **Unidades de traslado de personal (indicativo “Tango”):** A efectos de informe se considerará como “movimiento interno”.
-1. **Traslados de pacientes.**La necesidad de realizar traslado hospitalario por una unidad que participe en el servicio preventivo debe ser valorada y autorizada previamente por el responsable de dicho DRP.
-Si el traslado hospitalario afectara a la operatividad del DRP, se solicitará una unidad externa al dispositivo para realizar el mismo (siempre que la tiempo-dependencia de la patología sufrida por el paciente no lo contraindique).
-Sin perjuicio de lo anterior, el responsable o Supervisor del DRP podrá determinar, de forma justificada, un criterio común de traslado para el/los DRP, debiendo ser comunicado en la reunión previa al inicio del servicio a todos los intervinientes.
-\\Una vez realizado el traslado y siempre que haya sido realizado por una unidad del DRP, se solicitará agilidad en el regreso hasta el lugar del preventivo. Cuando sea necesaria su incorporación urgente al dispositivo tras finalizar un traslado se le asignará, previa autorización del responsable del DRP, un “número de informe corto” para hacer el regreso en clave 2.1, salvo que se trate de un aviso convencional destinado a un paciente, en cuyo caso se hará de forma ordinaria en clave 2.
-1. **Actuación con el Puesto Sanitario Avanzado (PSA):**
-Cuando en un DRP se cuente con la participación de un Puesto Sanitario Avanzado (PSA), se asignará a éste un número de informe que mantendrá durante todo el evento.
-No se cumplimentará cuadernillo de PSA en este tipo de servicios salvo que de forma justificada así lo considere el responsable del mismo. Independientemente del uso del cuadernillo, se deberá cumplimentar informe asistencial en los siguientes casos:
-1*. Asistencias a menores de edad no acompañados.
-1*. Asistencias por motivos potencialmente judicializables (agresiones de cualquier índole, desperfectos en vía pública, accidentes de tráfico sobrevenidos, etc.).
-1*. En caso de administración de tratamiento parenteral.
-1*. Cualquier otro motivo que sea considerado por el personal de soporte vital avanzado que se encuentre prestando servicio en el PSA.
-
-          El PSA siempre deberá reflejar la unidad que le transfiere el paciente.
-\\         Una vez finalizado el evento, el *Responsable del DRP* , o en su defecto el *Jefe del PSA* contactará (preferentemente por clave 8) con el responsable del CECOR para proceder con el cierre de los informes realizados.
-\\       Finalizado el evento, quedará una USVB en preventivo hasta que el personal de logística desmonte y traslade todo el material al vehículo de logística; momento a partir del cual se podrá  informar de la clave 14 a la unidad.
-
-1. **Informe al finalizar el evento:**
-El responsable de CECOR cumplimentará el informe electrónico una vez procedido con el cierre del Centro Coordinador Operativo (CECOR).
-Debe quedar reflejado:
-
-* Incidencias acontecidas.
-* Activaciones totales realizadas.
-* Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
-* Pacientes trasladados, indicando el tipo de unidad que traslada.
-* Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
-* Se adjuntará el documento con las activaciones del DRP obtenido a través de la aplicación Consulta de Informes.
-
-El responsable del CECOR contactará con el Lima de Guardia para facilitarle estos datos y que queden reflejados en su informe correspondiente.
-Se realizarán dos informes en caso de coexistencia de macroservicio y multiservicio en el mismo día; o por decisión del responsable del CECOR, previa consulta al supervisor del DRP.
-
-### **Cecor interno macroservicio**
-Se trata de aquel servicio en el que se produzca una gran ocupación de la vía pública por masificación de personas; que haga necesario la participación de un elevado número de unidades/personal para su cobertura, seguimiento y coordinación.
-
-1. **Apertura informática de la aplicación DRP.**
-Se abrirá la aplicación, distribuyendo las unidades en función de la orden de servicio, para lo que se podrán utilizar diferentes zonas.
-
-1. **número de identificación de servicio en un DRP.**
-
-         Se establece un código de cinco dígitos (MMDDT):
-
-* **Mes** (dos dígitos)
-* **Día** (dos dígitos)
-* **Turno de trabajo** (un dígito)
-  * Turno 1 de 07:00 a 15:00 horas.
-  * Turno 2 de 15:00 horas a 23:00 horas.
-  * Turno 3 de 23:00 a 7:00 horas.
-  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
-
-**Ejemplo:** para el 22 de diciembre de 2023, Turno de mañana sería 12221, turno de tarde sería 12222, turno de noche sería 12223. Si comienza el evento a las 16:00 horas y finaliza a las 1:00 horas permanecerá en turno 2 (12222) .
-
-1. **Aplicación Informática DRP: número de identificación de servicio de un DRP.**
-Se establece un código de cinco dígitos continuos, seguido del año en curso, separado por una barra (MMDDT/AA):
-* **Mes** (dos dígitos)
-* **Día** (dos dígitos)
-* **Turno de trabajo** (un dígito)
-  * Turno 1 de 07:00 a 15:00 horas.
-  * Turno 2 de 15:00 horas a 23:00 horas.
-  * Turno 3 de 23:00 a 7:00 horas.
-  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
-* **Año en curso en el que se realiza el DRP**(los dos dígitos finales del año en curso)
-
-**Ejemplo:** para el 19 de marzo de 2024. Sería el turno de mañana **03191/24**, turno de tarde sería **03192/24**.
-
-1. **Operatividad de las unidades.**
-Se realizará la carga (volcado) de las unidades en el sistema informático previo a la operatividad (salvo que lo impida alguna incidencia sobrevenida que deberá reflejarse como tal en el informe correspondiente) facilitando que ésta pueda ser comunicada de forma telemática desde el propio vehículo (enviando el “status 9” en la emisora del vehículo).
-\\Sin perjuicio de lo previo, las unidades que pasen a formar parte de los DRP comunicarán también su operatividad indicando su ubicación inicial exacta por canal 10 o canal reservado por la Central de Comunicaciones para ese Servicio.
-
-1. **Asignación de informes y códigos.**
-Según el procedimiento radiotelefónico, los códigos de incidente asignados a toda aquella **unidad con capacidad asistencial **que se encuentre en un servicio preventivo comenzarán por el número ocho (“8. SERVICIOS PROGRAMADOS”).
-\\**Códigos de Incidente:**
-1*. Códigos 8.12 a 8.15: serán asignados a todas las unidades como clave 2.1. (“informe corto”)
-1*. Códigos 8.1 a 8.7:
-1**. Unidades de Mando/Apoyo: serán asignados como clave 2.1 (“informe corto”)
-1**. Unidades Asistenciales: serán asignados como clave 2 (“informe largo”)
-1. **Unidades Asistenciales:** se encontrarán operativas en “Clave 0”, asignándoles un informe por cada asistencia, quedando en clave 0 al finalizar la intervención. Si realizasen más de una asistencia en el mismo punto usarán número de paciente correlativos (“barras”).
-\\**Unidades a pie:** tanto a los ECO como a los DEPA se les asignará un número de informe cuando vayan a atender un suceso que sea resuelto de forma autónoma, sin que se transfiera a otro recurso de SAMUR-Protección Civil. En caso de atender de forma autónoma a varios heridos, utilizarán números de pacientes consecutivos (“barras”). En caso de realizar exclusivamente acompañamiento del paciente hasta otro tipo de unidad asistencial o PSA, éstos deberán reflejar en su informe (cuadernillo de PSA y/o informe asistencial) qué ECO ha hecho la transferencia del paciente y el equipo ECO no realizará informe propio.
-\\**Unidades de Mando y/o Apoyo:** los códigos e informes asignados a toda aquella unidad que participe en un servicio preventivo y que desarrolle su función exclusivamente como *Unidad de Apoyo o de Mando* serán asignados en Clave 2.1 (“informe corto”).
-\\En el caso de que cualquiera de estos indicativos se encontrara con una asistencia sobrevenida, comunicarán dicha situación a la central de comunicaciones y solicitarán un número de informe para realizar el informe de la asistencia correspondiente (dando por cerrado el informe previo en Clave 2.1).
-\\**Unidades de traslado de personal (indicativo “Tango”):** a efectos de informe se considerará como “movimiento interno”.
-\\**Traslados de pacientes.**La necesidad de realizar traslado hospitalario por una unidad que participe en el servicio preventivo debe ser valorada y autorizada previamente por el responsable de dicho DRP.
-\\Si el traslado hospitalario afectara a la operatividad del DRP, se solicitará una unidad externa al dispositivo para realizar el mismo (siempre que la tiempo-dependencia de la patología sufrida por el paciente no lo contraindique).
-\\Sin perjuicio de lo anterior, el responsable o Supervisor del DRP podrá determinar, de forma justificada, un criterio común de traslado para el/los DRP, debiendo ser comunicado en la reunión previa al inicio del servicio a todos los intervinientes.
-\\Una vez realizado el traslado y siempre que haya sido realizado por una unidad del DRP, se solicitará agilidad en el regreso hasta el lugar del preventivo. Cuando sea necesaria su incorporación urgente al dispositivo tras finalizar un traslado se le asignará, previa autorización del responsable del DRP, un “número de informe corto” para hacer el regreso en clave 2.1, salvo que se trate de un aviso convencional destinado a un paciente, en cuyo caso se hará de forma ordinaria en clave 2.
-
-1. **Reserva de canales de comunicaciones.**
-Se realizará la siguiente distribución de canales de comunicación, salvo decisión del Supervisor responsable del DRP.
-\\**Canales:**
-1*. SAMUR 6: CICOIN
-1*. SAMUR 10: Operatividad vehículos DRP
-1*. SAMUR 11: Mandos
-1*. SAMUR 12: PSA, ECOS del PSA y Foxtrot
-1*. SAMUR 13: Filiación DRP
-1*. SAMUR 14: Logística DRP + IMV
-1*. SAMUR 15: DEPAS
-1*. SAMUR 16: Uros Operativo – IMV
-1*. SAMUR 17: ECOS
-1*. SAMUR 18: Reservado eventos
-
-1. **Actuación con el Puesto Sanitario Avanzado (PSA):**
-Cuando en un Dispositivo de Riesgo Previsible se cuente con la participación de un Puesto Sanitario Avanzado (PSA), se asignará un número de informe que mantendrá durante todo el evento. Se procederá a la cumplimentación del “Cuadernillo de PSA”, realizando informes de asistencia en los casos indicados.
-\\**Cumplimentación de Informes y Cuadernillos de Filiación en PSA:**
-Todo PSA contará con un “Cuadernillo de Filiación”. Se cumplimentará con los datos de cualquier paciente que sea valorado y/o atendido por personal del Puesto Sanitario Avanzado (o que esté asignado al mismo).
-1*. Se cumplimentará informe asistencial (con número de paciente correlativo) en el PSA en los siguientes casos:
-1**. Asistencias a menores de edad no acompañados.
-1**. Asistencias por motivos potencialmente judicializables (agresiones de cualquier índole, desperfectos en vía pública, accidentes de tráfico sobrevenidos, etc)
-1**. En caso de administración de tratamiento parenteral.
-1**. Cualquier otro motivo que sea considerado por el personal de soporte vital avanzado que se encuentre prestando servicio en el PSA.
-1*. Una vez finalizado el evento, el *Responsable del DRP*, o en su defecto el *Jefe del PSA* contactará (preferentemente por clave 8) con el responsable del CECOR para proceder con el cierre de los informes realizados.
-
-           Finalizado el evento, quedará una USVB en preventivo hasta que la unidad de logística desmonte y traslade todo el material al vehículo de logística; momento a partir del cual se podrá informar de la clave 14 a la unidad.
-
-1. **Preaviso hospitalario.**
-La solicitud de un preaviso hospitalario en un DRP, tanto de una SVA del preventivo como si fuera de unidad derivada del operativo, será comunicada al responsable de la *Central de Comunicaciones*, quien:
-1*. Activará la cadena de mando.
-1*. Realizará la gestión del preaviso acorde a los procedimientos habituales del servicio.
-
-* **Informe al finalizar el evento.**
-\\El responsable de CECOR cumplimentará el informe electrónico una vez procedido con el cierre del Centro Coordinador Operativo (CECOR).
-\\Debe quedar reflejado:
-* Incidencias acontecidas.
-* Activaciones totales realizadas.
-* Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
-* Pacientes trasladados, indicando el tipo de unidad que traslada.
-* Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
-* Documento con las activaciones del DRP obtenido a través de la aplicación Consulta de Informes.
-
-        El responsable del CECOR contactará con el Lima de Guardia para facilitarle estos datos y que queden reflejados en su informe correspondiente.
-\\       Se realizarán dos informes en caso de coexistencia de macroservicio y multiservicio en el mismo día; o por decisión del responsable del CECOR, previa consulta al supervisor del DRP.
-
-## **Procedimiento de CECOR externo**
-Se define como “CECOR Externo” a todo Centro de Coordinación en el que un miembro de SAMUR-Protección Civil ejerce funciones de enlace y coordinación con otros servicios de emergencias, servicios de seguridad y/o instituciones para el correcto desarrollo de un DRP.
-\\Habitualmente, este tipo de CECOR se desarrolla en las instalaciones de otras instituciones (recintos deportivos, salas de concierto, recintos feriales, u otros…).
-Puede estar cubierto inicialmente, o no, por un despliegue de unidades que den cobertura por parte de SAMUR-Protección Civil a los riesgos de dicho evento.
-\\Un caso específico de este procedimiento se produce cuando el CECOR EXTERNO se desarrolla en las “UCO” (Unidad de Control Organizativo), formalmente definidas en la Ley del Deporte y bajo la dirección de un Coordinador de Seguridad. La UCO es el centro ubicado en las instalaciones deportivas, desde donde el Coordinador de seguridad del evento ejerce la dirección del dispositivo de seguridad, en todas sus fases, durante el acontecimiento deportivo, con la asistencia del responsable de seguridad del mismo, para facilitar su normal desarrollo.
-
-1. **Orden de servicio, desarrollo del servicio e informe.**
-\\La Orden de Servicio (OS) será entregada al Responsable del CECOR por parte del Jefe de División de Guardia (Oficina de guarda del Charlie Bravo) en el caso de personal funcionario, o bien por el Lima de Guardia en caso del personal voluntario.
-De no encontrarse el Jefe de División de Guardia disponible, se podrá solicitar la OS a los responsables de la Central de Comunicaciones, quienes deberán enviarla por mail al Responsable del CECOR.
-Recogerá el siguiente material al inicio del servicio en la Base Central de SAMUR-PC:
-1*. Tablet para cumplimentación de informes: Electromedicina.
-1*. En caso necesario, vehículo para transporte hasta el CECOR: Oficina del Parque.
-1*. Material sanitario, complementario y de comunicaciones: Farmacia.
-Se desplazará a la localización donde preste el servicio como Responsable de CECOR (en 2.1), debiendo comunicar la operatividad del vehículo empleado por Canal “SAMUR 2”.
-El personal funcionario cumplimentará y cerrará el “Informe de CECOR” a través de la aplicación “Informes” de SAMUR-PC antes de finalizar la jornada laboral.
-El personal voluntario, remitirá los datos e incidencias relevantes al Lima de Guardia, quien será el encargado de la cumplimentación del informe correspondiente.
-Al finalizar el servicio se realizará un informe en el que debe quedar reflejado:
-1*. Incidencias acontecidas.
-1*. Activaciones totales realizadas.
-1*. Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
-1*. Pacientes trasladados, indicando el tipo de unidad que traslada.
-1*. Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
-1. Funciones del responsable de CECOR:
-\\El Responsable del “CECOR Externo” tiene las siguientes funciones:
-1*. Comunicar la Apertura y Cierre del CECOR, así como del propio DRP de SAMUR-Protección Civil si lo hubiera, a la Central de Comunicaciones por canal “SAMUR 2”, indicando el resumen de asistencias realizadas e incidencias destacadas.
-1*. Informar al Supervisor de Guardia del comienzo y finalización de su actividad en el CECOR. En el caso de tratarse de personal voluntario (ej. cobertura de CECOR en una UCO), informar al Lima de Guardia, transmitiéndole los datos necesarios para la cumplimentación del informe correspondiente.
-1*. Solicitar las unidades a la Central de Comunicaciones en caso de ser necesario durante el desarrollo del DRP.
-1*. Coordinar las unidades de SAMUR-Protección-Civil asignadas al DRP o que se dirijan a realizar asistencias a dicho evento, las vías de acceso, los posibles puntos de espera o puntos de reunión de víctimas y cualquier otra necesidad durante el desarrollo del CECOR o el DRP hasta la llegada de un responsable jerárquico superior (en caso de producirse).
-1*. Informar a la Central de Comunicaciones de cualquier incidencia o hecho relevante acontecido durante el desarrollo del dispositivo. Asimismo, deberá informar al responsable jerárquico superior en los casos que se contemplen según el manual de procedimientos.
-1*. Cumplimentar y cerrar el informe de CECOR al finalizar el servicio y/o la jornada laboral, de la forma descrita previamente.
-
----
-
 # [101] Organigrama Operativo
 
 Sección: Administrativos
@@ -8162,6 +7479,689 @@ Actualizado: 2026-09-01
 1*. Cumplimente el informe de asistencia.
 1*. Registre al paciente en el hospital.
 1*. Selle la copia del informe que conservará el Servicio, y entregue la copia original en el hospital.
+
+---
+
+# [126a] Procedimiento de comunicaciones en un DRP
+
+Sección: DRP
+URL: https://manual-samur.vercel.app/manual/126a-procedimiento-de-comunicaciones-en-un-drp
+Markdown: https://manual-samur.vercel.app/procedures/126a.md
+Actualizado: 2026-09-01
+
+El **Centro Coordinador de Emergencias de SAMUR-Protección Civil (CCES)** es el responsable de las comunicaciones durante los dispositivos de riesgo previsible.
+
+* Atendiendo a criterios de ocupación, carga de trabajo y facilitación de las comunicaciones, el Encargado del CCES podrá delegar el control de las Comunicaciones de el/los canal/es asignados a los servicios preventivos en las siguientes figuras:
+  * **CECOR interno:** planificado en “Orden de Servicio” o sobrevenido.
+  * **Base de Comunicaciones.** Se trata de la estructura de comunicaciones conformada por uno o más miembros de SAMUR-Protección Civil con la capacidad de gestionar las comunicaciones de uno o varios canales de comunicación durante el desarrollo de DRP y/o cualquier otro evento sobrevenido. La localización de la Base de Comunicaciones puede ser en una estructura móvil (CICOIN, vehículos, personal a pie, etc.) o en estructuras fijas (base operativa, otra localización, etc.). No requiere de un responsable jerárquico específico, depende organizativamente del mando de la Central de Comunicaciones.
+  * **Coordinador o Jefe del DRP.**
+  * **CECOR externo/UCO:** como cometido adicional al descrito en el procedimiento de CECOR en un dispositivo de riesgo previsible.
+  * **Lima de Guardia.**
+* El Encargado del CCES puede decidir gestionar las comunicaciones a través de la herramienta informática “DRP”. Esta decisión llevará implícita la apertura de un “CECOR Interno” de SAMUR-Protección Civil de forma sobrevenida, cuyo responsable, salvo delegación expresa en otra persona, será el Encargado del CCES. En dicho caso se actuará conforme al procedimiento de “CECOR en un DRP” y se emitirá el informe correspondiente al cierre del mismo. Esta decisión será comunicada con antelación al Lima de Guardia y/o al Responsable del DRP.
+
+**En los DRP con CECOR interno** se actuará según el procedimiento de CECOR en un dispositivo de riesgo previsible. En el resto de casos se actuará como sigue:
+
+* Salvo decisión expresa por parte del Encargado del CCES, se asignará un número de informe a cada unidad o PSA que comunique su operatividad para comenzar su servicio en un servicio preventivo.
+* Podrá asignarse un canal de comunicación específico para uno o varios servicios preventivos de forma simultánea. Esta decisión debe autorizarse por el Encargado del CCES y deberá ser comunicada al Lima de guardia.
+* Tras recibir el cierre del servicio por parte de un recurso operativo en un DRP, se cerrarán todas las asistencias realizadas.
+
+* Las unidades asistenciales comunicarán su operatividad a la salida de Base 0 por canal “SAMUR 2” de forma general, salvo comunicación expresa de haberse asignado un canal específico para dicho preventivo.
+* Para cualquier otro comunicado, contactarán con el CCES por canal “SAMUR 1” salvo comunicación expresa de haberse asignado un canal específico para dicho preventivo.
+* Las unidades operativas cumplirán con el procedimiento radiotelefónico, desplazándose con diligencia hasta el lugar de despliegue, e indicando de forma correspondiente las diferentes claves de actuación.
+* En ausencia de un Responsable del DRP específicamente asignado a dicho evento, contactarán con el responsable del evento para informar de su presencia y localización.
+* Cada unidad tendrá asignado un único número de informe para todos los pacientes y cada paciente un número de paciente correlativo (“barra”).
+* En el caso de que hubiera un PSA actuará según lo descrito en el procedimiento de CECOR en un dispositivo de riesgo previsible.
+* Al finalizar el DRP comunicarán con el CCES para realizar el cierre de los informes realizados.
+* **Cierre del servicio en casos sin asistencias:**
+  * Desarrollado el DRP sin asistencias: código W.7.1.
+  * Cierre sin asistencias por suspensión de la actividad: código W.4.0.
+* **Traslados hospitalarios:**
+  * Las unidades no realizarán traslados sin la autorización del Responsable del DRP o, en su defecto, del CCES.
+  * Si la unidad del DRP realizara un traslado, al finalizar el mismo deberá comunicar con el CCES para cerrar todos los pacientes atendidos con ese número de informe hasta ese momento y, si se incorporan de nuevo al DRP, recibir un nuevo número de informe.
+
+---
+
+# [drp_01] Procedimiento General de los DRP
+
+Sección: DRP
+URL: https://manual-samur.vercel.app/manual/drp_01-procedimiento-general-de-los-drp
+Markdown: https://manual-samur.vercel.app/procedures/drp_01.md
+Actualizado: 2026-09-01
+
+## Definición y objeto.
+Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.). En este documento podremos referirnos a los DRP también como “Preventivos” o “Servicios Preventivos”.
+
+Este procedimiento, y los que lo acompañan para los aspectos específicos, tienen como objeto establecer la operativa de SAMUR-Protección Civil en los DRP en los que participa.
+
+## Tipos de servicios.
+Se consideran los siguientes tipos de DRP:
+
+* **Servicios preventivos asistenciales convencionales**. Son servicios sencillos, con la misión de realizar una cobertura preventiva sanitaria o labores de protección civil que se resuelvan con un dispositivo menor. Como criterio general, serán los que tengan un máximo de tres unidades, lo que corresponde con los códigos 8.1, 8.2, 8.4, 8.5 y 8.7.
+* **Servicios preventivos asistenciales complejos.** Cobertura preventiva superior al servicio convencional, lo que se corresponde con los códigos 8.3, 8.4.1, 8.5.1 y 8.6. Dentro de este epígrafe también se incluyen los **grandes dispositivos**, que responden a una organización y despliegue de medios y/o recursos extraordinarios. Pueden requerir de relevos dentro de servicio y/o un despliegue previo, siquiera logístico, por sus dimensiones. Como criterio general, serán aquellos en los que se desplieguen más de 15 recursos.
+* **Servicios preventivos asistenciales de refuerzo.** Se constituyen como refuerzo del operativo ordinario en determinadas zonas y horarios con motivo de una mayor afluencia de personas. En función de sus dimensiones pueden ser convencionales o complejos y en función de su planificación pueden ser sobrevenidos (emergencia) o programados. Correspondería con los códigos 8.8 y 8.9
+* **Servicios preventivos no asistenciales con funciones de enlace o coordinación.** Constituyen una entidad específica de los DRP. Consisten en despliegue de personal de enlace en los centros de coordinación operativa (CECOR) y su funcionamiento se rige por lo dispuesto en el procedimiento de “CECOR” en un dispositivo de riesgo previsible. Correspondería a los códigos 8.10 y 8.11
+
+## Responsable del DRP.
+Cada servicio tendrá un responsable que será acorde al nivel de complejidad del dispositivo:
+
+* **Servicios convencionales y de refuerzo.** Esta función recaerá en el Lima de guardia, salvo nombramiento expreso de otro responsable. Esta función la ejercerá por delegación el componente de mayor categoría o antigüedad de las unidades desplegadas, que no se identificará con ningún indicativo específico y reportará al Lima de guardia cuantas circunstancias y decisiones sea necesario tomar.
+* **Servicios complejos** que así lo requieran. La figura de responsable recaerá, en función de la complejidad del mismo, en:
+  * **Coordinador del DRP. **Realizará esta función un voluntario de Protección Civil con categoría de jefe de equipo o jefe de escuadra.
+    * *Indicativo:* “Eco 0”.
+    * *Chaleco identificativo* de color naranja y cuadros amarillos en la zona superior, con el rótulo “COORDINADOR DRP”.
+    * *Funciones*:
+***1. Participará activamente en la organización del personal y asignación de unidades de voluntarios en colaboración con el Lima de guardia. En caso necesario, por ausencia sobrevenida de algún voluntario, podrá ajustar las dotaciones, con el visto bueno del Lima de guardia.
+***1. Responderá jerárquicamente ante el Lima de guardia y recabará su aprobación en aquellas decisiones que afecten a la operatividad o puedan afectar a la planificación recogida en la orden de servicio.
+***1. Contactará con el Lima de guardia para la toma de decisiones en relación con el personal funcionario que pudiera haber en el DRP.
+* **Jefe del DRP.** Realizará esta función un funcionario designado por el Servicio y con nivel acorde a la dimensión del dispositivo.
+  * *Indicativo:* indicativo propio del mando funcionario.
+  * *Chaleco identificativo* de color rojo y cuadros amarillos en la zona superior, con el rótulo “JEFE DRP”.
+  * *Funciones*:
+**1. Reunión previa con los otros responsables, si los hubiera.
+**1. Reunión previa al despliegue *(briefing).*
+**1. Contacto con organizador y otros servicios desplegados (sociales, seguridad, etc.).
+**1. Ajustes necesarios por causas sobrevenidas.
+**1. Supervisión del servicio. Prever la respuesta ante incidencias durante el servicio.
+**1. Previsión de descansos y relevos, en colaboración con el responsable del CECOR interno.
+**1. Comunicar los recursos y asistencias al Lima de guardia en la forma establecida para su registro, en colaboración con el responsable del CECOR interno.
+**1. Entregar los “Cuadernillos de PSA” a los responsables del PSA.
+**1. Establecer la forma de recogida de informes y asegurar su entrega a Archivo en la forma establecida en los grandes dispositivos.
+**1. Podrá apoyarse en el Coordinador del DRP para la gestión y coordinación de las unidades de voluntarios.
+* **Servicios no asistenciales con funciones de enlace o coordinación.** El responsable será el responsable de CECOR externo designado específicamente para dicho servicio, acorde al procedimiento de CECOR en un dispositivo de riesgo previsible.
+
+### El Lima de guardia, acorde a sus funciones descritas en el manual de procedimientos
+* Mantiene sus funciones de responsabilidad sobre el personal voluntario, por lo que prestará la asistencia que éstos puedan necesitar.
+* En los DRP con un Coordinador del DRP mantendrá la supervisión sobre el mismo y resolverá cualquier incidencia que pudiera presentarse, llegando a relevar al Eco 0 si así lo estima oportuno.
+* En los servicios con Jefe del DRP colaborará con el mismo en la recepción de personal voluntario y despliegue.
+* Es el responsable de rellenar la ficha del servicio existente en su informe de guardia o aplicación de gestión de servicios. Para ello, el responsable del DRP deberá facilitar al Lima de guardia los datos necesarios para su cumplimentación en colaboración con el responsable del CECOR interno.
+
+Todo responsable de un DRP, con independencia del tipo o complejidad del servicio preventivo, se pondrá en contacto con el responsable del evento (o persona designada) a su llegada al mismo para coordinarse en las actuaciones que fueran precisas, conocer con detalle cómo se va a desarrollar el mismo, informar de la ubicación de los recursos, confirmar las vías de evaluación o cualquier otra indicación mostrada en la orden de servicio.
+
+## Orden de servicio
+La orden de servicio es un documento en el que consta toda la información necesaria para el desarrollo de un DRP, centrada en la organización, planificación y cobertura del mismo. Estará disponible con la mayor antelación posible a la fecha de realización del servicio.
+
+La orden de servicio debe de constar, al menos, de los siguientes apartados:
+
+1. **Datos administrativos**
+1*. Nombre del servicio.
+1*. Nº del evento.
+1*. Fecha.
+1*. Horarios destacados de la actividad a desarrollar.
+1*. Descripción del evento y/o actividad.
+1*. Perfil de los participantes.
+1. **Horarios destacados del servicio**
+1*. Hora de cita para el servicio.
+1*. Opcional: Hora de briefing y localización del mismo.
+1*. Hora máxima de despliegue del servicio.
+1*. Hora de inicio de actividad y/o servicio.
+1*. Hora de fin de actividad y/o servicio.
+1*. Hora prevista de finalización.
+1. **Recursos y ubicaciones**
+1*. Unidades y/o recursos desplegados.
+1*. Localización de las unidades y/o recursos.
+1. **Planos y mapas**
+1*. Cualquier plano/mapa de recorrido, zona de influencia y/o cualquier otro detalle que se considere relevante relacionado con el servicio.
+1. **Planes de contingencia**
+1*. Previsión de riesgo especiales. Descripción de los mismos en su caso.
+1*. Puntos de encuentro en caso de necesidad de evacuación.
+1*. Vías de evacuación de referencia.
+1*. Planificación ante un IMV:
+1*. Puntos de ubicación de PSA.
+1*. Zonas recomendadas de acceso y/o espera de recursos.
+1. **Otra información de interés**
+1*. Actividades concretas o de especial riesgo durante el desarrollo del servicio (entrega de premios, eventos con pirotecnia, acceso de personal VIP, etc.).
+1*. Cualquier otra información de interés o indicación que se considere relevante para el desarrollo del servicio.
+
+## Informes asistenciales en un DRP.
+Todas las unidades cumplimentarán el informe asistencial para los pacientes atendidos ([ver procedimiento Cumplimentación de informes asistenciales](/manual/205-cumplimentacion-de-los-informes-de-asistencia)), reflejando la resolución* *del aviso. En el caso de realizar transferencia (al PSA del DRP, a otra unidad del DRP o a otra unidad procedente del operativo ordinario) se reflejará esta circunstancia y el nº de informe de la unidad receptora.
+
+* **Informes en un PSA.**
+  * De forma general se realizará un informe asistencial por cada paciente atendido en el PSA. Se asignará un número de paciente correlativo, con el número de informe del PSA, comenzando con el paciente número 1.
+  * En caso de que se encuentre activo un CECOR, se actuará conforme al procedimiento correspondiente .
+* **Informes de equipos sanitarios a pie (ECO, DEPA).**
+  * Se actuará conforme a lo descrito para equipos sanitarios a pie en el procedimiento de “CECOR” en un dispositivo de riesgo previsible.
+
+## Finalización del servicio.
+A la finalización del servicio, todos los informes cumplimentados deberán entregarse en Archivo o buzón específico, salvo que por indicación expresa se determine otra vía.
+
+---
+
+# [drp_02] Procedimiento de despliege de un DRP
+
+Sección: DRP
+URL: https://manual-samur.vercel.app/manual/drp_02-procedimiento-de-despliege-de-un-drp
+Markdown: https://manual-samur.vercel.app/procedures/drp_02.md
+Actualizado: 2026-09-01
+
+## **Objeto**.
+Este procedimiento tiene por objeto establecer el modo de actuar en los despliegues y repliegues de los diferentes tipos de dispositivos de riesgo previsible (DRP).
+
+## **Despliege**
+### Servicios convencionales.
+* Con tiempo suficiente el Lima de guardia deberá comprobar la orden de servicio y la cobertura prestando especial atención a horarios, lugar y características del evento. Las posibles incidencias se transmitirán en la reunión de comienzo de la guardia.
+* El personal voluntario se entrevistará con el Lima de guardia para firmar la asistencia y confirmar la asignación de vehículo, posición, canal de trabajo, etc. Asimismo, verificarán junto al Lima y/o al Sierra de guardia la orden del servicio con los horarios y los detalles de la cobertura de éste. Posteriormente recogerán el vehículo según procedimiento de la Oficina del Parque así como el resto de material necesario.
+* En caso de que esté cubierto por personal funcionario, éste se entrevistará con el Charlie Bravo si acude específicamente a cubrir el servicio o será contactado a través de la Central de Comunicaciones si se encuentra prestando servicio en el operativo ordinario. En cualquier caso, se pondrán en contacto con el Responsable del DRP con la finalidad de informarse de los datos necesarios para la correcta cobertura y al finalizar el servicio para dar la información sobre asistencias realizadas.
+* Si, por causas sobrevenidas, fuera necesario reasignar la ubicación o prolongar el tiempo que la unidad de funcionarios está cubriendo el servicio preventivo, el Lima de guardia se coordinará con el Jefe de Supervisión de guardia.
+
+### Servicios complejos.
+* Con anterioridad al inicio de las reuniones previas al despliegue, tanto el Lima de guardia como el Responsable del DRP deberán comprobar la orden de servicio y la cobertura prevista, prestando especial atención a horarios, lugar y características del evento.
+* Con carácter general, los mandos designados para la gestión del DRP deberán incorporarse en Base 0 al menos 30 minutos antes de la hora de cita del resto del personal con el objeto de mantener una reunión previa en la que se comentarán los aspectos generales y posibles modificaciones sobrevenidas de último momento. En dicha reunión también participará el Lima de guardia.
+* El control de asistencia del personal voluntario se realizará en la oficina de personal voluntario salvo en los casos en que se decida realizarlo directamente en otro lugar (como el destinado al briefing inicial del servicio).
+* A la hora de cita general podrá realizarse una reunión previa informativa *(briefing) *con todos los intervinientes. Este briefing será obligatorio en caso de así indicarse en la orden de servicio, en el horario y localización correspondiente. El responsable del DRP (o del turno en los de larga duración) dirigirá el briefing, que deberá incluir:
+* Características del servicio preventivo y horarios relevantes.
+* Organización geográfica.
+* Canales de comunicación.
+* Asignación de vehículos.
+* Tipo de operatividad acordada del DRP para la asignación de informes (macroservicio/multiservicio).
+* Equipos de reacción.
+* Accesos y localización de los PSA si los hubiera.
+* Posibles lugares de descanso.
+* Relevos y horarios, en caso necesario.
+* Plan de contingencia y sus características.
+* El coordinador del DRP colaborará con el jefe del DRP en todas las tareas que sean necesarias, especialmente la asignación de zonas, vehículos, material de comunicaciones y el control de los recursos entregados a cada voluntario.
+* El Lima de guardia colaborará con el responsable del DRP en la recepción del personal, preparación del material, etc.
+
+### Despliegue en Grandes Dispositivos.
+* En el caso de un gran dispositivo, y siempre que así se determine, se establecerá una coordinación para la recepción del personal, preparación de material y asignación de vehículos específico.
+* En este caso se contará con la colaboración del Lima de guardia y/o personal de RRHH funcionario y/o voluntario, así como el personal de la Oficina del Parque, Electromedicina y Farmacia, según el tipo de servicio y las necesidades.
+* Con el objetivo de agilizar el despliegue, se tendrán en cuenta los siguientes aspectos:
+* El Responsable del DRP asignará las dotaciones de los equipos asistenciales, además de su ubicación y tarea designadas en el siguiente orden: ruedas pesadas (USVB, USVA), ruedas ligeras (UPR, Halcón, Lince), DEPA, Palma y equipos a pie (Eco).
+* El personal de la Oficina del Parque dispondrá de las carpetas y llaves de los vehículos en un lugar a la salida del *briefing* para su entrega a los equipos operativos.
+* Los vehículos estarán preparados para que el personal no tenga que pasar por farmacia o electromedicina, a excepción de medicación que precise firma de personal facultativo.
+* El material de los equipos Eco será gestionado por sus mandos directos (Eco 0 o jefes de sector).
+* Los responsables de los equipos Halcón, Lince y Palma gestionarán el material de acuerdo con su funcionamiento interno del equipo de especialidad.
+* El día previo al evento, el personal de Farmacia facilitará una relación de números de equipos Tetra portátiles y teléfonos asignados a cada vehículo. Enviará la información a los siguientes responsables:
+  * Responsable del DRP.
+  * Responsable del CECOR interno asignado al DRP.
+  * Encargado y Jefe de Equipo de la Central de Comunicaciones.
+  * Lima de guardia.
+* La Central de Comunicaciones asignará los números de dispositivos indicados a cada unidad, permitiendo que se comunique la operatividad de las mismas mediante el “status 9”. En caso de no recibir la confirmación de su operatividad por mensaje pasarán por el canal de comunicaciones asignado y facilitarán los datos por voz.
+
+### Servicio preventivo de refuerzo.
+* El despliegue y operatividad de las unidades se realizarán de forma análoga al operativo ordinario o retén, con la salvedad de poder establecer un canal de comunicación específico.
+
+### Servicios preventivos no asistenciales con funciones de enlace o coordinación.
+* El despliegue del CECOR externo e interno tendrá lugar acorde al procedimiento correspondiente ([ver procedimiento de CECOR en un dispositivo de riesgo previsible](/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible).
+
+## **Repliegue**
+### Finalización del servicio (clave 14).
+* **Servicios convencionales.**
+  * En caso de no estar presente el Lima de guardia y/o el responsable específico designado para el DRP, al finalizar el evento será la unidad (o unidades) quien contacte con la Central por el canal correspondiente para informar de esta circunstancia, solicitar clave 14 y dar cuenta de las asistencias realizadas.
+  * En los DRP con responsable específico asignado será éste quien decida el momento de clave 14 de las diferentes unidades y establezca la finalización del DRP, lo que comunicará a la Central o CECOR. Si las unidades tenían número de informe abierto deberán contactar con la Central o CECOR para el cierre.
+* **Servicios complejos. **Será el Responsable del DRP el encargado de autorizar las claves 14 de los diferentes recursos implicados.
+* **Servicios preventivos de refuerzo.** Será la Central quien autorice la clave 14 a las unidades.
+* **Servicios preventivos no asistenciales (CECOR):**
+  * CECOR externo. El Responsable del CECOR externo comunicará la finalización de su servicio a la Central de Comunicaciones, solicitando la clave 14.
+  * CECOR interno. El Responsable del CECOR será el responsable de autorizar la clave 14 a todos los componentes del CECOR una vez finalizadas sus funciones en el DRP.
+
+Tras recibir la clave 14 y hasta la llegada a Base 0 las unidades permanecerán atentas a las comunicaciones de radio. No es necesario dar la clave 12 a la llegada a Base 0.
+
+En los DRP en que hubiera PSA debe quedar una unidad asistencial en el punto hasta el completo desmontaje del PSA.
+
+### Devolución de material.
+La devolución de material se realizará de la siguiente manera, salvo indicación expresa en contra:
+
+* Las unidades móviles devolverán el material en las dependencias de Farmacia y Electromedicina, según corresponda.
+* Los conductores deberán acudir a la Oficina del Parque para la devolución de las llaves y documentación del vehículo.
+* Los mandos directos de los equipos Eco recogerán el material a la llegada a Base 0 y centralizarán su devolución según se haya establecido.
+* Los responsables de los equipos Halcón, Lince y Palma realizarán la devolución de acuerdo con su funcionamiento interno en el equipo de especialidad.
+
+### Cumplimentación de la ficha de servicio.
+El Lima de guardia recabará la información necesaria para la cumplimentación de la ficha del servicio, la cual debe de ser facilitada por las unidades o dotaciones implicadas:
+
+* Incidencias acontecidas.
+* Pacientes atendidos por recursos móviles, diferenciando los que son vistos por recurso avanzado o solo por recurso básico.
+* Pacientes trasladados, indicando el tipo de unidad que traslada.
+* El número de preavisos.
+* El número total de pacientes atendidos en PSA y, de éstos, los que son vistos sin informe específico.
+
+---
+
+# [drp_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible
+
+Sección: DRP
+URL: https://manual-samur.vercel.app/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
+Markdown: https://manual-samur.vercel.app/procedures/drp_03.md
+Actualizado: 2026-05-05
+
+### Objetivos de este procedimiento
+* Establecerá la definición de CECOR y sus diferentes tipos.
+* Describir las obligaciones del Responsable del CECOR.
+* Unificar la actuación de las Unidades de Comunicación de SAMUR-Protección Civil durante el desarrollo de un dispositivo de riesgo previsible.
+* Estructurar la cumplimentación de los informes de CECOR que son emitidos por los responsables cuando finalizan los dispositivos de riesgo previsibles.
+
+### Definición y tipos
+* Los **Dispositivos de Riesgo Previsible (DRP)** son estructuras o servicios sanitarios ante situaciones de riesgo controlado o previsto, que pueden poner en peligro la salud de la población con motivo de la realización de eventos públicos que habitualmente suponen concentraciones multitudinarias (ejemplos: conciertos, acontecimientos deportivos, eventos de relevancia institucional, festividades, etc.).
+* Se denomina **“CECOR”** a todo aquel Centro de Coordinación Operativa, especialmente diseñado para la gestión de las comunicaciones y de las intervenciones, en los dispositivos de riesgo previsible. Tiene como objetivo la coordinación adecuada entre los diferentes servicios/dispositivos sanitarios. Puede estar formado por un solo DRP o por varios. Podemos diferenciar:
+  * **CECOR INTERNO:** Centro de Coordinación establecido por SAMUR-Protección Civil para la gestión de las unidades o intervenciones sanitarias durante uno o varios DRP.
+  * **CECOR EXTERNO:** Centro de Coordinación en el que un miembro de SAMUR-Protección ejerce funciones de enlace y coordinación con otros servicios de emergencias y/o instituciones para el correcto desarrollo de un DRP.
+* Se define **“UCO”** como **“Unidad de Control Organizativo”**. Es el centro de coordinación ubicado en las instalaciones deportivas, desde donde el Coordinador de seguridad del evento ejerce la dirección del dispositivo de seguridad, en todas sus fases, durante el acontecimiento deportivo, con la asistencia del responsable de seguridad del mismo, para facilitar su normal desarrollo. En ella un miembro de SAMUR-Protección Civil ejerce funciones de enlace y, en caso necesario, gestiona las unidades destinadas al DRP.
+
+## **Procedimiento de CECOR interno**
+Este CECOR se desarrolla en las instalaciones de la Central de Comunicaciones de SAMUR-Protección Civil, El CICOIN (Centro Integral de Coordinación e Información) u otra localización donde se pueda establecer un centro de comunicaciones con operadores del servicio.
+
+### **Funciones del responsable del CECOR INTERNO:**
+* Es el responsable de la gestión de las comunicaciones en el/los dispositivos de riesgo previsible que se encuentre participando.
+
+* Coordinará al personal que tenga asignado a su cargo (funcionario y voluntario) para cumplir con las responsabilidades asumidas.
+* Solicitará al Lima de Guardia o al Encargado de la Central de Comunicaciones:
+  * Orden de servicio de cada DRP. Tiene obligación de conocerla.
+  * Relación de unidades.
+  * Números de tetra portátil asignados a cada unidad.
+  * Número de los móviles asignados a cada unidad.
+* En los DRP en los que se establezca una reunión previa al comienzo del servicio, tendrá la obligación de participar en la misma con el objeto de informar de posibles cambios o resolver dudas sobre el desarrollo del dispositivo.
+* Solicitará un contaje periódico del número de asistencias.
+* Realizará cuantas labores sean necesarias para la correcta gestión y control de las comunicaciones/avisos/transferencias entre unidades/etc. durante el desarrollo del DRP.
+* Utilizará los medios y herramientas informáticas de SAMUR-Protección Civil para la gestión de los DRP (en especial la aplicación “DRP” de la Central de Comunicaciones).
+* Establecerá los periodos de descanso, con una duración variable, en la que se tendrán en cuenta (entre otros) los siguientes factores:
+  * Duración del DRP
+  * Tipo de DRP.
+  * Desarrollo del mismo y carga de trabajo.
+  * Cualquier otro factor que pueda influir en la toma de decisiones a criterio del responsable.
+* Informará al Supervisor de Guardia, el responsable del DRP y a cualquier otro responsable directamente implicado, de cualquier incidencia acontecida durante el desarrollo del mismo.
+* Cumplimentará el informe web de CECOR al finalizar el DRP.
+
+### El CECOR INTERNO puede gestionarse a través de la aplicación “DRP” atendiendo a los siguientes criterios
+1. Multiservicio.
+1. Macroservicio.
+
+### **Cecor interno multiservicio**
+Es aquel CECOR en el que se coordinan varios DRP con diferentes órdenes de servicio de manera simultánea. En la aplicación “DRP” se utiliza el modo “multiservicio” y se abren diferentes zonas para cada dispositivo de riesgo previsible.
+
+1. **Apertura informática de la aplicación DRP**.
+Se abrirán tantas zonas como DRP haya, nombrando cada zona según el nombre del dispositivo concreto.
+En este caso, en la aplicación DRP, cada zona corresponderá a cada uno de los servicios correspondientes.
+1. **Número de identificación del servicio en la aplicación DRP**.
+Se establece un código de cinco dígitos (MMDDT):
+* **Mes** (dos dígitos)
+* **Día** (dos dígitos)
+* **Turno de trabajo** (un dígito)
+  * Turno 1 de 07:00 a 15:00 horas.
+  * Turno 2 de 15:00 horas a 23:00 horas.
+  * Turno 3 de 23:00 a 7:00 horas.
+  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
+
+**Ejemplo:** para el 22 de diciembre de 2023, turno de mañana sería 12221, turno de tarde sería 12222, turno de noche sería 12223. Si comienza el evento a las 16:00 horas y finaliza a las 1:00 horas permanecerá en turno 2 (12222).
+
+1. **Aplicación Informática DRP: número de identificación del servicio.**
+Se establece un código de cinco dígitos continuos, seguido del año en curso, separado por una barra (MMDDT/AA)
+
+* **Mes** (dos dígitos)
+* **Día** (dos dígitos)
+* **Turno de trabajo** (un dígito)
+  * Turno 1 de 07:00 a 15:00 horas.
+  * Turno 2 de 15:00 horas a 23:00 horas.
+  * Turno 3 de 23:00 a 7:00 horas.
+  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
+* **Año en curso**(los dos dígitos finales del año en curso).
+
+**Ejemplo:** para el 19 de marzo de 2024. En turno de mañana sería **03191/24**, en turno de tarde sería **03192/24**.
+
+1. **Operatividad de las unidades.**
+
+Se realizará la carga (volcado) de las unidades en el sistema informático previo a la operatividad (salvo que lo impida alguna incidencia sobrevenida que deberá reflejarse como tal en el informe correspondiente) facilitando que ésta pueda ser comunicada de forma telemática desde el propio vehículo (enviando el “status 9” en la emisora del vehículo).
+\\Sin perjuicio de lo previo, las unidades que pasen a formar parte de los DRP comunicarán también su operatividad indicando su ubicación inicial exacta por canal 10 o canal reservado por la Central de Comunicaciones para ese Servicio.
+
+1. **Asignación de informes y códigos.**
+Según el procedimiento radiotelefónico, los códigos de incidente asignados a toda aquella unidad con capacidad asistencial que se encuentre en un servicio preventivo comenzarán por el número ocho (“8. SERVICIOS PROGRAMADOS”).
+
+1. **Códigos de incidente:**
+1*. Códigos 8.12 a 8.15: serán asignados a todas las unidades como clave 2.1 (“informe corto”).
+1*. Códigos 8.1 a 8.7:
+1**. Unidades de mando/apoyo: serán asignados como clave 2.1 (“informe corto”).
+1**. Unidades asistenciales: serán asignados como clave 2 (“informe largo”).
+1. **Unidades asistenciales.** Se les asignará un número de informe en clave 2 (“informe largo”). A la llegada al lugar indicado las unidades darán la clave 3 de forma telemática o, en su defecto, por voz. Usarán su número de informe para las diferentes asistencias que realicen. En el caso de que realicen más de una asistencia usarán números de pacientes correlativos (“barras”). Si hicieran un traslado y volvieran al preventivo recibirían un nuevo número de informe.
+1. **Unidades o equipos sanitarios a pie (ECO, DEPA). **Se les asignará un número de informe:
+1*. Cuando el equipo lo solicite porque se dispone a atender un paciente de forma autónoma, sin que se transfiera a otro recurso de SAMUR-Protección Civil. En caso de atender de forma autónoma a varios heridos en el mismo punto, utilizarán números de pacientes consecutivos (“barras”).
+1*. Cuando sea la Central o Base de Comunicaciones quien les asigne un suceso, por trazabilidad. Esta circunstancia se le hará saber expresamente al equipo para que actúen según el criterio general de realización de informes asistenciales.
+1*. En caso de realizar exclusivamente acompañamiento del paciente hasta otro tipo de recurso asistencial, el equipo receptor deberá reflejar en su informe (cuadernillo de PSA y/o informe asistencial) qué equipo ECO o DEPA ha hecho la transferencia del paciente y éstos no tendrán que realizar informe propio salvo indicación expresa del CECOR por haberles asignado número de informe.
+1*. De forma análoga a los PSA, si así se habilita, los ECO podrán tener su propio cuadernillo (o sistema de filiación digital alternativo) para situaciones de previsión de gran demanda.
+1. **Unidades de mando y/o apoyo.**Los códigos e informes asignados a toda aquella unidad que participe en un servicio preventivo y que desarrolle su función exclusivamente como unidad de apoyo o de mando serán asignados en Clave 2.1 (“informe corto”). En el caso de que cualquiera de estos indicativos se encontrara con una asistencia sobrevenida, comunicarán dicha situación al CECOR y solicitarán un número de informe para realizar el informe de la asistencia correspondiente (dando por cerrado el informe previo en clave 2.1).
+1. **Unidades de traslado de personal (indicativo “Tango”):** A efectos de informe se considerará como “movimiento interno”.
+1. **Traslados de pacientes.**La necesidad de realizar traslado hospitalario por una unidad que participe en el servicio preventivo debe ser valorada y autorizada previamente por el responsable de dicho DRP.
+Si el traslado hospitalario afectara a la operatividad del DRP, se solicitará una unidad externa al dispositivo para realizar el mismo (siempre que la tiempo-dependencia de la patología sufrida por el paciente no lo contraindique).
+Sin perjuicio de lo anterior, el responsable o Supervisor del DRP podrá determinar, de forma justificada, un criterio común de traslado para el/los DRP, debiendo ser comunicado en la reunión previa al inicio del servicio a todos los intervinientes.
+\\Una vez realizado el traslado y siempre que haya sido realizado por una unidad del DRP, se solicitará agilidad en el regreso hasta el lugar del preventivo. Cuando sea necesaria su incorporación urgente al dispositivo tras finalizar un traslado se le asignará, previa autorización del responsable del DRP, un “número de informe corto” para hacer el regreso en clave 2.1, salvo que se trate de un aviso convencional destinado a un paciente, en cuyo caso se hará de forma ordinaria en clave 2.
+1. **Actuación con el Puesto Sanitario Avanzado (PSA):**
+Cuando en un DRP se cuente con la participación de un Puesto Sanitario Avanzado (PSA), se asignará a éste un número de informe que mantendrá durante todo el evento.
+No se cumplimentará cuadernillo de PSA en este tipo de servicios salvo que de forma justificada así lo considere el responsable del mismo. Independientemente del uso del cuadernillo, se deberá cumplimentar informe asistencial en los siguientes casos:
+1*. Asistencias a menores de edad no acompañados.
+1*. Asistencias por motivos potencialmente judicializables (agresiones de cualquier índole, desperfectos en vía pública, accidentes de tráfico sobrevenidos, etc.).
+1*. En caso de administración de tratamiento parenteral.
+1*. Cualquier otro motivo que sea considerado por el personal de soporte vital avanzado que se encuentre prestando servicio en el PSA.
+
+          El PSA siempre deberá reflejar la unidad que le transfiere el paciente.
+\\         Una vez finalizado el evento, el *Responsable del DRP* , o en su defecto el *Jefe del PSA* contactará (preferentemente por clave 8) con el responsable del CECOR para proceder con el cierre de los informes realizados.
+\\       Finalizado el evento, quedará una USVB en preventivo hasta que el personal de logística desmonte y traslade todo el material al vehículo de logística; momento a partir del cual se podrá  informar de la clave 14 a la unidad.
+
+1. **Informe al finalizar el evento:**
+El responsable de CECOR cumplimentará el informe electrónico una vez procedido con el cierre del Centro Coordinador Operativo (CECOR).
+Debe quedar reflejado:
+
+* Incidencias acontecidas.
+* Activaciones totales realizadas.
+* Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
+* Pacientes trasladados, indicando el tipo de unidad que traslada.
+* Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
+* Se adjuntará el documento con las activaciones del DRP obtenido a través de la aplicación Consulta de Informes.
+
+El responsable del CECOR contactará con el Lima de Guardia para facilitarle estos datos y que queden reflejados en su informe correspondiente.
+Se realizarán dos informes en caso de coexistencia de macroservicio y multiservicio en el mismo día; o por decisión del responsable del CECOR, previa consulta al supervisor del DRP.
+
+### **Cecor interno macroservicio**
+Se trata de aquel servicio en el que se produzca una gran ocupación de la vía pública por masificación de personas; que haga necesario la participación de un elevado número de unidades/personal para su cobertura, seguimiento y coordinación.
+
+1. **Apertura informática de la aplicación DRP.**
+Se abrirá la aplicación, distribuyendo las unidades en función de la orden de servicio, para lo que se podrán utilizar diferentes zonas.
+
+1. **número de identificación de servicio en un DRP.**
+
+         Se establece un código de cinco dígitos (MMDDT):
+
+* **Mes** (dos dígitos)
+* **Día** (dos dígitos)
+* **Turno de trabajo** (un dígito)
+  * Turno 1 de 07:00 a 15:00 horas.
+  * Turno 2 de 15:00 horas a 23:00 horas.
+  * Turno 3 de 23:00 a 7:00 horas.
+  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
+
+**Ejemplo:** para el 22 de diciembre de 2023, Turno de mañana sería 12221, turno de tarde sería 12222, turno de noche sería 12223. Si comienza el evento a las 16:00 horas y finaliza a las 1:00 horas permanecerá en turno 2 (12222) .
+
+1. **Aplicación Informática DRP: número de identificación de servicio de un DRP.**
+Se establece un código de cinco dígitos continuos, seguido del año en curso, separado por una barra (MMDDT/AA):
+* **Mes** (dos dígitos)
+* **Día** (dos dígitos)
+* **Turno de trabajo** (un dígito)
+  * Turno 1 de 07:00 a 15:00 horas.
+  * Turno 2 de 15:00 horas a 23:00 horas.
+  * Turno 3 de 23:00 a 7:00 horas.
+  * Para establecer el turno se toma como referencia la hora de inicio (aunque se sobrepase la franja horaria establecida), salvo cambios de personal o unidades.
+* **Año en curso en el que se realiza el DRP**(los dos dígitos finales del año en curso)
+
+**Ejemplo:** para el 19 de marzo de 2024. Sería el turno de mañana **03191/24**, turno de tarde sería **03192/24**.
+
+1. **Operatividad de las unidades.**
+Se realizará la carga (volcado) de las unidades en el sistema informático previo a la operatividad (salvo que lo impida alguna incidencia sobrevenida que deberá reflejarse como tal en el informe correspondiente) facilitando que ésta pueda ser comunicada de forma telemática desde el propio vehículo (enviando el “status 9” en la emisora del vehículo).
+\\Sin perjuicio de lo previo, las unidades que pasen a formar parte de los DRP comunicarán también su operatividad indicando su ubicación inicial exacta por canal 10 o canal reservado por la Central de Comunicaciones para ese Servicio.
+
+1. **Asignación de informes y códigos.**
+Según el procedimiento radiotelefónico, los códigos de incidente asignados a toda aquella **unidad con capacidad asistencial **que se encuentre en un servicio preventivo comenzarán por el número ocho (“8. SERVICIOS PROGRAMADOS”).
+\\**Códigos de Incidente:**
+1*. Códigos 8.12 a 8.15: serán asignados a todas las unidades como clave 2.1. (“informe corto”)
+1*. Códigos 8.1 a 8.7:
+1**. Unidades de Mando/Apoyo: serán asignados como clave 2.1 (“informe corto”)
+1**. Unidades Asistenciales: serán asignados como clave 2 (“informe largo”)
+1. **Unidades Asistenciales:** se encontrarán operativas en “Clave 0”, asignándoles un informe por cada asistencia, quedando en clave 0 al finalizar la intervención. Si realizasen más de una asistencia en el mismo punto usarán número de paciente correlativos (“barras”).
+\\**Unidades a pie:** tanto a los ECO como a los DEPA se les asignará un número de informe cuando vayan a atender un suceso que sea resuelto de forma autónoma, sin que se transfiera a otro recurso de SAMUR-Protección Civil. En caso de atender de forma autónoma a varios heridos, utilizarán números de pacientes consecutivos (“barras”). En caso de realizar exclusivamente acompañamiento del paciente hasta otro tipo de unidad asistencial o PSA, éstos deberán reflejar en su informe (cuadernillo de PSA y/o informe asistencial) qué ECO ha hecho la transferencia del paciente y el equipo ECO no realizará informe propio.
+\\**Unidades de Mando y/o Apoyo:** los códigos e informes asignados a toda aquella unidad que participe en un servicio preventivo y que desarrolle su función exclusivamente como *Unidad de Apoyo o de Mando* serán asignados en Clave 2.1 (“informe corto”).
+\\En el caso de que cualquiera de estos indicativos se encontrara con una asistencia sobrevenida, comunicarán dicha situación a la central de comunicaciones y solicitarán un número de informe para realizar el informe de la asistencia correspondiente (dando por cerrado el informe previo en Clave 2.1).
+\\**Unidades de traslado de personal (indicativo “Tango”):** a efectos de informe se considerará como “movimiento interno”.
+\\**Traslados de pacientes.**La necesidad de realizar traslado hospitalario por una unidad que participe en el servicio preventivo debe ser valorada y autorizada previamente por el responsable de dicho DRP.
+\\Si el traslado hospitalario afectara a la operatividad del DRP, se solicitará una unidad externa al dispositivo para realizar el mismo (siempre que la tiempo-dependencia de la patología sufrida por el paciente no lo contraindique).
+\\Sin perjuicio de lo anterior, el responsable o Supervisor del DRP podrá determinar, de forma justificada, un criterio común de traslado para el/los DRP, debiendo ser comunicado en la reunión previa al inicio del servicio a todos los intervinientes.
+\\Una vez realizado el traslado y siempre que haya sido realizado por una unidad del DRP, se solicitará agilidad en el regreso hasta el lugar del preventivo. Cuando sea necesaria su incorporación urgente al dispositivo tras finalizar un traslado se le asignará, previa autorización del responsable del DRP, un “número de informe corto” para hacer el regreso en clave 2.1, salvo que se trate de un aviso convencional destinado a un paciente, en cuyo caso se hará de forma ordinaria en clave 2.
+
+1. **Reserva de canales de comunicaciones.**
+Se realizará la siguiente distribución de canales de comunicación, salvo decisión del Supervisor responsable del DRP.
+\\**Canales:**
+1*. SAMUR 6: CICOIN
+1*. SAMUR 10: Operatividad vehículos DRP
+1*. SAMUR 11: Mandos
+1*. SAMUR 12: PSA, ECOS del PSA y Foxtrot
+1*. SAMUR 13: Filiación DRP
+1*. SAMUR 14: Logística DRP + IMV
+1*. SAMUR 15: DEPAS
+1*. SAMUR 16: Uros Operativo – IMV
+1*. SAMUR 17: ECOS
+1*. SAMUR 18: Reservado eventos
+
+1. **Actuación con el Puesto Sanitario Avanzado (PSA):**
+Cuando en un Dispositivo de Riesgo Previsible se cuente con la participación de un Puesto Sanitario Avanzado (PSA), se asignará un número de informe que mantendrá durante todo el evento. Se procederá a la cumplimentación del “Cuadernillo de PSA”, realizando informes de asistencia en los casos indicados.
+\\**Cumplimentación de Informes y Cuadernillos de Filiación en PSA:**
+Todo PSA contará con un “Cuadernillo de Filiación”. Se cumplimentará con los datos de cualquier paciente que sea valorado y/o atendido por personal del Puesto Sanitario Avanzado (o que esté asignado al mismo).
+1*. Se cumplimentará informe asistencial (con número de paciente correlativo) en el PSA en los siguientes casos:
+1**. Asistencias a menores de edad no acompañados.
+1**. Asistencias por motivos potencialmente judicializables (agresiones de cualquier índole, desperfectos en vía pública, accidentes de tráfico sobrevenidos, etc)
+1**. En caso de administración de tratamiento parenteral.
+1**. Cualquier otro motivo que sea considerado por el personal de soporte vital avanzado que se encuentre prestando servicio en el PSA.
+1*. Una vez finalizado el evento, el *Responsable del DRP*, o en su defecto el *Jefe del PSA* contactará (preferentemente por clave 8) con el responsable del CECOR para proceder con el cierre de los informes realizados.
+
+           Finalizado el evento, quedará una USVB en preventivo hasta que la unidad de logística desmonte y traslade todo el material al vehículo de logística; momento a partir del cual se podrá informar de la clave 14 a la unidad.
+
+1. **Preaviso hospitalario.**
+La solicitud de un preaviso hospitalario en un DRP, tanto de una SVA del preventivo como si fuera de unidad derivada del operativo, será comunicada al responsable de la *Central de Comunicaciones*, quien:
+1*. Activará la cadena de mando.
+1*. Realizará la gestión del preaviso acorde a los procedimientos habituales del servicio.
+
+* **Informe al finalizar el evento.**
+\\El responsable de CECOR cumplimentará el informe electrónico una vez procedido con el cierre del Centro Coordinador Operativo (CECOR).
+\\Debe quedar reflejado:
+* Incidencias acontecidas.
+* Activaciones totales realizadas.
+* Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
+* Pacientes trasladados, indicando el tipo de unidad que traslada.
+* Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
+* Documento con las activaciones del DRP obtenido a través de la aplicación Consulta de Informes.
+
+        El responsable del CECOR contactará con el Lima de Guardia para facilitarle estos datos y que queden reflejados en su informe correspondiente.
+\\       Se realizarán dos informes en caso de coexistencia de macroservicio y multiservicio en el mismo día; o por decisión del responsable del CECOR, previa consulta al supervisor del DRP.
+
+## **Procedimiento de CECOR externo**
+Se define como “CECOR Externo” a todo Centro de Coordinación en el que un miembro de SAMUR-Protección Civil ejerce funciones de enlace y coordinación con otros servicios de emergencias, servicios de seguridad y/o instituciones para el correcto desarrollo de un DRP.
+\\Habitualmente, este tipo de CECOR se desarrolla en las instalaciones de otras instituciones (recintos deportivos, salas de concierto, recintos feriales, u otros…).
+Puede estar cubierto inicialmente, o no, por un despliegue de unidades que den cobertura por parte de SAMUR-Protección Civil a los riesgos de dicho evento.
+\\Un caso específico de este procedimiento se produce cuando el CECOR EXTERNO se desarrolla en las “UCO” (Unidad de Control Organizativo), formalmente definidas en la Ley del Deporte y bajo la dirección de un Coordinador de Seguridad. La UCO es el centro ubicado en las instalaciones deportivas, desde donde el Coordinador de seguridad del evento ejerce la dirección del dispositivo de seguridad, en todas sus fases, durante el acontecimiento deportivo, con la asistencia del responsable de seguridad del mismo, para facilitar su normal desarrollo.
+
+1. **Orden de servicio, desarrollo del servicio e informe.**
+\\La Orden de Servicio (OS) será entregada al Responsable del CECOR por parte del Jefe de División de Guardia (Oficina de guarda del Charlie Bravo) en el caso de personal funcionario, o bien por el Lima de Guardia en caso del personal voluntario.
+De no encontrarse el Jefe de División de Guardia disponible, se podrá solicitar la OS a los responsables de la Central de Comunicaciones, quienes deberán enviarla por mail al Responsable del CECOR.
+Recogerá el siguiente material al inicio del servicio en la Base Central de SAMUR-PC:
+1*. Tablet para cumplimentación de informes: Electromedicina.
+1*. En caso necesario, vehículo para transporte hasta el CECOR: Oficina del Parque.
+1*. Material sanitario, complementario y de comunicaciones: Farmacia.
+Se desplazará a la localización donde preste el servicio como Responsable de CECOR (en 2.1), debiendo comunicar la operatividad del vehículo empleado por Canal “SAMUR 2”.
+El personal funcionario cumplimentará y cerrará el “Informe de CECOR” a través de la aplicación “Informes” de SAMUR-PC antes de finalizar la jornada laboral.
+El personal voluntario, remitirá los datos e incidencias relevantes al Lima de Guardia, quien será el encargado de la cumplimentación del informe correspondiente.
+Al finalizar el servicio se realizará un informe en el que debe quedar reflejado:
+1*. Incidencias acontecidas.
+1*. Activaciones totales realizadas.
+1*. Pacientes atendidos, reflejando los que son vistos por recurso avanzado o solo por recurso básico.
+1*. Pacientes trasladados, indicando el tipo de unidad que traslada.
+1*. Debe cumplimentarse todos aquellos campos que constan en el informe acorde con el desarrollo del CECOR.
+1. Funciones del responsable de CECOR:
+\\El Responsable del “CECOR Externo” tiene las siguientes funciones:
+1*. Comunicar la Apertura y Cierre del CECOR, así como del propio DRP de SAMUR-Protección Civil si lo hubiera, a la Central de Comunicaciones por canal “SAMUR 2”, indicando el resumen de asistencias realizadas e incidencias destacadas.
+1*. Informar al Supervisor de Guardia del comienzo y finalización de su actividad en el CECOR. En el caso de tratarse de personal voluntario (ej. cobertura de CECOR en una UCO), informar al Lima de Guardia, transmitiéndole los datos necesarios para la cumplimentación del informe correspondiente.
+1*. Solicitar las unidades a la Central de Comunicaciones en caso de ser necesario durante el desarrollo del DRP.
+1*. Coordinar las unidades de SAMUR-Protección-Civil asignadas al DRP o que se dirijan a realizar asistencias a dicho evento, las vías de acceso, los posibles puntos de espera o puntos de reunión de víctimas y cualquier otra necesidad durante el desarrollo del CECOR o el DRP hasta la llegada de un responsable jerárquico superior (en caso de producirse).
+1*. Informar a la Central de Comunicaciones de cualquier incidencia o hecho relevante acontecido durante el desarrollo del dispositivo. Asimismo, deberá informar al responsable jerárquico superior en los casos que se contemplen según el manual de procedimientos.
+1*. Cumplimentar y cerrar el informe de CECOR al finalizar el servicio y/o la jornada laboral, de la forma descrita previamente.
+
+---
+
+# [114] Autoprotección en casos sospechos de viruela del mono
+
+Sección: Intervinientes
+URL: https://manual-samur.vercel.app/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
+Markdown: https://manual-samur.vercel.app/procedures/114.md
+Actualizado: 2026-09-01
+
+Actuación ante posibles casos de pacientes infectados por Viruela del Mono
+
+Este procedimiento tiene como objetivo las indicaciones del manejo de los casos con sospecha o confirmación de viruela del mono en el escenario actual.
+
+La viruela del mono es una zoonosis vírica que fue declarada emergencia de salud pública de importancia internacional por la directora general de la OMS el 23 de junio de 2022 hasta mayo de 2023 y actualmente, desde el 14 de agosto de 2024.
+
+Las lesiones son firmes o gomosas, bien circunscritas, profundas y a menudo desarrollan umbilicación (se asemeja a un punto en la parte superior de la lesión). Se describen a menudo como dolorosas hasta la fase de curación, cuando se convierten en picor (costras). Suelen aparecer en las zonas genital y anorrectal o en la boca. Este exantema no siempre aparece en las palmas de las manos y las plantas de los pies.
+
+Las lesiones suelen desarrollarse simultáneamente y evolucionar juntas en cualquier parte del cuerpo. La evolución de las lesiones pasa por cuatro etapas: macular, papular, vesicular (elevadas y llenas de líquido claro) y pustular (llenas de líquido opaco), antes de la formación de costras y la descamación. Una vez que se han caído todas las costras y se ha formado una nueva capa de piel, la persona deja de ser contagiosa.
+
+En el brote actual también se han dado con frecuencia síntomas rectales (por ejemplo, heces purulentas o sanguinolentas, dolor rectal y/o sangrado rectal).
+
+La fiebre y otros síntomas prodrómicos (por ejemplo, escalofríos, linfadenopatías, malestar general, mialgia o cefalea) pueden aparecer antes de la erupción, pero se pueden dar después de la misma o no estar presentes en absoluto.
+
+Suelen presentan síntomas respiratorios (por ejemplo, dolor de garganta, congestión nasal o tos). El periodo de incubación es de 3 a 17 días. Durante este tiempo, la persona no tiene síntomas.
+
+La enfermedad suele durar entre 2 y 4 semanas.
+
+La transmisión de persona a persona del virus de la viruela del mono se produce por contacto directo con el material de la lesión o por exposición a las secreciones respiratorias. Los informes sobre la transmisión de persona a persona describen un contacto estrecho con una persona infectada. La transmisión en entornos sanitarios se ha descrito raramente.
+
+Existe riesgo alto de contagio si:
+
+* Hay un contacto sin protección entre la piel o las membranas mucosas de una persona y la piel, las lesiones o los fluidos corporales de un paciente (por ejemplo, cualquier contacto sexual, salpicaduras involuntarias de saliva del paciente a los ojos o a la cavidad oral de una persona, contacto sin guantes con el paciente), o materiales contaminados (por ejemplo, sábanas, ropa).
+* Se está dentro de un habitáculo cerrado a menos de 1,80 metros de un paciente durante cualquier procedimiento que pueda crear aerosoles de secreciones orales, lesiones cutáneas o suspensión de exudados secos (por ejemplo, sacudir la ropa de cama sucia), sin llevar mascarilla FFP2, guantes, bata / traje de protección y protección ocular.
+
+#### **Medidas de protección de intervinientes**
+En las atenciones a pacientes con sospecha o viruela del mono confirmada es obligatorio:
+
+* En todas las asistencias a pacientes o contacto con personas del entorno cercano se utilizarán como elementos de protección: mascarilla FFP2, protección ocular, guantes y batas o trajes antisalpicaduras (Nivel 1). Se le pondrá al paciente, de manera inmediata, una mascarilla quirúrgica, así como a personas del entorno cercano habitual.
+* En los casos en los que sea necesario el manejo avanzado de la vía aérea o técnicas en las que se creen aerosoles de secreciones orales, se utilizarán las mismas medidas.
+* Si se realiza traslado se mantendrán las medidas tomadas con respecto al personal. Se deberán cubrir las lesiones del paciente con una sábana evitando el contacto con superficies, no desvestirle y guardar todas sus pertenencias en una bolsa. Preavise al hospital sobre el traslado del caso sospechoso y la situación clínica del paciente.
+
+Con posterioridad a la asistencia se deben comunicar los siguientes datos al jefe de guardia para su notificación a:
+
+* Salud Pública: nombre, apellidos, DNI/pasaporte, fecha de nacimiento y hospital de traslado,
+* Unidad de RRHH: datos de los intervinientes.
+
+Una vez finalizado el aviso:
+
+* Si se ha usado bata o traje deséchela o desinfecte, según el caso, con Surfaclin, así como la protección ocular.
+* Retire las sábanas contaminadas.
+* Contenga y elimine los residuos contaminados, como apósitos, vendas o guantes desechables, mascarillas.
+* Desinfecte las superficies y los objetos del vehículo sanitario que haya tocado el paciente con Surfaclin.
+* Realice higiene de manos.
+
+---
+
+# [115] Apoyo psicológico a intervinientes
+
+Sección: Intervinientes
+URL: https://manual-samur.vercel.app/manual/115-apoyo-psicologico-a-intervinientes
+Markdown: https://manual-samur.vercel.app/procedures/115.md
+Actualizado: 2026-09-01
+
+### Procedimiento de apoyo psicológico inmediato a intervinientes tras incidentes críticos
+Este procedimiento regula la activación del Psicólogo de Guardia (indicativo Romeo) ante sucesos estresantes que produzcan o sean susceptibles de producir un impacto emocional negativo y significativo en el interviniente debido a sus características, causas y/o consecuencias.
+
+El **objetivo principal** del procedimiento es regular la intervención del Psicólogo de Guardia sobre las dotaciones operativas que hayan intervenido de forma directa e indirecta en los sucesos susceptibles (incluyendo responsables de guardia y TATS Central de comunicaciones) con la finalidad de reducir factores de riesgo, activar factores protectores y estrategias de afrontamiento adecuadas en los intervinientes en caso necesario.
+
+De este modo se consideran eventos susceptibles de intervención mediante este Procedimiento:
+
+* Sucesos de Gran Magnitud con múltiples víctimas graves (accidentes, catástrofes, desastres naturales).
+* Atentados terroristas.
+* Amenaza o agresión con riesgo de lesión y/o muerte.
+* Homicidio o asesinato de rehenes tras retenciones largas.
+* Asistencia a menores en situación crítica o fallecidos.
+* Tareas asistenciales en accidentes graves de intervinientes SAMUR – PC.
+* Asistencia a familiares graves de miembros de SAMUR- PC.
+* Sucesos en los que se ha usado violencia extrema (física o psíquica) contra la víctima.
+* Accidentes de tráfico de intervinientes en los que resulten leves y/o ilesos y existan daños importantes a otros.
+* Sucesos a criterio del Supervisor y/o Jefe de guardia que puedan afectar al interviniente. Otro suceso que por sus características pueda afectar al interviniente.
+
+Será susceptible de atención cualquier interviniente del Servicio de Emergencias SAMUR-Protección Civil.
+
+ 1. **Sucesos en los que el Psicólogo de Guardia interviene como profesional atendiendo a victimas primarias y/o secundarias y en el que pudieran ser afectados a su vez intervinientes**:
+
+* El Psicólogo de Guardia (Indicativo ROMEO) será activado por la Central de Comunicaciones, según el Procedimiento de Activación General.
+* En estos casos el Psicólogo de Guardia atenderá en primer lugar a víctimas primarias y segundarias, y en segundo lugar a intervinientes.
+* El Psicólogo de Guardia deberá contar con la colaboración del Jefe de División de Guardia, el Jefe de División de Calidad y/o el Supervisor para detectar aquellos intervinientes con afectación emocional, especialmente en aquellos casos en los que debido a características de la situación el Romeo no pueda realizar una observación y valoración directa de todos los afectados. Dicho responsable informará a la Central de Comunicaciones pasando las unidades a clave 6.
+* El  Psicólogo de Guardia finalizará su actuación en el lugar del suceso y posteriormente atenderá a las dotaciones de forma grupal y/o individual  según necesidades en el lugar definido por el Jefe de Guardia y/o Supervisor. (1)
+* La Central de Comunicaciones asignará un número de informe al Psicólogo de Guardia con el **código 15.5** (Atención psicológica a intervinientes de SAMUR-Protección Civil).
+
+(1) *Si la unidad precisa clave 14 por clave 6 la intervención del Romeo se producirá en Base 0. En caso de que la unidad no precise clave 14, la intervención se producirá en su base operativa.*
+
+ 2. **Sucesos en los que resultan afectados intervinientes sin actuación del Psicólogo de Guardia en el suceso**:
+
+El Psicólogo de Guardia será informado a través de la Central de Comunicaciones de la necesidad de atención inmediata a intervinientes, pasando la unidad a clave 6. Se asignará un número de informe con el código 15.5 y atenderá a las dotaciones de forma grupal y/o individual según necesidades en el lugar definido por el Jefe de Guardia y/o Supervisor.
+
+ 3. **Resolución y Seguimiento**:
+
+Se comunicará al Jefe de Guardia y Supervisor de Guardia la finalización de la intervención valorando de forma conjunta la consideración de la continuidad del/los profesional/es en la guardia.
+
+El Romeo contactará telefónicamente de forma individual con los intervinientes atendiendo a criterios de seguimiento en un plazo no superior a 7 días, y en caso de ser necesario derivará a recurso externo.
+
+---
+
+# [216] Accidente laboral con riesgo biológico
+
+Sección: Intervinientes
+URL: https://manual-samur.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
+Markdown: https://manual-samur.vercel.app/procedures/216.md
+Actualizado: 2026-09-01
+
+Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, señalando las recomendaciones necesarias para el manejo de exposiciones accidentales a fluidos biológicos que contengan Virus Hepatitis B, Virus Hepatitis C y VIH, según la evidencia científica internacional actual.
+
+Ante accidentes de estas características con contaminación por fluidos corporales (sangre, LCR, líquido sinovial, pericárdico, amniótico, semen o fluidos vaginales) en el desarrollo de la actividad laboral, se debe:
+
+* Comunicar, inmediatamente, el accidente a la Central de Comunicaciones, haciendo constar que se trata de una exposición accidental a material biológico.
+* El personal accidentado realizará las pautas de manejo inicial ante exposiciones potencialmente contaminadas, consistentes en:
+  * Contaminación de heridas abiertas y exposición percutanea:
+    * Lávese lo antes posible con agua y jabón.
+    * Posteriormente irrigue con suero salino estéril y desinfecte con solución antiséptica.
+  * Contaminación de mucosas:
+    * Irrigue con agua o suero salino abundante.
+* El personal accidentado deberá acudir al centro sanitario de referencia para accidentes laborales (en la actualidad Hospital ASEPEYO de Coslada) concertado con la Mutua de Accidentes Laborales, para la 1ª extracción sanguínea de seguimiento para VHB, VHC y VIH, y pautas de profilaxis para VHB.
+* El personal accidentado deberá seguir los cauces establecidos por la Subdirección General de SAMUR-Protección Civil y la Mutua de Accidentes Laborales concertada, en el seguimiento del accidente laboral con riesgo biológico, así como el procedimiento administrativo correspondiente de notificación del accidente laboral a la Subdirección.
+* El jefe de División de Guardia o el Supervisor de Guardia se trasladará al lugar del incidente y evaluará el riesgo de transmisión de VHB, VHC y VIH. Para ello:
+  * Recogerá información sobre:
+    * tipo de exposición (contacto, salpicadura, exposición percutanea)
+    * integridad o no de la piel o mucosas
+    * volumen de fluidos
+    * tiempo de exposición
+    * En el caso de exposición percutanea: tipo de aguja, profundidad del pinchazo, técnica por la que se ha obtenido el fluido.
+  * Recogerá información sobre el paciente-fuente acerca del estadio de su enfermedad (clínica, carga viral, recuento de linfocitos CD4) y tratamientos actuales.
+  * Realizará un test de determinación rápida de VIH sobre la fuente y el trabajador accidentado (sistema de diagnóstico inmediato).
+  * Informará sobre las medidas más adecuadas a seguir, incluyendo las recomendaciones de profilaxis post-exposición para VIH, efectos secundarios y contraindicaciones.
+  * Si existe un riesgo considerable de transmisión de VIH, facilitará en las primeras dos horas tras exposición, el inicio de profilaxis antirretroviral, según pauta especificada a continuación. El trabajador, no obstante, podrá, a decisión propia, iniciar el tratamiento, aún con riesgo de transmisión insignificante.
+  * Facilitará un impreso oficial al trabajador en el que conste que éste ha recibido información sobre la quimioprofilaxis post-exposición, sus efectos secundarios, y su aceptación o no a la administración de esta terapia y posterior seguimiento.
+  * Informará y facilitará el acceso del trabajador afectado al Centro Sanitario donde se realizará la extracción de muestras basales de sangre y la obtención del tratamiento completo, así como la cita para posterior seguimiento (Hospital de Asepeyo en Coslada, Servicio de Urgencias)*
+  * Dejará constancia en el informe de guardia de la existencia del accidente laboral con riesgo biológico, adjuntando parte de asistencia médica del centro sanitario concertado y el impreso firmado por el trabajador.
+* La Unidad de Recursos Humanos se encargará del seguimiento del accidente laboral en el aspecto administrativo.
+
+### Pautas de quimioprofilaxis post-exposición accidental a sangre y/o fluidos contaminados
+Manejo inicial de exposiciones potencialmente contaminadas, según el esquema previo.
+
+Terapias **Básica** y **Expandida** de profilaxis post-exposición VIH. Debe ser administrada en la 1ª y 2ª hora tras la exposición y durante 4 semanas.
+
+* **Básica**: a aplicar cuando hay contaminación con fluidos o con posibilidad de existencia de sangre (aguja de pequeño calibre, sangre no visible, abundante sangrado sobre mucosas) o carga viral baja.
+  * Combivir (Lamivudina 150 mg /Zidovudina 300 mg): 1 comprimido/12 h.
+* **Expandida**: a aplicar cuando existe exposición de alto riesgo (volumen alto de sangre contaminada, carga viral alta en paciente terminal). Añadir a la pauta anterior.
+  * Kaletra (Lopinavir 100mg/ Ritonavir 25mg): 4 comprimidos/12 h.
+
+**(*) El responsable de coordinación y seguimiento de los casos será el Servicio de Medicina Preventiva concertado con la mutua de accidentes laborales.**
+
+---
+
+# [216b] Contacto con meningitis bacteriana
+
+Sección: Intervinientes
+URL: https://manual-samur.vercel.app/manual/216b-contacto-con-meningitis-bacteriana
+Markdown: https://manual-samur.vercel.app/procedures/216b.md
+Actualizado: 2026-09-01
+
+Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, por contacto con pacientes con posible Meningitis bacteriana.
+
+Sospecharemos paciente con posible meningitis bacteriana, cuando presente fiebre, cefalea y rigidez de nuca.
+
+* **Prevención**: Los métodos de prevención de las Meningitis bacterianas incluyen por un lado, el uso de mascarilla para el paciente y el personal sanitario como precaución de contacto con gotitas de pflugge y por otro la Quimioprofilaxis de los contactos cercanos.
+* **Definición de contacto cercano**: Aunque el "contacto cercano" no ha sido claramente definido, generalmente se refiere a las personas que han tenido contacto prolongado (más de 8 horas), cerca (menos de 3 metros) con el paciente, o que han estado directamente expuestos a las secreciones orales del paciente desde una semana antes de la aparición de los síntomas hasta 24 horas después del inicio del tratamiento antibiótico apropiado.
+* **En el caso de personal Sanitario** quedan excluidos los contactos transitorios breves, no íntimos, salvo que se haya participado en maniobras de reanimación Cardiopulmonar, [intubación endotraqueal](/manual/602_03-intubacion-endotraqueal) y/o aspiración de secreciones respiratorias.
+* **Momento de instauración de la quimioprofilaxis**: Debido a que la tasa de enfermedad secundaria para los contactos cercanos es más alta inmediatamente después de la aparición de la enfermedad en el caso índice, la Quimioprofilaxis antimicrobiana se debe administrar tan pronto como sea posible (idealmente menos de 24 horas después de la identificación del paciente índice). Por el contrario, la Quimioprofilaxis administrada más de 14 días después de la exposición al caso índice es probablemente un valor limitado o nulo.
+
+#### **Pautas de quimioprofilaxis**:
+![](/images/procedures/216b/Pautas-de-quimioprofilaxis.png)
+
+Se podrá optar por la pauta de Rifampicina o Ciprofloxacino en primera elección.
+
+En caso de Embarazo se utilizará Ceftriaxona.
+
+* En caso de sospecha de contacto con paciente con Meningitis bacteriana, el trabajador lo comunicará a la Central de comunicaciones. que a su vez informará al Jefe de División de Guardia.
+* El Jefe de División de guardia, recabará la información necesaria en el centro hospitalario, y en cualquier caso, informará al trabajador del posible riesgo y le ofertará el tratamiento antibiótico indicado (según pautas anteriores).
+* El trabajador deberá acudir al centro sanitario de referencia concertado con la Mutua de Accidentes Laborales en un plazo de 72 horas, para el seguimiento del accidente laboral y del tratamiento.
+* El personal accidentado deberá seguir los cauces establecidos por la Subdirección General de SAMUR-Protección Civil y la Mutua de Accidentes Laborales en el seguimiento del accidente laboral, así como el procedimiento administrativo correspondiente de notificación de accidente laboral a la Subdirección.
+* El Jefe de División de Guardia dejará constancia en el informe de guardia de la existencia del accidente laboral con riesgo biológico.
+* La Sección de Logística, se encargará del seguimiento del accidente laboral en el aspecto administrativo.
 
 ---
 

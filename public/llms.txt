@@ -85,6 +85,20 @@ Total procedimientos: 230
 - [218] Actuación preventiva en Disturbios urbanos y Actos antisociales: https://manual-samur.vercel.app/manual/218-actuacion-preventiva-en-disturbios-urbanos-y-actos
 - [219] Transferencia de pacientes* entre profesionales sanitarios.: https://manual-samur.vercel.app/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
 
+## DRP (4 procedimientos)
+
+- [126a] Procedimiento de comunicaciones en un DRP: https://manual-samur.vercel.app/manual/126a-procedimiento-de-comunicaciones-en-un-drp
+- [drp_01] Procedimiento General de los DRP: https://manual-samur.vercel.app/manual/drp_01-procedimiento-general-de-los-drp
+- [drp_02] Procedimiento de despliege de un DRP: https://manual-samur.vercel.app/manual/drp_02-procedimiento-de-despliege-de-un-drp
+- [drp_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible: https://manual-samur.vercel.app/manual/drp_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
+
+## Intervinientes (4 procedimientos)
+
+- [114] Autoprotección en casos sospechos de viruela del mono: https://manual-samur.vercel.app/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
+- [115] Apoyo psicológico a intervinientes: https://manual-samur.vercel.app/manual/115-apoyo-psicologico-a-intervinientes
+- [216] Accidente laboral con riesgo biológico: https://manual-samur.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
+- [216b] Contacto con meningitis bacteriana: https://manual-samur.vercel.app/manual/216b-contacto-con-meningitis-bacteriana
+
 ## SVA (67 procedimientos)
 
 - [301] PARADA CARDIORRESPIRATORIA: https://manual-samur.vercel.app/manual/301-parada-cardiorrespiratoria

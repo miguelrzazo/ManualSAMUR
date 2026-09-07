@@ -31,3 +31,17 @@ test("LLMS compact and full exports share corpus date, never wall-clock date", (
     Object.defineProperty(globalThis, "Date", { value: OriginalDate, configurable: true, writable: true });
   }
 });
+
+test("compact LLMS export includes every supported procedure section", () => {
+  const procedures = [
+    { ...procedure, id: "drp_01", section: "DRP", title: "Procedimiento DRP" },
+    { ...procedure, id: "115", section: "Intervinientes", title: "Procedimiento intervinientes" },
+  ];
+
+  const compact = generateLlmsTxt(procedures, "2026-09-01");
+
+  assert.match(compact, /## DRP \(1 procedimientos\)/);
+  assert.match(compact, /- \[drp_01\] Procedimiento DRP:/);
+  assert.match(compact, /## Intervinientes \(1 procedimientos\)/);
+  assert.match(compact, /- \[115\] Procedimiento intervinientes:/);
+});
