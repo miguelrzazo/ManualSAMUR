@@ -1,4 +1,4 @@
-import type { MobileContent } from "./data/schema.ts";
+import type { MobileContent } from "../../../packages/manual-content/src/index.ts";
 import { procedureRouteKey, resolveProcedureReference } from "./procedure-logic.ts";
 import { buildCodeReferences, buildVademecumReferences, type MobileReferenceKind, type MobileReferenceSearchResult } from "./reference-search-logic.ts";
 import { locationRecords, locationRouteKey, resolveLocationRoute, type LocationRecord } from "./location-logic.ts";

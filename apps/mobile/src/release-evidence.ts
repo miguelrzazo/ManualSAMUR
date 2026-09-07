@@ -1,4 +1,4 @@
-import type { MobileSnapshot } from "./data/schema.ts";
+import type { MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
 
 export const RELEASE_EVIDENCE_SCHEMA = "samur-manual.mobile-release-evidence" as const;
 export const RELEASE_EVIDENCE_VERSION = 1 as const;

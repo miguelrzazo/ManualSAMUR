@@ -34,7 +34,7 @@ import { useReduceMotion } from "./src/hooks/motion";
 import { useScrollChrome } from "./src/hooks/use-scroll-chrome";
 import { successNotice, warningNotice } from "./src/hooks/haptics";
 import { BackToTop, Chip, CompactHeader, Disclosure, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
-import type { MobileAttachment, MobileProcedure } from "./src/data/schema";
+import type { MobileAttachment, MobileProcedure } from "../../packages/manual-content/src/index.ts";
 import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
 import { activeSectionKey } from "./src/vademecum-logic";
@@ -273,7 +273,7 @@ function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { p
 // full-screen during a shift.
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
   const styles = useAppStyles();
-  const { snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, resumeStaged, discardStaged } = useContent();
+  const { snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContent();
   const { appearance, setAppearance } = usePreferences();
   const reduceMotion = useReduceMotion();
   const settingsTriggerRef = useRef<View>(null);
@@ -283,7 +283,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
-      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onResumeStaged={resumeStaged} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "0.1.0"} />
+      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onActivateStaged={activateStagedUpdate} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "0.1.0"} />
     </SafeAreaView>
   );
 }

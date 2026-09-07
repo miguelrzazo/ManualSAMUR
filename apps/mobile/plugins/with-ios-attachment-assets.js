@@ -21,7 +21,7 @@ function findFile(root, filename) {
 }
 
 /**
- * Bundles the 310 resolvable attachments into the iOS app as two Xcode "folder
+ * Bundles all resolvable attachments into the iOS app as two Xcode "folder
  * references" (blue folders) named `docs` and `images`, added to the main target's
  * Copy Bundle Resources build phase. A folder reference — unlike a regular group —
  * is copied into the built app verbatim, preserving its internal subdirectory

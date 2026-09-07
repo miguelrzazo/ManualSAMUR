@@ -4,7 +4,7 @@ const { withDangerousMod } = require("expo/config-plugins");
 const { copyResolvableAttachments } = require("./attachment-bundle");
 
 /**
- * Bundles the 310 resolvable attachments into `android/app/src/main/assets`,
+ * Bundles all resolvable attachments into `android/app/src/main/assets`,
  * preserving the manifest's `localPath` layout (leading slash stripped). Gradle
  * packages everything under `src/main/assets` into the APK/AAB assets folder as-is,
  * so `docs/...` and `images/...` land directly under the asset root — matching

@@ -46,7 +46,8 @@
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
-      "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata"
+      "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata",
+      "contentOrigin": "https://manual-proced-spc.vercel.app"
     }
   }
 }

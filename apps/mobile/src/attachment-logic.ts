@@ -1,7 +1,8 @@
-import type { MobileAttachment, MobileManifestAttachment } from "./data/schema";
+import type { MobileAttachment, MobileManifestAttachment } from "../../../packages/manual-content/src/index.ts";
 
 export const ESSENTIAL_ATTACHMENT_CAP_BYTES = 75 * 1024 * 1024;
 export const V1_INSTALLED_ATTACHMENT_CAP_BYTES = 150 * 1024 * 1024;
+export const DEFAULT_PUBLISHED_CONTENT_ORIGIN = "https://manual-proced-spc.vercel.app";
 
 export type AttachmentDownloadStatus =
   | "not-downloaded"
@@ -78,8 +79,8 @@ export function isExpectedAttachmentMetadata(attachment: MobileAttachment): bool
 /**
  * An attachment with no approved byteLength/sha256 can never be verified locally or
  * safely downloaded (see `markAttachmentAvailable`, which throws without them). For
- * this manifest that is a permanent state, not a transient one: 8 of 318 attachments
- * were confirmed 404 upstream (gone from servpub.madrid.es) and cannot be re-synced.
+ * this manifest that is a permanent state, not a transient one: some attachments were
+ * confirmed 404 upstream (gone from servpub.madrid.es) and cannot be re-synced.
  * The UI must never present these as pending/downloadable — only as an external link
  * to the official, possibly-stale `sourceUrl`.
  */
@@ -99,6 +100,19 @@ export function attachmentStorageKey(id: string): string {
 /** Keep downloaded files content-addressed by stable manifest identity, never by URL text. */
 export function attachmentDownloadFilename(attachment: MobileAttachment): string {
   return `${attachment.id}-${attachment.filename}`;
+}
+
+/** Prefer the same Vercel publication that serves the content package. */
+export function publishedAttachmentUrl(
+  attachment: Pick<MobileAttachment, "localPath">,
+  origin = DEFAULT_PUBLISHED_CONTENT_ORIGIN,
+): string | undefined {
+  if (!attachment.localPath.startsWith("/docs/") && !attachment.localPath.startsWith("/images/")) return undefined;
+  try {
+    return new URL(attachment.localPath, `${origin.replace(/\/$/, "")}/`).toString();
+  } catch {
+    return undefined;
+  }
 }
 
 export function attachmentStatusLabel(status: AttachmentDownloadStatus): string {

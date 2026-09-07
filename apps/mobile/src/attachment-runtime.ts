@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import { Directory, File, Paths } from "expo-file-system";
 import * as Crypto from "expo-crypto";
 import {
@@ -12,13 +13,14 @@ import {
   markAttachmentCancelled,
   markAttachmentFailed,
   markAttachmentPaused,
+  publishedAttachmentUrl,
   recoverAttachment,
   startAttachmentDownload,
   updateAttachmentProgress,
   V1_INSTALLED_ATTACHMENT_CAP_BYTES,
   type AttachmentRecord,
 } from "./attachment-logic";
-import type { MobileAttachment } from "./data/schema";
+import type { MobileAttachment } from "../../../packages/manual-content/src/index.ts";
 
 export interface AttachmentRecordStorage {
   getItem(key: string): Promise<string | null>;
@@ -35,6 +37,12 @@ export interface AttachmentDownloadOptions {
 }
 
 const ATTACHMENT_DIRECTORY_NAME = "manualsamur-attachments";
+
+function publishedContentOrigin(): string {
+  if (typeof process.env.EXPO_PUBLIC_CONTENT_ORIGIN === "string") return process.env.EXPO_PUBLIC_CONTENT_ORIGIN;
+  const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
+  return typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "https://manual-proced-spc.vercel.app";
+}
 
 function recordsKey(attachment: MobileAttachment): string {
   return attachmentStorageKey(attachment.id);
@@ -176,7 +184,8 @@ export async function downloadOptionalAttachment(
   let finished = false;
   let progressWrite: Promise<void> = Promise.resolve();
   try {
-    task = File.createDownloadTask(attachment.sourceUrl, destination, {
+    const downloadUrl = publishedAttachmentUrl(attachment, publishedContentOrigin()) ?? attachment.sourceUrl;
+    task = File.createDownloadTask(downloadUrl, destination, {
       sessionType: "background",
       signal: options.signal,
       onProgress: ({ bytesWritten, totalBytes }) => {

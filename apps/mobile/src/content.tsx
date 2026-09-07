@@ -1,29 +1,18 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import * as Crypto from "expo-crypto";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
 import bundledAttachmentManifest from "./data/attachment-manifest.json";
 import {
-  MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
-  MOBILE_ATTACHMENT_MANIFEST_VERSION,
-  MOBILE_SNAPSHOT_SCHEMA,
-  MOBILE_SNAPSHOT_VERSION,
-  canonicalJson,
-  mobileAttachmentEntries,
-  mobilePackageHashPayload,
-  isValidAttachment,
-  isValidManifestAttachment,
-  isValidMobileUpdateEvent,
-  stableRouteKey,
+  isMobileContentPackage,
+  isMobileContentSnapshot,
   type MobileAttachmentManifest,
   type MobileContent,
   type MobileProcedure,
   type MobileSnapshot,
-} from "./data/schema";
+} from "../../../packages/manual-content/src/index.ts";
 import { resolveProcedureReference } from "./procedure-logic";
 import {
-  activateStagedPackage,
   ContentUpdateCancelledError,
   contentFreshness,
   discardStagedPackage,
@@ -67,7 +56,7 @@ type ContentContextValue = {
   forgetQuery: (query: string) => void;
   refresh: () => Promise<void>;
   cancelRefresh: () => void;
-  resumeStaged: () => Promise<void>;
+  activateStagedUpdate: () => Promise<void>;
   discardStaged: () => Promise<void>;
 };
 
@@ -80,36 +69,8 @@ export interface SyncProgress {
 const ContentContext = createContext<ContentContextValue | null>(null);
 
 async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAttachmentManifest): Promise<boolean> {
-  if (!candidate || typeof candidate !== "object") return false;
-  const snapshot = candidate as Partial<MobileSnapshot>;
-  if (snapshot.schema !== MOBILE_SNAPSHOT_SCHEMA || snapshot.version !== MOBILE_SNAPSHOT_VERSION || !snapshot.content) return false;
-  if (typeof snapshot.generatedAt !== "string" || !/^[a-f0-9]{64}$/.test(snapshot.hash ?? "")) return false;
-  if (snapshot.contentHash !== undefined && snapshot.contentHash !== snapshot.hash) return false;
-  if (!/^[a-f0-9]{64}$/.test(snapshot.packageHash ?? "")) return false;
-  const content = snapshot.content as MobileContent;
-  if (!Array.isArray(content.procedures)) return false;
-  if (!content.relationsIndex || typeof content.relationsIndex !== "object" || !content.relationsIndex.codes || typeof content.relationsIndex.codes !== "object") return false;
-  if (!Array.isArray(content.updates) || content.updates.some((event) => !isValidMobileUpdateEvent(event))) return false;
-  if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
-  if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
-  if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;
-  if (content.procedures.some((procedure) => procedure.attachments.some((attachment) => !isValidAttachment(attachment)))) return false;
-  const attachments = mobileAttachmentEntries(content);
-  if (new Set(attachments.map((attachment) => attachment.id)).size !== attachments.length) return false;
-  if (attachments.some((attachment) => !isValidManifestAttachment(attachment))) return false;
-  if (expectedManifest && (canonicalJson(expectedManifest) !== canonicalJson({
-    schema: MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
-    version: MOBILE_ATTACHMENT_MANIFEST_VERSION,
-    generatedAt: snapshot.generatedAt,
-    contentHash: snapshot.hash,
-    packageHash: snapshot.packageHash,
-    attachments,
-  }))) return false;
-  const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(content));
-  if (digest !== snapshot.hash) return false;
-  const manifestDigest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(attachments));
-  const packageDigest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, canonicalJson(mobilePackageHashPayload(snapshot as MobileSnapshot, manifestDigest)));
-  return packageDigest === snapshot.packageHash;
+  if (!isMobileContentSnapshot(candidate)) return false;
+  return expectedManifest ? isMobileContentPackage(candidate, expectedManifest) : true;
 }
 
 function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
@@ -117,6 +78,24 @@ function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
   if (typeof process.env[envName] === "string") return process.env[envName];
   const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
   return typeof extra?.[name] === "string" ? extra[name] as string : "";
+}
+
+interface PublishedContentMetadata {
+  schema: string;
+  version: number;
+  hash: string;
+  packageHash?: string;
+  generatedAt: string;
+}
+
+function isPublishedContentMetadata(value: unknown): value is PublishedContentMetadata {
+  if (!value || typeof value !== "object") return false;
+  const metadata = value as Partial<PublishedContentMetadata>;
+  return typeof metadata.schema === "string"
+    && typeof metadata.version === "number"
+    && typeof metadata.hash === "string"
+    && (metadata.packageHash === undefined || typeof metadata.packageHash === "string")
+    && typeof metadata.generatedAt === "string";
 }
 
 export function useContent(): ContentContextValue {
@@ -243,6 +222,20 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     refreshController.current = controller;
     let responseReceived = false;
     try {
+      const metadataUrl = endpoint("metadataEndpoint");
+      if (metadataUrl) {
+        const metadataResponse = await fetch(metadataUrl, { headers: { Accept: "application/json" }, signal: controller.signal });
+        responseReceived = true;
+        if (!metadataResponse.ok) throw new Error(`HTTP ${metadataResponse.status}`);
+        const metadata: unknown = await metadataResponse.json();
+        if (!isPublishedContentMetadata(metadata)) throw new Error("La metadata publicada no es válida");
+        if (metadata.packageHash && metadata.packageHash === snapshot.packageHash) {
+          setSyncState("success");
+          setSyncProgress({});
+          return;
+        }
+      }
+
       const response = await fetch(url, { headers: { Accept: "application/json" }, signal: controller.signal });
       responseReceived = true;
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -254,12 +247,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, snapshotIsValid, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {}, controller.signal);
       setStagedPackage(staged);
       setSyncProgress({ downloadedBytes: staged.downloadedBytes, totalBytes: staged.totalBytes });
-      setSyncState("activating");
-      await activateStagedPackage(AsyncStorage, staged, snapshotIsValid, new Date().toISOString(), controller.signal);
-      setSnapshot(candidate as MobileSnapshot);
-      setStagedPackage(undefined);
-      setSyncState("success");
-      setSyncProgress({ downloadedBytes: totalBytes || undefined, totalBytes: totalBytes || undefined });
+      setSyncState("recovery");
     } catch (error) {
       setLastError(error instanceof Error ? error.message : "No se pudo actualizar el contenido");
       if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
@@ -278,7 +266,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       setIsRefreshing(false);
       if (refreshController.current === controller) refreshController.current = null;
     }
-  }, []);
+  }, [snapshot.packageHash]);
 
   const cancelRefresh = useCallback(() => {
     // Once activation starts, cancellation is disabled so the pointer write
@@ -287,7 +275,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     refreshController.current?.abort();
   }, [syncState]);
 
-  const resumeStaged = useCallback(async () => {
+  const activateStagedUpdate = useCallback(async () => {
     setIsRefreshing(true);
     setLastError(undefined);
     setSyncState("activating");
@@ -331,9 +319,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     forgetQuery,
     refresh,
     cancelRefresh,
-    resumeStaged,
+    activateStagedUpdate,
     discardStaged,
-  }), [cancelRefresh, discardStaged, favorites, forgetQuery, isHydrated, isRefreshing, lastError, recentQueries, recents, refresh, remember, rememberQuery, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite, resumeStaged]);
+  }), [activateStagedUpdate, cancelRefresh, discardStaged, favorites, forgetQuery, isHydrated, isRefreshing, lastError, recentQueries, recents, refresh, remember, rememberQuery, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

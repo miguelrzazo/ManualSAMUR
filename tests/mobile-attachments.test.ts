@@ -18,6 +18,7 @@ import {
   isLocallyAvailable,
   isViewableInApp,
   markAttachmentAvailable,
+  publishedAttachmentUrl,
   rendersInline,
   markAttachmentFailed,
   recoverAttachment,
@@ -53,6 +54,14 @@ const attachment: MobileManifestAttachment = {
   sha256,
   procedureId: "301",
 };
+
+test("published attachment URLs stay on the configured Vercel origin", () => {
+  assert.equal(
+    publishedAttachmentUrl({ localPath: "/docs/procedures/301/manual.pdf" }, "https://manual.example/"),
+    "https://manual.example/docs/procedures/301/manual.pdf",
+  );
+  assert.equal(publishedAttachmentUrl({ localPath: "/private/manual.pdf" }), undefined);
+});
 
 test("attachment identity is stable and does not use the mutable source URL as a filename", () => {
   assert.equal(attachmentDownloadFilename(attachment), "attachment-1-manual.pdf");

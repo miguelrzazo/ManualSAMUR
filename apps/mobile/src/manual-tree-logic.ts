@@ -16,7 +16,7 @@
  * (see tests/mobile-manual-tree.test.ts).
  */
 
-import type { MobileUpdateEvent } from "./data/schema.ts";
+import type { MobileUpdateEvent } from "../../../packages/manual-content/src/index.ts";
 
 // ─── Section ordering and grouping rules (mirrors lib/content.ts + lib/manual-data.ts) ──
 

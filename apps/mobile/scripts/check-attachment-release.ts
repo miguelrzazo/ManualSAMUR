@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { evaluateAttachmentRelease, type AttachmentReleasePolicy } from "../src/attachment-logic.ts";
-import { isValidManifestAttachment, type MobileAttachmentManifest } from "../src/data/schema.ts";
+import { isValidManifestAttachment, type MobileAttachmentManifest } from "../../../packages/manual-content/src/index.ts";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const policy = JSON.parse(fs.readFileSync(path.join(appRoot, "attachment-release-policy.json"), "utf8")) as AttachmentReleasePolicy;

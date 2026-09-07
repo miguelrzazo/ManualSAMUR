@@ -47,6 +47,10 @@ yarn-error.log*
 /public/manual-updates.json
 /public/manual-history.json
 
+# Native content package — generated from content/data during mobile builds.
+apps/mobile/src/data/snapshot.json
+apps/mobile/src/data/attachment-manifest.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -5,11 +5,11 @@ const path = require("node:path");
  * Shared by the iOS and Android attachment-bundling config plugins (T2, issue #62).
  *
  * The owner decided every attachment in the manifest is "essential" — bundled offline
- * with the app rather than downloaded on demand. Only the 310 attachments that resolved
- * during content sync (have both byteLength and sha256) can actually be bundled; 8 are
- * permanently gone upstream (404) and are never copied here. attachment-runtime.ts already
+ * with the app rather than downloaded on demand. Only attachments that resolved during
+ * content sync (have both byteLength and sha256) can actually be bundled; permanently
+ * unavailable upstream files are never copied here. attachment-runtime.ts already
  * refuses to mark an attachment "available" without matching bytes+hash, so leaving those
- * 8 out of the bundle is safe by construction — they simply stay unresolvable.
+ * out of the bundle is safe by construction — they simply stay unresolvable.
  */
 
 function repositoryRootFrom(mobileAppRoot) {

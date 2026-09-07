@@ -1,4 +1,4 @@
-import type { MobileSnapshot } from "./data/schema";
+import type { MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
 
 /**
  * The pointer is the only record changed during activation. Content packages

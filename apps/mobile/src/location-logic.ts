@@ -1,4 +1,4 @@
-import type { MobileContent } from "./data/schema";
+import type { MobileContent } from "../../../packages/manual-content/src/index.ts";
 
 export type LocationKind = "hospital" | "base";
 export type LocationFilter = "all" | LocationKind;

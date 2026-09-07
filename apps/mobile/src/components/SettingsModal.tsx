@@ -22,7 +22,7 @@ export interface SettingsModalProps {
   onClose: () => void;
   onRefresh: () => Promise<void>;
   onCancelRefresh: () => void;
-  onResumeStaged: () => Promise<void>;
+  onActivateStaged: () => Promise<void>;
   onDiscardStaged: () => Promise<void>;
   onOpenAbbreviations: () => void;
   generatedAt: string;
@@ -50,7 +50,7 @@ function syncStatus(syncState: SyncState, generatedAt: string): SyncStatus {
     case "success": return { icon: "check-circle-outline", title: "Contenido actualizado", detail: "Paquete verificado y activo", color: "green" };
     case "offline": return { icon: "cloud-off-outline", title: "Sin conexión", detail: "Puedes seguir usando el contenido local", color: "amber" };
     case "failure": return { icon: "alert-circle-outline", title: "No se pudo actualizar", detail: "El contenido anterior permanece activo", color: "danger" };
-    case "recovery": return { icon: "backup-restore", title: "Actualización pendiente", detail: "Puedes reanudarla o descartarla", color: "amber" };
+    case "recovery": return { icon: "backup-restore", title: "Actualización pendiente", detail: "Puedes activarla o descartarla", color: "amber" };
     case "stale": return { icon: "clock-alert-outline", title: "Conviene buscar actualizaciones", detail: "El contenido local tiene más de 30 días", color: "amber" };
     default: return contentFreshness(generatedAt) === "fresh"
       ? { icon: "check-decagram-outline", title: "Contenido local disponible", detail: "Revisión reciente", color: "green" }
@@ -64,7 +64,7 @@ function formattedDate(value: string): string {
 }
 
 export function SettingsModal({
-  visible, onClose, onRefresh, onCancelRefresh, onResumeStaged, onDiscardStaged,
+  visible, onClose, onRefresh, onCancelRefresh, onActivateStaged, onDiscardStaged,
   onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState,
   syncProgress, stagedPackage, appearance, setAppearance, appVersion,
   legalMetadata = PENDING_SETTINGS_LEGAL_METADATA, reduceMotion = false,
@@ -112,9 +112,9 @@ export function SettingsModal({
           )}
           {stagedPackage ? (
             <View style={styles.recovery} accessibilityLiveRegion="polite">
-              <Text style={styles.meta}>Hay un paquete descargado pendiente. El contenido anterior sigue protegido.</Text>
+              <Text style={styles.meta}>Hay una actualización verificada pendiente. El contenido anterior sigue activo hasta que la confirmes.</Text>
               <View style={styles.actions}>
-                <Press onPress={() => void onResumeStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Reanudar</Text></Press>
+                <Press onPress={() => void onActivateStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Activar actualización</Text></Press>
                 <Press onPress={() => void onDiscardStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Descartar</Text></Press>
               </View>
             </View>
@@ -213,4 +213,3 @@ function useStyles(palette: AdaptivePalette) {
     legal: { ...typography.caption, color: palette.inkMuted, textAlign: "center", marginTop: spacing.sm },
   }), [palette]);
 }
-

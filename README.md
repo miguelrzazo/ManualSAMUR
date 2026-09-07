@@ -38,6 +38,11 @@ npm run mobile:content           # Regenerar el paquete offline de la app Expo
 npm run mobile:typecheck         # Typecheck de la superficie nativa
 ```
 
+Los cambios de contenido se publican con el despliegue existente de Vercel. La app nativa
+consulta primero `/api/mobile/content/metadata`, descarga y verifica el paquete solo si cambia,
+lo deja preparado y espera confirmación explícita para activarlo. Los anexos se sirven desde el
+mismo origen de Vercel cuando no están ya incluidos offline; no se añade ningún servicio externo.
+
 La sincronización mensual corre en `.github/workflows/update-content.yml` y abre un PR
 de revisión únicamente si hay cambios de contenido reales.
 
@@ -63,6 +68,9 @@ O accede a un procedimiento individual: https://manual-proced-spc.vercel.app/man
   Como consecuencia, cualquier comparación de fechas debe hacerse en cliente — en servidor
   quedaría congelada en el momento del build. Ver el hook `lib/hooks/use-now.ts`.
 - **Contenido**: Markdown en `content/procedures/` (10 subcarpetas por sección), datos JSON en `content/data/`
+- **Paquete compartido**: `packages/manual-content/` define el contrato, serialización, validación,
+  hashes y relaciones que consumen la web y las superficies iOS/Android; los adaptadores de
+  compilación mantienen el acceso al sistema de archivos fuera del paquete.
 - **Datos de cliente**: `public/search-index.json`, `public/manual-updates.json` y
   `public/manual-history.json` se generan en el build y se descargan bajo demanda, para
   no inflar el HTML de cada página

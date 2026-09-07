@@ -1,4 +1,4 @@
-import { stableRouteKey, type MobileProcedure } from "./data/schema.ts";
+import { stableRouteKey, type MobileProcedure } from "../../../packages/manual-content/src/index.ts";
 import { buildSearchSnippet, readableSnippetSource, type SearchSnippet } from "./search-snippet-logic.ts";
 
 export interface ProcedureSearchResult {

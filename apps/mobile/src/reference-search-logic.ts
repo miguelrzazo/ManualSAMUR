@@ -1,5 +1,5 @@
 import { displayLabel } from "./title-case.ts";
-import type { MobileContent } from "./data/schema";
+import type { MobileContent } from "../../../packages/manual-content/src/index.ts";
 
 export type MobileReferenceKind = "drug" | "perfusion" | "fluid" | "commercialName" | "code" | "abbreviation";
 

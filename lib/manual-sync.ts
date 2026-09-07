@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { capMobileUpdateEvents, MAX_MOBILE_UPDATE_EVENTS } from "../packages/manual-content/src/index.ts";
 
 const _MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
@@ -17,7 +18,7 @@ export function getDefaultManualVersion(referenceNow = new Date()): string {
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
 /** Keep the shipped event stream bounded; it is embedded in every mobile package. */
-export const MAX_MANUAL_UPDATE_EVENTS = 500;
+export const MAX_MANUAL_UPDATE_EVENTS = MAX_MOBILE_UPDATE_EVENTS;
 
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
 export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial" | "deleted";
@@ -422,9 +423,7 @@ export function writeManualUpdatesDataset(dataset: ManualUpdatesDataset, cwd = p
 }
 
 export function capManualUpdateEvents(events: readonly ManualUpdateEvent[], maxEvents = MAX_MANUAL_UPDATE_EVENTS): ManualUpdateEvent[] {
-  return [...events]
-    .sort((left, right) => `${right.effectiveDate}|${right.approvedAt ?? ""}`.localeCompare(`${left.effectiveDate}|${left.approvedAt ?? ""}`))
-    .slice(0, maxEvents);
+  return capMobileUpdateEvents(events, maxEvents) as ManualUpdateEvent[];
 }
 
 export const DEFAULT_MANUAL_HISTORY_PATH = "content/data/manual-history.json";

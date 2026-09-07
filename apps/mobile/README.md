@@ -1,7 +1,7 @@
 # Pulso abierto mobile
 
 Pulso abierto is the independent ManualSAMUR reference companion. The app is intentionally local-first:
-the generated v2 content snapshot is bundled, favorites and recents stay in AsyncStorage,
+the generated v3 content snapshot is bundled, favorites and recents stay in AsyncStorage,
 and an update is accepted only after its package integrity validates. A failed or
 interrupted refresh leaves the last known-good snapshot in place.
 
@@ -53,38 +53,32 @@ target.
   failures fall back to the local directory/schematic; location is requested only after the
   person explicitly asks to use it. The approved optional Madrid offline pack is managed through
   MapLibre's native offline support. The app does not claim traffic-aware routing or live capacity.
-- Updates are local-only and transactional at the snapshot level. The API endpoint is the
-  existing `/api/mobile/content/v2` contract. Every snapshot carries a content hash and
-  package hash; the generator and runtime also verify canonical bytes, stable route keys,
-  a matching attachment manifest, and safe `/docs` or `/images` paths.
+- Updates are local-first and transactional at the snapshot level. The app checks the small
+  metadata endpoint first, downloads only when the package hash changes, stages and verifies
+  the package, and waits for explicit activation. The existing `/api/mobile/content/v2`
+  route remains the content contract. Every snapshot carries a content hash and package hash;
+  the shared package and runtime verify canonical bytes, stable route keys, a matching
+  attachment manifest, and safe `/docs` or `/images` paths.
 - **All attachments are essential** (owner decision, issue #62): every attachment the
   content sync could resolve is bundled offline inside the app at build time, not
-  downloaded on demand. `attachment-release-policy.json` is approved with all 310
-  resolvable attachment ids as `essentialAttachmentIds`; the `notes` field records the
-  owner decision, the byte total, and the 8 exclusions in Spanish. The iOS
+  downloaded on demand. `attachment-release-policy.json` is approved with all resolvable
+  attachment ids as `essentialAttachmentIds`; the `notes` field records the
+  owner decision, the byte total, and the 5 exclusions in Spanish. The iOS
   (`plugins/with-ios-attachment-assets.js`) and Android
-  (`plugins/with-android-attachment-assets.js`) config plugins copy those 310 files
+  (`plugins/with-android-attachment-assets.js`) config plugins copy those 313 files
   from `public/docs` and `public/images` into the native project during
   `expo prebuild`, preserving each attachment's `localPath` layout so
   `attachment-runtime.ts`'s bundle lookup (`Paths.bundle` + `localPath`) resolves them.
   Nothing is downloaded at runtime for these; `downloadOptionalAttachment` remains as a
   defensive fallback path, not the primary delivery mechanism.
-  - **8 of 318 manifest attachments cannot be bundled.** Their source files were never
-    recovered by content sync (no `byteLength`/`sha256`), and every one of their
-    `sourceUrl`s was confirmed to return HTTP 404 against servpub.madrid.es — they are
-    gone from the upstream wiki, not merely slow to sync. They are one image
-    (procedure 606_03a) and seven PDFs (procedure 314_05's intranasal medication sheet,
-    and procedure 509's six `509.1`–`509.6` documents). `attachment-runtime.ts` treats
-    any attachment lacking that metadata as permanently unavailable
-    (`isAttachmentUnavailableUpstream`): `reconcileAttachmentRecord` pins it to `failed`
-    with a fixed Spanish notice pointing at the (possibly stale) official `sourceUrl`,
-    and `downloadOptionalAttachment` refuses to attempt a network fetch for it. They
-    never render as pending, broken, or "available on demand" — only as an explicit
-    external link.
+  - **5 of 318 manifest attachments cannot be bundled.** Their source files have no
+    approved `byteLength`/`sha256` metadata and are treated as unavailable by
+    `attachment-runtime.ts`; `reconcileAttachmentRecord` pins them to `failed` with a
+    fixed notice pointing at the official `sourceUrl`. They never render as pending,
+    broken, or "available on demand" — only as an explicit external link.
   - **Deviation from the issue #26 spec, accepted knowingly.** The spec's initial-download
-    target is 50 MB; bundling the 310 resolvable attachments adds ~56.5 MB (59,243,267
-    bytes measured from the manifest), which exceeds that target. It stays comfortably
-    under both the 75 MB essential and 150 MB installed V1 caps in `attachment-logic.ts`
+    target is 50 MB; bundling the 313 resolvable attachments remains under both the 75 MB
+    essential and 150 MB installed V1 caps in `attachment-logic.ts`
     (neither cap was changed for this). The owner chose full offline coverage of the
     manual over the 50 MB target; this is recorded here and in the policy's `notes`
     rather than hidden. `npm run attachments:check-release` enforces the caps and that

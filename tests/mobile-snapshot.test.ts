@@ -10,6 +10,7 @@ import {
   isMobileContentPackage,
   isMobileContentSnapshot,
   packageHash,
+  sha256Hex,
   type MobileAttachmentManifest,
   type MobileContentSnapshot,
 } from "../lib/mobile-snapshot.ts";
@@ -51,6 +52,8 @@ test("mobile snapshots validate their schema, version and content hash", () => {
   assert.equal(isMobileContentSnapshot(snapshot), true);
   assert.equal(isMobileContentSnapshot({ ...snapshot, version: 99 }), false);
   assert.equal(isMobileContentSnapshot({ ...snapshot, hash: "changed" }), false);
+  const packaged = buildMobileContentSnapshot();
+  assert.equal(isMobileContentSnapshot({ ...packaged, packageHash: "0".repeat(64) }), false);
 });
 
 test("mobile snapshots give every procedure a unique route key", () => {
@@ -62,6 +65,10 @@ test("mobile snapshots give every procedure a unique route key", () => {
 
 test("canonical package bytes do not depend on object insertion order", () => {
   assert.equal(canonicalJson({ z: 1, a: { y: true, x: "ok" } }), '{"a":{"x":"ok","y":true},"z":1}');
+});
+
+test("shared content hashing matches the published SHA-256 contract", () => {
+  assert.equal(sha256Hex("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
 });
 
 test("package hash includes the attachment manifest", () => {

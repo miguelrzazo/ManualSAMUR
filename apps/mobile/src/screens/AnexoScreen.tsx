@@ -15,7 +15,7 @@ import {
   type AttachmentRecord,
 } from "../attachment-logic";
 import { downloadOptionalAttachment, reconcileAttachmentRecord } from "../attachment-runtime";
-import type { MobileAttachment } from "../data/schema";
+import type { MobileAttachment } from "../../../../packages/manual-content/src/index.ts";
 import type { RootStackParamList } from "../navigation-types";
 
 /**
@@ -29,8 +29,8 @@ import type { RootStackParamList } from "../navigation-types";
  *
  * This screen renders the document itself. A bundled or already-downloaded anexo appears
  * immediately; anything else downloads here, with progress, and swaps to the document in
- * place. The external "fuente oficial" link survives as the recovery path for the eight
- * anexos that are confirmed gone upstream, and only for those.
+ * place. The external "fuente oficial" link survives as the recovery path for anexos
+ * that are confirmed gone upstream, and only for those.
  */
 export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Anexo">) {
   const palette = useTheme();
