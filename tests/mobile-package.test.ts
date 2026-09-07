@@ -57,9 +57,9 @@ test("managed Expo config uses the approved display name without changing app id
       android?: { package?: string; label?: string };
     };
   };
-  assert.equal(appConfig.expo?.name, "Manual de Procedimientos SAMUR-PC");
-  assert.equal(appConfig.expo?.ios?.infoPlist?.CFBundleDisplayName, "Manual de Procedimientos SAMUR-PC");
-  assert.equal(appConfig.expo?.android?.label, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(appConfig.expo?.name, "Manual SAMUR");
+  assert.equal(appConfig.expo?.ios?.infoPlist?.CFBundleDisplayName, "Manual SAMUR");
+  assert.equal(appConfig.expo?.android?.label, "Manual SAMUR");
   assert.equal(appConfig.expo?.slug, "manualsamur");
   assert.equal(appConfig.expo?.scheme, "manualsamur");
   assert.equal(appConfig.expo?.ios?.bundleIdentifier, "es.madrid.samur.manual");

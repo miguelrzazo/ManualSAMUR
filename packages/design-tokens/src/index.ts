@@ -121,6 +121,21 @@ export const typography = {
 export type TypographyToken = keyof typeof typography;
 
 /**
+ * Un círculo perfecto: el radio es siempre la mitad del lado.
+ *
+ * Trece sitios lo escribían a mano —`{ width: 34, height: 34, borderRadius: 17 }`—
+ * y en la auditoría de radios aparecían como trece valores sueltos (9, 11, 12, 14,
+ * 15, 17, 18, 22, 27) mezclados con los de la escala, tapando las incoherencias
+ * de verdad. Escrito así, el radio deja de ser una decisión: se deduce del lado.
+ *
+ * No sustituye a `radii`. Un botón redondo no está en la escala porque no es una
+ * esquina redondeada, es una forma.
+ */
+export function circle(size: number) {
+  return { width: size, height: size, borderRadius: size / 2 } as const;
+}
+
+/**
  * Elevation. Borders that exist only to fake depth become shadows; borders that
  * carry structure (separators, selected states) stay borders.
  */

@@ -14,7 +14,7 @@ import {
   type SectionListData,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
+import { circle, radii, spacing, TAB_BAR_INSET } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
 import { BACK_TO_TOP_PLACEMENT } from "../scroll-chrome-logic";
@@ -806,7 +806,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomColor: "transparent",
     },
     topTabActive: { borderBottomColor: palette.ink },
-    topTabDot: { width: 7, height: 7, borderRadius: 4 },
+    topTabDot: circle(7),
     topTabLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "700" },
     topTabCount: { color: palette.inkMuted, fontSize: 12, fontWeight: "500", fontVariant: ["tabular-nums"] },
     otrosRow: { backgroundColor: palette.surfaceMuted, borderBottomWidth: 1, borderBottomColor: palette.line },
@@ -890,7 +890,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomWidth: 1,
       borderBottomColor: palette.line,
     },
-    locationTypeIcon: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
+    locationTypeIcon: { ...circle(34), alignItems: "center", justifyContent: "center" },
     baseNumber: {
       minWidth: 32,
       textAlign: "center",

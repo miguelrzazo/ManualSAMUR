@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import {
   extractVademecumAttachmentLinks,
   mergeImportedDrugs,
+  resolveExistingDrugId,
   parseCommercialRowsFromText,
   parseFluidsFromText,
   parsePerfusionsFromText,
@@ -19,6 +20,7 @@ import {
   type PerfusionRowInput,
 } from "../lib/vademecum-sync.ts";
 import { normalizeForSearch } from "../lib/vademecum-utils.ts";
+import { assertCodeDatasetIsPlausible } from "../lib/codigos-sync-logic.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -306,7 +308,13 @@ async function main() {
     const importedFluids = parseFluidsFromText(pdfToText(localFluidsPdfPath));
     const importedCommercials = parseCommercialRowsFromText(pdfToText(localCommercialPdfPath));
 
-    const mergedDrugs = mergeImportedDrugs(existingDrugs, importedDrugs);
+    const statePath = path.join(DATA_DIR, "vademecum-source-state.json");
+    const previousIds: string[] = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")).importedIds : [];
+    if (!importedDrugs.length) throw new Error("The official vademecum parser returned no records");
+    const importedIds = [...new Set(importedDrugs.map((drug) => resolveExistingDrugId(drug, existingDrugs) ?? slugify(drug.name)))].sort();
+    const retained = previousIds.filter((id) => importedIds.includes(id));
+    assertCodeDatasetIsPlausible(previousIds.length, retained.length);
+    const mergedDrugs = mergeImportedDrugs(existingDrugs, importedDrugs, previousIds);
     const mergedPerfusions = mergePerfusions(importedPerfusions, existingPerfusions, mergedDrugs);
     const mergedFluids = mergeFluids(importedFluids, existingFluids);
     const mergedCommercials = mergeCommercialRows(importedCommercials, mergedDrugs);
@@ -316,6 +324,7 @@ async function main() {
     writeJsonFile("perfusiones.json", mergedPerfusions);
     writeJsonFile("fluidos.json", mergedFluids);
     writeJsonFile("vademecum-comerciales.json", mergedCommercials);
+    fs.writeFileSync(statePath, JSON.stringify({ importedIds }, null, 2) + "\n");
 
     console.log(
       `Done: ${mergedDrugs.length} fármacos, ${mergedPerfusions.length} perfusiones, ${mergedFluids.length} fluidos, ${mergedCommercials.length} relaciones comerciales.`,

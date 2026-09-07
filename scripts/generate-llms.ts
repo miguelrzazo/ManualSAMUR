@@ -13,6 +13,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import matter from "gray-matter";
+import { getAllProcedures } from "../lib/content.ts";
 import { normalizeProcedureContent } from "../lib/manual-data.ts";
 import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "../lib/markdown-export.ts";
 
@@ -201,11 +202,20 @@ export function generateLlmsFullTxt(procedures: ProcedureMeta[], updatedDate = l
   return header + sections.join("\n");
 }
 
-function copyProceduresMd(procedures: ProcedureMeta[]): void {
-  const destDir = path.join(PUBLIC_DIR, "procedures");
+export function copyProceduresMd(procedures: ProcedureMeta[], destDir = path.join(PUBLIC_DIR, "procedures")): void {
+  if (procedures.length === 0) throw new Error("Refusing to replace the public corpus with an empty dataset");
+  const expected = new Set(procedures.map((proc) => `${proc.id}.md`));
+  if (expected.size !== procedures.length || procedures.some((proc) => !/^[a-zA-Z0-9_-]+$/.test(proc.id))) {
+    throw new Error("Invalid or duplicate procedure IDs in public export");
+  }
   fs.mkdirSync(destDir, { recursive: true });
   for (const proc of procedures) {
     fs.writeFileSync(path.join(destDir, `${proc.id}.md`), canonicalProcedureMarkdown(proc), "utf8");
+  }
+  for (const entry of fs.readdirSync(destDir, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith(".md") && !expected.has(entry.name)) {
+      fs.unlinkSync(path.join(destDir, entry.name));
+    }
   }
 }
 
@@ -234,6 +244,10 @@ function main() {
       resolveInternalHref,
     });
   }
+
+  // Public Markdown and native/web readers use exactly the same normalized links.
+  const rendered = new Map(getAllProcedures().map((procedure) => [procedure.id, procedure.content]));
+  for (const procedure of procedures) procedure.content = rendered.get(procedure.id) ?? procedure.content;
 
   const updatedDate = latestUpdatedDate(procedures);
   const llmsTxt = generateLlmsTxt(procedures, updatedDate);

@@ -15,6 +15,13 @@
  */
 export const MAX_DELETION_RATIO = 0.2;
 
+/** Absence from an index alone is never proof of withdrawal. */
+export function assertConfirmedWithdrawal(status: number, source: string): void {
+  if (status !== 404 && status !== 410) {
+    throw new Error(`Withdrawal not confirmed for ${source}: HTTP ${status}. Preserve the local procedure and investigate discovery.`);
+  }
+}
+
 /**
  * ¿Puede este sync declarar de baja el procedimiento si deja de aparecer?
  *

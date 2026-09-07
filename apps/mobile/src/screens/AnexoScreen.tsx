@@ -190,7 +190,7 @@ function createStyles(palette: AdaptivePalette) {
     message: { ...typography.callout, color: palette.ink, textAlign: "center" },
     action: { minHeight: 44, justifyContent: "center", paddingHorizontal: spacing.lg, borderRadius: radii.md, backgroundColor: palette.primaryAction },
     actionText: { ...typography.footnote, fontWeight: "600", color: palette.white },
-    progressTrack: { width: "70%", height: 4, borderRadius: 2, backgroundColor: palette.surfaceMuted, overflow: "hidden" },
+    progressTrack: { width: "70%", height: 4, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, overflow: "hidden" },
     progressFill: { height: 4, backgroundColor: palette.primary },
     imageScroll: { flexGrow: 1, justifyContent: "center", backgroundColor: palette.paper },
     image: { width: "100%", aspectRatio: 1, backgroundColor: palette.paper },

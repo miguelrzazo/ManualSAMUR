@@ -127,7 +127,7 @@ test("parseMarkdownTableAt keeps non-pipe continuation lines in the active cell"
 
 test("splitMarkdownBlocks emits tables in document order and restarts list numbering", () => {
   const blocks = splitMarkdownBlocks(["1. Primer paso.", "| Criterio | Valor |", "| --- | --- |", "| Edad | >65 |", "1. Segundo paso."]);
-  assert.deepEqual(blocks.map((block) => block.kind === "table" ? "table" : block.row.kind === "ordered" ? `ordered-${block.row.ordinal}` : block.row.kind), ["ordered-1", "table", "ordered-1"]);
+  assert.deepEqual(blocks.map((block) => block.kind === "table" ? "table" : block.kind === "line" && block.row.kind === "ordered" ? `ordered-${block.row.ordinal}` : block.kind === "line" ? block.row.kind : block.kind), ["ordered-1", "table", "ordered-1"]);
 });
 
 test("all bundled table-bearing procedures produce a native table block", () => {

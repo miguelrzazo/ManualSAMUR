@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { spacing, typography, TAB_BAR_INSET, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { AdaptivePalette, circle, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints } from "../accessibility.ts";
 import { displayTitle } from "../title-case.ts";
 import { formatDistanceLabel, type LocationWithDistance } from "../mapa-logic.ts";
@@ -131,7 +131,7 @@ function useStyles(palette: AdaptivePalette) {
     sectionTitle: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
     sectionCount: { ...typography.footnote, color: palette.inkMuted, fontVariant: ["tabular-nums"] },
     row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: palette.surface },
-    icon: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", backgroundColor: palette.primaryWash },
+    icon: { ...circle(34), alignItems: "center", justifyContent: "center", backgroundColor: palette.primaryWash },
     copy: { flex: 1 },
     title: { ...typography.callout, fontWeight: "500", color: palette.ink },
     meta: { ...typography.footnote, color: palette.inkMuted, marginTop: 1 },

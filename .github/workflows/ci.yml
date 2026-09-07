@@ -55,6 +55,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate generated content parity
+        run: npm run validate:content-parity
+
       - name: Collect dated mobile release evidence
         env:
           MOBILE_BUILD_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}

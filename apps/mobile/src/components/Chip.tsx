@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { AdaptivePalette, circle, radii, spacing, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints } from "../accessibility.ts";
 import { selectionTick } from "../hooks/haptics.ts";
 import { useTheme } from "../theme.tsx";
@@ -59,7 +59,7 @@ export function Chip({ label, selected = false, onPress, icon, count, dotColor, 
     >
       {dotColor ? <View style={[styles.dot, { backgroundColor: dotColor }]} /> : null}
       {icon ? <MaterialCommunityIcons name={icon} size={15} color={tint} /> : null}
-      <Text style={[styles.label, accent ? { color: accent } : undefined, selected && !accent && styles.labelSelected]} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.label, accent ? { color: accent } : undefined, selected && !accent && styles.labelSelected]}>{label}</Text>
       {count === undefined ? null : (
         <Text style={[styles.count, accent ? { color: accent } : undefined, selected && !accent && styles.labelSelected]}>{count}</Text>
       )}
@@ -79,13 +79,15 @@ function useStyles(palette: AdaptivePalette) {
       alignItems: "center",
       justifyContent: "center",
       gap: spacing.xs + 2,
-      minHeight: 34,
+      // The outer Press supplies the 44pt touch target. Keep the visual chip
+      // flexible so Dynamic Type can expand its label without clipping it.
+      minHeight: 36,
       paddingHorizontal: spacing.md,
       borderRadius: radii.pill,
       backgroundColor: palette.surfaceMuted,
     },
     chipSelected: { backgroundColor: palette.ink },
-    dot: { width: 7, height: 7, borderRadius: 4 },
+    dot: circle(7),
     label: { ...typography.footnote, fontWeight: "500", color: palette.inkMuted },
     labelSelected: { color: palette.paper },
     count: { ...typography.caption2, color: palette.inkMuted, fontVariant: ["tabular-nums"] },

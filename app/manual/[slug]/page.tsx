@@ -200,7 +200,7 @@ export default async function ProcedurePage({ params }: Props) {
           subgroup={procedure.sidebarSubgroup}
         />
         {/* Header */}
-        <div className="mb-5 rounded-lg border border-border/60 bg-card/50 p-4 md:p-5">
+        <div className="mb-6 rounded-[14px] border border-border/60 bg-card/50 p-4 md:p-5">
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-sm text-muted-foreground">{procedure.id}</span>
@@ -242,17 +242,17 @@ export default async function ProcedurePage({ params }: Props) {
         {/* Índice desplegable. Se muestra hasta xl, que es donde entra el
             minimapa lateral; el corte debe coincidir con el de
             TableOfContentsRail o habría anchuras sin ningún índice. */}
-        <div className="xl:hidden mb-4" data-print-hide>
+        <div className="xl:hidden mb-6" data-print-hide>
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />
         </div>
 
         {/* MDX Content */}
         {hasBody && (
-        <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
+        <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-[14px] border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
           prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-24
-          prose-h2:text-[1.75rem] md:prose-h2:text-[2.1rem] prose-h2:mt-12 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-primary/25 prose-h2:pb-3 prose-h2:leading-snug prose-h2:text-foreground
-          prose-h3:text-[1.2rem] md:prose-h3:text-[1.4rem] prose-h3:mt-9 prose-h3:mb-3 prose-h3:text-foreground/85 prose-h3:font-semibold prose-h3:leading-snug
-          prose-h4:text-[1rem] md:prose-h4:text-[1.1rem] prose-h4:mt-7 prose-h4:mb-2 prose-h4:font-semibold prose-h4:text-foreground/75
+          prose-h2:text-[1.75rem] md:prose-h2:text-[2.1rem] prose-h2:mt-6 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-primary/25 prose-h2:pb-3 prose-h2:leading-snug prose-h2:text-foreground
+          prose-h3:text-[1.2rem] md:prose-h3:text-[1.4rem] prose-h3:mt-6 prose-h3:mb-3 prose-h3:text-foreground/85 prose-h3:font-semibold prose-h3:leading-snug
+          prose-h4:text-[1rem] md:prose-h4:text-[1.1rem] prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-semibold prose-h4:text-foreground/75
           prose-h5:text-[0.9rem] prose-h5:mt-5 prose-h5:mb-1.5 prose-h5:font-medium prose-h5:text-foreground/65
           prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-4
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline

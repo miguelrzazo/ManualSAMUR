@@ -8,7 +8,7 @@ import type { SyncProgress, SyncState } from "../content.tsx";
 import { contentFreshness, type StagedPackage } from "../content-transaction.ts";
 import type { AppearancePreference } from "../preferences-logic.ts";
 import {
-  PENDING_SETTINGS_LEGAL_METADATA,
+  SETTINGS_LEGAL_METADATA,
   isPendingSettingsMetadata,
   type SettingsLegalMetadata,
 } from "../settings-legal.ts";
@@ -68,7 +68,7 @@ export function SettingsModal({
   visible, onClose, onRefresh, onCancelRefresh, onActivateStaged, onDiscardStaged,
   onOpenAbbreviations, generatedAt, packageHash, isRefreshing, lastError, syncState,
   syncProgress, stagedPackage, appearance, setAppearance, appVersion,
-  legalMetadata = PENDING_SETTINGS_LEGAL_METADATA, reduceMotion = false,
+  legalMetadata = SETTINGS_LEGAL_METADATA, reduceMotion = false,
 }: SettingsModalProps) {
   const palette = useTheme();
   const styles = useStyles(palette);
@@ -165,7 +165,7 @@ export function SettingsModal({
           <MetadataRow label="Entidad editora" value={legalMetadata.publisher} />
           <MetadataLink label="Política de privacidad" value={legalMetadata.privacyPolicyUrl} />
           <MetadataLink label="Soporte" value={legalMetadata.supportUrl} />
-          <MetadataLink label="Contacto" value={legalMetadata.supportEmail} email />
+          {legalMetadata.supportEmail ? <MetadataLink label="Contacto" value={legalMetadata.supportEmail} email /> : null}
           <View style={styles.versionRow}><Text style={styles.meta}>Versión de la app</Text><Text style={styles.rowTitle}>{appVersion}</Text></View>
           <Text style={styles.legal}>ManualSAMUR y SAMUR-Protección Civil son referencias de sus titulares.</Text>
         </ScrollView>

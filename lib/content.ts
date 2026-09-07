@@ -15,6 +15,7 @@ import {
 } from "./manual-data.ts";
 import type { ManualAttachment } from "./manual-sync.ts";
 import { buildVademecumHref, resolveDrugIdReference, type VademecumDrugReference } from "./vademecum-utils.ts";
+import { linkReferenceMentions, type ReferenceCode } from "./reference-links.ts";
 
 const PROCEDURES_DIR = path.join(process.cwd(), "content/procedures");
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -36,6 +37,19 @@ const LOCAL_ASSET_ALIASES: Record<string, string> = {
 const VADEMECUM_DRUGS = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"),
 ) as VademecumDrugReference[];
+
+const REFERENCE_CODES: ReferenceCode[] = [
+  ["codigos-incidente", "incidente"], ["codigos-sva", "sva"], ["codigos-svb", "svb"],
+  ["codigos-upsi", "upsi"], ["codigos-upsq", "upsq"], ["codigos-icao", "icao"],
+  ["codigos-indicativos", "indicativos"], ["codigos-pc", "claves"], ["codigos-lima", "lima"],
+].flatMap(([file, tab]) => {
+  try {
+    const values = JSON.parse(fs.readFileSync(path.join(process.cwd(), "content/data", `${file}.json`), "utf8"));
+    return Array.isArray(values) ? values.flatMap((value) => value && typeof value.code === "string" && typeof value.name === "string"
+      ? [{ code: value.code, name: value.name, tab, ...(tab === "claves" ? { subtab: "claves" } : {}) }]
+      : []) : [];
+  } catch { return []; }
+});
 
 function walkMarkdownFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
@@ -303,7 +317,7 @@ export function getAllProcedures(): Procedure[] {
   };
 
   const baseProcedures = procedures.map((procedure: Procedure) => {
-    const content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
+    const normalizedContent = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
       currentProcedureId: procedure.id,
       procedureTitle: procedure.title,
       resolveInternalHref,
@@ -312,6 +326,7 @@ export function getAllProcedures(): Procedure[] {
         return drugId ? buildVademecumHref(drugId) : null;
       },
     });
+    const content = linkReferenceMentions(normalizedContent, VADEMECUM_DRUGS, REFERENCE_CODES, (id) => buildVademecumHref(id));
     const sidebarMeta = getProcedureSidebarMeta(procedure.section, procedure.id, procedure.title);
     const outgoingRelations = buildOutgoingRelations({
       procedureId: procedure.id,

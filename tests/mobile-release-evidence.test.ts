@@ -77,7 +77,7 @@ test("strict release readiness requires every matrix gate, provenance, device an
   missingInternalApproval.internalTestDecision = { status: "required", decidedBy: null, decidedAt: null };
   assert.equal(validateReleaseEvidence(missingInternalApproval, true).ready, false);
   const productionApproval = completeEvidence();
-  productionApproval.productionDecision = { submission: "approved", rollout: "approved", halt: "approved", rollback: "approved" } as ReleaseEvidence["productionDecision"];
+  productionApproval.productionDecision = { submission: "approved", rollout: "approved", halt: "approved", rollback: "approved" } as unknown as ReleaseEvidence["productionDecision"];
   assert.equal(validateReleaseEvidence(productionApproval, true).ready, false);
   const missingSigningMetadata = completeEvidence();
   missingSigningMetadata.signing.iosSha256 = null;

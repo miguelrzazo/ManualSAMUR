@@ -20,6 +20,13 @@ export const PENDING_SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = 
   supportEmail: SETTINGS_METADATA_PENDING,
 };
 
+export const SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = {
+  publisher: "Miguel Rosa Zazo",
+  privacyPolicyUrl: "https://manual-proced-spc.vercel.app/privacidad",
+  supportUrl: "https://manual-proced-spc.vercel.app/soporte",
+  supportEmail: "",
+};
+
 export type SettingsLegalMetadataField = keyof SettingsLegalMetadata;
 
 export interface SettingsReleaseIssue {
@@ -66,9 +73,9 @@ export function validateSettingsReleaseMetadata(metadata: SettingsLegalMetadata)
     issues.push({ field: "supportUrl", message: "La página de soporte debe usar una URL HTTPS válida." });
   }
 
-  if (isPendingSettingsMetadata(metadata.supportEmail)) {
+  if (metadata.supportEmail === SETTINGS_METADATA_PENDING) {
     issues.push({ field: "supportEmail", message: "Falta el correo de contacto de soporte." });
-  } else if (!isContactEmail(metadata.supportEmail)) {
+  } else if (metadata.supportEmail && !isContactEmail(metadata.supportEmail)) {
     issues.push({ field: "supportEmail", message: "El correo de contacto de soporte no es válido." });
   }
 
@@ -78,4 +85,3 @@ export function validateSettingsReleaseMetadata(metadata: SettingsLegalMetadata)
 export function isSettingsReleaseReady(metadata: SettingsLegalMetadata): boolean {
   return validateSettingsReleaseMetadata(metadata).length === 0;
 }
-

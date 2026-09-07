@@ -136,7 +136,7 @@ function useStyles(palette: AdaptivePalette) {
       minHeight: 60,
       backgroundColor: palette.surface,
     },
-    accent: { width: 3, alignSelf: "stretch", marginVertical: spacing.sm, borderRadius: 2 },
+    accent: { width: 3, alignSelf: "stretch", marginVertical: spacing.sm, borderRadius: radii.pill },
     badge: { minWidth: 44, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radii.sm, backgroundColor: palette.primaryWash, alignItems: "center" },
     badgeText: { ...typography.footnote, fontWeight: "600", color: palette.primary, fontVariant: ["tabular-nums"] },
     icon: { width: 24, textAlign: "center" },

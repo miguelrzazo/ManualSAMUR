@@ -31,7 +31,7 @@ import {
   View,
   type ListRenderItemInfo,
 } from "react-native";
-import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
+import { circle, radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
 import { displayTitle } from "../title-case";
@@ -362,7 +362,7 @@ function createStyles(palette: AdaptivePalette) {
       paddingRight: spacing.md,
       backgroundColor: palette.surface,
     },
-    sectionDot: { width: 8, height: 8, borderRadius: 4 },
+    sectionDot: circle(8),
     sectionHeaderLabel: { flex: 1, fontSize: 17, fontWeight: "600", color: palette.ink, letterSpacing: -0.43 },
 
     groupHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44, paddingRight: spacing.md, backgroundColor: palette.surface },

@@ -34,6 +34,8 @@ export interface AttachmentReleasePolicy {
   approved: boolean;
   essentialAttachmentIds: string[];
   approvalReference?: string;
+  /** Optional human-readable owner rationale retained in the release manifest. */
+  notes?: string;
 }
 
 /** Deliberately conservative until the content owner approves an allowlist. */

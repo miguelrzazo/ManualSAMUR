@@ -3,7 +3,7 @@ import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-na
 import { useReduceMotion } from "./hooks/motion.ts";
 import { useImperativeHandle, useRef, type Ref } from "react";
 import { StyleSheet, View } from "react-native";
-import type { AdaptivePalette } from "@manual-samur/design-tokens";
+import { circle, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { locationVisual } from "./location-logic.ts";
 import type { OnlineMapPin } from "./online-map-logic.ts";
 import { MAPLIBRE_CARTO_STYLE_URLS } from "./online-map-runtime.ts";
@@ -52,8 +52,8 @@ export interface OnlineMapViewRef {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  markerDot: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
-  userDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 3, borderColor: "#FFFFFF", backgroundColor: "#1D4ED8" },
+  markerDot: { ...circle(24), borderWidth: 2, borderColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  userDot: { ...circle(18), borderWidth: 3, borderColor: "#FFFFFF", backgroundColor: "#1D4ED8" },
 });
 
 /**

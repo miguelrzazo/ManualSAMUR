@@ -14,7 +14,7 @@ import {
   type SectionListData,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
+import { circle, radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
 import { displayTitle } from "../title-case";
@@ -268,7 +268,7 @@ function DomainContent({
             accessibilityState={{ expanded: categoriesOpen }}
           >
             <MaterialCommunityIcons name="tune-variant" size={15} color={activeCategory ? categoryAccent(activeCategory) : palette.inkMuted} />
-            <Text style={[styles.categoryToggleText, activeCategory && { color: categoryAccent(activeCategory) }]} numberOfLines={1}>
+            <Text style={[styles.categoryToggleText, activeCategory && { color: categoryAccent(activeCategory) }]}>
               {activeCategory ?? "Todas las categorías"}
             </Text>
             <MaterialCommunityIcons name={categoriesOpen ? "chevron-up" : "chevron-down"} size={16} color={palette.inkMuted} />
@@ -576,11 +576,11 @@ function createStyles(palette: AdaptivePalette) {
     categoryToggle: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, flexShrink: 1 },
     categoryToggleText: { flexShrink: 1, fontSize: 13, fontWeight: "500", color: palette.inkMuted },
     categoryClear: { alignItems: "center", justifyContent: "center" },
-    categoryListRow: { paddingBottom: spacing.sm },
+    categoryListRow: { paddingVertical: spacing.xs },
     categoryRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-    categoryContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
-    categoryDot: { width: 7, height: 7, borderRadius: 4 },
-    alphabetRow: { paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line },
+    categoryContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, gap: spacing.xs },
+    categoryDot: circle(7),
+    alphabetRow: { paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
     alphabetContent: { paddingHorizontal: spacing.lg, gap: 4 },
     alphabetChip: {
       minWidth: 30,
@@ -605,7 +605,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomWidth: 1,
       borderBottomColor: palette.line,
     },
-    sectionHeaderDot: { width: 8, height: 8, borderRadius: 4 },
+    sectionHeaderDot: circle(8),
     sectionHeaderLabel: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
     sectionHeaderCount: { color: palette.inkMuted, fontSize: 11, fontWeight: "600" },
     resourceRow: {
@@ -618,7 +618,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomWidth: 1,
       borderBottomColor: palette.line,
     },
-    rowAccentBar: { width: 3, alignSelf: "stretch", borderRadius: 2 },
+    rowAccentBar: { width: 3, alignSelf: "stretch", borderRadius: radii.pill },
     rowCopy: { flex: 1 },
     rowTitle: { color: palette.ink, fontSize: 14, fontWeight: "700" },
     rowMeta: { color: palette.inkMuted, fontSize: 11, marginTop: 2, lineHeight: 15 },

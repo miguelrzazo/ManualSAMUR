@@ -10,8 +10,8 @@ Total procedimientos: 223
 # [101] Organigrama Operativo
 
 Sección: Administrativos
-URL: https://manual-samur.vercel.app/manual/101-organigrama-operativo
-Markdown: https://manual-samur.vercel.app/procedures/101.md
+URL: https://manual-proced-spc.vercel.app/manual/101-organigrama-operativo
+Markdown: https://manual-proced-spc.vercel.app/procedures/101.md
 Actualizado: 2026-05-09
 
 
@@ -21,8 +21,8 @@ Actualizado: 2026-05-09
 # [102] Organigrama Administrativo
 
 Sección: Administrativos
-URL: https://manual-samur.vercel.app/manual/102-organigrama-administrativo
-Markdown: https://manual-samur.vercel.app/procedures/102.md
+URL: https://manual-proced-spc.vercel.app/manual/102-organigrama-administrativo
+Markdown: https://manual-proced-spc.vercel.app/procedures/102.md
 Actualizado: 2026-05-09
 
 
@@ -32,8 +32,8 @@ Actualizado: 2026-05-09
 # [103] Funciones del personal de Guardia
 
 Sección: Administrativos
-URL: https://manual-samur.vercel.app/manual/103-funciones-del-personal-de-guardia
-Markdown: https://manual-samur.vercel.app/procedures/103.md
+URL: https://manual-proced-spc.vercel.app/manual/103-funciones-del-personal-de-guardia
+Markdown: https://manual-proced-spc.vercel.app/procedures/103.md
 Actualizado: 2026-09-01
 
 1. El personal del operativo debe vestir, de forma obligatoria, la ropa de trabajo del Servicio, cuyas características estarán predefinidas en atención a la seguridad personal de los actuantes, y que quedan contempladas en el apartado de uniformidad y EPIs. También queda contemplado en este procedimiento la amortización y reposición de dichas prendas.
@@ -590,8 +590,8 @@ Bajo la supervisión operativa del Jefe/a de Guardia y orgánica del Jefe/a de U
 # [104] UNIFORMIDAD y EPIs
 
 Sección: Administrativos
-URL: https://manual-samur.vercel.app/manual/104-uniformidad-y-epis
-Markdown: https://manual-samur.vercel.app/procedures/104.md
+URL: https://manual-proced-spc.vercel.app/manual/104-uniformidad-y-epis
+Markdown: https://manual-proced-spc.vercel.app/procedures/104.md
 Actualizado: 2026-09-01
 
 ### **Uso, mantenimiento o limpieza y eliminación del uniforme corporativo y los Equipos de protección individual**
@@ -665,8 +665,8 @@ En la siguiente tabla se exponen las condiciones de uso, mantenimiento o limpiez
 # [121] Procedimiento radiotelefónico
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/121-procedimiento-radiotelefonico
-Markdown: https://manual-samur.vercel.app/procedures/121.md
+URL: https://manual-proced-spc.vercel.app/manual/121-procedimiento-radiotelefonico
+Markdown: https://manual-proced-spc.vercel.app/procedures/121.md
 Actualizado: 2026-06-03
 
 ### **Conceptos.**
@@ -1293,8 +1293,8 @@ El CCES puede, si la situación lo requiere, decretar el silencio en radio para 
 # [122] Gestión de llamadas de emergencia
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/122-gestion-de-llamadas-de-emergencia
-Markdown: https://manual-samur.vercel.app/procedures/122.md
+URL: https://manual-proced-spc.vercel.app/manual/122-gestion-de-llamadas-de-emergencia
+Markdown: https://manual-proced-spc.vercel.app/procedures/122.md
 Actualizado: 2026-09-01
 
 [Ver Protocolo de Activación en caso de Emergencia](/docs/procedures/122/122_ProtocoloActivacion.pdf) 
@@ -1423,8 +1423,8 @@ Actualizado: 2026-09-01
 # [123] Técnicas de comunicación
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/123-tecnicas-de-comunicacion
-Markdown: https://manual-samur.vercel.app/procedures/123.md
+URL: https://manual-proced-spc.vercel.app/manual/123-tecnicas-de-comunicacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/123.md
 Actualizado: 2026-05-05
 
 ### **Consideraciones generales en el manejo de llamadas de emergencia:**
@@ -1589,8 +1589,8 @@ Manejar llamadas de emergencia puede ser emocionalmente desafiante y agotador. E
 # [124] Recomendaciones generales
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/124-recomendaciones-generales
-Markdown: https://manual-samur.vercel.app/procedures/124.md
+URL: https://manual-proced-spc.vercel.app/manual/124-recomendaciones-generales
+Markdown: https://manual-proced-spc.vercel.app/procedures/124.md
 Actualizado: 2026-09-01
 
 ### Recomendaciones telefónicas
@@ -1646,8 +1646,8 @@ Identifique la posibilidad de una patología concreta y ofrezca recomendaciones 
 # [125_01] Sospecha de PCR y RCP transtelefónico
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_01-sospecha-de-pcr-y-rcp-transtelefonico
-Markdown: https://manual-samur.vercel.app/procedures/125_01.md
+URL: https://manual-proced-spc.vercel.app/manual/125_01-sospecha-de-pcr-y-rcp-transtelefonico
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_01.md
 Actualizado: 2026-09-01
 
 En caso de recibir una llamada cuyo demandante indique la posibilidad de que el paciente se encuentre en PCR el operador realizará las siguientes acciones:
@@ -1730,8 +1730,8 @@ Además:
 # [125_02] Obstrucción de la vía aérea OVACE
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_02-obstruccion-de-la-via-aerea-ovace
-Markdown: https://manual-samur.vercel.app/procedures/125_02.md
+URL: https://manual-proced-spc.vercel.app/manual/125_02-obstruccion-de-la-via-aerea-ovace
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_02.md
 Actualizado: 2026-09-01
 
 ### **Procedimiento en adultos**
@@ -1829,8 +1829,8 @@ Indique al llamante:
 # [125_03] Sospecha de Síndrome Coronario Agudo (SCA)
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_03-sospecha-de-sindrome-coronario-agudo-sca
-Markdown: https://manual-samur.vercel.app/procedures/125_03.md
+URL: https://manual-proced-spc.vercel.app/manual/125_03-sospecha-de-sindrome-coronario-agudo-sca
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_03.md
 Actualizado: 2026-09-01
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -1867,8 +1867,8 @@ Intente descubrir también:
 # [125_04] Sospecha de Ictus
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_04-sospecha-de-ictus
-Markdown: https://manual-samur.vercel.app/procedures/125_04.md
+URL: https://manual-proced-spc.vercel.app/manual/125_04-sospecha-de-ictus
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_04.md
 Actualizado: 2026-09-01
 
 ### Recomendaciones telefónicas
@@ -1929,8 +1929,8 @@ La presencia de uno de los tres nos hará sospechar la presencia de ictus:
 # [125_05] Sospecha de Convulsiones
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_05-sospecha-de-convulsiones
-Markdown: https://manual-samur.vercel.app/procedures/125_05.md
+URL: https://manual-proced-spc.vercel.app/manual/125_05-sospecha-de-convulsiones
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_05.md
 Actualizado: 2026-09-01
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -1955,8 +1955,8 @@ Actúe conforme al procedimiento de paciente inconsciente, ver procedimiento [RC
 # [125_06] Foco de hemorragia activa
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_06-foco-de-hemorragia-activa
-Markdown: https://manual-samur.vercel.app/procedures/125_06.md
+URL: https://manual-proced-spc.vercel.app/manual/125_06-foco-de-hemorragia-activa
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_06.md
 Actualizado: 2026-09-01
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -1981,8 +1981,8 @@ Actúe según procedimiento general de Gestión de llamadas de emergencia
 # [125_07] Sospecha de parto en curso
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_07-sospecha-de-parto-en-curso
-Markdown: https://manual-samur.vercel.app/procedures/125_07.md
+URL: https://manual-proced-spc.vercel.app/manual/125_07-sospecha-de-parto-en-curso
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_07.md
 Actualizado: 2026-09-01
 
 Actúe según procedimiento general de Gestión de llamadas de emergencia
@@ -2028,8 +2028,8 @@ Indique al llamante que coloque al recién nacido encima de su madre y que lo ta
 # [125_08] Pacientes politraumatizados por accidente de tráfico
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
-Markdown: https://manual-samur.vercel.app/procedures/125_08.md
+URL: https://manual-proced-spc.vercel.app/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
+Markdown: https://manual-proced-spc.vercel.app/procedures/125_08.md
 Actualizado: 2026-09-01
 
 ### Recomendaciones telefónicas
@@ -2073,8 +2073,8 @@ Actúe según procedimiento general de Gestión de llamadas de emergencia
 # [126] Gestión de recursos
 
 Sección: Comunicaciones
-URL: https://manual-samur.vercel.app/manual/126-gestion-de-recursos
-Markdown: https://manual-samur.vercel.app/procedures/126.md
+URL: https://manual-proced-spc.vercel.app/manual/126-gestion-de-recursos
+Markdown: https://manual-proced-spc.vercel.app/procedures/126.md
 Actualizado: 2026-09-01
 
 ### **Definición de prioridades**
@@ -2308,8 +2308,8 @@ Conozca el desarrollo de la actuación mediante la solicitud de información a l
 # [201] Actuación General
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/201-actuacion-general
-Markdown: https://manual-samur.vercel.app/procedures/201.md
+URL: https://manual-proced-spc.vercel.app/manual/201-actuacion-general
+Markdown: https://manual-proced-spc.vercel.app/procedures/201.md
 Actualizado: 2026-04-24
 
 #### **Normas generales operativas**
@@ -2536,8 +2536,8 @@ Durante el traslado la asistencia debe de:
 # [203] Conducción de vehículos sanitarios en emergencias
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
-Markdown: https://manual-samur.vercel.app/procedures/203.md
+URL: https://manual-proced-spc.vercel.app/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
+Markdown: https://manual-proced-spc.vercel.app/procedures/203.md
 Actualizado: 2026-09-01
 
 ### **Recomendaciones para la conducción de vehículos sanitarios en servicio de urgencia**
@@ -2685,8 +2685,8 @@ Estacionamiento en atenciones que se desarrollan en aceras, espacios públicos o
 # [203_01] Procedimiento en caso de accidente con Unidades
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/203_01-procedimiento-en-caso-de-accidente-con-unidades
-Markdown: https://manual-samur.vercel.app/procedures/203_01.md
+URL: https://manual-proced-spc.vercel.app/manual/203_01-procedimiento-en-caso-de-accidente-con-unidades
+Markdown: https://manual-proced-spc.vercel.app/procedures/203_01.md
 Actualizado: 2026-09-01
 
 Este procedimiento tiene como fin definir las actuaciones a llevar a cabo tras un accidente de tráfico en el que se encuentre implicado un vehículo del Servicio relativas a comunicación del accidente, necesidades de recursos de apoyo en el punto, cumplimentación de partes de asistencia y documentación para tramitación del accidente por la aseguradora y resolución de la asistencia a lesionados.
@@ -2748,8 +2748,8 @@ El Jefe de División de Guardia realizará el parte de accidente laboral para co
 # [204] Farmacia Móvil
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/204-farmacia-movil
-Markdown: https://manual-samur.vercel.app/procedures/204.md
+URL: https://manual-proced-spc.vercel.app/manual/204-farmacia-movil
+Markdown: https://manual-proced-spc.vercel.app/procedures/204.md
 Actualizado: 2026-09-01
 
 ### **Procedimiento de farmacia móvil (indicativo FOXTROT)**
@@ -2800,8 +2800,8 @@ La activación de este recurso se realizará exclusivamente a través de la Cent
 # [205] Cumplimentación de los informes de asistencia
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/205-cumplimentacion-de-los-informes-de-asistencia
-Markdown: https://manual-samur.vercel.app/procedures/205.md
+URL: https://manual-proced-spc.vercel.app/manual/205-cumplimentacion-de-los-informes-de-asistencia
+Markdown: https://manual-proced-spc.vercel.app/procedures/205.md
 Actualizado: 2026-04-27
 
 Se entiende por informe de asistencia de transporte sanitario, el documento elaborado en papel impreso o en soporte informático realizado por la dotación de un equipo sobre la actuación que efectúa ante una demanda de carácter sanitario.
@@ -3089,8 +3089,8 @@ El informe de asistencia consta de:
 # [206] Preaviso Hospitalario
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/206-preaviso-hospitalario
-Markdown: https://manual-samur.vercel.app/procedures/206.md
+URL: https://manual-proced-spc.vercel.app/manual/206-preaviso-hospitalario
+Markdown: https://manual-proced-spc.vercel.app/procedures/206.md
 Actualizado: 2026-09-01
 
 Este procedimiento tiene por objeto:
@@ -3191,8 +3191,8 @@ El preaviso hospitalario consta de la siguiente información que será trasmitid
 # [206_01] Circulación de Unidades en Convoy
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/206_01-circulacion-de-unidades-en-convoy
-Markdown: https://manual-samur.vercel.app/procedures/206_01.md
+URL: https://manual-proced-spc.vercel.app/manual/206_01-circulacion-de-unidades-en-convoy
+Markdown: https://manual-proced-spc.vercel.app/procedures/206_01.md
 Actualizado: 2026-09-01
 
 El siguiente procedimiento tiene por objeto definir las distintas actuaciones a desarrollar en aquellas situaciones en las que varios vehículos del Servicio circulen juntos, realizando traslado o acompañamiento en el traslado de pacientes a un centro hospitalario. Será de aplicación en traslados convencionales, preavisos hospitalarios o traslados de pacientes en Código 9.
@@ -3244,8 +3244,8 @@ El inicio del traslado se efectuará cuando desde la Unidad de traslado así se 
 # [207] Incidentes con múltiples víctimas y Triaje (IMV)
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
-Markdown: https://manual-samur.vercel.app/procedures/207.md
+URL: https://manual-proced-spc.vercel.app/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
+Markdown: https://manual-proced-spc.vercel.app/procedures/207.md
 Actualizado: 2026-09-01
 
 El **Incidente con múltiples víctimas** se caracteriza por presentar en sus inicios una desproporción entre recursos y necesidades, y por lo tanto exige una respuesta extraordinaria, con el fin de optimizar los recursos existentes, preservando una capacidad de respuesta para el resto de acontecimientos.
@@ -3517,8 +3517,8 @@ Pretende dividir según la necesidad de estabilización / traslado urgente:
 # [208] Primera respuesta NRBQ
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/208-primera-respuesta-nrbq
-Markdown: https://manual-samur.vercel.app/procedures/208.md
+URL: https://manual-proced-spc.vercel.app/manual/208-primera-respuesta-nrbq
+Markdown: https://manual-proced-spc.vercel.app/procedures/208.md
 Actualizado: 2026-09-01
 
 PROCEDIMIENTO DE PRIMERA RESPUESTA ANTE INCIDENTES NRBQ
@@ -3770,8 +3770,8 @@ Una vez analizado el incidente, se procede a gestionar el aviso como en la actua
 # [209] Atención Sociosanitaria a menores
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/209-atencion-sociosanitaria-a-menores
-Markdown: https://manual-samur.vercel.app/procedures/209.md
+URL: https://manual-proced-spc.vercel.app/manual/209-atencion-sociosanitaria-a-menores
+Markdown: https://manual-proced-spc.vercel.app/procedures/209.md
 Actualizado: 2026-09-01
 
 ### Atención sociosanitaria a menores de edad (niños, niñas y adolescentes- NNA) en riesgo social o con sospecha de situación de violencia
@@ -3921,8 +3921,8 @@ Informe a los padres y al niño/niña, si su nivel de maduración lo permite, de
 # [209_01] Atención sociosanitaria a mayores
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/209_01-atencion-sociosanitaria-a-mayores
-Markdown: https://manual-samur.vercel.app/procedures/209_01.md
+URL: https://manual-proced-spc.vercel.app/manual/209_01-atencion-sociosanitaria-a-mayores
+Markdown: https://manual-proced-spc.vercel.app/procedures/209_01.md
 Actualizado: 2026-04-30
 
 ### **Procedimiento de actuación para la atención sociosanitaria a personas mayores en riesgo social o con sospecha de maltrato código 5.9**
@@ -4004,8 +4004,8 @@ Desde la Unidad de Normativas de Calidad se notificará  antes de 72 horas desde
 # [209_02] Actuación en casos de violencia de género
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/209_02-actuacion-en-casos-de-violencia-de-genero
-Markdown: https://manual-samur.vercel.app/procedures/209_02.md
+URL: https://manual-proced-spc.vercel.app/manual/209_02-actuacion-en-casos-de-violencia-de-genero
+Markdown: https://manual-proced-spc.vercel.app/procedures/209_02.md
 Actualizado: 2026-09-01
 
 ### **Procedimiento operativo de actuación en casos de violencia de género**
@@ -4075,8 +4075,8 @@ En caso de no concurrir agresión física, la Central de Comunicaciones activar�
 # [210] Huelga de hambre
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/210-huelga-de-hambre
-Markdown: https://manual-samur.vercel.app/procedures/210.md
+URL: https://manual-proced-spc.vercel.app/manual/210-huelga-de-hambre
+Markdown: https://manual-proced-spc.vercel.app/procedures/210.md
 Actualizado: 2026-09-01
 
 ### **Atención a pacientes declarados en huelga de hambre**
@@ -4285,8 +4285,8 @@ o anuria en 12 horas
 # [211] Código VISEM
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/211-codigo-visem
-Markdown: https://manual-samur.vercel.app/procedures/211.md
+URL: https://manual-proced-spc.vercel.app/manual/211-codigo-visem
+Markdown: https://manual-proced-spc.vercel.app/procedures/211.md
 Actualizado: 2026-04-24
 
 ### Asistencia a mujeres víctimas de violencia sexual. Código VISEM
@@ -4385,8 +4385,8 @@ Si se trata de un código VISEM la recogida de muestras por el personal sanitari
 # [212] Código 9: Donación en asistolia
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/212-codigo-9-donacion-en-asistolia
-Markdown: https://manual-samur.vercel.app/procedures/212.md
+URL: https://manual-proced-spc.vercel.app/manual/212-codigo-9-donacion-en-asistolia
+Markdown: https://manual-proced-spc.vercel.app/procedures/212.md
 Actualizado: 2026-09-01
 
 Este procedimiento regula las actuaciones conjuntas realizadas por la Unidad de Coordinación de Trasplantes del Hospital Clínico San Carlos y el servicio SAMUR-Protección Civil, con el objetivo de recuperar donantes de órganos en asistolia no controlada, en el medio extrahospitalario, para trasplante.
@@ -4487,8 +4487,8 @@ El **médico** actuante debe:
 # [212_01] Código 11
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/212_01-codigo-11
-Markdown: https://manual-samur.vercel.app/procedures/212_01.md
+URL: https://manual-proced-spc.vercel.app/manual/212_01-codigo-11
+Markdown: https://manual-proced-spc.vercel.app/procedures/212_01.md
 Actualizado: 2026-09-01
 
 Procedimiento operativo de actuación ante la parda cardíaca de origen no traumático.
@@ -4687,8 +4687,8 @@ Como parte del procedimiento de colaboración, se propondrán sesiones conjuntas
 # [213] Código Infarto
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/213-codigo-infarto
-Markdown: https://manual-samur.vercel.app/procedures/213.md
+URL: https://manual-proced-spc.vercel.app/manual/213-codigo-infarto
+Markdown: https://manual-proced-spc.vercel.app/procedures/213.md
 Actualizado: 2026-09-01
 
 El objetivo del procedimiento consiste en regular la actuación operativa de coordinación con el hospital a seguir, en todos aquellas situaciones donde por parte de los facultativos de Samur - Protección Civil se constate la existencia de un paciente con signos y síntomas compatibles con un Síndrome coronario agudo con elevación del ST que cumpla los criterios de inclusión.
@@ -4799,8 +4799,8 @@ Ante la inclusión de un paciente en este procedimiento:
 # [213_01] Código 16
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/213_01-codigo-16
-Markdown: https://manual-samur.vercel.app/procedures/213_01.md
+URL: https://manual-proced-spc.vercel.app/manual/213_01-codigo-16
+Markdown: https://manual-proced-spc.vercel.app/procedures/213_01.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta para la asistencia integral al paciente con SCASEST
@@ -4901,8 +4901,8 @@ Como parte del procedimiento de colaboración, se propondrán sesiones conjuntas
 # [214] Códigos 1313.1: Reperfusión precoz en el ictus agudo
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo
-Markdown: https://manual-samur.vercel.app/procedures/214.md
+URL: https://manual-proced-spc.vercel.app/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo
+Markdown: https://manual-proced-spc.vercel.app/procedures/214.md
 Actualizado: 2026-09-01
 
 El objetivo del procedimiento consiste en regular la actuación operativa a seguir en pacientes con cuadro clínico compatible con ictus agudo que, cumpliendo los criterios de inclusión, puedan beneficiarse, en el menor tiempo posible, de una terapia de reperfusión (trombolisis intravenosa o tratamiento intervencionista endovascular), así como de los cuidados neurológicos especializados de una Unidad o de un Centro de Ictus.
@@ -5020,8 +5020,8 @@ En todos los casos:
 # [214_01] Código 15
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_01-codigo-15
-Markdown: https://manual-samur.vercel.app/procedures/214_01.md
+URL: https://manual-proced-spc.vercel.app/manual/214_01-codigo-15
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_01.md
 Actualizado: 2026-09-01
 
 ### **Procedimiento de actuación conjunta para la asistencia integral al paciente politraumatizado.   **
@@ -5127,8 +5127,8 @@ Como parte del procedimiento de colaboración, se propondrán sesiones conjuntas
 # [214_02] Código 33
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_02-codigo-33
-Markdown: https://manual-samur.vercel.app/procedures/214_02.md
+URL: https://manual-proced-spc.vercel.app/manual/214_02-codigo-33
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_02.md
 Actualizado: 2026-09-01
 
 ### **Actuación ante el paciente con síncope o presíncope post esfuerzo**
@@ -5208,8 +5208,8 @@ Serán resueltas a través del responsable de guardia del [código infarto](/man
 # [214_03] Código 15.1
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_03-codigo-151
-Markdown: https://manual-samur.vercel.app/procedures/214_03.md
+URL: https://manual-proced-spc.vercel.app/manual/214_03-codigo-151
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_03.md
 Actualizado: 2026-09-01
 
 === **Procedimiento de actuación conjunta para la asistencia integral al paciente traumático potencialmente grave
@@ -5299,8 +5299,8 @@ Todas las transferencias se realizarán en los respectivos box de reanimación d
 # [214_04] Código 19: Código TEP
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_04-codigo-19-codigo-tep
-Markdown: https://manual-samur.vercel.app/procedures/214_04.md
+URL: https://manual-proced-spc.vercel.app/manual/214_04-codigo-19-codigo-tep
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_04.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta para la asistencia integral al paciente con un posible Tromboembolismo Pulmonar
@@ -5398,8 +5398,8 @@ Como parte del procedimiento de colaboración, se propondrán sesiones conjuntas
 # [214_05] Código 18: Código SEPSIS
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_05-codigo-18-codigo-sepsis
-Markdown: https://manual-samur.vercel.app/procedures/214_05.md
+URL: https://manual-proced-spc.vercel.app/manual/214_05-codigo-18-codigo-sepsis
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_05.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación ante la sospecha de un paciente con Sepsis
@@ -5529,8 +5529,8 @@ Como parte del procedimiento de colaboración, se propondrán sesiones conjuntas
 # [214_06] Código Crisis
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_06-codigo-crisis
-Markdown: https://manual-samur.vercel.app/procedures/214_06.md
+URL: https://manual-proced-spc.vercel.app/manual/214_06-codigo-crisis
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_06.md
 Actualizado: 2026-09-01
 
 El objetivo del procedimiento consiste en regular la actuación operativa a seguir, en todas aquellas situaciones donde por parte de los facultativos de Samur Protección Civil se constate la existencia de un paciente con signos y síntomas compatibles con crisis epiléptica grave que cumpla los criterios de inclusión.
@@ -5628,8 +5628,8 @@ Neonatos
 # [214_07] Código VISNNA
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/214_07-codigo-visnna
-Markdown: https://manual-samur.vercel.app/procedures/214_07.md
+URL: https://manual-proced-spc.vercel.app/manual/214_07-codigo-visnna
+Markdown: https://manual-proced-spc.vercel.app/procedures/214_07.md
 Actualizado: 2026-04-27
 
 **Asistencia Sanitaria Urgente a Niños, Niñas y Adolescentes víctimas de violencia sexual. Código VISNNA.**
@@ -5758,8 +5758,8 @@ Recuerde que se trata de una situación de elevada vulnerabilidad de una persona
 # [215] Diagnóstico de Muerte
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/215-diagnostico-de-muerte
-Markdown: https://manual-samur.vercel.app/procedures/215.md
+URL: https://manual-proced-spc.vercel.app/manual/215-diagnostico-de-muerte
+Markdown: https://manual-proced-spc.vercel.app/procedures/215.md
 Actualizado: 2026-09-01
 
 Se declara fallecido:
@@ -5819,8 +5819,8 @@ Se procederá como en las pautas generales anteriores.
 # [217] Procedimiento de Incidentes Complejos. Código PIC
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217-procedimiento-de-incidentes-complejos-codigo-pic
-Markdown: https://manual-samur.vercel.app/procedures/217.md
+URL: https://manual-proced-spc.vercel.app/manual/217-procedimiento-de-incidentes-complejos-codigo-pic
+Markdown: https://manual-proced-spc.vercel.app/procedures/217.md
 Actualizado: 2026-09-01
 
 #### **Objeto**
@@ -6068,8 +6068,8 @@ La función fundamental de cada uno de los responsables de los diferentes servic
 # [217_00] Disturbios urbanos y Actos antisociales
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_00-disturbios-urbanos-y-actos-antisociales
-Markdown: https://manual-samur.vercel.app/procedures/217_00.md
+URL: https://manual-proced-spc.vercel.app/manual/217_00-disturbios-urbanos-y-actos-antisociales
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_00.md
 Actualizado: 2026-09-01
 
 ### **Actuación preventiva en disturbios urbanos y Actos antisociales**
@@ -6226,8 +6226,8 @@ La actuación se desarrolla en dos líneas de trabajo: intervención y prevenci�
 # [217_01] Con Policía Municipal
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_01-con-policia-municipal
-Markdown: https://manual-samur.vercel.app/procedures/217_01.md
+URL: https://manual-proced-spc.vercel.app/manual/217_01-con-policia-municipal
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_01.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta SAMUR-Protección Civil y Policía Municipal
@@ -6332,8 +6332,8 @@ Cualquier problema, duda o incidencia que surja en el curso del servicio y que n
 # [217_02] Policía Municipal. Dispositivo Eléctrico de Control (DEC)
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_02-policia-municipal-dispositivo-electrico-de-control-dec
-Markdown: https://manual-samur.vercel.app/procedures/217_02.md
+URL: https://manual-proced-spc.vercel.app/manual/217_02-policia-municipal-dispositivo-electrico-de-control-dec
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_02.md
 Actualizado: 2026-09-01
 
 ### Apoyo a las unidades de Policía Municipal en relación a la utilización del Dispositivo Electrónico de Control (DEC)
@@ -6377,8 +6377,8 @@ Tras la finalización de la asistencia, la central de comunicaciones SAMUR comun
 # [217_03] Con UAPF
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_03-con-uapf
-Markdown: https://manual-samur.vercel.app/procedures/217_03.md
+URL: https://manual-proced-spc.vercel.app/manual/217_03-con-uapf
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_03.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta: SAMUR-Protección Civil y Unidad de atención y protección a la familia (Sección de atención a la violencia doméstica)
@@ -6421,8 +6421,8 @@ Toda petición de ayuda sobre el particular que sea recibida de forma primaria p
 # [217_04] Con Bomberos
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_04-con-bomberos
-Markdown: https://manual-samur.vercel.app/procedures/217_04.md
+URL: https://manual-proced-spc.vercel.app/manual/217_04-con-bomberos
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_04.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta Bomberos y SAMUR-Protección Civil
@@ -6521,8 +6521,8 @@ En todo caso, los efectivos de la Policía, impedirán la salida de la zona de s
 # [217_05] Con SEAM
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_05-con-seam
-Markdown: https://manual-samur.vercel.app/procedures/217_05.md
+URL: https://manual-proced-spc.vercel.app/manual/217_05-con-seam
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_05.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta: SAMUR-Protección Civil y SEAM (Servicio de emergencias alimentarias municipal)
@@ -6577,8 +6577,8 @@ Dicha consulta se realizará a través del jefe de Guardia, o del supervisor de 
 # [217_06] Con SAMUR Social
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_06-con-samur-social
-Markdown: https://manual-samur.vercel.app/procedures/217_06.md
+URL: https://manual-proced-spc.vercel.app/manual/217_06-con-samur-social
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_06.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta: SAMUR-Protección Civil Y Samur Social
@@ -6751,8 +6751,8 @@ Existirá un teléfono directo de contacto entre ambos responsables.
 # [217_07] Con Policía Nacional
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_07-con-policia-nacional
-Markdown: https://manual-samur.vercel.app/procedures/217_07.md
+URL: https://manual-proced-spc.vercel.app/manual/217_07-con-policia-nacional
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_07.md
 Actualizado: 2026-04-27
 
 Objetivos generales
@@ -6857,8 +6857,8 @@ El presente procedimiento entrará en vigor el día 12 de enero del año 2026, d
 # [217_08] Con RENFE
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_08-con-renfe
-Markdown: https://manual-samur.vercel.app/procedures/217_08.md
+URL: https://manual-proced-spc.vercel.app/manual/217_08-con-renfe
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_08.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta: SAMUR-Protección Civil y ADIF (RENFE)
@@ -6952,8 +6952,8 @@ Los problemas entre ambas instituciones serán resueltos, en el momento, a trav�
 # [217_09] Con Metro
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_09-con-metro
-Markdown: https://manual-samur.vercel.app/procedures/217_09.md
+URL: https://manual-proced-spc.vercel.app/manual/217_09-con-metro
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_09.md
 Actualizado: 2026-04-28
 
 ***Procedimiento en proceso de actualización. Hasta la entrada en vigor del procedimiento nuevo, este documento tendrá validez como tal.***
@@ -6998,8 +6998,8 @@ Circular en el espacio existente entre las dos vías puede tener el firme irregu
 # [217_10] Con Unidad de Medio Ambiente
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/217_10-con-unidad-de-medio-ambiente
-Markdown: https://manual-samur.vercel.app/procedures/217_10.md
+URL: https://manual-proced-spc.vercel.app/manual/217_10-con-unidad-de-medio-ambiente
+Markdown: https://manual-proced-spc.vercel.app/procedures/217_10.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de actuación conjunta: SAMUR Protección Civil y Unidad de Medio Ambiente de Policía Municipal de Madrid (Casa de Campo)
@@ -7039,8 +7039,8 @@ Cualquier problema, duda o incidencia que surja en el curso del servicio y que n
 # [219] Transferencia de pacientes* entre profesionales sanitarios.
 
 Sección: Operativos
-URL: https://manual-samur.vercel.app/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
-Markdown: https://manual-samur.vercel.app/procedures/219.md
+URL: https://manual-proced-spc.vercel.app/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
+Markdown: https://manual-proced-spc.vercel.app/procedures/219.md
 Actualizado: 2026-09-01
 
 *("handover", "handoff" o "sign-out" en la literatura anglosajona).
@@ -7095,8 +7095,8 @@ Actualizado: 2026-09-01
 # [126_01] Procedimiento de comunicaciones en un DRP
 
 Sección: DRP
-URL: https://manual-samur.vercel.app/manual/126_01-procedimiento-de-comunicaciones-en-un-drp
-Markdown: https://manual-samur.vercel.app/procedures/126_01.md
+URL: https://manual-proced-spc.vercel.app/manual/126_01-procedimiento-de-comunicaciones-en-un-drp
+Markdown: https://manual-proced-spc.vercel.app/procedures/126_01.md
 Actualizado: 2026-09-01
 
 El **Centro Coordinador de Emergencias de SAMUR-Protección Civil (CCES)** es el responsable de las comunicaciones durante los dispositivos de riesgo previsible.
@@ -7134,8 +7134,8 @@ El **Centro Coordinador de Emergencias de SAMUR-Protección Civil (CCES)** es el
 # [700_01] Procedimiento General de los DRP
 
 Sección: DRP
-URL: https://manual-samur.vercel.app/manual/700_01-procedimiento-general-de-los-drp
-Markdown: https://manual-samur.vercel.app/procedures/700_01.md
+URL: https://manual-proced-spc.vercel.app/manual/700_01-procedimiento-general-de-los-drp
+Markdown: https://manual-proced-spc.vercel.app/procedures/700_01.md
 Actualizado: 2026-09-01
 
 ## Definición y objeto.
@@ -7239,8 +7239,8 @@ A la finalización del servicio, todos los informes cumplimentados deberán entr
 # [700_02] Procedimiento de despliege de un DRP
 
 Sección: DRP
-URL: https://manual-samur.vercel.app/manual/700_02-procedimiento-de-despliege-de-un-drp
-Markdown: https://manual-samur.vercel.app/procedures/700_02.md
+URL: https://manual-proced-spc.vercel.app/manual/700_02-procedimiento-de-despliege-de-un-drp
+Markdown: https://manual-proced-spc.vercel.app/procedures/700_02.md
 Actualizado: 2026-09-01
 
 ## **Objeto**.
@@ -7330,8 +7330,8 @@ El Lima de guardia recabará la información necesaria para la cumplimentación 
 # [700_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible
 
 Sección: DRP
-URL: https://manual-samur.vercel.app/manual/700_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
-Markdown: https://manual-samur.vercel.app/procedures/700_03.md
+URL: https://manual-proced-spc.vercel.app/manual/700_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
+Markdown: https://manual-proced-spc.vercel.app/procedures/700_03.md
 Actualizado: 2026-05-05
 
 ### Objetivos de este procedimiento
@@ -7589,8 +7589,8 @@ Al finalizar el servicio se realizará un informe en el que debe quedar reflejad
 # [114] Autoprotección en casos sospechos de viruela del mono
 
 Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
-Markdown: https://manual-samur.vercel.app/procedures/114.md
+URL: https://manual-proced-spc.vercel.app/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
+Markdown: https://manual-proced-spc.vercel.app/procedures/114.md
 Actualizado: 2026-09-01
 
 Actuación ante posibles casos de pacientes infectados por Viruela del Mono
@@ -7643,8 +7643,8 @@ Una vez finalizado el aviso:
 # [115] Apoyo psicológico a intervinientes
 
 Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/115-apoyo-psicologico-a-intervinientes
-Markdown: https://manual-samur.vercel.app/procedures/115.md
+URL: https://manual-proced-spc.vercel.app/manual/115-apoyo-psicologico-a-intervinientes
+Markdown: https://manual-proced-spc.vercel.app/procedures/115.md
 Actualizado: 2026-09-01
 
 ### Procedimiento de apoyo psicológico inmediato a intervinientes tras incidentes críticos
@@ -7692,8 +7692,8 @@ El Romeo contactará telefónicamente de forma individual con los intervinientes
 # [216] Accidente laboral con riesgo biológico
 
 Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
-Markdown: https://manual-samur.vercel.app/procedures/216.md
+URL: https://manual-proced-spc.vercel.app/manual/216-accidente-laboral-con-riesgo-biologico
+Markdown: https://manual-proced-spc.vercel.app/procedures/216.md
 Actualizado: 2026-09-01
 
 Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, señalando las recomendaciones necesarias para el manejo de exposiciones accidentales a fluidos biológicos que contengan Virus Hepatitis B, Virus Hepatitis C y VIH, según la evidencia científica internacional actual.
@@ -7742,8 +7742,8 @@ Terapias **Básica** y **Expandida** de profilaxis post-exposición VIH. Debe se
 # [216_01] Contacto con meningitis bacteriana
 
 Sección: Intervinientes
-URL: https://manual-samur.vercel.app/manual/216_01-contacto-con-meningitis-bacteriana
-Markdown: https://manual-samur.vercel.app/procedures/216_01.md
+URL: https://manual-proced-spc.vercel.app/manual/216_01-contacto-con-meningitis-bacteriana
+Markdown: https://manual-proced-spc.vercel.app/procedures/216_01.md
 Actualizado: 2026-09-01
 
 Este procedimiento tiene por objeto regular la actuación del personal ante accidentes laborales con riesgo biológico, por contacto con pacientes con posible Meningitis bacteriana.
@@ -7774,8 +7774,8 @@ En caso de Embarazo se utilizará Ceftriaxona.
 # [301] PARADA CARDIORRESPIRATORIA
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/301-parada-cardiorrespiratoria
-Markdown: https://manual-samur.vercel.app/procedures/301.md
+URL: https://manual-proced-spc.vercel.app/manual/301-parada-cardiorrespiratoria
+Markdown: https://manual-proced-spc.vercel.app/procedures/301.md
 Actualizado: 2026-04-27
 
 [Ver Anexo - Algoritmo SVA Adulto](/docs/procedures/301/301_algoritmo_SVA.pdf)
@@ -7954,8 +7954,8 @@ En ausencia de respuesta del paciente, en el sentido de recuperación de pulso, 
 # [301_01] Cuidados postparada
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/301_01-cuidados-postparada
-Markdown: https://manual-samur.vercel.app/procedures/301_01.md
+URL: https://manual-proced-spc.vercel.app/manual/301_01-cuidados-postparada
+Markdown: https://manual-proced-spc.vercel.app/procedures/301_01.md
 Actualizado: 2026-06-20
 
 [Ver anexo - Algoritmo Cuidados Postparto cardíaco](/docs/procedures/301_01/301a_algoritmo_CuidadosPostparocardiaco.pdf)
@@ -8038,8 +8038,8 @@ Traslade en USVA con preaviso hospitalario informando de los datos clínicos, ti
 # [301_02] PCR Traumática
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/301_02-pcr-traumatica
-Markdown: https://manual-samur.vercel.app/procedures/301_02.md
+URL: https://manual-proced-spc.vercel.app/manual/301_02-pcr-traumatica
+Markdown: https://manual-proced-spc.vercel.app/procedures/301_02.md
 Actualizado: 2026-09-01
 
 [Ver Anexo - Algoritmo ERC 2015](/docs/procedures/301_02/301b_algoritmo_ERC.pdf)
@@ -8139,8 +8139,8 @@ Si tras realizar la secuencia indicada, y si el paciente no recupera pulso, valo
 # [302] Manejo avanzado de vía aérea
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/302-manejo-avanzado-de-via-aerea
-Markdown: https://manual-samur.vercel.app/procedures/302.md
+URL: https://manual-proced-spc.vercel.app/manual/302-manejo-avanzado-de-via-aerea
+Markdown: https://manual-proced-spc.vercel.app/procedures/302.md
 Actualizado: 2026-09-01
 
 ### Maniobras
@@ -8284,8 +8284,8 @@ Valoración inicial con atención a la posible obstrucción por cuerpo extraño.
 # [302_01] Manejo de la vía aérea difícil
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/302_01-manejo-de-la-via-aerea-dificil
-Markdown: https://manual-samur.vercel.app/procedures/302_01.md
+URL: https://manual-proced-spc.vercel.app/manual/302_01-manejo-de-la-via-aerea-dificil
+Markdown: https://manual-proced-spc.vercel.app/procedures/302_01.md
 Actualizado: 2026-09-01
 
 Se considera **vía aérea difícil** aquella que condiciona una situación en la que el médico tiene dificultad en la ventilación con máscara facial y balón de reanimación, dificultad con la [intubación endotraqueal](/manual/602_03-intubacion-endotraqueal) o con ambas.
@@ -8364,8 +8364,8 @@ Si durante la asistencia no se puede garantizar una adecuada oxigenación del pa
 # [303] Analgesia y sedación
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/303-analgesia-y-sedacion
-Markdown: https://manual-samur.vercel.app/procedures/303.md
+URL: https://manual-proced-spc.vercel.app/manual/303-analgesia-y-sedacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/303.md
 Actualizado: 2026-09-01
 
 ### CONCEPTOS DE INTERÉS
@@ -8550,8 +8550,8 @@ Para un cálculo directo, puede multiplicarse el peso del niño en kg por 0,15 (
 # [304_01] Valoración inicial del paciente politraumatizado
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_01-valoracion-inicial-del-paciente-politraumatizado
-Markdown: https://manual-samur.vercel.app/procedures/304_01.md
+URL: https://manual-proced-spc.vercel.app/manual/304_01-valoracion-inicial-del-paciente-politraumatizado
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_01.md
 Actualizado: 2026-09-01
 
 La asistencia inicial del paciente traumatizado grave, se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de **riesgo vital** (vida, órgano, función), **posibilidad técnica**, y **accesibilidad**.
@@ -8752,8 +8752,8 @@ Realice preaviso hospitalario y traslado en USVA al centro de referencia que le 
 # [304_02] Shock hemorrágico de origen traumático
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_02-shock-hemorragico-de-origen-traumatico
-Markdown: https://manual-samur.vercel.app/procedures/304_02.md
+URL: https://manual-proced-spc.vercel.app/manual/304_02-shock-hemorragico-de-origen-traumatico
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_02.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -8874,8 +8874,8 @@ Administre, previa comprobación de K+ > 3,3 mEq/l, un bolo de Insulina iv (10 m
 # [304_03] Traumatismo craneoencefálico
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_03-traumatismo-craneoencefalico
-Markdown: https://manual-samur.vercel.app/procedures/304_03.md
+URL: https://manual-proced-spc.vercel.app/manual/304_03-traumatismo-craneoencefalico
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_03.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9071,8 +9071,8 @@ Alternativa: <DrugLink name="Manitol" /> iv a dosis de 0,5 - 1 g/kg en 20 min (a
 # [304_04] Traumatismo de tórax
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_04-traumatismo-de-torax
-Markdown: https://manual-samur.vercel.app/procedures/304_04.md
+URL: https://manual-proced-spc.vercel.app/manual/304_04-traumatismo-de-torax
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_04.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9351,8 +9351,8 @@ Es más frecuente en el lado izquierdo, provocado, en general, por compresión s
 # [304_05] Traumatismo de abdomen
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_05-traumatismo-de-abdomen
-Markdown: https://manual-samur.vercel.app/procedures/304_05.md
+URL: https://manual-proced-spc.vercel.app/manual/304_05-traumatismo-de-abdomen
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_05.md
 Actualizado: 2026-09-01
 
 Dada la dificultad diagnostica que tiene el trauma abdominal es de especial importancia considerar algunos aspectos:
@@ -9415,8 +9415,8 @@ Dada la dificultad diagnostica que tiene el trauma abdominal es de especial impo
 # [304_06] Traumatismos vertebro-medulares
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_06-traumatismos-vertebro-medulares
-Markdown: https://manual-samur.vercel.app/procedures/304_06.md
+URL: https://manual-proced-spc.vercel.app/manual/304_06-traumatismos-vertebro-medulares
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_06.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9500,8 +9500,8 @@ A todo lo añadido anteriormente:
 # [304_07] Traumatismos ortopédicos
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_07-traumatismos-ortopedicos
-Markdown: https://manual-samur.vercel.app/procedures/304_07.md
+URL: https://manual-proced-spc.vercel.app/manual/304_07-traumatismos-ortopedicos
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_07.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9576,8 +9576,8 @@ Actualizado: 2026-09-01
 # [304_08] Síndrome de aplastamiento
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_08-sindrome-de-aplastamiento
-Markdown: https://manual-samur.vercel.app/procedures/304_08.md
+URL: https://manual-proced-spc.vercel.app/manual/304_08-sindrome-de-aplastamiento
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_08.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9644,8 +9644,8 @@ Se distinguen dos momentos en el tratamiento.
 # [304_09] Traumatismo pélvico
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/304_09-traumatismo-pelvico
-Markdown: https://manual-samur.vercel.app/procedures/304_09.md
+URL: https://manual-proced-spc.vercel.app/manual/304_09-traumatismo-pelvico
+Markdown: https://manual-proced-spc.vercel.app/procedures/304_09.md
 Actualizado: 2026-09-01
 
 La fractura pélvica se asocia a una importante morbilidad y mortalidad. La importante hemorragia que asocia habitualmente exige de un diagnóstico precoz.
@@ -9693,8 +9693,8 @@ La fractura pélvica se asocia a una importante morbilidad y mortalidad. La impo
 # [305_01] Hemorragia digestiva aguda
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/305_01-hemorragia-digestiva-aguda
-Markdown: https://manual-samur.vercel.app/procedures/305_01.md
+URL: https://manual-proced-spc.vercel.app/manual/305_01-hemorragia-digestiva-aguda
+Markdown: https://manual-proced-spc.vercel.app/procedures/305_01.md
 Actualizado: 2026-09-01
 
 * Valoración inicial: ABC. Compruebe pulso periférico y alteraciones hemodinámicas (consultar anexo) con el ortostatismo (pérdidas sanguíneas de > 15 % suponen una disminución de la TAS de más de 20 mm Hg o aumento de la FC en más de 20 lpm al pasar a bipedestación; pérdidas de > 40% tienen marcada hipotensión en supino), intentando descartar situaciones que evolucionen a shock, así como angina asociada.[Ver anexo: Alteraciones hemodinámicas](/docs/procedures/305_01/305_01_alteracioneshemodinamicas.pdf)
@@ -9723,8 +9723,8 @@ Valore la realización de INR
 # [305_02] Abdomen agudo
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/305_02-abdomen-agudo
-Markdown: https://manual-samur.vercel.app/procedures/305_02.md
+URL: https://manual-proced-spc.vercel.app/manual/305_02-abdomen-agudo
+Markdown: https://manual-proced-spc.vercel.app/procedures/305_02.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -9797,8 +9797,8 @@ Realice intubación por criterios de inestabilidad hemodinámica ([ver procedimi
 # [306_01] Coma
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_01-coma
-Markdown: https://manual-samur.vercel.app/procedures/306_01.md
+URL: https://manual-proced-spc.vercel.app/manual/306_01-coma
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_01.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABCD. Obtenga historia clínica orientada (inicio del cuadro, síntomas previos; aparición aguda, gradual o transitoria; tratamientos habituales y trasgresiones terapéuticas). Exploración física y neurológica (nivel de conciencia, respuestas motoras a estímulos, reflejos del tronco cerebral, pupilas, movimientos oculares, existencia de convulsiones), cuantifique la profundidad del coma ([Escala de coma de Glasgow](/docs/procedures/306_01/304_01_EscalaGlasgow.pdf)), descarte focalidad neurológica y **filie la hora** de comienzo.
@@ -9836,8 +9836,8 @@ Actualizado: 2026-09-01
 # [306_02] Enfermedad vascular cerebral aguda
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_02-enfermedad-vascular-cerebral-aguda
-Markdown: https://manual-samur.vercel.app/procedures/306_02.md
+URL: https://manual-proced-spc.vercel.app/manual/306_02-enfermedad-vascular-cerebral-aguda
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_02.md
 Actualizado: 2026-06-20
 
 ### Procedimiento terapeútico en el ICTUS
@@ -9922,8 +9922,8 @@ Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intraveno
 # [306_03] Crisis  Estatus epiléptico
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_03-crisis-estatus-epileptico
-Markdown: https://manual-samur.vercel.app/procedures/306_03.md
+URL: https://manual-proced-spc.vercel.app/manual/306_03-crisis-estatus-epileptico
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_03.md
 Actualizado: 2026-05-20
 
 ### **Crisis Epiléptica**
@@ -10041,8 +10041,8 @@ O bien:
 # [306_04] Estado confusional agudo
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_04-estado-confusional-agudo
-Markdown: https://manual-samur.vercel.app/procedures/306_04.md
+URL: https://manual-proced-spc.vercel.app/manual/306_04-estado-confusional-agudo
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_04.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABCD. Obtenga historia clínica orientada y filie la hora de comienzo, la progresión en tiempo y el curso (comienzo agudo con fluctuación y empeoramiento nocturno). Describa las posibles alteraciones en el nivel de conciencia y atención y de las funciones cognitivas (memoria sobre todo reciente, orientación, percepción con alucinaciones, razonamiento), así como los cambios emocionales (ansiedad, agresividad, hipomanía), cambios autonómicos (sudoración, frialdad) y conductuales acompañantes.
@@ -10081,8 +10081,8 @@ Precaución con:
 # [306_05] Síndrome vertiginoso
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_05-sindrome-vertiginoso
-Markdown: https://manual-samur.vercel.app/procedures/306_05.md
+URL: https://manual-proced-spc.vercel.app/manual/306_05-sindrome-vertiginoso
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_05.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABCD. Obtenga la historia clínica orientada a descartar vértigo falso (agorafobia, cinetosis...) o verdadero (periférico/central)
@@ -10131,8 +10131,8 @@ Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intraveno
 # [306_06] Cefalea
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_06-cefalea
-Markdown: https://manual-samur.vercel.app/procedures/306_06.md
+URL: https://manual-proced-spc.vercel.app/manual/306_06-cefalea
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_06.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -10234,8 +10234,8 @@ Realice traslado con preaviso hospitalario en caso de:
 # [306_07] Síndrome discinético
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/306_07-sindrome-discinetico
-Markdown: https://manual-samur.vercel.app/procedures/306_07.md
+URL: https://manual-proced-spc.vercel.app/manual/306_07-sindrome-discinetico
+Markdown: https://manual-proced-spc.vercel.app/procedures/306_07.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABC.
@@ -10264,8 +10264,8 @@ Si existe agitación, movimiento tipo corea, balismo o discinesia severa, admini
 # [307_01] Cólico renoureteral (nefrítico)
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/307_01-colico-renoureteral-nefritico
-Markdown: https://manual-samur.vercel.app/procedures/307_01.md
+URL: https://manual-proced-spc.vercel.app/manual/307_01-colico-renoureteral-nefritico
+Markdown: https://manual-proced-spc.vercel.app/procedures/307_01.md
 Actualizado: 2026-09-01
 
 * Valoración inicial: ABC. Realizar una anamnesis exhaustiva. Reflejar en historia clínica antecedentes familiares y personales de episodios similares, antecedentes de cirugías inguinales o escrotales, existencia de fiebre, hematuria o anuria, malformaciones renales, riñón único funcional o anatómico.
@@ -10327,8 +10327,8 @@ Evolución:
 # [307_02] Síndrome escrotal agudo
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/307_02-sindrome-escrotal-agudo
-Markdown: https://manual-samur.vercel.app/procedures/307_02.md
+URL: https://manual-proced-spc.vercel.app/manual/307_02-sindrome-escrotal-agudo
+Markdown: https://manual-proced-spc.vercel.app/procedures/307_02.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -10421,8 +10421,8 @@ Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intraveno
 # [308_01] Urgencias obstétricas
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/308_01-urgencias-obstetricas
-Markdown: https://manual-samur.vercel.app/procedures/308_01.md
+URL: https://manual-proced-spc.vercel.app/manual/308_01-urgencias-obstetricas
+Markdown: https://manual-proced-spc.vercel.app/procedures/308_01.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -10642,8 +10642,8 @@ Inversión del fondo uterino, contactando con el cuello (incompleta) o saliendo 
 # [308_02] Asistencia al parto
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/308_02-asistencia-al-parto
-Markdown: https://manual-samur.vercel.app/procedures/308_02.md
+URL: https://manual-proced-spc.vercel.app/manual/308_02-asistencia-al-parto
+Markdown: https://manual-proced-spc.vercel.app/procedures/308_02.md
 Actualizado: 2026-09-01
 
 * Valoración inicial. Obtenga y documente antecedentes e historia obstétrica actual (GPAC: embarazos, partos, abortos previos y cesáreas; FUR; FPP, edad gestacional; presencia o no de contracciones (intensidad y duración, número y frecuencia de 2- 3 cada 10 minutos), evidencia de sangrado vaginal; rotura de bolsa, color y cantidad de líquido amniótico; tacto vaginal, si lo considera estrictamente necesario).
@@ -10703,8 +10703,8 @@ Actualizado: 2026-09-01
 # [309_01] Shock
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_01-shock
-Markdown: https://manual-samur.vercel.app/procedures/309_01.md
+URL: https://manual-proced-spc.vercel.app/manual/309_01-shock
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_01.md
 Actualizado: 2026-09-01
 
 * Valoración inicial ABCD, intentando descubrir precozmente signos y síntomas propios de la reducción de la perfusión en los tejidos y del aporte de oxígeno.
@@ -10776,8 +10776,8 @@ Reposición agresiva pero más ajustada, por riesgo de daño medular secundario 
 # [309_02] Síndrome Coronario Agudo con elevación del ST SCACEST
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
-Markdown: https://manual-samur.vercel.app/procedures/309_02.md
+URL: https://manual-proced-spc.vercel.app/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_02.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABCD, reseñe la hora del inicio del dolor y la hora del primer contacto médico con el paciente (clave 3). Tenga preparado el desfibrilador y evite el movimiento activo del paciente.
@@ -10920,8 +10920,8 @@ Función**: antisecretor gastrico, antiulceroso: inhibidores de la bomba de prot
 # [309_03] Síndrome Coronario Agudo sin elevación del SR (SCACEST)
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_03-sindrome-coronario-agudo-sin-elevacion-del-sr-scacest
-Markdown: https://manual-samur.vercel.app/procedures/309_03.md
+URL: https://manual-proced-spc.vercel.app/manual/309_03-sindrome-coronario-agudo-sin-elevacion-del-sr-scacest
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_03.md
 Actualizado: 2026-09-01
 
 Esta entidad incluye: **Angina inestable (AI)** e **Infarto de miocardio sin elevación persistente del segmento ST (IAMSEST)**, cuya distinción radica en la severidad y el tiempo de la isquemia miocárdica y, por tanto, en la capacidad de producir necrosis miocárdica con elevación de los marcadores de daño miocárdico (principalmente troponina).
@@ -11053,8 +11053,8 @@ o
 # [309_04] Insuficiencia cardiaca aguda  crónica agudizada
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_04-insuficiencia-cardiaca-aguda-cronica-agudizada
-Markdown: https://manual-samur.vercel.app/procedures/309_04.md
+URL: https://manual-proced-spc.vercel.app/manual/309_04-insuficiencia-cardiaca-aguda-cronica-agudizada
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_04.md
 Actualizado: 2026-06-20
 
 ### Contenido
@@ -11142,8 +11142,8 @@ Incluya la siguiente información en el preaviso e informe de la asistencia:
 # [309_05] Edema agudo de pulmón
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_05-edema-agudo-de-pulmon
-Markdown: https://manual-samur.vercel.app/procedures/309_05.md
+URL: https://manual-proced-spc.vercel.app/manual/309_05-edema-agudo-de-pulmon
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_05.md
 Actualizado: 2026-06-20
 
 * Situación clínica de un paciente con antecedentes cardiovasculares habitualmente, que presenta de forma más o menos **súbita**, **disnea**, acompañada de **ortopnea** y/o **disnea paroxística nocturna** o tos nocturna (asma cardial). En la exploración se encuentra taquipneico, con apenas capacidad para hablar, diaforético y cianótico. Auscultación pulmonar con **crepitantes** simétricos, de predominio en bases y variabilidad en la altura, con o sin **sibilancias**. Puede presentar **elevación de la presión venosa yugular** (PVY), edemas y ascitis si se asocia a IC derecha.
@@ -11232,8 +11232,8 @@ Si el paciente está **hipotenso** (TAS &lt; 80 mmHg):
 # [309_06] Arritmias
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_06-arritmias
-Markdown: https://manual-samur.vercel.app/procedures/309_06.md
+URL: https://manual-proced-spc.vercel.app/manual/309_06-arritmias
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_06.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -11399,8 +11399,8 @@ En cualquiera de los casos anteriores, si el paciente pasa a estar inestable, re
 # [309_07] Crisis hipertensivas
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_07-crisis-hipertensivas
-Markdown: https://manual-samur.vercel.app/procedures/309_07.md
+URL: https://manual-proced-spc.vercel.app/manual/309_07-crisis-hipertensivas
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_07.md
 Actualizado: 2026-04-15
 
 ### Contenido
@@ -11591,8 +11591,8 @@ Realice un diagnóstico clínico por exclusión de otros procesos neurológicos.
 # [309_08] Isquemia arterial aguda
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_08-isquemia-arterial-aguda
-Markdown: https://manual-samur.vercel.app/procedures/309_08.md
+URL: https://manual-proced-spc.vercel.app/manual/309_08-isquemia-arterial-aguda
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_08.md
 Actualizado: 2026-09-01
 
 **Es el resultado de una brusca interrupción del aporte sanguíneo a las extremidades. **
@@ -11632,8 +11632,8 @@ administre protección gástrica: <DrugLink name="Omeprazol" /> 40 mg iv.
 # [309_09] Síncope
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/309_09-sincope
-Markdown: https://manual-samur.vercel.app/procedures/309_09.md
+URL: https://manual-proced-spc.vercel.app/manual/309_09-sincope
+Markdown: https://manual-proced-spc.vercel.app/procedures/309_09.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -11789,8 +11789,8 @@ Los pacientes con los criterios a continuación expuestos, podrán ser remitidos
 # [310_01] Crisis asmática aguda
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/310_01-crisis-asmatica-aguda
-Markdown: https://manual-samur.vercel.app/procedures/310_01.md
+URL: https://manual-proced-spc.vercel.app/manual/310_01-crisis-asmatica-aguda
+Markdown: https://manual-proced-spc.vercel.app/procedures/310_01.md
 Actualizado: 2026-09-01
 
 * Valoración inicial: ABC.
@@ -11897,8 +11897,8 @@ Actualizado: 2026-09-01
 # [310_02] Exacerbaciones agudas del paciente con EPOC
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/310_02-exacerbaciones-agudas-del-paciente-con-epoc
-Markdown: https://manual-samur.vercel.app/procedures/310_02.md
+URL: https://manual-proced-spc.vercel.app/manual/310_02-exacerbaciones-agudas-del-paciente-con-epoc
+Markdown: https://manual-proced-spc.vercel.app/procedures/310_02.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -11968,8 +11968,8 @@ PCO2 > 60 mmHg o aumentada respecto a su basal o pH &lt; 7,26
 # [310_03] Tromboembolismo pulmonar
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/310_03-tromboembolismo-pulmonar
-Markdown: https://manual-samur.vercel.app/procedures/310_03.md
+URL: https://manual-proced-spc.vercel.app/manual/310_03-tromboembolismo-pulmonar
+Markdown: https://manual-proced-spc.vercel.app/procedures/310_03.md
 Actualizado: 2026-09-01
 
 **Debe sospecharse un TEP en pacientes con disnea brusca o empeoramiento de una disnea previa inexplicable.**
@@ -12045,8 +12045,8 @@ Prepare 2 ampollas de 10 mg en 80 ml de SG 5% (1 ml = 200 mcg, 1 gota = 10 mcg) 
 # [311] Urgencias psiquiátricas
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/311-urgencias-psiquiatricas
-Markdown: https://manual-samur.vercel.app/procedures/311.md
+URL: https://manual-proced-spc.vercel.app/manual/311-urgencias-psiquiatricas
+Markdown: https://manual-proced-spc.vercel.app/procedures/311.md
 Actualizado: 2026-09-01
 
 * Aproxímese al lugar, valorando el uso de sirenas y rotativos según información aportada por la Central.
@@ -12174,8 +12174,8 @@ En **intoxicación etílica o drogas de abuso** con necesidad de sedación, valo
 # [312_01] Complicaciones de la diabetes
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/312_01-complicaciones-de-la-diabetes
-Markdown: https://manual-samur.vercel.app/procedures/312_01.md
+URL: https://manual-proced-spc.vercel.app/manual/312_01-complicaciones-de-la-diabetes
+Markdown: https://manual-proced-spc.vercel.app/procedures/312_01.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -12331,8 +12331,8 @@ Proceda de la siguiente manera:
 # [312_02] Hiperglucemia por estrés
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/312_02-hiperglucemia-por-estres
-Markdown: https://manual-samur.vercel.app/procedures/312_02.md
+URL: https://manual-proced-spc.vercel.app/manual/312_02-hiperglucemia-por-estres
+Markdown: https://manual-proced-spc.vercel.app/procedures/312_02.md
 Actualizado: 2026-09-01
 
 Hiperglucemia que se asocia a la **enfermedad aguda crítica**, tanto en paciente diabético como en paciente no diabético. El **control glucémico**, mejora la **supervivencia** de estos pacientes.
@@ -12358,8 +12358,8 @@ Hiperglucemia que se asocia a la **enfermedad aguda crítica**, tanto en pacient
 # [312_03] Hiponatremia
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/312_03-hiponatremia
-Markdown: https://manual-samur.vercel.app/procedures/312_03.md
+URL: https://manual-proced-spc.vercel.app/manual/312_03-hiponatremia
+Markdown: https://manual-proced-spc.vercel.app/procedures/312_03.md
 Actualizado: 2026-09-01
 
 * Se considera hiponatremia una concentración sérica de **sodio &lt;135 mmol/L **con la siguiente clasificación según la gravedad bioquímica:
@@ -12415,8 +12415,8 @@ Se puede estimar la concentración sérica de sodio corregida con la siguiente t
 # [312_04] Hipopotasemia - Hiperpotasemia
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/312_04-hipopotasemia-hiperpotasemia
-Markdown: https://manual-samur.vercel.app/procedures/312_04.md
+URL: https://manual-proced-spc.vercel.app/manual/312_04-hipopotasemia-hiperpotasemia
+Markdown: https://manual-proced-spc.vercel.app/procedures/312_04.md
 Actualizado: 2026-09-01
 
 ### Contenido
@@ -12479,8 +12479,8 @@ Se considera **hiperpotasemia** a cifras **Potasio sérico > 5,5 mEq/l**.
 # [312_05] Hipocalcemia - Hipercalcemia
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/312_05-hipocalcemia-hipercalcemia
-Markdown: https://manual-samur.vercel.app/procedures/312_05.md
+URL: https://manual-proced-spc.vercel.app/manual/312_05-hipocalcemia-hipercalcemia
+Markdown: https://manual-proced-spc.vercel.app/procedures/312_05.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -12529,8 +12529,8 @@ Se considera Hipercalcemia severa a **cifras de calcio iónico > 2,5 - 3 mmol/l*
 # [313_01] Paciente quemado
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/313_01-paciente-quemado
-Markdown: https://manual-samur.vercel.app/procedures/313_01.md
+URL: https://manual-proced-spc.vercel.app/manual/313_01-paciente-quemado
+Markdown: https://manual-proced-spc.vercel.app/procedures/313_01.md
 Actualizado: 2026-05-20
 
 * Evalúe la escena y aplique las medidas de seguridad necesarias, priorizando la seguridad del personal asistencial (ver procedimiento con actuación con Bomberos, Actuación en situaciones NRBQ y Paciente intoxicado por humo).
@@ -12600,8 +12600,8 @@ Extreme las medidas de seguridad y, si es posible, elimine el tóxico
 # [313_02] Urgencias por calor
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/313_02-urgencias-por-calor
-Markdown: https://manual-samur.vercel.app/procedures/313_02.md
+URL: https://manual-proced-spc.vercel.app/manual/313_02-urgencias-por-calor
+Markdown: https://manual-proced-spc.vercel.app/procedures/313_02.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -12692,8 +12692,8 @@ Precaución en:
 # [313_03] Paciente con hipotermia
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/313_03-paciente-con-hipotermia
-Markdown: https://manual-samur.vercel.app/procedures/313_03.md
+URL: https://manual-proced-spc.vercel.app/manual/313_03-paciente-con-hipotermia
+Markdown: https://manual-proced-spc.vercel.app/procedures/313_03.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -12793,8 +12793,8 @@ Actualizado: 2026-09-01
 # [313_04] Lesiones por electricidad. Electrocución
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/313_04-lesiones-por-electricidad-electrocucion
-Markdown: https://manual-samur.vercel.app/procedures/313_04.md
+URL: https://manual-proced-spc.vercel.app/manual/313_04-lesiones-por-electricidad-electrocucion
+Markdown: https://manual-proced-spc.vercel.app/procedures/313_04.md
 Actualizado: 2026-09-01
 
 Las lesiones por electricidad están producidas por el efecto directo de la corriente eléctrica sobre los tejidos y su conversión en energía térmica.
@@ -12843,8 +12843,8 @@ Distinguimos tres tipos de corriente según su origen: corriente doméstica (alt
 # [313_05] Patologías por inmersión. Ahogamiento
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/313_05-patologias-por-inmersion-ahogamiento
-Markdown: https://manual-samur.vercel.app/procedures/313_05.md
+URL: https://manual-proced-spc.vercel.app/manual/313_05-patologias-por-inmersion-ahogamiento
+Markdown: https://manual-proced-spc.vercel.app/procedures/313_05.md
 Actualizado: 2026-09-01
 
 * Recabe información y clasifique el cuadro en función de las circunstancias en las que tuvo lugar el accidente.
@@ -12895,8 +12895,8 @@ Actualizado: 2026-09-01
 # [314_00] Valoración del niño grave
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_00-valoracion-del-nino-grave
-Markdown: https://manual-samur.vercel.app/procedures/314_00.md
+URL: https://manual-proced-spc.vercel.app/manual/314_00-valoracion-del-nino-grave
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_00.md
 Actualizado: 2026-09-01
 
 El procedimiento tiene como objetivo principal la identificación precoz de aquellos pacientes con potencial riesgo vital de cara a iniciar de forma urgente las medidas específicas de estabilización, las cuales serán nuestra prioridad, incluso por encima del diagnóstico.
@@ -13009,8 +13009,8 @@ Realice secuencia ABCDE si el paciente precisa estabilización rápida y precoz,
 # [314_01] RCP pediátrica
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_01-rcp-pediatrica
-Markdown: https://manual-samur.vercel.app/procedures/314_01.md
+URL: https://manual-proced-spc.vercel.app/manual/314_01-rcp-pediatrica
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_01.md
 Actualizado: 2026-06-20
 
 [Ver anexo - Algoritmo SVA Pediátrico](/docs/procedures/314_01/314_01_algoritmoSVAP.pdf)
@@ -13212,8 +13212,8 @@ Se cumplimentará la HCE (historia clínica electrónica) con el apartado de ECM
 # [314_02] Asistencia al recién nacido
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_02-asistencia-al-recien-nacido
-Markdown: https://manual-samur.vercel.app/procedures/314_02.md
+URL: https://manual-proced-spc.vercel.app/manual/314_02-asistencia-al-recien-nacido
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_02.md
 Actualizado: 2026-09-01
 
 [Ver anexo - tabla Edad-Peso](/docs/procedures/314_02/314_02_tablaEdadPeso.pdf)
@@ -13388,8 +13388,8 @@ Controle la temperatura (muy importante en el RN). La temperatura ambiente media
 # [314_03] Valoración del paciente pediátrico politraumatizado
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_03-valoracion-del-paciente-pediatrico-politraumatizado
-Markdown: https://manual-samur.vercel.app/procedures/314_03.md
+URL: https://manual-proced-spc.vercel.app/manual/314_03-valoracion-del-paciente-pediatrico-politraumatizado
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_03.md
 Actualizado: 2026-09-01
 
 La asistencia inicial del paciente pediátrico traumatizado grave se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de **riesgo vital** (vida, órgano, función), **posibilidad técnica** y **accesibilidad**.
@@ -13658,8 +13658,8 @@ Realice preaviso hospitalario y traslado en USVA al centro de referencia al proc
 # [314_04] Dificultad respiratoria
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_04-dificultad-respiratoria
-Markdown: https://manual-samur.vercel.app/procedures/314_04.md
+URL: https://manual-proced-spc.vercel.app/manual/314_04-dificultad-respiratoria
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_04.md
 Actualizado: 2026-09-01
 
 ### **Dificultad respiratoria alta**
@@ -13838,8 +13838,8 @@ Oxigenoterapia para mantener SatO2 > 92%.
 # [314_05] Crisis convulsivas
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_05-crisis-convulsivas
-Markdown: https://manual-samur.vercel.app/procedures/314_05.md
+URL: https://manual-proced-spc.vercel.app/manual/314_05-crisis-convulsivas
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_05.md
 Actualizado: 2026-09-01
 
 * Valoración Inicial: ABCDE. Filie la hora de comienzo y cese, si se ha producido.
@@ -13933,8 +13933,8 @@ También se deben ser trasladas al Hospital, preferentemente por una unidad de S
 # [314_06] Quemaduras
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_06-quemaduras
-Markdown: https://manual-samur.vercel.app/procedures/314_06.md
+URL: https://manual-proced-spc.vercel.app/manual/314_06-quemaduras
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_06.md
 Actualizado: 2026-09-01
 
 Valoración de la superficie quemada
@@ -14006,8 +14006,8 @@ Realice cura local de la quemadura:
 # [314_07] Manejo del ictus en la edad pediátrica
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_07-manejo-del-ictus-en-la-edad-pediatrica
-Markdown: https://manual-samur.vercel.app/procedures/314_07.md
+URL: https://manual-proced-spc.vercel.app/manual/314_07-manejo-del-ictus-en-la-edad-pediatrica
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_07.md
 Actualizado: 2026-06-20
 
 Este procedimiento tiene como objetivo la identificación precoz del accidente cerebro vascular agudo (ACVA) en niños menores de 16 años, y la posible inclusión en el Código ictus pediátrico (Reperfusión precoz en el Ictus agudo: [Código 13](/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo) y [Código 13.1](/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo)).
@@ -14106,8 +14106,8 @@ Si hay **hipotensión**: Poco frecuente. Generalmente por depleción de volumen 
 # [314_08] Urticaria, angioedema y anafilaxia en pediatría
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_08-urticaria-angioedema-y-anafilaxia-en-pediatria
-Markdown: https://manual-samur.vercel.app/procedures/314_08.md
+URL: https://manual-proced-spc.vercel.app/manual/314_08-urticaria-angioedema-y-anafilaxia-en-pediatria
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_08.md
 Actualizado: 2026-06-20
 
 En general realice una valoración inicial: ABC. Realice valoración del niño grave, urgencias pediátricas, incluyendo el triángulo de evaluación pediátrica.
@@ -14174,8 +14174,8 @@ Si el paciente no responde a las anteriores medidas:
 # [314_09] Atención al menor bajo los efectos de alcohol o drogas
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/314_09-atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas
-Markdown: https://manual-samur.vercel.app/procedures/314_09.md
+URL: https://manual-proced-spc.vercel.app/manual/314_09-atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas
+Markdown: https://manual-proced-spc.vercel.app/procedures/314_09.md
 Actualizado: 2026-09-01
 
 Atienda según el procedimiento específico de intoxicaciones.
@@ -14210,8 +14210,8 @@ Resumen:
 # [315_01] Manejo general del paciente intoxicado
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/315_01-manejo-general-del-paciente-intoxicado
-Markdown: https://manual-samur.vercel.app/procedures/315_01.md
+URL: https://manual-proced-spc.vercel.app/manual/315_01-manejo-general-del-paciente-intoxicado
+Markdown: https://manual-proced-spc.vercel.app/procedures/315_01.md
 Actualizado: 2026-09-01
 
 * Valoración de la escena. Aplique medidas de autoprotección, evitando contaminarse y extraiga al paciente del entorno tóxico según procedimiento de valoración de la escena.
@@ -14264,8 +14264,8 @@ Actualizado: 2026-09-01
 # [315_02] Intoxicación por humo
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/315_02-intoxicacion-por-humo
-Markdown: https://manual-samur.vercel.app/procedures/315_02.md
+URL: https://manual-proced-spc.vercel.app/manual/315_02-intoxicacion-por-humo
+Markdown: https://manual-proced-spc.vercel.app/procedures/315_02.md
 Actualizado: 2026-09-01
 
 * Evalúe la situación (ver el procedimiento operativo de actuación con Bomberos).
@@ -14347,8 +14347,8 @@ Se recomienda traslado para observación hospitalaria de 4-6 h, con traslado en 
 # [315_03] Intoxicaciones más frecuentes
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/315_03-intoxicaciones-mas-frecuentes
-Markdown: https://manual-samur.vercel.app/procedures/315_03.md
+URL: https://manual-proced-spc.vercel.app/manual/315_03-intoxicaciones-mas-frecuentes
+Markdown: https://manual-proced-spc.vercel.app/procedures/315_03.md
 Actualizado: 2026-09-01
 
 ### **Intoxicación por Opiáceos**
@@ -14616,8 +14616,8 @@ Alternativa: <DrugLink name="Ondansetron" />. Empleando la vía oral o intraveno
 # [316] Reacción alérgica
 
 Sección: SVA
-URL: https://manual-samur.vercel.app/manual/316-reaccion-alergica
-Markdown: https://manual-samur.vercel.app/procedures/316.md
+URL: https://manual-proced-spc.vercel.app/manual/316-reaccion-alergica
+Markdown: https://manual-proced-spc.vercel.app/procedures/316.md
 Actualizado: 2026-09-01
 
 * Retire al paciente del contacto con el agente causante si se conoce (suspensión de la administración de fármacos, extracción rápida de aguijón, retirada de restos alimentarios de la boca, etc).
@@ -14697,8 +14697,8 @@ Prepare 1 ampolla de 200 mg en 95 ml de SG 5%, comenzando por 30 ml/h (30mcgotas
 # [401] Valoración de la escena
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/401-valoracion-de-la-escena
-Markdown: https://manual-samur.vercel.app/procedures/401.md
+URL: https://manual-proced-spc.vercel.app/manual/401-valoracion-de-la-escena
+Markdown: https://manual-proced-spc.vercel.app/procedures/401.md
 Actualizado: 2026-04-30
 
 * Realice un **primer reconocimiento visual**, e identifique los posibles riesgos en el lugar de la actuación. No intervenga en aquellas situaciones en las que la seguridad del equipo no este garantizada, en especial:
@@ -14806,8 +14806,8 @@ Según el tipo de accidente, se valorarán los siguientes puntos:
 # [402] Valoración del paciente adulto
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/402-valoracion-del-paciente-adulto
-Markdown: https://manual-samur.vercel.app/procedures/402.md
+URL: https://manual-proced-spc.vercel.app/manual/402-valoracion-del-paciente-adulto
+Markdown: https://manual-proced-spc.vercel.app/procedures/402.md
 Actualizado: 2026-06-03
 
 [[[### **Valoración inicial**
@@ -15023,8 +15023,8 @@ Cumplimente el informe de asistencia.
 # [402_01] Valoración del niño grave
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/402_01-valoracion-del-nino-grave
-Markdown: https://manual-samur.vercel.app/procedures/402_01.md
+URL: https://manual-proced-spc.vercel.app/manual/402_01-valoracion-del-nino-grave
+Markdown: https://manual-proced-spc.vercel.app/procedures/402_01.md
 Actualizado: 2026-09-01
 
 El procedimiento tiene como objetivo principal la identificación precoz de aquellos pacientes con potencial riesgo vital de cara a iniciar de forma urgente las medidas específicas de estabilización, las cuales serán nuestra prioridad, incluso por encima de la valoración.
@@ -15134,8 +15134,8 @@ Realice una historia orientada al problema del niño, que debe contener una desc
 # [403] Instrumental adultos
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/403-instrumental-adultos
-Markdown: https://manual-samur.vercel.app/procedures/403.md
+URL: https://manual-proced-spc.vercel.app/manual/403-instrumental-adultos
+Markdown: https://manual-proced-spc.vercel.app/procedures/403.md
 Actualizado: 2026-09-01
 
 ### **Soporta vital básico - Instrumental en adultos **
@@ -15218,8 +15218,8 @@ En caso de una muerte sospechosa de criminalidad, manipule lo menos posible la e
 # [404] Instrumental pediátrico
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/404-instrumental-pediatrico
-Markdown: https://manual-samur.vercel.app/procedures/404.md
+URL: https://manual-proced-spc.vercel.app/manual/404-instrumental-pediatrico
+Markdown: https://manual-proced-spc.vercel.app/procedures/404.md
 Actualizado: 2026-09-01
 
 ### **Soporte vital básico -Instrumental pediátrico**
@@ -15329,8 +15329,8 @@ Colabore y apoye con la unidad de SVA en las maniobras de RCP-A.
 # [405] Obstrucción de la vía aérea por cuerpo extraño
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/405-obstruccion-de-la-via-aerea-por-cuerpo-extrano
-Markdown: https://manual-samur.vercel.app/procedures/405.md
+URL: https://manual-proced-spc.vercel.app/manual/405-obstruccion-de-la-via-aerea-por-cuerpo-extrano
+Markdown: https://manual-proced-spc.vercel.app/procedures/405.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -15410,8 +15410,8 @@ Valore la severidad de la obstrucción:
 # [406] Desfibrilación externa automática
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/406-desfibrilacion-externa-automatica
-Markdown: https://manual-samur.vercel.app/procedures/406.md
+URL: https://manual-proced-spc.vercel.app/manual/406-desfibrilacion-externa-automatica
+Markdown: https://manual-proced-spc.vercel.app/procedures/406.md
 Actualizado: 2026-09-01
 
 ### **Secuencia de uso**
@@ -15483,8 +15483,8 @@ Los niños víctimas de un colapso presenciado (por ejemplo, durante un evento d
 # [407] Patologías de origen cardiovascular
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/407-patologias-de-origen-cardiovascular
-Markdown: https://manual-samur.vercel.app/procedures/407.md
+URL: https://manual-proced-spc.vercel.app/manual/407-patologias-de-origen-cardiovascular
+Markdown: https://manual-proced-spc.vercel.app/procedures/407.md
 Actualizado: 2026-06-03
 
 ### Consideraciones previas
@@ -15611,8 +15611,8 @@ Una arritmia es un trastorno de la frecuencia cardiaca (taquicardia/ bradicardia
 # [408] Posible patología de origen respiratorio
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/408-posible-patologia-de-origen-respiratorio
-Markdown: https://manual-samur.vercel.app/procedures/408.md
+URL: https://manual-proced-spc.vercel.app/manual/408-posible-patologia-de-origen-respiratorio
+Markdown: https://manual-proced-spc.vercel.app/procedures/408.md
 Actualizado: 2026-09-01
 
 ### **Valoración de la escena**
@@ -15686,8 +15686,8 @@ Con SatO2 &lt; 90% sin oxígeno y buena TA, o &lt; 92% que no se normaliza con o
 # [409] Posible intoxicación por drogas de abuso
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/409-posible-intoxicacion-por-drogas-de-abuso
-Markdown: https://manual-samur.vercel.app/procedures/409.md
+URL: https://manual-proced-spc.vercel.app/manual/409-posible-intoxicacion-por-drogas-de-abuso
+Markdown: https://manual-proced-spc.vercel.app/procedures/409.md
 Actualizado: 2026-06-03
 
 ### **Valoración de la escena**
@@ -15782,8 +15782,8 @@ Solicite apoyo de USVA:
 # [410] Convulsiones
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/410-convulsiones
-Markdown: https://manual-samur.vercel.app/procedures/410.md
+URL: https://manual-proced-spc.vercel.app/manual/410-convulsiones
+Markdown: https://manual-proced-spc.vercel.app/procedures/410.md
 Actualizado: 2026-06-03
 
 ### Contenidos
@@ -15881,8 +15881,8 @@ Transfiera toda la información al personal del Hospital receptor.
 # [410_01] Posible enfermedad vascular cerebral aguda (ICTUS)
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/410_01-posible-enfermedad-vascular-cerebral-aguda-ictus
-Markdown: https://manual-samur.vercel.app/procedures/410_01.md
+URL: https://manual-proced-spc.vercel.app/manual/410_01-posible-enfermedad-vascular-cerebral-aguda-ictus
+Markdown: https://manual-proced-spc.vercel.app/procedures/410_01.md
 Actualizado: 2026-06-03
 
 ### **Introducción**
@@ -16010,8 +16010,8 @@ Solicite USVA en todos los casos en los que se presuma la existencia de accident
 # [411] Posible shock hipovolémico
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/411-posible-shock-hipovolemico
-Markdown: https://manual-samur.vercel.app/procedures/411.md
+URL: https://manual-proced-spc.vercel.app/manual/411-posible-shock-hipovolemico
+Markdown: https://manual-proced-spc.vercel.app/procedures/411.md
 Actualizado: 2026-06-03
 
 ### Contenidos
@@ -16068,8 +16068,8 @@ Solicite la presencia de USVA en el momento en que se presuma, bien por el mecan
 # [412_00] Valoración inicial del paciente politraumatizado
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
-Markdown: https://manual-samur.vercel.app/procedures/412_00.md
+URL: https://manual-proced-spc.vercel.app/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
+Markdown: https://manual-proced-spc.vercel.app/procedures/412_00.md
 Actualizado: 2026-06-03
 
 La asistencia inicial del paciente traumatizado grave, se realiza conforme a la secuencia de prioridades expuesta en el esquema siguiente, y siempre, atendiendo a los criterios de **riesgo vital** (vida, órgano, función), **posibilidad técnica**, y **accesibilidad**.
@@ -16203,8 +16203,8 @@ Realice traslado al centro de referencia por domicilio que le corresponda (salvo
 # [412_01] Craneoencefálico
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/412_01-craneoencefalico
-Markdown: https://manual-samur.vercel.app/procedures/412_01.md
+URL: https://manual-proced-spc.vercel.app/manual/412_01-craneoencefalico
+Markdown: https://manual-proced-spc.vercel.app/procedures/412_01.md
 Actualizado: 2026-09-01
 
 ### **Valoración de la escena**
@@ -16283,8 +16283,8 @@ Solicite la presencia de una USVA siempre que se presuma la existencia de una le
 # [412_02] Columna vertebral
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/412_02-columna-vertebral
-Markdown: https://manual-samur.vercel.app/procedures/412_02.md
+URL: https://manual-proced-spc.vercel.app/manual/412_02-columna-vertebral
+Markdown: https://manual-proced-spc.vercel.app/procedures/412_02.md
 Actualizado: 2026-09-01
 
 El objetivo de la valoración en un traumatismo de columna será: identificar daño medular, evitar daño medular 2º e identificar shock neurogénico. Ante tal sospecha se activará USVA.
@@ -16356,8 +16356,8 @@ Solicite la presencia de USVA en el momento en que se presuma la existencia de u
 # [412_03] Torácico
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/412_03-toracico
-Markdown: https://manual-samur.vercel.app/procedures/412_03.md
+URL: https://manual-proced-spc.vercel.app/manual/412_03-toracico
+Markdown: https://manual-proced-spc.vercel.app/procedures/412_03.md
 Actualizado: 2026-09-01
 
 ### **Valoración de la escena**
@@ -16443,8 +16443,8 @@ Solicite USVA siempre que existan:
 # [412_04] Abdominal
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/412_04-abdominal
-Markdown: https://manual-samur.vercel.app/procedures/412_04.md
+URL: https://manual-proced-spc.vercel.app/manual/412_04-abdominal
+Markdown: https://manual-proced-spc.vercel.app/procedures/412_04.md
 Actualizado: 2026-09-01
 
 Objetivo: la identificación temprana de posible shock hemorrágico tras un traumatismo abdomino-pélvico.
@@ -16524,8 +16524,8 @@ Solicite USVA siempre que existan:
 # [413] Atención y traslado al paciente psiquiátrico
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
-Markdown: https://manual-samur.vercel.app/procedures/413.md
+URL: https://manual-proced-spc.vercel.app/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
+Markdown: https://manual-proced-spc.vercel.app/procedures/413.md
 Actualizado: 2026-04-27
 
 ### **Pautas generales de actuación**
@@ -16698,8 +16698,8 @@ Traslade en:
 # [414] Solicitud de USVA
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/414-solicitud-de-usva
-Markdown: https://manual-samur.vercel.app/procedures/414.md
+URL: https://manual-proced-spc.vercel.app/manual/414-solicitud-de-usva
+Markdown: https://manual-proced-spc.vercel.app/procedures/414.md
 Actualizado: 2026-06-03
 
 ### **Solicitud de USVA por parte de USVB (Clave 16 de USVA)**
@@ -16840,8 +16840,8 @@ Se le solicitará a la central vía tetra, permiso para realizar clave 8.1, para
 # [415] Paciente con posible alteración de niveles de glucemia capilar
 
 Sección: SVB
-URL: https://manual-samur.vercel.app/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
-Markdown: https://manual-samur.vercel.app/procedures/415.md
+URL: https://manual-proced-spc.vercel.app/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
+Markdown: https://manual-proced-spc.vercel.app/procedures/415.md
 Actualizado: 2026-06-03
 
 * Compruebe que el paciente no tiene ningún síntoma o signo de riesgo vital, ([Ver procedimiento SVB Valoración del paciente adulto](/manual/402-valoracion-del-paciente-adulto))
@@ -16886,8 +16886,8 @@ Solicite Clave 16 de USVA:
 # [501] Activación y actuación del psicólogo de guardia
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
-Markdown: https://manual-samur.vercel.app/procedures/501.md
+URL: https://manual-proced-spc.vercel.app/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
+Markdown: https://manual-proced-spc.vercel.app/procedures/501.md
 Actualizado: 2026-09-01
 
 ### **Fase de activación del psicólogo de guardia**
@@ -16931,8 +16931,8 @@ Al finalizar el turno de guardia el psicólogo:
 # [502] Intervención psicosocial en situaciones de crisis
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/502-intervencion-psicosocial-en-situaciones-de-crisis
-Markdown: https://manual-samur.vercel.app/procedures/502.md
+URL: https://manual-proced-spc.vercel.app/manual/502-intervencion-psicosocial-en-situaciones-de-crisis
+Markdown: https://manual-proced-spc.vercel.app/procedures/502.md
 Actualizado: 2026-09-01
 
 ### **Intervención psicosocial en situaciones de crisis**
@@ -16978,8 +16978,8 @@ El objetivo de este procedimiento es proporcionar los primeros auxilios psicoló
 # [503] Comunicación de malas noticias, inicio y proceso de duelo
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/503-comunicacion-de-malas-noticias-inicio-y-proceso-de-duelo
-Markdown: https://manual-samur.vercel.app/procedures/503.md
+URL: https://manual-proced-spc.vercel.app/manual/503-comunicacion-de-malas-noticias-inicio-y-proceso-de-duelo
+Markdown: https://manual-proced-spc.vercel.app/procedures/503.md
 Actualizado: 2026-09-01
 
 ### **Comunicación de malas noticias, inicio y proceso de duelo**
@@ -17041,8 +17041,8 @@ Asesore a los familiares para que sean ellos, a ser posible, quienes comuniquen 
 # [504] Crisis de ansiedad
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/504-crisis-de-ansiedad
-Markdown: https://manual-samur.vercel.app/procedures/504.md
+URL: https://manual-proced-spc.vercel.app/manual/504-crisis-de-ansiedad
+Markdown: https://manual-proced-spc.vercel.app/procedures/504.md
 Actualizado: 2026-09-01
 
 Este procedimiento marca la intervención del psicólogo en crisis de ansiedad de etiología psicológica o como respuesta a un estresor psicosocial.
@@ -17075,8 +17075,8 @@ Este procedimiento marca la intervención del psicólogo en crisis de ansiedad d
 # [505] Asistencia psicológica en conducta suicida
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/505-asistencia-psicologica-en-conducta-suicida
-Markdown: https://manual-samur.vercel.app/procedures/505.md
+URL: https://manual-proced-spc.vercel.app/manual/505-asistencia-psicologica-en-conducta-suicida
+Markdown: https://manual-proced-spc.vercel.app/procedures/505.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -17136,8 +17136,8 @@ Valore sistemas de respuesta (fisiológico, cognitivo, motor y emocional) entre 
 # [506] Situaciones de negociación
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/506-situaciones-de-negociacion
-Markdown: https://manual-samur.vercel.app/procedures/506.md
+URL: https://manual-proced-spc.vercel.app/manual/506-situaciones-de-negociacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/506.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -17235,8 +17235,8 @@ Realice filiación e informe de las personas atendidas por el psicólogo.
 # [507] Asistencia psicológica en Código 9
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/507-asistencia-psicologica-en-codigo-9
-Markdown: https://manual-samur.vercel.app/procedures/507.md
+URL: https://manual-proced-spc.vercel.app/manual/507-asistencia-psicologica-en-codigo-9
+Markdown: https://manual-proced-spc.vercel.app/procedures/507.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -17298,8 +17298,8 @@ Identifique a los familiares presentes en el lugar.
 # [508] Asistencia psicológica en agresión sexual
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/508-asistencia-psicologica-en-agresion-sexual
-Markdown: https://manual-samur.vercel.app/procedures/508.md
+URL: https://manual-proced-spc.vercel.app/manual/508-asistencia-psicologica-en-agresion-sexual
+Markdown: https://manual-proced-spc.vercel.app/procedures/508.md
 Actualizado: 2026-09-01
 
 El presente Procedimiento marca como objetivo principal dar respuesta desde un punto de vista psicológico a aquellas víctimas que se encuentran en fase de impacto tras haber vivido una supuesta agresión sexual.
@@ -17332,8 +17332,8 @@ Valore el estado psicológico de la víctima.
 # [509] Asistencia psicológica en violencia de género
 
 Sección: Psicológicos
-URL: https://manual-samur.vercel.app/manual/509-asistencia-psicologica-en-violencia-de-genero
-Markdown: https://manual-samur.vercel.app/procedures/509.md
+URL: https://manual-proced-spc.vercel.app/manual/509-asistencia-psicologica-en-violencia-de-genero
+Markdown: https://manual-proced-spc.vercel.app/procedures/509.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -17404,8 +17404,8 @@ Menores:
 # [601_01] Relación con el paciente
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_01-relacion-con-el-paciente
-Markdown: https://manual-samur.vercel.app/procedures/601_01.md
+URL: https://manual-proced-spc.vercel.app/manual/601_01-relacion-con-el-paciente
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_01.md
 Actualizado: 2026-09-01
 
 Los pacientes tienen una serie de derechos y deberes recogidos en el artículo 10 de la la Ley General de Sanidad 14/86 de 25 de abril, a los que estará sujeta toda asistencia realizada por personal de Samur-Protección Civil:
@@ -17473,8 +17473,8 @@ Ante los pacientes y ciudadanos, usted representa la imagen del Servicio y del A
 # [601_02] Técnicas y medidas higiénicas
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_02-tecnicas-y-medidas-higienicas
-Markdown: https://manual-samur.vercel.app/procedures/601_02.md
+URL: https://manual-proced-spc.vercel.app/manual/601_02-tecnicas-y-medidas-higienicas
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_02.md
 Actualizado: 2026-09-01
 
 ### **Técnicas y medidas higiénicas para la prevención de infecciones**
@@ -17592,8 +17592,8 @@ Recuerde que tanto el campo estéril, como las áreas que hayan contactado con l
 # [601_03] Signos Vitales
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_03-signos-vitales
-Markdown: https://manual-samur.vercel.app/procedures/601_03.md
+URL: https://manual-proced-spc.vercel.app/manual/601_03-signos-vitales
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_03.md
 Actualizado: 2026-06-01
 
 Consideramos signos vitales la respiración, el pulso, el relleno capilar, la presión arterial y la temperatura. Consideraciones pediátricas: valores ([ver procedimiento de urgencias pediátricas](/manual/314_00-valoracion-del-nino-grave))
@@ -17755,8 +17755,8 @@ Técnica digital por proximidad
 # [601_04] Medición de Temperatura central mediante sonda esofágica
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_04-medicion-de-temperatura-central-mediante-sonda-esofagica
-Markdown: https://manual-samur.vercel.app/procedures/601_04.md
+URL: https://manual-proced-spc.vercel.app/manual/601_04-medicion-de-temperatura-central-mediante-sonda-esofagica
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_04.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -17795,8 +17795,8 @@ En caso de posible fractura de base de cráneo, rotura de huesos de la cara y ta
 # [601_05] Administración de comprimido bucodispersable
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_05-administracion-de-comprimido-bucodispersable
-Markdown: https://manual-samur.vercel.app/procedures/601_05.md
+URL: https://manual-proced-spc.vercel.app/manual/601_05-administracion-de-comprimido-bucodispersable
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_05.md
 Actualizado: 2026-09-01
 
 Son comprimidos no recubiertos destinados a ser colocados en la boca, donde se dispersan rápidamente antes de ser tragados.
@@ -17824,8 +17824,8 @@ Son comprimidos no recubiertos destinados a ser colocados en la boca, donde se d
 # [601_06] Test rápido de antígeno de SARS-CoV-2
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/601_06-test-rapido-de-antigeno-de-sars-cov-2
-Markdown: https://manual-samur.vercel.app/procedures/601_06.md
+URL: https://manual-proced-spc.vercel.app/manual/601_06-test-rapido-de-antigeno-de-sars-cov-2
+Markdown: https://manual-proced-spc.vercel.app/procedures/601_06.md
 Actualizado: 2026-09-01
 
 ### **Instrucciones de uso test rápido de antígeno de SARS-CoV-2**
@@ -17862,8 +17862,8 @@ Proceso de prueba del test rápido de antígeno de SARS-CoV-2
 # [602_01] Permeabilización básica de la vía aérea
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_01-permeabilizacion-basica-de-la-via-aerea
-Markdown: https://manual-samur.vercel.app/procedures/602_01.md
+URL: https://manual-proced-spc.vercel.app/manual/602_01-permeabilizacion-basica-de-la-via-aerea
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_01.md
 Actualizado: 2026-09-01
 
 ### **Obstrucción de la vía aérea**
@@ -17920,8 +17920,8 @@ La colocación de esta cánula en menores de 8 años se realiza deslizando la c�
 # [602_02] Aspiración de secreciones
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_02-aspiracion-de-secreciones
-Markdown: https://manual-samur.vercel.app/procedures/602_02.md
+URL: https://manual-proced-spc.vercel.app/manual/602_02-aspiracion-de-secreciones
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_02.md
 Actualizado: 2026-09-01
 
 **Material**: guantes, aspirador, sondas de aspiración estériles de distintos tamaños (en T o con orificio lateral).
@@ -17952,8 +17952,8 @@ Para aspirar boca o faringe utilice sondas rígidas o semirrígidas de gran cali
 # [602_03] Intubación Endotraqueal
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_03-intubacion-endotraqueal
-Markdown: https://manual-samur.vercel.app/procedures/602_03.md
+URL: https://manual-proced-spc.vercel.app/manual/602_03-intubacion-endotraqueal
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_03.md
 Actualizado: 2026-09-01
 
 La intubación endotraqueal es la técnica definitiva de permeabilización y aislamiento de la vía aérea, permitiendo:
@@ -18049,8 +18049,8 @@ Válido para fijación de Cánula supraglótica i-gel®
 # [602_04] INTRODUCTOR DE FROVA 14,0 Fr (adultos)
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_04-introductor-de-frova-140-fr-adultos
-Markdown: https://manual-samur.vercel.app/procedures/602_04.md
+URL: https://manual-proced-spc.vercel.app/manual/602_04-introductor-de-frova-140-fr-adultos
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_04.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18080,8 +18080,8 @@ Evite introducir el introductor con excesiva fuerza o a ciegas, por el riesgo de
 # [602_05] CRICOTIROIDOTOMÍA
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_05-cricotiroidotomia
-Markdown: https://manual-samur.vercel.app/procedures/602_05.md
+URL: https://manual-proced-spc.vercel.app/manual/602_05-cricotiroidotomia
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_05.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18120,8 +18120,8 @@ Contraindicada en niños menores de 12 años.
 # [602_06] TORACOCENTESIS
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_06-toracocentesis
-Markdown: https://manual-samur.vercel.app/procedures/602_06.md
+URL: https://manual-proced-spc.vercel.app/manual/602_06-toracocentesis
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_06.md
 Actualizado: 2026-09-01
 
 ### **Toracocentesis con catéter en adultos:**
@@ -18155,8 +18155,8 @@ La técnica de toracocentesis con catéter en niños varía poco respecto a la d
 # [602_07] TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_07-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
-Markdown: https://manual-samur.vercel.app/procedures/602_07.md
+URL: https://manual-proced-spc.vercel.app/manual/602_07-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_07.md
 Actualizado: 2026-09-01
 
 ### Toracostomía con sonda Kit de Drenaje Torácico Portex®
@@ -18208,8 +18208,8 @@ La técnica de toracostomía en paciente pediátricos se realiza con catéter so
 # [602_08] Medición de satO2
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_08-medicion-de-sato2
-Markdown: https://manual-samur.vercel.app/procedures/602_08.md
+URL: https://manual-proced-spc.vercel.app/manual/602_08-medicion-de-sato2
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_08.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18261,8 +18261,8 @@ Lecturas incorrectas en situaciones de:
 # [602_09] Medición de COHb
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_09-medicion-de-cohb
-Markdown: https://manual-samur.vercel.app/procedures/602_09.md
+URL: https://manual-proced-spc.vercel.app/manual/602_09-medicion-de-cohb
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_09.md
 Actualizado: 2026-09-01
 
 ### Medición de la saturación de monóxido de carbono - cooximetría
@@ -18304,8 +18304,8 @@ Interpretación de resultados:
 # [602_10] Medición de ETCO2
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_10-medicion-de-etco2
-Markdown: https://manual-samur.vercel.app/procedures/602_10.md
+URL: https://manual-proced-spc.vercel.app/manual/602_10-medicion-de-etco2
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_10.md
 Actualizado: 2026-09-01
 
 ### Medición de la concentración de co2 espirado (capnógrafo-oxímetro capnocheck ii-sims bci)
@@ -18354,8 +18354,8 @@ Utilice la ETCO2 para estimar la calidad de la RCP (si la ETCO2 es &lt; de 10 mm
 # [602_11] Administración de fármacos por vía inhalatoria
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_11-administracion-de-farmacos-por-via-inhalatoria
-Markdown: https://manual-samur.vercel.app/procedures/602_11.md
+URL: https://manual-proced-spc.vercel.app/manual/602_11-administracion-de-farmacos-por-via-inhalatoria
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_11.md
 Actualizado: 2026-09-01
 
 ### Características
@@ -18397,8 +18397,8 @@ Administración de analgesia (Fentanilo) y sedación (Midazolam) o mixto (Ketami
 # [602_12] Administración endotraqueal de medicamentos
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_12-administracion-endotraqueal-de-medicamentos
-Markdown: https://manual-samur.vercel.app/procedures/602_12.md
+URL: https://manual-proced-spc.vercel.app/manual/602_12-administracion-endotraqueal-de-medicamentos
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_12.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18420,8 +18420,8 @@ Actualizado: 2026-09-01
 # [602_13] Ventilación Mecánica No Invasiva
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_13-ventilacion-mecanica-no-invasiva
-Markdown: https://manual-samur.vercel.app/procedures/602_13.md
+URL: https://manual-proced-spc.vercel.app/manual/602_13-ventilacion-mecanica-no-invasiva
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_13.md
 Actualizado: 2026-09-01
 
 ### **Consideraciones previas**
@@ -18517,8 +18517,8 @@ La VMNI no debe retrasar ni limitar el resto del tratamiento. Esto es especialme
 # [602_14] Administración de fármacos con cámara de inhalación
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/602_14-administracion-de-farmacos-con-camara-de-inhalacion
-Markdown: https://manual-samur.vercel.app/procedures/602_14.md
+URL: https://manual-proced-spc.vercel.app/manual/602_14-administracion-de-farmacos-con-camara-de-inhalacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/602_14.md
 Actualizado: 2026-09-01
 
 ### Descripción
@@ -18578,8 +18578,8 @@ Técnica en niños
 # [603_01] Electrodiagrama de 12 Derivaciones
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_01-electrodiagrama-de-12-derivaciones
-Markdown: https://manual-samur.vercel.app/procedures/603_01.md
+URL: https://manual-proced-spc.vercel.app/manual/603_01-electrodiagrama-de-12-derivaciones
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_01.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18714,8 +18714,8 @@ Monitor Corpuls3
 # [603_02] Desfibrilación
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_02-desfibrilacion
-Markdown: https://manual-samur.vercel.app/procedures/603_02.md
+URL: https://manual-proced-spc.vercel.app/manual/603_02-desfibrilacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_02.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18757,8 +18757,8 @@ Las palas normales para adultos pueden utilizarse en niños a partir de los 10 k
 # [603_03] Desfibrilación de doble secuencia
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_03-desfibrilacion-de-doble-secuencia
-Markdown: https://manual-samur.vercel.app/procedures/603_03.md
+URL: https://manual-proced-spc.vercel.app/manual/603_03-desfibrilacion-de-doble-secuencia
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_03.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18806,8 +18806,8 @@ Fig. 2:  Cheskes S, Verbeek PR, Drennan IR, McLeod SL, Turner L, Pinto R, et al.
 # [603_04] Cardioversión
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_04-cardioversion
-Markdown: https://manual-samur.vercel.app/procedures/603_04.md
+URL: https://manual-proced-spc.vercel.app/manual/603_04-cardioversion
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_04.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18843,8 +18843,8 @@ El desfibrilador vuelve automáticamente al modo asincrónico después de cada d
 # [603_05] Marcapasos temporal no invasivo
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_05-marcapasos-temporal-no-invasivo
-Markdown: https://manual-samur.vercel.app/procedures/603_05.md
+URL: https://manual-proced-spc.vercel.app/manual/603_05-marcapasos-temporal-no-invasivo
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_05.md
 Actualizado: 2026-09-01
 
 ### Contenidos
@@ -18941,8 +18941,8 @@ Si fuera necesario, pulse la tecla blanda [**Pausa]** para interrumpir el marcap
 # [603_06] Masaje del seno carotídeo
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_06-masaje-del-seno-carotideo
-Markdown: https://manual-samur.vercel.app/procedures/603_06.md
+URL: https://manual-proced-spc.vercel.app/manual/603_06-masaje-del-seno-carotideo
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_06.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -18979,8 +18979,8 @@ Contraindicaciones, el masaje carotídeo bilateral está totalmente contraindica
 # [603_07] Pericardiocentesis
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_07-pericardiocentesis
-Markdown: https://manual-samur.vercel.app/procedures/603_07.md
+URL: https://manual-proced-spc.vercel.app/manual/603_07-pericardiocentesis
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_07.md
 Actualizado: 2026-09-01
 
 **Material**: guantes, gasas, monitor-desfibrilador, solución antiséptica, catéter nº 14 G largo, jeringa de 10 ml ó 20 ml, llave de tres pasos.
@@ -19010,8 +19010,8 @@ Habitualmente el líquido pericárdico sanguinolento no se coagula, pero si la h
 # [603_08] Toracotomía de reanimación
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_08-toracotomia-de-reanimacion
-Markdown: https://manual-samur.vercel.app/procedures/603_08.md
+URL: https://manual-proced-spc.vercel.app/manual/603_08-toracotomia-de-reanimacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_08.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19064,8 +19064,8 @@ Sólo si está seguro de que el corazón está indemne, se evitará la apertura 
 # [603_09] Hipotermia terapéutica en la parada cardiaca
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_09-hipotermia-terapeutica-en-la-parada-cardiaca
-Markdown: https://manual-samur.vercel.app/procedures/603_09.md
+URL: https://manual-proced-spc.vercel.app/manual/603_09-hipotermia-terapeutica-en-la-parada-cardiaca
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_09.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19108,8 +19108,8 @@ Con la dosis referida, es probable que el paciente alcance la temperatura diana 
 # [603_10] Dispositivo de compresiones torácicas automático LUCAS 3
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/603_10-dispositivo-de-compresiones-toracicas-automatico-lucas-3
-Markdown: https://manual-samur.vercel.app/procedures/603_10.md
+URL: https://manual-proced-spc.vercel.app/manual/603_10-dispositivo-de-compresiones-toracicas-automatico-lucas-3
+Markdown: https://manual-proced-spc.vercel.app/procedures/603_10.md
 Actualizado: 2026-09-01
 
 El dispositivo a continuación referido es utilizado como alternativa a las compresiones cardiacas manuales en las siguientes circunstancias:
@@ -19162,8 +19162,8 @@ Imágenes: Sistema de compresión torácica LUCAS® 3 – [INSTRUCCIONES DE USO]
 # [604_01] Preparación y manipulación de material de acceso vascular
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_01-preparacion-y-manipulacion-de-material-de-acceso-vascular
-Markdown: https://manual-samur.vercel.app/procedures/604_01.md
+URL: https://manual-proced-spc.vercel.app/manual/604_01-preparacion-y-manipulacion-de-material-de-acceso-vascular
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_01.md
 Actualizado: 2026-09-01
 
 ### **Material para la canalización venosa**
@@ -19205,8 +19205,8 @@ El esparadrapo es un material no estéril de fijación y que suele estar habitua
 # [604_02] Priorización de la localización de accesos vasculares
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_02-priorizacion-de-la-localizacion-de-accesos-vasculares
-Markdown: https://manual-samur.vercel.app/procedures/604_02.md
+URL: https://manual-proced-spc.vercel.app/manual/604_02-priorizacion-de-la-localizacion-de-accesos-vasculares
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_02.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19238,8 +19238,8 @@ Nunca de primera elección, ni como alternativa inicial, exceptuando en los caso
 # [604_03] Canalización de vías venosas periféricas
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_03-canalizacion-de-vias-venosas-perifericas
-Markdown: https://manual-samur.vercel.app/procedures/604_03.md
+URL: https://manual-proced-spc.vercel.app/manual/604_03-canalizacion-de-vias-venosas-perifericas
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_03.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19290,8 +19290,8 @@ Dependerá de la patología y gravedad del paciente. Por este motivo, aunque la 
 # [604_04] Canalización de vías venosas periféricas guiada por ecografía
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_04-canalizacion-de-vias-venosas-perifericas-guiada-por-ecografia
-Markdown: https://manual-samur.vercel.app/procedures/604_04.md
+URL: https://manual-proced-spc.vercel.app/manual/604_04-canalizacion-de-vias-venosas-perifericas-guiada-por-ecografia
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_04.md
 Actualizado: 2026-09-01
 
 ### Canalización de [vías venosas periféricas](/manual/604_03-canalizacion-de-vias-venosas-perifericas) guiada por ecografía
@@ -19390,8 +19390,8 @@ Es preferible utilizar la orientación transversal cuando se tiene menos experie
 # [604_05] Administración de fármacos por vía intravenosa
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_05-administracion-de-farmacos-por-via-intravenosa
-Markdown: https://manual-samur.vercel.app/procedures/604_05.md
+URL: https://manual-proced-spc.vercel.app/manual/604_05-administracion-de-farmacos-por-via-intravenosa
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_05.md
 Actualizado: 2026-09-01
 
 ### **Administración de fármacos en bolo**
@@ -19455,8 +19455,8 @@ Registre siempre:
 # [604_06] Canalización de vías venosas centrales
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_06-canalizacion-de-vias-venosas-centrales
-Markdown: https://manual-samur.vercel.app/procedures/604_06.md
+URL: https://manual-proced-spc.vercel.app/manual/604_06-canalizacion-de-vias-venosas-centrales
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_06.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19506,8 +19506,8 @@ Actualizado: 2026-09-01
 # [604_07] Vía Intraósea, sistema EZ-IO
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_07-via-intraosea-sistema-ez-io
-Markdown: https://manual-samur.vercel.app/procedures/604_07.md
+URL: https://manual-proced-spc.vercel.app/manual/604_07-via-intraosea-sistema-ez-io
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_07.md
 Actualizado: 2026-09-01
 
 ### **Indicaciones**
@@ -19697,8 +19697,8 @@ Se recomienda administrar un bolo de suero fisiológico tras cada bolo de medica
 # [604_08] Accesos vasculares especiales
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_08-accesos-vasculares-especiales
-Markdown: https://manual-samur.vercel.app/procedures/604_08.md
+URL: https://manual-proced-spc.vercel.app/manual/604_08-accesos-vasculares-especiales
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_08.md
 Actualizado: 2026-09-01
 
 ### Uso de accesos venosos especiales en situaciones de emergencia: catéteres venosos centrales de larga duración y fístulas arteriovenosas
@@ -19894,8 +19894,8 @@ No se tomará nunca la presión arterial en esa extremidad, ya que la sobrepresi
 # [604_09] Cateterización de la vena umbilical
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_09-cateterizacion-de-la-vena-umbilical
-Markdown: https://manual-samur.vercel.app/procedures/604_09.md
+URL: https://manual-proced-spc.vercel.app/manual/604_09-cateterizacion-de-la-vena-umbilical
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_09.md
 Actualizado: 2026-09-01
 
 **Material**: Catéter umbilical (3,5 Fr para lactantes pretérmino y 5,0 Fr para lactantes a término), bisturí, llave de tres pasos, pinza hemostática, jeringuilla, suero salino, guantes estériles, gasas estériles, povidona yodada, hilo de sutura, esparadrapo y paño estéril.
@@ -19933,8 +19933,8 @@ Localización de vasos:
 # [604_10] Accesos vasculares en niños
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_10-accesos-vasculares-en-ninos
-Markdown: https://manual-samur.vercel.app/procedures/604_10.md
+URL: https://manual-proced-spc.vercel.app/manual/604_10-accesos-vasculares-en-ninos
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_10.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -19987,8 +19987,8 @@ Prepare el material previo a la punción venosa.
 # [604_11] Obtención de sangre arterial
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_11-obtencion-de-sangre-arterial
-Markdown: https://manual-samur.vercel.app/procedures/604_11.md
+URL: https://manual-proced-spc.vercel.app/manual/604_11-obtencion-de-sangre-arterial
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_11.md
 Actualizado: 2026-09-01
 
 **Material**: guantes, gasas, solución antiséptica, alcohol, esparadrapo, jeringa (2-5 ml.), agujas (25x9, 40x8).
@@ -20021,8 +20021,8 @@ Seleccione la zona de punción. Realice la Prueba de Allen si la arteria selecci
 # [604_12] Analítica de sangre
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_12-analitica-de-sangre
-Markdown: https://manual-samur.vercel.app/procedures/604_12.md
+URL: https://manual-proced-spc.vercel.app/manual/604_12-analitica-de-sangre
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_12.md
 Actualizado: 2026-09-01
 
 ### Analítica de sangre (autoanalizador epoc)
@@ -20046,8 +20046,8 @@ Actualizado: 2026-09-01
 # [604_13] Medición de la glucemia
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_13-medicion-de-la-glucemia
-Markdown: https://manual-samur.vercel.app/procedures/604_13.md
+URL: https://manual-proced-spc.vercel.app/manual/604_13-medicion-de-la-glucemia
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_13.md
 Actualizado: 2026-06-03
 
 ### Contenidos
@@ -20082,8 +20082,8 @@ Indicaciones: alteraciones neurológicas (p.e. bajo nivel de consciencia, ICTUS,
 # [604_14] Determinación de INR (MEDIDOR MISSION)
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_14-determinacion-de-inr-medidor-mission
-Markdown: https://manual-samur.vercel.app/procedures/604_14.md
+URL: https://manual-proced-spc.vercel.app/manual/604_14-determinacion-de-inr-medidor-mission
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_14.md
 Actualizado: 2026-09-01
 
 ### Determinación de INR (medidor mission®)
@@ -20142,8 +20142,8 @@ El medidor puede apagarse al retirar la tira reactiva utilizada y presionar, o b
 # [604_15] Test de troponina de alta sensibilidad (Analizador SIEMENS Healthineers)
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/604_15-test-de-troponina-de-alta-sensibilidad-analizador-siemens-healthineers
-Markdown: https://manual-samur.vercel.app/procedures/604_15.md
+URL: https://manual-proced-spc.vercel.app/manual/604_15-test-de-troponina-de-alta-sensibilidad-analizador-siemens-healthineers
+Markdown: https://manual-proced-spc.vercel.app/procedures/604_15.md
 Actualizado: 2026-09-01
 
 ### Test de troponina de alta sensibilidad (analizador Siemens healthineers)
@@ -20185,8 +20185,8 @@ Antes de realizar las pruebas, busque una superficie de trabajo limpia, seca y e
 # [605_01] Sondaje gástrico
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/605_01-sondaje-gastrico
-Markdown: https://manual-samur.vercel.app/procedures/605_01.md
+URL: https://manual-proced-spc.vercel.app/manual/605_01-sondaje-gastrico
+Markdown: https://manual-proced-spc.vercel.app/procedures/605_01.md
 Actualizado: 2026-09-01
 
 **Material**: guantes, gasas, sonda gástrica de tipo Levin (una sola luz) o Salem (dos luces), lubricante hidrosoluble, jeringa de cono ancho que se adapte a la sonda, recipiente o bolsa colectora, esparadrapo, fonendoscopio, equipo de aspiración, solución salina.
@@ -20230,8 +20230,8 @@ En lactantes el calibre adecuado es de 28 F. Éste se aumentará proporcionalmen
 # [605_02] Lavado gástrico
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/605_02-lavado-gastrico
-Markdown: https://manual-samur.vercel.app/procedures/605_02.md
+URL: https://manual-proced-spc.vercel.app/manual/605_02-lavado-gastrico
+Markdown: https://manual-proced-spc.vercel.app/procedures/605_02.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -20287,8 +20287,8 @@ Coloque la sonda gástrica según el procedimiento al respecto. Si utiliza una s
 # [605_03] Administración de carbón activado
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/605_03-administracion-de-carbon-activado
-Markdown: https://manual-samur.vercel.app/procedures/605_03.md
+URL: https://manual-proced-spc.vercel.app/manual/605_03-administracion-de-carbon-activado
+Markdown: https://manual-proced-spc.vercel.app/procedures/605_03.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -20335,8 +20335,8 @@ El carbón activado interfiere con la absorción de otros fármacos, incluso de 
 # [605_04] Sondaje vesical
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/605_04-sondaje-vesical
-Markdown: https://manual-samur.vercel.app/procedures/605_04.md
+URL: https://manual-proced-spc.vercel.app/manual/605_04-sondaje-vesical
+Markdown: https://manual-proced-spc.vercel.app/procedures/605_04.md
 Actualizado: 2026-09-01
 
 **Material**: guantes estériles y no estériles, sondas vesicales tipo Foley de los nº 12, 18 ó 22, paño estéril, gasas estériles, empapador, jeringa de 10 ml, ampolla con 10 ml de suero fisiológico o agua bidestilada, solución antiséptica, bolsa colectora, lubricante hidrosoluble.
@@ -20385,8 +20385,8 @@ No permita un vaciado rápido de la vejiga. Pince la sonda al llegar a unos 400 
 # [606_01] Tratamiento inicial de heridas
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_01-tratamiento-inicial-de-heridas
-Markdown: https://manual-samur.vercel.app/procedures/606_01.md
+URL: https://manual-proced-spc.vercel.app/manual/606_01-tratamiento-inicial-de-heridas
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_01.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -20440,8 +20440,8 @@ Este procedimiento hace referencia a aquellas heridas que afecten a tejidos blan
 # [606_02] Control de hemorragias
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_02-control-de-hemorragias
-Markdown: https://manual-samur.vercel.app/procedures/606_02.md
+URL: https://manual-proced-spc.vercel.app/manual/606_02-control-de-hemorragias
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_02.md
 Actualizado: 2026-04-27
 
 ### **Introducción**
@@ -20600,8 +20600,8 @@ Técnica
 # [606_03] Vendajes
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_03-vendajes
-Markdown: https://manual-samur.vercel.app/procedures/606_03.md
+URL: https://manual-proced-spc.vercel.app/manual/606_03-vendajes
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_03.md
 Actualizado: 2026-09-01
 
 ### **Técnica**
@@ -20672,8 +20672,8 @@ Actualizado: 2026-09-01
 # [606_04] Parche oclusivo torácico
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_04-parche-oclusivo-toracico
-Markdown: https://manual-samur.vercel.app/procedures/606_04.md
+URL: https://manual-proced-spc.vercel.app/manual/606_04-parche-oclusivo-toracico
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_04.md
 Actualizado: 2026-09-01
 
 En el servicio disponemos de un parche torácico tipo Asherman preparado y listo para su uso en las USVA y USVB.
@@ -20718,8 +20718,8 @@ Gafas de protección, guantes, suero fisiológico, envoltorio de gasas estérile
 # [606_05] Tratamiento inicial de las quemaduras
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_05-tratamiento-inicial-de-las-quemaduras
-Markdown: https://manual-samur.vercel.app/procedures/606_05.md
+URL: https://manual-proced-spc.vercel.app/manual/606_05-tratamiento-inicial-de-las-quemaduras
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_05.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -20756,8 +20756,8 @@ En base a la profundidad las quemaduras se clasifican en:
 # [606_06] Técnica de escarotomía
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_06-tecnica-de-escarotomia
-Markdown: https://manual-samur.vercel.app/procedures/606_06.md
+URL: https://manual-proced-spc.vercel.app/manual/606_06-tecnica-de-escarotomia
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_06.md
 Actualizado: 2026-09-01
 
 ### Objetivo
@@ -20791,8 +20791,8 @@ Quemaduras circunferenciales de espesor total en extremidades aunque existan sig
 # [606_07] Técnicas de movilización de pacientes
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_07-tecnicas-de-movilizacion-de-pacientes
-Markdown: https://manual-samur.vercel.app/procedures/606_07.md
+URL: https://manual-proced-spc.vercel.app/manual/606_07-tecnicas-de-movilizacion-de-pacientes
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_07.md
 Actualizado: 2026-09-01
 
 ### **Movilización de pacientes en decúbito**
@@ -20949,8 +20949,8 @@ Realice la técnica con, al menos, dos personas:
 # [606_08] Técnicas de inmovilización
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_08-tecnicas-de-inmovilizacion
-Markdown: https://manual-samur.vercel.app/procedures/606_08.md
+URL: https://manual-proced-spc.vercel.app/manual/606_08-tecnicas-de-inmovilizacion
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_08.md
 Actualizado: 2026-04-27
 
 ### **Técnicas de inmovilización en pacientes traumatizados**
@@ -21078,8 +21078,8 @@ El vacío se puede realizar con la bomba de aspiración o con un aspirador de se
 # [606_09] Inmovilización niño. SIPE®
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/606_09-inmovilizacion-nino-sipe
-Markdown: https://manual-samur.vercel.app/procedures/606_09.md
+URL: https://manual-proced-spc.vercel.app/manual/606_09-inmovilizacion-nino-sipe
+Markdown: https://manual-proced-spc.vercel.app/procedures/606_09.md
 Actualizado: 2026-09-01
 
 ### SIPE® Inmovilización y extricación del niño traumático en su SRI
@@ -21207,8 +21207,8 @@ En vez de sujetar la cinta a la correa de la camilla también puede sujetarse a 
 # [607] EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/607-exploracion-ecografica-extrahospitalaria
-Markdown: https://manual-samur.vercel.app/procedures/607.md
+URL: https://manual-proced-spc.vercel.app/manual/607-exploracion-ecografica-extrahospitalaria
+Markdown: https://manual-proced-spc.vercel.app/procedures/607.md
 Actualizado: 2026-09-01
 
 ### **Procedimiento de exploración ecográfica urgente en el trauma: Técnica de E-FAST**
@@ -21350,8 +21350,8 @@ Identificación del paciente: al menos con el número de informe y, si es posibl
 # [608_01] Lavado Ocular
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/608_01-lavado-ocular
-Markdown: https://manual-samur.vercel.app/procedures/608_01.md
+URL: https://manual-proced-spc.vercel.app/manual/608_01-lavado-ocular
+Markdown: https://manual-proced-spc.vercel.app/procedures/608_01.md
 Actualizado: 2026-09-01
 
 ### **Consideraciones previas**
@@ -21380,8 +21380,8 @@ Identifique la causa de la lesión.
 # [608_02] Extracción de lentes de contacto (rígidas y blandas
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/608_02-extraccion-de-lentes-de-contacto-rigidas-y-blandas
-Markdown: https://manual-samur.vercel.app/procedures/608_02.md
+URL: https://manual-proced-spc.vercel.app/manual/608_02-extraccion-de-lentes-de-contacto-rigidas-y-blandas
+Markdown: https://manual-proced-spc.vercel.app/procedures/608_02.md
 Actualizado: 2026-09-01
 
 ### Extracción de lentes de contacto (rígidas y blandas)
@@ -21422,8 +21422,8 @@ Utilice guantes con los dedos enjuagados en solución salina.
 # [609_01] Cesárea postparada
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/609_01-cesarea-postparada
-Markdown: https://manual-samur.vercel.app/procedures/609_01.md
+URL: https://manual-proced-spc.vercel.app/manual/609_01-cesarea-postparada
+Markdown: https://manual-proced-spc.vercel.app/procedures/609_01.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas
@@ -21488,8 +21488,8 @@ En el caso de que la paciente recupere pulso (RCE presente, proceda a la sutura 
 # [609_02] Episotomía Mediolateral
 
 Sección: Técnicas
-URL: https://manual-samur.vercel.app/manual/609_02-episotomia-mediolateral
-Markdown: https://manual-samur.vercel.app/procedures/609_02.md
+URL: https://manual-proced-spc.vercel.app/manual/609_02-episotomia-mediolateral
+Markdown: https://manual-proced-spc.vercel.app/procedures/609_02.md
 Actualizado: 2026-09-01
 
 ### Consideraciones previas

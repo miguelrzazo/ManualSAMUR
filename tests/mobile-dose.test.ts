@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   calculateDoseConversion,
   doseUtilityEligibility,
+  isDoseConversionSuccess,
   type DoseConversionRequest,
   type DoseMedicationMetadata,
 } from "../apps/mobile/src/dose-logic.ts";
@@ -42,7 +43,7 @@ const base = (overrides: Partial<DoseConversionRequest> = {}): DoseConversionReq
 function success(request: DoseConversionRequest) {
   const result = calculateDoseConversion(request);
   assert.equal(result.ok, true);
-  if (!result.ok) throw new Error(result.reason);
+  if (!isDoseConversionSuccess(result)) throw new Error("unexpected failed conversion");
   return result;
 }
 
@@ -56,7 +57,7 @@ test("golden amount to volume accepts Spanish decimal comma and audits the full 
   assert.equal(result.audit.medication.id, "adrenalina");
   assert.equal(result.audit.presentation.id, "adrenalina-1mg-1ml");
   assert.equal(result.audit.source.revision, "SAMUR-2026.09");
-  assert.equal(result.audit.inputs.entered.amount?.value, "12,5");
+  assert.equal((result.audit.inputs.entered.amount as { value?: string } | undefined)?.value, "12,5");
   assert.equal((result.audit.inputs.normalized.amount as { value: number }).value, 12.5);
   assert.equal(result.audit.rounding.increment, 0.1);
 });
@@ -166,7 +167,7 @@ test("fails closed for excluded, ambiguous, and unstructured medication records"
   } as unknown as DoseMedicationMetadata }));
   assert.equal(proseOnly.ok, false);
   if (!proseOnly.ok) assert.equal(proseOnly.code, "missing-structured-metadata");
-  assert.deepEqual(doseUtilityEligibility(proseOnly.ok ? proseOnly.audit.medication : proseOnly), { eligible: false, reason: "La ficha no contiene concentración, vía, fuente o redondeo estructurados completos." });
+  assert.deepEqual(doseUtilityEligibility(proseOnly), { eligible: false, reason: "La ficha no contiene concentración, vía, fuente o redondeo estructurados completos." });
 });
 
 test("does not mutate medication metadata or expose a persistence mechanism", () => {

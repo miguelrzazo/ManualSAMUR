@@ -21,7 +21,7 @@ const appRoot = path.join(process.cwd(), "apps/mobile");
 
 /** Replays a scroll gesture as the sequence of offsets `onScroll` would deliver. */
 function replay(offsets: number[], from: ScrollChromeState = INITIAL_SCROLL_CHROME): ScrollChromeState {
-  return offsets.reduce(nextScrollChromeState, from);
+  return offsets.reduce((state, offset) => nextScrollChromeState(state, offset), from);
 }
 
 test("scrolling down past the trigger collapses the chrome", () => {

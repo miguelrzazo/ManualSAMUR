@@ -342,22 +342,12 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
         />
       )}
 
-      {online && <View pointerEvents="box-none" style={styles.controlsRow}>
-        <Pressable onPress={() => void onPressCenterOnMe()} disabled={permission === "requesting"} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Centrar en mi ubicación" accessibilityHint="Solicita permiso de ubicación solo al pulsar y centra el mapa en tu posición." accessibilityState={{ busy: permission === "requesting", disabled: permission === "requesting" }}>
-          <MaterialCommunityIcons name="crosshairs-gps" size={20} color={permission === "granted" ? palette.primary : palette.ink} />
-          <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Mi ubicación</Text>
+      {online && <View pointerEvents="box-none" style={styles.trailingControls}>
+        <Pressable onPress={() => setSheetOpen(true)} style={[styles.compactMapControl, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Lista y filtro de hospitales y bases" accessibilityHint="Abre la lista de hospitales y bases con búsqueda, filtro y acciones adicionales.">
+          <MaterialCommunityIcons name="format-list-bulleted" size={21} color={palette.ink} />
         </Pressable>
-        <Pressable onPress={() => void onPressNearest("hospital")} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
-          <MaterialCommunityIcons name="hospital-building" size={20} color={palette.ink} />
-          <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Hospital cercano</Text>
-        </Pressable>
-        <Pressable onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Status4")} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Hoja de referencia Status 4" accessibilityHint="Abre la hoja de referencia Status 4 con los hospitales de destino automático.">
-          <MaterialCommunityIcons name="alert-decagram-outline" size={20} color={palette.ink} />
-          <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Status 4</Text>
-        </Pressable>
-        <Pressable onPress={() => setSheetOpen(true)} style={[styles.controlButton, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Lista y filtro de hospitales y bases" accessibilityHint="Abre la lista de hospitales y bases con búsqueda, filtro y el mapa offline de Madrid.">
-          <MaterialCommunityIcons name="format-list-bulleted" size={20} color={palette.ink} />
-          <Text style={styles.controlButtonText} numberOfLines={2} maxFontSizeMultiplier={1.5}>Lista y filtro</Text>
+        <Pressable onPress={() => void onPressCenterOnMe()} disabled={permission === "requesting"} style={[styles.compactMapControl, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Centrar en mi ubicación" accessibilityHint="Solicita permiso de ubicación solo al pulsar y centra el mapa en tu posición." accessibilityState={{ busy: permission === "requesting", disabled: permission === "requesting" }}>
+          <MaterialCommunityIcons name="crosshairs-gps" size={21} color={permission === "granted" ? palette.primary : palette.ink} />
         </Pressable>
       </View>}
 
@@ -367,7 +357,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
         </View>
       )}
       {mapState.status === "online" && (
-        <Pressable onPress={retryOnlineMap} style={styles.onlineMapRefresh} accessibilityRole="button" accessibilityLabel="Actualizar mapa online">
+        <Pressable onPress={retryOnlineMap} style={[styles.onlineMapRefresh, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Actualizar mapa online" accessibilityHint="Vuelve a comprobar el mapa online y sus datos.">
           <MaterialCommunityIcons name="refresh" size={16} color={palette.white} />
         </Pressable>
       )}
@@ -403,6 +393,18 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
                 <Text style={styles.bannerText}>La ubicación no está disponible en este dispositivo. El directorio local no necesita permiso.</Text>
               </View>
             )}
+            <View style={styles.sheetActions} accessibilityLabel="Acciones del mapa">
+              <Pressable onPress={() => void onPressNearest("hospital")} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
+                <MaterialCommunityIcons name="hospital-building" size={19} color={palette.ink} />
+                <Text style={styles.sheetActionText}>Hospital más cercano</Text>
+                <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
+              </Pressable>
+              <Pressable onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Status4")} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hoja de referencia Status 4" accessibilityHint="Abre la hoja de referencia Status 4 con los hospitales de destino automático.">
+                <MaterialCommunityIcons name="alert-decagram-outline" size={19} color={palette.ink} />
+                <Text style={styles.sheetActionText}>Status 4</Text>
+                <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
+              </Pressable>
+            </View>
           </View>
           <LocationDirectory
             locations={visibleLocations}
@@ -430,32 +432,32 @@ function createStyles(palette: AdaptivePalette) {
     pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8, textShadowColor: palette.paper, textShadowRadius: 8, textShadowOffset: { width: 0, height: 0 } },
     banner: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md },
     bannerText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 },
-    primaryPill: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 44, borderRadius: radii.pill, backgroundColor: palette.ink, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+    primaryPill: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 48, borderRadius: radii.pill, backgroundColor: palette.ink, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
     primaryPillText: { color: palette.paper, fontSize: 13, fontWeight: "800" },
-    secondaryPill: { alignSelf: "flex-start", minHeight: 40, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.ink, paddingHorizontal: spacing.lg, alignItems: "center", justifyContent: "center", marginTop: spacing.sm },
+    secondaryPill: { alignSelf: "flex-start", minHeight: 48, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.ink, paddingHorizontal: spacing.lg, alignItems: "center", justifyContent: "center", marginTop: spacing.sm },
     secondaryPillText: { color: palette.ink, fontSize: 12, fontWeight: "800" },
     nearestBanner: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md },
     nearestBannerCopy: { flex: 1 },
     nearestBannerTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" },
     nearestBannerMeta: { color: palette.green, fontSize: 11, fontWeight: "700", marginTop: 2 },
     topStack: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, gap: spacing.sm, alignItems: "flex-start" },
-    controlsRow: { position: "absolute", left: spacing.lg, right: spacing.lg, bottom: TAB_BAR_INSET + spacing.sm, flexDirection: "row", gap: spacing.sm, justifyContent: "space-between" },
-    controlButton: { flex: 1, minHeight: 56, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, alignItems: "center", justifyContent: "center", gap: 4, paddingHorizontal: 4 },
-    controlButtonText: { color: palette.ink, fontSize: 12, fontWeight: "600", textAlign: "center" },
-    // Sits ABOVE the floating controls row (bottom 132 + its height), not on top of it:
-    // at bottom 136 the credit was drawn over the "Status 4" and "Lista y filtro"
-    // buttons and made both unreadable. Attribution is a licensing obligation, so it
-    // has to stay legible, and so do the controls it was covering.
+    trailingControls: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + spacing.lg, gap: spacing.sm, alignItems: "center" },
+    compactMapControl: { width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, alignItems: "center", justifyContent: "center" },
+    // Sits above the compact trailing controls, keeping the credit legible without
+    // competing with the map actions.
     // La atribucion va sobre las teselas, y hay basemap oscuro (dark-matter) ademas
     // del claro: con la chapa blanca y el azul fijos que tenia, en modo oscuro se
     // quedaba como una pegatina blanca encima de un mapa negro.
     onlineMapAttribution: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + 52, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
     onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
-    onlineMapRefresh: { position: "absolute", top: 60, right: spacing.lg, width: 36, height: 36, borderRadius: 18, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
+    onlineMapRefresh: { position: "absolute", top: 60, right: spacing.lg, width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
     sheetTop: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
     locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md },
-    locationActionButton: { minHeight: 46, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg },
+    locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg },
     locationActionText: { color: palette.paper, fontSize: 13, fontWeight: "800" },
+    sheetActions: { gap: spacing.sm },
+    sheetAction: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.surface, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md },
+    sheetActionText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
   });
 }

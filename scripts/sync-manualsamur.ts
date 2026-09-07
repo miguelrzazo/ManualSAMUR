@@ -8,7 +8,7 @@ import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
 import { createPatch } from "diff";
-import { assertDatasetNotEmptied, assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
+import { assertConfirmedWithdrawal, assertDatasetNotEmptied, assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -57,6 +57,8 @@ import {
   readMainLinksData,
 } from "../lib/main-content.ts";
 import { diffCodeDataset } from "../lib/codigos-sync-logic.ts";
+import { buildCodeDatasetCandidates, CODE_SOURCE_FILES } from "../lib/code-dataset-candidates.ts";
+import { diffReferenceDataset, referenceRecordDiff } from "../lib/reference-dataset-sync.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -489,8 +491,8 @@ async function discoverFromAllDocs(): Promise<ProcedureSpace[]> {
     });
 
     return spaces;
-  } catch {
-    return [];
+  } catch (error) {
+    throw new Error(`Incomplete AllDocs discovery: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -606,7 +608,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         const newBody = markdown.trim();
         if (oldBody !== newBody) {
           const patch: string = createPatch(id, oldBody, newBody, "", "", { context: 3 });
-          contentDiff = patch.split("\n").slice(0, 150).join("\n");
+          contentDiff = patch;
         }
       }
 
@@ -661,6 +663,9 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
 
   // Detect procedures that existed locally but were not discovered in this sync run
   if (!allowedProcedureIds) {
+    if (failed > 0 || errors.length > 0) {
+      throw new Error(`Incomplete procedure sync; refusing withdrawals and publication: ${errors.join("; ")}`);
+    }
     const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)!));
     // Antes esto era Object.entries(loadExistingTitleMap()), y ese helper devuelve
     // un Map: Object.entries() sobre un Map da [], así que el bloque nunca llegó a
@@ -676,14 +681,28 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     // changelog público quedaría corrupto tras un PR grande y verosímil.
     assertDiscoveryIsPlausible(spaces.length, existingEntries.length, missing.length);
 
+    // Verify the complete withdrawal set before removing a single local file.
+    const withdrawals = [];
     for (const [existingId, existingTitle] of missing) {
+      const existing = readExistingProcedureMeta(existingId);
+      if (!existing || typeof existing.data.source !== "string") throw new Error(`Missing withdrawal provenance: ${existingId}`);
+      const response = await fetch(existing.data.source, { headers: HEADERS, signal: AbortSignal.timeout(20000) });
+      await response.body?.cancel();
+      assertConfirmedWithdrawal(response.status, existing.data.source);
+      withdrawals.push({ existingId, existingTitle, existing });
+    }
+    for (const { existingId, existingTitle, existing } of withdrawals) {
       changes.push({
         id: existingId,
         title: existingTitle,
         changeType: "deleted",
         changeKind: "eliminado",
+        source: String(existing.data.source),
+        procedurePath: existing.filePath,
+        diff: createPatch(existingId, existing.content.trim(), "", "", "", { context: 3 }),
         sourceUpdated: new Date().toISOString().slice(0, 10),
       });
+      if (!dryRun) fs.unlinkSync(existing.filePath);
     }
   }
 
@@ -719,7 +738,7 @@ async function syncVademecum(dryRun: boolean): Promise<DomainResult> {
     "content/data/fluidos.json",
     "content/data/vademecum-comerciales.json",
   ];
-  const before = hashFiles(files);
+  const before = new Map(files.map((file) => [file, readJsonDataset(file) as Array<Record<string, unknown>>]));
 
   if (!dryRun) {
     execFileSync(process.execPath, ["--experimental-strip-types", "scripts/scrape-vademecum.ts"], {
@@ -728,8 +747,8 @@ async function syncVademecum(dryRun: boolean): Promise<DomainResult> {
     });
   }
 
-  const after = hashFiles(files);
-  const changes = diffHashes(before, after);
+  const kinds = ["drug", "perfusion", "fluid", "commercial"];
+  const changes = files.flatMap((file, index) => diffReferenceDataset(before.get(file) ?? [], readJsonDataset(file) as Array<Record<string, unknown>>, kinds[index]).map((change) => ({ ...change, source: file })));
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
 }
 
@@ -749,19 +768,22 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
   const before = new Map(files.map((file) => [file, readJsonDataset(file)]));
 
   if (!dryRun) {
-    fs.mkdirSync(path.join(ROOT_DIR, "docs"), { recursive: true });
-    const knownOfficialDocs = [
-      "https://servpub.madrid.es/manualsamur/bin/download/Menu/Cabecera%20principal/Hoja%20resumen%20procedimiento%20radiotelef%C3%B3nico%20SAMUR-PC%20USVA/WebHome/Hoja-resumen-procedimiento-radiotelefonico-SAMUR-PC-USVA_202604.pdf",
-      "https://servpub.madrid.es/manualsamur/bin/download/Menu/Cabecera%20principal/Hoja%20resumen%20procedimiento%20radiotelef%C3%B3nico%20SAMUR-PC%20USVB/WebHome/Hoja-resumen-procedimiento-radiotelefonico-SAMUR-PC-USVB_202604.pdf",
-    ];
-
-    for (const url of knownOfficialDocs) {
-      try {
-        fs.writeFileSync(path.join(ROOT_DIR, "docs", decodeURIComponent(url.split("/").at(-1) ?? "codigos.pdf")), await fetchBuffer(url));
-      } catch {
-        // ignore
-      }
-    }
+    const procedure = readExistingProcedureMeta("121");
+    if (!procedure) throw new Error("Missing canonical radio procedure 121");
+    const attachments = procedure.data.attachments as ManualAttachment[];
+    const required = CODE_SOURCE_FILES.map((name) => {
+      const attachment = attachments.find((item) => item.localPath.endsWith(`/${name}`));
+      if (!attachment) throw new Error(`Missing official code source: ${name}`);
+      return attachment;
+    });
+    const failures = await downloadAttachments(required, false);
+    if (failures.length) throw new Error(`Code source download failed: ${failures.map((item) => item.sourceUrl).join(", ")}`);
+    const statePath = path.join(ROOT_DIR, "content/data/code-source-state.json");
+    const prior = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : {};
+    const { hashes, candidates } = buildCodeDatasetCandidates(ROOT_DIR, procedure.content, prior);
+    // Every candidate has passed coverage, uniqueness and loss checks before any JSON is written.
+    for (const [group, rows] of candidates) writeJsonDataset(`content/data/codigos-${group}.json`, rows);
+    if (JSON.stringify(prior) !== JSON.stringify(hashes)) fs.writeFileSync(statePath, JSON.stringify(hashes, null, 2) + "\n");
   }
 
   const changes = files.flatMap((file) => {
@@ -770,6 +792,9 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
     return diffCodeDataset(before.get(file), readJsonDataset(file), codeGroup).map((change) => ({
       ...change,
       source: file,
+      diff: referenceRecordDiff(change.id,
+        (before.get(file) as Array<{ code: string }>).find((row) => `code:${codeGroup}:${row.code}` === change.id),
+        (readJsonDataset(file) as Array<{ code: string }>).find((row) => `code:${codeGroup}:${row.code}` === change.id)),
     }));
   });
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
@@ -987,6 +1012,10 @@ async function executeSync(options: SyncOptions) {
   if (options.domains.has("main")) results.main = await syncMain(options.dryRun);
 
   const finishedAt = new Date().toISOString();
+  const failures = Object.values(results).flatMap((result) => result.errors);
+  if (failures.length || Object.values(results).some((result) => result.summary.failed > 0)) {
+    throw new Error(`Incomplete sync; no approved snapshot will be published: ${failures.join("; ")}`);
+  }
   const run: ManualSyncRun = {
     id: finishedAt,
     startedAt,

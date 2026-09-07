@@ -34,7 +34,9 @@ test("manual update history is capped to the newest events", () => {
   const events = Array.from({ length: 4 }, (_, index) => ({
     eventId: `event-${index}`,
     procedureIds: ["101"],
-    changeKind: "nuevo",
+    changeKind: "nuevo" as const,
+    origin: "wiki" as const,
+    isRecent: false,
     summary: `Evento ${index}`,
     effectiveDate: `2026-01-0${index + 1}`,
   }));

@@ -313,7 +313,7 @@ function scoreNameSimilarity(left: string, right: string) {
   return union === 0 ? 0 : intersection / union;
 }
 
-function resolveExistingDrugId(importedDrug: WikiDrugEntry, existingDrugs: DrugRecord[]) {
+export function resolveExistingDrugId(importedDrug: WikiDrugEntry, existingDrugs: DrugRecord[]) {
   let bestMatch: { id: string; score: number } | null = null;
 
   for (const existingDrug of existingDrugs) {
@@ -354,6 +354,7 @@ export function startsDoseBlock(line: string): boolean {
 export function mergeImportedDrugs(
   existingDrugs: DrugRecord[],
   importedDrugs: WikiDrugEntry[],
+  previouslyImportedIds: readonly string[] = [],
 ): DrugRecord[] {
   const existingById = new Map(existingDrugs.map((drug) => [drug.id, drug]));
   const mergedById = new Map<string, DrugRecord>();
@@ -389,7 +390,7 @@ export function mergeImportedDrugs(
   }
 
   for (const existingDrug of existingDrugs) {
-    if (!mergedById.has(existingDrug.id)) {
+    if (!mergedById.has(existingDrug.id) && !previouslyImportedIds.includes(existingDrug.id)) {
       mergedById.set(existingDrug.id, existingDrug);
     }
   }

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Manual de Procedimientos SAMUR-PC",
+    "name": "Manual SAMUR",
     "slug": "manualsamur",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -15,10 +15,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
-        "CFBundleDisplayName": "Manual de Procedimientos SAMUR-PC",
+        "CFBundleDisplayName": "Manual SAMUR",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
       },
-      "deploymentTarget": "16.4"
+      "deploymentTarget": "16.4",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,8 @@
         "backgroundColor": "#1B4FA8"
       },
       "package": "es.madrid.samur.manual",
-      "label": "Manual de Procedimientos SAMUR-PC"
+      "label": "Manual SAMUR",
+      "versionCode": 1
     },
     "plugins": [
       "expo-status-bar",
@@ -42,7 +44,8 @@
       "./plugins/with-ios-podfile-safe-scripts",
       "./plugins/with-ios-attachment-assets",
       "./plugins/with-android-attachment-assets",
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "./plugins/with-android-release-signing"
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",

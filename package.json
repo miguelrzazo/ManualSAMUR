@@ -34,7 +34,8 @@
     "mobile:typecheck": "npx tsc --noEmit -p apps/mobile/tsconfig.json",
     "sync:manualsamur:detect": "node --experimental-strip-types scripts/sync-manualsamur.ts detect --all",
     "sync:manualsamur:apply": "npx ts-node scripts/sync-manualsamur.ts apply --all",
-    "sync:manualsamur:ingest-pdf": "node --experimental-strip-types scripts/sync-manualsamur.ts ingest-official-pdf"
+    "sync:manualsamur:ingest-pdf": "node --experimental-strip-types scripts/sync-manualsamur.ts ingest-official-pdf",
+    "validate:content-parity": "node --experimental-strip-types scripts/validate-content-parity.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

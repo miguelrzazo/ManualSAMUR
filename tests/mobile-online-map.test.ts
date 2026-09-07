@@ -179,7 +179,7 @@ test("the MapLibre provider adapter probes the style URL and returns pins source
   const locations = locationRecords(snapshot.content);
   const originalFetch = globalThis.fetch;
   try {
-    globalThis.fetch = (async () => ({ ok: true, status: 200 })) as typeof fetch;
+    globalThis.fetch = async () => new Response(null, { status: 200 });
     const provider = createMapLibreOnlineMapProvider(locations);
     assert.equal(provider.providerId, "maplibre-carto-osm");
     const result = await provider.fetch({ query: "", filter: "all" });
@@ -195,7 +195,7 @@ test("the MapLibre provider adapter rejects when the style response is not ok", 
   const locations = locationRecords(snapshot.content);
   const originalFetch = globalThis.fetch;
   try {
-    globalThis.fetch = (async () => ({ ok: false, status: 503 })) as typeof fetch;
+    globalThis.fetch = async () => new Response(null, { status: 503 });
     const provider = createMapLibreOnlineMapProvider(locations);
     await assert.rejects(provider.fetch({ query: "", filter: "all" }), /503/);
   } finally {

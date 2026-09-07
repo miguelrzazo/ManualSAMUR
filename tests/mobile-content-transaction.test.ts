@@ -40,7 +40,7 @@ class MemoryStorage implements ContentStorage {
 const accepts = async (value: unknown) => Boolean(value && typeof value === "object" && (value as MobileSnapshot).schema === "samur-manual.mobile-content");
 
 function validatedSnapshot(): MobileSnapshot {
-  const content = { procedures: [], relationsIndex: { codes: {} } } as MobileSnapshot["content"];
+  const content = { procedures: [], relationsIndex: { codes: {} } } as unknown as MobileSnapshot["content"];
   const hashValue = contentHash(content);
   return { schema: "samur-manual.mobile-content", version: 3, generatedAt: "2026-09-01T00:00:00.000Z", hash: hashValue, contentHash: hashValue, packageHash: packageHash(content, []), content };
 }
