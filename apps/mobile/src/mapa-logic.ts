@@ -1,4 +1,5 @@
 import { filterLocations, sortLocationsByDistance, type LocationCoordinate, type LocationKind, type LocationRecord } from "./location-logic.ts";
+import { MADRID_OFFLINE_PACK_BOUNDS } from "./offline-map-pack-logic.ts";
 
 /**
  * Pure helpers for the full-screen Mapa (T5e). Kept apart from React Native and
@@ -11,6 +12,21 @@ export type LocationWithDistance = LocationRecord & { distanceMeters?: number };
 /** MapLibre coordinate order is [longitude, latitude] — the opposite of `LocationRecord`'s lat/lng fields. Centralising the flip here keeps every camera-move call site from re-deriving it (and getting it backwards). */
 export function mapCameraTargetFor(location: Pick<LocationRecord, "lat" | "lng">): [longitude: number, latitude: number] {
   return [location.lng, location.lat];
+}
+
+/**
+ * ¿Cae la coordenada dentro de la caja que ya usan tanto la cámara del mapa online
+ * (`maxBounds` en `OnlineMapView`) como el paquete offline de Madrid? MapLibre
+ * recorta la cámara a esa caja EN SILENCIO: si no comprobamos esto antes de pedir
+ * un `moveTo`, un usuario fuera de Madrid ve la cámara saltar al borde de la
+ * ciudad sin explicación, y su punto de ubicación se dibuja pinzado a esa caja.
+ *
+ * Única fuente de verdad de la caja: `MADRID_OFFLINE_PACK_BOUNDS`. No se declara
+ * aquí una segunda constante de límites.
+ */
+export function isWithinMadridBounds(coordinate: LocationCoordinate): boolean {
+  const [west, south, east, north] = MADRID_OFFLINE_PACK_BOUNDS;
+  return coordinate.lng >= west && coordinate.lng <= east && coordinate.lat >= south && coordinate.lat <= north;
 }
 
 /**

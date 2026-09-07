@@ -26,6 +26,7 @@ export const accessibilityHints = {
   dismiss: "Cierra esta pantalla y devuelve el foco al elemento que la abrió.",
   search: "Escribe términos, identificadores o texto del manual.",
   switchTab: "Cambia a esta sección de la navegación principal.",
+  share: "Abre las opciones para compartir este procedimiento.",
 } as const;
 
 /**

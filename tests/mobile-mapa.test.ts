@@ -2,7 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { formatDistanceLabel, mapCameraTargetFor, nearestLocationOfKind } from "../apps/mobile/src/mapa-logic.ts";
+import { formatDistanceLabel, isWithinMadridBounds, mapCameraTargetFor, nearestLocationOfKind } from "../apps/mobile/src/mapa-logic.ts";
+import { MADRID_OFFLINE_PACK_BOUNDS } from "../apps/mobile/src/offline-map-pack-logic.ts";
 import { locationRecords } from "../apps/mobile/src/location-logic.ts";
 
 const appRoot = path.join(process.cwd(), "apps/mobile");
@@ -33,4 +34,23 @@ test("distance labels switch from meters to kilometers at 1000m, with a Spanish 
   const mapaSource = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
   assert.doesNotMatch(mapaSource, /en línea recta/);
   assert.match(mapaSource, /distancia directa/);
+});
+
+test("isWithinMadridBounds matches the single source of truth (MADRID_OFFLINE_PACK_BOUNDS)", () => {
+  const [west, south, east, north] = MADRID_OFFLINE_PACK_BOUNDS;
+
+  // Central Madrid (Puerta del Sol, roughly).
+  assert.equal(isWithinMadridBounds({ lat: 40.4168, lng: -3.7038 }), true);
+
+  // Just outside each of the four edges.
+  assert.equal(isWithinMadridBounds({ lat: 40.4168, lng: west - 0.01 }), false);
+  assert.equal(isWithinMadridBounds({ lat: 40.4168, lng: east + 0.01 }), false);
+  assert.equal(isWithinMadridBounds({ lat: south - 0.01, lng: -3.7038 }), false);
+  assert.equal(isWithinMadridBounds({ lat: north + 0.01, lng: -3.7038 }), false);
+
+  // The exact corners are inclusive.
+  assert.equal(isWithinMadridBounds({ lat: south, lng: west }), true);
+  assert.equal(isWithinMadridBounds({ lat: south, lng: east }), true);
+  assert.equal(isWithinMadridBounds({ lat: north, lng: west }), true);
+  assert.equal(isWithinMadridBounds({ lat: north, lng: east }), true);
 });

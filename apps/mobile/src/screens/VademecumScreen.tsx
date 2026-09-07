@@ -583,9 +583,7 @@ function createStyles(palette: AdaptivePalette) {
     alphabetRow: { paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
     alphabetContent: { paddingHorizontal: spacing.lg, gap: 4 },
     alphabetChip: {
-      minWidth: 30,
-      minHeight: 30,
-      borderRadius: 15,
+      ...circle(30),
       backgroundColor: palette.surfaceMuted,
       alignItems: "center",
       justifyContent: "center",

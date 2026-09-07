@@ -24,7 +24,7 @@ import {
 import { ProcedureLinkCard } from "@/components/manual/ProcedureLinkCard";
 import { ProcedureVisitTracker } from "@/components/manual/ProcedureVisitTracker";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
-import { PrintButton } from "@/components/manual/PrintButton";
+import { ShareButton } from "@/components/manual/ShareButton";
 import {
   AlgoritmoLabel,
   Caution,
@@ -52,8 +52,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
-import { canonicalProcedureMarkdown } from "@/lib/markdown-export";
-import { CopyMarkdownButton } from "@/components/manual/CopyMarkdownButton";
+import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "@/lib/markdown-export";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -215,12 +214,15 @@ export default async function ProcedurePage({ params }: Props) {
               )}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
-              <PrintButton />
-              <CopyMarkdownButton markdown={canonicalProcedureMarkdown(procedure)} />
+              <ShareButton
+                title={procedure.title}
+                url={`${resolveCanonicalSiteUrl()}/manual/${procedure.slug}`}
+                markdown={canonicalProcedureMarkdown(procedure)}
+              />
               <FavoriteButton
                 procedureId={procedure.id}
                 validIds={allProcedures.map((item) => item.id)}
-                className="h-9 w-9 p-0"
+                className="h-9 w-9 p-0 print:hidden"
               />
             </div>
           </div>

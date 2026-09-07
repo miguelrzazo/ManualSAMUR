@@ -16,7 +16,7 @@ const pbxFile = require("xcode/lib/pbxFile");
 // `UILaunchScreen` Info.plist key (supported since iOS 14). This needs no ibtool step,
 // so it can never hit the platform-mismatch failure above.
 const backgroundColorName = "SplashBackgroundColor";
-const backgroundColorHex = "D92732"; // matches app.json's splash.backgroundColor
+const backgroundColorHex = "1B4FA8"; // matches app.json's splash.backgroundColor
 
 function hexToUnitComponent(hex) {
   return (parseInt(hex, 16) / 255).toFixed(3);

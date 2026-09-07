@@ -224,6 +224,8 @@ test("the centre-on-me control asks for permission on tap and never on mount", (
   assert.doesNotMatch(source, /useEffect\([^)]*requestLocation/);
   // Declining leaves the map up: only `onPressNearest` trades it for the directory.
   assert.equal(source.match(/reason: "permission-denied"/g)?.length, 1);
-  // The reader's own position is plotted only once it exists.
-  assert.match(source, /userLocation=\{origin \?/);
+  // The reader's own position is plotted only once it exists, and only when it falls
+  // inside the box MapLibre's `maxBounds` clamps to — outside it the camera would pin
+  // the dot to the edge of Madrid instead of the reader's real, out-of-town position.
+  assert.match(source, /userLocation=\{origin && isWithinMadridBounds\(origin\) \?/);
 });

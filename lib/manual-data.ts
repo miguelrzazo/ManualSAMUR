@@ -1292,7 +1292,12 @@ export function getProcedureSidebarMeta(
       if (num === 313) return { group: "Urgencias específicas", subgroup: "Urgencias por agentes físicos" };
       if (num === 314) return { group: "Urgencias específicas", subgroup: "Urgencias pediátricas" };
       if (num === 315) return { group: "Urgencias específicas", subgroup: "Intoxicaciones" };
-      return { group: "Urgencias específicas", subgroup: "Otras urgencias" };
+      // Red de seguridad: ningún id del corpus actual debería llegar aquí (todos los
+      // procedimientos SVA casan con una regla explícita arriba). Si un futuro sync de la
+      // wiki añade un id nuevo (p. ej. 317) sin clasificar, cae en este cajón; debe
+      // permanecer vacío. tests/manual-taxonomy.test.ts falla si algo aterriza aquí, para
+      // que una persona clasifique el procedimiento en lugar de perderlo en un subgrupo fantasma.
+      return { group: "Urgencias específicas", subgroup: "Sin clasificar" };
 
     case "SVB":
       if (/^412/.test(id)) {

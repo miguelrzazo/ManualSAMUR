@@ -3,6 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 import { StatusBar } from "expo-status-bar";
 import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,6 +17,7 @@ import {
   Platform,
   Pressable as NativePressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -26,16 +29,17 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { ContentProvider, findProcedure, useContent } from "./src/content";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
 import { useScrollChrome } from "./src/hooks/use-scroll-chrome";
-import { BackToTop, Chip, CompactHeader, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField } from "./src/components";
+import { BackToTop, Chip, CompactHeader, FavoriteToggle, MarkdownTable, PageHeader, Press, SearchField, Toast } from "./src/components";
 import type { MobileAttachment, MobileProcedure } from "../../packages/manual-content/src/index.ts";
 import { displayTitle } from "./src/title-case";
 import { procedureHeadings, procedureRouteKey, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
+import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
 import { snippetText, type SearchSnippet } from "./src/search-snippet-logic";
 import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
@@ -78,6 +82,17 @@ import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/**
+ * Origen del sitio web canónico, para construir el enlace y el pie del PDF de
+ * "compartir procedimiento". `procedure-share.ts` se mantiene puro (sin
+ * `expo-constants`), así que este es el único sitio donde se lee — el mismo
+ * valor que ya usa la descarga de anexos en `attachment-runtime.ts`.
+ */
+const CONTENT_ORIGIN = (() => {
+  const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
+  return typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "https://manual-proced-spc.vercel.app";
+})();
 
 /**
  * App.tsx's stylesheet, per theme. This replaces a module-level `let styles`
@@ -188,7 +203,7 @@ function fieldLabel(key: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeTitle = true, headerTitle }: {
+function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeTitle = true, headerTitle, trailing }: {
   navigation: { setOptions: (options: Record<string, unknown>) => void };
   title: string;
   favorite?: boolean;
@@ -202,6 +217,12 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
    * what the back button on the *next* screen and VoiceOver both read.
    */
   headerTitle?: () => React.ReactNode;
+  /**
+   * An extra control beside the favourite star (e.g. the procedure reader's
+   * share trigger, which has no favourite star of its own — see the comment
+   * above `ProcedureScreen`'s `useDetailHeader` call).
+   */
+  trailing?: () => React.ReactNode;
 }) {
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -210,11 +231,16 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
       title: displayTitle(title),
       headerLargeTitle: largeTitle,
       headerTitle,
-      headerRight: onToggleFavorite
-        ? () => <FavoriteToggle favorite={Boolean(favorite)} onToggle={onToggleFavorite} size={24} />
+      headerRight: onToggleFavorite || trailing
+        ? () => (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
+              {trailing?.()}
+              {onToggleFavorite && <FavoriteToggle favorite={Boolean(favorite)} onToggle={onToggleFavorite} size={24} />}
+            </View>
+          )
         : undefined,
     });
-  }, [navigation, title, favorite, onToggleFavorite, largeTitle, headerTitle]);
+  }, [navigation, title, favorite, onToggleFavorite, largeTitle, headerTitle, trailing]);
 }
 
 function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
@@ -603,6 +629,153 @@ function ProcedureFigure({ attachment, record, onOpen, alt }: { attachment: Mobi
   );
 }
 
+/**
+ * El botón de compartir de la cabecera del lector.
+ *
+ * Va junto al favorito de las demás fichas (`useDetailHeader`'s `trailing`),
+ * aunque el procedimiento no tenga un favorito ahí: ese control vive dentro
+ * del cuerpo por la razón que explica el comentario sobre `handoff` más abajo
+ * — compite con el título grande — y este no tiene ese problema porque no
+ * lleva texto propio, solo el icono.
+ */
+function ProcedureShareTrigger({ onPress, busy }: { onPress: () => void; busy: boolean }) {
+  const palette = useTheme();
+  return (
+    <Press
+      onPress={onPress}
+      disabled={busy}
+      hitSlop={12}
+      accessibilityRole="button"
+      accessibilityLabel="Compartir procedimiento"
+      accessibilityHint={accessibilityHints.share}
+      accessibilityState={{ busy, disabled: busy }}
+      style={styles_shareTrigger.button}
+    >
+      <MaterialCommunityIcons name="export-variant" size={22} color={busy ? palette.inkMuted : palette.ink} />
+    </Press>
+  );
+}
+
+const styles_shareTrigger = {
+  // Mismo patrón que `FavoriteToggle`: sin fondo propio, centrado sobre su
+  // icono, el hit target lo da `Press` (44pt mínimo) y no un círculo dibujado.
+  button: { alignItems: "center", justifyContent: "center" },
+} as const;
+
+/**
+ * Compartir un procedimiento: el enlace web, o un PDF generado con
+ * `expo-print`. Vive en su propio hook para que `ProcedureScreen` —ya larga—
+ * no absorba también la máquina de estados de la generación del PDF.
+ */
+function useProcedureShare(procedure: MobileProcedure | undefined) {
+  const [sheetOpen, setSheetOpen] = useState(false);
+  // `undefined` mientras se comprueba; una vez resuelto no vuelve a cambiar
+  // durante la vida de la pantalla, así que una sola comprobación al montar
+  // basta — no hace falta repetirla cada vez que se abre la hoja.
+  const [pdfAvailable, setPdfAvailable] = useState<boolean | undefined>(undefined);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const available = await Sharing.isAvailableAsync();
+        if (!cancelled) setPdfAvailable(available);
+      } catch {
+        if (!cancelled) setPdfAvailable(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const shareLink = useCallback(async () => {
+    if (!procedure) return;
+    setBusy(true);
+    setError(undefined);
+    try {
+      const url = buildProcedureShareUrl(CONTENT_ORIGIN, procedure);
+      await Share.share(Platform.OS === "ios" ? { url, message: displayTitle(procedure.title) } : { message: url, title: displayTitle(procedure.title) });
+      setSheetOpen(false);
+    } catch {
+      setError("No se ha podido abrir el panel para compartir el enlace.");
+    } finally {
+      setBusy(false);
+    }
+  }, [procedure]);
+
+  const sharePdf = useCallback(async () => {
+    if (!procedure) return;
+    setBusy(true);
+    setError(undefined);
+    try {
+      const html = buildProcedureShareHtml(procedure, CONTENT_ORIGIN);
+      const { uri } = await Print.printToFileAsync({ html, base64: false });
+      await Sharing.shareAsync(uri, { UTI: "com.adobe.pdf", mimeType: "application/pdf", dialogTitle: displayTitle(procedure.title) });
+      setSheetOpen(false);
+    } catch {
+      setError("No se ha podido generar el PDF de este procedimiento.");
+    } finally {
+      setBusy(false);
+    }
+  }, [procedure]);
+
+  return { sheetOpen, setSheetOpen, pdfAvailable, busy, error, setError, shareLink, sharePdf };
+}
+
+/**
+ * La hoja de opciones de "Compartir". Mismas filas de acción que la hoja de
+ * Mapa (`sheetActions`/`sheetAction` en MapaScreen.tsx): icono, texto,
+ * chevron — en vez de inventar un segundo lenguaje visual para elegir entre
+ * dos acciones.
+ */
+function ProcedureShareSheet({ visible, onClose, procedureTitle, pdfAvailable, busy, onShareLink, onSharePdf }: {
+  visible: boolean;
+  onClose: () => void;
+  procedureTitle: string;
+  pdfAvailable: boolean | undefined;
+  busy: boolean;
+  onShareLink: () => void;
+  onSharePdf: () => void;
+}) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  return (
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+      <SafeAreaView style={styles.shareSheetScreen} edges={["top", "bottom"]}>
+        <PageHeader
+          title="Compartir"
+          trailing={
+            <Pressable onPress={onClose} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar opciones para compartir" accessibilityHint={accessibilityHints.dismiss}>
+              <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
+            </Pressable>
+          }
+        />
+        <View style={styles.shareSheetBody}>
+          <Text style={styles.shareSheetSubject} numberOfLines={2}>{displayTitle(procedureTitle)}</Text>
+          <View style={styles.sheetActions} accessibilityLabel="Formas de compartir">
+            <Pressable onPress={onShareLink} disabled={busy} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Compartir enlace" accessibilityHint="Abre la hoja para compartir el enlace web de este procedimiento." accessibilityState={{ disabled: busy }}>
+              <MaterialCommunityIcons name="link-variant" size={19} color={palette.ink} />
+              <Text style={styles.sheetActionText}>Compartir enlace</Text>
+              <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
+            </Pressable>
+            {pdfAvailable !== false && (
+              <Pressable onPress={onSharePdf} disabled={busy} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Compartir como PDF" accessibilityHint="Genera un PDF de este procedimiento y abre la hoja para compartirlo." accessibilityState={{ busy, disabled: busy }}>
+                <MaterialCommunityIcons name="file-pdf-box" size={19} color={palette.ink} />
+                <Text style={styles.sheetActionText}>{busy ? "Generando PDF…" : "Compartir como PDF"}</Text>
+                <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
+              </Pressable>
+            )}
+          </View>
+          {pdfAvailable === false && (
+            <Text style={styles.shareSheetNotice}>Este dispositivo no puede compartir archivos: solo está disponible el enlace.</Text>
+          )}
+        </View>
+      </SafeAreaView>
+    </Modal>
+  );
+}
+
 function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Procedure">) {
   const palette = useTheme();
   const styles = useAppStyles();
@@ -638,6 +811,8 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const [activeHeadingKey, setActiveHeadingKey] = useState<string | null>(null);
   const [pendingHeadingKey, setPendingHeadingKey] = useState<string | null>(null);
   const [tocFrame, setTocFrame] = useState({ y: 0, height: 0 });
+  const share = useProcedureShare(procedure);
+  const shareTrigger = useCallback(() => <ProcedureShareTrigger onPress={() => share.setSheetOpen(true)} busy={share.busy} />, [share]);
   useEffect(() => {
     if (procedure && canRecordRecent(content, routeKey)) remember(routeKey);
   }, [content, procedure, remember, routeKey]);
@@ -731,6 +906,9 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     title: procedure ? procedure.title : "Procedimiento",
     largeTitle: false,
     headerTitle: reduceMotion ? undefined : headerTitle,
+    // Compartir sí cabe aquí: a diferencia del favorito no lleva palabra
+    // propia junto al icono, así que no compite con el título grande.
+    trailing: procedure ? shareTrigger : undefined,
   });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const outgoingIds = [...new Set(procedure.relations.filter((relation) => relation.direction === "outgoing" && relation.kind !== "suggested").map((relation) => relation.id))].filter((id) => id !== procedure.id);
@@ -821,6 +999,16 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     label="Volver al principio del procedimiento"
     bottom={spacing.xl}
   />
+  <ProcedureShareSheet
+    visible={share.sheetOpen}
+    onClose={() => share.setSheetOpen(false)}
+    procedureTitle={procedure.title}
+    pdfAvailable={share.pdfAvailable}
+    busy={share.busy}
+    onShareLink={() => void share.shareLink()}
+    onSharePdf={() => void share.sharePdf()}
+  />
+  {share.error && <Toast message={share.error} tone="error" onDismiss={() => share.setError(undefined)} />}
   </SafeAreaView>;
 }
 
@@ -1134,6 +1322,10 @@ function createStyles(palette: AdaptivePalette) {
   // debajo empezaba 16pt mas adentro, y la cabecera no alineaba con nada.
   brandHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: palette.paper },
   brandLockup: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  // Los radios del logo no salen de la escala a proposito: reproducen el squircle
+  // del propio icono (rx 224 sobre un lienzo de 1024, es decir ~0,22 del lado), no
+  // una esquina redondeada de superficie. circle() tampoco vale, porque un circulo
+  // perfecto seria 47 y 19. Si se tocan, el logo deja de ser el icono.
   logoMark: { width: 94, height: 94, borderRadius: 27, backgroundColor: palette.primary, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   logoMarkSmall: { width: 38, height: 38, borderRadius: 11 },
   logoCrossVertical: { position: "absolute", width: 15, height: 60, backgroundColor: palette.white, borderRadius: 3 },
@@ -1142,7 +1334,7 @@ function createStyles(palette: AdaptivePalette) {
   logoArrow: { position: "absolute", width: 36, height: 36, backgroundColor: palette.ink, transform: [{ rotate: "45deg" }], left: 20, top: 16, borderRadius: 4 },
   logoArrowSmall: { width: 16, height: 16, left: 8, top: 7, borderRadius: 2 },
   brandName: { flexShrink: 1, color: palette.ink, ...typography.title3, fontWeight: "700" },
-  iconButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },
+  iconButton: { ...circle(44), alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },
   searchBar: { minHeight: 58, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
   searchInput: { flex: 1, color: palette.ink, fontSize: 14, paddingVertical: 0 }, searchPlaceholder: { flex: 1, color: palette.inkMuted, fontSize: 14 },
   sectionHeading: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginTop: spacing.md, marginBottom: spacing.md },
@@ -1150,17 +1342,17 @@ function createStyles(palette: AdaptivePalette) {
   sectionAction: { color: palette.primary, fontSize: 12, fontWeight: "800", paddingBottom: 2 },
   cardList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl },
   resourceRow: { minHeight: 70, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderBottomWidth: 1, borderBottomColor: palette.line }, resourceRowMain: { flex: 1, minHeight: 44, flexDirection: "row", alignItems: "center", gap: spacing.md },
-  resourceCode: { width: 42, height: 42, borderRadius: 12, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" },
+  resourceCode: { width: 42, height: 42, borderRadius: radii.sm, backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" },
   drugCode: { backgroundColor: palette.surfaceMuted }, resourceCopy: { flex: 1 }, resourceTitle: { color: palette.ink, fontSize: 14, lineHeight: 18, fontWeight: "700" }, resourceInlineCode: { color: palette.primary, fontWeight: "800" }, resourceMeta: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: 3 }, resourceSnippet: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 5 }, resourceSnippetMatch: { color: palette.ink, fontWeight: "700", backgroundColor: palette.amberWash },
   pressed: { opacity: 0.72 },
-  progressTrack: { height: 4, borderRadius: 2, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
+  progressTrack: { height: 4, borderRadius: radii.pill, backgroundColor: palette.line, overflow: "hidden", marginTop: 7 }, progressFill: { height: 4, backgroundColor: palette.green },
   disclaimer: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginVertical: spacing.md },
   searchScreenHeader: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }, searchScreenHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.md }, pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8 }, searchPadding: { paddingHorizontal: spacing.lg }, filterScroller: { flexGrow: 0, marginTop: spacing.md, marginBottom: spacing.md }, filterScrollerContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, gap: spacing.sm }, detailSearch: { marginTop: spacing.lg },
   filterRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, paddingHorizontal: spacing.lg, marginBottom: spacing.sm }, filterChip: { minHeight: 44, justifyContent: "center", paddingVertical: 9, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted }, filterChipActive: { backgroundColor: palette.ink }, filterText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" }, filterTextActive: { color: palette.paper },
   emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm }, emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 16 }, emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 13, lineHeight: 18 },
   mapLegend: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.md }, mapLegendText: { color: palette.inkMuted, fontSize: 12 }, locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabled: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.surfaceMuted, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, padding: spacing.md, marginHorizontal: spacing.lg, marginBottom: spacing.md }, onlineMapDisabledTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" }, onlineMapDisabledCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, locationActions: { gap: spacing.sm, marginBottom: spacing.md }, locationActionButton: { minHeight: 48, borderRadius: radii.md, backgroundColor: palette.ink, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm, paddingHorizontal: spacing.lg }, locationActionText: { color: palette.white, fontSize: 13, fontWeight: "800" }, nearestToggle: { flexDirection: "row", gap: spacing.sm }, nearestChoice: { flex: 1, minHeight: 42, borderRadius: radii.sm, backgroundColor: palette.surfaceMuted, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.sm }, nearestChoiceActive: { backgroundColor: palette.primaryWash, borderWidth: 1, borderColor: palette.primary }, nearestChoiceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800", textAlign: "center" }, nearestChoiceTextActive: { color: palette.primaryDark }, locationFallback: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }, locationFallbackText: { flex: 1, color: palette.ink, fontSize: 12, lineHeight: 17 }, locationTypeBadge: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.sm, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, marginBottom: spacing.sm }, locationTypeBadgeText: { fontSize: 12, fontWeight: "800" }, accessibleEquivalent: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }, accessibleEquivalentTitle: { color: palette.ink, fontSize: 14, fontWeight: "800" }, accessibleEquivalentCopy: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: 3 }, onlineMapAttributionText: { fontSize: 10, color: "#13233D" }, retryLinkText: { color: palette.ink, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: 4 },
   schematicMap: { height: 300, borderRadius: radii.lg, backgroundColor: palette.surfaceMuted, overflow: "hidden", position: "relative", marginBottom: spacing.xl, borderWidth: 1, borderColor: palette.line }, mapRoadOne: { position: "absolute", width: "150%", height: 42, backgroundColor: palette.paper, transform: [{ rotate: "-24deg" }], top: 125, left: -50 }, mapRoadTwo: { position: "absolute", width: "120%", height: 20, backgroundColor: palette.paper, transform: [{ rotate: "38deg" }], top: 64, left: -12 }, mapRoadThree: { position: "absolute", width: 18, height: "130%", backgroundColor: palette.paper, transform: [{ rotate: "15deg" }], top: -20, left: 185 }, mapPinRed: { backgroundColor: palette.primary }, mapPinNavy: { backgroundColor: palette.ink }, mapCompass: { position: "absolute", top: 15, right: 15, alignItems: "center" }, mapCompassN: { fontSize: 11, color: palette.ink, fontWeight: "900" }, mapNote: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: -spacing.md, marginBottom: spacing.xl }, locationIconBase: { backgroundColor: palette.amberWash }, locationAddress: { color: palette.ink, fontSize: 11, lineHeight: 16, marginTop: 2 }, locationDistance: { color: palette.green, fontSize: 11, fontWeight: "800", lineHeight: 16, marginTop: 2 }, locationFreshness: { color: palette.inkMuted, fontSize: 10, lineHeight: 14, marginTop: 2 },
-  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, headerHandoffTitle: { color: palette.ink, fontSize: 17, fontWeight: "600", letterSpacing: -0.4, maxWidth: 240, textAlign: "center" }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl, overflow: "hidden" }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08 }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, orderedMarker: { color: palette.primary, fontSize: 15, lineHeight: 23, fontWeight: "800" , minWidth: 22 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, contentsHeader: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, contentsRowActive: { backgroundColor: palette.surface }, contentsAccent: { width: 3, height: 24, borderRadius: 2, backgroundColor: "transparent", marginRight: spacing.sm }, contentsAccentActive: { backgroundColor: palette.primary }, pinnedContents: { position: "absolute", top: 0, left: spacing.lg, right: spacing.lg, minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.pill }, pinnedContentsText: { color: palette.ink, fontSize: 12, fontWeight: "800" },
+  detailTopbar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xl }, detailTopbarLabel: { flex: 1, marginHorizontal: spacing.md, textAlign: "center", color: palette.inkMuted, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 }, detailSection: { color: palette.primary, fontSize: 11, fontWeight: "900", letterSpacing: 1.4, marginBottom: spacing.sm }, detailTitle: { color: palette.ink, fontSize: 30, lineHeight: 34, fontWeight: "800", letterSpacing: -0.8 }, headerHandoffTitle: { color: palette.ink, fontSize: 17, fontWeight: "600", letterSpacing: -0.4, maxWidth: 240, textAlign: "center" }, detailMeta: { color: palette.inkMuted, fontSize: 12, marginTop: spacing.sm, marginBottom: spacing.lg }, sourceNotice: { flexDirection: "row", gap: spacing.sm, backgroundColor: palette.dangerWash, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }, sourceNoticeText: { flex: 1, color: palette.dangerDark, fontSize: 12, lineHeight: 17 }, sourceRecoveryLink: { color: palette.dangerDark, fontSize: 12, fontWeight: "800", textDecorationLine: "underline", marginTop: spacing.sm }, contentsCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl, overflow: "hidden" }, contentsTitle: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08 }, contentsRow: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: palette.line }, contentsText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" }, contentsTextNested: { paddingLeft: spacing.md, fontWeight: "600", color: palette.inkMuted }, markdown: { gap: spacing.sm, marginBottom: spacing.xl }, markdownText: { color: palette.ink, fontSize: 15, lineHeight: 23 }, markdownH2: { color: palette.ink, fontSize: 22, lineHeight: 27, fontWeight: "800", marginTop: spacing.lg }, markdownH3: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "800", marginTop: spacing.md }, markdownBullet: { flexDirection: "row", gap: spacing.sm, paddingLeft: spacing.sm }, bulletDot: { color: palette.primary, fontSize: 18, lineHeight: 23 }, orderedMarker: { color: palette.primary, fontSize: 15, lineHeight: 23, fontWeight: "800" , minWidth: 22 }, attachmentRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, padding: spacing.md, minHeight: 66, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, editorialBlock: { padding: spacing.md, gap: spacing.sm, borderBottomWidth: 1, borderBottomColor: palette.line }, editorialLink: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, editorialTitle: { color: palette.ink, fontSize: 16, lineHeight: 21, fontWeight: "800" }, updateList: { backgroundColor: palette.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, overflow: "hidden", marginBottom: spacing.xl }, updateRow: { padding: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, contentsHeader: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, contentsRowActive: { backgroundColor: palette.surface }, contentsAccent: { width: 3, height: 24, borderRadius: radii.pill, backgroundColor: "transparent", marginRight: spacing.sm }, contentsAccentActive: { backgroundColor: palette.primary }, pinnedContents: { position: "absolute", top: 0, left: spacing.lg, right: spacing.lg, minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.pill }, pinnedContentsText: { color: palette.ink, fontSize: 12, fontWeight: "800" },
   favoriteAction: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: spacing.xs + 2, minHeight: 44, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, marginTop: spacing.md },
   favoriteActionOn: { backgroundColor: palette.primaryWash },
   favoriteActionText: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
@@ -1172,11 +1364,21 @@ function createStyles(palette: AdaptivePalette) {
   figure: { width: "100%", borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line },
   figurePlaceholder: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 60, paddingHorizontal: spacing.md, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line },
   figureCaption: { ...typography.caption, color: palette.inkMuted, marginTop: spacing.xs },
-  figureZoom: { position: "absolute", top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: palette.ink, opacity: 0.72 },
+  figureZoom: { position: "absolute", top: spacing.sm, right: spacing.sm, ...circle(28), alignItems: "center", justifyContent: "center", backgroundColor: palette.ink, opacity: 0.72 },
   detailDisclaimer: { color: palette.inkMuted, fontSize: 12, lineHeight: 17, marginTop: spacing.xl, marginBottom: spacing.md },
   infoBlock: { borderTopWidth: 1, borderTopColor: palette.line, paddingVertical: spacing.md }, infoLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: 4 }, infoValue: { color: palette.ink, fontSize: 15, lineHeight: 22 }, codeRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, codeValue: { minWidth: 55, color: palette.primary, fontSize: 15, fontWeight: "900" }, codeResultCode: { backgroundColor: palette.amberWash }, abbreviationResultCode: { backgroundColor: palette.greenWash }, abbreviationRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, abbreviation: { width: 70, color: palette.primary, fontWeight: "900", fontSize: 13 },
   modal: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: palette.ink, fontSize: 24, fontWeight: "800" }, modalClose: { color: palette.primary, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: palette.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderColor: palette.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, recoveryActions: { backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.sm }, recoveryButtons: { flexDirection: "row", gap: spacing.sm }, recoveryButton: { marginTop: spacing.sm, backgroundColor: palette.ink, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonText: { color: palette.paper, fontSize: 12, fontWeight: "800" }, recoveryButtonSecondary: { marginTop: spacing.sm, borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonSecondaryText: { color: palette.ink, fontSize: 12, fontWeight: "800" }, primaryButton: { backgroundColor: palette.primaryAction, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, secondaryButton: { borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.sm }, secondaryButtonText: { color: palette.ink, fontWeight: "800", fontSize: 14 }, locationDetailBlock: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.lg }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: palette.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceControlStacked: { flexDirection: "column" }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: palette.ink }, appearanceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: palette.paper }, infoPanel: { backgroundColor: palette.dangerWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: palette.dangerDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: palette.dangerDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: palette.line }, linkText: { color: palette.primary, fontSize: 13, fontWeight: "800" }, legalText: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" },
   launchScreen: { flex: 1, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" }, launchTitle: { color: palette.white, ...typography.title1, textAlign: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl }, disclosureScreen: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: palette.primary, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: palette.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureBody: { color: palette.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
+  // La hoja de "Compartir" del lector. Mismas filas de acción que la hoja de
+  // Mapa (sheetActions/sheetAction en MapaScreen.tsx) — un único lenguaje
+  // para elegir entre varias acciones, no uno por pantalla.
+  shareSheetScreen: { flex: 1, backgroundColor: palette.paper },
+  shareSheetBody: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: spacing.md },
+  shareSheetSubject: { color: palette.inkMuted, fontSize: 13, lineHeight: 18 },
+  shareSheetNotice: { color: palette.inkMuted, fontSize: 12, lineHeight: 17 },
+  sheetActions: { gap: spacing.sm },
+  sheetAction: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.surface, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md },
+  sheetActionText: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
   // The default JS-drawn tab bar styles (tabBar/tabBarTablet/tabLabel/…) were removed here:
   // MainTabs now supplies a custom `tabBar` (GlassTabBar, src/nav-shell.tsx) so the system
   // can render real Liquid Glass, which `@react-navigation/bottom-tabs` can never draw itself.

@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { Animated, Pressable, StyleSheet } from "react-native";
-import { motion, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { circle, motion, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { accessibilityTargetStyle } from "../accessibility.ts";
 import { lightImpact } from "../hooks/haptics.ts";
 import { useReduceMotion } from "../hooks/motion.ts";
@@ -93,9 +93,7 @@ function useStyles(palette: AdaptivePalette) {
           bottom: BACK_TO_TOP_PLACEMENT.bottom,
         },
         button: {
-          width: BACK_TO_TOP_PLACEMENT.size,
-          height: BACK_TO_TOP_PLACEMENT.size,
-          borderRadius: BACK_TO_TOP_PLACEMENT.size / 2,
+          ...circle(BACK_TO_TOP_PLACEMENT.size),
           backgroundColor: palette.ink,
           alignItems: "center",
           justifyContent: "center",

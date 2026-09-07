@@ -21,8 +21,8 @@ import {
   type LocationKind,
   type LocationRecord,
 } from "../location-logic";
-import { formatDistanceLabel, mapCameraTargetFor, nearestLocationOfKind, type LocationWithDistance } from "../mapa-logic";
-import { LocationDirectory, PageHeader } from "../components";
+import { formatDistanceLabel, isWithinMadridBounds, mapCameraTargetFor, nearestLocationOfKind, type LocationWithDistance } from "../mapa-logic";
+import { LocationDirectory, PageHeader, Toast } from "../components";
 import {
   APPROVED_ONLINE_MAP_POLICY,
   initialOnlineMapState,
@@ -95,6 +95,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
   const [mapState, setMapState] = useState<OnlineMapState>(() => initialOnlineMapState(mapPolicy));
   const [sheetOpen, setSheetOpen] = useState(false);
   const [nearestBanner, setNearestBanner] = useState<{ kind: LocationKind; location: LocationWithDistance } | undefined>();
+  const [outOfBoundsWarning, setOutOfBoundsWarning] = useState(false);
   const cachingRef = useRef(false);
   const lastSnapshotRef = useRef(false);
   const mapRef = useRef<OnlineMapViewRef>(null);
@@ -201,13 +202,28 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
    * is the right answer when the whole point of the tap was a distance calculation, but
    * here it would take the map away as a punishment for declining. The denied banner
    * above says what happened and the list sheet keeps the offline directory one tap away.
+   *
+   * `OnlineMapView` clamps the camera to `MADRID_CAMERA_BOUNDS` (MapLibre's `maxBounds`),
+   * and it does so silently: a coordinate outside that box would not move the camera
+   * where the reader actually is, it would jerk it to the nearest edge of Madrid with no
+   * explanation. So a reader outside the box gets a toast instead of a camera move, and
+   * the camera stays exactly where it was.
    */
   const onPressCenterOnMe = async () => {
     const result = origin ? ({ status: "granted", coordinate: origin } as const) : await requestLocation();
     if (result.status !== "granted") return;
+    if (!isWithinMadridBounds(result.coordinate)) {
+      setOutOfBoundsWarning(true);
+      return;
+    }
     focusLocation(result.coordinate);
   };
 
+  // `focusLocation` here does NOT need the same out-of-bounds guard as
+  // `onPressCenterOnMe`: the camera target is `nearest` — a record from the packaged
+  // directory, always inside `MADRID_CAMERA_BOUNDS` by construction — never the reader's
+  // own (possibly out-of-Madrid) coordinate. `origin` is used only for the distance sort,
+  // and the user-location dot it feeds is already gated by `isWithinMadridBounds` above.
   const onPressNearest = async (kind: LocationKind) => {
     // The coordinate comes back from the request itself. It used to be read out of
     // `origin` by an effect watching for the state to land, which meant a setState
@@ -261,7 +277,11 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           bounds={MADRID_CAMERA_BOUNDS}
           minZoom={MADRID_OFFLINE_PACK_MIN_ZOOM}
           maxZoom={MADRID_OFFLINE_PACK_MAX_ZOOM}
-          userLocation={origin ? [origin.lng, origin.lat] : undefined}
+          // Fuera de la caja de Madrid, MapLibre pinzaría el punto contra el borde del
+          // `maxBounds` en vez de dibujarlo donde el lector realmente está — un punto
+          // engañoso es peor que ningún punto. Aplica a cualquier vía que ponga `origin`
+          // (este control, "hospital más cercano" o "Usar mi ubicación" de la hoja).
+          userLocation={origin && isWithinMadridBounds(origin) ? [origin.lng, origin.lat] : undefined}
           onPinPress={(pin) => openLocationDetail(pin.locationRouteKey)}
           onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
           palette={palette}
@@ -357,7 +377,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
         </View>
       )}
       {mapState.status === "online" && (
-        <Pressable onPress={retryOnlineMap} style={[styles.onlineMapRefresh, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Actualizar mapa online" accessibilityHint="Vuelve a comprobar el mapa online y sus datos.">
+        <Pressable onPress={retryOnlineMap} style={[styles.onlineMapRefresh, { top: insets.top + spacing.sm }, accessibilityTargetStyle()]} accessibilityRole="button" accessibilityLabel="Actualizar mapa online" accessibilityHint="Vuelve a comprobar el mapa online y sus datos.">
           <MaterialCommunityIcons name="refresh" size={16} color={palette.white} />
         </Pressable>
       )}
@@ -419,6 +439,14 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           />
         </SafeAreaView>
       </Modal>
+
+      {outOfBoundsWarning && (
+        <Toast
+          message="Estás fuera de Madrid. El mapa solo cubre el área de SAMUR-PC."
+          tone="warning"
+          onDismiss={() => setOutOfBoundsWarning(false)}
+        />
+      )}
     </View>
   );
 }
@@ -450,7 +478,12 @@ function createStyles(palette: AdaptivePalette) {
     // quedaba como una pegatina blanca encima de un mapa negro.
     onlineMapAttribution: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + 52, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
     onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
-    onlineMapRefresh: { position: "absolute", top: 60, right: spacing.lg, width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
+    // `top` is set inline from `insets.top + spacing.sm` — the same formula `topOverlay`
+    // uses — instead of a hardcoded 60, so it clears the notch on every device. It sits at
+    // the same height as `pageTitle` (the first row of `topOverlay`), not below it: that
+    // title is short ("Mapa") and left-aligned, so it never reaches this control on the
+    // right, on any device this app supports.
+    onlineMapRefresh: { position: "absolute", right: spacing.lg, width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.ink, alignItems: "center", justifyContent: "center" },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
     sheetTop: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
     locationPolicyNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md },

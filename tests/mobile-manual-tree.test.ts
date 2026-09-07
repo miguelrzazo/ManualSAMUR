@@ -221,3 +221,20 @@ test("seen event ids are persisted defensively and idempotently", () => {
   const seen = toggleSeenEventId(toggleSeenEventId([], "event-1"), "event-1");
   assert.equal(serializeSeenEventIds(seen), '["event-1"]');
 });
+
+// `manualSidebarMeta` is a hand-maintained verbatim port of `lib/manual-data.ts`'s
+// `getProcedureSidebarMeta` — its SVA branch's final `return` is a safety net
+// (`subgroup: "Sin clasificar"`) that no procedure in the current corpus should ever
+// reach. Mirrors the equivalent guard in tests/manual-taxonomy.test.ts for the web side.
+test("no procedure lands in the phantom 'Sin clasificar' fallback", () => {
+  const offenders: string[] = [];
+  for (const procedure of procedures) {
+    const meta = manualSidebarMeta(procedure.section, procedure.id, procedure.title);
+    if (meta.subgroup === "Sin clasificar") offenders.push(procedure.id);
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `Procedimientos sin clasificar explícitamente en manualSidebarMeta (revisar la rama "SVA" en apps/mobile/src/manual-tree-logic.ts): ${offenders.join(", ")}`,
+  );
+});

@@ -113,7 +113,9 @@ export function manualSidebarMeta(section: string, id: string, title: string): M
       if (num === 313) return { group: "Urgencias específicas", subgroup: "Urgencias por agentes físicos" };
       if (num === 314) return { group: "Urgencias específicas", subgroup: "Urgencias pediátricas" };
       if (num === 315) return { group: "Urgencias específicas", subgroup: "Intoxicaciones" };
-      return { group: "Urgencias específicas", subgroup: "Otras urgencias" };
+      // Red de seguridad: ningún procedimiento SVA del corpus actual llega hasta aquí
+      // (verificado: 0 de 65). Un test debe mantener esta rama vacía.
+      return { group: "Urgencias específicas", subgroup: "Sin clasificar" };
     case "SVB":
       if (/^412/.test(id)) return { group: "Traumatismos SVB", subgroup: "Valoración del politraumatizado" };
       if (num <= 406) return { group: "Valoración y soporte vital", subgroup: "Secuencia básica" };
