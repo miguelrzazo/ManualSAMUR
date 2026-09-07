@@ -30,7 +30,7 @@ export const RECENT_WINDOW_MS = RECENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 /**
  * Lo mínimo que /manual necesita servir para decidir la píldora "N nuevos".
  *
- * Los eventos completos (630, con ~663 KB de diffs) ya no viajan en el HTML: se
+ * Los eventos completos, con sus diffs, ya no viajan en el HTML: se
  * descargan de public/manual-updates.json al abrir el diálogo.
  */
 export interface UpdatePillEvent {

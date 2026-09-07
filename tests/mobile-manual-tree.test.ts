@@ -17,6 +17,10 @@ import {
   MANUAL_SECTIONS_PRIORITY,
   manualSidebarMeta,
   sortManualHistorial,
+  parseSeenEventIds,
+  serializeSeenEventIds,
+  toggleSeenEventId,
+  parseUnifiedDiff,
   sortManualSections,
   type ManualTreeProcedureRef,
 } from "../apps/mobile/src/manual-tree-logic.ts";
@@ -126,6 +130,7 @@ function makeEvent(overrides: Partial<ReturnType<typeof asManualUpdateEvents>[nu
   return {
     procedureIds: ["101"],
     changeKind: "actualizado",
+    diff: "@@ -1 +1 @@\n-old\n+new",
     effectiveDate: "2026-01-01",
     approvedAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
@@ -163,6 +168,14 @@ test("manualNovedades excludes revisado events and sorts most-recent first", () 
   assert.deepEqual(novedades.map((e) => e.eventId), ["new", "old"]);
 });
 
+test("user-facing history excludes dataset events even when legacy ids are present", () => {
+  const events = applyManualRecencyWindow([
+    makeEvent({ eventId: "vademecum", summary: "Dataset", category: "vademecum", procedureIds: ["101"] }),
+    makeEvent({ eventId: "procedure", summary: "Procedimiento", category: "procedure" }),
+  ]);
+  assert.deepEqual(sortManualHistorial(events).map((event) => event.eventId), ["procedure"]);
+});
+
 test("groupManualEventsByDate groups by day, most recent day first", () => {
   const events = [
     makeEvent({ eventId: "a", summary: "a", approvedAt: "2026-06-01T09:00:00.000Z" }),
@@ -174,19 +187,37 @@ test("groupManualEventsByDate groups by day, most recent day first", () => {
   assert.equal(groups[1].events.length, 2);
 });
 
-test("sortManualHistorial keeps revisado events (unlike manualNovedades) and is stable most-recent-first", () => {
+test("sortManualHistorial excludes non-user-facing review events and stays most-recent-first", () => {
   const events = [
     makeEvent({ eventId: "a", summary: "a", approvedAt: "2026-06-01T00:00:00.000Z" }),
     makeEvent({ eventId: "b", summary: "b", changeKind: "revisado", approvedAt: "2026-06-05T00:00:00.000Z" }),
   ];
   const sorted = sortManualHistorial(events);
-  assert.deepEqual(sorted.map((e) => e.eventId), ["b", "a"]);
+  assert.deepEqual(sorted.map((e) => e.eventId), ["a"]);
 });
 
 test("the bundled update history parses cleanly and stays internally consistent", () => {
   const events = asManualUpdateEvents(snapshot.content.updates);
-  assert.ok(events.length > 1000);
+  assert.ok(events.length > 0);
+  assert.ok(events.length <= 500);
   assert.equal(new Set(events.map((e) => e.eventId)).size, events.length);
   const recomputed = applyManualRecencyWindow(events, new Date("2026-09-05T00:00:00.000Z"));
   assert.ok(recomputed.every((e) => typeof e.isRecent === "boolean"));
+});
+
+test("diff rendering strips XWiki wrappers and keeps added/removed counts", () => {
+  const diff = parseUnifiedDiff("@@ -1 +1 @@\n-(((//antes//)))\n+**después**");
+  assert.deepEqual(diff.lines.map((line) => [line.kind, line.text]), [
+    ["hunk", "@@ -1 +1 @@"],
+    ["removed", "antes"],
+    ["added", "después"],
+  ]);
+  assert.equal(diff.added, 1);
+  assert.equal(diff.removed, 1);
+});
+
+test("seen event ids are persisted defensively and idempotently", () => {
+  assert.deepEqual(parseSeenEventIds('{"bad":true}'), []);
+  const seen = toggleSeenEventId(toggleSeenEventId([], "event-1"), "event-1");
+  assert.equal(serializeSeenEventIds(seen), '["event-1"]');
 });

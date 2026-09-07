@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
-import { normalizeProcedureContent, type ProcedureEditorialBlock, type ProcedureRelation } from "./manual-data.ts";
-import type { ManualUpdateEvent } from "./manual-sync.ts";
+import { getAllProcedures } from "./content.ts";
+import { buildManualRelationsIndex, type CodeReferenceSource } from "./manual-relations-index.ts";
+import { capManualUpdateEvents, type ManualUpdateEvent } from "./manual-sync.ts";
 import {
   MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
   MOBILE_ATTACHMENT_MANIFEST_VERSION,
@@ -15,6 +15,7 @@ import {
   mobileAttachmentEntries,
   mobilePackageHashPayload,
   stableRouteKey,
+  type MobileProcedureMention,
   type MobileAttachmentManifest as MobileAttachmentManifestPackage,
 } from "../apps/mobile/src/data/schema.ts";
 
@@ -31,9 +32,8 @@ export interface MobileProcedure {
   synonyms: string[];
   related: string[];
   backlinks: string[];
-  relations: ProcedureRelation[];
-  editorialBlocks: ProcedureEditorialBlock[];
-  updates: ManualUpdateEvent[];
+  relations: Array<{ id: string; direction: string; kind: string; strength: string }>;
+  editorialBlocks: unknown[];
   updated: string;
   sourceUpdated: string;
   source?: string;
@@ -72,6 +72,7 @@ export interface MobileContentSnapshot {
     status4: unknown[];
     manual: Record<string, unknown>;
     links: Record<string, unknown>;
+    relationsIndex: { codes: Record<string, MobileProcedureMention[]> };
     updates: ManualUpdateEvent[];
   };
 }
@@ -83,23 +84,6 @@ export interface MobileContentPackage {
 
 function readData<T>(name: string, cwd = process.cwd()): T {
   return JSON.parse(readFileSync(path.join(cwd, "content/data", `${name}.json`), "utf8")) as T;
-}
-
-function walkMarkdownFiles(directory: string): string[] {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const fullPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) return walkMarkdownFiles(fullPath);
-    return entry.isFile() && entry.name.endsWith(".md") ? [fullPath] : [];
-  });
-}
-
-function textForSearch(markdown: string): string {
-  return markdown
-    .replace(/```[\\s\\S]*?```/g, " ")
-    .replace(/!?(?:\\[[^\\]]*\\])?\\([^)]*\\)/g, " ")
-    .replace(/[#>*_`|]/g, " ")
-    .replace(/\\s+/g, " ")
-    .trim();
 }
 
 function localAttachmentIntegrity(cwd: string, localPath: string): Pick<MobileAttachmentManifest, "byteLength" | "sha256"> {
@@ -119,89 +103,74 @@ function localAttachmentIntegrity(cwd: string, localPath: string): Pick<MobileAt
 }
 
 function readProceduresLegacy(cwd: string): MobileProcedure[] {
-  const procedures = walkMarkdownFiles(path.join(cwd, "content/procedures"))
-    .map((filePath) => {
-      const { data, content: rawContent } = matter(readFileSync(filePath, "utf8"));
-      const id = String(data.id ?? path.basename(filePath, ".md"));
-      // The corpus is raw XWiki markdown — the sync writes it verbatim and the web
-      // normalizes on read (lib/content.ts). The package used to ship the raw body, so
-      // every artifact the web strips (cell wrappers, image macros, print buttons, the
-      // page footer) reached the native reader intact. Share the same pass.
-      //
-      // No href resolvers are handed in: the native app resolves `/manual/<slug>` links
-      // itself further down, and has no browser URL to resolve against.
-      const content = normalizeProcedureContent(rawContent, new Map(), typeof data.source === "string" ? data.source : undefined, {
-        currentProcedureId: id,
-        procedureTitle: String(data.title ?? id),
-      });
-      return {
-        id,
-        title: String(data.title ?? id),
-        section: String(data.section ?? "General"),
-        slug: String(data.slug ?? id),
-        routeKey: stableRouteKey(id),
-        tags: Array.isArray(data.tags) ? data.tags.filter((tag): tag is string => typeof tag === "string") : [],
-        synonyms: Array.isArray(data.synonyms) ? data.synonyms.filter((synonym): synonym is string => typeof synonym === "string") : [],
-        related: Array.isArray(data.related) ? data.related.filter((related): related is string => typeof related === "string") : [],
-        backlinks: [],
-        relations: [],
-        editorialBlocks: [],
-        updates: [],
-        updated: String(data.updated ?? ""),
-        sourceUpdated: String(data.sourceUpdated ?? ""),
-        source: typeof data.source === "string" ? data.source : undefined,
-        attachments: Array.isArray(data.attachments)
-          ? data.attachments.flatMap((attachment) => {
-            if (!attachment || typeof attachment !== "object") return [];
-            const candidate = attachment as Record<string, unknown>;
-            return typeof candidate.sourceUrl === "string" && typeof candidate.localPath === "string"
-              ? [{
-                id: createHash("sha1").update(`${candidate.sourceUrl}:${candidate.localPath}`).digest("hex").slice(0, 16),
-                sourceUrl: candidate.sourceUrl,
-                localPath: candidate.localPath,
-                filename: path.basename(candidate.localPath),
-                kind: (candidate.kind === "image" || candidate.kind === "pdf" ? candidate.kind : "other") as MobileAttachmentManifest["kind"],
-                ...localAttachmentIntegrity(cwd, candidate.localPath),
-              }]
-              : [];
-          })
-          : [],
-        content,
-        searchText: textForSearch(content),
-      };
-    })
-    .sort((left, right) => left.id.localeCompare(right.id, "es", { numeric: true }));
-
-  const idBySlug = new Map(procedures.map((procedure) => [procedure.slug, procedure.id]));
-  const withLinks = procedures.map((procedure) => {
-    const linkedProcedureIds = [...procedure.content.matchAll(/\/manual\/([^\s)#?"']+)/g)]
-      .map((match) => idBySlug.get(decodeURIComponent(match[1])))
-      .filter((id): id is string => Boolean(id) && id !== procedure.id);
-    return { ...procedure, routeKey: stableRouteKey(procedure.id), related: [...new Set([...procedure.related, ...linkedProcedureIds])] };
+  // The web corpus owns the id/slug map used during normalization. Passing a
+  // fresh Map() here used to disable every editorial, content-link and
+  // safe-mention link before relation derivation even had a chance to run.
+  return getAllProcedures().map((procedure) => {
+    const relations = procedure.relations.filter((relation) => relation.kind !== "suggested");
+    return {
+      id: procedure.id,
+      title: procedure.title,
+      section: procedure.section,
+      slug: procedure.slug,
+      routeKey: stableRouteKey(procedure.id),
+      tags: procedure.tags,
+      synonyms: procedure.synonyms,
+      related: relations.filter((relation) => relation.direction === "outgoing").map((relation) => relation.id),
+      backlinks: procedure.backlinks,
+      relations,
+      editorialBlocks: procedure.editorialBlocks,
+      updated: procedure.updated,
+      sourceUpdated: procedure.sourceUpdated,
+      source: procedure.source,
+      attachments: procedure.attachments.map((attachment) => ({
+        id: createHash("sha1").update(`${attachment.sourceUrl}:${attachment.localPath}`).digest("hex").slice(0, 16),
+        sourceUrl: attachment.sourceUrl,
+        localPath: attachment.localPath,
+        filename: path.basename(attachment.localPath),
+        kind: attachment.kind,
+        ...localAttachmentIntegrity(cwd, attachment.localPath),
+      })),
+      content: procedure.content,
+      searchText: procedure.searchText,
+    };
   });
-  return withLinks.map((procedure) => ({
-    ...procedure,
-    backlinks: withLinks.filter((candidate) => candidate.related.includes(procedure.id)).map((candidate) => candidate.id),
-    relations: procedure.related.map((id) => ({ id, direction: "outgoing" as const, kind: "content-link" as const, strength: "strong" as const })),
+}
+
+function codeReferenceSources(codes: Record<string, unknown[]>): CodeReferenceSource[] {
+  return Object.entries(codes).flatMap(([group, values]) => values.flatMap((value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+    const record = value as Record<string, unknown>;
+    if (typeof record.code !== "string" || typeof record.name !== "string") return [];
+    return [{
+      code: record.code,
+      name: record.name,
+      tab: group,
+      subtab: group === "claves" ? "claves" : undefined,
+      group: typeof record.group === "string" ? record.group : undefined,
+      category: typeof record.category === "string" ? record.category : undefined,
+    }];
   }));
 }
 
-function readProcedures(cwd: string, updates: ManualUpdateEvent[]): MobileProcedure[] {
-  const editorialById = new Map<string, ProcedureEditorialBlock[]>();
-  for (const filePath of walkMarkdownFiles(path.join(cwd, "content/procedures"))) {
-    const { data } = matter(readFileSync(filePath, "utf8"));
-    const blockPath = filePath.replace(/\.md$/, ".blocks.json");
-    try { editorialById.set(String(data.id ?? path.basename(filePath, ".md")), JSON.parse(readFileSync(blockPath, "utf8")) as ProcedureEditorialBlock[]); } catch { /* no editorial supplement */ }
+function buildMobileRelationsIndex(
+  procedures: MobileProcedure[],
+  codes: Record<string, unknown[]>,
+  drugs: unknown[],
+): { codes: Record<string, MobileProcedureMention[]> } {
+  const sources = codeReferenceSources(codes);
+  const index = buildManualRelationsIndex({
+    procedures,
+    drugs: drugs.filter((value): value is { id: string; name: string } => Boolean(value) && typeof value === "object" && typeof (value as Record<string, unknown>).id === "string" && typeof (value as Record<string, unknown>).name === "string"),
+    codes: sources,
+  });
+  const mobileCodes: Record<string, MobileProcedureMention[]> = {};
+  for (const source of sources) {
+    const sourceKey = `${source.tab}:${source.subtab ?? ""}:${source.code}`;
+    const mobileKey = `${source.tab}:${source.code}`;
+    if (index.codes[sourceKey]) mobileCodes[mobileKey] = index.codes[sourceKey];
   }
-  return readProceduresLegacy(cwd).map((procedure) => ({
-    ...procedure,
-    editorialBlocks: editorialById.get(procedure.id) ?? [],
-    updates: updates.filter((event) => event.procedureIds.includes(procedure.id)),
-    relations: [
-      ...procedure.relations,
-      ...procedure.backlinks.map((id) => ({ id, direction: "incoming" as const, kind: "content-link" as const, strength: "strong" as const })),
-    ],
-  }));
+  return { codes: mobileCodes };
 }
 
 export function contentHash(content: MobileContentSnapshot["content"]): string {
@@ -220,22 +189,25 @@ export function packageHash(content: MobileContentSnapshot["content"], attachmen
 
 export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: string): MobileContentSnapshot {
   const manual = readData<Record<string, unknown>>("manual-sync", cwd);
-  const updates = readData<{ events?: ManualUpdateEvent[] }>("manual-updates", cwd).events ?? [];
+  const updates = capManualUpdateEvents(readData<{ events?: ManualUpdateEvent[] }>("manual-updates", cwd).events ?? []);
+  const codes: Record<string, unknown[]> = {
+    incidente: readData("codigos-incidente", cwd),
+    sva: readData("codigos-sva", cwd),
+    svb: readData("codigos-svb", cwd),
+    upsi: readData("codigos-upsi", cwd),
+    upsq: readData("codigos-upsq", cwd),
+    icao: readData("codigos-icao", cwd),
+    indicativos: readData("codigos-indicativos", cwd),
+    claves: readData("codigos-pc", cwd),
+    lima: readData("codigos-lima", cwd),
+    cheatsheet: readData("codigos-cheatsheet", cwd),
+  };
+  const drugs = readData<unknown[]>("vademecum", cwd);
+  const procedures = readProceduresLegacy(cwd);
   const content: MobileContentSnapshot["content"] = {
-    procedures: readProcedures(cwd, updates),
-    codes: {
-      incidente: readData("codigos-incidente", cwd),
-      sva: readData("codigos-sva", cwd),
-      svb: readData("codigos-svb", cwd),
-      upsi: readData("codigos-upsi", cwd),
-      upsq: readData("codigos-upsq", cwd),
-      icao: readData("codigos-icao", cwd),
-      indicativos: readData("codigos-indicativos", cwd),
-      claves: readData("codigos-pc", cwd),
-      lima: readData("codigos-lima", cwd),
-      cheatsheet: readData("codigos-cheatsheet", cwd),
-    },
-    drugs: readData("vademecum", cwd),
+    procedures,
+    codes,
+    drugs,
     perfusions: readData("perfusiones", cwd),
     fluids: readData("fluidos", cwd),
     commercialNames: readData("vademecum-comerciales", cwd),
@@ -245,6 +217,7 @@ export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: st
     status4: readData("status4", cwd),
     manual,
     links: readData("main-links", cwd),
+    relationsIndex: buildMobileRelationsIndex(procedures, codes, drugs),
     updates,
   };
 
@@ -290,6 +263,7 @@ export function isMobileContentSnapshot(value: unknown): value is MobileContentS
   if (snapshot.contentHash !== undefined && snapshot.contentHash !== snapshot.hash) return false;
   if (snapshot.packageHash !== undefined && !/^[a-f0-9]{64}$/.test(snapshot.packageHash)) return false;
   const content = snapshot.content as MobileContentSnapshot["content"];
+  if (!content.relationsIndex || typeof content.relationsIndex !== "object" || !content.relationsIndex.codes || typeof content.relationsIndex.codes !== "object") return false;
   if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
   if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
   if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;

@@ -36,6 +36,7 @@ const content: MobileContentSnapshot["content"] = {
     collaboratorsUrl: "",
   },
   updates: [],
+  relationsIndex: { codes: {} },
 };
 
 test("mobile snapshots validate their schema, version and content hash", () => {
@@ -85,13 +86,14 @@ test("package hash includes the attachment manifest", () => {
   }), false);
 });
 
-test("v2 snapshots carry canonical relation, editorial, update and attachment data", () => {
+test("v3 snapshots carry canonical relation, editorial, reverse-index and attachment data", () => {
   const snapshot = buildMobileContentSnapshot();
   const procedure = snapshot.content.procedures.find((item) => item.editorialBlocks.length > 0);
 
   assert.ok(procedure);
   assert.ok(Array.isArray(procedure.relations));
-  assert.ok(Array.isArray(procedure.updates));
+  assert.equal("updates" in procedure, false);
+  assert.ok(Object.keys(snapshot.content.relationsIndex.codes).length > 0);
   assert.ok(procedure.attachments.every((attachment) => attachment.id && attachment.filename));
 });
 

@@ -2,9 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "react-native";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { hasAcknowledgedDisclosure, parseAppearancePreference, type AppearancePreference } from "./preferences-logic";
+import { parseSeenEventIds, serializeSeenEventIds, toggleSeenEventId } from "./manual-tree-logic";
 
 export const FIRST_USE_DISCLOSURE_KEY = "manualsamur.firstUseDisclosure.v1";
 export const APPEARANCE_PREFERENCE_KEY = "manualsamur.preferences.appearance.v1";
+export const SEEN_EVENTS_STORAGE_KEY = "manualsamur.preferences.seenEvents.v1";
 
 export type { AppearancePreference } from "./preferences-logic";
 
@@ -14,6 +16,8 @@ type PreferencesContextValue = {
   acknowledgeFirstUse: () => Promise<void>;
   appearance: AppearancePreference;
   setAppearance: (preference: AppearancePreference) => void;
+  seenEventIds: string[];
+  markEventSeen: (eventId: string) => void;
 };
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -28,18 +32,21 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const [isHydrated, setIsHydrated] = useState(false);
   const [hasAcknowledgedFirstUse, setHasAcknowledgedFirstUse] = useState(false);
   const [appearance, setAppearanceState] = useState<AppearancePreference>("system");
+  const [seenEventIds, setSeenEventIds] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [disclosure, storedAppearance] = await Promise.all([
+        const [disclosure, storedAppearance, storedSeenEvents] = await Promise.all([
           AsyncStorage.getItem(FIRST_USE_DISCLOSURE_KEY),
           AsyncStorage.getItem(APPEARANCE_PREFERENCE_KEY),
+          AsyncStorage.getItem(SEEN_EVENTS_STORAGE_KEY),
         ]);
         if (cancelled) return;
         setHasAcknowledgedFirstUse(hasAcknowledgedDisclosure(disclosure));
         setAppearanceState(parseAppearancePreference(storedAppearance));
+        setSeenEventIds(parseSeenEventIds(storedSeenEvents));
       } catch {
         // A storage failure should never block a local-first launch.
         if (!cancelled) {
@@ -67,13 +74,23 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     void AsyncStorage.setItem(APPEARANCE_PREFERENCE_KEY, preference);
   }, []);
 
+  const markEventSeen = useCallback((eventId: string) => {
+    setSeenEventIds((current) => {
+      const next = toggleSeenEventId(current, eventId);
+      if (next.length !== current.length) void AsyncStorage.setItem(SEEN_EVENTS_STORAGE_KEY, serializeSeenEventIds(next));
+      return next;
+    });
+  }, []);
+
   const value = useMemo(() => ({
     isHydrated,
     hasAcknowledgedFirstUse,
     acknowledgeFirstUse,
     appearance,
     setAppearance,
-  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, isHydrated, setAppearance]);
+    seenEventIds,
+    markEventSeen,
+  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, isHydrated, markEventSeen, seenEventIds, setAppearance]);
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }

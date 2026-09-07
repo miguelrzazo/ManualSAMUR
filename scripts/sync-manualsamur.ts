@@ -17,6 +17,7 @@ import {
   applyRecencyWindow,
   approvePendingChanges,
   buildTickerFromEvents,
+  capManualUpdateEvents,
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
@@ -53,6 +54,7 @@ import {
   parseMainLinksFromHtml,
   readMainLinksData,
 } from "../lib/main-content.ts";
+import { diffCodeDataset } from "../lib/codigos-sync-logic.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -714,15 +716,16 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
   const files = [
     "content/data/codigos-incidente.json",
     "content/data/codigos-indicativos.json",
-    "content/data/codigos-claves.json",
+    "content/data/codigos-pc.json",
     "content/data/codigos-sva.json",
     "content/data/codigos-svb.json",
     "content/data/codigos-upsi.json",
     "content/data/codigos-upsq.json",
     "content/data/codigos-icao.json",
     "content/data/codigos-cheatsheet.json",
+    "content/data/codigos-lima.json",
   ];
-  const before = hashFiles(files);
+  const before = new Map(files.map((file) => [file, readJsonDataset(file)]));
 
   if (!dryRun) {
     fs.mkdirSync(path.join(ROOT_DIR, "docs"), { recursive: true });
@@ -740,9 +743,21 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
     }
   }
 
-  const after = hashFiles(files);
-  const changes = diffHashes(before, after);
+  const changes = files.flatMap((file) => {
+    const group = path.basename(file, ".json").replace(/^codigos-/, "");
+    const codeGroup = group === "pc" ? "claves" : group;
+    return diffCodeDataset(before.get(file), readJsonDataset(file), codeGroup).map((change) => ({
+      ...change,
+      source: file,
+    }));
+  });
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
+}
+
+function readJsonDataset(relativePath: string): unknown {
+  const fullPath = path.join(ROOT_DIR, relativePath);
+  if (!fs.existsSync(fullPath)) return [];
+  try { return JSON.parse(fs.readFileSync(fullPath, "utf8")); } catch { return null; }
 }
 
 function writeJsonDataset(filePath: string, data: unknown) {
@@ -833,11 +848,7 @@ function emptyDomainResult(): DomainResult {
 function mergeEvents(existing: ManualUpdateEvent[], incoming: ManualUpdateEvent[]) {
   const byId = new Map(existing.map((event) => [event.eventId, event]));
   for (const event of incoming) byId.set(event.eventId, event);
-  return [...byId.values()].sort((a, b) => {
-    const ak = `${a.effectiveDate}|${a.approvedAt ?? ""}`;
-    const bk = `${b.effectiveDate}|${b.approvedAt ?? ""}`;
-    return bk.localeCompare(ak);
-  });
+  return capManualUpdateEvents([...byId.values()]);
 }
 
 function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpdateEvent[] {
@@ -870,6 +881,8 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         approvedAt,
         isRecent: false,
         diff: change.diff,
+        category: change.category ?? (domain === "procedures" ? "procedure" : domain === "vademecum" ? "vademecum" : undefined),
+        routeKey: change.routeKey ?? (change.category === "codigo" ? change.id : undefined),
       });
     }
   }

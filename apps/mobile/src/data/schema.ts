@@ -4,7 +4,7 @@
  * and the native runtime can validate the same shape.
  */
 export const MOBILE_SNAPSHOT_SCHEMA = "samur-manual.mobile-content" as const;
-export const MOBILE_SNAPSHOT_VERSION = 2 as const;
+export const MOBILE_SNAPSHOT_VERSION = 3 as const;
 export const MOBILE_ATTACHMENT_MANIFEST_SCHEMA = "samur-manual.mobile-attachments" as const;
 export const MOBILE_ATTACHMENT_MANIFEST_VERSION = 1 as const;
 
@@ -43,7 +43,20 @@ export interface MobileUpdateEvent {
   approvedAt?: string;
   isRecent?: boolean;
   category?: string;
+  routeKey?: string;
   diff?: string;
+}
+
+export interface MobileProcedureMention {
+  procedureId: string;
+  title: string;
+  slug: string;
+  section: string;
+  preview: string;
+}
+
+export interface MobileRelationsIndex {
+  codes: Record<string, MobileProcedureMention[]>;
 }
 
 export interface MobileProcedure {
@@ -58,7 +71,6 @@ export interface MobileProcedure {
   backlinks: string[];
   relations: Array<{ id: string; direction: string; kind: string; strength: string }>;
   editorialBlocks: unknown[];
-  updates: MobileUpdateEvent[];
   updated: string;
   sourceUpdated: string;
   source?: string;
@@ -90,6 +102,7 @@ export interface MobileContent {
   status4: Array<Record<string, unknown>>;
   manual: Record<string, unknown>;
   links: MobileLinks;
+  relationsIndex: MobileRelationsIndex;
   updates: MobileUpdateEvent[];
 }
 
@@ -99,7 +112,7 @@ export function isValidMobileUpdateEvent(value: unknown): value is MobileUpdateE
   if (typeof event.eventId !== "string" || !event.eventId) return false;
   if (!Array.isArray(event.procedureIds) || event.procedureIds.some((id) => typeof id !== "string" || !id)) return false;
   if (typeof event.changeKind !== "string" || typeof event.summary !== "string" || typeof event.effectiveDate !== "string") return false;
-  for (const key of ["origin", "officialUrl", "approvedAt", "category", "diff"] as const) {
+  for (const key of ["origin", "officialUrl", "approvedAt", "category", "routeKey", "diff"] as const) {
     if (event[key] !== undefined && typeof event[key] !== "string") return false;
   }
   return event.isRecent === undefined || typeof event.isRecent === "boolean";
@@ -110,7 +123,7 @@ export interface MobileSnapshot {
   version: typeof MOBILE_SNAPSHOT_VERSION;
   generatedAt: string;
   hash: string;
-  /** Hash of the canonical content bytes. Kept as `hash` for v2 API compatibility. */
+  /** Hash of the canonical content bytes. Kept as `hash` for API compatibility. */
   contentHash?: string;
   /** Hash of the canonical content plus attachment manifest package. */
   packageHash?: string;

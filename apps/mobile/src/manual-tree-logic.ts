@@ -301,6 +301,17 @@ export type ManualUpdateChangeKind = "nuevo" | "actualizado" | "revisado" | "eli
 
 export type ManualUpdateEvent = MobileUpdateEvent & { changeKind: ManualUpdateChangeKind };
 
+const USER_FACING_CHANGE_KINDS = new Set(["nuevo", "actualizado", "eliminado"]);
+
+/** History policy shared by the global timeline, Novedades and detail screens. */
+export function isUserFacingUpdate(event: ManualUpdateEvent): boolean {
+  if (event.category === "codigo") return USER_FACING_CHANGE_KINDS.has(event.changeKind);
+  if (event.category && event.category !== "procedure") return false;
+  if (event.procedureIds.length === 0) return false;
+  if (event.changeKind === "nuevo" || event.changeKind === "eliminado") return true;
+  return event.changeKind === "actualizado" && Boolean(event.diff?.trim());
+}
+
 function record(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
 }
@@ -322,6 +333,7 @@ export function asManualUpdateEvents(values: unknown): ManualUpdateEvent[] {
       approvedAt: typeof v.approvedAt === "string" ? v.approvedAt : undefined,
       isRecent: typeof v.isRecent === "boolean" ? v.isRecent : undefined,
       category: typeof v.category === "string" ? v.category : undefined,
+      routeKey: typeof v.routeKey === "string" ? v.routeKey : undefined,
       diff: typeof v.diff === "string" ? v.diff : undefined,
     }))
     .filter((event) => event.eventId.length > 0 && event.summary.length > 0);
@@ -366,7 +378,7 @@ function sortEventsDesc(events: readonly ManualUpdateEvent[]): ManualUpdateEvent
  * read as a change worth surfacing.
  */
 export function manualNovedades(events: readonly ManualUpdateEvent[]): ManualUpdateEvent[] {
-  return sortEventsDesc(events.filter((event) => event.isRecent && event.changeKind !== "revisado"));
+  return sortEventsDesc(events.filter((event) => event.isRecent && isUserFacingUpdate(event)));
 }
 
 export function manualEventDateKey(event: ManualUpdateEvent): string {
@@ -392,7 +404,69 @@ export function groupManualEventsByDate(events: readonly ManualUpdateEvent[]): M
     .map(([date, dateEvents]) => ({ date, events: dateEvents }));
 }
 
-/** Full history (every changeKind, "revisado" included), most recent first. */
+/** Full user-facing history, with internal reviews and metadata-only updates removed. */
 export function sortManualHistorial(events: readonly ManualUpdateEvent[]): ManualUpdateEvent[] {
-  return sortEventsDesc(events);
+  return sortEventsDesc(events.filter(isUserFacingUpdate));
+}
+
+export type UnifiedDiffLineKind = "context" | "added" | "removed" | "hunk";
+
+export interface UnifiedDiffLine {
+  kind: UnifiedDiffLineKind;
+  text: string;
+}
+
+export interface UnifiedDiff {
+  lines: UnifiedDiffLine[];
+  added: number;
+  removed: number;
+}
+
+function stripXWikiDiffMarkup(value: string): string {
+  return value
+    .replace(/\(\(\(|\)\)\)/g, "")
+    .replace(/\/\/([^/]+)\/\//g, "$1")
+    .replace(/\*\*|__|~~/g, "")
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function parseUnifiedDiff(diff: unknown): UnifiedDiff {
+  const lines: UnifiedDiffLine[] = [];
+  let added = 0;
+  let removed = 0;
+  for (const rawLine of typeof diff === "string" ? diff.split(/\r?\n/) : []) {
+    const kind: UnifiedDiffLineKind = rawLine.startsWith("@@")
+      ? "hunk"
+      : rawLine.startsWith("+") && !rawLine.startsWith("+++")
+        ? "added"
+        : rawLine.startsWith("-") && !rawLine.startsWith("---")
+          ? "removed"
+          : "context";
+    if (kind === "added") added += 1;
+    if (kind === "removed") removed += 1;
+    lines.push({ kind, text: stripXWikiDiffMarkup(kind === "added" || kind === "removed" ? rawLine.slice(1) : rawLine) });
+  }
+  return { lines, added, removed };
+}
+
+export function parseSeenEventIds(serialized: string | null | undefined): string[] {
+  if (!serialized) return [];
+  try {
+    const parsed: unknown = JSON.parse(serialized);
+    if (!Array.isArray(parsed)) return [];
+    return [...new Set(parsed.filter((value): value is string => typeof value === "string" && value.length > 0))];
+  } catch {
+    return [];
+  }
+}
+
+export function serializeSeenEventIds(values: readonly string[]): string {
+  return JSON.stringify([...new Set(values.filter((value) => value.length > 0))]);
+}
+
+export function toggleSeenEventId(values: readonly string[], eventId: string): string[] {
+  if (!eventId) return [...values];
+  return values.includes(eventId) ? [...values] : [...values, eventId];
 }

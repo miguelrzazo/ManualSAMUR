@@ -128,7 +128,6 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           searchIndex,
           vademecum,
           indicativos,
-          claves,
           incidente,
           pc,
           icao,
@@ -146,7 +145,6 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
           }),
           import("@/content/data/vademecum.json"),
           import("@/content/data/codigos-indicativos.json"),
-          import("@/content/data/codigos-claves.json"),
           import("@/content/data/codigos-incidente.json"),
           import("@/content/data/codigos-pc.json"),
           import("@/content/data/codigos-icao.json"),
@@ -164,7 +162,6 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
         const drugs = vademecum.default;
         const codes = [
           ...indicativos.default,
-          ...claves.default,
           ...incidente.default,
           ...pc.default,
           ...icao.default,

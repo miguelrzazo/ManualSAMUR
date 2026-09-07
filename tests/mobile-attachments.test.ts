@@ -144,8 +144,8 @@ test("real essential allowlist matches exactly the manifest's resolvable attachm
   }
 });
 
-test("real manifest: exactly 8 attachments are excluded as gone upstream, and none of them can ever read back as local", () => {
-  assert.equal(realUnresolvableAttachments.length, 8);
+test("real manifest: exactly 5 attachments are excluded as gone upstream, and none of them can ever read back as local", () => {
+  assert.equal(realUnresolvableAttachments.length, 5);
   for (const candidate of realUnresolvableAttachments) {
     assert.equal(realPolicy.essentialAttachmentIds.includes(candidate.id), false, `${candidate.id} must not be in the essential allowlist`);
     assert.equal(isAttachmentUnavailableUpstream(candidate), true);

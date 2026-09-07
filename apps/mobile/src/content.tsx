@@ -88,8 +88,8 @@ async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAtta
   if (!/^[a-f0-9]{64}$/.test(snapshot.packageHash ?? "")) return false;
   const content = snapshot.content as MobileContent;
   if (!Array.isArray(content.procedures)) return false;
+  if (!content.relationsIndex || typeof content.relationsIndex !== "object" || !content.relationsIndex.codes || typeof content.relationsIndex.codes !== "object") return false;
   if (!Array.isArray(content.updates) || content.updates.some((event) => !isValidMobileUpdateEvent(event))) return false;
-  if (content.procedures.some((procedure) => !Array.isArray(procedure.updates) || procedure.updates.some((event) => !isValidMobileUpdateEvent(event)))) return false;
   if (new Set(content.procedures.map((procedure) => procedure.id)).size !== content.procedures.length) return false;
   if (new Set(content.procedures.map((procedure) => procedure.routeKey)).size !== content.procedures.length) return false;
   if (content.procedures.some((procedure) => procedure.routeKey !== stableRouteKey(procedure.id))) return false;
@@ -126,7 +126,7 @@ export function useContent(): ContentContextValue {
 }
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const [snapshot, setSnapshot] = useState<MobileSnapshot>(bundledSnapshot as MobileSnapshot);
+  const [snapshot, setSnapshot] = useState<MobileSnapshot>(bundledSnapshot as unknown as MobileSnapshot);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
   const [recentQueries, setRecentQueries] = useState<string[]>([]);
@@ -164,7 +164,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       } else if (transaction.warning) {
         setLastError(transaction.warning);
         setSyncState("stale");
-      } else if (contentFreshness(transaction.snapshot?.generatedAt ?? (bundledSnapshot as MobileSnapshot).generatedAt) !== "fresh") {
+      } else if (contentFreshness(transaction.snapshot?.generatedAt ?? (bundledSnapshot as unknown as MobileSnapshot).generatedAt) !== "fresh") {
         setSyncState("stale");
       }
       if (!await snapshotIsValid(bundledSnapshot, bundledAttachmentManifest as MobileAttachmentManifest)) {

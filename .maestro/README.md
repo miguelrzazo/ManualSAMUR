@@ -13,6 +13,7 @@ Run:
 ```bash
 maestro test .maestro/procedure-tables.yaml
 maestro test .maestro/scroll-chrome.yaml
+maestro test .maestro/update-history.yaml
 ```
 
 `procedure-tables.yaml` opens procedures `304_02` and `314_06`, checks representative cells, verifies that raw Markdown table syntax is not displayed, and swipes through a horizontally scrollable clinical table.
@@ -24,6 +25,9 @@ of the Códigos list rather than above it, the Vademécum A-Z index highlights t
 letter in view, the global search rows lead with a kind icon and explain body
 matches with a highlighted excerpt, and the procedure title hands off to the
 navigation bar. It also writes the screenshots used as evidence on those issues.
+
+`update-history.yaml` checks the production update-history route, its two tabs,
+and that non-user-facing review events stay out of the timeline.
 
 Note on swipes: both flows use explicit `start`/`end` percentages rather than
 `direction: UP`. Maestro's directional swipe starts at the vertical centre and

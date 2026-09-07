@@ -43,7 +43,6 @@ export function isUsableProcedure(value: unknown): value is MobileProcedure {
     && Array.isArray(candidate.backlinks)
     && Array.isArray(candidate.relations)
     && Array.isArray(candidate.editorialBlocks)
-    && Array.isArray(candidate.updates)
     && Array.isArray(candidate.attachments);
 }
 

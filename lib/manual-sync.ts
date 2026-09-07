@@ -16,6 +16,8 @@ export function getDefaultManualVersion(referenceNow = new Date()): string {
 }
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
+/** Keep the shipped event stream bounded; it is embedded in every mobile package. */
+export const MAX_MANUAL_UPDATE_EVENTS = 500;
 
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
 export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial" | "deleted";
@@ -66,6 +68,8 @@ export interface SyncChange {
   sourceUpdated?: string;
   source?: string;
   diff?: string;
+  category?: ManualUpdateCategory;
+  routeKey?: string;
 }
 
 export interface SyncDomainSummary {
@@ -118,6 +122,7 @@ export interface ManualUpdateEvent {
   effectiveDate: string;
   approvedAt?: string;
   isRecent: boolean;
+  routeKey?: string;
   diff?: string;
   category?: ManualUpdateCategory;
 }
@@ -402,7 +407,7 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
       // (se han llegado a mostrar 117 novedades de hace 47 días). Se fuerza a false y
       // el cliente recalcula con el reloj del usuario mediante applyRecencyWindow.
       events: Array.isArray(parsed.events)
-        ? (parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isRecent: false }))
+        ? capManualUpdateEvents((parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isRecent: false })))
         : [],
     };
   } catch {
@@ -413,7 +418,13 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
 export function writeManualUpdatesDataset(dataset: ManualUpdatesDataset, cwd = process.cwd()) {
   const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, `${JSON.stringify(dataset, null, 2)}\n`, "utf8");
+  fs.writeFileSync(filePath, `${JSON.stringify({ ...dataset, events: capManualUpdateEvents(dataset.events) }, null, 2)}\n`, "utf8");
+}
+
+export function capManualUpdateEvents(events: readonly ManualUpdateEvent[], maxEvents = MAX_MANUAL_UPDATE_EVENTS): ManualUpdateEvent[] {
+  return [...events]
+    .sort((left, right) => `${right.effectiveDate}|${right.approvedAt ?? ""}`.localeCompare(`${left.effectiveDate}|${left.approvedAt ?? ""}`))
+    .slice(0, maxEvents);
 }
 
 export const DEFAULT_MANUAL_HISTORY_PATH = "content/data/manual-history.json";

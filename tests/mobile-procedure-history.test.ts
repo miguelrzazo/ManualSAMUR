@@ -14,6 +14,7 @@ function event(overrides: Partial<ManualUpdateEvent> & Pick<ManualUpdateEvent, "
   return {
     procedureIds: ["101"],
     changeKind: "actualizado",
+    diff: "@@ -1 +1 @@\n-old\n+new",
     effectiveDate: "2026-01-01",
     ...overrides,
   };
@@ -47,8 +48,16 @@ test("procedure history rejects malformed update input at its runtime boundary",
     null,
     { eventId: "missing-summary", procedureIds: ["101"] },
     { eventId: "bad-procedures", summary: "No enlazado", procedureIds: "101" },
-    { eventId: "valid", summary: "Válido", procedureIds: ["101"] },
+    { eventId: "valid", summary: "Válido", procedureIds: ["101"], changeKind: "actualizado", diff: "cambio" },
   ], "101").map((item) => item.eventId), ["valid"]);
+});
+
+test("procedure history hides diff-less updates while predicates support code routes", () => {
+  const selected = selectProcedureHistory([
+    event({ eventId: "without-diff", summary: "Metadata only", diff: undefined }),
+    event({ eventId: "code", summary: "Código actualizado", category: "codigo", routeKey: "code:sva:13", procedureIds: [] }),
+  ], (item) => item.category === "codigo" && item.routeKey === "code:sva:13");
+  assert.deepEqual(selected.map((item) => item.eventId), ["code"]);
 });
 
 test("known change kinds have Spanish labels and unknown kinds get a readable fallback", () => {
@@ -72,7 +81,7 @@ test("the view-model contract always describes the section and its empty state",
 test("diff handling trims meaningful text and omits blank disclosure controls", () => {
   assert.equal(procedureHistoryDiff(event({ eventId: "diff", summary: "Con diff", diff: "  - antes\n+ después  " })), "- antes\n+ después");
   assert.equal(procedureHistoryDiff(event({ eventId: "blank", summary: "Vacío", diff: " \n " })), undefined);
-  assert.equal(procedureHistoryDiff(event({ eventId: "absent", summary: "Ausente" })), undefined);
+  assert.equal(procedureHistoryDiff(event({ eventId: "absent", summary: "Ausente", diff: undefined })), undefined);
 
   const model = buildProcedureHistoryModel([
     event({ eventId: "with", summary: "Con", diff: " detalle " }),

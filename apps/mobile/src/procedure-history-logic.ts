@@ -1,5 +1,6 @@
 import {
   asManualUpdateEvents,
+  isUserFacingUpdate,
   sortManualHistorial,
   type ManualUpdateEvent,
 } from "./manual-tree-logic.ts";
@@ -35,11 +36,14 @@ export interface ProcedureHistoryModel {
  */
 export function selectProcedureHistory(
   updates: unknown | readonly ManualUpdateEvent[],
-  procedureId: string,
+  selector: string | ((event: ManualUpdateEvent) => boolean),
 ): ManualUpdateEvent[] {
-  if (!procedureId) return [];
+  const predicate = typeof selector === "function"
+    ? selector
+    : (event: ManualUpdateEvent) => event.procedureIds.includes(selector);
+  if (typeof selector === "string" && !selector) return [];
   return sortManualHistorial(
-    asManualUpdateEvents(updates).filter((event) => event.procedureIds.includes(procedureId)),
+    asManualUpdateEvents(updates).filter((event) => isUserFacingUpdate(event) && predicate(event)),
   );
 }
 
@@ -63,12 +67,12 @@ export function procedureHistoryDiff(event: ManualUpdateEvent): string | undefin
 
 export function buildProcedureHistoryModel(
   updates: unknown | readonly ManualUpdateEvent[],
-  procedureId: string,
+  selector: string | ((event: ManualUpdateEvent) => boolean),
 ): ProcedureHistoryModel {
   return {
     title: PROCEDURE_HISTORY_TITLE,
     emptyMessage: PROCEDURE_HISTORY_EMPTY_MESSAGE,
-    items: selectProcedureHistory(updates, procedureId).map((event) => ({
+    items: selectProcedureHistory(updates, selector).map((event) => ({
       event,
       date: procedureHistoryDate(event),
       changeLabel: procedureHistoryChangeLabel(event.changeKind),

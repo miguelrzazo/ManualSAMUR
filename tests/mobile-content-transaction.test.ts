@@ -18,7 +18,7 @@ import {
 const hash = (digit: string) => digit.repeat(64);
 const snapshot = (digit: string): MobileSnapshot => ({
   schema: "samur-manual.mobile-content",
-  version: 2,
+  version: 3,
   generatedAt: "2026-09-01T00:00:00.000Z",
   hash: hash(digit),
   contentHash: hash(digit),
@@ -40,9 +40,9 @@ class MemoryStorage implements ContentStorage {
 const accepts = async (value: unknown) => Boolean(value && typeof value === "object" && (value as MobileSnapshot).schema === "samur-manual.mobile-content");
 
 function validatedSnapshot(): MobileSnapshot {
-  const content = { procedures: [] } as MobileSnapshot["content"];
+  const content = { procedures: [], relationsIndex: { codes: {} } } as MobileSnapshot["content"];
   const hashValue = contentHash(content);
-  return { schema: "samur-manual.mobile-content", version: 2, generatedAt: "2026-09-01T00:00:00.000Z", hash: hashValue, contentHash: hashValue, packageHash: packageHash(content, []), content };
+  return { schema: "samur-manual.mobile-content", version: 3, generatedAt: "2026-09-01T00:00:00.000Z", hash: hashValue, contentHash: hashValue, packageHash: packageHash(content, []), content };
 }
 
 test("staging writes an immutable package and recovery record without changing the active pointer", async () => {

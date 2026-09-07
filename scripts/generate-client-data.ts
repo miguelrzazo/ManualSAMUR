@@ -12,7 +12,7 @@ import type { ProcedureSearchDoc } from "../lib/search.ts";
  *   public/manual-history.json — historial completo de cambios
  *
  * Ambos existen por el mismo motivo. Viajaban dentro del payload RSC de cada página
- * (el índice de búsqueda desde el layout raíz, los 630 eventos con sus diffs desde
+ * (el índice de búsqueda desde el layout raíz, los eventos con sus diffs desde
  * /manual), lo que inflaba el HTML a varios MB. Sacarlos a ficheros estáticos hace
  * que se descarguen solo cuando hacen falta —al abrir la búsqueda o el historial— y
  * que el navegador los cachee entre visitas.
@@ -54,8 +54,9 @@ console.log(`[generate-client-data] ${searchIndex.length} procedimientos → pub
 
 // ─── Eventos de novedades ─────────────────────────────────────────────────────
 
-// Los 630 eventos, con ~663 KB de diffs, se serializaban en el HTML de /manual.
-// El diálogo los descarga al abrirse; la página solo lleva lo justo para la píldora.
+// Los eventos, con sus diffs, se descargan solo al abrir el historial; además,
+// readManualUpdatesDataset aplica el límite de 500 para no publicar un stream
+// que crezca sin límite.
 const updates = readManualUpdatesDataset();
 const updateBytes = writeJson("manual-updates.json", updates);
 console.log(`[generate-client-data] ${updates.events.length} eventos → public/manual-updates.json (${mb(updateBytes)})`);

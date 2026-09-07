@@ -446,7 +446,7 @@ test("communications datasets exist with minimum expected sections", () => {
     fs.readFileSync(path.join(process.cwd(), "content/data/codigos-indicativos.json"), "utf8"),
   ) as Array<{ code: string; name: string; group?: string }>;
   const claves = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "content/data/codigos-claves.json"), "utf8"),
+    fs.readFileSync(path.join(process.cwd(), "content/data/codigos-pc.json"), "utf8"),
   ) as Array<{ code: string; name: string; group?: string }>;
   const cheatsheet = JSON.parse(
     fs.readFileSync(path.join(process.cwd(), "content/data/codigos-cheatsheet.json"), "utf8"),

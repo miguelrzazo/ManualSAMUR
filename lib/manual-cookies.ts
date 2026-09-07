@@ -9,7 +9,7 @@ export const COOKIE_LIMIT = 12;
 /**
  * Tope de eventos "vistos" que se conservan.
  *
- * A diferencia de favoritos/recientes, esta lista crecía sin límite. Con 630 eventos
+ * A diferencia de favoritos/recientes, esta lista crecía sin límite. Con cientos de eventos
  * a ~45 B por id se supera el máximo de ~4 KB por cookie; el navegador la descarta
  * en silencio y *todo* el estado de "visto" se pierde, así que las insignias vuelven
  * a salir en rojo. Se guardan solo los más recientes: los ids antiguos ya no importan

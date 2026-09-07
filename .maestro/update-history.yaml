@@ -1,0 +1,29 @@
+# The history flow verifies the production route and the user-facing filter.
+# It uses the bundled v3 package.
+appId: es.madrid.samur.manual
+tags:
+  - ci
+  - smoke
+  - update-history
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    text: "8081"
+    optional: true
+- tapOn:
+    text: "Entendido, abrir el manual"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "Historial"
+    timeout: 15000
+- tapOn:
+    text: "Historial"
+- extendedWaitUntil:
+    visible:
+      text: "Historial de actualizaciones"
+    timeout: 5000
+- assertVisible: "Novedades"
+- assertVisible: "Historial"
+- assertNotVisible: "Revisado"

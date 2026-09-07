@@ -41,6 +41,7 @@
     "2236eb9b64460881",
     "233b5ee9c829de01",
     "23952f03a1dcab9a",
+    "239c35f5af37882d",
     "23fbf0ef3f535933",
     "2596d129174b9c82",
     "26ffc5d270326635",
@@ -79,6 +80,7 @@
     "460f2b89897fda22",
     "46558c562c15dc09",
     "466801adeaf1341a",
+    "46a5c590f3f7132e",
     "46d193e1b458e6ee",
     "47424a6423b4a1a1",
     "4790dca47970844f",
@@ -297,6 +299,7 @@
     "ee5a54ed0c5c8f37",
     "f05be0d77f84fda6",
     "f0904d8a21cd62d0",
+    "f19795593cddd7a3",
     "f0a50e7a831fb04a",
     "f2933d7b28837813",
     "f3b4ce3f75973ec2",
@@ -314,5 +317,5 @@
     "ffc6b98cae5ed9d1"
   ],
   "approvalReference": "issue-62-owner-decision-2026-09-05",
-  "notes": "Decisión del propietario del contenido: TODOS los anexos del manual son esenciales y se empaquetan offline con la app, en lugar de descargarse bajo demanda. De los 318 anexos del manifiesto, 310 se resolvieron con byteLength y SHA-256 verificados y ocupan 59243267 bytes (~56,5 MB en total), dentro de los límites de 75 MB (esenciales) y 150 MB (instalados) de attachment-logic.ts. Los 8 anexos restantes ya no existen en la wiki de origen: se comprobó cada sourceUrl contra servpub.madrid.es y todos devuelven HTTP 404 (una imagen del procedimiento 606_03a, el PDF de medicación intranasal del procedimiento 314_05, y los seis PDF 509.1-509.6 del procedimiento 509). No se pueden descargar ni empaquetar; se excluyen deliberadamente de la allowlist y el runtime (attachment-runtime.ts) los deja siempre en estado no disponible, con el enlace oficial como única alternativa. La especificación (issue #26) fija un objetivo de descarga inicial de 50 MB; empaquetar los 56,5 MB de anexos esenciales supera ese objetivo. El propietario acepta esta desviación con conocimiento de causa a cambio de que el manual completo funcione sin conexión desde el primer arranque; no se ha modificado ningún límite de tamaño para ocultar la desviación."
+  "notes": "Decisión del propietario del contenido: TODOS los anexos resolubles del manual son esenciales y se empaquetan offline con la app, en lugar de descargarse bajo demanda. De los 318 anexos del manifiesto, 313 se resolvieron con byteLength y SHA-256 verificados y ocupan 59564983 bytes (~56,8 MB en total), dentro de los límites de 75 MB (esenciales) y 150 MB (instalados) de attachment-logic.ts. Los 5 anexos restantes ya no existen en la wiki de origen: se comprobó cada sourceUrl contra servpub.madrid.es y todos devuelven HTTP 404 (una imagen del procedimiento 603a y los cuatro PDF 509.3-509.6 del procedimiento 509). No se pueden descargar ni empaquetar; se excluyen deliberadamente de la allowlist y el runtime (attachment-runtime.ts) los deja siempre en estado no disponible, con el enlace oficial como única alternativa. La especificación (issue #26) fija un objetivo de descarga inicial de 50 MB; empaquetar los 56,8 MB de anexos esenciales supera ese objetivo. El propietario acepta esta desviación con conocimiento de causa a cambio de que el manual completo funcione sin conexión desde el primer arranque; no se ha modificado ningún límite de tamaño para ocultar la desviación."
 }

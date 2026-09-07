@@ -30,7 +30,6 @@ test("offline procedure lookup ranks exact identifier/title before synonym and c
     backlinks: [],
     relations: [],
     editorialBlocks: [],
-    updates: [],
     updated: "",
     sourceUpdated: "",
     attachments: [],
@@ -211,7 +210,7 @@ test("no excerpt where there is nothing to explain", () => {
 test("searchProcedures explains body hits but not title hits", () => {
   const base = {
     section: "SVA", slug: "", routeKey: "", tags: [], synonyms: [], related: [], backlinks: [],
-    relations: [], editorialBlocks: [], updates: [], attachments: [], sourceUpdated: "", source: "", updated: "",
+    relations: [], editorialBlocks: [], attachments: [], sourceUpdated: "", source: "", updated: "",
   };
   const procedures = [
     { ...base, id: "1", title: "Atropello", content: "Cualquier cosa.", searchText: "" },

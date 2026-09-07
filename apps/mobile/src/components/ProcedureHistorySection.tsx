@@ -1,14 +1,15 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { ManualUpdateEvent } from "../manual-tree-logic.ts";
 import { buildProcedureHistoryModel, type ProcedureHistoryItem } from "../procedure-history-logic.ts";
 import { useTheme } from "../theme.tsx";
-import { Press } from "./Press.tsx";
+import { UpdateDiff } from "./UpdateDiff.tsx";
 
 export interface ProcedureHistorySectionProps {
-  procedureId: string;
+  procedureId?: string;
+  predicate?: (event: ManualUpdateEvent) => boolean;
   updates: unknown | readonly ManualUpdateEvent[];
 }
 
@@ -17,10 +18,13 @@ export interface ProcedureHistorySectionProps {
  * The section is intentionally always present so an empty history is an
  * explicit content state rather than an apparently missing feature.
  */
-export function ProcedureHistorySection({ procedureId, updates }: ProcedureHistorySectionProps) {
+export function ProcedureHistorySection({ procedureId, predicate, updates }: ProcedureHistorySectionProps) {
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
-  const model = useMemo(() => buildProcedureHistoryModel(updates, procedureId), [procedureId, updates]);
+  const model = useMemo(
+    () => buildProcedureHistoryModel(updates, predicate ?? procedureId ?? (() => false)),
+    [predicate, procedureId, updates],
+  );
 
   return (
     <View style={styles.section} accessibilityLabel={model.title}>
@@ -50,7 +54,6 @@ function ProcedureHistoryRow({
   palette: AdaptivePalette;
   styles: ReturnType<typeof createStyles>;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const badge = badgeColors(item.event.changeKind, palette);
 
   return (
@@ -62,26 +65,7 @@ function ProcedureHistoryRow({
         <Text style={styles.date}>{item.date}</Text>
       </View>
       <Text style={styles.summary}>{item.event.summary}</Text>
-      {item.diff ? (
-        <>
-          <Press
-            onPress={() => setExpanded((value) => !value)}
-            style={styles.diffButton}
-            accessibilityRole="button"
-            accessibilityLabel={`${expanded ? "Ocultar" : "Mostrar"} cambios del ${item.date}`}
-            accessibilityHint={expanded ? "Oculta el detalle del cambio." : "Muestra el detalle del cambio."}
-            accessibilityState={{ expanded }}
-          >
-            <Text style={styles.diffButtonText}>{expanded ? "Ocultar cambios" : "Ver cambios"}</Text>
-            <MaterialCommunityIcons
-              name={expanded ? "chevron-up" : "chevron-down"}
-              size={20}
-              color={palette.primary}
-            />
-          </Press>
-          {expanded ? <Text style={styles.diff}>{item.diff}</Text> : null}
-        </>
-      ) : null}
+      {item.diff ? <UpdateDiff diff={item.diff} palette={palette} compact /> : null}
     </View>
   );
 }

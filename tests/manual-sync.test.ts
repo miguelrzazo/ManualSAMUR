@@ -8,6 +8,7 @@ import {
   filterUserFacingTickerEvents,
   getDefaultManualVersion,
   appendSyncRun,
+  capManualUpdateEvents,
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
@@ -18,12 +19,35 @@ import {
   resolveStableProcedureIdForSource,
   stableContentHash,
 } from "../lib/manual-sync.ts";
+import { assertCodeDatasetIsPlausible, diffCodeDataset, CodeDatasetImplausibleError } from "../lib/codigos-sync-logic.ts";
 
 test("stableContentHash ignores insignificant whitespace changes", () => {
   assert.equal(
     stableContentHash("## Título\n\nDosis:  1 mg\n"),
     stableContentHash("## Título\r\n\r\nDosis: 1 mg"),
   );
+});
+
+test("manual update history is capped to the newest events", () => {
+  const events = Array.from({ length: 4 }, (_, index) => ({
+    eventId: `event-${index}`,
+    procedureIds: ["101"],
+    changeKind: "nuevo",
+    summary: `Evento ${index}`,
+    effectiveDate: `2026-01-0${index + 1}`,
+  }));
+  assert.deepEqual(capManualUpdateEvents(events, 2).map((event) => event.eventId), ["event-3", "event-2"]);
+});
+
+test("code dataset diffs emit routable per-code events and guard parser mass loss", () => {
+  const before = [{ code: "13", name: "Antiguo", category: "sva" }, { code: "14", name: "Igual" }];
+  const after = [{ code: "13", name: "Nuevo", category: "sva" }, { code: "15", name: "Añadido" }];
+  assert.deepEqual(diffCodeDataset(before, after, "sva"), [
+    { id: "code:sva:13", routeKey: "code:sva:13", title: "Nuevo", changeType: "updated", changeKind: "actualizado", category: "codigo" },
+    { id: "code:sva:14", routeKey: "code:sva:14", title: "Igual", changeType: "deleted", changeKind: "eliminado", category: "codigo" },
+    { id: "code:sva:15", routeKey: "code:sva:15", title: "Añadido", changeType: "created", changeKind: "nuevo", category: "codigo" },
+  ]);
+  assert.throws(() => assertCodeDatasetIsPlausible(10, 7), CodeDatasetImplausibleError);
 });
 
 test("classifyProcedureChange detects new, unchanged and updated procedures", () => {

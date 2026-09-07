@@ -27,6 +27,6 @@ export type RootStackParamList = {
   /** One anexo, rendered in-app: a PDF page view or a zoomable image. */
   Anexo: { attachmentId: string };
   Status4: undefined;
-  /** Throwaway UI spike for issue 85; never intended for production navigation. */
-  HistoryPrototype: undefined;
+  /** Full-screen update timeline for the manual and its code datasets. */
+  Historial: undefined;
 };

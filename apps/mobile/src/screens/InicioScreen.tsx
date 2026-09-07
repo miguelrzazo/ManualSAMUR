@@ -25,18 +25,16 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
   View,
   type ListRenderItemInfo,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
-import { displayLabel, displayTitle } from "../title-case";
+import { displayTitle } from "../title-case";
 import { FavoriteToggle } from "../components";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { lightImpact } from "../hooks/haptics";
@@ -54,17 +52,12 @@ import {
   asManualUpdateEvents,
   buildManualTree,
   flattenManualTree,
-  groupManualEventsByDate,
   manualNovedades,
   manualSectionColor,
-  sortManualHistorial,
   sortManualSections,
   type ManualTreeRow,
-  type ManualUpdateEvent,
 } from "../manual-tree-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
-
-const HISTORY_PAGE_SIZE = 50;
 
 type InicioNavigation = BottomTabScreenProps<TabsParamList, "Inicio">["navigation"];
 
@@ -76,13 +69,6 @@ function openSavedReference(navigation: InicioNavigation, item: SavedReference) 
   else if (item.kind === "hospital" || item.kind === "base") parent?.navigate("Location", { routeKey: item.routeKey });
   else parent?.navigate("Vademecum", { routeKey: item.routeKey });
 }
-
-const KIND_BADGE_COLOR: Record<string, string> = {
-  nuevo: "green",
-  actualizado: "ink",
-  revisado: "amber",
-  eliminado: "red",
-};
 
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   const { content, favorites, recents, toggleFavorite } = useContent();
@@ -117,16 +103,11 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   );
   const novedades = useMemo(() => manualNovedades(updateEvents), [updateEvents]);
 
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [historyTab, setHistoryTab] = useState<"novedades" | "historial">("novedades");
-  const [historyPage, setHistoryPage] = useState(1);
-  const novedadesGroups = useMemo(() => groupManualEventsByDate(novedades), [novedades]);
-  const historialEvents = useMemo(() => sortManualHistorial(updateEvents), [updateEvents]);
 
   const favoriteItems = useMemo(() => selectSavedReferences(content, favorites).slice(0, 8), [content, favorites]);
   const recentItems = useMemo(() => selectProcedureReferences(content, recents).slice(0, 8), [content, recents]);
 
-  const openHistory = () => { setHistoryPage(1); setHistoryOpen(true); };
+  const openHistory = () => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Historial");
 
   const openProcedure = (id: string) => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Procedure", { id });
 
@@ -205,17 +186,6 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
                   {novedades.length > 0 ? `${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial"}
                 </Text>
               </Pressable>
-              {__DEV__ && (
-                <Pressable
-                  onPress={() => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("HistoryPrototype")}
-                  style={styles.prototypeChip}
-                  accessibilityRole="button"
-                  accessibilityLabel="Abrir prototipo del historial de actualizaciones"
-                >
-                  <MaterialCommunityIcons name="flask-outline" size={16} color={palette.primary} />
-                  <Text style={styles.prototypeChipText}>Prototipo</Text>
-                </Pressable>
-              )}
             </View>
 
             {favoriteItems.length > 0 && (
@@ -252,19 +222,6 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
         }
       />
 
-      <HistoryModal
-        visible={historyOpen}
-        onClose={() => setHistoryOpen(false)}
-        tab={historyTab}
-        onChangeTab={setHistoryTab}
-        novedadesGroups={novedadesGroups}
-        historialEvents={historialEvents}
-        historyPage={historyPage}
-        onLoadMore={() => setHistoryPage((page) => page + 1)}
-        onOpenProcedure={(id) => { setHistoryOpen(false); openProcedure(id); }}
-        palette={palette}
-        styles={styles}
-      />
     </View>
   );
 }
@@ -338,122 +295,6 @@ function CollectionSection({
   );
 }
 
-function HistoryModal({
-  visible,
-  onClose,
-  tab,
-  onChangeTab,
-  novedadesGroups,
-  historialEvents,
-  historyPage,
-  onLoadMore,
-  onOpenProcedure,
-  palette,
-  styles,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  tab: "novedades" | "historial";
-  onChangeTab: (tab: "novedades" | "historial") => void;
-  novedadesGroups: ReturnType<typeof groupManualEventsByDate>;
-  historialEvents: ManualUpdateEvent[];
-  historyPage: number;
-  onLoadMore: () => void;
-  onOpenProcedure: (id: string) => void;
-  palette: AdaptivePalette;
-  styles: ReturnType<typeof createStyles>;
-}) {
-  const visibleHistorial = historialEvents.slice(0, historyPage * HISTORY_PAGE_SIZE);
-  return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <SafeAreaView style={styles.historyModalSafeArea} edges={["top", "bottom"]} accessibilityViewIsModal>
-        <View style={styles.historyHeader} accessibilityRole="header">
-          <Text style={styles.historyTitle}>Historial de actualizaciones</Text>
-          <Pressable onPress={onClose} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar historial de actualizaciones" accessibilityHint={accessibilityHints.dismiss}>
-            <MaterialCommunityIcons name="close" size={22} color={palette.ink} />
-          </Pressable>
-        </View>
-        <View style={styles.historyTabs} accessibilityRole="tablist">
-          {([["novedades", `Novedades (${novedadesGroups.reduce((total, g) => total + g.events.length, 0)})`], ["historial", `Historial completo (${historialEvents.length})`]] as const).map(([key, label]) => (
-            <Pressable
-              key={key}
-              onPress={() => onChangeTab(key)}
-              style={[styles.historyTab, tab === key && styles.historyTabActive]}
-              accessibilityRole="tab"
-              accessibilityLabel={label}
-              accessibilityState={{ selected: tab === key }}
-            >
-              <Text style={[styles.historyTabText, tab === key && styles.historyTabTextActive]}>{label}</Text>
-            </Pressable>
-          ))}
-        </View>
-        {tab === "novedades" ? (
-          <FlatList
-            data={novedadesGroups}
-            keyExtractor={(group) => group.date}
-            contentContainerStyle={styles.historyContent}
-            ListEmptyComponent={<Text style={styles.historyEmpty}>No hay novedades en los últimos 30 días. Consulta el historial completo.</Text>}
-            renderItem={({ item: group }) => (
-              <View style={styles.historyDateGroup}>
-                <Text style={styles.historyDateLabel}>{group.date}</Text>
-                {group.events.map((event) => <HistoryEventRow key={event.eventId} event={event} onOpenProcedure={onOpenProcedure} palette={palette} styles={styles} />)}
-              </View>
-            )}
-          />
-        ) : (
-          <FlatList
-            data={visibleHistorial}
-            keyExtractor={(event) => event.eventId}
-            contentContainerStyle={styles.historyContent}
-            onEndReachedThreshold={0.4}
-            onEndReached={() => { if (visibleHistorial.length < historialEvents.length) onLoadMore(); }}
-            renderItem={({ item: event }) => <HistoryEventRow event={event} onOpenProcedure={onOpenProcedure} palette={palette} styles={styles} showDate />}
-          />
-        )}
-      </SafeAreaView>
-    </Modal>
-  );
-}
-
-function HistoryEventRow({
-  event,
-  onOpenProcedure,
-  palette,
-  styles,
-  showDate = false,
-}: {
-  event: ManualUpdateEvent;
-  onOpenProcedure: (id: string) => void;
-  palette: AdaptivePalette;
-  styles: ReturnType<typeof createStyles>;
-  showDate?: boolean;
-}) {
-  const procedureId = event.procedureIds[0];
-  const badgeColorKey = KIND_BADGE_COLOR[event.changeKind] ?? "ink";
-  const badgeColor = badgeColorKey === "green" ? palette.green : badgeColorKey === "amber" ? palette.amber : badgeColorKey === "red" ? palette.danger : palette.ink;
-  const body = (
-    <>
-      <Text style={[styles.historyBadge, { color: badgeColor }]}>{displayLabel(event.changeKind)}</Text>
-      <View style={styles.resourceCopy}>
-        <Text style={styles.historySummary}>{event.summary}</Text>
-        {showDate && <Text style={styles.historyDate}>{(event.approvedAt ?? event.effectiveDate).slice(0, 10)}</Text>}
-      </View>
-    </>
-  );
-  return procedureId ? (
-    <Pressable
-      onPress={() => onOpenProcedure(procedureId)}
-      style={({ pressed }) => [styles.historyRow, pressed && styles.pressed]}
-      accessibilityRole="button"
-      accessibilityLabel={`${event.changeKind}: ${event.summary}`}
-      accessibilityHint={accessibilityHints.openDetail}
-    >
-      {body}
-    </Pressable>
-  ) : (
-    <View style={styles.historyRow}>{body}</View>
-  );
-}
 
 function createStyles(palette: AdaptivePalette) {
   return StyleSheet.create({
@@ -491,8 +332,6 @@ function createStyles(palette: AdaptivePalette) {
     secondaryChipHighlight: { backgroundColor: palette.primaryWash },
     secondaryChipText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
     secondaryChipTextHighlight: { color: palette.primary },
-    prototypeChip: { flexDirection: "row", alignItems: "center", gap: 6, minHeight: 36, paddingHorizontal: spacing.md, borderRadius: radii.pill, borderWidth: 1, borderColor: palette.primary, backgroundColor: palette.primaryWash },
-    prototypeChipText: { fontSize: 12, fontWeight: "700", color: palette.primary },
 
     collectionSection: {
       backgroundColor: palette.surface,
@@ -539,29 +378,5 @@ function createStyles(palette: AdaptivePalette) {
     procedureId: { minWidth: 40, color: palette.inkMuted, fontSize: 12, fontWeight: "700", fontVariant: ["tabular-nums"] },
     procedureTitle: { flex: 1, fontSize: 13, color: palette.ink },
 
-    historyModalSafeArea: { flex: 1, backgroundColor: palette.paper },
-    historyHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-    historyTitle: { fontSize: 16, fontWeight: "800", color: palette.ink },
-    historyTabs: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: palette.line, paddingHorizontal: spacing.lg },
-    historyTab: { minHeight: 40, paddingHorizontal: spacing.md, justifyContent: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
-    historyTabActive: { borderBottomColor: palette.ink },
-    historyTabText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
-    historyTabTextActive: { color: palette.ink },
-    historyContent: { padding: spacing.lg, gap: spacing.sm },
-    historyEmpty: { textAlign: "center", color: palette.inkMuted, fontSize: 13, paddingVertical: spacing.xl },
-    historyDateGroup: { marginBottom: spacing.md },
-    historyDateLabel: { fontSize: 11, fontWeight: "800", color: palette.inkMuted, marginBottom: spacing.xs },
-    historyRow: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: spacing.sm,
-      minHeight: 44,
-      paddingVertical: spacing.sm,
-      borderBottomWidth: 1,
-      borderBottomColor: palette.line,
-    },
-    historyBadge: { fontSize: 12, fontWeight: "600", minWidth: 76 },
-    historySummary: { fontSize: 13, color: palette.ink, lineHeight: 18 },
-    historyDate: { fontSize: 11, color: palette.inkMuted, marginTop: 2 },
   });
 }
