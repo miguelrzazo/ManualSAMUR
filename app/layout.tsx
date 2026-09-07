@@ -17,7 +17,15 @@ export const metadata: Metadata = {
   title: "Manual Procedimientos SAMUR-PC",
   description: "Manual de procedimientos SAMUR-Protección Civil (Versión NO Oficial)",
   manifest: "/manifest.json",
-  icons: { icon: "/favicon.png", apple: "/favicon.png" },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    // apple-touch-icon has to be its own 180x180: iOS ignores sizes it has to
+    // downscale itself, and the old value pointed at a 1254px favicon.
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
+  },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Manual SAMUR" },
 };
 

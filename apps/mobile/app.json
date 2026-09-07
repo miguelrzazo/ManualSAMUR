@@ -19,7 +19,12 @@
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
       },
       "deploymentTarget": "16.4",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "icon": {
+        "light": "./assets/icon-ios-light.png",
+        "dark": "./assets/icon-ios-dark.png",
+        "tinted": "./assets/icon-ios-tinted.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -45,7 +50,8 @@
       "./plugins/with-ios-attachment-assets",
       "./plugins/with-android-attachment-assets",
       "@maplibre/maplibre-react-native",
-      "./plugins/with-android-release-signing"
+      "./plugins/with-android-release-signing",
+      "expo-sharing"
     ],
     "extra": {
       "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
