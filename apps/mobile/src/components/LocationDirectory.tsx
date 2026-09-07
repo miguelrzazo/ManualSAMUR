@@ -5,7 +5,7 @@ import { spacing, typography, TAB_BAR_INSET, type AdaptivePalette } from "@manua
 import { accessibilityHints } from "../accessibility.ts";
 import { displayTitle } from "../title-case.ts";
 import { formatDistanceLabel, type LocationWithDistance } from "../mapa-logic.ts";
-import { locationStaleNotice, type LocationSourcePolicy } from "../location-logic.ts";
+import { locationStaleNotice, locationVisual, type LocationSourcePolicy } from "../location-logic.ts";
 import { Chip } from "./Chip.tsx";
 import { EmptyState } from "./EmptyState.tsx";
 import { Press } from "./Press.tsx";
@@ -85,16 +85,17 @@ export function LocationDirectory({ locations, query, onQueryChange, filter, onF
         renderItem={({ item }) => {
           const stale = locationStaleNotice(item, new Date(), policy);
           const distance = formatDistanceLabel(item.distanceMeters);
+          const visual = locationVisual(item, palette);
           return (
             <Press
               onPress={() => onOpen(item)}
               style={styles.row}
               accessibilityRole="button"
-              accessibilityLabel={`${item.kind === "hospital" ? "Hospital" : "Base"} ${item.name}. ${item.address}, ${item.district}${distance ? `. ${distance}` : ""}`}
+              accessibilityLabel={`${visual.label} ${item.name}. ${item.address}, ${item.district}${distance ? `. ${distance}` : ""}`}
               accessibilityHint={accessibilityHints.openDetail}
             >
-              <View style={[styles.icon, item.kind === "base" && styles.iconBase]}>
-                <MaterialCommunityIcons name={item.kind === "hospital" ? "hospital-building" : "ambulance"} size={18} color={item.kind === "hospital" ? palette.primaryDark : palette.ink} />
+              <View style={[styles.icon, { backgroundColor: visual.wash }]}>
+                <MaterialCommunityIcons name={visual.icon} size={18} color={visual.color} />
               </View>
               <View style={styles.copy}>
                 <Text style={styles.title} numberOfLines={2}>{displayTitle(item.shortName)}</Text>
@@ -129,7 +130,6 @@ function useStyles(palette: AdaptivePalette) {
     sectionCount: { ...typography.footnote, color: palette.inkMuted, fontVariant: ["tabular-nums"] },
     row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: palette.surface },
     icon: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", backgroundColor: palette.primaryWash },
-    iconBase: { backgroundColor: palette.surfaceMuted },
     copy: { flex: 1 },
     title: { ...typography.callout, fontWeight: "500", color: palette.ink },
     meta: { ...typography.footnote, color: palette.inkMuted, marginTop: 1 },

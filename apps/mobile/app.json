@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Manual de procedimientos SAMUR PC",
+    "name": "Manual de Procedimientos SAMUR-PC",
     "slug": "manualsamur",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -15,7 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
-        "CFBundleDisplayName": "Manual de procedimientos SAMUR PC",
+        "CFBundleDisplayName": "Manual de Procedimientos SAMUR-PC",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
       },
       "deploymentTarget": "16.4"
@@ -26,7 +26,7 @@
         "backgroundColor": "#1B4FA8"
       },
       "package": "es.madrid.samur.manual",
-      "label": "Manual de procedimientos SAMUR PC"
+      "label": "Manual de Procedimientos SAMUR-PC"
     },
     "plugins": [
       "expo-status-bar",

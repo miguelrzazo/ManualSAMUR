@@ -1,6 +1,9 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useImperativeHandle, useRef, type Ref } from "react";
 import { StyleSheet, View } from "react-native";
+import type { AdaptivePalette } from "@manual-samur/design-tokens";
+import { locationVisual } from "./location-logic.ts";
 import type { OnlineMapPin } from "./online-map-logic.ts";
 import { MAPLIBRE_CARTO_STYLE_URLS } from "./online-map-runtime.ts";
 
@@ -30,10 +33,9 @@ export interface OnlineMapViewProps {
    * reader did not ask for.
    */
   userLocation?: [longitude: number, latitude: number];
+  palette: AdaptivePalette;
   onPinPress: (pin: OnlineMapPin) => void;
   onLoadError: () => void;
-  markerColor: string;
-  markerColorBase: string;
   ref?: Ref<OnlineMapViewRef>;
 }
 
@@ -49,7 +51,7 @@ export interface OnlineMapViewRef {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  markerDot: { width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: "#FFFFFF" },
+  markerDot: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
   userDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 3, borderColor: "#FFFFFF", backgroundColor: "#1D4ED8" },
 });
 
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
  * turn-by-turn, no travel-time claims, no offline cartography — the online map only
  * ever shows the same offline location directory as pins on a live basemap.
  */
-export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, userLocation, onPinPress, onLoadError, markerColor, markerColorBase, ref }: OnlineMapViewProps) {
+export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, userLocation, palette, onPinPress, onLoadError, ref }: OnlineMapViewProps) {
   const cameraRef = useRef<CameraRef>(null);
   useImperativeHandle(ref, () => ({
     moveTo(coordinate, targetZoom) {
@@ -71,11 +73,14 @@ export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, 
     <View style={styles.fill}>
       <Map style={styles.fill} mapStyle={dark ? MAPLIBRE_CARTO_STYLE_URLS.dark : MAPLIBRE_CARTO_STYLE_URLS.light} attribution attributionPosition={{ bottom: 6, left: 6 }} logo={false} onDidFailLoadingMap={onLoadError}>
         <Camera ref={cameraRef} initialViewState={{ center, zoom }} maxBounds={bounds} minZoom={minZoom} maxZoom={maxZoom} />
-        {pins.map((pin) => (
-          <Marker key={pin.id} id={pin.id} lngLat={[pin.coordinate.lng, pin.coordinate.lat]} onPress={() => onPinPress(pin)}>
-            <View style={[styles.markerDot, { backgroundColor: pin.kind === "hospital" ? markerColor : markerColorBase }]} />
-          </Marker>
-        ))}
+        {pins.map((pin) => {
+          const visual = locationVisual(pin, palette);
+          return <Marker key={pin.id} id={pin.id} lngLat={[pin.coordinate.lng, pin.coordinate.lat]} onPress={() => onPinPress(pin)}>
+            <View style={[styles.markerDot, { backgroundColor: visual.color }]} accessibilityRole="button" accessibilityLabel={`${visual.label} ${pin.title}`} accessibilityHint="Abre los detalles de esta ubicación.">
+              <MaterialCommunityIcons name={visual.icon} size={13} color={palette.paper} />
+            </View>
+          </Marker>;
+        })}
         {userLocation && (
           <Marker id="user-location" lngLat={userLocation}>
             <View style={styles.userDot} accessibilityLabel="Tu ubicación" />

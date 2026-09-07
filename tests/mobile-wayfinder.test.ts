@@ -92,8 +92,8 @@ test("the tab bar and search capsule use Liquid Glass with an honest, palette-ba
 
 test("platform identity uses the manual's own name without changing the package identifier", () => {
   const config = JSON.parse(readFileSync(path.join(appRoot, "app.json"), "utf8")) as { expo: { name: string; ios: { bundleIdentifier: string; infoPlist?: { CFBundleDisplayName?: string } }; android?: { label?: string } } };
-  assert.equal(config.expo.name, "Manual de procedimientos SAMUR PC");
-  assert.equal(config.expo.ios.infoPlist?.CFBundleDisplayName, "Manual de procedimientos SAMUR PC");
-  assert.equal(config.expo.android?.label, "Manual de procedimientos SAMUR PC");
+  assert.equal(config.expo.name, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(config.expo.ios.infoPlist?.CFBundleDisplayName, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(config.expo.android?.label, "Manual de Procedimientos SAMUR-PC");
   assert.equal(config.expo.ios.bundleIdentifier, "es.madrid.samur.manual");
 });

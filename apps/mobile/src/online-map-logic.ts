@@ -1,4 +1,4 @@
-import type { LocationCoordinate, LocationFilter, LocationKind, LocationRecord } from "./location-logic";
+import type { HospitalOwnership, LocationCoordinate, LocationFilter, LocationKind, LocationRecord } from "./location-logic";
 
 /** Provider-neutral seam. Keep online map policy and fallbacks free of SDK imports. */
 export const ONLINE_MAP_POLICY_SCHEMA = "samur-manual.online-map-policy" as const;
@@ -84,6 +84,7 @@ export interface OnlineMapRequest {
 export interface OnlineMapPin {
   id: string;
   kind: LocationKind;
+  hospitalOwnership?: HospitalOwnership;
   title: string;
   coordinate: LocationCoordinate;
   source: "offline" | "online";
@@ -174,6 +175,7 @@ export function mapPinsFromLocations(locations: LocationRecord[], source: Online
   return locations.map((location) => ({
     id: location.id,
     kind: location.kind,
+    hospitalOwnership: location.hospitalOwnership,
     title: location.shortName || location.name,
     coordinate: { lat: location.lat, lng: location.lng },
     source,

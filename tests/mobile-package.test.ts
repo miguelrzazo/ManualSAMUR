@@ -46,3 +46,22 @@ test("managed Expo config carries the iOS scene lifecycle boundary", () => {
   assert.match(plugin, /class SceneDelegate: UIResponder, UIWindowSceneDelegate/);
   assert.match(plugin, /reactNativeFactory[\s\S]*startReactNative/);
 });
+
+test("managed Expo config uses the approved display name without changing app identity keys", () => {
+  const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as {
+    expo?: {
+      name?: string;
+      slug?: string;
+      scheme?: string;
+      ios?: { bundleIdentifier?: string; infoPlist?: { CFBundleDisplayName?: string } };
+      android?: { package?: string; label?: string };
+    };
+  };
+  assert.equal(appConfig.expo?.name, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(appConfig.expo?.ios?.infoPlist?.CFBundleDisplayName, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(appConfig.expo?.android?.label, "Manual de Procedimientos SAMUR-PC");
+  assert.equal(appConfig.expo?.slug, "manualsamur");
+  assert.equal(appConfig.expo?.scheme, "manualsamur");
+  assert.equal(appConfig.expo?.ios?.bundleIdentifier, "es.madrid.samur.manual");
+  assert.equal(appConfig.expo?.android?.package, "es.madrid.samur.manual");
+});

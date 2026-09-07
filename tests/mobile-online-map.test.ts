@@ -102,6 +102,7 @@ test("online pins reuse stable offline location identity, filters, coordinates, 
   assert.deepEqual(pins[0], {
     id: locations[0].id,
     kind: locations[0].kind,
+    hospitalOwnership: locations[0].hospitalOwnership,
     title: locations[0].shortName,
     coordinate: { lat: locations[0].lat, lng: locations[0].lng },
     source: "offline",

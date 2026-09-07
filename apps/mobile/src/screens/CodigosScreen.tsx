@@ -51,6 +51,7 @@ import { useContent } from "../content";
 import { BackToTop, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes } from "../reference-search-logic";
 import { displayTitle } from "../title-case";
+import { hasHospitalOwnership, locationVisual, normalizeHospitalOwnership } from "../location-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
 
 /**
@@ -468,9 +469,12 @@ function OtrosContent({
   const hospitalList = useMemo(() => buildHospitalList(hospitals, status4), [hospitals, status4]);
   const cheatsheet = useMemo(() => asCheatsheetSections(content.codes.cheatsheet ?? []), [content.codes.cheatsheet]);
   const districts = useMemo(() => groupBasesByDistrict(bases), [bases]);
+  const publicVisual = locationVisual({ kind: "hospital", hospitalOwnership: "public" }, palette);
+  const privateVisual = locationVisual({ kind: "hospital", hospitalOwnership: "private" }, palette);
+  const baseVisual = locationVisual({ kind: "base" }, palette);
 
   const filteredHospitals = useMemo(
-    () => hospitalList.filter((h) => (showPrivate ? h.type === "private" : h.type === "public")),
+    () => hospitalList.filter((h) => hasHospitalOwnership(h.type, showPrivate ? "private" : "public")),
     [hospitalList, showPrivate],
   );
 
@@ -565,6 +569,9 @@ function OtrosContent({
             accessibilityLabel={`Base ${base.number}, ${base.name}, ${base.district}`}
             accessibilityHint={accessibilityHints.openMap}
           >
+            <View style={[styles.locationTypeIcon, { backgroundColor: baseVisual.wash }]}>
+              <MaterialCommunityIcons name={baseVisual.icon} size={17} color={baseVisual.color} />
+            </View>
             <Text style={styles.baseNumber}>{base.number}</Text>
             <View style={styles.rowCopy}>
               <Text style={styles.rowTitle}>{displayTitle(base.name)}</Text>
@@ -583,8 +590,8 @@ function OtrosContent({
     return (
       <View style={styles.flexFill}>
         <View style={styles.hospitalFilterRow}>
-          <Chip label="Públicos" selected={!showPrivate} onPress={() => setShowPrivate(false)} role="tab" accessibilityLabel="Mostrar hospitales públicos" />
-          <Chip label="Privados" selected={showPrivate} onPress={() => setShowPrivate(true)} role="tab" accessibilityLabel="Mostrar hospitales privados" />
+          <Chip label="Públicos" icon={publicVisual.icon} accent={publicVisual.color} selected={!showPrivate} onPress={() => setShowPrivate(false)} role="tab" accessibilityLabel="Mostrar hospitales públicos" />
+          <Chip label="Privados" icon={privateVisual.icon} accent={privateVisual.color} selected={showPrivate} onPress={() => setShowPrivate(true)} role="tab" accessibilityLabel="Mostrar hospitales privados" />
           <Pressable
             onPress={onOpenStatus4}
             style={[styles.status4Button, accessibilityTargetStyle()]}
@@ -604,8 +611,9 @@ function OtrosContent({
           ListEmptyComponent={
             <EmptyState title="Sin hospitales" detail="No hay hospitales para este filtro." />
           }
-          renderItem={({ item: hospital }) => (
-            <Pressable
+          renderItem={({ item: hospital }) => {
+            const visual = locationVisual({ kind: "hospital", hospitalOwnership: normalizeHospitalOwnership(hospital.type) }, palette);
+            return <Pressable
               onPress={() =>
                 hospital.lat && hospital.lng
                   ? void Linking.openURL(`https://www.google.com/maps?q=${hospital.lat},${hospital.lng}`)
@@ -613,20 +621,23 @@ function OtrosContent({
               }
               style={[styles.locationRow, accessibilityTargetStyle()]}
               accessibilityRole={hospital.lat ? "link" : "text"}
-              accessibilityLabel={`${hospital.name}${hospital.status4 !== null ? `, status 4 más ${hospital.status4}` : ""}`}
+              accessibilityLabel={`${visual.label} ${hospital.name}${hospital.status4 !== null ? `, status 4 más ${hospital.status4}` : ""}`}
               accessibilityHint={hospital.lat ? accessibilityHints.openMap : undefined}
             >
+              <View style={[styles.locationTypeIcon, { backgroundColor: visual.wash }]}>
+                <MaterialCommunityIcons name={visual.icon} size={17} color={visual.color} />
+              </View>
               <View style={styles.hospitalBadgeStack}>
                 <Text style={styles.hospitalId}>{hospital.id}</Text>
                 {hospital.status4 !== null && <Text style={styles.hospitalStatus4}>4+{hospital.status4}</Text>}
               </View>
               <View style={styles.rowCopy}>
                 <Text style={styles.rowTitle}>{displayTitle(hospital.name)}</Text>
-                <Text style={styles.rowMeta}>{hospital.address}</Text>
+                <Text style={[styles.rowMeta, { color: visual.color }]}>{visual.label} · {hospital.address}</Text>
               </View>
-              {hospital.lat && <MaterialCommunityIcons name="map-marker-outline" size={18} color={palette.inkMuted} />}
-            </Pressable>
-          )}
+              {hospital.lat && <MaterialCommunityIcons name="map-marker-outline" size={18} color={visual.color} />}
+            </Pressable>;
+          }}
         />
       </View>
     );
@@ -861,6 +872,7 @@ function createStyles(palette: AdaptivePalette) {
       borderBottomWidth: 1,
       borderBottomColor: palette.line,
     },
+    locationTypeIcon: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center" },
     baseNumber: {
       minWidth: 32,
       textAlign: "center",

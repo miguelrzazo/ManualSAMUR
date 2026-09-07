@@ -4,12 +4,15 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
   filterLocations,
+  hasHospitalOwnership,
   haversineDistanceMeters,
   isLocationStale,
   locationFavoriteId,
   locationPolicyReady,
   locationPolicyStatus,
   locationRecords,
+  locationVisual,
+  normalizeHospitalOwnership,
   locationSourcePolicy,
   locationRouteKey,
   parseLocationRouteKey,
@@ -19,6 +22,8 @@ import {
   sortLocationsByDistance,
   type LocationRecord,
 } from "../apps/mobile/src/location-logic.ts";
+import { mapPinsFromLocations } from "../apps/mobile/src/online-map-logic.ts";
+import { adaptivePalette } from "../packages/design-tokens/src/index.ts";
 
 const appRoot = path.join(process.cwd(), "apps/mobile");
 const snapshot = JSON.parse(readFileSync(path.join(appRoot, "src/data/snapshot.json"), "utf8")) as { generatedAt: string; content: { hospitals: Array<Record<string, unknown>>; bases: Array<Record<string, unknown>> } };
@@ -41,6 +46,59 @@ test("offline search and type filters cover id, name, address, and district", ()
   assert.equal(filterLocations(locations, "Gregorio").find((item) => item.id === "HGM")?.kind, "hospital");
   assert.equal(filterLocations(locations, "Centro", "base").every((item) => item.kind === "base"), true);
   assert.equal(filterLocations(locations, "HGM", "base").length, 0);
+});
+
+test("packaged locations preserve the public/private hospital split and shared visuals", () => {
+  assert.equal(locations.filter((location) => location.hospitalOwnership === "public").length, 11);
+  assert.equal(locations.filter((location) => location.hospitalOwnership === "private").length, 10);
+  assert.equal(locations.filter((location) => location.kind === "base").length, 25);
+
+  const publicHospital = locations.find((location) => location.id === "HGM")!;
+  const privateHospital = locations.find((location) => location.id === "HRB")!;
+  const base = locations.find((location) => location.id === "B0")!;
+  assert.deepEqual(locationVisual(publicHospital, adaptivePalette.light), {
+    label: "Hospital público",
+    icon: "hospital-building",
+    color: adaptivePalette.light.primary,
+    wash: adaptivePalette.light.primaryWash,
+  });
+  assert.deepEqual(locationVisual(privateHospital, adaptivePalette.light), {
+    label: "Hospital privado",
+    icon: "hospital-marker",
+    color: adaptivePalette.light.amber,
+    wash: adaptivePalette.light.amberWash,
+  });
+  assert.deepEqual(locationVisual(base, adaptivePalette.light), {
+    label: "Base SAMUR",
+    icon: "ambulance",
+    color: adaptivePalette.light.green,
+    wash: adaptivePalette.light.greenWash,
+  });
+});
+
+test("malformed hospital ownership remains visible without a false public/private claim", () => {
+  assert.equal(normalizeHospitalOwnership("public"), "public");
+  assert.equal(normalizeHospitalOwnership("private"), "private");
+  assert.equal(normalizeHospitalOwnership("unknown"), undefined);
+  assert.equal(hasHospitalOwnership("private", "private"), true);
+  assert.equal(hasHospitalOwnership("unknown", "private"), false);
+  const unknown = locationRecords({ hospitals: [{ id: "HX", lat: 40, lng: -3, type: "unknown" }], bases: [] })[0];
+  assert.equal(unknown.hospitalOwnership, undefined);
+  assert.deepEqual(locationVisual(unknown, adaptivePalette.light), {
+    label: "Hospital",
+    icon: "hospital-building",
+    color: adaptivePalette.light.inkMuted,
+    wash: adaptivePalette.light.surfaceMuted,
+  });
+});
+
+test("online map pins carry the same hospital ownership as directory records", () => {
+  const pins = mapPinsFromLocations(locations.filter((location) => ["HGM", "HRB", "B0"].includes(location.id)));
+  assert.deepEqual(pins.map((pin) => [pin.id, pin.kind, pin.hospitalOwnership]), [
+    ["HGM", "hospital", "public"],
+    ["HRB", "hospital", "private"],
+    ["B0", "base", undefined],
+  ]);
 });
 
 test("nearest uses on-device straight-line distance and defaults callers to hospitals", () => {
@@ -68,6 +126,7 @@ test("schematic nodes preserve the same location information as the accessible l
       district: location.district,
       lat: location.lat,
       lng: location.lng,
+      hospitalOwnership: location.hospitalOwnership,
       sourceDate: location.sourceDate,
       sourcePolicyApproved: location.sourcePolicyApproved,
     });
@@ -118,6 +177,23 @@ test("location screen requests permission only from an explicit action and keeps
   assert.doesNotMatch(mapaSource, /mapPercent/, "the fabricated pin positions must not come back");
   const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
   assert.match(appSource, /Abrir en Mapas/);
+});
+
+test("all location surfaces consume the shared category presentation and expose category text", () => {
+  const appSource = readFileSync(path.join(appRoot, "App.tsx"), "utf8");
+  const directorySource = readFileSync(path.join(appRoot, "src/components/LocationDirectory.tsx"), "utf8");
+  const mapaSource = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
+  const codigosSource = readFileSync(path.join(appRoot, "src/screens/CodigosScreen.tsx"), "utf8");
+  const mapViewSource = readFileSync(path.join(appRoot, "src/online-map-view.tsx"), "utf8");
+  assert.match(appSource, /locationVisual/);
+  assert.match(appSource, /locationTypeBadge/);
+  assert.match(directorySource, /locationVisual/);
+  assert.match(directorySource, /visual\.label/);
+  assert.match(mapaSource, /locationVisual/);
+  assert.match(codigosSource, /locationVisual/);
+  assert.match(codigosSource, /normalizeHospitalOwnership/);
+  assert.match(mapViewSource, /locationVisual/);
+  assert.match(mapViewSource, /visual\.icon/);
 });
 
 test("location detail no longer narrates freshness in the normal case, only when a record is genuinely stale", () => {

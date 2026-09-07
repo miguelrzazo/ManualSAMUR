@@ -39,7 +39,7 @@ export function Chip({ label, selected = false, onPress, icon, count, dotColor, 
   const styles = useStyles(palette);
   // `paper`, not `white`: in dark mode the selected fill is `ink` (near-white), and a
   // white glyph on it disappears. `labelSelected` already used `paper`; the icon did not.
-  const tint = selected ? palette.paper : accent ?? palette.inkMuted;
+  const tint = accent ?? (selected ? palette.paper : palette.inkMuted);
 
   return (
     <Press
@@ -49,8 +49,8 @@ export function Chip({ label, selected = false, onPress, icon, count, dotColor, 
       }}
       style={[
         styles.chip,
-        accent && !selected ? { backgroundColor: withAlpha(accent) } : undefined,
-        selected && styles.chipSelected,
+        accent ? { backgroundColor: withAlpha(accent) } : undefined,
+        selected && !accent && styles.chipSelected,
       ]}
       accessibilityRole={role}
       accessibilityState={{ selected }}
@@ -59,9 +59,9 @@ export function Chip({ label, selected = false, onPress, icon, count, dotColor, 
     >
       {dotColor ? <View style={[styles.dot, { backgroundColor: dotColor }]} /> : null}
       {icon ? <MaterialCommunityIcons name={icon} size={15} color={tint} /> : null}
-      <Text style={[styles.label, accent && !selected ? { color: accent } : undefined, selected && styles.labelSelected]} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.label, accent ? { color: accent } : undefined, selected && !accent && styles.labelSelected]} numberOfLines={1}>{label}</Text>
       {count === undefined ? null : (
-        <Text style={[styles.count, accent && !selected ? { color: accent } : undefined, selected && styles.labelSelected]}>{count}</Text>
+        <Text style={[styles.count, accent ? { color: accent } : undefined, selected && !accent && styles.labelSelected]}>{count}</Text>
       )}
     </Press>
   );

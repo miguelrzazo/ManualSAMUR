@@ -15,6 +15,7 @@ import {
   locationRouteKey,
   locationSourcePolicy,
   sortLocationsByDistance,
+  locationVisual,
   type LocationCoordinate,
   type LocationFilter,
   type LocationKind,
@@ -263,8 +264,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           userLocation={origin ? [origin.lng, origin.lat] : undefined}
           onPinPress={(pin) => openLocationDetail(pin.locationRouteKey)}
           onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
-          markerColor={palette.primary}
-          markerColorBase={palette.ink}
+          palette={palette}
         />
       )}
       <View pointerEvents="box-none" style={[online ? styles.topOverlay : styles.topStack, { paddingTop: insets.top + spacing.sm }]}>
@@ -309,8 +309,8 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           </View>
         )}
         {nearestBanner && (
-          <Pressable onPress={() => openLocationDetail(locationRouteKey(nearestBanner.location))} style={styles.nearestBanner} accessibilityRole="button" accessibilityLabel={`${nearestBanner.kind === "hospital" ? "Hospital" : "Base"} más cercano: ${nearestBanner.location.shortName}. ${formatDistanceLabel(nearestBanner.location.distanceMeters) ?? ""}`} accessibilityHint={accessibilityHints.openDetail}>
-            <MaterialCommunityIcons name={nearestBanner.kind === "hospital" ? "hospital-building" : "ambulance"} size={18} color={palette.ink} />
+          <Pressable onPress={() => openLocationDetail(locationRouteKey(nearestBanner.location))} style={styles.nearestBanner} accessibilityRole="button" accessibilityLabel={`${locationVisual(nearestBanner.location, palette).label} más cercano: ${nearestBanner.location.shortName}. ${formatDistanceLabel(nearestBanner.location.distanceMeters) ?? ""}`} accessibilityHint={accessibilityHints.openDetail}>
+            <MaterialCommunityIcons name={locationVisual(nearestBanner.location, palette).icon} size={18} color={locationVisual(nearestBanner.location, palette).color} />
             <View style={styles.nearestBannerCopy}>
               <Text style={styles.nearestBannerTitle}>{nearestBanner.location.shortName}</Text>
               <Text style={styles.nearestBannerMeta}>{formatDistanceLabel(nearestBanner.location.distanceMeters)}</Text>

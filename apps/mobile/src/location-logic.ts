@@ -1,7 +1,17 @@
 import type { MobileContent } from "../../../packages/manual-content/src/index.ts";
+import { adaptivePalette, type AdaptivePalette } from "../../../packages/design-tokens/src/index.ts";
 
 export type LocationKind = "hospital" | "base";
 export type LocationFilter = "all" | LocationKind;
+export type HospitalOwnership = "public" | "private";
+export type LocationIcon = "hospital-building" | "hospital-marker" | "ambulance";
+
+export interface LocationVisual {
+  label: "Hospital público" | "Hospital privado" | "Hospital" | "Base SAMUR";
+  icon: LocationIcon;
+  color: string;
+  wash: string;
+}
 
 export interface LocationRecord {
   id: string;
@@ -12,6 +22,7 @@ export interface LocationRecord {
   district: string;
   lat: number;
   lng: number;
+  hospitalOwnership?: HospitalOwnership;
   /** Date the packaged location data was generated (see LocationSourcePolicy.sourceDate). */
   sourceDate: string;
   sourcePolicyApproved: boolean;
@@ -71,6 +82,27 @@ function coordinate(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
+export function normalizeHospitalOwnership(value: unknown): HospitalOwnership | undefined {
+  return value === "public" || value === "private" ? value : undefined;
+}
+
+export function hasHospitalOwnership(value: unknown, ownership: HospitalOwnership): boolean {
+  return normalizeHospitalOwnership(value) === ownership;
+}
+
+export function locationVisual(location: Pick<LocationRecord, "kind" | "hospitalOwnership">, palette: AdaptivePalette = adaptivePalette.light): LocationVisual {
+  if (location.kind === "base") {
+    return { label: "Base SAMUR", icon: "ambulance", color: palette.green, wash: palette.greenWash };
+  }
+  if (location.hospitalOwnership === "private") {
+    return { label: "Hospital privado", icon: "hospital-marker", color: palette.amber, wash: palette.amberWash };
+  }
+  if (location.hospitalOwnership === "public") {
+    return { label: "Hospital público", icon: "hospital-building", color: palette.primary, wash: palette.primaryWash };
+  }
+  return { label: "Hospital", icon: "hospital-building", color: palette.inkMuted, wash: palette.surfaceMuted };
+}
+
 function normalizeText(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es");
 }
@@ -91,6 +123,7 @@ export function locationRecords(content: Pick<MobileContent, "hospitals" | "base
       district: stringValue(item.district, "Madrid"),
       lat,
       lng,
+      hospitalOwnership: normalizeHospitalOwnership(item.type),
       sourceDate: policy.sourceDate,
       sourcePolicyApproved: policy.approved,
       emergency: item.emergency === true,
@@ -185,8 +218,8 @@ export function sortLocationsByDistance(locations: LocationRecord[], origin?: Lo
     .sort((left, right) => (left.distanceMeters ?? Number.POSITIVE_INFINITY) - (right.distanceMeters ?? Number.POSITIVE_INFINITY));
 }
 
-export function schematicNodes(locations: LocationRecord[]): Array<Pick<LocationRecord, "id" | "kind" | "name" | "shortName" | "address" | "district" | "lat" | "lng" | "sourceDate" | "sourcePolicyApproved">> {
-  return locations.map(({ id, kind, name, shortName, address, district, lat, lng, sourceDate, sourcePolicyApproved }) => ({ id, kind, name, shortName, address, district, lat, lng, sourceDate, sourcePolicyApproved }));
+export function schematicNodes(locations: LocationRecord[]): Array<Pick<LocationRecord, "id" | "kind" | "name" | "shortName" | "address" | "district" | "lat" | "lng" | "sourceDate" | "sourcePolicyApproved" | "hospitalOwnership">> {
+  return locations.map(({ id, kind, name, shortName, address, district, lat, lng, sourceDate, sourcePolicyApproved, hospitalOwnership }) => ({ id, kind, name, shortName, address, district, lat, lng, sourceDate, sourcePolicyApproved, hospitalOwnership }));
 }
 
 export function platformMapsUrl(location: Pick<LocationRecord, "name" | "lat" | "lng">, platform: "ios" | "android" | "web" = "ios"): string {
