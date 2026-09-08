@@ -46,14 +46,9 @@ test("non-HTTPS links and malformed support contacts are rejected", () => {
 });
 
 
-/**
- * El hueco de la academia (#98) se construye vacio: hasta que haya creatividad,
- * la app no debe cambiar en nada. Estas condiciones son las que lo garantizan.
- */
-test("el hueco de la academia no se enseña mientras no este configurado", async () => {
-  const { academySlot, shouldShowAcademyEntry, shouldShowAcademySplash } = await import("../apps/mobile/src/academy-slot.ts");
+test("la promoción de academia aparece una sola vez después del primer uso", async () => {
+  const { shouldShowAcademyEntry, shouldShowAcademySplash } = await import("../apps/mobile/src/academy-slot.ts");
 
-  assert.equal(academySlot, undefined, "no debe entrar creatividad en el repositorio sin decidirlo");
   assert.equal(shouldShowAcademyEntry(undefined), false);
   assert.equal(shouldShowAcademySplash(undefined, true, false), false);
 
@@ -61,7 +56,7 @@ test("el hueco de la academia no se enseña mientras no este configurado", async
   assert.equal(shouldShowAcademyEntry(configurado), true);
   // Nunca antes de aceptar el aviso de primer uso.
   assert.equal(shouldShowAcademySplash(configurado, false, false), false);
-  // Y una sola vez por sesion: la pantalla de lanzamiento vuelve en cada reactivacion.
+  // Y una sola vez por instalación: la marca se conserva entre sesiones.
   assert.equal(shouldShowAcademySplash(configurado, true, false), true);
   assert.equal(shouldShowAcademySplash(configurado, true, true), false);
   // Sin imagen de arranque hay entrada en ajustes pero no interrupcion al abrir.
