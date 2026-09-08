@@ -35,7 +35,7 @@ export function AcademyPromo({ slot, onContinue }: { slot: AcademySlot; onContin
         </View>
         <View style={styles.promoCard} accessibilityLabel="Promoción de APTA Academy">
           <View style={styles.brandBlock}>
-            <Text style={styles.academyName}>{slot.title}</Text>
+            <Text style={styles.academyName}>by <Text style={styles.academyNameStrong}>{slot.title}</Text></Text>
             <Image source={slot.splashImage} style={styles.mascot} contentFit="contain" alt="Lince azul de APTA guiando el estudio" accessibilityLabel="Lince azul de APTA guiando el estudio" />
           </View>
           <View style={styles.copy}>
@@ -81,7 +81,8 @@ function createStyles(palette: AdaptivePalette) {
     appName: { color: palette.ink, fontSize: 18, fontWeight: "800", letterSpacing: -0.3 },
     promoCard: { flexGrow: 1, justifyContent: "space-between", gap: spacing.lg, backgroundColor: palette.surface, borderColor: palette.line, borderRadius: radii.lg, borderWidth: 1, padding: spacing.lg },
     brandBlock: { alignItems: "center", gap: spacing.sm },
-    academyName: { color: palette.primary, fontSize: 23, fontWeight: "900", letterSpacing: -0.5 },
+    academyName: { color: palette.inkMuted, fontSize: 15, fontWeight: "700", letterSpacing: -0.2 },
+    academyNameStrong: { color: palette.primary, fontSize: 23, fontWeight: "900", letterSpacing: -0.5 },
     mascot: { width: "65%", height: 205 },
     copy: { alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.xs },
     eyebrow: { color: APTA_GREEN, fontSize: 10, fontWeight: "900", letterSpacing: 1.1, textAlign: "center", textTransform: "uppercase" },
