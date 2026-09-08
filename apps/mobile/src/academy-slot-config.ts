@@ -1,5 +1,4 @@
 import aptaBlueTutor from "../assets/apta-blue-tutor.png";
-import aptaLockup from "../assets/apta-lockup.png";
 import type { AcademySlot } from "./academy-slot.ts";
 
 /**
@@ -11,5 +10,4 @@ export const academySlot: AcademySlot = {
   detail: "Ruta de estudio, tests y tutor virtual",
   url: "https://www.apta-academy.com",
   splashImage: aptaBlueTutor,
-  splashLogo: aptaLockup,
 };
