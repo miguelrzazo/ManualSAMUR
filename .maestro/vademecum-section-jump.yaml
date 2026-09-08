@@ -1,0 +1,44 @@
+appId: es.madrid.samur.manual
+name: Vademécum A-Z salta a secciones no medidas
+tags:
+  - issue-108
+  - regression
+---
+- launchApp
+- swipe:
+    direction: DOWN
+    duration: 100
+
+# Expo development clients start on the server picker when no bundle is loaded.
+- runFlow:
+    when:
+      visible: "Enter URL manually"
+    commands:
+      - tapOn: "Enter URL manually"
+      - tapOn: "http://"
+      - inputText: "http://127.0.0.1:8081"
+      - tapOn: "Connect"
+- runFlow:
+    when:
+      visible: "Entendido, abrir el manual"
+    commands:
+      - tapOn: "Entendido, abrir el manual"
+- extendedWaitUntil:
+    visible:
+      text: "Vademécum"
+    timeout: 20000
+- tapOn:
+    id: "tab-vademecum"
+- extendedWaitUntil:
+    visible:
+      text: "Ir a la letra H"
+    timeout: 10000
+
+# H is below the initial render window. The list must use the SectionList
+# retry path, render H and finish the pending jump instead of only selecting H.
+- tapOn: "Ir a la letra H"
+- extendedWaitUntil:
+    visible:
+      text: "Haloperidol"
+    timeout: 10000
+- assertVisible: "Ir a la letra H"

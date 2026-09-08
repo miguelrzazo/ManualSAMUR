@@ -31,6 +31,11 @@ export const accessibilityHints = {
   share: "Abre las opciones para compartir este procedimiento.",
 } as const;
 
+/** Stable selectors shared by the real tab bar and the reader's floating copy. */
+export function navigationTestID(route: string): string {
+  return `tab-${route === "VademecumList" ? "vademecum" : route.toLowerCase()}`;
+}
+
 /**
  * The palette now lives in `@manual-samur/design-tokens` so the app has exactly
  * one definition of each colour role. It is re-exported here because this module

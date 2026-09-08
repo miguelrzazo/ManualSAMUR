@@ -156,6 +156,24 @@ test("the alphabet index reports its selection and highlights it, rather than be
   assert.match(source, /accessibilityState=\{\{ selected \}\}/);
 });
 
+test("the navigation exposes a stable Vademécum selector for mobile E2E flows", () => {
+  const accessibility = readFileSync(path.join(process.cwd(), "apps/mobile/src/accessibility.ts"), "utf8");
+  const shell = readFileSync(path.join(process.cwd(), "apps/mobile/src/nav-shell.tsx"), "utf8");
+  const reader = readFileSync(path.join(process.cwd(), "apps/mobile/src/components/ReaderNavBar.tsx"), "utf8");
+  assert.match(accessibility, /route === "VademecumList" \? "vademecum"/);
+  assert.match(shell, /testID=\{navigationTestID\(route\.name\)\}/);
+  assert.match(reader, /testID=\{navigationTestID\(destination\.route\)\}/);
+});
+
+test("offscreen alphabet jumps keep the virtualized-list retry handler connected", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8");
+  const listStart = source.indexOf("<SectionList\n        ref={sectionListRef}");
+  assert.ok(listStart >= 0, "the Vademécum domain list must exist");
+  const sectionList = source.slice(listStart, source.indexOf("      />", listStart) + 8);
+  assert.match(sectionList, /onScrollToIndexFailed=\{jump\.onScrollToIndexFailed\}/);
+  assert.doesNotMatch(sectionList, /onScrollToIndexFailed=\{\(\) => undefined\}/);
+});
+
 test("domain rows drop the per-row glyph that only repeated the tab the reader already picked", () => {
   const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8");
   const start = source.indexOf("function VademecumRow");

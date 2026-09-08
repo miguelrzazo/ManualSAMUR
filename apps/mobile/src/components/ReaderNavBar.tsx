@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { motion, radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels } from "../accessibility.ts";
+import { accessibilityHints, accessibilityTargetStyle, navigationTestID, routeAccessibilityLabels } from "../accessibility.ts";
 import { selectionTick } from "../hooks/haptics.ts";
 import { useReduceMotion } from "../hooks/motion.ts";
 import { GlassCapsule, TAB_ICON_SIZE } from "../nav-shell.tsx";
@@ -93,6 +93,7 @@ export function ReaderNavBar({ expanded, onToggle, onNavigate, palette }: {
                 {READER_NAV_DESTINATIONS.map((destination) => (
                   <Press
                     key={destination.route}
+                    testID={navigationTestID(destination.route)}
                     onPress={() => go(destination.route)}
                     style={[styles.tabItem, accessibilityTargetStyle()]}
                     accessibilityRole="tab"

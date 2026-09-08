@@ -359,7 +359,7 @@ function DomainContent({
         // A tapped letter stops overriding the scrollspy once the jump has landed.
         onMomentumScrollEnd={() => setPendingKey(null)}
         onScrollEndDrag={() => setPendingKey(null)}
-        onScrollToIndexFailed={() => undefined}
+        onScrollToIndexFailed={jump.onScrollToIndexFailed}
         ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
           <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} accessibilityRole="header">

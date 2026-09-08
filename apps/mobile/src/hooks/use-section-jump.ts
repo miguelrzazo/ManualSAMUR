@@ -12,19 +12,12 @@ import type { LayoutChangeEvent, SectionList } from "react-native";
  * movimiento, sin pista.
  *
  * Aquí cada cabecera registra su posición al dibujarse y el salto usa esa posición
- * con `scrollTo`, que no depende de que la fila destino esté medida.
+ * con `scrollTo`, que no depende de que la fila destino esté medida. Si la sección
+ * aún no está renderizada, `onScrollToIndexFailed` aproxima el desplazamiento y la
+ * cabecera termina el salto cuando React Native la monta.
  *
- * ── Límite conocido (#108) ──────────────────────────────────────────────────
- * Esto arregla el salto a una sección **ya dibujada**: verificado en Códigos, donde
- * las fichas de grupo ahora sí desplazan la lista. El salto a una sección que nunca
- * se ha dibujado —la letra "H" de un Vademécum abierto por la "A"— sigue sin
- * funcionar: ni `scrollToLocation` ni el reintento de `onScrollToIndexFailed` mueven
- * esa lista. La causa no está identificada. Lo que sí se descartó, probándolo en el
- * simulador, es que `getScrollResponder().scrollTo` no sirva (en Códigos mueve la
- * lista) y que el culpable fuera el borrado de posiciones al cambiar de secciones.
- *
- * Lo descartado y lo que queda por probar está en
- * https://github.com/miguelrzazo/ManualSAMUR/issues/108 — no lo repitas desde cero.
+ * El mismo adaptador se comparte entre Códigos y Vademécum; el bug #108 se producía
+ * porque Vademécum sustituía accidentalmente ese callback por un no-op.
  */
 export interface SectionJump {
   /** `onLayout` para la cabecera de la sección `key`. */

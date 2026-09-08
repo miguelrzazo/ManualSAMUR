@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radii, spacing, typography } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
+import { accessibilityHints, accessibilityTargetStyle, navigationTestID, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
 import { selectionTick } from "./hooks/haptics";
 
 /**
@@ -128,6 +128,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
         return (
           <Pressable
             key={route.key}
+            testID={navigationTestID(route.name)}
             onPress={() => goTo(route, focused)}
             style={[styles.tabItem, accessibilityTargetStyle()]}
             accessibilityRole="tab"

@@ -29,6 +29,9 @@ navigation bar. It also writes the screenshots used as evidence on those issues.
 `update-history.yaml` checks the production update-history route, its two tabs,
 and that non-user-facing review events stay out of the timeline.
 
+`vademecum-section-jump.yaml` is the focused regression for issue #108: it taps
+the offscreen H section and verifies that a row from that section is rendered.
+
 Note on swipes: both flows use explicit `start`/`end` percentages rather than
 `direction: UP`. Maestro's directional swipe starts at the vertical centre and
 ends near the bottom bar, which on these layouts barely moves a list.
