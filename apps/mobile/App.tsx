@@ -79,6 +79,9 @@ import { MapaScreen } from "./src/screens/MapaScreen";
 import { Status4Cheatsheet } from "./src/components/Status4Cheatsheet";
 import { ProcedureHistorySection } from "./src/components/ProcedureHistorySection";
 import { SettingsModal } from "./src/components/SettingsModal";
+import { AcademyPromo } from "./src/components/AcademyPromo";
+import { shouldShowAcademySplash } from "./src/academy-slot.ts";
+import { academySlot } from "./src/academy-slot-config.ts";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 import { HistorialScreen } from "./src/screens/HistorialScreen";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
@@ -1506,13 +1509,16 @@ function AppNavigation() {
 }
 
 function AppGate() {
-  const { isHydrated, hasAcknowledgedFirstUse, acknowledgeFirstUse, appearance } = usePreferences();
+  const { isHydrated, hasAcknowledgedFirstUse, acknowledgeFirstUse, hasSeenAcademyPromo, markAcademyPromoSeen, appearance } = usePreferences();
   const scheme = useColorScheme();
   const palette = useTheme();
   const styles = useAppStyles();
   const dark = appearance === "dark" || (appearance === "system" && scheme === "dark");
   if (!isHydrated) return <LaunchScreen />;
   if (!hasAcknowledgedFirstUse) return <FirstUseDisclosure onContinue={acknowledgeFirstUse} />;
+  if (academySlot && shouldShowAcademySplash(academySlot, hasAcknowledgedFirstUse, hasSeenAcademyPromo)) {
+    return <AcademyPromo slot={academySlot} onContinue={markAcademyPromoSeen} />;
+  }
   // No `key` here on purpose. The palette used to be a module-level `let` reassigned
   // during this render, so the only way to get the tree to see a theme change was to
   // remount the whole navigator — which threw away wherever the user had navigated to.

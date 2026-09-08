@@ -17,7 +17,8 @@ import {
 import { useTheme } from "../theme.tsx";
 import { Press } from "./Press.tsx";
 import { PageHeader } from "./PageHeader.tsx";
-import { academySlot, shouldShowAcademyEntry } from "../academy-slot.ts";
+import { shouldShowAcademyEntry } from "../academy-slot.ts";
+import { academySlot } from "../academy-slot-config.ts";
 
 /**
  * Ajustes.
@@ -169,8 +170,8 @@ export function SettingsModal({
 
           {academySlot && shouldShowAcademyEntry(academySlot) && (
             <>
-              {/* El hueco de la academia (#98). Sin creatividad configurada no se
-                  dibuja nada, asi que hoy esta seccion no existe en pantalla. */}
+              {/* La formación es un enlace externo y la creatividad del arranque
+                  es local: Ajustes sigue funcionando sin cobertura. */}
               <SectionTitle>Formación</SectionTitle>
               <Row icon="school-outline" tint={palette.primary} title={academySlot.title} meta={academySlot.detail} external onPress={() => open(String(academySlot?.url))} />
             </>

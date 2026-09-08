@@ -5,6 +5,7 @@ import { hasAcknowledgedDisclosure, parseAppearancePreference, type AppearancePr
 import { parseSeenEventIds, serializeSeenEventIds, toggleSeenEventId } from "./manual-tree-logic";
 
 export const FIRST_USE_DISCLOSURE_KEY = "manualsamur.firstUseDisclosure.v1";
+export const ACADEMY_PROMO_SEEN_KEY = "manualsamur.academyPromoSeen.v1";
 export const APPEARANCE_PREFERENCE_KEY = "manualsamur.preferences.appearance.v1";
 export const SEEN_EVENTS_STORAGE_KEY = "manualsamur.preferences.seenEvents.v1";
 
@@ -14,6 +15,8 @@ type PreferencesContextValue = {
   isHydrated: boolean;
   hasAcknowledgedFirstUse: boolean;
   acknowledgeFirstUse: () => Promise<void>;
+  hasSeenAcademyPromo: boolean;
+  markAcademyPromoSeen: () => Promise<void>;
   appearance: AppearancePreference;
   setAppearance: (preference: AppearancePreference) => void;
   seenEventIds: string[];
@@ -31,6 +34,7 @@ export function usePreferences(): PreferencesContextValue {
 export function PreferencesProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [hasAcknowledgedFirstUse, setHasAcknowledgedFirstUse] = useState(false);
+  const [hasSeenAcademyPromo, setHasSeenAcademyPromo] = useState(false);
   const [appearance, setAppearanceState] = useState<AppearancePreference>("system");
   const [seenEventIds, setSeenEventIds] = useState<string[]>([]);
 
@@ -38,19 +42,22 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     let cancelled = false;
     (async () => {
       try {
-        const [disclosure, storedAppearance, storedSeenEvents] = await Promise.all([
+        const [disclosure, academyPromoSeen, storedAppearance, storedSeenEvents] = await Promise.all([
           AsyncStorage.getItem(FIRST_USE_DISCLOSURE_KEY),
+          AsyncStorage.getItem(ACADEMY_PROMO_SEEN_KEY),
           AsyncStorage.getItem(APPEARANCE_PREFERENCE_KEY),
           AsyncStorage.getItem(SEEN_EVENTS_STORAGE_KEY),
         ]);
         if (cancelled) return;
         setHasAcknowledgedFirstUse(hasAcknowledgedDisclosure(disclosure));
+        setHasSeenAcademyPromo(academyPromoSeen === "seen");
         setAppearanceState(parseAppearancePreference(storedAppearance));
         setSeenEventIds(parseSeenEventIds(storedSeenEvents));
       } catch {
         // A storage failure should never block a local-first launch.
         if (!cancelled) {
           setHasAcknowledgedFirstUse(false);
+          setHasSeenAcademyPromo(false);
           setAppearanceState("system");
         }
       } finally {
@@ -67,6 +74,11 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const acknowledgeFirstUse = useCallback(async () => {
     setHasAcknowledgedFirstUse(true);
     await AsyncStorage.setItem(FIRST_USE_DISCLOSURE_KEY, "acknowledged");
+  }, []);
+
+  const markAcademyPromoSeen = useCallback(async () => {
+    setHasSeenAcademyPromo(true);
+    await AsyncStorage.setItem(ACADEMY_PROMO_SEEN_KEY, "seen");
   }, []);
 
   const setAppearance = useCallback((preference: AppearancePreference) => {
@@ -86,11 +98,13 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     isHydrated,
     hasAcknowledgedFirstUse,
     acknowledgeFirstUse,
+    hasSeenAcademyPromo,
+    markAcademyPromoSeen,
     appearance,
     setAppearance,
     seenEventIds,
     markEventSeen,
-  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, isHydrated, markEventSeen, seenEventIds, setAppearance]);
+  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, hasSeenAcademyPromo, isHydrated, markAcademyPromoSeen, markEventSeen, seenEventIds, setAppearance]);
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }
