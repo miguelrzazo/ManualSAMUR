@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pill, Code, MapPin } from "lucide-react";
-import { globalSearch, type SearchResult } from "@/lib/global-search";
+import type { SearchResult } from "@/lib/global-search";
 import { cn } from "@/lib/utils";
 import type { ProcedureSearchDoc } from "@/lib/search";
 import {
@@ -200,6 +200,9 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
 
       setIsLoading(true);
       try {
+        // Fuse y el adaptador de búsqueda pesan más que la UI del diálogo. Se
+        // cargan solo al ejecutar una consulta, no junto con la navegación global.
+        const { globalSearch } = await import("@/lib/global-search");
         const searchResults = await globalSearch(term, data.procedures, data.drugs, data.codes, data.hospitals, data.bases);
         setResults(filter ? searchResults.filter((r) => r.type === filter) : searchResults);
       } catch (error) {

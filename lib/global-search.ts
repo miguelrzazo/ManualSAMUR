@@ -51,11 +51,18 @@ export interface SearchResult {
 }
 
 let drugsFuse: Fuse<Drug> | null = null;
+let drugsSource: Drug[] | null = null;
 let codesFuse: Fuse<Code> | null = null;
+let codesSource: Code[] | null = null;
 let hospitalsFuse: Fuse<Hospital> | null = null;
+let hospitalsSource: Hospital[] | null = null;
 let basesFuse: Fuse<Base> | null = null;
+let basesSource: Base[] | null = null;
 
 function buildDrugsFuse(drugs: Drug[]): Fuse<Drug> {
+  if (drugsFuse && drugsSource === drugs) return drugsFuse;
+
+  drugsSource = drugs;
   drugsFuse = new Fuse(drugs, {
     keys: [
       { name: "id", weight: 2.2 },
@@ -76,6 +83,9 @@ function buildDrugsFuse(drugs: Drug[]): Fuse<Drug> {
 }
 
 function buildCodesFuse(codes: Code[]): Fuse<Code> {
+  if (codesFuse && codesSource === codes) return codesFuse;
+
+  codesSource = codes;
   codesFuse = new Fuse(codes, {
     keys: [
       { name: "code", weight: 2.4 },
@@ -95,6 +105,9 @@ function buildCodesFuse(codes: Code[]): Fuse<Code> {
 }
 
 function buildHospitalsFuse(hospitals: Hospital[]): Fuse<Hospital> {
+  if (hospitalsFuse && hospitalsSource === hospitals) return hospitalsFuse;
+
+  hospitalsSource = hospitals;
   hospitalsFuse = new Fuse(hospitals, {
     keys: [
       { name: "id", weight: 2.1 },
@@ -114,6 +127,9 @@ function buildHospitalsFuse(hospitals: Hospital[]): Fuse<Hospital> {
 }
 
 function buildBasesFuse(bases: Base[]): Fuse<Base> {
+  if (basesFuse && basesSource === bases) return basesFuse;
+
+  basesSource = bases;
   basesFuse = new Fuse(bases, {
     keys: [
       { name: "id", weight: 2.0 },

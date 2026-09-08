@@ -1,7 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 
 import { globalSearch } from "../lib/global-search.ts";
+
+test("the global navigation does not eagerly load the search engine", () => {
+  const source = readFileSync(path.join(process.cwd(), "components/shared/GlobalSearch.tsx"), "utf8");
+
+  assert.match(source, /const \{ globalSearch \} = await import\("@\/lib\/global-search"\)/);
+  assert.doesNotMatch(source, /import \{ globalSearch,/);
+});
 
 test("globalSearch returns matching procedures alongside other result types", async () => {
   const procedures = [
