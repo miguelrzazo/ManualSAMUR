@@ -1,6 +1,6 @@
 import type { MobileContent } from "../../../packages/manual-content/src/index.ts";
 import { procedureRouteKey, resolveProcedureReference } from "./procedure-logic.ts";
-import { buildCodeReferences, buildVademecumReferences, type MobileReferenceKind, type MobileReferenceSearchResult } from "./reference-search-logic.ts";
+import { getMobileSearchIndex, type MobileReferenceKind, type MobileReferenceSearchResult } from "./reference-search-logic.ts";
 import { locationRecords, locationRouteKey, resolveLocationRoute, type LocationRecord } from "./location-logic.ts";
 
 /** A local-only, typed identity used by both Favorites and Recents. */
@@ -172,9 +172,15 @@ function locationToSaved(location: LocationRecord): SavedReference {
   };
 }
 
+const savedReferenceIndexCache = new WeakMap<MobileContent, Map<string, SavedReference>>();
+
 export function savedReferenceIndex(content: MobileContent): Map<string, SavedReference> {
+  const cached = savedReferenceIndexCache.get(content);
+  if (cached) return cached;
+
+  const searchIndex = getMobileSearchIndex(content);
   const index = new Map<string, SavedReference>();
-  for (const procedure of content.procedures) {
+  for (const procedure of searchIndex.procedureEntries.map((entry) => entry.procedure)) {
     index.set(procedureRouteKey(procedure), {
       routeKey: procedureRouteKey(procedure),
       kind: "procedure",
@@ -183,10 +189,11 @@ export function savedReferenceIndex(content: MobileContent): Map<string, SavedRe
       subtitle: procedure.section,
     });
   }
-  for (const reference of [...buildVademecumReferences(content), ...buildCodeReferences(content.codes)]) {
+  for (const reference of [...(searchIndex.vademecumReferences ?? []), ...(searchIndex.codeReferences ?? [])]) {
     index.set(reference.routeKey, referenceToSaved(reference));
   }
   for (const location of locationRecords(content)) index.set(locationRouteKey(location), locationToSaved(location));
+  savedReferenceIndexCache.set(content, index);
   return index;
 }
 

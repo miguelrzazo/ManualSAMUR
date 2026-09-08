@@ -8,7 +8,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
 import { useTheme } from "../theme";
-import { useContent } from "../content";
+import { useContentData } from "../content";
 import {
   filterLocations,
   locationRecords,
@@ -79,7 +79,7 @@ type LocationRequestResult =
  * someone mid-shift for.
  */
 export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Mapa">) {
-  const { content } = useContent();
+  const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const insets = useSafeAreaInsets();

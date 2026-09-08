@@ -51,7 +51,7 @@ import {
   type OtrosTabKey,
   type TopTabKey,
 } from "../codigos-logic";
-import { useContent } from "../content";
+import { useContentData } from "../content";
 import { BackToTop, Badge, Chip, CompactHeader, EmptyState, PageHeader, SearchField } from "../components";
 import { codeRouteKey, searchCodes, type MobileReferenceSearchResult } from "../reference-search-logic";
 import { codeRouteHasDetail } from "../codigos-logic";
@@ -72,7 +72,7 @@ interface ScrollToTopHandle {
 }
 
 export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
-  const { content } = useContent();
+  const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 

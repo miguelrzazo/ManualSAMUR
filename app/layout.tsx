@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
@@ -9,9 +8,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { getProcedureNavMeta } from "@/lib/content";
 import { readMainLinksData } from "@/lib/main-content";
 import "./globals.css";
-
-const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Manual Procedimientos SAMUR-PC",
@@ -45,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const mainLinks = readMainLinksData();
 
   return (
-    <html lang="es" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="es" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ViewportHeightObserver />

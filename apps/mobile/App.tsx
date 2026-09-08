@@ -33,7 +33,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { ContentProvider, findProcedure, useContent } from "./src/content";
+import { ContentProvider, findProcedure, useContentData, useContentPreferences, useContentSync } from "./src/content";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
@@ -43,14 +43,15 @@ import type { MobileAttachment, MobileProcedure } from "../../packages/manual-co
 import { displayTitle } from "./src/title-case";
 import { APP_CHANGELOG } from "./src/app-changelog";
 import { DRUG_DETAIL_FIELDS, drugFieldText, parseDoseLines, parseDrugRoutes } from "./src/drug-detail-logic";
-import { procedureHeadings, procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures, splitMarkdownBlocks, splitProcedureSections, type ProcedureSection } from "./src/procedure-logic";
+import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures } from "./src/procedure-logic";
 import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
 import { highlightSegments, snippetText, type SearchSnippet } from "./src/search-snippet-logic";
 import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
+import { activeHeadingIdAtOffset, parseProcedureDocument, type MeasuredHeadingOffset, type ParsedProcedureDocument, type ParsedProcedureSection } from "./src/procedure-document.ts";
 import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
 import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
-import { isLocallyAvailable, rendersInline, type AttachmentRecord } from "./src/attachment-logic";
+import { isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
   locationRecords,
@@ -160,7 +161,7 @@ function BrandHeader({ onSettings, settingsRef }: { onSettings?: () => void; set
   const styles = useAppStyles();
   return (
     <PageHeader
-      title="Manual SAMUR"
+      title="Manual"
       trailing={onSettings ? (
         <Pressable ref={settingsRef} onPress={onSettings} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={routeAccessibilityLabels.Ajustes} accessibilityHint="Abre las preferencias, privacidad y estado del contenido.">
           <MaterialCommunityIcons name="tune-variant" size={21} color={palette.ink} />
@@ -281,7 +282,7 @@ function SectionHeading({ title, action, onAction }: { title: string; action?: s
 function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { procedure: MobileProcedure; onPress: () => void; showFavorite?: boolean; snippet?: SearchSnippet }) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { favorites, toggleFavorite } = useContent();
+  const { favorites, toggleFavorite } = useContentPreferences();
   const routeKey = procedureRouteKey(procedure);
   const favorite = favorites.includes(routeKey);
   return (
@@ -327,7 +328,8 @@ function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { p
 // full-screen during a shift.
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
   const styles = useAppStyles();
-  const { content, snapshot, isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContent();
+  const { content, snapshot } = useContentData();
+  const { isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContentSync();
   const { appearance, setAppearance } = usePreferences();
   const reduceMotion = useReduceMotion();
   const settingsTriggerRef = useRef<View>(null);
@@ -356,7 +358,8 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
  */
 function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
   const styles = useAppStyles();
-  const { content, recents, recentQueries, rememberQuery, forgetQuery } = useContent();
+  const { content } = useContentData();
+  const { recents, recentQueries, rememberQuery, forgetQuery } = useContentPreferences();
   const stack = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
   const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
@@ -506,7 +509,7 @@ function openSavedReference(stack: NativeStackNavigationProp<RootStackParamList>
 function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: MobileReferenceSearchResult; onCode: (routeKey: string) => void; onVademecum: (routeKey: string) => void; onDrug: (id: string) => void }) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { favorites, toggleFavorite } = useContent();
+  const { favorites, toggleFavorite } = useContentPreferences();
   const icon = reference.kind === "code" ? "radio-handheld" : reference.kind === "abbreviation" ? "format-letter-case" : "pill";
   const targetId = reference.targetId;
   const onPress = reference.kind === "code" ? () => onCode(reference.routeKey) : reference.kind === "drug" && targetId ? () => onDrug(targetId) : () => onVademecum(reference.routeKey);
@@ -539,7 +542,8 @@ function ReferenceRow({ reference, onCode, onVademecum, onDrug }: { reference: M
 function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Location">) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { content, favorites, toggleFavorite, remember } = useContent();
+  const { content } = useContentData();
+  const { favorites, toggleFavorite, remember } = useContentPreferences();
   const policy = locationSourcePolicy;
   const locations = useMemo(() => locationRecords(content, policy), [content, policy]);
   const location = resolveLocationRoute(locations, route.params.routeKey);
@@ -833,12 +837,13 @@ function ProcedureFindBar({ query, onChangeQuery, total, index, onStep, onClose 
 function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Procedure">) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { content, favorites, toggleFavorite, remember } = useContent();
+  const { content } = useContentData();
+  const { favorites, toggleFavorite, remember } = useContentPreferences();
   const reduceMotion = useReduceMotion();
   const [attachmentError, setAttachmentError] = useState<string>();
   const [attachmentRecovery, setAttachmentRecovery] = useState<MobileProcedure["attachments"][number]>();
   const [attachmentRecords, setAttachmentRecords] = useState<Record<string, AttachmentRecord>>({});
-  const procedure = findProcedure(content, route.params.id);
+  const procedure = useMemo(() => findProcedure(content, route.params.id), [content, route.params.id]);
   const scrollRef = useRef<ScrollView>(null);
   const chrome = useScrollChrome();
   /**
@@ -855,10 +860,14 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
    * on every scroll event; it is read once rather than assumed.
    */
   const [insetTop, setInsetTop] = useState(0);
-  const routeKey = procedure ? procedureRouteKey(procedure) : `procedure:${route.params.id}`;
-  const sections = useMemo(() => procedure ? splitProcedureSections(procedure.content) : [], [procedure]);
-  const headings = useMemo(() => procedureHeadings(procedure?.content ?? ""), [procedure]);
+  const readerDocument = useMemo<ParsedProcedureDocument | undefined>(
+    () => procedure ? parseProcedureDocument(procedure, content.procedures) : undefined,
+    [content.procedures, procedure],
+  );
+  const routeKey = readerDocument?.routeKey ?? `procedure:${route.params.id}`;
+  const headings = readerDocument?.headings ?? [];
   const sectionOffsets = useRef<Record<string, number>>({});
+  const headingOffsets = useRef<MeasuredHeadingOffset[]>([]);
   const markdownOrigin = useRef(0);
   const [tocExpanded, setTocExpanded] = useState(true);
   const [tocPinned, setTocPinned] = useState(false);
@@ -898,7 +907,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const [findQuery, setFindQuery] = useState("");
   const [findIndex, setFindIndex] = useState(0);
   const blockOffsets = useRef<Record<string, number>>({});
-  const findMatches = useMemo(() => findProcedureMatches(sections, findQuery), [sections, findQuery]);
+  const findMatches = useMemo(() => readerDocument ? findProcedureMatches(readerDocument, findQuery) : [], [findQuery, readerDocument]);
 
   const scrollToBlock = useCallback((blockKey: string) => {
     const offset = blockOffsets.current[blockKey] ?? sectionOffsets.current[blockKey];
@@ -964,6 +973,12 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     if (offset > 0) requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: offset, animated: false }));
   }, [procedure, routeKey]);
   useEffect(() => {
+    sectionOffsets.current = {};
+    blockOffsets.current = {};
+    headingOffsets.current = [];
+    markdownOrigin.current = 0;
+  }, [readerDocument]);
+  useEffect(() => {
     let cancelled = false;
     if (!procedure) return () => { cancelled = true; };
     (async () => {
@@ -1018,6 +1033,19 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     [headerTitleOpacity, headerTitleShift, procedure, styles.headerHandoffTitle],
   );
 
+  const onSectionLayout = useCallback((id: string, offset: number) => {
+    const absoluteOffset = markdownOrigin.current + offset;
+    sectionOffsets.current[id] = absoluteOffset;
+    if (readerDocument?.headingIndexById[id] === undefined) return;
+    const existingIndex = headingOffsets.current.findIndex((entry) => entry.id === id);
+    if (existingIndex >= 0) {
+      headingOffsets.current[existingIndex] = { id, offset: absoluteOffset };
+      return;
+    }
+    headingOffsets.current.push({ id, offset: absoluteOffset });
+    headingOffsets.current.sort((left, right) => (readerDocument?.headingIndexById[left.id] ?? 0) - (readerDocument?.headingIndexById[right.id] ?? 0));
+  }, [readerDocument]);
+
   const onProcedureScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     // Seguir bajando vuelve a minimizar la cápsula de navegación. Se decide aquí, en el
@@ -1035,12 +1063,12 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     const top = event.nativeEvent.contentInset?.top ?? 0;
     setInsetTop((current) => (current === top ? current : top));
     const contentY = offsetY + top;
-    const visible = headings.filter((heading) => typeof sectionOffsets.current[heading.id] === "number" && sectionOffsets.current[heading.id] <= contentY + spacing.md).at(-1);
-    const observed = visible ? activeSectionKey([{ sectionKey: visible.id }]) : null;
+    const visibleId = activeHeadingIdAtOffset(headingOffsets.current, contentY + spacing.md);
+    const observed = visibleId ? activeSectionKey([{ sectionKey: visibleId }]) : null;
     setActiveHeadingKey((current) => current === observed ? current : observed);
     if (pendingHeadingKey && observed === pendingHeadingKey) setPendingHeadingKey(null);
     setTocPinned(tocFrame.height > 0 && contentY > tocFrame.y + tocFrame.height);
-  }, [chrome, headings, pendingHeadingKey, routeKey, scrollY, setInsetTop, tocFrame]);
+  }, [chrome, pendingHeadingKey, routeKey, scrollY, tocFrame]);
   // The header carries the procedure's name. It used to carry the raw id
   // ("Procedimiento 601_01") because a 60-character name wraps to four lines at
   // large-title size — so the large title is off here, and the id stays on the
@@ -1062,19 +1090,11 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     trailing: procedure ? headerActions : undefined,
   });
   if (!procedure) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
-  const outgoingIds = [...new Set(procedure.relations.filter((relation) => relation.direction === "outgoing" && relation.kind !== "suggested").map((relation) => relation.id))].filter((id) => id !== procedure.id);
-  const incomingIds = [...new Set(procedure.relations.filter((relation) => relation.direction === "incoming").map((relation) => relation.id))].filter((id) => id !== procedure.id);
-  const outgoing = outgoingIds.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
-  const incoming = incomingIds.map((id) => findProcedure(content, id)).filter((item): item is MobileProcedure => Boolean(item));
-  const unresolvedRelatedIds = outgoingIds.filter((id) => !findProcedure(content, id));
-  // Figures belong to the reading; documents belong in a list. See `rendersInline`.
-  // Una figura que el cuerpo ya dibuja no se repite abajo: antes de que el lector
-  // pintara las imagenes inline, "Figuras" era el unico sitio donde aparecian.
-  const inlineImageSources = new Set(
-    (procedure.content.match(/!\[[^\]]*\]\(([^)\s]+)\)/g) ?? []).map((match) => match.replace(/^!\[[^\]]*\]\(|\)$/g, "")),
-  );
-  const imageAttachments = procedure.attachments.filter((attachment) => rendersInline(attachment) && !inlineImageSources.has(attachment.localPath));
-  const documentAttachments = procedure.attachments.filter((attachment) => !rendersInline(attachment));
+  if (!readerDocument) return <MissingResource title="Procedimiento no disponible" detail={`No se encontró “${route.params.id}” en el paquete local.`} onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
+  const { navigation: documentNavigation, rendering, assets } = readerDocument;
+  const { outgoing, incoming, unresolvedRelatedIds } = documentNavigation;
+  const { imageAttachments, documentAttachments } = rendering;
+  const currentHeadingText = readerDocument.headingById.get(pendingHeadingKey ?? activeHeadingKey ?? "")?.text ?? "Contenido";
   /**
    * Opening an anexo is now a navigation, not a download-then-hand-off-to-the-OS.
    *
@@ -1132,16 +1152,16 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       <Text style={[styles.favoriteActionText, procedureFavorite && styles.favoriteActionTextOn]}>{procedureFavorite ? "Guardado" : "Guardar"}</Text>
     </Press>
     <Text style={styles.detailMeta}>{procedure.section} · {procedure.id}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
-    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => { animateNextLayout(reduceMotion); setTocExpanded((expanded) => !expanded); }} style={styles.contentsHeader} accessibilityRole="button" accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
+    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => { animateNextLayout(reduceMotion); setTocExpanded((expanded) => !expanded); }} style={styles.contentsHeader} accessibilityRole="button" accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : currentHeadingText}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
     <MarkdownContent
-      sections={sections}
+      sections={readerDocument.renderSections}
       onContainerLayout={(offset) => { markdownOrigin.current = offset; }}
-      onSectionLayout={(id, offset) => { sectionOffsets.current[id] = markdownOrigin.current + offset; }}
+      onSectionLayout={onSectionLayout}
       onBlockLayout={(key, sectionKey, offset) => { blockOffsets.current[key] = (sectionOffsets.current[sectionKey] ?? markdownOrigin.current) + offset; }}
       highlightQuery={findOpen ? findQuery : undefined}
       activeBlockKey={findOpen ? findMatches[findIndex]?.blockKey : undefined}
       renderImage={(src, alt) => {
-        const attachment = procedure.attachments.find((candidate) => candidate.localPath === src);
+        const attachment = assets.attachmentsByLocalPath.get(src);
         if (!attachment) return null;
         return <ProcedureFigure attachment={attachment} record={attachmentRecords[attachment.id]} onOpen={() => openAttachment(attachment)} alt={alt} />;
       }}
@@ -1159,7 +1179,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       va en `position: absolute; top: 0` dentro de este mismo `SafeAreaView`, así que
       se pintaba justo encima de la barra y la tapaba entera. Y mientras se busca, el
       índice de secciones no es la herramienta que se está usando. */}
-  {!findOpen && tocPinned && headings.length > 0 && <Press onPress={() => { setTocExpanded(true); const target = tocFrame.y - insetTop - spacing.md; scrollRef.current?.scrollTo({ y: Math.max(0, target), animated: !reduceMotion }); }} style={styles.pinnedContents} accessibilityRole="button" accessibilityLabel={`Contenido, ${headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "sección actual"}`}><Text style={styles.pinnedContentsText}>{headings.find((heading) => heading.id === (pendingHeadingKey ?? activeHeadingKey))?.text ?? "Contenido"}</Text><MaterialCommunityIcons name="format-list-bulleted" size={17} color={palette.primary} /></Press>}
+  {!findOpen && tocPinned && headings.length > 0 && <Press onPress={() => { setTocExpanded(true); const target = tocFrame.y - insetTop - spacing.md; scrollRef.current?.scrollTo({ y: Math.max(0, target), animated: !reduceMotion }); }} style={styles.pinnedContents} accessibilityRole="button" accessibilityLabel={`Contenido, ${currentHeadingText}`}><Text style={styles.pinnedContentsText}>{currentHeadingText}</Text><MaterialCommunityIcons name="format-list-bulleted" size={17} color={palette.primary} /></Press>}
   {/* Los dos controles del lector se apilan en la esquina inicial: la cápsula de
       navegación abajo y "volver arriba" justo encima. `readerControlsOverlap()`
       convierte esa relación en algo que una prueba puede afirmar — que es como se
@@ -1204,7 +1224,8 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
 
 function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Drug">) {
   const styles = useAppStyles();
-  const { content, favorites, toggleFavorite, remember } = useContent();
+  const { content } = useContentData();
+  const { favorites, toggleFavorite, remember } = useContentPreferences();
   const drug = content.drugs.find((item) => String(item.id) === route.params.id);
   const routeKey = `vademecum:drug:${route.params.id}`;
   const favorite = favorites.includes(routeKey);
@@ -1254,7 +1275,8 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
 
 function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Vademecum">) {
   const styles = useAppStyles();
-  const { content, favorites, toggleFavorite, remember } = useContent();
+  const { content } = useContentData();
+  const { favorites, toggleFavorite, remember } = useContentPreferences();
   const reference = resolveVademecumReference(content, route.params.routeKey);
   const favorite = favorites.includes(route.params.routeKey);
   useEffect(() => {
@@ -1270,7 +1292,8 @@ function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<
 
 function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Code">) {
   const styles = useAppStyles();
-  const { content, favorites, toggleFavorite, remember } = useContent();
+  const { content } = useContentData();
+  const { favorites, toggleFavorite, remember } = useContentPreferences();
   const reference = resolveCodeReference(content.codes, route.params.routeKey);
   const favorite = favorites.includes(route.params.routeKey);
   useEffect(() => {
@@ -1295,7 +1318,7 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
 function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList, "Status4">) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { content } = useContent();
+  const { content } = useContentData();
   const hospitals = useMemo(() => asCodigosHospitals(content.hospitals), [content.hospitals]);
   const status4 = useMemo(() => asStatus4Entries(content.status4), [content.status4]);
   const entries = useMemo(() => buildHospitalList(hospitals, status4), [hospitals, status4]);
@@ -1333,7 +1356,7 @@ function ChangelogScreen({ navigation }: NativeStackScreenProps<RootStackParamLi
 function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Abbreviations">) {
   const palette = useTheme();
   const styles = useAppStyles();
-  const { content } = useContent();
+  const { content } = useContentData();
   const [query, setQuery] = useState(route.params?.query ?? "");
   const entries = useMemo(() => searchAbbreviations(content.abbreviations, query, 1000), [content.abbreviations, query]);
   return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
@@ -1344,7 +1367,7 @@ function attachmentKindLabel(kind: MobileAttachment["kind"]): string {
   return kind === "pdf" ? "PDF" : kind === "image" ? "Imagen" : "Documento";
 }
 
-function MarkdownContent({ sections, onContainerLayout, onSectionLayout, onBlockLayout, renderImage, highlightQuery, activeBlockKey }: { sections: ProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void; onBlockLayout?: (key: string, sectionKey: string, offset: number) => void; renderImage?: (src: string, alt: string) => React.ReactNode; highlightQuery?: string; activeBlockKey?: string }) {
+function MarkdownContent({ sections, onContainerLayout, onSectionLayout, onBlockLayout, renderImage, highlightQuery, activeBlockKey }: { sections: ParsedProcedureSection[]; onContainerLayout: (offset: number) => void; onSectionLayout: (id: string, offset: number) => void; onBlockLayout?: (key: string, sectionKey: string, offset: number) => void; renderImage?: (src: string, alt: string) => React.ReactNode; highlightQuery?: string; activeBlockKey?: string }) {
   const styles = useAppStyles();
   // Va aqui y no en el stylesheet porque depende de `fontScale`, y `useThemedStyles`
   // memoiza por paleta: un cambio de tamaño de letra no lo regeneraria.
@@ -1368,7 +1391,7 @@ function MarkdownContent({ sections, onContainerLayout, onSectionLayout, onBlock
         ? <Text key={index} style={styles.markdownHighlight}>{segment.text}</Text>
         : <Text key={index}>{segment.text}</Text>);
   };
-  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{marked(section.heading.text)}</Text>}{splitMarkdownBlocks(section.lines).map((block) => {
+  return <View style={styles.markdown} onLayout={(event) => onContainerLayout(event.nativeEvent.layout.y)}>{sections.map((section) => <View key={section.key} onLayout={(event) => onSectionLayout(section.key, event.nativeEvent.layout.y)}>{section.heading && <Text style={section.heading.level === 2 ? styles.markdownH2 : styles.markdownH3}>{marked(section.heading.text)}</Text>}{section.blocks.map((block) => {
     if (block.kind === "table") { const key = `${section.key}-table-${block.startIndex}`; return <View key={key} onLayout={reportBlock(section.key, key)}><MarkdownTable table={block.table} formatCell={readableMarkdownCell} /></View>; }
     if (block.kind === "image") return <React.Fragment key={`${section.key}-img-${block.index}`}>{renderImage?.(block.src, block.alt)}</React.Fragment>;
     if (block.row.kind === "skip") return null;

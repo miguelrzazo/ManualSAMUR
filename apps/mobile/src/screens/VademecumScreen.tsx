@@ -23,7 +23,7 @@ import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
 import { useSectionJump } from "../hooks/use-section-jump";
 import { selectionTick } from "../hooks/haptics";
 import { BackToTop, Chip, CompactHeader, Press } from "../components";
-import { useContent } from "../content";
+import { useContentData } from "../content";
 import { buildVademecumReferences, searchMobileReferences, type MobileReferenceSearchResult } from "../reference-search-logic";
 import {
   activeSectionKey,
@@ -59,7 +59,7 @@ import type { RootStackParamList, TabsParamList } from "../navigation-types";
  * reales. `dose-logic.ts` se queda por sus ayudantes de formato y su auditoría.
  */
 export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
-  const { content } = useContent();
+  const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 

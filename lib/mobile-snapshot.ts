@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { getAllProcedures } from "./content.ts";
+import { compileProcedureCorpus } from "./procedure-compiler.ts";
 import { type CodeReferenceSource } from "./manual-relations-index.ts";
 import {
   MOBILE_ATTACHMENT_MANIFEST_SCHEMA,
@@ -77,7 +77,7 @@ function localAttachmentIntegrity(cwd: string, localPath: string): Pick<MobileAt
 }
 
 function readProcedures(cwd: string): MobileProcedure[] {
-  return getAllProcedures().map((procedure) => {
+  return compileProcedureCorpus(cwd).map((procedure) => {
     const relations = procedure.relations.filter((relation) => relation.kind !== "suggested");
     return {
       id: procedure.id,

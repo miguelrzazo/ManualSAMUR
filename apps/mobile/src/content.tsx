@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
 import bundledAttachmentManifest from "./data/attachment-manifest.json";
 import {
@@ -11,6 +11,16 @@ import {
   type MobileProcedure,
   type MobileSnapshot,
 } from "../../../packages/manual-content/src/index.ts";
+import {
+  ContentDataContext,
+  ContentPreferencesContext,
+  ContentSyncContext,
+  type ContentDataContextValue,
+  type ContentPreferencesContextValue,
+  type ContentSyncContextValue,
+  type SyncProgress,
+  type SyncState,
+} from "./content-context";
 import { resolveProcedureReference } from "./procedure-logic";
 import {
   ContentUpdateCancelledError,
@@ -36,37 +46,8 @@ import {
   toggleSavedRouteKey,
 } from "./saved-logic";
 
-type ContentContextValue = {
-  content: MobileContent;
-  snapshot: MobileSnapshot;
-  favorites: string[];
-  recents: string[];
-  /** What the user last searched for, so Buscar has something to show before they type. */
-  recentQueries: string[];
-  isHydrated: boolean;
-  isRefreshing: boolean;
-  lastError?: string;
-  syncState: SyncState;
-  syncProgress: SyncProgress;
-  stagedPackage?: StagedPackage;
-  toggleFavorite: (routeKey: string) => void;
-  remember: (routeKey: string) => void;
-  removeRecent: (routeKey: string) => void;
-  rememberQuery: (query: string) => void;
-  forgetQuery: (query: string) => void;
-  refresh: () => Promise<void>;
-  cancelRefresh: () => void;
-  activateStagedUpdate: () => Promise<void>;
-  discardStaged: () => Promise<void>;
-};
-
-export type SyncState = "idle" | "checking" | "downloading" | "validating" | "activating" | "success" | "stale" | "offline" | "failure" | "recovery";
-export interface SyncProgress {
-  downloadedBytes?: number;
-  totalBytes?: number;
-}
-
-const ContentContext = createContext<ContentContextValue | null>(null);
+export type ContentContextValue = ContentDataContextValue & ContentPreferencesContextValue & ContentSyncContextValue;
+export type { SyncProgress, SyncState } from "./content-context";
 
 async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAttachmentManifest): Promise<boolean> {
   if (!isMobileContentSnapshot(candidate)) return false;
@@ -98,11 +79,29 @@ function isPublishedContentMetadata(value: unknown): value is PublishedContentMe
     && typeof metadata.generatedAt === "string";
 }
 
+/**
+ * Compatibility aggregate for existing screens. New consumers should choose
+ * useContentData, useContentPreferences, or useContentSync instead.
+ */
 export function useContent(): ContentContextValue {
-  const value = useContext(ContentContext);
-  if (!value) throw new Error("useContent must be used inside ContentProvider");
-  return value;
+  const data = useContext(ContentDataContext);
+  const preferences = useContext(ContentPreferencesContext);
+  const sync = useContext(ContentSyncContext);
+  if (!data || !preferences || !sync) throw new Error("useContent must be used inside ContentProvider");
+  return useMemo(() => ({ ...data, ...preferences, ...sync }), [data, preferences, sync]);
 }
+
+export {
+  selectContent,
+  selectFavorites,
+  selectRecentQueries,
+  selectRecents,
+  selectSnapshot,
+  selectSyncState,
+  useContentData,
+  useContentPreferences,
+  useContentSync,
+} from "./content-context";
 
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [snapshot, setSnapshot] = useState<MobileSnapshot>(bundledSnapshot as unknown as MobileSnapshot);
@@ -300,30 +299,44 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setSyncState("stale");
   }, []);
 
-  const value = useMemo<ContentContextValue>(() => ({
+  const dataValue = useMemo<ContentDataContextValue>(() => ({
     content: snapshot.content,
     snapshot,
+  }), [snapshot]);
+
+  const preferencesValue = useMemo<ContentPreferencesContextValue>(() => ({
     favorites,
     recents,
     recentQueries,
+    toggleFavorite,
+    remember,
+    removeRecent,
+    rememberQuery,
+    forgetQuery,
+  }), [favorites, forgetQuery, recentQueries, recents, remember, rememberQuery, removeRecent, toggleFavorite]);
+
+  const syncValue = useMemo<ContentSyncContextValue>(() => ({
     isHydrated,
     isRefreshing,
     lastError,
     syncState,
     syncProgress,
     stagedPackage,
-    toggleFavorite,
-    remember,
-    removeRecent,
-    rememberQuery,
-    forgetQuery,
     refresh,
     cancelRefresh,
     activateStagedUpdate,
     discardStaged,
-  }), [activateStagedUpdate, cancelRefresh, discardStaged, favorites, forgetQuery, isHydrated, isRefreshing, lastError, recentQueries, recents, refresh, remember, rememberQuery, removeRecent, snapshot, stagedPackage, syncProgress, syncState, toggleFavorite]);
+  }), [activateStagedUpdate, cancelRefresh, discardStaged, isHydrated, isRefreshing, lastError, refresh, stagedPackage, syncProgress, syncState]);
 
-  return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
+  return (
+    <ContentDataContext.Provider value={dataValue}>
+      <ContentPreferencesContext.Provider value={preferencesValue}>
+        <ContentSyncContext.Provider value={syncValue}>
+          {children}
+        </ContentSyncContext.Provider>
+      </ContentPreferencesContext.Provider>
+    </ContentDataContext.Provider>
+  );
 }
 
 export function findProcedure(content: MobileContent, id: string): MobileProcedure | undefined {

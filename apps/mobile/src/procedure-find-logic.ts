@@ -1,3 +1,4 @@
+import type { ParsedProcedureDocument, ParsedProcedureSection } from "./procedure-document.ts";
 import { readableMarkdownCell, readableMarkdownLine, splitMarkdownBlocks, type ProcedureSection } from "./procedure-logic.ts";
 import { countMatches, snippetQueryTerms } from "./search-snippet-logic.ts";
 
@@ -20,7 +21,7 @@ import { countMatches, snippetQueryTerms } from "./search-snippet-logic.ts";
  * desplazamientos: un `blockKey` que no coincidiera dejaría la coincidencia
  * contada pero inalcanzable.
  */
-export interface ProcedureFindMatch {
+export interface ProcedureFindText {
   /** `${section.key}-${index}` para líneas, `${section.key}-table-${startIndex}` para tablas. */
   blockKey: string;
   sectionKey: string;
@@ -28,44 +29,44 @@ export interface ProcedureFindMatch {
   text: string;
 }
 
+export type ProcedureFindMatch = ProcedureFindText;
+
 /** El mismo mínimo de longitud que la búsqueda global: dos letras. */
 export function isFindableQuery(query: string): boolean {
   return snippetQueryTerms(query).length > 0;
 }
 
-export function findProcedureMatches(sections: readonly ProcedureSection[], query: string): ProcedureFindMatch[] {
-  if (!isFindableQuery(query)) return [];
-  const matches: ProcedureFindMatch[] = [];
-
+/** Build the searchable text once, from the blocks the native renderer will draw. */
+export function buildProcedureFindText(sections: readonly ParsedProcedureSection[]): ProcedureFindText[] {
+  const findText: ProcedureFindText[] = [];
   for (const section of sections) {
-    // El encabezado de la sección se dibuja fuera de los bloques, así que se comprueba
-    // aparte o una coincidencia en un título no aparecería en ningún sitio.
-    if (section.heading && countMatches(section.heading.text, query) > 0) {
-      matches.push({ blockKey: section.key, sectionKey: section.key, text: section.heading.text });
-    }
-    for (const block of splitMarkdownBlocks(section.lines)) {
+    if (section.heading) findText.push({ blockKey: section.key, sectionKey: section.key, text: section.heading.text });
+    for (const block of section.blocks) {
       if (block.kind === "table") {
-        // Una tabla es un bloque: se salta a ella entera. Marcar una celda concreta
-        // exigiría medir cada fila, y una tabla del manual cabe en una pantalla.
         const text = [...block.table.headers, ...block.table.rows.flat()].map(readableMarkdownCell).join(" ");
-        if (countMatches(text, query) > 0) {
-          matches.push({ blockKey: `${section.key}-table-${block.startIndex}`, sectionKey: section.key, text });
-        }
+        if (text) findText.push({ blockKey: `${section.key}-table-${block.startIndex}`, sectionKey: section.key, text });
         continue;
       }
-      // Las imágenes no llevan texto que buscar: su alternativa la dibuja la figura,
-      // no el cuerpo.
-      if (block.kind === "image") continue;
-      if (block.row.kind === "skip") continue;
+      if (block.kind === "image" || block.row.kind === "skip") continue;
       const text = readableMarkdownLine(block.line.trim());
-      if (!text) continue;
-      if (countMatches(text, query) > 0) {
-        matches.push({ blockKey: `${section.key}-${block.index}`, sectionKey: section.key, text });
-      }
+      if (text) findText.push({ blockKey: `${section.key}-${block.index}`, sectionKey: section.key, text });
     }
   }
+  return findText;
+}
 
-  return matches;
+function findTextFromSections(sections: readonly ProcedureSection[]): ProcedureFindText[] {
+  return buildProcedureFindText(sections.map((section) => ({ ...section, blocks: splitMarkdownBlocks(section.lines) })));
+}
+
+function isParsedProcedureDocument(source: ParsedProcedureDocument | readonly ProcedureSection[]): source is ParsedProcedureDocument {
+  return !Array.isArray(source);
+}
+
+export function findProcedureMatches(source: ParsedProcedureDocument | readonly ProcedureSection[], query: string): ProcedureFindMatch[] {
+  if (!isFindableQuery(query)) return [];
+  const findText = isParsedProcedureDocument(source) ? source.findText : findTextFromSections(source);
+  return findText.filter((entry: ProcedureFindText) => countMatches(entry.text, query) > 0);
 }
 
 /**

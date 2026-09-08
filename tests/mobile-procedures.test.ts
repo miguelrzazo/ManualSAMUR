@@ -13,6 +13,7 @@ import {
   splitMarkdownBlocks,
   splitProcedureSections,
 } from "../apps/mobile/src/procedure-logic.ts";
+import { getMobileSearchIndex } from "../apps/mobile/src/reference-search-logic.ts";
 import { buildSearchSnippet, readableSnippetSource, snippetText } from "../apps/mobile/src/search-snippet-logic.ts";
 import type { MobileProcedure } from "../apps/mobile/src/data/schema.ts";
 
@@ -44,6 +45,39 @@ test("offline procedure lookup ranks exact identifier/title before synonym and c
   assert.equal(searchProcedures(procedures, "RCP")[0]?.procedure.id, "301");
   assert.equal(searchProcedures(procedures, "reanimación")[0]?.procedure.id, "301");
   assert.equal(searchProcedures(procedures, "301")[0]?.rank, 0);
+});
+
+test("procedure search normalizes full bodies once per procedure identity", () => {
+  let contentReads = 0;
+  const procedure = {
+    id: "fixture",
+    title: "Procedimiento fixture",
+    section: "SVA",
+    slug: "procedimiento-fixture",
+    routeKey: "procedure:fixture",
+    tags: [],
+    synonyms: [],
+    related: [],
+    backlinks: [],
+    relations: [],
+    editorialBlocks: [],
+    updated: "",
+    sourceUpdated: "",
+    attachments: [],
+    searchText: "",
+    get content() {
+      contentReads += 1;
+      return "Texto corporal que no se debe volver a normalizar.";
+    },
+  } as unknown as MobileProcedure;
+  const procedures = [procedure];
+
+  const index = getMobileSearchIndex(procedures, "procedures");
+  const readsAfterIndexBuild = contentReads;
+  assert.ok(readsAfterIndexBuild > 0);
+  assert.equal(searchProcedures(procedures, "procedimiento")[0]?.procedure, procedure);
+  assert.equal(contentReads, readsAfterIndexBuild);
+  assert.strictEqual(getMobileSearchIndex(procedures, "procedures"), index);
 });
 
 test("known procedures resolve by canonical route, id, or slug while malformed references stay unavailable", () => {

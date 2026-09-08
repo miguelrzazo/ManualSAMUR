@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getAllProcedures } from "../lib/content.ts";
+import { compileProcedureCorpus } from "../lib/procedure-compiler.ts";
 import { readManualHistoryDataset, readManualUpdatesDataset } from "../lib/manual-sync.ts";
 import type { ProcedureSearchDoc } from "../lib/search.ts";
 
@@ -33,7 +33,7 @@ function mb(bytes: number): string {
 
 // ─── Índice de búsqueda ───────────────────────────────────────────────────────
 
-const searchIndex: ProcedureSearchDoc[] = getAllProcedures().map((procedure) => ({
+const searchIndex: ProcedureSearchDoc[] = compileProcedureCorpus().map((procedure) => ({
   id: procedure.id,
   title: procedure.title,
   slug: procedure.slug,

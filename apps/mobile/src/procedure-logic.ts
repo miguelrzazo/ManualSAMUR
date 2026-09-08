@@ -1,5 +1,6 @@
 import { stableRouteKey, type MobileProcedure } from "../../../packages/manual-content/src/index.ts";
 import { buildSearchSnippet, readableSnippetSource, type SearchSnippet } from "./search-snippet-logic.ts";
+import { getMobileSearchIndex, type MobileSearchIndex } from "./reference-search-logic.ts";
 
 export interface ProcedureSearchResult {
   procedure: MobileProcedure;
@@ -67,17 +68,17 @@ function hasAllTerms(haystack: string, queryTerms: string[]): boolean {
   return queryTerms.every((term) => haystack.includes(term));
 }
 
-function rankProcedure(procedure: MobileProcedure, query: string): number | undefined {
-  const normalizedQuery = normalize(query);
+function rankProcedure(entry: MobileSearchIndex["procedureEntries"][number], query: { normalized: string; compact: string; terms: string[] }): number | undefined {
+  const normalizedQuery = query.normalized;
   if (!normalizedQuery) return 100;
 
-  const queryCompact = compact(query);
-  const queryTerms = terms(query);
-  const id = compact(procedure.id);
-  const title = normalize(procedure.title);
-  const synonyms = procedure.synonyms.map(normalize).filter(Boolean);
-  const tags = procedure.tags.map(normalize).filter(Boolean);
-  const searchText = normalize(`${procedure.searchText} ${procedure.content}`);
+  const queryCompact = query.compact;
+  const queryTerms = query.terms;
+  const id = entry.compactId;
+  const title = entry.normalizedTitle;
+  const synonyms = entry.normalizedSynonyms;
+  const tags = entry.normalizedTags;
+  const searchText = entry.normalizedSearchText;
 
   // Keep the two strongest lookup contracts explicit: a known ID/title must not
   // be displaced by a fuzzy content hit.
@@ -91,15 +92,16 @@ function rankProcedure(procedure: MobileProcedure, query: string): number | unde
   if (synonyms.some((value) => value.includes(normalizedQuery))) return 7;
   if (tags.some((value) => value.includes(normalizedQuery))) return 8;
   if (searchText.includes(normalizedQuery)) return 9;
-  if (hasAllTerms(normalize(`${procedure.id} ${procedure.title} ${procedure.section} ${synonyms.join(" ")} ${tags.join(" ")} ${searchText}`), queryTerms)) return 10;
+  if (hasAllTerms(entry.normalizedAllText, queryTerms)) return 10;
   return undefined;
 }
 
 /** Deterministic, offline lookup for procedure identifiers, titles, synonyms and full text. */
 export function searchProcedures(procedures: MobileProcedure[], query: string, limit = 60): ProcedureSearchResult[] {
-  const results = procedures
-    .filter(isUsableProcedure)
-    .map((procedure, index) => ({ procedure, rank: rankProcedure(procedure, query), index }))
+  const index = getMobileSearchIndex(procedures, "procedures");
+  const queryParts = { normalized: normalize(query), compact: compact(query), terms: terms(query) };
+  const results = index.procedureEntries
+    .map((entry, index) => ({ procedure: entry.procedure, rank: rankProcedure(entry, queryParts), index }))
     .filter((result): result is { procedure: MobileProcedure; rank: number; index: number } => result.rank !== undefined)
     .sort((left, right) => left.rank - right.rank || left.procedure.id.localeCompare(right.procedure.id, "es", { numeric: true }) || left.index - right.index);
   return results.slice(0, limit).map(({ procedure, rank }) => ({ procedure, rank, snippet: bodySnippet(procedure, query) }));
@@ -122,12 +124,12 @@ function bodySnippet(procedure: MobileProcedure, query: string): SearchSnippet |
 }
 
 /** Resolve every supported link form to the one stable native route identity. */
-export function resolveProcedureReference(procedures: MobileProcedure[], reference: string): MobileProcedure | undefined {
+export function resolveProcedureReference(procedures: readonly MobileProcedure[], reference: string): MobileProcedure | undefined {
   const value = String(reference ?? "").trim();
-  const usable = procedures.filter(isUsableProcedure);
-  return usable.find((procedure) => procedure.id === value)
-    ?? usable.find((procedure) => procedure.routeKey === value)
-    ?? usable.find((procedure) => procedure.slug === value);
+  const index = getMobileSearchIndex(procedures, "procedures");
+  return index.proceduresById.get(value)
+    ?? index.proceduresByRouteKey.get(value)
+    ?? index.proceduresBySlug.get(value);
 }
 
 export function procedureRouteKey(procedureOrId: MobileProcedure | string): string {

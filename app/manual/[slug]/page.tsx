@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  getAdjacentProcedures,
-  getAllProcedures,
-  getBacklinkProcedures,
   getProcedureBySlug,
-  getProcedureMeta,
-  getRelatedProcedures,
-  getSuggestedProcedures,
+  getProcedureNavMeta,
+  getProcedureRouteData,
 } from "@/lib/content";
 import {
   groupProcedureEditorialBlocks,
@@ -108,7 +104,7 @@ const mdxComponents = {
 };
 
 export async function generateStaticParams() {
-  const procedures = getAllProcedures();
+  const procedures = getProcedureNavMeta();
   return procedures.map((p) => ({ slug: p.slug }));
 }
 
@@ -124,17 +120,23 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProcedurePage({ params }: Props) {
   const { slug } = await params;
-  const procedure = getProcedureBySlug(slug);
-  if (!procedure) notFound();
+  const routeData = getProcedureRouteData(slug);
+  if (!routeData) notFound();
 
-  const related = getRelatedProcedures(procedure);
-  const backlinks = getBacklinkProcedures(procedure);
-  const suggested = getSuggestedProcedures(procedure);
-  const allProcedures = getProcedureMeta();
+  const {
+    procedure,
+    related,
+    backlinks,
+    suggested,
+    prev,
+    next,
+    procedureNav,
+    validProcedureIds,
+    previewByProcedureId,
+  } = routeData;
   const updateEvents = readManualUpdatesDataset().events
     .filter((event) => event.procedureIds.includes(procedure.id))
     .sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`));
-  const { prev, next } = getAdjacentProcedures(procedure.id);
   const hasEditorialBlocks = procedure.editorialBlocks.length > 0;
   // 101 y 102 son organigramas: su contenido ES el PDF adjunto y el cuerpo viene
   // vacío. Sin esto se pintaba una tarjeta en blanco encima de «Anexos» y el
@@ -166,11 +168,6 @@ export default async function ProcedurePage({ params }: Props) {
     "Psicológicos": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
     Técnicas: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
   };
-  const previewByProcedureId = allProcedures.reduce<Record<string, string>>((acc, item) => {
-    const text = item.searchText.replace(/\s+/g, " ").trim();
-    acc[item.id] = text.length > 260 ? `${text.slice(0, 257).trim()}...` : text;
-    return acc;
-  }, {});
   // updateEvents ya viene ordenado por effectiveDate descendente, así que el primer
   // evento no-"revisado" es el candidato más reciente. Si ese no entra en la ventana,
   // ninguno lo hace. La comparación temporal la resuelve RecentUpdateBadge en cliente.
@@ -184,7 +181,7 @@ export default async function ProcedurePage({ params }: Props) {
       <TableOfContentsRail articleId="procedure-content" pageTitle={procedure.title} />
       <ProcedureVisitTracker
         procedureId={procedure.id}
-        validIds={allProcedures.map((item) => item.id)}
+        validIds={validProcedureIds}
       />
       {/* Main content */}
       {/* El id vive en el div del cuerpo, no aquí: el índice ("En esta página")
@@ -221,7 +218,7 @@ export default async function ProcedurePage({ params }: Props) {
               />
               <FavoriteButton
                 procedureId={procedure.id}
-                validIds={allProcedures.map((item) => item.id)}
+                validIds={validProcedureIds}
                 className="h-9 w-9 p-0 print:hidden"
               />
             </div>
@@ -283,7 +280,7 @@ export default async function ProcedurePage({ params }: Props) {
                       key={block.id}
                       block={block}
                       procedure={procedure}
-                      allProcedures={allProcedures}
+                      allProcedures={procedureNav}
                     />
                   ))}
                   {section.content ? (
@@ -298,7 +295,7 @@ export default async function ProcedurePage({ params }: Props) {
                       key={block.id}
                       block={block}
                       procedure={procedure}
-                      allProcedures={allProcedures}
+                      allProcedures={procedureNav}
                     />
                   ))}
                 </div>
@@ -308,7 +305,7 @@ export default async function ProcedurePage({ params }: Props) {
                   key={block.id}
                   block={block}
                   procedure={procedure}
-                  allProcedures={allProcedures}
+                  allProcedures={procedureNav}
                 />
               ))}
             </>

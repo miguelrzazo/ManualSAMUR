@@ -7,7 +7,7 @@ import Pdf from "react-native-pdf";
 import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle } from "../accessibility";
 import { useTheme } from "../theme";
-import { useContent } from "../content";
+import { useContentData } from "../content";
 import {
   attachmentStatusLabel,
   isAttachmentUnavailableUpstream,
@@ -35,7 +35,7 @@ import type { RootStackParamList } from "../navigation-types";
 export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Anexo">) {
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
-  const { content } = useContent();
+  const { content } = useContentData();
 
   const attachment = useMemo(() => findAttachment(content.procedures, route.params.attachmentId), [content.procedures, route.params.attachmentId]);
   const [record, setRecord] = useState<AttachmentRecord>();

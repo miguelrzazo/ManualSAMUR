@@ -6,7 +6,7 @@ import { Press } from "../components/Press.tsx";
 import { Badge } from "../components/Badge.tsx";
 import { UpdateDiff } from "../components/UpdateDiff.tsx";
 import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
-import { useContent } from "../content.tsx";
+import { useContentData } from "../content.tsx";
 import { usePreferences } from "../preferences.tsx";
 import { useTheme, useThemedStyles } from "../theme.tsx";
 import type { RootStackParamList } from "../navigation-types.ts";
@@ -17,7 +17,7 @@ type HistoryTab = "novedades" | "historial";
 export function HistorialScreen({ navigation }: Props) {
   const palette = useTheme();
   const styles = useThemedStyles(createStyles);
-  const { content } = useContent();
+  const { content } = useContentData();
   const { seenEventIds, markEventSeen } = usePreferences();
   const [tab, setTab] = useState<HistoryTab>("novedades");
   const events = useMemo(() => asManualUpdateEvents(content.updates), [content.updates]);

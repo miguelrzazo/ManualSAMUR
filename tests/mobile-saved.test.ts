@@ -34,6 +34,7 @@ test("saved identities cover procedures, medicines, codes, bases and hospitals",
   assert.ok(hospital);
   assert.ok(base);
   assert.equal(new Set(index.keys()).size, index.size);
+  assert.strictEqual(savedReferenceIndex(content), savedReferenceIndex(content));
 });
 
 test("legacy procedure-only storage migrates and duplicate routes remain stable", () => {

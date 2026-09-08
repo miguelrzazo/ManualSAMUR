@@ -38,7 +38,7 @@ import { displayTitle } from "../title-case";
 import { FavoriteToggle } from "../components";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { lightImpact } from "../hooks/haptics";
-import { useContent } from "../content";
+import { useContentData, useContentPreferences } from "../content";
 import { procedureRouteKey } from "../procedure-logic";
 import {
   selectProcedureReferences,
@@ -72,7 +72,8 @@ function openSavedReference(navigation: InicioNavigation, item: SavedReference) 
 }
 
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
-  const { content, favorites, recents, toggleFavorite } = useContent();
+  const { content } = useContentData();
+  const { favorites, recents, toggleFavorite } = useContentPreferences();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
@@ -230,7 +231,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
             )}
 
             <View style={styles.treeHeading}>
-              <Text style={styles.treeHeadingText}>Manual de procedimientos</Text>
+              <Text style={styles.treeHeadingText}>Manual</Text>
               <Text style={styles.treeHeadingCount}>{content.procedures.length} fichas</Text>
             </View>
           </>

@@ -8,6 +8,7 @@ import {
   buildCodeReferences,
   buildVademecumReferences,
   codeRouteKey,
+  getMobileSearchIndex,
   relatedProcedureIdsForDrug,
   resolveCodeReference,
   resolveVademecumReference,
@@ -52,6 +53,57 @@ test("reference lookup is accent insensitive and deterministic for empty queries
   const second = searchVademecum(snapshot.content, "acido acetil salicilico", 10);
   assert.deepEqual(first.map((item) => item.id), second.map((item) => item.id));
   assert.equal(searchAbbreviations(snapshot.content.abbreviations, "", 500).length, buildAbbreviationReferences(snapshot.content.abbreviations).length);
+});
+
+test("one package identity reuses the shared mobile search index across search domains", () => {
+  const index = getMobileSearchIndex(snapshot.content);
+  assert.strictEqual(getMobileSearchIndex(snapshot.content), index);
+  assert.strictEqual(getMobileSearchIndex(snapshot.content.procedures, "procedures"), index);
+  assert.strictEqual(getMobileSearchIndex(snapshot.content.codes, "codes"), index);
+  assert.strictEqual(getMobileSearchIndex(snapshot.content.abbreviations, "abbreviations"), index);
+  assert.strictEqual(buildVademecumReferences(snapshot.content), buildVademecumReferences(snapshot.content));
+  assert.strictEqual(buildCodeReferences(snapshot.content.codes), buildCodeReferences(snapshot.content.codes));
+  assert.strictEqual(buildAbbreviationReferences(snapshot.content.abbreviations), buildAbbreviationReferences(snapshot.content.abbreviations));
+
+  // The procedure search screen receives the collection directly. A later full
+  // package lookup must promote that same identity instead of creating a second index.
+  const procedures = snapshot.content.procedures.slice();
+  const procedureFirstIndex = getMobileSearchIndex(procedures, "procedures");
+  const packageWithSameCollections = { ...snapshot.content, procedures };
+  assert.strictEqual(getMobileSearchIndex(packageWithSameCollections, "vademecum"), procedureFirstIndex);
+});
+
+test("drug relation lookup reuses normalized procedure bodies after the first query", () => {
+  let contentReads = 0;
+  const procedure = {
+    id: "fixture",
+    title: "Procedimiento fixture",
+    section: "SVA",
+    slug: "procedimiento-fixture",
+    routeKey: "procedure:fixture",
+    tags: [],
+    synonyms: [],
+    related: [],
+    backlinks: [],
+    relations: [],
+    editorialBlocks: [],
+    updated: "",
+    sourceUpdated: "",
+    attachments: [],
+    searchText: "adrenalina",
+    get content() {
+      contentReads += 1;
+      return "La adrenalina se administra según el procedimiento.";
+    },
+  } as unknown as MobileContent["procedures"][number];
+  const content = { procedures: [procedure] } as unknown as Pick<MobileContent, "procedures">;
+  const drug = { id: "adrenalina", name: "Adrenalina" };
+
+  assert.deepEqual(relatedProcedureIdsForDrug(content, drug), ["fixture"]);
+  const readsAfterFirstLookup = contentReads;
+  assert.ok(readsAfterFirstLookup > 0);
+  assert.deepEqual(relatedProcedureIdsForDrug(content, drug), ["fixture"]);
+  assert.equal(contentReads, readsAfterFirstLookup);
 });
 
 test("code and vademécum entries resolve through stable detail routes and recover when absent", () => {

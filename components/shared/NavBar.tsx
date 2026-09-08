@@ -3,11 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, ChevronLeft, Code2, Map, FlaskConical, CaseSensitive } from "lucide-react";
+import { BookOpen, ChevronLeft, Code2, Map as MapIcon, FlaskConical, CaseSensitive } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { GlobalSearch } from "@/components/shared/GlobalSearch";
 import { AppMenu } from "@/components/shared/AppMenu";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ProcedureNavMeta } from "@/lib/content";
 import type { MainLinksData } from "@/lib/main-content";
@@ -16,7 +16,7 @@ const navItems = [
   { href: "/manual", label: "Manual", icon: BookOpen },
   { href: "/codigos", label: "Códigos", icon: Code2 },
   { href: "/vademecum", label: "Vademécum", icon: FlaskConical },
-  { href: "/mapa", label: "Mapa", icon: Map },
+  { href: "/mapa", label: "Mapa", icon: MapIcon },
 ];
 
 interface Props {
@@ -28,11 +28,15 @@ export function NavBar({ procedures, mainLinks }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
+  const procedureBySlug = useMemo(
+    () => new Map(procedures.map((procedure) => [procedure.slug, procedure])),
+    [procedures],
+  );
 
   const parts = pathname.split("/").filter(Boolean);
   const isInProcedure = parts[0] === "manual" && parts.length > 1;
   const procedureSlug = isInProcedure ? parts[1] : null;
-  const currentProcedure = procedureSlug ? procedures.find((p) => p.slug === procedureSlug) : null;
+  const currentProcedure = procedureSlug ? procedureBySlug.get(procedureSlug) : null;
   const procedureId = currentProcedure?.id ?? procedureSlug;
   const procedureTitle = currentProcedure?.title ?? null;
 
