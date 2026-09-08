@@ -395,14 +395,17 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
             the offline fallback, three metres up the same file. One list, one set of
             filters, one row anatomy.
           */}
-          <PageHeader
-            title="Hospitales y bases"
-            trailing={
-              <Pressable onPress={() => setSheetOpen(false)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar lista y filtro" accessibilityHint={accessibilityHints.dismiss}>
-                <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
-              </Pressable>
-            }
-          />
+          <View style={styles.sheetHeaderBreathing}>
+            <PageHeader
+              title="Hospitales y bases"
+              titleStyle={styles.sheetTitle}
+              trailing={
+                <Pressable onPress={() => setSheetOpen(false)} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Cerrar lista y filtro" accessibilityHint={accessibilityHints.dismiss}>
+                  <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
+                </Pressable>
+              }
+            />
+          </View>
           {/*
             Aquí ya no hay ni el aviso de "Fuente oficial del SAMUR · paquete del …" ni
             el botón "Usar mi ubicación".
@@ -502,6 +505,8 @@ function createStyles(palette: AdaptivePalette) {
     onlineMapAttribution: { position: "absolute", left: spacing.lg, maxWidth: "70%", bottom: TAB_BAR_INSET + spacing.lg, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
     onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
+    sheetHeaderBreathing: { paddingBottom: spacing.xs },
+    sheetTitle: { fontSize: typography.title1.fontSize, lineHeight: typography.title1.lineHeight },
     sheetTop: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
     sheetActions: { gap: spacing.sm },
     sheetAction: { minHeight: 48, borderRadius: radii.md, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.surface, flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md },

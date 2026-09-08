@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
 import { spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { useTheme } from "../theme.tsx";
 import { displayTitle } from "../title-case.ts";
@@ -21,17 +21,18 @@ import { displayTitle } from "../title-case.ts";
  *    overlay, which is why the settings gear used to land on top of the title on
  *    Inicio and on top of the subtitle on Vademécum.
  */
-export function PageHeader({ title, trailing, leading }: {
+export function PageHeader({ title, trailing, leading, titleStyle }: {
   title: string;
   trailing?: React.ReactNode;
   leading?: React.ReactNode;
+  titleStyle?: StyleProp<TextStyle>;
 }) {
   const palette = useTheme();
   const styles = useStyles(palette);
   return (
     <View style={styles.header}>
       {leading}
-      <Text style={styles.title} numberOfLines={2} accessibilityRole="header">{displayTitle(title)}</Text>
+      <Text style={[styles.title, titleStyle]} numberOfLines={2} accessibilityRole="header">{displayTitle(title)}</Text>
       <View style={styles.trailing}>{trailing}</View>
     </View>
   );
