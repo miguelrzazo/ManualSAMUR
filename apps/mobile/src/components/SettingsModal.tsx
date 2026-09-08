@@ -17,6 +17,7 @@ import {
 import { useTheme } from "../theme.tsx";
 import { Press } from "./Press.tsx";
 import { PageHeader } from "./PageHeader.tsx";
+import { AcademySettingsCard } from "./AcademyPromo.tsx";
 import { shouldShowAcademyEntry } from "../academy-slot.ts";
 import { academySlot } from "../academy-slot-config.ts";
 
@@ -125,6 +126,9 @@ export function SettingsModal({
           }
         />
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {academySlot && shouldShowAcademyEntry(academySlot) && (
+            <AcademySettingsCard slot={academySlot} onPress={() => open(String(academySlot.url))} />
+          )}
           <SectionTitle>Contenido</SectionTitle>
           <View style={styles.card} accessible accessibilityLabel={`${status.title}. ${lastError ?? status.detail}`} accessibilityLiveRegion="polite">
             <MaterialCommunityIcons name={status.icon} size={26} color={palette[status.color]} />
@@ -168,15 +172,6 @@ export function SettingsModal({
           </View>
           <Row icon="format-letter-case" tint={palette.green} title="Abreviaturas" meta="Consulta local por abreviatura o significado" onPress={onOpenAbbreviations} />
 
-          {academySlot && shouldShowAcademyEntry(academySlot) && (
-            <>
-              {/* La formación es un enlace externo y la creatividad del arranque
-                  es local: Ajustes sigue funcionando sin cobertura. */}
-              <SectionTitle>Formación</SectionTitle>
-              <Row icon="school-outline" tint={palette.primary} title={academySlot.title} meta={academySlot.detail} external onPress={() => open(String(academySlot?.url))} />
-            </>
-          )}
-
           <SectionTitle>Aviso de uso</SectionTitle>
           {/* Un aviso, no cuatro. Era "Referencia independiente" + "Apoyo a la consulta"
               diciendo lo mismo en dos tarjetas seguidas; este es el texto que la web
@@ -209,7 +204,6 @@ export function SettingsModal({
           <Notice icon="lock-outline">No necesita cuenta y no está diseñada para registrar datos de pacientes. Favoritos, recientes y preferencias se guardan en el dispositivo. La ubicación se pide solo al usar la cercanía del mapa; el directorio funciona sin concederla.</Notice>
           <MetadataLink label="Política de privacidad" value={legalMetadata.privacyPolicyUrl} />
           <MetadataLink label="Soporte" value={legalMetadata.supportUrl} />
-          <MetadataRow label="Entidad editora" value={legalMetadata.publisher} />
 
           {/* La versión abre el registro de cambios. Era una línea de texto muerta al
               final de la lista, y es lo primero que se mira cuando algo va raro. */}
