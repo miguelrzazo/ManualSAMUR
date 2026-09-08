@@ -229,3 +229,12 @@ test("the centre-on-me control asks for permission on tap and never on mount", (
   // the dot to the edge of Madrid instead of the reader's real, out-of-town position.
   assert.match(source, /userLocation=\{origin && isWithinMadridBounds\(origin\) \?/);
 });
+
+test("the nearest-hospital action completes before dismissing its modal", () => {
+  const source = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
+  const start = source.indexOf('<Pressable onPress={async () => { await onPressNearest("hospital"); setSheetOpen(false); }}');
+  assert.notEqual(start, -1, "the nearest-hospital action must await its work before closing the sheet");
+  const action = source.slice(start, source.indexOf("</Pressable>", start));
+  assert.ok(action.indexOf('await onPressNearest("hospital")') < action.indexOf("setSheetOpen(false)"));
+  assert.match(action, /disabled=\{permission === "requesting"\}/);
+});

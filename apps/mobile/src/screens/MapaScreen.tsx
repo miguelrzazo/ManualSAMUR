@@ -426,15 +426,14 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
               </View>
             )}
             <View style={styles.sheetActions} accessibilityLabel="Acciones del mapa">
-              <Pressable onPress={() => { setSheetOpen(false); void onPressNearest("hospital"); }} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él.">
+              <Pressable onPress={async () => { await onPressNearest("hospital"); setSheetOpen(false); }} disabled={permission === "requesting"} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hospital más cercano" accessibilityHint="Calcula el hospital más cercano por distancia directa y centra el mapa en él." accessibilityState={{ busy: permission === "requesting", disabled: permission === "requesting" }}>
                 <MaterialCommunityIcons name="hospital-building" size={19} color={palette.ink} />
                 <Text style={styles.sheetActionText}>Hospital más cercano</Text>
                 <MaterialCommunityIcons name="chevron-right" size={19} color={palette.inkMuted} />
               </Pressable>
               {/* La hoja se cierra ANTES de navegar. Un `Modal` de React Native es un
                   view controller presentado aparte, así que la pantalla de Status 4 se
-                  apilaba detrás de él: se abría, pero no se veía. Lo mismo vale para
-                  "Hospital más cercano", que además centra el mapa que la hoja tapa. */}
+                  apilaba detrás de él: se abría, pero no se veía. */}
               <Pressable onPress={() => { setSheetOpen(false); navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Status4"); }} style={styles.sheetAction} accessibilityRole="button" accessibilityLabel="Hoja de referencia Status 4" accessibilityHint="Abre la hoja de referencia Status 4 con los hospitales de destino automático.">
                 <MaterialCommunityIcons name="alert-decagram-outline" size={19} color={palette.ink} />
                 <Text style={styles.sheetActionText}>Status 4</Text>
