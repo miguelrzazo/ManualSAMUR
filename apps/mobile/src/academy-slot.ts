@@ -23,8 +23,6 @@ export interface AcademySlot {
   url: string;
   /** Imagen empaquetada, opcional, para el arranque. */
   splashImage?: ImageSourcePropType;
-  /** Lockup empaquetado para la composición nativa del arranque. */
-  splashLogo?: ImageSourcePropType;
 }
 
 /**

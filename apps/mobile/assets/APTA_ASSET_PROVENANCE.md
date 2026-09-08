@@ -1,6 +1,5 @@
 # Assets de APTA Academy
 
-El lockup se copió de `miguelrzazo/SAMUR_Academy/brand-kit/logos/lockup-1024-transparent.png`.
 La mascota azul `apta-blue-tutor.png` es una variación generada con `illo`,
 condicionada por `brand-kit/mascot/studying.png`, y después pasada a alpha para
 usarla como cutout local.
