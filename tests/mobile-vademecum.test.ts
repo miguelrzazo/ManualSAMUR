@@ -19,7 +19,7 @@ import {
   type VademecumTabKey,
 } from "../apps/mobile/src/vademecum-logic.ts";
 import { buildVademecumReferences } from "../apps/mobile/src/reference-search-logic.ts";
-import { DRUG_DETAIL_FIELDS, parseDoseLines, parseDrugRoutes } from "../apps/mobile/src/drug-detail-logic.ts";
+import { DRUG_DETAIL_FIELDS, DRUG_NOTE_FIELDS, DRUG_SAFETY_FIELDS, parseDoseLines, parseDrugRoutes, parseMedicationDose } from "../apps/mobile/src/drug-detail-logic.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as {
@@ -235,16 +235,29 @@ test("la posologia se parte en pautas en vez de salir como un parrafo corrido", 
   }
 });
 
+test("la posologia agrupa solo los encabezados explícitos y conserva el resto en General", () => {
+  assert.deepEqual(
+    parseMedicationDose("Preparación inicial.\n- Adultos:\n- 10 mg iv.\n- Niños: 0,1 mg/kg\n- Adultos y niños:\n5 mg/kg"),
+    [
+      { audience: "general", label: "General", lines: [{ text: "Preparación inicial.", bullet: false }] },
+      { audience: "adultos", label: "Adultos", sourceHeading: "Adultos", lines: [{ text: "10 mg iv.", bullet: true }] },
+      { audience: "ninos", label: "Niños", sourceHeading: "Niños", lines: [{ text: "0,1 mg/kg", bullet: true }] },
+      { audience: "general", label: "General", sourceHeading: "Adultos y niños", lines: [{ text: "5 mg/kg", bullet: false }] },
+    ],
+  );
+  assert.deepEqual(parseMedicationDose("- Lactantes:\n1 mg\n- Adolescentes:\n2 mg").map((section) => section.audience), ["lactantes", "adolescentes"]);
+  assert.deepEqual(parseMedicationDose("10 mg/kg"), [{ audience: "general", label: "General", lines: [{ text: "10 mg/kg", bullet: false }] }]);
+});
+
 test("via y dosis salen del listado de campos secundarios de la ficha", () => {
-  // Estaban entre "Presentacion publicada" y "Contraindicaciones", con el mismo peso
+  // Estaban entre "Presentación" y "Contraindicaciones", con el mismo peso
   // visual que "Notas". Ahora los dibuja la pantalla arriba y aparte.
   const keys = DRUG_DETAIL_FIELDS.map(([, key]) => key);
   assert.ok(!keys.includes("route"));
   assert.ok(!keys.includes("dose"));
-  // Y ningun otro campo se ha caido por el camino.
-  assert.deepEqual(keys, ["indication", "funcion", "presentation", "contraindications", "efectos_secundarios", "notes"]);
-  // "publicada" se mantiene en las etiquetas que salen literales del manual: es lo que
-  // distingue el dato publicado de una lectura nuestra.
+  assert.deepEqual(keys, ["indication", "funcion", "presentation"]);
   const labels = DRUG_DETAIL_FIELDS.map(([label]) => label);
-  assert.ok(labels.includes("Presentación publicada"));
+  assert.deepEqual(labels, ["Indicación", "Función", "Presentación"]);
+  assert.deepEqual(DRUG_SAFETY_FIELDS.map(([, key]) => key), ["contraindications", "efectos_secundarios", "precauciones", "interacciones", "incompatibilidades"]);
+  assert.deepEqual(DRUG_NOTE_FIELDS, [["Notas", "notes"]]);
 });

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import test from "node:test";
 import type { MobileSnapshot } from "../packages/manual-content/src/index.ts";
 import { STAGED_PACKAGE_KEY, type ContentStorage } from "../apps/mobile/src/content-transaction.ts";
@@ -18,7 +19,7 @@ class MemoryStorage implements ContentStorage {
   async removeItem(key: string) { this.values.delete(key); }
 }
 
-const hash = (identity: string) => identity.repeat(64);
+const hash = (identity: string) => createHash("sha256").update(identity).digest("hex");
 
 const metadata = (identity: string, packageHash = hash(identity)): PublishedContentMetadata => ({
   schema: "samur-manual.mobile-content",

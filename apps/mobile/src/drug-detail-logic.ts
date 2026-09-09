@@ -2,15 +2,20 @@
  * Cómo se lee la ficha de un fármaco.
  *
  * La pantalla dibujaba ocho bloques `etiqueta / valor` idénticos, en el orden en que
- * estaban escritos: "Función", "Indicación", "Presentación publicada", "Vía", "Dosis
- * publicada", "Contraindicaciones", "Efectos secundarios", "Notas". Las dos cosas que
+ * estaban escritos: "Función", "Indicación", "Presentación", "Vía", "Dosis",
+ * "Contraindicaciones", "Efectos secundarios", "Notas". Las dos cosas que
  * se consultan con el paciente delante —por dónde va y cuánto— tenían exactamente el
  * mismo peso visual que "Notas", y la dosis llegaba como un párrafo de cinco líneas
  * con guiones dentro, sin saltos, porque el valor se pintaba tal cual.
  *
- * Este módulo es sólo la parte que se puede probar sin montar nada: partir las vías y
- * partir la posología en líneas. El orden y la jerarquía los pone la pantalla.
+ * Este módulo conserva los adaptadores que puede probarse sin montar la app. La
+ * interpretación compartida de la posología vive en `packages/manual-content` para
+ * que web y móvil no acaben separando adultos y niños con reglas distintas.
  */
+
+import { parseMedicationDose, type MedicationDoseLine } from "../../../packages/manual-content/src/index.ts";
+
+export type { MedicationDoseLine, MedicationDoseSection } from "../../../packages/manual-content/src/index.ts";
 
 /**
  * Las vías de administración, una por chapa.
@@ -29,11 +34,7 @@ export function parseDrugRoutes(value: unknown): string[] {
   )];
 }
 
-export interface DoseLine {
-  text: string;
-  /** Una pauta concreta, escrita en el origen como `- …` o `* …`. */
-  bullet: boolean;
-}
+export type DoseLine = MedicationDoseLine;
 
 /**
  * La posología, en líneas.
@@ -50,30 +51,33 @@ export interface DoseLine {
  * manual tal cual, sólo que separada.
  */
 export function parseDoseLines(value: unknown): DoseLine[] {
-  if (typeof value !== "string") return [];
-  return value
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const bullet = /^[-*•]\s+/.test(line);
-      return { text: bullet ? line.replace(/^[-*•]\s+/, "") : line, bullet };
-    });
+  return parseMedicationDose(value).flatMap((section) => section.lines);
 }
 
+export { parseMedicationDose } from "../../../packages/manual-content/src/index.ts";
+
 /**
- * Los campos que quedan bajo la posología, en el orden en que se leen.
+ * Los campos informativos que quedan bajo la posología, en el orden en que se leen.
  *
  * "Vía" y "Dosis" ya no están en la lista: la pantalla los dibuja arriba y con otro
- * tratamiento. Estaban aquí, entre "Presentación publicada" y "Contraindicaciones",
+ * tratamiento. Estaban aquí, entre "Presentación" y "Contraindicaciones",
  * indistinguibles de sus vecinos.
  */
 export const DRUG_DETAIL_FIELDS: readonly (readonly [label: string, key: string])[] = [
   ["Indicación", "indication"],
   ["Función", "funcion"],
-  ["Presentación publicada", "presentation"],
+  ["Presentación", "presentation"],
+] as const;
+
+export const DRUG_SAFETY_FIELDS: readonly (readonly [label: string, key: string])[] = [
   ["Contraindicaciones", "contraindications"],
   ["Efectos secundarios", "efectos_secundarios"],
+  ["Precauciones", "precauciones"],
+  ["Interacciones", "interacciones"],
+  ["Incompatibilidades", "incompatibilidades"],
+] as const;
+
+export const DRUG_NOTE_FIELDS: readonly (readonly [label: string, key: string])[] = [
   ["Notas", "notes"],
 ] as const;
 

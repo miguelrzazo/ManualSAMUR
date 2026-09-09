@@ -3,12 +3,18 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  AlertTriangle,
+  Baby,
   ChevronRight,
   Droplets,
+  Route,
+  ShieldAlert,
   Table2,
   Tags,
+  UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseMedicationDose, type MedicationDoseSection } from "@/packages/manual-content/src/index.ts";
 import { VADEMECUM_TABS, type VademecumTabKey } from "@/lib/vademecum-config";
 import { buildAlphabetSections } from "@/lib/vademecum-utils";
 import type { ManualReverseMention } from "@/lib/manual-relations-index";
@@ -170,12 +176,53 @@ function RichText({ text }: { text: string }) {
   return <div className="space-y-0.5">{nodes}</div>;
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({ label, value, className }: { label: string; value: string; className?: string }) {
   return (
-    <div>
+    <div className={className}>
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
       <RichText text={value} />
     </div>
+  );
+}
+
+function DoseSection({ section, index }: { section: MedicationDoseSection; index: number }) {
+  const Icon = section.audience === "adultos" ? UserRound : section.audience === "ninos" || section.audience === "lactantes" ? Baby : UserRound;
+  const tone = section.audience === "adultos"
+    ? "border-sky-200 bg-sky-50/70 dark:border-sky-900/60 dark:bg-sky-950/20"
+    : section.audience === "ninos" || section.audience === "lactantes"
+      ? "border-teal-200 bg-teal-50/70 dark:border-teal-900/60 dark:bg-teal-950/20"
+      : "border-border/60 bg-background";
+  const body = section.lines.map((line) => line.bullet ? `- ${line.text}` : line.text).join("\n");
+
+  return (
+    <section className={cn("rounded-lg border px-3 py-3", tone)} aria-labelledby={`dose-section-${index}`}>
+      <div className="mb-2 flex items-center gap-2">
+        <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+        <h3 id={`dose-section-${index}`} className="text-sm font-bold">{section.label}</h3>
+        {section.sourceHeading && section.sourceHeading !== section.label && (
+          <span className="text-xs text-muted-foreground">{section.sourceHeading}</span>
+        )}
+      </div>
+      <RichText text={body} />
+    </section>
+  );
+}
+
+function SafetyRow({ label, value, tone }: { label: string; value: string; tone: "danger" | "warning" | "neutral" }) {
+  const styles = {
+    danger: "border-red-200 bg-red-50/80 dark:border-red-900/60 dark:bg-red-950/20",
+    warning: "border-amber-200 bg-amber-50/80 dark:border-amber-900/60 dark:bg-amber-950/20",
+    neutral: "border-border/60 bg-muted/20",
+  };
+  const Icon = tone === "danger" ? ShieldAlert : tone === "warning" ? AlertTriangle : Route;
+  return (
+    <section className={cn("rounded-lg border px-3 py-3", styles[tone])} aria-label={label}>
+      <div className="mb-2 flex items-center gap-2">
+        <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+        <h3 className="text-xs font-semibold uppercase tracking-wide">{label}</h3>
+      </div>
+      <RichText text={value} />
+    </section>
   );
 }
 
@@ -227,27 +274,41 @@ function DrugCard({
 
 /** Cuerpo del detalle de un fármaco; se pinta dentro del modal. */
 function DrugDetailBody({ drug }: { drug: Drug }) {
+  const doseSections = parseMedicationDose(drug.dose);
+  const safetyRows: Array<{ label: string; value: string; tone: "danger" | "warning" | "neutral" }> = [
+    { label: "Contraindicaciones", value: drug.contraindications, tone: "danger" },
+    { label: "Efectos secundarios", value: drug.efectos_secundarios ?? "", tone: "warning" },
+    { label: "Precauciones", value: drug.precauciones ?? "", tone: "warning" },
+    { label: "Interacciones", value: drug.interacciones ?? "", tone: "neutral" },
+    { label: "Incompatibilidades", value: drug.incompatibilidades ?? "", tone: "neutral" },
+  ].filter((row) => row.value.trim().length > 0).map((row) => ({
+    ...row,
+    tone: row.tone as "danger" | "warning" | "neutral",
+  }));
+
   return (
     <>
-      {drug.funcion && <InfoRow label="Función" value={drug.funcion} />}
-      <InfoRow label="Indicación" value={drug.indication} />
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Dosis</p>
-        <div className="bg-background rounded-lg px-3 py-2.5 border border-border/50">
-          <RichText text={drug.dose} />
-        </div>
-      </div>
-      <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Vía</p>
-        <div className="flex gap-1.5 flex-wrap">
+        <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vías de administración</p>
+        <div className="flex flex-wrap gap-1.5" aria-label={`Vías de administración: ${drug.route.join(", ")}`}>
           {drug.route.map((route) => <RouteChip key={route} route={route} />)}
         </div>
       </div>
-      <InfoRow label="Contraindicaciones" value={drug.contraindications} />
-      {drug.efectos_secundarios && <InfoRow label="Efectos secundarios" value={drug.efectos_secundarios} />}
-      {drug.precauciones && <InfoRow label="Precauciones" value={drug.precauciones} />}
-      {drug.interacciones && <InfoRow label="Interacciones" value={drug.interacciones} />}
-      {drug.incompatibilidades && <InfoRow label="Incompatibilidades" value={drug.incompatibilidades} />}
+      <div>
+        <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Dosis</p>
+        <div className="space-y-2">
+          {doseSections.map((section, index) => <DoseSection key={`${section.audience}-${index}`} section={section} index={index} />)}
+        </div>
+      </div>
+      {drug.indication && <InfoRow label="Indicación" value={drug.indication} />}
+      {drug.funcion && <InfoRow label="Función" value={drug.funcion} />}
+      {drug.presentation && <InfoRow label="Presentación" value={drug.presentation} />}
+      {safetyRows.length > 0 && (
+        <section aria-labelledby="drug-safety-heading" className="space-y-2">
+          <h2 id="drug-safety-heading" className="text-sm font-bold">Seguridad</h2>
+          {safetyRows.map((row) => <SafetyRow key={row.label} {...row} />)}
+        </section>
+      )}
       {drug.notes && (
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Notas</p>
@@ -811,7 +872,7 @@ export function VademecumView({
         accent={getColor(selectedDrug?.category ?? "")}
         title={selectedDrug?.name ?? ""}
         subtitle={selectedDrug?.synonyms.length ? selectedDrug.synonyms.join(", ") : undefined}
-        badge={selectedDrug ? `${selectedDrug.category} · ${selectedDrug.presentation}` : undefined}
+        badge={selectedDrug?.category}
         mentions={selectedDrug ? drugMentions[selectedDrug.id] ?? [] : []}
       >
         {selectedDrug && <DrugDetailBody drug={selectedDrug} />}

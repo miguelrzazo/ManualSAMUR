@@ -21,6 +21,17 @@ tags:
     text: "8081"
     optional: true
 
+# El cliente de desarrollo puede no descubrir el servidor local automáticamente.
+# Solo se usa como ruta provisional cuando no hay una candidata firmada instalada.
+- runFlow:
+    when:
+      visible: "Enter URL manually"
+    commands:
+      - tapOn: "Enter URL manually"
+      - tapOn: "http://"
+      - inputText: "http://[::1]:8081"
+      - tapOn: "Connect"
+
 # ─── 1 · Primer arranque: el aviso de que no es oficial ─────────────────────
 - extendedWaitUntil:
     visible:
@@ -28,6 +39,15 @@ tags:
     timeout: 30000
 - takeScreenshot: store-01-primer-arranque
 - tapOn: "Entendido, abrir el manual"
+
+# La candidata actual puede mostrar el intersticial de APTA Academy en el primer
+# arranque; el recorrido de la ficha debe continuar sin convertirlo en una escena
+# de producto ni depender de que el slot promocional esté habilitado.
+- runFlow:
+    when:
+      visible: "Continuar a la app"
+    commands:
+      - tapOn: "Continuar a la app"
 
 # ─── 2 · Inicio: el manual entero, disponible sin conexion ──────────────────
 - extendedWaitUntil:
@@ -74,6 +94,15 @@ tags:
           duration: 200
 - takeScreenshot: store-05-tabla-clinica
 
+# El detalle de procedimiento es un stack screen y no muestra la barra de tabs;
+# usa su control flotante Inicio antes de recorrer las referencias hermanas.
+- tapOn:
+    point: "7%, 94%"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 10000
+
 # ─── 4 · Vademecum ──────────────────────────────────────────────────────────
 - tapOn: "Vademécum"
 - extendedWaitUntil:
@@ -101,6 +130,11 @@ tags:
 - takeScreenshot: store-08-mapa
 
 # ─── 7 · Ajustes: estado de sincronizacion y fuente oficial ────────────────
+- tapOn: "Inicio"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 10000
 - tapOn:
     text: "Ajustes"
     optional: true

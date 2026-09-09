@@ -144,9 +144,12 @@ test("abbreviations stay out of global search while remaining in the information
   assert.match(source, /DRUG_DETAIL_FIELDS/);
   assert.match(
     readFileSync(path.join(process.cwd(), "apps/mobile/src/drug-detail-logic.ts"), "utf8"),
-    /Presentación publicada/,
+    /Presentación/,
   );
-  assert.match(source, /Dosis publicada/);
+  assert.match(source, /Dosis/);
+  assert.match(source, /Seguridad/);
+  assert.doesNotMatch(source, /Dosis publicada/);
+  assert.doesNotMatch(source, /Presentación publicada/);
   assert.match(source, /Procedimientos relacionados/);
   assert.match(source, /function CodeScreen/);
 });

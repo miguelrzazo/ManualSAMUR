@@ -138,10 +138,31 @@ export interface MobileLinks {
   collaboratorsUrl: string;
 }
 
+/** Shared medication contract consumed by the web and native vademecum views. */
+export interface MedicationRecord {
+  id: string;
+  name: string;
+  synonyms: string[];
+  category: string;
+  subcategory: string;
+  presentation: string;
+  funcion?: string;
+  indication: string;
+  dose: string;
+  route: string[];
+  contraindications: string;
+  efectos_secundarios?: string;
+  precauciones?: string;
+  interacciones?: string;
+  incompatibilidades?: string;
+  notes?: string;
+  [key: string]: unknown;
+}
+
 export interface MobileContent {
   procedures: MobileProcedure[];
   codes: Record<string, unknown[]>;
-  drugs: Array<Record<string, unknown>>;
+  drugs: MedicationRecord[];
   perfusions: Array<Record<string, unknown>>;
   fluids: Array<Record<string, unknown>>;
   commercialNames: Array<Record<string, unknown>>;
