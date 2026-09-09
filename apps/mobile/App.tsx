@@ -72,6 +72,7 @@ import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type Resolv
 import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
 import { Image } from "expo-image";
 import aptaBlueTutor from "./assets/apta-blue-tutor.png";
+import manualIcon from "./assets/icon.png";
 import { GlassTabBar, TAB_ICON_SIZE } from "./src/nav-shell";
 import { AnexoScreen } from "./src/screens/AnexoScreen";
 import { CodigosScreen } from "./src/screens/CodigosScreen";
@@ -128,13 +129,7 @@ const Pressable = forwardRef<View, PressableProps>(function AccessiblePressable(
 
 function LogoMark({ small = false }: { small?: boolean }) {
   const styles = useAppStyles();
-  return (
-    <View style={[styles.logoMark, small && styles.logoMarkSmall]} accessible accessibilityLabel="Manual de procedimientos SAMUR PC">
-      <View style={[styles.logoCrossVertical, small && styles.logoSmallBar]} />
-      <View style={[styles.logoCrossHorizontal, small && styles.logoSmallHorizontal]} />
-      <View style={[styles.logoArrow, small && styles.logoArrowSmall]} />
-    </View>
-  );
+  return <Image source={manualIcon} style={[styles.logoMark, small && styles.logoMarkSmall]} contentFit="contain" alt="Icono de Manual SAMUR" accessibilityLabel="Icono de Manual SAMUR" />;
 }
 
 function restoreAccessibilityFocus(ref: React.RefObject<View | null>) {
@@ -153,7 +148,7 @@ function restoreAccessibilityFocus(ref: React.RefObject<View | null>) {
  * título grande que llevan Códigos, Vademécum, Mapa y Buscar (`PageHeader`), y la
  * pestaña deja de ser la única con una cabecera propia.
  *
- * `LogoMark` sigue existiendo: lo dibujan la pantalla de carga y el aviso de primer
+ * `LogoMark` sigue existiendo: lo muestran la pantalla de carga y el aviso de primer
  * uso, que son los dos sitios donde la app todavía no se ha presentado.
  */
 function BrandHeader({ onSettings, settingsRef }: { onSettings?: () => void; settingsRef?: React.RefObject<View | null> }) {
@@ -1645,17 +1640,8 @@ function createStyles(palette: AdaptivePalette) {
   detailContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 720 },
   // `brandHeader`/`brandLockup`/`brandName` ya no existen: la cabecera de Inicio es
   // `PageHeader`, la misma que las demás pestañas, y ya no lleva el icono de la app.
-  // Los radios del logo no salen de la escala a proposito: reproducen el squircle
-  // del propio icono (rx 224 sobre un lienzo de 1024, es decir ~0,22 del lado), no
-  // una esquina redondeada de superficie. circle() tampoco vale, porque un circulo
-  // perfecto seria 47 y 19. Si se tocan, el logo deja de ser el icono.
-  logoMark: { width: 94, height: 94, borderRadius: 27, backgroundColor: palette.primary, alignItems: "center", justifyContent: "center", overflow: "hidden" },
+  logoMark: { width: 94, height: 94, borderRadius: 27, backgroundColor: palette.primary, overflow: "hidden" },
   logoMarkSmall: { width: 38, height: 38, borderRadius: 11 },
-  logoCrossVertical: { position: "absolute", width: 15, height: 60, backgroundColor: palette.white, borderRadius: 3 },
-  logoCrossHorizontal: { position: "absolute", width: 60, height: 15, backgroundColor: palette.white, borderRadius: 3 },
-  logoSmallBar: { width: 6, height: 24 }, logoSmallHorizontal: { width: 24, height: 6 },
-  logoArrow: { position: "absolute", width: 36, height: 36, backgroundColor: palette.ink, transform: [{ rotate: "45deg" }], left: 20, top: 16, borderRadius: 4 },
-  logoArrowSmall: { width: 16, height: 16, left: 8, top: 7, borderRadius: 2 },
   iconButton: { ...circle(44), alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },
   searchBar: { minHeight: 58, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, gap: spacing.sm, marginBottom: spacing.xl },
   searchInput: { flex: 1, color: palette.ink, fontSize: 14, paddingVertical: 0 }, searchPlaceholder: { flex: 1, color: palette.inkMuted, fontSize: 14 },

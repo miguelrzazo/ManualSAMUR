@@ -17,6 +17,7 @@ const pbxFile = require("xcode/lib/pbxFile");
 // so it can never hit the platform-mismatch failure above.
 const backgroundColorName = "SplashBackgroundColor";
 const backgroundColorHex = "1B4FA8"; // matches app.json's splash.backgroundColor
+const launchImageSetName = "SplashScreenLogo";
 
 function hexToUnitComponent(hex) {
   return (parseInt(hex, 16) / 255).toFixed(3);
@@ -37,6 +38,17 @@ function colorSetContents() {
           idiom: "universal",
         },
       ],
+      info: { author: "expo", version: 1 },
+    },
+    null,
+    2,
+  );
+}
+
+function imageSetContents() {
+  return JSON.stringify(
+    {
+      images: [{ filename: "splash.png", idiom: "universal", scale: "3x" }],
       info: { author: "expo", version: 1 },
     },
     null,
@@ -74,7 +86,10 @@ function withIOSLaunchScreen(config) {
   config = withInfoPlist(config, (modConfig) => {
     const results = { ...modConfig.modResults };
     delete results.UILaunchStoryboardName;
-    results.UILaunchScreen = { UIColorName: backgroundColorName };
+    results.UILaunchScreen = {
+      UIColorName: backgroundColorName,
+      UIImageName: launchImageSetName,
+    };
     return { ...modConfig, modResults: results };
   });
 
@@ -86,6 +101,16 @@ function withIOSLaunchScreen(config) {
       const colorSetDir = path.join(assetsDir, `${backgroundColorName}.colorset`);
       fs.mkdirSync(colorSetDir, { recursive: true });
       fs.writeFileSync(path.join(colorSetDir, "Contents.json"), colorSetContents());
+
+      const imageSetDir = path.join(assetsDir, `${launchImageSetName}.imageset`);
+      fs.rmSync(imageSetDir, { recursive: true, force: true });
+      fs.mkdirSync(imageSetDir, { recursive: true });
+      const splashImagePath = path.resolve(modConfig.modRequest.projectRoot, modConfig.splash?.image ?? "assets/splash.png");
+      if (!fs.existsSync(splashImagePath)) {
+        throw new Error(`with-ios-launch-screen could not find splash image: ${splashImagePath}`);
+      }
+      fs.copyFileSync(splashImagePath, path.join(imageSetDir, "splash.png"));
+      fs.writeFileSync(path.join(imageSetDir, "Contents.json"), imageSetContents());
     }
 
     const storyboardPath = findFile(projectRoot, "SplashScreen.storyboard");

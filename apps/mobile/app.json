@@ -21,7 +21,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "deploymentTarget": "16.4",
-      "buildNumber": "5",
+      "buildNumber": "6",
       "icon": {
         "light": "./assets/icon-ios-light.png",
         "dark": "./assets/icon-ios-dark.png",
@@ -40,6 +40,16 @@
     "plugins": [
       "expo-status-bar",
       "expo-font",
+      "./plugins/with-ios-launch-screen",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1B4FA8",
+          "image": "./assets/splash.png",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ],
       [
         "expo-location",
         {
@@ -47,7 +57,6 @@
         }
       ],
       "./plugins/with-ios-scene-lifecycle",
-      "./plugins/with-ios-launch-screen",
       "./plugins/with-ios-podfile-safe-scripts",
       "./plugins/with-ios-attachment-assets",
       "./plugins/with-android-attachment-assets",
@@ -56,7 +65,7 @@
       "expo-sharing"
     ],
     "extra": {
-      "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v2",
+      "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v3",
       "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata",
       "contentOrigin": "https://manual-proced-spc.vercel.app"
     }
