@@ -54,11 +54,14 @@ target.
   person explicitly asks to use it. The approved optional Madrid offline pack is managed through
   MapLibre's native offline support. The app does not claim traffic-aware routing or live capacity.
 - Updates are local-first and transactional at the snapshot level. The app checks the small
-  metadata endpoint first, downloads only when the package hash changes, stages and verifies
-  the package, and waits for explicit activation. The existing `/api/mobile/content/v2`
-  route remains the content contract. Every snapshot carries a content hash and package hash;
+  metadata endpoint first, downloads only when the package hash changes, stages, verifies and
+  activates the package atomically. It checks at launch and when returning to the foreground,
+  with a six-hour cooldown; the manual refresh remains available in Información y ajustes.
+  New clients use `/api/mobile/content/v3`; `/api/mobile/content/v2` remains a compatibility
+  alias for already-installed clients. Every snapshot carries a content hash and package hash;
   the shared package and runtime verify canonical bytes, stable route keys, a matching
-  attachment manifest, and safe `/docs` or `/images` paths.
+  attachment manifest, and safe `/docs` or `/images` paths. If the publication is incompatible,
+  the app reports that a new app version is required and keeps the last known-good package.
 - **All attachments are essential** (owner decision, issue #62): every attachment the
   content sync could resolve is bundled offline inside the app at build time, not
   downloaded on demand. `attachment-release-policy.json` is approved with all resolvable
@@ -85,8 +88,9 @@ target.
     every essential id is bundled and metadata-complete on every run.
 - There are no accounts, user analytics, or cross-device synchronization paths.
 - The production procedure screen includes an accessible, procedure-scoped update history with
-  newest-first events and expandable source diffs. The Inicio-wide history remains a development
-  prototype behind `__DEV__`.
+  newest-first events and expandable source diffs. The Historial screen keeps recent Novedades in
+  the package and loads the complete history from paginated static pages, caching each page by
+  publication identity for offline consultation.
 - The production Settings sheet exposes content health and recovery, appearance, abbreviations,
   privacy/location/independence/medical notices, and legal/support metadata. Publisher, privacy,
   and support values are intentionally marked pending for now; they are non-clickable and the

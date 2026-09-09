@@ -43,6 +43,7 @@ export interface MobileUpdateEvent {
   category?: string;
   routeKey?: string;
   diff?: string;
+  newHash?: string;
 }
 
 export interface MobileProcedureMention {
@@ -273,7 +274,7 @@ export function isValidMobileUpdateEvent(value: unknown): value is MobileUpdateE
   if (typeof event.eventId !== "string" || !event.eventId) return false;
   if (!Array.isArray(event.procedureIds) || event.procedureIds.some((id) => typeof id !== "string" || !id)) return false;
   if (typeof event.changeKind !== "string" || typeof event.summary !== "string" || typeof event.effectiveDate !== "string") return false;
-  for (const key of ["origin", "officialUrl", "approvedAt", "category", "routeKey", "diff"] as const) {
+  for (const key of ["origin", "officialUrl", "approvedAt", "category", "routeKey", "diff", "newHash"] as const) {
     if (event[key] !== undefined && typeof event[key] !== "string") return false;
   }
   return event.isRecent === undefined || typeof event.isRecent === "boolean";

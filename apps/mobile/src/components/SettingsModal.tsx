@@ -64,6 +64,7 @@ function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: Conte
   if (lastCheck?.outcome === "update-available") return { icon: "cloud-upload-outline", title: "Actualización disponible", detail: "Busca la actualización para descargarla y verificarla", color: "amber" };
   if (lastCheck?.outcome === "up-to-date") return { icon: "check-circle-outline", title: "Contenido al día", detail: "La última comprobación no encontró cambios", color: "green" };
   if (lastCheck?.outcome === "offline") return { icon: "cloud-off-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la conexión", color: "amber" };
+  if (lastCheck?.outcome === "incompatible") return { icon: "cellphone-arrow-down", title: "Actualiza la aplicación", detail: "La publicación requiere una versión nueva", color: "amber" };
   if (lastCheck?.outcome === "invalid-response" || lastCheck?.outcome === "failure") return { icon: "alert-circle-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la actualización", color: "amber" };
   switch (syncState) {
     case "activating": return { icon: "database-sync-outline", title: "Activando contenido", detail: "Finalizando la actualización", color: "primary" };

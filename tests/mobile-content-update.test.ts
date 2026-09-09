@@ -108,6 +108,30 @@ test("invalid metadata becomes a typed, user-classifiable failure", async () => 
   );
 });
 
+test("incompatible published schema stops before downloading a stale package", async () => {
+  const calls: string[] = [];
+  await assert.rejects(
+    () => checkAndStageContent({
+      contentUrl: "https://example.test/content/v2",
+      metadataUrl: "https://example.test/metadata",
+      activeSnapshot: snapshot("old"),
+      storage: new MemoryStorage(),
+      validate: async () => true,
+      fetchImpl: async (url) => {
+        calls.push(url);
+        return response({
+          schema: "samur-manual.mobile-content",
+          version: 2,
+          hash: hash("old"),
+          generatedAt: "2026-09-09T10:00:00.000Z",
+        });
+      },
+    }),
+    (error: unknown) => error instanceof ContentUpdateRuntimeError && error.outcome === "incompatible",
+  );
+  assert.deepEqual(calls, ["https://example.test/metadata"]);
+});
+
 test("network errors classify as offline without touching the active package", async () => {
   const storage = new MemoryStorage();
   await assert.rejects(

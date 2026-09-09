@@ -7,6 +7,7 @@
     "prototype:icon": "next dev",
     "generate:llms": "node --experimental-strip-types scripts/generate-llms.ts",
     "generate:client-data": "node --experimental-strip-types scripts/generate-client-data.ts",
+    "generate:manual-history": "node --experimental-strip-types scripts/update-manual-history.ts",
     "sync:docs-public": "node --experimental-strip-types scripts/sync-public-docs.ts",
     "extract:pdf": "node --experimental-strip-types scripts/extract-pdf-text.ts",
     "discover:wiki": "node --experimental-strip-types scripts/discover-wiki-pages.ts",

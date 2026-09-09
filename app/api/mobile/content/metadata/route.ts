@@ -1,6 +1,6 @@
 import { buildMobileContentSnapshot } from "@/lib/mobile-snapshot";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 export async function GET() {
   const snapshot = buildMobileContentSnapshot();
@@ -11,7 +11,8 @@ export async function GET() {
       hash: snapshot.hash,
       packageHash: snapshot.packageHash,
       generatedAt: snapshot.generatedAt,
+      contentUrl: "/api/mobile/content/v3",
     },
-    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } },
+    { headers: { "Cache-Control": "public, max-age=0, must-revalidate" } },
   );
 }

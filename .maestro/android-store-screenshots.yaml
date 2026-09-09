@@ -1,0 +1,140 @@
+# Android screenshot pass derived from store-screenshots.yaml.
+#
+# Prerequisites:
+# - The Android debug/development build is installed on a phone-sized emulator.
+# - The bundled content snapshot is present; no backend or mock API is required.
+# - Run this flow from the screenshot artifact directory so Maestro keeps the
+#   generated PNGs with the run evidence.
+appId: es.madrid.samur.manual
+tags:
+  - android
+  - screenshots
+  - store
+---
+# A fresh Android app-data reset is sufficient to show the first-use disclosure.
+- launchApp:
+    clearState: true
+- stopApp
+
+# Resetting a development client also clears its remembered Metro URL. Open the
+# running local bundle explicitly so the flow does not depend on the native
+# launcher onboarding/server-picker timing.
+- openLink: "exp+manualsamur://expo-development-client/?url=http%3A%2F%2F127.0.0.1%3A8081"
+
+# ─── 1 · First launch disclosure ────────────────────────────────────────────
+- extendedWaitUntil:
+    visible:
+      text: "Continuar a la app"
+    timeout: 30000
+- tapOn: "Continuar a la app"
+- extendedWaitUntil:
+    visible:
+      text: "Entendido, abrir el manual"
+    timeout: 30000
+- takeScreenshot: android-store-01-primer-arranque
+- tapOn: "Entendido, abrir el manual"
+
+# ─── 2 · Inicio ─────────────────────────────────────────────────────────────
+- extendedWaitUntil:
+    visible:
+      id: "app-interactive-shell"
+    timeout: 20000
+- assertVisible: "Inicio"
+- assertVisible: "Códigos"
+- assertVisible: "Vademécum"
+- assertVisible: "Mapa"
+- takeScreenshot: android-store-02-inicio
+
+# ─── 3 · Search results ─────────────────────────────────────────────────────
+- tapOn:
+    id: "tab-buscar"
+- extendedWaitUntil:
+    visible:
+      id: "manual-search-input"
+    timeout: 10000
+- tapOn:
+    id: "manual-search-input"
+- inputText: "304_02"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-304_02"
+    timeout: 15000
+- takeScreenshot: android-store-03-buscar
+
+# ─── 4 · Procedure detail ───────────────────────────────────────────────────
+- tapOn:
+    id: "procedure-row-304_02"
+- extendedWaitUntil:
+    visible:
+      text: "Contenido del procedimiento"
+    timeout: 10000
+- takeScreenshot: android-store-04-procedimiento
+
+# ─── 5 · Clinical table ─────────────────────────────────────────────────────
+- scrollUntilVisible:
+    element:
+      text: "Alto riesgo"
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "Edad"
+- assertNotVisible: "| --- |"
+- takeScreenshot: android-store-05-tabla-clinica
+
+# Return through the Android stack, then use the stable tab ID rather than the
+# iPhone-specific bottom-left coordinate in the original store flow.
+- pressKey: BACK
+- extendedWaitUntil:
+    visible:
+      id: "tab-buscar"
+    timeout: 10000
+- tapOn:
+    id: "tab-inicio"
+
+# ─── 6 · Vademécum ──────────────────────────────────────────────────────────
+- tapOn:
+    id: "tab-vademecum"
+- extendedWaitUntil:
+    visible:
+      text: "Vademécum"
+    timeout: 10000
+- takeScreenshot: android-store-06-vademecum
+
+# ─── 7 · Códigos ────────────────────────────────────────────────────────────
+- tapOn:
+    id: "tab-codigos"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos y claves"
+    timeout: 10000
+- takeScreenshot: android-store-07-codigos
+
+# ─── 8 · Map without location permission ────────────────────────────────────
+- tapOn:
+    id: "tab-mapa"
+- extendedWaitUntil:
+    visible:
+      text: "Mapa"
+    timeout: 10000
+- tapOn:
+    text: "No permitir"
+    optional: true
+- tapOn:
+    text: "Don’t allow"
+    optional: true
+- takeScreenshot: android-store-08-mapa
+
+# ─── 9 · Settings ───────────────────────────────────────────────────────────
+- tapOn:
+    id: "tab-inicio"
+- extendedWaitUntil:
+    visible:
+      id: "settings-button"
+    timeout: 10000
+- tapOn:
+    id: "settings-button"
+- extendedWaitUntil:
+    visible:
+      text: "Información y ajustes"
+    timeout: 5000
+- assertVisible: "Apariencia"
+- takeScreenshot: android-store-09-ajustes

@@ -71,6 +71,8 @@ export interface SyncChange {
   diff?: string;
   category?: ManualUpdateCategory;
   routeKey?: string;
+  /** Hash of the changed reference body/record, used for idempotent events. */
+  sourceHash?: string;
 }
 
 export interface SyncDomainSummary {
@@ -126,6 +128,7 @@ export interface ManualUpdateEvent {
   routeKey?: string;
   diff?: string;
   category?: ManualUpdateCategory;
+  newHash?: string;
 }
 
 export interface ManualUpdatesDataset {
@@ -144,6 +147,7 @@ export interface ManualHistoryEntry {
   summary: string;
   diff?: string;
   category?: string;
+  routeKey?: string;
 }
 
 export interface ManualHistoryDataset {
@@ -444,7 +448,7 @@ export function readManualHistoryDataset(cwd = process.cwd()): ManualHistoryData
 
 export function appendToManualHistory(
   newEntries: ManualHistoryEntry[],
-  maxEntries = 500,
+  maxEntries = Number.MAX_SAFE_INTEGER,
   cwd = process.cwd(),
 ): void {
   if (newEntries.length === 0) return;

@@ -1,5 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { TAB_BAR_INSET, radii, spacing } from "@manual-samur/design-tokens";
 import { Press } from "../components/Press.tsx";
@@ -10,6 +12,7 @@ import { useContentData } from "../content.tsx";
 import { usePreferences } from "../preferences.tsx";
 import { useTheme, useThemedStyles } from "../theme.tsx";
 import type { RootStackParamList } from "../navigation-types.ts";
+import { loadRemoteHistoryPage } from "../remote-history-logic.ts";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Historial">;
 type HistoryTab = "novedades" | "historial";
@@ -20,9 +23,16 @@ export function HistorialScreen({ navigation }: Props) {
   const { content } = useContentData();
   const { seenEventIds, markEventSeen, markAllEventsSeen } = usePreferences();
   const [tab, setTab] = useState<HistoryTab>("novedades");
+  const [remoteHistory, setRemoteHistory] = useState<ManualUpdateEvent[]>([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [historyAttempted, setHistoryAttempted] = useState(false);
+  const [historyPage, setHistoryPage] = useState(-1);
+  const [historyTotalPages, setHistoryTotalPages] = useState(0);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState<string>();
   const events = useMemo(() => asManualUpdateEvents(content.updates), [content.updates]);
   const recentEvents = useMemo(() => manualNovedades(applyManualRecencyWindow(events)), [events]);
-  const historyEvents = useMemo(() => sortManualHistorial(events), [events]);
+  const historyEvents = useMemo(() => sortManualHistorial(historyLoaded ? remoteHistory : events), [events, historyLoaded, remoteHistory]);
   // Las dos pestañas se agrupan por fecha. «Historial» era una lista plana en la
   // que cada fila repetía su fecha, así que la misma fecha salía escrita veinte
   // veces seguidas en lugar de una vez encima de su grupo.
@@ -30,6 +40,39 @@ export function HistorialScreen({ navigation }: Props) {
   const historyGroups = useMemo(() => groupManualEventsByDate(historyEvents), [historyEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
   const unreadRecentEvents = useMemo(() => recentEvents.filter((event) => !seen.has(event.eventId)), [recentEvents, seen]);
+
+  const loadHistoryPage = useCallback(async (page: number) => {
+    if (historyLoading) return;
+    const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
+    const origin = typeof process.env.EXPO_PUBLIC_CONTENT_ORIGIN === "string"
+      ? process.env.EXPO_PUBLIC_CONTENT_ORIGIN
+      : typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "";
+    setHistoryAttempted(true);
+    setHistoryLoading(true);
+    setHistoryError(undefined);
+    try {
+      const result = await loadRemoteHistoryPage({ origin, page, storage: AsyncStorage });
+      setRemoteHistory((current) => {
+        const byId = new Map(current.map((event) => [event.eventId, event]));
+        for (const event of asManualUpdateEvents(result.page.events)) byId.set(event.eventId, event);
+        return [...byId.values()];
+      });
+      setHistoryPage(page);
+      setHistoryTotalPages(result.index.totalPages);
+      setHistoryLoaded(true);
+      if (result.fromCache) setHistoryError("Sin conexión: mostrando las páginas de historial guardadas en este dispositivo.");
+    } catch {
+      setHistoryError("No se pudo cargar el historial completo; se muestran los cambios locales disponibles.");
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [historyLoading]);
+
+  useEffect(() => {
+    if (tab !== "historial" || historyAttempted || historyLoading) return;
+    const timer = setTimeout(() => { void loadHistoryPage(0); }, 0);
+    return () => clearTimeout(timer);
+  }, [historyAttempted, historyLoading, loadHistoryPage, tab]);
 
   const openEvent = (event: ManualUpdateEvent) => {
     markEventSeen(event.eventId);
@@ -41,7 +84,7 @@ export function HistorialScreen({ navigation }: Props) {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} contentInsetAdjustmentBehavior="automatic">
       <View style={styles.tabs} accessibilityRole="tablist">
         <Press onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
-        <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}</Text></Press>
+        <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}{historyTotalPages > 1 ? "+" : ""}</Text></Press>
       </View>
       {tab === "novedades" && unreadRecentEvents.length > 0 && (
         <Press
@@ -62,6 +105,13 @@ export function HistorialScreen({ navigation }: Props) {
           ))}
         </View>
       ))}
+      {tab === "historial" && historyError && <Text style={styles.historyStatus}>{historyError}</Text>}
+      {tab === "historial" && historyLoading && <Text style={styles.historyStatus}>Cargando historial…</Text>}
+      {tab === "historial" && historyLoaded && historyPage + 1 < historyTotalPages && !historyLoading && (
+        <Press onPress={() => void loadHistoryPage(historyPage + 1)} style={styles.loadMore} accessibilityRole="button">
+          <Text style={styles.loadMoreText}>Cargar más historial</Text>
+        </Press>
+      )}
       {((tab === "novedades" && groups.length === 0) || (tab === "historial" && historyGroups.length === 0)) && <Text style={styles.empty}>No hay cambios relevantes para mostrar.</Text>}
     </ScrollView>
   );
@@ -116,6 +166,9 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     unreadLabel: { color: palette.dangerDark, fontSize: 11, fontWeight: "800" },
     readLabel: { color: palette.inkMuted, fontSize: 11, fontWeight: "700" },
     summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },
+    historyStatus: { color: palette.inkMuted, fontSize: 12, lineHeight: 18 },
+    loadMore: { minHeight: 44, alignItems: "center", justifyContent: "center", borderRadius: radii.pill, backgroundColor: palette.primaryWash },
+    loadMoreText: { color: palette.primary, fontSize: 13, fontWeight: "800" },
     empty: { color: palette.inkMuted, fontSize: 14, paddingVertical: spacing.lg },
   });
 }

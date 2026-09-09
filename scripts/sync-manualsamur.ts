@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
@@ -622,6 +623,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         sourceUpdated,
         source: space.url,
         diff: contentDiff,
+        sourceHash: snapshot.contentHash,
       });
 
       if (!dryRun && changeType !== "unchanged") {
@@ -701,6 +703,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         procedurePath: existing.filePath,
         diff: createPatch(existingId, existing.content.trim(), "", "", "", { context: 3 }),
         sourceUpdated: new Date().toISOString().slice(0, 10),
+        sourceHash: typeof existing.data.contentHash === "string" ? existing.data.contentHash : undefined,
       });
       if (!dryRun) fs.unlinkSync(existing.filePath);
     }
@@ -916,8 +919,14 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         ? `${label}: ${change.id} ${change.title}`
         : `${domain} actualizado: ${change.title}`;
 
+      const identity = change.sourceHash
+        ?? (change.diff
+          ? createHash("sha256").update(change.diff).digest("hex")
+          : createHash("sha256").update(`${domain}:${change.id}:${change.changeType}:${change.title}`).digest("hex"));
       events.push({
-        eventId: `wiki:${run.id}:${domain}:${change.id}`,
+        // Do not include the sync timestamp: rerunning the same CI job must
+        // update the same event rather than append a duplicate.
+        eventId: `wiki:${domain}:${change.id}:${identity}`,
         origin: "wiki",
         officialUrl: change.source,
         procedureIds: domain === "procedures" ? [change.id] : [],
@@ -927,6 +936,7 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         approvedAt,
         isRecent: false,
         diff: change.diff,
+        newHash: change.sourceHash,
         category: change.category ?? (domain === "procedures" ? "procedure" : domain === "vademecum" ? "vademecum" : undefined),
         routeKey: change.routeKey ?? (change.category === "codigo" ? change.id : undefined),
       });

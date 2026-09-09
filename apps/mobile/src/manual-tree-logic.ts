@@ -367,6 +367,7 @@ export function asManualUpdateEvents(values: unknown): ManualUpdateEvent[] {
       category: typeof v.category === "string" ? v.category : undefined,
       routeKey: typeof v.routeKey === "string" ? v.routeKey : undefined,
       diff: typeof v.diff === "string" ? v.diff : undefined,
+      newHash: typeof v.newHash === "string" ? v.newHash : undefined,
     }))
     .filter((event) => event.eventId.length > 0 && event.summary.length > 0);
 }

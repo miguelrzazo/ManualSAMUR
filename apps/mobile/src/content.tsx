@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import { AppState, type AppStateStatus } from "react-native";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
 import {
@@ -100,6 +101,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const refreshController = useRef<AbortController | null>(null);
   const refreshTask = useRef<Promise<void> | null>(null);
   const automaticRefreshStarted = useRef(false);
+  const lastAutomaticRefreshAt = useRef(0);
+  const recoveredPackageNeedsActivation = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,7 +122,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (transactionResult.staged) {
         setStagedPackage(transactionResult.staged);
         setSyncProgress({ downloadedBytes: transactionResult.staged.downloadedBytes, totalBytes: transactionResult.staged.totalBytes });
-        setSyncState(transactionResult.stagedSnapshot ? "recovery" : "failure");
+        setSyncState(transactionResult.stagedSnapshot ? "activating" : "failure");
+        recoveredPackageNeedsActivation.current = Boolean(transactionResult.stagedSnapshot);
       } else if (transactionResult.warning) {
         setLastError(transactionResult.warning);
         setSyncState("stale");
@@ -237,7 +241,19 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         } else if (result.staged) {
           setStagedPackage(result.staged);
           setSyncProgress({ downloadedBytes: result.staged.downloadedBytes, totalBytes: result.staged.totalBytes });
-          setSyncState("recovery");
+          setSyncState("activating");
+          const activated = await resumeStagedPackage(AsyncStorage, validateSnapshotOnce);
+          if (!activated) throw new Error("No hay ningún paquete pendiente de activar");
+          setSnapshot(activated.snapshot);
+          setStagedPackage(undefined);
+          persistCheck({
+            checkedAt: new Date().toISOString(),
+            outcome: "up-to-date",
+            remoteIdentity: activated.snapshot.packageHash,
+            remoteGeneratedAt: activated.snapshot.generatedAt,
+          });
+          setSyncProgress({});
+          setSyncState("success");
         }
       } catch (error) {
         if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
@@ -275,7 +291,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isHydrated || automaticRefreshStarted.current || stagedPackage) return;
     automaticRefreshStarted.current = true;
-    scheduleAfterFirstFrame(() => { void refresh({ background: true }); });
+    scheduleAfterFirstFrame(() => {
+      lastAutomaticRefreshAt.current = Date.now();
+      void refresh({ background: true });
+    });
+  }, [isHydrated, refresh, stagedPackage]);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    const minRefreshIntervalMs = 6 * 60 * 60 * 1000;
+    const onAppStateChange = (status: AppStateStatus) => {
+      if (status !== "active" || stagedPackage || refreshTask.current) return;
+      if (Date.now() - lastAutomaticRefreshAt.current < minRefreshIntervalMs) return;
+      lastAutomaticRefreshAt.current = Date.now();
+      void refresh({ background: true });
+    };
+    const subscription = AppState.addEventListener("change", onAppStateChange);
+    return () => subscription.remove();
   }, [isHydrated, refresh, stagedPackage]);
 
   const cancelRefresh = useCallback(() => {
@@ -315,6 +347,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setSyncProgress({});
     setSyncState("stale");
   }, []);
+
+  useEffect(() => {
+    if (!isHydrated || !stagedPackage || !recoveredPackageNeedsActivation.current) return;
+    recoveredPackageNeedsActivation.current = false;
+    scheduleAfterFirstFrame(() => { void activateStagedUpdate(); });
+  }, [activateStagedUpdate, isHydrated, stagedPackage]);
 
   const dataValue = useMemo<ContentDataContextValue>(() => ({
     content: snapshot.content,

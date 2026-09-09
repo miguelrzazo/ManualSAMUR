@@ -130,7 +130,11 @@ function buildMobileRelationsIndex(procedures: MobileProcedure[], codes: Record<
 
 export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: string): MobileContentSnapshot {
   const manual = readData<Record<string, unknown>>("manual-sync", cwd);
-  const updates = capMobileUpdateEvents(readData<{ events?: MobileUpdateEvent[] }>("manual-updates", cwd).events ?? []);
+  const publicationGeneratedAt = generatedAt
+    ?? (typeof manual.lastApprovedAt === "string" ? manual.lastApprovedAt : undefined)
+    ?? (typeof manual.lastSyncAt === "string" ? manual.lastSyncAt : undefined)
+    ?? "1970-01-01T00:00:00.000Z";
+  const updates = recentMobileUpdateProjection(readData<{ events?: MobileUpdateEvent[] }>("manual-updates", cwd).events ?? [], publicationGeneratedAt);
   const codes: Record<string, unknown[]> = {
     incidente: readData("codigos-incidente", cwd),
     sva: readData("codigos-sva", cwd),
@@ -165,15 +169,24 @@ export function buildMobileContentSnapshot(cwd = process.cwd(), generatedAt?: st
   return {
     schema: MOBILE_SNAPSHOT_SCHEMA,
     version: MOBILE_SNAPSHOT_VERSION,
-    generatedAt: generatedAt
-      ?? (typeof manual.lastApprovedAt === "string" ? manual.lastApprovedAt : undefined)
-      ?? (typeof manual.lastSyncAt === "string" ? manual.lastSyncAt : undefined)
-      ?? "1970-01-01T00:00:00.000Z",
+    generatedAt: publicationGeneratedAt,
     hash,
     contentHash: hash,
     packageHash: packageHash(content, attachments),
     content,
   };
+}
+
+function recentMobileUpdateProjection(events: readonly MobileUpdateEvent[], referenceNow: string): MobileUpdateEvent[] {
+  const reference = new Date(referenceNow).getTime();
+  const recentWindow = 30 * 24 * 60 * 60 * 1000;
+  return capMobileUpdateEvents(events.filter((event) => {
+    const date = new Date(event.approvedAt ?? event.effectiveDate).getTime();
+    if (!Number.isFinite(date) || date > reference || reference - date > recentWindow) return false;
+    if (event.category === "codigo") return true;
+    if (event.changeKind === "nuevo" || event.changeKind === "eliminado") return true;
+    return event.changeKind === "actualizado" && Boolean(event.diff?.trim());
+  }));
 }
 
 export function buildMobileContentPackage(cwd = process.cwd(), generatedAt?: string): MobileContentPackage {

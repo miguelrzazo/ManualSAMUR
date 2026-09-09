@@ -12,6 +12,7 @@ import {
   contentCheckErrorOutcome,
   contentCheckRecordFor,
   contentUpdateNeeded,
+  isCompatiblePublishedContentMetadata,
   isPublishedContentMetadata,
   type ContentCheckOutcome,
   type ContentCheckRecord,
@@ -79,6 +80,13 @@ export async function checkAndStageContent(options: ContentUpdateRuntimeOptions)
       const candidate: unknown = await metadataResponse.json();
       if (!isPublishedContentMetadata(candidate)) throw new Error("La metadata publicada no es válida");
       metadata = candidate;
+      if (!isCompatiblePublishedContentMetadata(metadata)) {
+        throw new ContentUpdateRuntimeError(
+          "incompatible",
+          contentCheckRecordFor("incompatible", now(), metadata),
+          `La publicación requiere el esquema ${metadata.version}; la aplicación admite el esquema 3`,
+        );
+      }
       if (!contentUpdateNeeded(metadata, options.activeSnapshot)) {
         return { kind: "up-to-date", metadata, record: contentCheckRecordFor("up-to-date", now(), metadata) };
       }

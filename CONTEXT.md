@@ -38,3 +38,17 @@ An explicit amount-per-volume value attached to a published medication presentat
 
 **Manual SAMUR medication record**:
 A medication presentation published in the official Manual SAMUR Vademécum; publication is the clinical approval boundary for this utility, and external or custom medication records are excluded. _Avoid_: imported medication, custom drug
+
+## Content lifecycle
+
+**Content publication**:
+A coherent set of published reference items that web and mobile can identify as the same current edition. _Avoid_: deployment, sync run
+
+**Change event**:
+A meaningful change to one published reference item, including what changed and when it was detected, approved, and published. _Avoid_: update record, log entry
+
+**Novedad**:
+A recent, relevant change event presented as an actionable notice; it can be unread locally without changing the publication itself. _Avoid_: alert, notification
+
+**Historial**:
+The complete, permanent consultation of meaningful change events, including their summaries and available diffs. _Avoid_: recent updates, changelog

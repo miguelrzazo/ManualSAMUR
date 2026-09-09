@@ -1,8 +1,9 @@
 import type { MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
+import { MOBILE_SNAPSHOT_SCHEMA, MOBILE_SNAPSHOT_VERSION } from "../../../packages/manual-content/src/index.ts";
 
 export const CONTENT_CHECK_STORAGE_KEY = "manualsamur.content.check.v1";
 
-export type ContentCheckOutcome = "up-to-date" | "update-available" | "offline" | "invalid-response" | "failure";
+export type ContentCheckOutcome = "up-to-date" | "update-available" | "offline" | "invalid-response" | "incompatible" | "failure";
 
 export interface PublishedContentMetadata {
   schema: string;
@@ -10,6 +11,7 @@ export interface PublishedContentMetadata {
   hash: string;
   packageHash?: string;
   generatedAt: string;
+  contentUrl?: string;
 }
 
 export interface ContentCheckRecord {
@@ -32,6 +34,10 @@ export function isPublishedContentMetadata(value: unknown): value is PublishedCo
     && metadata.generatedAt.length > 0;
 }
 
+export function isCompatiblePublishedContentMetadata(metadata: PublishedContentMetadata): boolean {
+  return metadata.schema === MOBILE_SNAPSHOT_SCHEMA && metadata.version === MOBILE_SNAPSHOT_VERSION;
+}
+
 export function contentIdentity(value: Pick<PublishedContentMetadata, "hash" | "packageHash"> | Pick<MobileSnapshot, "hash" | "packageHash">): string {
   return value.packageHash ?? value.hash;
 }
@@ -47,7 +53,7 @@ export function parseContentCheckRecord(serialized: string | null | undefined): 
     if (!value || typeof value !== "object") return undefined;
     const record = value as Partial<ContentCheckRecord>;
     if (typeof record.checkedAt !== "string" || typeof record.outcome !== "string") return undefined;
-    if (!["up-to-date", "update-available", "offline", "invalid-response", "failure"].includes(record.outcome)) return undefined;
+    if (!["up-to-date", "update-available", "offline", "invalid-response", "incompatible", "failure"].includes(record.outcome)) return undefined;
     return {
       checkedAt: record.checkedAt,
       outcome: record.outcome as ContentCheckOutcome,
@@ -85,7 +91,8 @@ export function isNetworkLikeError(error: unknown): boolean {
 
 export function contentCheckErrorOutcome(error: unknown, responseReceived: boolean): ContentCheckOutcome {
   if (isNetworkLikeError(error) || !responseReceived) return "offline";
-  if (error instanceof Error && /metadata|published|valid|json|schema/i.test(error.message)) return "invalid-response";
+  if (error instanceof Error && /incompatible|version|schema/i.test(error.message)) return "incompatible";
+  if (error instanceof Error && /metadata|published|valid|json/i.test(error.message)) return "invalid-response";
   return "failure";
 }
 
@@ -93,6 +100,7 @@ export function userFacingContentCheckError(outcome: ContentCheckOutcome): strin
   switch (outcome) {
     case "offline": return "No se pudo comprobar la conexión; el contenido local sigue disponible.";
     case "invalid-response": return "La actualización publicada no es válida; se mantiene el contenido local.";
+    case "incompatible": return "La actualización requiere una versión nueva de la aplicación; se mantiene el contenido local.";
     case "failure": return "No se pudo comprobar el contenido; se mantiene el último paquete local.";
     default: return "";
   }

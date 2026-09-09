@@ -29,10 +29,18 @@ for (const procedure of snapshot.content.procedures) {
   assert.equal(procedure.updated, web.updated);
   for (const relation of procedure.relations) assert.ok(ids.has(relation.id), `Dangling relation ${procedure.id} → ${relation.id}`);
 }
-for (const endpoint of ["v2", "metadata"]) {
+for (const endpoint of ["v3", "v2", "metadata"]) {
   const exported = read(`out/api/mobile/content/${endpoint}`);
   assert.equal(exported.hash, snapshot.hash, `Exported ${endpoint} hash differs`);
   assert.equal(exported.packageHash, snapshot.packageHash, `Exported ${endpoint} package differs`);
   if (endpoint === "v2") assert.ok(canonicalJson(exported) === canonicalJson(snapshot), "Exported mobile content differs");
+}
+const historyIndex = read("public/mobile-history/index.json");
+assert.equal(historyIndex.publicationIdentity, snapshot.packageHash, "Mobile history belongs to another publication");
+assert.equal(historyIndex.totalPages, historyIndex.pages.length, "Mobile history index has missing pages");
+for (const page of historyIndex.pages) {
+  const historyPage = read(`public${page.path}`);
+  assert.equal(historyPage.publicationIdentity, snapshot.packageHash, `Mobile history page ${page.page} belongs to another publication`);
+  assert.equal(historyPage.page, page.page, `Mobile history page ${page.page} has the wrong number`);
 }
 console.log(`Content parity passed: ${ids.size} procedures; shared snapshot ${snapshot.hash}`);

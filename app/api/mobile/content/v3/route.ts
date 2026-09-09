@@ -1,6 +1,9 @@
 import { buildMobileContentSnapshot } from "@/lib/mobile-snapshot";
 
-/** Compatibility alias for already-installed clients. New clients use /v3. */
+/**
+ * Static export of the current v3 publication. The metadata route and this
+ * route are built from the same snapshot so a deployment cannot mix identities.
+ */
 export const dynamic = "force-static";
 
 export async function GET() {
