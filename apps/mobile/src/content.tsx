@@ -18,6 +18,15 @@ import {
   type SyncState,
 } from "./content-context";
 import { readContentBoot, scheduleAfterFirstFrame, validateBootSnapshot, validateSnapshotOnce } from "./content-boot";
+import {
+  CONTENT_CHECK_STORAGE_KEY,
+  contentCheckRecordFor,
+  parseContentCheckRecord,
+  serializeContentCheckRecord,
+  userFacingContentCheckError,
+  type ContentCheckRecord,
+} from "./content-update-logic";
+import { checkAndStageContent, ContentUpdateRuntimeError } from "./content-update-runtime";
 import { resolveProcedureReference } from "./procedure-logic";
 import {
   ContentUpdateCancelledError,
@@ -26,8 +35,6 @@ import {
   migrateLegacySnapshot,
   readTransaction,
   resumeStagedPackage,
-  stagePackage,
-  throwIfCancelled,
   type StagedPackage,
 } from "./content-transaction";
 import {
@@ -51,24 +58,6 @@ function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
   if (typeof process.env[envName] === "string") return process.env[envName];
   const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
   return typeof extra?.[name] === "string" ? extra[name] as string : "";
-}
-
-interface PublishedContentMetadata {
-  schema: string;
-  version: number;
-  hash: string;
-  packageHash?: string;
-  generatedAt: string;
-}
-
-function isPublishedContentMetadata(value: unknown): value is PublishedContentMetadata {
-  if (!value || typeof value !== "object") return false;
-  const metadata = value as Partial<PublishedContentMetadata>;
-  return typeof metadata.schema === "string"
-    && typeof metadata.version === "number"
-    && typeof metadata.hash === "string"
-    && (metadata.packageHash === undefined || typeof metadata.packageHash === "string")
-    && typeof metadata.generatedAt === "string";
 }
 
 /**
@@ -103,23 +92,28 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastError, setLastError] = useState<string>();
+  const [lastCheck, setLastCheck] = useState<ContentCheckRecord>();
   const [syncState, setSyncState] = useState<SyncState>("idle");
   const [syncProgress, setSyncProgress] = useState<SyncProgress>({});
   const [stagedPackage, setStagedPackage] = useState<StagedPackage>();
+  const [isBackgroundRefreshing, setIsBackgroundRefreshing] = useState(false);
   const refreshController = useRef<AbortController | null>(null);
+  const refreshTask = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [storedFavorites, storedRecents, storedQueries, transaction] = await Promise.all([
+      const [storedFavorites, storedRecents, storedQueries, storedCheck, transaction] = await Promise.all([
         AsyncStorage.getItem(FAVORITES_STORAGE_KEY),
         AsyncStorage.getItem(RECENTS_STORAGE_KEY),
         AsyncStorage.getItem(RECENT_QUERIES_STORAGE_KEY),
+        AsyncStorage.getItem(CONTENT_CHECK_STORAGE_KEY),
         readContentBoot(AsyncStorage, bundledSnapshot as unknown as MobileSnapshot),
       ]);
       if (cancelled) return;
       const transactionResult = transaction.transaction;
       setRecentQueries(parseRecentQueries(storedQueries));
+      setLastCheck(parseContentCheckRecord(storedCheck));
       if (transactionResult.snapshot) setSnapshot(transaction.snapshot);
       if (transactionResult.staged) {
         setStagedPackage(transactionResult.staged);
@@ -128,6 +122,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       } else if (transactionResult.warning) {
         setLastError(transactionResult.warning);
         setSyncState("stale");
+      } else if (parseContentCheckRecord(storedCheck)?.outcome === "up-to-date") {
+        setSyncState("success");
       } else if (contentFreshness(transactionResult.snapshot?.generatedAt ?? (bundledSnapshot as unknown as MobileSnapshot).generatedAt) !== "fresh") {
         setSyncState("stale");
       }
@@ -205,66 +201,72 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const refresh = useCallback(async () => {
-    const url = endpoint("contentEndpoint");
-    if (!url) {
-      setLastError("No hay conexión de actualización configurada; se mantiene el paquete local.");
-      setSyncState("offline");
-      return;
-    }
-    setIsRefreshing(true);
-    setLastError(undefined);
-    setSyncState("checking");
-    setSyncProgress({});
-    const controller = new AbortController();
-    refreshController.current = controller;
-    let responseReceived = false;
-    try {
-      const metadataUrl = endpoint("metadataEndpoint");
-      if (metadataUrl) {
-        const metadataResponse = await fetch(metadataUrl, { headers: { Accept: "application/json" }, signal: controller.signal });
-        responseReceived = true;
-        if (!metadataResponse.ok) throw new Error(`HTTP ${metadataResponse.status}`);
-        const metadata: unknown = await metadataResponse.json();
-        if (!isPublishedContentMetadata(metadata)) throw new Error("La metadata publicada no es válida");
-        if (metadata.packageHash && metadata.packageHash === snapshot.packageHash) {
-          setSyncState("success");
-          setSyncProgress({});
-          return;
-        }
-      }
+  const persistCheck = useCallback((record: ContentCheckRecord) => {
+    setLastCheck(record);
+    void AsyncStorage.setItem(CONTENT_CHECK_STORAGE_KEY, serializeContentCheckRecord(record));
+  }, []);
 
-      const response = await fetch(url, { headers: { Accept: "application/json" }, signal: controller.signal });
-      responseReceived = true;
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      setSyncState("downloading");
-      const totalBytes = Number(response.headers.get("content-length") ?? "");
-      const candidate: unknown = await response.json();
-      setSyncState("validating");
-      throwIfCancelled(controller.signal);
-      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, validateSnapshotOnce, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {}, controller.signal);
-      setStagedPackage(staged);
-      setSyncProgress({ downloadedBytes: staged.downloadedBytes, totalBytes: staged.totalBytes });
-      setSyncState("recovery");
-    } catch (error) {
-      setLastError(error instanceof Error ? error.message : "No se pudo actualizar el contenido");
-      if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
-        const transaction = await readTransaction(AsyncStorage, validateSnapshotOnce);
-        if (transaction.staged) {
-          setStagedPackage(transaction.staged);
-          setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
-          setSyncState(transaction.stagedSnapshot ? "recovery" : "failure");
-        } else {
-          setSyncState("stale");
+  const refresh = useCallback((options: { background?: boolean } = {}) => {
+    if (refreshTask.current) return refreshTask.current;
+    const background = options.background === true;
+    const task = (async () => {
+      const controller = new AbortController();
+      refreshController.current = controller;
+      setIsRefreshing(true);
+      setIsBackgroundRefreshing(background);
+      setLastError(undefined);
+      setSyncState("checking");
+      setSyncProgress({});
+      try {
+        const result = await checkAndStageContent({
+          contentUrl: endpoint("contentEndpoint"),
+          metadataUrl: endpoint("metadataEndpoint"),
+          activeSnapshot: snapshot,
+          storage: AsyncStorage,
+          validate: validateSnapshotOnce,
+          signal: controller.signal,
+          onPhase: (phase) => setSyncState(phase),
+          onProgress: (progress) => setSyncProgress(progress),
+        });
+        persistCheck(result.record);
+        setLastError(undefined);
+        if (result.kind === "up-to-date") {
+          setSyncProgress({});
+          setSyncState("success");
+        } else if (result.staged) {
+          setStagedPackage(result.staged);
+          setSyncProgress({ downloadedBytes: result.staged.downloadedBytes, totalBytes: result.staged.totalBytes });
+          setSyncState("recovery");
         }
-      } else {
-        setSyncState(responseReceived ? "failure" : "offline");
+      } catch (error) {
+        if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
+          const transaction = await readTransaction(AsyncStorage, validateSnapshotOnce);
+          if (transaction.staged) {
+            setStagedPackage(transaction.staged);
+            setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
+            setSyncState(transaction.stagedSnapshot ? "recovery" : "failure");
+          } else {
+            setSyncState("stale");
+          }
+        } else {
+          const outcome = error instanceof ContentUpdateRuntimeError ? error.outcome : "failure";
+          const record = error instanceof ContentUpdateRuntimeError
+            ? error.record
+            : contentCheckRecordFor(outcome, new Date().toISOString());
+          persistCheck(record);
+          setLastError(error instanceof ContentUpdateRuntimeError ? userFacingContentCheckError(error.outcome) : "No se pudo comprobar el contenido; se mantiene el último paquete local.");
+          setSyncState(outcome === "offline" ? "offline" : "failure");
+        }
+      } finally {
+        setIsRefreshing(false);
+        setIsBackgroundRefreshing(false);
+        if (refreshController.current === controller) refreshController.current = null;
       }
-    } finally {
-      setIsRefreshing(false);
-      if (refreshController.current === controller) refreshController.current = null;
-    }
-  }, [snapshot.packageHash]);
+    })();
+    refreshTask.current = task;
+    void task.finally(() => { if (refreshTask.current === task) refreshTask.current = null; });
+    return task;
+  }, [persistCheck, snapshot]);
 
   const cancelRefresh = useCallback(() => {
     // Once activation starts, cancellation is disabled so the pointer write
@@ -318,6 +320,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     isHydrated,
     isRefreshing,
     lastError,
+    lastCheck,
+    isBackgroundRefreshing,
     syncState,
     syncProgress,
     stagedPackage,
@@ -325,7 +329,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     cancelRefresh,
     activateStagedUpdate,
     discardStaged,
-  }), [activateStagedUpdate, cancelRefresh, discardStaged, isHydrated, isRefreshing, lastError, refresh, stagedPackage, syncProgress, syncState]);
+  }), [activateStagedUpdate, cancelRefresh, discardStaged, isBackgroundRefreshing, isHydrated, isRefreshing, lastCheck, lastError, refresh, stagedPackage, syncProgress, syncState]);
 
   return (
     <ContentDataContext.Provider value={dataValue}>

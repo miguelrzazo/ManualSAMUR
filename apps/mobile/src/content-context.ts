@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import type { MobileContent, MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
 import type { StagedPackage } from "./content-transaction";
+import type { ContentCheckRecord } from "./content-update-logic";
 
 export type SyncState = "idle" | "checking" | "downloading" | "validating" | "activating" | "success" | "stale" | "offline" | "failure" | "recovery";
 
@@ -33,10 +34,12 @@ export interface ContentSyncContextValue {
   isHydrated: boolean;
   isRefreshing: boolean;
   lastError?: string;
+  lastCheck?: ContentCheckRecord;
+  isBackgroundRefreshing: boolean;
   syncState: SyncState;
   syncProgress: SyncProgress;
   stagedPackage?: StagedPackage;
-  refresh: () => Promise<void>;
+  refresh: (options?: { background?: boolean }) => Promise<void>;
   cancelRefresh: () => void;
   activateStagedUpdate: () => Promise<void>;
   discardStaged: () => Promise<void>;
@@ -71,4 +74,3 @@ export const selectFavorites = (value: ContentPreferencesContextValue): string[]
 export const selectRecents = (value: ContentPreferencesContextValue): string[] => value.recents;
 export const selectRecentQueries = (value: ContentPreferencesContextValue): string[] => value.recentQueries;
 export const selectSyncState = (value: ContentSyncContextValue): SyncState => value.syncState;
-

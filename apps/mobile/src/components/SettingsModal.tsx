@@ -4,9 +4,10 @@ import React from "react";
 import { Linking, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { accessibilityHints } from "../accessibility.ts";
-import type { SyncProgress, SyncState } from "../content.tsx";
-import { contentFreshness, type StagedPackage } from "../content-transaction.ts";
-import type { AppearancePreference } from "../preferences-logic.ts";
+import { useContentData, useContentSync, type SyncState } from "../content.tsx";
+import { contentFreshness } from "../content-transaction.ts";
+import { usePreferences } from "../preferences.tsx";
+import type { ContentCheckRecord } from "../content-update-logic.ts";
 import {
   ABOUT_AUTHOR,
   ADAPTATION_DISCLAIMER,
@@ -50,23 +51,9 @@ export interface SettingsLinks {
 export interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
-  onRefresh: () => Promise<void>;
-  onCancelRefresh: () => void;
-  onActivateStaged: () => Promise<void>;
-  onDiscardStaged: () => Promise<void>;
   onOpenAbbreviations: () => void;
   onOpenChangelog: () => void;
-  generatedAt: string;
-  packageHash?: string;
-  isRefreshing: boolean;
-  lastError?: string;
-  syncState: SyncState;
-  syncProgress: SyncProgress;
-  stagedPackage?: StagedPackage;
-  appearance: AppearancePreference;
-  setAppearance: (preference: AppearancePreference) => void;
   appVersion: string;
-  links: SettingsLinks;
   /** Origen del sitio web, del que cuelgan la lista de colaboradores y las páginas legales. */
   contentOrigin: string;
   legalMetadata?: SettingsLegalMetadata;
@@ -75,15 +62,19 @@ export interface SettingsModalProps {
 
 type SyncStatus = { icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; title: string; detail: string; color: keyof AdaptivePalette };
 
-function syncStatus(syncState: SyncState, generatedAt: string): SyncStatus {
+function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: ContentCheckRecord, isRefreshing = false, staged = false): SyncStatus {
+  if (isRefreshing) {
+    if (syncState === "downloading") return { icon: "cloud-download-outline", title: "Descargando contenido", detail: "El contenido anterior sigue disponible", color: "primary" };
+    if (syncState === "validating") return { icon: "shield-check-outline", title: "Verificando el paquete", detail: "Comprobando integridad antes de activarlo", color: "primary" };
+    return { icon: "cloud-search-outline", title: "Comprobando actualizaciones", detail: "La aplicación sigue disponible mientras se comprueba", color: "primary" };
+  }
+  if (staged || lastCheck?.outcome === "update-available") return { icon: "cloud-upload-outline", title: "Actualización disponible", detail: "Hay contenido verificado listo para activar", color: "amber" };
+  if (lastCheck?.outcome === "up-to-date") return { icon: "check-circle-outline", title: "Contenido al día", detail: "La última comprobación no encontró cambios", color: "green" };
+  if (lastCheck?.outcome === "offline") return { icon: "cloud-off-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la conexión", color: "amber" };
+  if (lastCheck?.outcome === "invalid-response" || lastCheck?.outcome === "failure") return { icon: "alert-circle-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la actualización", color: "amber" };
   switch (syncState) {
-    case "checking": return { icon: "cloud-search-outline", title: "Buscando actualizaciones", detail: "Consultando el paquete publicado", color: "primary" };
-    case "downloading": return { icon: "cloud-download-outline", title: "Descargando contenido", detail: "El contenido anterior sigue disponible", color: "primary" };
-    case "validating": return { icon: "shield-check-outline", title: "Verificando el paquete", detail: "Comprobando integridad antes de activarlo", color: "primary" };
     case "activating": return { icon: "database-sync-outline", title: "Activando contenido", detail: "Finalizando la actualización", color: "primary" };
-    case "success": return { icon: "check-circle-outline", title: "Contenido actualizado", detail: "Paquete verificado y activo", color: "green" };
     case "offline": return { icon: "cloud-off-outline", title: "Sin conexión", detail: "Puedes seguir usando el contenido local", color: "amber" };
-    case "failure": return { icon: "alert-circle-outline", title: "No se pudo actualizar", detail: "El contenido anterior permanece activo", color: "danger" };
     case "recovery": return { icon: "backup-restore", title: "Actualización pendiente", detail: "Puedes activarla o descartarla", color: "amber" };
     case "stale": return { icon: "clock-alert-outline", title: "Conviene buscar actualizaciones", detail: "El contenido local tiene más de 30 días", color: "amber" };
     default: return contentFreshness(generatedAt) === "fresh"
@@ -98,14 +89,16 @@ function formattedDate(value: string): string {
 }
 
 export function SettingsModal({
-  visible, onClose, onRefresh, onCancelRefresh, onActivateStaged, onDiscardStaged,
-  onOpenAbbreviations, onOpenChangelog, generatedAt, packageHash, isRefreshing, lastError, syncState,
-  syncProgress, stagedPackage, appearance, setAppearance, appVersion, links, contentOrigin,
+  visible, onClose, onOpenAbbreviations, onOpenChangelog, appVersion, contentOrigin,
   legalMetadata = SETTINGS_LEGAL_METADATA, reduceMotion = false,
 }: SettingsModalProps) {
   const palette = useTheme();
   const styles = useStyles(palette);
-  const status = syncStatus(syncState, generatedAt);
+  const { content, snapshot } = useContentData();
+  const sync = useContentSync();
+  const { appearance, setAppearance } = usePreferences();
+  const { isRefreshing, lastError, syncState, syncProgress, stagedPackage, lastCheck } = sync;
+  const status = syncStatus(syncState, snapshot.generatedAt, lastCheck, isRefreshing, Boolean(stagedPackage));
   const progress = syncProgress.totalBytes && syncProgress.downloadedBytes !== undefined
     ? Math.min(100, Math.round((syncProgress.downloadedBytes / syncProgress.totalBytes) * 100))
     : undefined;
@@ -130,12 +123,12 @@ export function SettingsModal({
             <AcademySettingsCard slot={academySlot} onPress={() => open(String(academySlot.url))} />
           )}
           <SectionTitle>Contenido</SectionTitle>
-          <View style={styles.card} accessible accessibilityLabel={`${status.title}. ${lastError ?? status.detail}`} accessibilityLiveRegion="polite">
+          <View style={styles.card} accessible accessibilityLabel={`${status.title}. ${lastError ?? status.detail}`} accessibilityLiveRegion="polite" testID="content-status-card">
             <MaterialCommunityIcons name={status.icon} size={26} color={palette[status.color]} />
             <View style={styles.copy}>
               <Text style={styles.rowTitle}>{status.title}</Text>
               <Text style={styles.meta}>{lastError ?? status.detail}</Text>
-              <Text style={styles.revision}>{formattedDate(generatedAt)} · revisión {packageHash?.slice(0, 10) ?? "no disponible"}</Text>
+              <Text style={styles.revision}>{formattedDate(snapshot.generatedAt)} · revisión {snapshot.packageHash?.slice(0, 10) ?? "no disponible"}{lastCheck?.checkedAt ? ` · comprobado ${formattedDate(lastCheck.checkedAt)}` : ""}</Text>
               {progress !== undefined ? (
                 <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: progress }}>
                   <View style={[styles.progressFill, { width: `${progress}%` }]} />
@@ -144,11 +137,11 @@ export function SettingsModal({
             </View>
           </View>
           {isRefreshing ? (
-            <Press onPress={onCancelRefresh} disabled={syncState === "activating"} style={[styles.primaryButton, syncState === "activating" && styles.disabled]} accessibilityRole="button" accessibilityState={{ disabled: syncState === "activating", busy: true }}>
-              <Text style={styles.primaryButtonText}>{syncState === "activating" ? "Aplicando actualización…" : "Cancelar actualización"}</Text>
+            <Press onPress={sync.isBackgroundRefreshing ? undefined : sync.cancelRefresh} disabled={syncState === "activating" || sync.isBackgroundRefreshing} style={[styles.primaryButton, (syncState === "activating" || sync.isBackgroundRefreshing) && styles.disabled]} accessibilityRole="button" accessibilityState={{ disabled: syncState === "activating" || sync.isBackgroundRefreshing, busy: true }}>
+              <Text style={styles.primaryButtonText}>{syncState === "activating" ? "Aplicando actualización…" : sync.isBackgroundRefreshing ? "Comprobando…" : "Cancelar actualización"}</Text>
             </Press>
           ) : (
-            <Press onPress={() => void onRefresh()} style={styles.primaryButton} accessibilityRole="button">
+            <Press onPress={() => void sync.refresh()} style={styles.primaryButton} accessibilityRole="button">
               <Text style={styles.primaryButtonText}>Buscar actualización</Text>
             </Press>
           )}
@@ -156,8 +149,8 @@ export function SettingsModal({
             <View style={styles.recovery} accessibilityLiveRegion="polite">
               <Text style={styles.meta}>Hay una actualización verificada pendiente. El contenido anterior sigue activo hasta que la confirmes.</Text>
               <View style={styles.actions}>
-                <Press onPress={() => void onActivateStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Activar actualización</Text></Press>
-                <Press onPress={() => void onDiscardStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Descartar</Text></Press>
+                <Press onPress={() => void sync.activateStagedUpdate()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Activar actualización</Text></Press>
+                <Press onPress={() => void sync.discardStaged()} disabled={isRefreshing} style={styles.secondaryButton} accessibilityRole="button"><Text style={styles.secondaryButtonText}>Descartar</Text></Press>
               </View>
             </View>
           ) : null}
@@ -180,11 +173,11 @@ export function SettingsModal({
           <Notice icon="medical-bag">El contenido y los cálculos son material de referencia: no sustituyen a los protocolos vigentes, a las instrucciones operativas ni al criterio profesional.</Notice>
 
           <SectionTitle>Enlaces oficiales</SectionTitle>
-          <Row icon="alert-outline" tint={palette.amber} title="Aviso importante" meta="Documento oficial en PDF" external onPress={() => open(links.avisoImportanteUrl)} />
-          <Row icon="book-open-variant" tint={palette.primary} title="Manual oficial" meta="Fuente de todo el contenido de esta app" external onPress={() => open(links.sourceUrl)} />
+          <Row icon="alert-outline" tint={palette.amber} title="Aviso importante" meta="Documento oficial en PDF" external onPress={() => open(content.links.avisoImportanteUrl)} />
+          <Row icon="book-open-variant" tint={palette.primary} title="Manual oficial" meta="Fuente de todo el contenido de esta app" external onPress={() => open(content.links.sourceUrl)} />
           <Row icon="account-group-outline" tint={palette.primary} title="Colaboradores" meta="Quiénes escribieron el manual original" external onPress={() => open(`${contentOrigin}/colaboradores`)} />
-          <Row icon="web" tint={palette.primary} title="SAMUR-Protección Civil" meta="Web del Ayuntamiento de Madrid" external onPress={() => open(links.officialWebUrl)} />
-          <Row icon="email-outline" tint={palette.primary} title="Escribir a SAMUR" meta={links.samurEmail} external onPress={() => open(`mailto:${links.samurEmail}`)} />
+          <Row icon="web" tint={palette.primary} title="SAMUR-Protección Civil" meta="Web del Ayuntamiento de Madrid" external onPress={() => open(content.links.officialWebUrl)} />
+          <Row icon="email-outline" tint={palette.primary} title="Escribir a SAMUR" meta={content.links.samurEmail} external onPress={() => open(`mailto:${content.links.samurEmail}`)} />
 
           <SectionTitle>Sobre mí</SectionTitle>
           <View style={styles.card}>

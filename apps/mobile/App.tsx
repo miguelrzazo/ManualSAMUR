@@ -33,7 +33,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { ContentProvider, findProcedure, useContentData, useContentPreferences, useContentSync } from "./src/content";
+import { ContentProvider, findProcedure, useContentData, useContentPreferences } from "./src/content";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
@@ -42,7 +42,7 @@ import { BackToTop, Badge, Chip, CompactHeader, FavoriteToggle, MarkdownTable, M
 import type { MobileAttachment, MobileProcedure } from "../../packages/manual-content/src/index.ts";
 import { displayTitle } from "./src/title-case";
 import { APP_CHANGELOG } from "./src/app-changelog";
-import { DRUG_DETAIL_FIELDS, drugFieldText, parseDoseLines, parseDrugRoutes } from "./src/drug-detail-logic";
+import { DRUG_DETAIL_FIELDS, DRUG_NOTE_FIELDS, DRUG_SAFETY_FIELDS, drugFieldText, parseDrugRoutes, parseMedicationDose, type MedicationDoseSection } from "./src/drug-detail-logic";
 import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures } from "./src/procedure-logic";
 import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
@@ -328,9 +328,6 @@ function ProcedureRow({ procedure, onPress, showFavorite = false, snippet }: { p
 // full-screen during a shift.
 function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio">) {
   const styles = useAppStyles();
-  const { content, snapshot } = useContentData();
-  const { isRefreshing, lastError, refresh, cancelRefresh, syncState, syncProgress, stagedPackage, activateStagedUpdate, discardStaged } = useContentSync();
-  const { appearance, setAppearance } = usePreferences();
   const reduceMotion = useReduceMotion();
   const settingsTriggerRef = useRef<View>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -339,7 +336,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
-      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onRefresh={refresh} onCancelRefresh={cancelRefresh} onActivateStaged={activateStagedUpdate} onDiscardStaged={discardStaged} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} onOpenChangelog={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Changelog"); }} links={content.links} contentOrigin={CONTENT_ORIGIN} generatedAt={snapshot.generatedAt} packageHash={snapshot.packageHash} isRefreshing={isRefreshing} lastError={lastError} syncState={syncState} syncProgress={syncProgress} stagedPackage={stagedPackage} appearance={appearance} setAppearance={(preference) => void setAppearance(preference)} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "1.0.0"} />
+      <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} onOpenChangelog={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Changelog"); }} contentOrigin={CONTENT_ORIGIN} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "1.0.0"} />
     </SafeAreaView>
   );
 }
@@ -1223,6 +1220,39 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
  * las pruebas de posología del vademécum.
  */
 
+function MedicationDoseSectionView({ section, index }: { section: MedicationDoseSection; index: number }) {
+  const styles = useAppStyles();
+  const icon = section.audience === "adultos" ? "account-outline" : section.audience === "ninos" || section.audience === "lactantes" ? "baby-face-outline" : "account-multiple-outline";
+  const tone = section.audience === "adultos" ? styles.doseSectionAdult : section.audience === "ninos" || section.audience === "lactantes" ? styles.doseSectionPediatric : styles.doseSectionGeneral;
+  return (
+    <View style={[styles.doseSection, tone]} accessibilityLabel={section.sourceHeading ? `${section.label}. ${section.sourceHeading}` : section.label}>
+      <View style={styles.doseSectionHeader}>
+        <MaterialCommunityIcons name={icon} size={18} color={styles.doseSectionIcon.color} accessibilityElementsHidden />
+        <Text style={styles.doseSectionTitle}>{section.label}</Text>
+        {section.sourceHeading && section.sourceHeading !== section.label && <Text style={styles.doseSectionContext}>{section.sourceHeading}</Text>}
+      </View>
+      {section.lines.map((line, lineIndex) => line.bullet
+        ? <View key={`${index}-${lineIndex}`} style={styles.doseBulletRow}><Text style={styles.doseBulletDot}>•</Text><Text style={styles.doseValue}>{line.text}</Text></View>
+        : <Text key={`${index}-${lineIndex}`} style={styles.doseValue}>{line.text}</Text>)}
+    </View>
+  );
+}
+
+function MedicationSafetyPanel({ label, value, tone }: { label: string; value: string; tone: "danger" | "warning" | "neutral" }) {
+  const styles = useAppStyles();
+  const icon = tone === "danger" ? "alert-octagon-outline" : tone === "warning" ? "alert-outline" : "information-outline";
+  const panelStyle = tone === "danger" ? styles.safetyPanelDanger : tone === "warning" ? styles.safetyPanelWarning : styles.safetyPanelNeutral;
+  return (
+    <View style={[styles.safetyPanel, panelStyle]} accessibilityLabel={label}>
+      <View style={styles.safetyPanelHeader}>
+        <MaterialCommunityIcons name={icon} size={18} color={styles.safetyPanelIcon.color} accessibilityElementsHidden />
+        <Text style={styles.safetyPanelTitle}>{label}</Text>
+      </View>
+      <Text style={styles.infoValue}>{value}</Text>
+    </View>
+  );
+}
+
 function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Drug">) {
   const styles = useAppStyles();
   const { content } = useContentData();
@@ -1237,10 +1267,11 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   useDetailHeader({ navigation, title: String(drug?.name ?? "Fármaco"), favorite, onToggleFavorite });
   if (!drug) return <MissingResource title="Fármaco no disponible" />;
   const routes = parseDrugRoutes(drug.route);
-  const doseLines = parseDoseLines(drug.dose);
+  const doseSections = parseMedicationDose(drug.dose);
   const relatedIds = relatedProcedureIdsForDrug(content, drug).slice(0, 12);
-  // Orden: qué es → por dónde → cuánto → todo lo demás. Antes eran ocho bloques
-  // idénticos en los que "Vía" y "Dosis publicada" pesaban lo mismo que "Notas".
+  const safetyRows = DRUG_SAFETY_FIELDS.map(([label, key]) => ({ label, value: drugFieldText(drug[key]) }))
+    .filter((row) => row.value.length > 0)
+    .map((row) => ({ ...row, tone: row.label === "Contraindicaciones" ? "danger" as const : row.label === "Efectos secundarios" || row.label === "Precauciones" ? "warning" as const : "neutral" as const }));
   return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     <View style={styles.drugTaxonomy}>
       {[drug.category, drug.subcategory].filter((value): value is string => typeof value === "string" && value.length > 0).map((value) => (
@@ -1249,24 +1280,33 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
     </View>
     {routes.length > 0 && (
       <View style={styles.drugRoutes} accessibilityLabel={`Vías de administración: ${routes.join(", ")}`}>
-        <Text style={styles.infoLabel}>Vía</Text>
+        <Text style={styles.infoLabel}>Vías de administración</Text>
         <View style={styles.drugRouteChips}>
           {routes.map((route) => <Badge key={route} label={route} tone="accent" />)}
         </View>
       </View>
     )}
-    {doseLines.length > 0 && (
-      <View style={styles.doseCard} accessibilityLabel={`Dosis. ${doseLines.map((line) => line.text).join(". ")}`}>
-        <Text style={styles.doseLabel}>Dosis publicada</Text>
-        {/* Una línea por pauta. El campo del paquete es texto plano con guiones
-            dentro, y pintado de una pieza las cinco pautas de un antídoto salen como
-            un párrafo corrido en el que hay que buscar el guion con el dedo. */}
-        {doseLines.map((line, index) => line.bullet
-          ? <View key={index} style={styles.doseBulletRow}><Text style={styles.doseBulletDot}>•</Text><Text style={styles.doseValue}>{line.text}</Text></View>
-          : <Text key={index} style={styles.doseValue}>{line.text}</Text>)}
+    {doseSections.length > 0 && (
+      <View style={styles.doseCard} accessibilityLabel={`Dosis. ${doseSections.map((section) => `${section.label}: ${section.lines.map((line) => line.text).join(". ")}`).join(". ")}`}>
+        <Text style={styles.doseLabel}>Dosis</Text>
+        <View style={styles.doseSections}>
+          {doseSections.map((section, index) => <MedicationDoseSectionView key={`${section.audience}-${index}`} section={section} index={index} />)}
+        </View>
       </View>
     )}
     {DRUG_DETAIL_FIELDS.map(([label, key]) => {
+      const display = drugFieldText(drug[key]);
+      return display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null;
+    })}
+    {safetyRows.length > 0 && (
+      <View style={styles.safetySection}>
+        <SectionHeading title="Seguridad" />
+        <View style={styles.safetyPanels}>
+          {safetyRows.map((row) => <MedicationSafetyPanel key={row.label} {...row} />)}
+        </View>
+      </View>
+    )}
+    {DRUG_NOTE_FIELDS.map(([label, key]) => {
       const display = drugFieldText(drug[key]);
       return display ? <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{label}</Text><Text style={styles.infoValue}>{display}</Text></View> : null;
     })}
@@ -1668,13 +1708,31 @@ function createStyles(palette: AdaptivePalette) {
   drugTaxonomy: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.lg },
   drugRoutes: { marginBottom: spacing.lg, gap: spacing.sm },
   drugRouteChips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  // La dosis, en su propia tarjeta y a cuerpo de lectura. Es lo que se consulta con el
-  // paciente delante; salía en el mismo bloque plano que "Notas".
+  // La dosis conserva el texto clínico, pero separa los encabezados explícitos de
+  // población para que Adultos y Niños no compitan en el mismo bloque visual.
   doseCard: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.lg, gap: spacing.sm },
   doseLabel: { ...typography.footnote, fontWeight: "600", color: palette.inkMuted },
+  doseSections: { gap: spacing.sm },
+  doseSection: { borderRadius: radii.sm, borderWidth: 1, padding: spacing.md, gap: spacing.sm },
+  doseSectionAdult: { borderColor: palette.primary, backgroundColor: palette.primaryWash },
+  doseSectionPediatric: { borderColor: palette.green, backgroundColor: palette.greenWash },
+  doseSectionGeneral: { borderColor: palette.line, backgroundColor: palette.surface },
+  doseSectionHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  doseSectionIcon: { color: palette.inkMuted },
+  doseSectionTitle: { color: palette.ink, fontSize: 14, fontWeight: "800" },
+  doseSectionContext: { flex: 1, color: palette.inkMuted, fontSize: 12 },
   doseValue: { flex: 1, ...typography.body, color: palette.ink },
   doseBulletRow: { flexDirection: "row", gap: spacing.sm },
   doseBulletDot: { color: palette.primary, ...typography.body, lineHeight: typography.body.lineHeight },
+  safetySection: { marginTop: spacing.sm },
+  safetyPanels: { gap: spacing.sm },
+  safetyPanel: { borderRadius: radii.md, borderWidth: 1, padding: spacing.md, gap: spacing.sm },
+  safetyPanelDanger: { borderColor: palette.dangerDark, backgroundColor: palette.dangerWash },
+  safetyPanelWarning: { borderColor: palette.amber, backgroundColor: palette.amberWash },
+  safetyPanelNeutral: { borderColor: palette.line, backgroundColor: palette.surfaceMuted },
+  safetyPanelHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  safetyPanelIcon: { color: palette.inkMuted },
+  safetyPanelTitle: { color: palette.ink, fontSize: 13, fontWeight: "800" },
   infoBlock: { borderTopWidth: 1, borderTopColor: palette.line, paddingVertical: spacing.md }, infoLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "600", letterSpacing: -0.08, marginBottom: 4 }, infoValue: { color: palette.ink, fontSize: 15, lineHeight: 22 }, codeRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, codeValue: { minWidth: 55, color: palette.primary, fontSize: 15, fontWeight: "900" }, codeResultCode: { backgroundColor: palette.amberWash }, abbreviationResultCode: { backgroundColor: palette.greenWash }, abbreviationRow: { minHeight: 44, flexDirection: "row", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line }, abbreviation: { width: 70, color: palette.primary, fontWeight: "900", fontSize: 13 },
   modal: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg }, modalContent: { paddingBottom: spacing.xxl }, modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.xl }, modalTitle: { color: palette.ink, fontSize: 24, fontWeight: "800" }, modalClose: { color: palette.primary, fontWeight: "800", padding: spacing.sm }, settingsSectionTitle: { color: palette.ink, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: spacing.sm }, settingsCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: palette.surface, borderColor: palette.line, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.sm }, recoveryActions: { backgroundColor: palette.amberWash, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.sm }, recoveryButtons: { flexDirection: "row", gap: spacing.sm }, recoveryButton: { marginTop: spacing.sm, backgroundColor: palette.ink, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonText: { color: palette.paper, fontSize: 12, fontWeight: "800" }, recoveryButtonSecondary: { marginTop: spacing.sm, borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.sm, paddingVertical: 10, paddingHorizontal: spacing.lg }, recoveryButtonSecondaryText: { color: palette.ink, fontSize: 12, fontWeight: "800" }, primaryButton: { backgroundColor: palette.primaryAction, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.md }, secondaryButton: { borderColor: palette.lineStrong, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, alignItems: "center", marginTop: spacing.sm }, secondaryButtonText: { color: palette.ink, fontWeight: "800", fontSize: 14 }, locationDetailBlock: { backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.lg }, disabledButton: { opacity: 0.55 }, primaryButtonText: { color: palette.white, fontWeight: "800", fontSize: 14 }, appearanceControl: { flexDirection: "row", backgroundColor: palette.surfaceMuted, borderRadius: radii.md, padding: 4, gap: 4 }, appearanceControlStacked: { flexDirection: "column" }, appearanceOption: { flex: 1, minHeight: 45, borderRadius: radii.sm, alignItems: "center", justifyContent: "center", gap: 3 }, appearanceOptionActive: { backgroundColor: palette.ink }, appearanceText: { color: palette.inkMuted, fontSize: 11, fontWeight: "800" }, appearanceTextActive: { color: palette.paper }, infoPanel: { backgroundColor: palette.dangerWash, padding: spacing.lg, borderRadius: radii.md }, infoPanelTitle: { color: palette.dangerDark, fontWeight: "900", fontSize: 14, marginBottom: spacing.sm }, infoPanelText: { color: palette.dangerDark, fontSize: 13, lineHeight: 19 }, linkRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: palette.line }, linkText: { color: palette.primary, fontSize: 13, fontWeight: "800" }, legalText: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, marginTop: spacing.lg }, modalBackdrop: { flex: 1, backgroundColor: "rgba(19,35,61,0.35)", justifyContent: "flex-end" },
   launchScreen: { flex: 1, backgroundColor: palette.paper, alignItems: "center", justifyContent: "center" }, launchTitle: { color: palette.ink, ...typography.title1, textAlign: "center", marginTop: spacing.lg, paddingHorizontal: spacing.xl }, launchAcademy: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginTop: spacing.xl, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.lg, backgroundColor: palette.primaryWash }, launchMascot: { width: 64, height: 64 }, launchAcademyCopy: { maxWidth: 220, gap: 2 }, launchByline: { color: palette.ink, fontSize: 13, lineHeight: 18, fontWeight: "900" }, launchClaim: { color: palette.primaryDark, fontSize: 12, lineHeight: 16, fontWeight: "700" }, disclosureScreen: { flex: 1, backgroundColor: palette.paper, padding: spacing.lg, justifyContent: "space-between" }, disclosureContent: { alignItems: "flex-start", paddingTop: spacing.xxl }, disclosureEyebrow: { color: palette.primary, fontSize: 10, fontWeight: "900", letterSpacing: 1.3, marginTop: spacing.xxl, marginBottom: spacing.md }, disclosureTitle: { color: palette.ink, fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.8, marginBottom: spacing.lg }, disclosureAcademy: { flexDirection: "row", alignItems: "center", width: "100%", gap: spacing.md, marginBottom: spacing.lg, padding: spacing.md, borderRadius: radii.md, backgroundColor: palette.primaryWash }, disclosureMascot: { width: 48, height: 48 }, disclosureAcademyCopy: { flex: 1, gap: 2 }, disclosureAcademyCreator: { color: palette.ink, fontSize: 13, lineHeight: 18, fontWeight: "900" }, disclosureAcademyClaim: { color: palette.primaryDark, fontSize: 12, lineHeight: 16, fontWeight: "700" }, disclosureBody: { color: palette.ink, fontSize: 16, lineHeight: 23, marginBottom: spacing.md }, disclosureFooter: { color: palette.inkMuted, fontSize: 11, lineHeight: 16, textAlign: "center", marginTop: spacing.md, marginBottom: spacing.sm },
