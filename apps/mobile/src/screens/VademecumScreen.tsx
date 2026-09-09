@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   View,
-  type ListRenderItemInfo,
   type SectionListData,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -111,39 +110,39 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
           stays behind it. */}
       {chrome.collapsed && <CompactHeader title="Vademécum" onExpand={chrome.expand} />}
       {!chrome.collapsed && (
-      <>
-      <View style={styles.header}>
-        <Text style={styles.pageTitle}>Vademécum</Text>
-        <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
-      </View>
+      <View style={styles.expandedChrome}>
+        <View style={styles.header}>
+          <Text style={styles.pageTitle}>Vademécum</Text>
+          <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
+        </View>
 
-      <View style={styles.topTabsRow} accessibilityRole="tablist" accessibilityLabel="Dominios del vademécum">
-        <FlatList
-          horizontal
-          data={VADEMECUM_TABS}
-          keyExtractor={(tab) => tab.key}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.topTabsContent}
-          renderItem={({ item: tab }) => {
-            const focused = activeTab === tab.key;
-            return (
-              <Pressable
-                onPress={() => switchTab(tab.key)}
-                style={[styles.topTab, focused && styles.topTabActive, accessibilityTargetStyle()]}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: focused }}
-                accessibilityLabel={`${tab.label}, ${tabCounts[tab.key]} referencias`}
-                accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
-              >
-                <MaterialCommunityIcons name={tab.icon} size={15} color={focused ? palette.primary : palette.inkMuted} />
-                <Text style={[styles.topTabLabel, focused && { color: palette.primary }]}>{tab.label}</Text>
-                <Text style={styles.topTabCount}>{tabCounts[tab.key]}</Text>
-              </Pressable>
-            );
-          }}
-        />
+        <View style={styles.topTabsRow} accessibilityRole="tablist" accessibilityLabel="Dominios del vademécum">
+          <FlatList
+            horizontal
+            data={VADEMECUM_TABS}
+            keyExtractor={(tab) => tab.key}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.topTabsContent}
+            renderItem={({ item: tab }) => {
+              const focused = activeTab === tab.key;
+              return (
+                <Pressable
+                  onPress={() => switchTab(tab.key)}
+                  style={[styles.topTab, focused && styles.topTabActive, accessibilityTargetStyle()]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: focused }}
+                  accessibilityLabel={`${tab.label}, ${tabCounts[tab.key]} referencias`}
+                  accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
+                >
+                  <MaterialCommunityIcons name={tab.icon} size={15} color={focused ? palette.primary : palette.inkMuted} />
+                  <Text style={[styles.topTabLabel, focused && { color: palette.primary }]}>{tab.label}</Text>
+                  <Text style={styles.topTabCount}>{tabCounts[tab.key]}</Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
       </View>
-      </>
       )}
 
       {searching ? (
@@ -231,7 +230,6 @@ function DomainContent({
     () => (showAlphabetIndex ? buildAlphabetSections(filtered) : buildCategorySections(filtered)),
     [filtered, showAlphabetIndex],
   );
-
   const alphabetRef = useRef<FlatList<VademecumAlphabetSection | VademecumCategorySection>>(null);
   // What the list says we are looking at…
   const [observedKey, setObservedKey] = useState<string | null>(null);
@@ -323,23 +321,23 @@ function DomainContent({
             keyExtractor={(section) => section.key}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.alphabetContent}
-            // La tira de letras es otra lista: si no consigue centrar la letra activa,
-            // eso es cosmético y se resuelve solo al siguiente render. Enchufarla al
-            // manejador del `SectionList` hacía que un fallo aquí desplazara *la otra*
-            // lista a un desplazamiento calculado con las medidas de esta.
+            // La tira de letras es otra lista: un fallo aquí es cosmético y no debe
+            // conectarse al manejador del SectionList.
             onScrollToIndexFailed={() => undefined}
             renderItem={({ item: section, index }) => {
               const selected = section.key === activeKey;
               return (
-                <Pressable
+                <Press
                   onPress={() => { selectionTick(); scrollToSection(index); }}
-                  style={[styles.alphabetChip, selected && styles.alphabetChipActive, accessibilityTargetStyle(32)]}
+                  style={styles.alphabetHit}
                   accessibilityRole="tab"
                   accessibilityState={{ selected }}
                   accessibilityLabel={`Ir a la letra ${section.key}`}
                 >
-                  <Text style={[styles.alphabetChipText, selected && styles.alphabetChipTextActive]}>{section.key}</Text>
-                </Pressable>
+                  <View style={[styles.alphabetChip, selected && styles.alphabetChipActive]}>
+                    <Text style={[styles.alphabetChipText, selected && styles.alphabetChipTextActive]}>{section.key}</Text>
+                  </View>
+                </Press>
               );
             }}
           />
@@ -362,14 +360,19 @@ function DomainContent({
         onScrollToIndexFailed={jump.onScrollToIndexFailed}
         ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
-          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} accessibilityRole="header">
+          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} testID={`vademecum-section-${section.key}`} accessibilityRole="header">
             {!showAlphabetIndex && <View style={[styles.sectionHeaderDot, { backgroundColor: categoryAccent(section.key) }]} />}
             <Text style={styles.sectionHeaderLabel}>{section.key}</Text>
             <Text style={styles.sectionHeaderCount}>{section.data.length}</Text>
           </View>
         )}
-        renderItem={({ item }: ListRenderItemInfo<MobileReferenceSearchResult>) => (
-          <VademecumRow reference={item} palette={palette} styles={styles} onPress={() => onOpen(item)} />
+        renderItem={({ item }) => (
+          <VademecumRow
+            reference={item}
+            palette={palette}
+            styles={styles}
+            onPress={() => onOpen(item)}
+          />
         )}
       />
     </View>
@@ -578,6 +581,7 @@ function createStyles(palette: AdaptivePalette) {
     },
     searchInput: { flex: 1, color: palette.ink, fontSize: 14, paddingVertical: 0 },
     topTabsRow: { borderBottomWidth: 1, borderBottomColor: palette.line },
+    expandedChrome: { overflow: "hidden" },
     topTabsContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
     topTab: {
       flexDirection: "row",
@@ -606,6 +610,7 @@ function createStyles(palette: AdaptivePalette) {
       alignItems: "center",
       justifyContent: "center",
     },
+    alphabetHit: { alignItems: "center", justifyContent: "center" },
     alphabetChipActive: { backgroundColor: palette.ink },
     alphabetChipText: { color: palette.ink, fontSize: 12, fontWeight: "700" },
     // `paper`, not `white`: in dark mode the active fill is `ink`, which is near-white.

@@ -156,6 +156,13 @@ test("the alphabet index reports its selection and highlights it, rather than be
   assert.match(source, /accessibilityState=\{\{ selected \}\}/);
 });
 
+test("alphabet buttons keep the compact visual treatment without shrinking the mobile hit target", () => {
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/VademecumScreen.tsx"), "utf8");
+  assert.match(source, /<Press\n\s+onPress=\{\(\) => \{ selectionTick\(\); scrollToSection\(index\); \}\}\n\s+style=\{styles\.alphabetHit\}/);
+  assert.match(source, /<View style=\{\[styles\.alphabetChip, selected && styles\.alphabetChipActive\]\}>/);
+  assert.match(source, /alphabetHit: \{ alignItems: "center", justifyContent: "center" \}/);
+});
+
 test("the navigation exposes a stable Vademécum selector for mobile E2E flows", () => {
   const accessibility = readFileSync(path.join(process.cwd(), "apps/mobile/src/accessibility.ts"), "utf8");
   const shell = readFileSync(path.join(process.cwd(), "apps/mobile/src/nav-shell.tsx"), "utf8");
@@ -172,6 +179,12 @@ test("offscreen alphabet jumps keep the virtualized-list retry handler connected
   const sectionList = source.slice(listStart, source.indexOf("      />", listStart) + 8);
   assert.match(sectionList, /onScrollToIndexFailed=\{jump\.onScrollToIndexFailed\}/);
   assert.doesNotMatch(sectionList, /onScrollToIndexFailed=\{\(\) => undefined\}/);
+  assert.match(source, /useSectionJump\(sectionListRef\)/);
+  assert.match(source, /onLayout=\{jump\.registerSection\(section\.key\)\}/);
+  // SectionList adds header and footer cells to its flattened index. Guessed
+  // row geometry therefore drifts for every later letter; measured headers and
+  // the shared retry path are the only supported jump mechanism here.
+  assert.doesNotMatch(source, /getItemLayout|preferSectionIndex|initialNumToRender|measuredLengths|layoutIndexes/);
 });
 
 test("domain rows drop the per-row glyph that only repeated the tab the reader already picked", () => {

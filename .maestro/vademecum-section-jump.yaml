@@ -4,6 +4,7 @@ tags:
   - issue-108
   - regression
 ---
+- stopApp
 - launchApp
 - swipe:
     direction: DOWN
@@ -27,8 +28,7 @@ tags:
     visible:
       text: "Vademécum"
     timeout: 20000
-- tapOn:
-    id: "tab-vademecum"
+- tapOn: "Vademécum"
 - extendedWaitUntil:
     visible:
       text: "Ir a la letra H"
@@ -41,4 +41,6 @@ tags:
     visible:
       text: "Haloperidol"
     timeout: 10000
+- assertVisible:
+    id: "vademecum-section-H"
 - assertVisible: "Ir a la letra H"
