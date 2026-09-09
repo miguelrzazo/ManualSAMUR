@@ -39,6 +39,7 @@ import { FavoriteToggle } from "../components";
 import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { lightImpact } from "../hooks/haptics";
 import { useContentData, useContentPreferences } from "../content";
+import { usePreferences } from "../preferences.tsx";
 import { procedureRouteKey } from "../procedure-logic";
 import {
   selectProcedureReferences,
@@ -74,6 +75,7 @@ function openSavedReference(navigation: InicioNavigation, item: SavedReference) 
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   const { content } = useContentData();
   const { favorites, recents, toggleFavorite } = useContentPreferences();
+  const { seenEventIds } = usePreferences();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
@@ -104,6 +106,8 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
     [content.updates],
   );
   const novedades = useMemo(() => manualNovedades(updateEvents), [updateEvents]);
+  const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
+  const unreadNovedades = useMemo(() => novedades.filter((event) => !seen.has(event.eventId)), [novedades, seen]);
 
 
   const favoriteItems = useMemo(() => selectSavedReferences(content, favorites).slice(0, 8), [content, favorites]);
@@ -192,14 +196,14 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
             <View style={styles.secondaryRow}>
               <Pressable
                 onPress={openHistory}
-                style={[styles.secondaryChip, novedades.length > 0 && styles.secondaryChipHighlight]}
+                style={[styles.secondaryChip, unreadNovedades.length > 0 && styles.secondaryChipAlert]}
                 accessibilityRole="button"
-                accessibilityLabel={novedades.length > 0 ? `Historial de actualizaciones, ${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial de actualizaciones"}
+                accessibilityLabel={unreadNovedades.length > 0 ? `Novedades sin leer, ${unreadNovedades.length}` : "Sin novedades"}
                 accessibilityHint={accessibilityHints.openDetail}
               >
-                <MaterialCommunityIcons name="clock-outline" size={16} color={novedades.length > 0 ? palette.primary : palette.inkMuted} />
-                <Text style={[styles.secondaryChipText, novedades.length > 0 && styles.secondaryChipTextHighlight]}>
-                  {novedades.length > 0 ? `${novedades.length} novedad${novedades.length === 1 ? "" : "es"}` : "Historial"}
+                <MaterialCommunityIcons name="clock-outline" size={16} color={unreadNovedades.length > 0 ? palette.danger : palette.inkMuted} />
+                <Text style={[styles.secondaryChipText, unreadNovedades.length > 0 && styles.secondaryChipTextAlert]}>
+                  {unreadNovedades.length > 0 ? `Novedades · ${unreadNovedades.length}` : "Sin novedades"}
                 </Text>
               </Pressable>
             </View>
@@ -356,6 +360,8 @@ function createStyles(palette: AdaptivePalette) {
     secondaryChipHighlight: { backgroundColor: palette.primaryWash },
     secondaryChipText: { fontSize: 12, fontWeight: "700", color: palette.inkMuted },
     secondaryChipTextHighlight: { color: palette.primary },
+    secondaryChipAlert: { backgroundColor: palette.dangerWash },
+    secondaryChipTextAlert: { color: palette.dangerDark },
 
     collectionSection: {
       backgroundColor: palette.surface,

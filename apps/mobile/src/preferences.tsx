@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "react-native";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { hasAcknowledgedDisclosure, parseAppearancePreference, type AppearancePreference } from "./preferences-logic";
-import { parseSeenEventIds, serializeSeenEventIds, toggleSeenEventId } from "./manual-tree-logic";
+import { addSeenEventIds, parseSeenEventIds, serializeSeenEventIds } from "./manual-tree-logic";
 
 export const FIRST_USE_DISCLOSURE_KEY = "manualsamur.firstUseDisclosure.v1";
 export const ACADEMY_PROMO_SEEN_KEY = "manualsamur.academyPromoSeen.v1";
@@ -21,6 +21,7 @@ type PreferencesContextValue = {
   setAppearance: (preference: AppearancePreference) => void;
   seenEventIds: string[];
   markEventSeen: (eventId: string) => void;
+  markAllEventsSeen: (eventIds: readonly string[]) => void;
 };
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -88,7 +89,15 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
 
   const markEventSeen = useCallback((eventId: string) => {
     setSeenEventIds((current) => {
-      const next = toggleSeenEventId(current, eventId);
+      const next = addSeenEventIds(current, [eventId]);
+      if (next.length !== current.length) void AsyncStorage.setItem(SEEN_EVENTS_STORAGE_KEY, serializeSeenEventIds(next));
+      return next;
+    });
+  }, []);
+
+  const markAllEventsSeen = useCallback((eventIds: readonly string[]) => {
+    setSeenEventIds((current) => {
+      const next = addSeenEventIds(current, eventIds);
       if (next.length !== current.length) void AsyncStorage.setItem(SEEN_EVENTS_STORAGE_KEY, serializeSeenEventIds(next));
       return next;
     });
@@ -104,7 +113,8 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     setAppearance,
     seenEventIds,
     markEventSeen,
-  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, hasSeenAcademyPromo, isHydrated, markAcademyPromoSeen, markEventSeen, seenEventIds, setAppearance]);
+    markAllEventsSeen,
+  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, hasSeenAcademyPromo, isHydrated, markAcademyPromoSeen, markAllEventsSeen, markEventSeen, seenEventIds, setAppearance]);
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }

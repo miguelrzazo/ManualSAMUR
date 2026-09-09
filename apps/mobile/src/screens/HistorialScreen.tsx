@@ -18,7 +18,7 @@ export function HistorialScreen({ navigation }: Props) {
   const palette = useTheme();
   const styles = useThemedStyles(createStyles);
   const { content } = useContentData();
-  const { seenEventIds, markEventSeen } = usePreferences();
+  const { seenEventIds, markEventSeen, markAllEventsSeen } = usePreferences();
   const [tab, setTab] = useState<HistoryTab>("novedades");
   const events = useMemo(() => asManualUpdateEvents(content.updates), [content.updates]);
   const recentEvents = useMemo(() => manualNovedades(applyManualRecencyWindow(events)), [events]);
@@ -29,6 +29,7 @@ export function HistorialScreen({ navigation }: Props) {
   const groups = useMemo(() => groupManualEventsByDate(recentEvents), [recentEvents]);
   const historyGroups = useMemo(() => groupManualEventsByDate(historyEvents), [historyEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
+  const unreadRecentEvents = useMemo(() => recentEvents.filter((event) => !seen.has(event.eventId)), [recentEvents, seen]);
 
   const openEvent = (event: ManualUpdateEvent) => {
     markEventSeen(event.eventId);
@@ -42,6 +43,17 @@ export function HistorialScreen({ navigation }: Props) {
         <Press onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
         <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}</Text></Press>
       </View>
+      {tab === "novedades" && unreadRecentEvents.length > 0 && (
+        <Press
+          testID="mark-all-novedades-read"
+          onPress={() => markAllEventsSeen(unreadRecentEvents.map((event) => event.eventId))}
+          style={styles.markAll}
+          accessibilityRole="button"
+          accessibilityLabel="Marcar todas las novedades como leídas"
+        >
+          <Text style={styles.markAllText}>Marcar todo como leído</Text>
+        </Press>
+      )}
       {(tab === "novedades" ? groups : historyGroups).map((group) => (
         <View key={group.date} style={styles.group}>
           <Text style={styles.date}>{formatDate(group.date)}</Text>
@@ -62,6 +74,7 @@ function HistoryEvent({ event, unread, onOpen, palette, styles }: { event: Manua
   const body = <View style={styles.eventCopy}>
     <View style={styles.eventHeader}>
       <Badge label={kindLabel} tone="accent" color={kindColor} background={event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash} />
+      <Text style={unread ? styles.unreadLabel : styles.readLabel}>{unread ? "Sin leer" : "Leído"}</Text>
     </View>
     <Text style={styles.summary}>{affectedTitle}</Text>
     {event.diff ? <UpdateDiff diff={event.diff} palette={palette} compact /> : null}
@@ -90,6 +103,8 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     tabActive: { borderBottomColor: palette.primary },
     tabText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" },
     tabTextActive: { color: palette.primary },
+    markAll: { alignSelf: "flex-end", minHeight: 40, justifyContent: "center", paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.dangerWash },
+    markAllText: { color: palette.dangerDark, fontSize: 12, fontWeight: "800" },
     group: { gap: spacing.sm },
     date: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "900", letterSpacing: -0.2, marginTop: spacing.sm },
     event: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md },
@@ -98,6 +113,8 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     eventUnread: { borderColor: palette.primary, backgroundColor: palette.primaryWash },
     eventCopy: { gap: spacing.sm },
     eventHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
+    unreadLabel: { color: palette.dangerDark, fontSize: 11, fontWeight: "800" },
+    readLabel: { color: palette.inkMuted, fontSize: 11, fontWeight: "700" },
     summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },
     empty: { color: palette.inkMuted, fontSize: 14, paddingVertical: spacing.lg },
   });

@@ -499,6 +499,12 @@ export function serializeSeenEventIds(values: readonly string[]): string {
 }
 
 export function toggleSeenEventId(values: readonly string[], eventId: string): string[] {
-  if (!eventId) return [...values];
-  return values.includes(eventId) ? [...values] : [...values, eventId];
+  return addSeenEventIds(values, eventId ? [eventId] : []);
+}
+
+/** Add read markers without toggling an already-read event back to unread. */
+export function addSeenEventIds(values: readonly string[], eventIds: readonly string[]): string[] {
+  const next = new Set(values);
+  for (const eventId of eventIds) if (eventId) next.add(eventId);
+  return [...next];
 }

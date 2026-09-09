@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
   applyManualRecencyWindow,
+  addSeenEventIds,
   asManualUpdateEvents,
   buildManualTree,
   flattenManualTree,
@@ -221,6 +222,7 @@ test("seen event ids are persisted defensively and idempotently", () => {
   assert.deepEqual(parseSeenEventIds('{"bad":true}'), []);
   const seen = toggleSeenEventId(toggleSeenEventId([], "event-1"), "event-1");
   assert.equal(serializeSeenEventIds(seen), '["event-1"]');
+  assert.deepEqual(addSeenEventIds(["event-1"], ["event-1", "event-2"]), ["event-1", "event-2"]);
 });
 
 // `manualSidebarMeta` is a hand-maintained verbatim port of `lib/manual-data.ts`'s
