@@ -27,3 +27,8 @@ tags:
 - assertVisible: "Novedades"
 - assertVisible: "Historial"
 - assertNotVisible: "Revisado"
+- tapOn:
+    id: "mark-all-novedades-read"
+    optional: true
+- pressKey: BACK
+- assertVisible: "Sin novedades"

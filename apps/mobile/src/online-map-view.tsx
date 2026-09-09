@@ -1,8 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-native";
 import { useReduceMotion } from "./hooks/motion.ts";
-import { useImperativeHandle, useRef, type Ref } from "react";
-import { StyleSheet, View } from "react-native";
+import { memo, useImperativeHandle, useRef, type Ref } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { circle, spacing, TAB_BAR_INSET, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { locationVisual } from "./location-logic.ts";
 import type { OnlineMapPin } from "./online-map-logic.ts";
@@ -44,8 +44,31 @@ export interface OnlineMapViewRef {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  markerDot: { ...circle(24), borderWidth: 2, borderColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  markerDot: { ...circle(40), borderWidth: 2, borderColor: "#FFFFFF", alignItems: "center", justifyContent: "center" },
+  markerLabel: { color: "#FFFFFF", fontSize: 9, fontWeight: "800", includeFontPadding: false },
   userDot: { ...circle(18), borderWidth: 3, borderColor: "#FFFFFF", backgroundColor: "#1D4ED8" },
+});
+
+interface OnlineMapMarkerProps {
+  palette: AdaptivePalette;
+  pin: OnlineMapPin;
+  onPress: (pin: OnlineMapPin) => void;
+}
+
+const OnlineMapMarker = memo(function OnlineMapMarker({ palette, pin, onPress }: OnlineMapMarkerProps) {
+  const visual = locationVisual(pin, palette);
+  return (
+    <Marker key={pin.id} id={pin.id} lngLat={[pin.coordinate.lng, pin.coordinate.lat]} onPress={() => onPress(pin)}>
+      <View
+        style={[styles.markerDot, { backgroundColor: visual.color }]}
+        accessibilityRole="button"
+        accessibilityLabel={`${visual.label} ${pin.accessibilityTitle}${pin.markerLabel ? `. Identificador ${pin.markerLabel}` : ""}`}
+        accessibilityHint="Abre los detalles de esta ubicación."
+      >
+        {pin.markerLabel ? <Text style={styles.markerLabel}>{pin.markerLabel}</Text> : <MaterialCommunityIcons name={visual.icon} size={16} color={palette.paper} />}
+      </View>
+    </Marker>
+  );
 });
 
 /**
@@ -87,14 +110,7 @@ export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, 
         onDidFailLoadingMap={onLoadError}
       >
         <Camera ref={cameraRef} initialViewState={{ center, zoom }} maxBounds={bounds} minZoom={minZoom} maxZoom={maxZoom} />
-        {pins.map((pin) => {
-          const visual = locationVisual(pin, palette);
-          return <Marker key={pin.id} id={pin.id} lngLat={[pin.coordinate.lng, pin.coordinate.lat]} onPress={() => onPinPress(pin)}>
-            <View style={[styles.markerDot, { backgroundColor: visual.color }]} accessibilityRole="button" accessibilityLabel={`${visual.label} ${pin.title}`} accessibilityHint="Abre los detalles de esta ubicación.">
-              <MaterialCommunityIcons name={visual.icon} size={13} color={palette.paper} />
-            </View>
-          </Marker>;
-        })}
+        {pins.map((pin) => <OnlineMapMarker key={pin.id} pin={pin} palette={palette} onPress={onPinPress} />)}
         {userLocation && (
           <Marker id="user-location" lngLat={userLocation}>
             <View style={styles.userDot} accessibilityLabel="Tu ubicación" />

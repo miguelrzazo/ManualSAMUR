@@ -136,6 +136,18 @@ export function locationDisplayName(location: Pick<LocationRecord, "kind" | "sho
 }
 
 /**
+ * Compact marker label for the map. Keep this tied to the source identity: public
+ * hospital abbreviations must not become a second, drifting catalogue in the app.
+ */
+export function locationMarkerLabel(
+  location: Pick<LocationRecord, "kind" | "baseNumber" | "id" | "hospitalOwnership">,
+): string | undefined {
+  if (location.kind === "base" && typeof location.baseNumber === "number") return String(location.baseNumber);
+  if (location.kind === "hospital" && location.hospitalOwnership === "public") return location.id;
+  return undefined;
+}
+
+/**
  * Subtítulo de una fila: dirección, y el distrito con su número oficial.
  *
  * Para una base se antepone el barrio, que es lo que el título acaba de dejar

@@ -107,9 +107,26 @@ test("online pins reuse stable offline location identity, filters, coordinates, 
     coordinate: { lat: locations[0].lat, lng: locations[0].lng },
     source: "offline",
     locationRouteKey: `location:${locations[0].kind}:${locations[0].id}`,
+    markerLabel: locations[0].id,
+    accessibilityTitle: locations[0].name,
   });
   assert.equal(new Set(pins.map((pin) => pin.locationRouteKey)).size, pins.length);
   assert.equal(mapPinsFromLocations(locations, "online")[0].source, "online");
+});
+
+test("map markers expose compact source labels without losing full accessibility names", () => {
+  const locations = locationRecords(snapshot.content);
+  const base = locations.find((location) => location.kind === "base" && location.baseNumber === 0);
+  const publicHospital = locations.find((location) => location.kind === "hospital" && location.hospitalOwnership === "public");
+  const privateHospital = locations.find((location) => location.kind === "hospital" && location.hospitalOwnership === "private");
+  assert.ok(base && publicHospital && privateHospital);
+
+  const pins = mapPinsFromLocations([base, publicHospital, privateHospital]);
+  assert.equal(pins[0].markerLabel, "0");
+  assert.equal(pins[1].markerLabel, publicHospital.id);
+  assert.equal(pins[2].markerLabel, undefined);
+  assert.equal(pins[1].accessibilityTitle, publicHospital.name);
+  assert.equal(pins[2].accessibilityTitle, privateHospital.name);
 });
 
 test("the disabled adapter cannot accidentally make an unapproved network request", async () => {

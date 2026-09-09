@@ -29,6 +29,7 @@ import {
   onlineMapFallbackLabel,
   transitionOnlineMapState,
   type OnlineMapRequest,
+  type OnlineMapPin,
   type OnlineMapState,
 } from "../online-map-logic";
 import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider, MAPLIBRE_CARTO_STYLE_URLS } from "../online-map-runtime";
@@ -188,9 +189,13 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
     }
   }, [activateOnlineMap, mapState.status]);
 
-  const openLocationDetail = (routeKey: string) => {
+  const openLocationDetail = useCallback((routeKey: string) => {
     navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Location", { routeKey });
-  };
+  }, [navigation]);
+
+  const onPinPress = useCallback((pin: OnlineMapPin) => {
+    openLocationDetail(pin.locationRouteKey);
+  }, [openLocationDetail]);
 
   /**
    * "Centrar en mi ubicación". The permission is requested here and nowhere else on
@@ -282,7 +287,7 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
           // engañoso es peor que ningún punto. Aplica a cualquier vía que ponga `origin`
           // (este control, "hospital más cercano" o "Usar mi ubicación" de la hoja).
           userLocation={origin && isWithinMadridBounds(origin) ? [origin.lng, origin.lat] : undefined}
-          onPinPress={(pin) => openLocationDetail(pin.locationRouteKey)}
+          onPinPress={onPinPress}
           onLoadError={() => setMapState((previous) => transitionOnlineMapState(previous, { type: "failure", reason: "provider-error" }, mapPolicy))}
           palette={palette}
         />

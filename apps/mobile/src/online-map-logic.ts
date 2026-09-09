@@ -1,4 +1,4 @@
-import { locationDisplayName } from "./location-logic.ts";
+import { locationDisplayName, locationMarkerLabel } from "./location-logic.ts";
 import type { HospitalOwnership, LocationCoordinate, LocationFilter, LocationKind, LocationRecord } from "./location-logic";
 
 /** Provider-neutral seam. Keep online map policy and fallbacks free of SDK imports. */
@@ -90,6 +90,8 @@ export interface OnlineMapPin {
   coordinate: LocationCoordinate;
   source: "offline" | "online";
   locationRouteKey: string;
+  markerLabel?: string;
+  accessibilityTitle: string;
 }
 
 export interface OnlineMapSnapshot {
@@ -184,6 +186,8 @@ export function mapPinsFromLocations(locations: LocationRecord[], source: Online
     coordinate: { lat: location.lat, lng: location.lng },
     source,
     locationRouteKey: `location:${location.kind}:${location.id}`,
+    markerLabel: locationMarkerLabel(location),
+    accessibilityTitle: location.name,
   }));
 }
 
