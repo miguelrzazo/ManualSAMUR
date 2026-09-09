@@ -294,6 +294,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       if (!result) throw new Error("No hay ningún paquete pendiente de recuperación");
       setSnapshot(result.snapshot);
       setStagedPackage(undefined);
+      persistCheck({
+        checkedAt: new Date().toISOString(),
+        outcome: "up-to-date",
+        remoteIdentity: result.snapshot.packageHash,
+        remoteGeneratedAt: result.snapshot.generatedAt,
+      });
       setSyncState("success");
     } catch (error) {
       setLastError(error instanceof Error ? error.message : "No se pudo recuperar el paquete pendiente");
@@ -301,7 +307,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [persistCheck]);
 
   const discardStaged = useCallback(async () => {
     await discardStagedPackage(AsyncStorage);

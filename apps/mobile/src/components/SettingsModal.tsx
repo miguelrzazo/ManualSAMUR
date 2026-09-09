@@ -40,14 +40,6 @@ import { academySlot } from "../academy-slot-config.ts";
  * web; ahora también aquí, que es donde alguien los busca desde el teléfono.
  */
 
-export interface SettingsLinks {
-  sourceUrl: string;
-  avisoImportanteUrl: string;
-  samurEmail: string;
-  officialWebUrl: string;
-  collaboratorsUrl: string;
-}
-
 export interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
@@ -68,7 +60,8 @@ function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: Conte
     if (syncState === "validating") return { icon: "shield-check-outline", title: "Verificando el paquete", detail: "Comprobando integridad antes de activarlo", color: "primary" };
     return { icon: "cloud-search-outline", title: "Comprobando actualizaciones", detail: "La aplicación sigue disponible mientras se comprueba", color: "primary" };
   }
-  if (staged || lastCheck?.outcome === "update-available") return { icon: "cloud-upload-outline", title: "Actualización disponible", detail: "Hay contenido verificado listo para activar", color: "amber" };
+  if (staged) return { icon: "backup-restore", title: "Actualización pendiente de activar", detail: "Hay contenido verificado listo para activar", color: "amber" };
+  if (lastCheck?.outcome === "update-available") return { icon: "cloud-upload-outline", title: "Actualización disponible", detail: "Busca la actualización para descargarla y verificarla", color: "amber" };
   if (lastCheck?.outcome === "up-to-date") return { icon: "check-circle-outline", title: "Contenido al día", detail: "La última comprobación no encontró cambios", color: "green" };
   if (lastCheck?.outcome === "offline") return { icon: "cloud-off-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la conexión", color: "amber" };
   if (lastCheck?.outcome === "invalid-response" || lastCheck?.outcome === "failure") return { icon: "alert-circle-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la actualización", color: "amber" };
