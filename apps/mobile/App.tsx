@@ -163,7 +163,7 @@ function BrandHeader({ onSettings, settingsRef }: { onSettings?: () => void; set
     <PageHeader
       title="Manual"
       trailing={onSettings ? (
-        <Pressable ref={settingsRef} onPress={onSettings} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={routeAccessibilityLabels.Ajustes} accessibilityHint="Abre las preferencias, privacidad y estado del contenido.">
+        <Pressable ref={settingsRef} testID="settings-button" onPress={onSettings} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={routeAccessibilityLabels.Ajustes} accessibilityHint="Abre las preferencias, privacidad y estado del contenido.">
           <MaterialCommunityIcons name="tune-variant" size={21} color={palette.ink} />
         </Pressable>
       ) : undefined}
@@ -1558,13 +1558,21 @@ function AppGate() {
   // during this render, so the only way to get the tree to see a theme change was to
   // remount the whole navigator — which threw away wherever the user had navigated to.
   // `useTheme()` re-renders instead.
-  return <ContentProvider><View style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
+  return <ContentProvider><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
+}
+
+function IconFontPreloader() {
+  useEffect(() => {
+    void MaterialCommunityIcons.loadFont().catch(() => undefined);
+  }, []);
+  return null;
 }
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
+        <IconFontPreloader />
         <PreferencesProvider>
           <ThemeProvider>
             <AppGate />

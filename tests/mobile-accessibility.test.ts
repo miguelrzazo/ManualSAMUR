@@ -114,6 +114,9 @@ test("core routes expose accessibility semantics and adaptive behavior", () => {
   assert.match(appSource, /reduceMotion \? "none"/);
   assert.match(appSource, /useColorScheme/);
   assert.match(appSource, /useWindowDimensions/);
+  assert.match(appSource, /MaterialCommunityIcons\.loadFont\(\)/, "the icon font must start loading before the navigation shell paints");
+  assert.match(appSource, /testID="app-interactive-shell"/);
+  assert.match(appSource, /testID="settings-button"/);
   assert.match(appSource, /accessibilityTargetStyle\(\)/);
   assert.match(appSource, /maxWidth: 960/);
   assert.match(appSource, /findNodeHandle/);

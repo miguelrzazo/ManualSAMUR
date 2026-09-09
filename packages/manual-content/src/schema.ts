@@ -299,10 +299,21 @@ export function mobilePackageHashPayload(snapshot: Pick<MobileSnapshot, "hash">,
 export function contentHash(content: MobileContent): string { return sha256Hex(canonicalJson(content)); }
 export function attachmentManifestHash(attachments: MobileManifestAttachment[]): string { return sha256Hex(canonicalJson(attachments)); }
 export function packageHash(content: MobileContent, attachments: MobileManifestAttachment[]): string {
-  return sha256Hex(canonicalJson(mobilePackageHashPayload({ hash: contentHash(content) }, attachmentManifestHash(attachments))));
+  return packageHashFromContentHash(contentHash(content), attachments);
 }
 
-export function isMobileContentSnapshot(value: unknown): value is MobileSnapshot {
+function packageHashFromContentHash(contentHashValue: string, attachments: MobileManifestAttachment[]): string {
+  return sha256Hex(canonicalJson(mobilePackageHashPayload({ hash: contentHashValue }, attachmentManifestHash(attachments))));
+}
+
+/**
+ * Cheap launch-time validation. It checks the shape and local invariants of a
+ * package without canonicalising or hashing its full content body.
+ *
+ * Cryptographic validation remains available through isMobileContentSnapshot
+ * and isMobileContentPackage for downloaded and activated packages.
+ */
+export function isMobileContentSnapshotShape(value: unknown): value is MobileSnapshot {
   if (!value || typeof value !== "object") return false;
   const snapshot = value as Partial<MobileSnapshot>;
   if (snapshot.schema !== MOBILE_SNAPSHOT_SCHEMA || snapshot.version !== MOBILE_SNAPSHOT_VERSION) return false;
@@ -320,17 +331,30 @@ export function isMobileContentSnapshot(value: unknown): value is MobileSnapshot
   const attachments = mobileAttachmentEntries(content);
   if (new Set(attachments.map((attachment) => attachment.id)).size !== attachments.length) return false;
   if (attachments.some((attachment) => !isValidManifestAttachment(attachment))) return false;
-  if (snapshot.packageHash !== undefined && snapshot.packageHash !== packageHash(content, attachments)) return false;
-  return contentHash(content) === snapshot.hash;
+  return true;
+}
+
+function validateSnapshotIntegrity(value: unknown): { snapshot: MobileSnapshot; attachments: MobileManifestAttachment[]; packageHash: string } | undefined {
+  if (!isMobileContentSnapshotShape(value)) return undefined;
+  const snapshot = value as MobileSnapshot;
+  const attachments = mobileAttachmentEntries(snapshot.content);
+  if (contentHash(snapshot.content) !== snapshot.hash) return undefined;
+  const computedPackageHash = packageHashFromContentHash(snapshot.hash, attachments);
+  if (snapshot.packageHash !== undefined && snapshot.packageHash !== computedPackageHash) return undefined;
+  return { snapshot, attachments, packageHash: computedPackageHash };
+}
+
+export function isMobileContentSnapshot(value: unknown): value is MobileSnapshot {
+  return Boolean(validateSnapshotIntegrity(value));
 }
 
 export function isMobileContentPackage(value: unknown, manifestValue: unknown): value is MobileSnapshot {
-  if (!isMobileContentSnapshot(value) || !manifestValue || typeof manifestValue !== "object") return false;
+  const validated = validateSnapshotIntegrity(value);
+  if (!validated || !manifestValue || typeof manifestValue !== "object") return false;
   const manifest = manifestValue as Partial<MobileAttachmentManifest>;
   if (manifest.schema !== MOBILE_ATTACHMENT_MANIFEST_SCHEMA || manifest.version !== MOBILE_ATTACHMENT_MANIFEST_VERSION) return false;
-  if (manifest.generatedAt !== value.generatedAt || manifest.contentHash !== value.hash || !Array.isArray(manifest.attachments)) return false;
-  const expectedAttachments = mobileAttachmentEntries(value.content);
-  return canonicalJson(manifest.attachments) === canonicalJson(expectedAttachments)
-    && manifest.packageHash === packageHash(value.content, expectedAttachments)
-    && value.packageHash === manifest.packageHash;
+  if (manifest.generatedAt !== validated.snapshot.generatedAt || manifest.contentHash !== validated.snapshot.hash || !Array.isArray(manifest.attachments)) return false;
+  return canonicalJson(manifest.attachments) === canonicalJson(validated.attachments)
+    && manifest.packageHash === validated.packageHash
+    && validated.snapshot.packageHash === manifest.packageHash;
 }

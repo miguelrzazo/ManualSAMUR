@@ -2,11 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import bundledSnapshot from "./data/snapshot.json";
-import bundledAttachmentManifest from "./data/attachment-manifest.json";
 import {
-  isMobileContentPackage,
-  isMobileContentSnapshot,
-  type MobileAttachmentManifest,
   type MobileContent,
   type MobileProcedure,
   type MobileSnapshot,
@@ -21,6 +17,7 @@ import {
   type SyncProgress,
   type SyncState,
 } from "./content-context";
+import { readContentBoot, scheduleAfterFirstFrame, validateBootSnapshot, validateSnapshotOnce } from "./content-boot";
 import { resolveProcedureReference } from "./procedure-logic";
 import {
   ContentUpdateCancelledError,
@@ -48,11 +45,6 @@ import {
 
 export type ContentContextValue = ContentDataContextValue & ContentPreferencesContextValue & ContentSyncContextValue;
 export type { SyncProgress, SyncState } from "./content-context";
-
-async function snapshotIsValid(candidate: unknown, expectedManifest?: MobileAttachmentManifest): Promise<boolean> {
-  if (!isMobileContentSnapshot(candidate)) return false;
-  return expectedManifest ? isMobileContentPackage(candidate, expectedManifest) : true;
-}
 
 function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
   const envName = name === "contentEndpoint" ? "EXPO_PUBLIC_CONTENT_ENDPOINT" : "EXPO_PUBLIC_METADATA_ENDPOINT";
@@ -123,31 +115,21 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         AsyncStorage.getItem(FAVORITES_STORAGE_KEY),
         AsyncStorage.getItem(RECENTS_STORAGE_KEY),
         AsyncStorage.getItem(RECENT_QUERIES_STORAGE_KEY),
-        readTransaction(AsyncStorage, snapshotIsValid),
+        readContentBoot(AsyncStorage, bundledSnapshot as unknown as MobileSnapshot),
       ]);
       if (cancelled) return;
+      const transactionResult = transaction.transaction;
       setRecentQueries(parseRecentQueries(storedQueries));
-      if (transaction.snapshot) {
-        setSnapshot(transaction.snapshot);
-      } else {
-        try {
-          const migrated = await migrateLegacySnapshot(AsyncStorage, snapshotIsValid);
-          if (migrated) setSnapshot(migrated);
-        } catch { /* Keep the bundled snapshot if legacy storage is corrupt. */ }
-      }
-      if (transaction.staged) {
-        setStagedPackage(transaction.staged);
-        setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
-        setSyncState(transaction.stagedSnapshot ? "recovery" : "failure");
-      } else if (transaction.warning) {
-        setLastError(transaction.warning);
+      if (transactionResult.snapshot) setSnapshot(transaction.snapshot);
+      if (transactionResult.staged) {
+        setStagedPackage(transactionResult.staged);
+        setSyncProgress({ downloadedBytes: transactionResult.staged.downloadedBytes, totalBytes: transactionResult.staged.totalBytes });
+        setSyncState(transactionResult.stagedSnapshot ? "recovery" : "failure");
+      } else if (transactionResult.warning) {
+        setLastError(transactionResult.warning);
         setSyncState("stale");
-      } else if (contentFreshness(transaction.snapshot?.generatedAt ?? (bundledSnapshot as unknown as MobileSnapshot).generatedAt) !== "fresh") {
+      } else if (contentFreshness(transactionResult.snapshot?.generatedAt ?? (bundledSnapshot as unknown as MobileSnapshot).generatedAt) !== "fresh") {
         setSyncState("stale");
-      }
-      if (!await snapshotIsValid(bundledSnapshot, bundledAttachmentManifest as MobileAttachmentManifest)) {
-        setLastError("El paquete local no supera la validación de integridad");
-        setSyncState("failure");
       }
       if (storedFavorites) {
         const migratedFavorites = parseSavedRouteKeys(storedFavorites);
@@ -162,6 +144,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         if (normalized !== storedRecents) void AsyncStorage.setItem(RECENTS_STORAGE_KEY, normalized);
       }
       setIsHydrated(true);
+      scheduleAfterFirstFrame(() => {
+        if (transactionResult.snapshot) {
+          void validateBootSnapshot(transactionResult.snapshot, bundledSnapshot as unknown as MobileSnapshot)
+            .then((verifiedSnapshot) => {
+              if (!cancelled && verifiedSnapshot !== transactionResult.snapshot) {
+                setSnapshot(verifiedSnapshot);
+                setLastError("El contenido activo no supera la validación; se mantiene el paquete local.");
+                setSyncState("stale");
+              }
+            })
+            .catch(() => undefined);
+        } else {
+          void migrateLegacySnapshot(AsyncStorage, validateSnapshotOnce)
+            .then((migrated) => { if (!cancelled && migrated) setSnapshot(migrated); })
+            .catch(() => undefined);
+        }
+      });
     })();
     return () => { cancelled = true; };
   }, []);
@@ -243,14 +242,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const candidate: unknown = await response.json();
       setSyncState("validating");
       throwIfCancelled(controller.signal);
-      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, snapshotIsValid, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {}, controller.signal);
+      const staged = await stagePackage(AsyncStorage, candidate as MobileSnapshot, validateSnapshotOnce, new Date().toISOString(), Number.isFinite(totalBytes) ? { downloadedBytes: totalBytes, totalBytes } : {}, controller.signal);
       setStagedPackage(staged);
       setSyncProgress({ downloadedBytes: staged.downloadedBytes, totalBytes: staged.totalBytes });
       setSyncState("recovery");
     } catch (error) {
       setLastError(error instanceof Error ? error.message : "No se pudo actualizar el contenido");
       if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
-        const transaction = await readTransaction(AsyncStorage, snapshotIsValid);
+        const transaction = await readTransaction(AsyncStorage, validateSnapshotOnce);
         if (transaction.staged) {
           setStagedPackage(transaction.staged);
           setSyncProgress({ downloadedBytes: transaction.staged.downloadedBytes, totalBytes: transaction.staged.totalBytes });
@@ -279,7 +278,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     setLastError(undefined);
     setSyncState("activating");
     try {
-      const result = await resumeStagedPackage(AsyncStorage, snapshotIsValid);
+      const result = await resumeStagedPackage(AsyncStorage, validateSnapshotOnce);
       if (!result) throw new Error("No hay ningún paquete pendiente de recuperación");
       setSnapshot(result.snapshot);
       setStagedPackage(undefined);

@@ -1,4 +1,4 @@
-import type { MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
+import { isMobileContentSnapshotShape, type MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
 
 /**
  * The pointer is the only record changed during activation. Content packages
@@ -157,6 +157,41 @@ export async function readTransaction(
       result.stagedSnapshot = envelope.snapshot;
     } else {
       result.staged = { ...staged, phase: "failed", error: "El paquete en recuperación no supera la validación" };
+    }
+  }
+  return result;
+}
+
+/**
+ * Read the active and staged records without hashing their complete content.
+ *
+ * The active pointer is only written after strict validation in
+ * activateStagedPackage. On launch we therefore check the pointer/envelope
+ * relationship and the cheap local shape invariants, then let the bundled or
+ * activated snapshot render immediately. readTransaction remains the strict
+ * path for recovery and tests that need cryptographic verification.
+ */
+export async function readTransactionMetadata(storage: ContentStorage): Promise<TransactionReadResult> {
+  const result: TransactionReadResult = {};
+  const pointer = parseJson<unknown>(await storage.getItem(ACTIVE_POINTER_KEY));
+  if (isActivePointer(pointer)) {
+    result.active = pointer;
+    const envelope = parseJson<unknown>(await storage.getItem(pointer.packageKey));
+    if (isPackageEnvelope(envelope) && envelope.packageHash === pointer.packageHash && isMobileContentSnapshotShape(envelope.snapshot)) {
+      result.snapshot = envelope.snapshot;
+    } else {
+      result.warning = "El paquete activo no supera las comprobaciones locales; se conserva el último contenido conocido.";
+    }
+  }
+
+  const staged = parseJson<unknown>(await storage.getItem(STAGED_PACKAGE_KEY));
+  if (isStagedPackage(staged)) {
+    result.staged = staged;
+    const envelope = parseJson<unknown>(await storage.getItem(staged.packageKey));
+    if (isPackageEnvelope(envelope) && envelope.packageHash === staged.packageHash && isMobileContentSnapshotShape(envelope.snapshot)) {
+      result.stagedSnapshot = envelope.snapshot;
+    } else {
+      result.staged = { ...staged, phase: "failed", error: "El paquete en recuperación no supera las comprobaciones locales" };
     }
   }
   return result;
