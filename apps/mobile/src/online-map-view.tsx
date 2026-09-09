@@ -3,18 +3,10 @@ import { Camera, Map, Marker, type CameraRef } from "@maplibre/maplibre-react-na
 import { useReduceMotion } from "./hooks/motion.ts";
 import { useImperativeHandle, useRef, type Ref } from "react";
 import { StyleSheet, View } from "react-native";
-import { circle, type AdaptivePalette } from "@manual-samur/design-tokens";
+import { circle, spacing, TAB_BAR_INSET, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { locationVisual } from "./location-logic.ts";
 import type { OnlineMapPin } from "./online-map-logic.ts";
 import { MAPLIBRE_CARTO_STYLE_URLS } from "./online-map-runtime.ts";
-
-/**
- * Text shown alongside the native attribution control so the OSM + CARTO credit is
- * legible without the viewer having to tap anything — a licensing obligation, not a
- * nicety. Kept as a plain, always-rendered row rather than relying solely on
- * MapLibre's tap-to-reveal attribution button.
- */
-export const ONLINE_MAP_ATTRIBUTION_TEXT = "© OpenStreetMap contributors · © CARTO";
 
 export interface OnlineMapViewProps {
   dark: boolean;
@@ -69,6 +61,8 @@ const styles = StyleSheet.create({
  * sitio. Un salto de 240 ms desorienta.
  */
 const CAMERA_EASE_MS = 650;
+const MAP_SCALE_BAR_POSITION = { bottom: TAB_BAR_INSET + spacing.lg, left: spacing.lg };
+const MAP_ATTRIBUTION_POSITION = { bottom: TAB_BAR_INSET + spacing.lg + spacing.xl, left: spacing.lg };
 
 export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, maxZoom, userLocation, palette, onPinPress, onLoadError, ref }: OnlineMapViewProps) {
   const cameraRef = useRef<CameraRef>(null);
@@ -82,7 +76,16 @@ export function OnlineMapView({ dark, pins, center, zoom = 11, bounds, minZoom, 
   }), [reduceMotion]);
   return (
     <View style={styles.fill}>
-      <Map style={styles.fill} mapStyle={dark ? MAPLIBRE_CARTO_STYLE_URLS.dark : MAPLIBRE_CARTO_STYLE_URLS.light} attribution attributionPosition={{ bottom: 6, left: 6 }} logo={false} onDidFailLoadingMap={onLoadError}>
+      <Map
+        style={styles.fill}
+        mapStyle={dark ? MAPLIBRE_CARTO_STYLE_URLS.dark : MAPLIBRE_CARTO_STYLE_URLS.light}
+        attribution
+        attributionPosition={MAP_ATTRIBUTION_POSITION}
+        scaleBar
+        scaleBarPosition={MAP_SCALE_BAR_POSITION}
+        logo={false}
+        onDidFailLoadingMap={onLoadError}
+      >
         <Camera ref={cameraRef} initialViewState={{ center, zoom }} maxBounds={bounds} minZoom={minZoom} maxZoom={maxZoom} />
         {pins.map((pin) => {
           const visual = locationVisual(pin, palette);

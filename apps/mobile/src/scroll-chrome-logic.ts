@@ -172,12 +172,9 @@ export function readerNavCapsuleRect(): ScreenRect {
   return { left, right: left + size, bottom, top: bottom + size };
 }
 
-/**
- * Back-to-top stacks directly above the nav capsule, sharing its leading edge: one
- * vertical column of two controls rather than two controls hunting for a free corner.
- */
+/** Back-to-top stacks above the nav capsule and shares its visual centerline. */
 export const READER_BACK_TO_TOP_PLACEMENT = {
-  left: READER_NAV_CAPSULE.left,
+  left: READER_NAV_CAPSULE.left + (READER_NAV_CAPSULE.size - BACK_TO_TOP_SIZE) / 2,
   bottom: READER_NAV_CAPSULE.bottom + READER_NAV_CAPSULE.size + spacing.sm,
   size: BACK_TO_TOP_SIZE,
 } as const;

@@ -242,8 +242,8 @@ test("the reader's two floating controls stack in one column instead of fighting
 
   const nav = readerNavCapsuleRect();
   const backToTop = readerBackToTopRect();
-  // Misma columna: comparten el borde inicial.
-  assert.equal(nav.left, backToTop.left);
+  // Misma columna: el círculo queda centrado bajo la cápsula aunque sus anchos difieran.
+  assert.equal((nav.left + nav.right) / 2, (backToTop.left + backToTop.right) / 2);
   // Y "volver arriba" está por encima, no por debajo.
   assert.ok(backToTop.bottom >= nav.top, "volver arriba debe empezar por encima de la cápsula");
 

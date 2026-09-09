@@ -32,7 +32,7 @@ import {
   type OnlineMapState,
 } from "../online-map-logic";
 import { classifyOnlineMapFailure, createMapLibreOnlineMapProvider, MAPLIBRE_CARTO_STYLE_URLS } from "../online-map-runtime";
-import { OnlineMapView, ONLINE_MAP_ATTRIBUTION_TEXT, type OnlineMapViewRef } from "../online-map-view";
+import { OnlineMapView, type OnlineMapViewRef } from "../online-map-view";
 import { downloadMadridOfflinePack, isMadridOfflinePackReady } from "../offline-map-pack-runtime";
 import {
   MADRID_OFFLINE_PACK_BOUNDS,
@@ -376,11 +376,6 @@ export function MapaScreen({ navigation }: BottomTabScreenProps<TabsParamList, "
         </Pressable>
       </View>}
 
-      {mapState.status === "online" && (
-        <View style={styles.onlineMapAttribution} pointerEvents="none">
-          <Text style={styles.onlineMapAttributionText} numberOfLines={1} maxFontSizeMultiplier={1.2}>{ONLINE_MAP_ATTRIBUTION_TEXT}</Text>
-        </View>
-      )}
       {/* No hay botón de refrescar. El mapa online no tiene contenido que caduque
           entre dos pulsaciones —las teselas de Madrid están cacheadas y el paquete de
           datos lo actualiza Ajustes—, así que era un control permanente en la esquina
@@ -488,21 +483,6 @@ function createStyles(palette: AdaptivePalette) {
     topStack: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm, gap: spacing.sm, alignItems: "flex-start" },
     trailingControls: { position: "absolute", right: spacing.lg, bottom: TAB_BAR_INSET + spacing.lg, gap: spacing.sm, alignItems: "center" },
     compactMapControl: { width: 48, height: 48, borderRadius: radii.md, backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong, alignItems: "center", justifyContent: "center" },
-    // Abajo a la izquierda, justo encima del control de atribucion de MapLibre.
-    //
-    // Estaba a la derecha, a `TAB_BAR_INSET + 52`, que es exactamente encima de
-    // `trailingControls`: el credito y el boton de centrarme se pisaban. La esquina
-    // izquierda no la ocupa nada, y ahi la atribucion queda junto a la nativa en vez
-    // de flotando sola sobre el mapa.
-    //
-    // La atribucion va sobre las teselas, y hay basemap oscuro (dark-matter) ademas
-    // del claro: con la chapa blanca y el azul fijos que tenia, en modo oscuro se
-    // quedaba como una pegatina blanca encima de un mapa negro.
-    // `left` sin `right`: fijando los dos, la vista absoluta se estira de lado a lado y
-    // el credito sale como una banda blanca cruzando el mapa en vez de como una chapa
-    // del ancho de su texto. `maxWidth` la corta antes de llegar a los controles.
-    onlineMapAttribution: { position: "absolute", left: spacing.lg, maxWidth: "70%", bottom: TAB_BAR_INSET + spacing.lg, backgroundColor: palette.surface, opacity: 0.9, borderRadius: radii.sm, paddingHorizontal: spacing.xs + 2, paddingVertical: 2 },
-    onlineMapAttributionText: { ...typography.caption2, color: palette.ink },
     sheetScreen: { flex: 1, backgroundColor: palette.paper },
     sheetHeaderBreathing: { paddingBottom: spacing.xs },
     sheetTitle: { fontSize: typography.title1.fontSize, lineHeight: typography.title1.lineHeight },

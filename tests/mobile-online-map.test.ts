@@ -144,6 +144,7 @@ test("map UI exposes the online map activation, attribution, and offline fallbac
   // T5e moved Mapa from a directory-first screen inline in App.tsx to a full-screen map
   // with floating controls in its own module — see src/screens/MapaScreen.tsx.
   const source = readFileSync(path.join(appRoot, "src/screens/MapaScreen.tsx"), "utf8");
+  const mapViewSource = readFileSync(path.join(appRoot, "src/online-map-view.tsx"), "utf8");
   // The disabled-state copy stays in the source as a defensive fallback even though the
   // approved policy means it is not the state reached in normal operation.
   assert.match(source, /Mapa online no habilitado/);
@@ -154,7 +155,11 @@ test("map UI exposes the online map activation, attribution, and offline fallbac
   assert.match(source, /Mostrar mapa online/);
   assert.match(source, /APPROVED_ONLINE_MAP_POLICY/);
   assert.match(source, /OnlineMapView/);
-  assert.match(source, /ONLINE_MAP_ATTRIBUTION_TEXT/);
+  assert.doesNotMatch(source, /ONLINE_MAP_ATTRIBUTION_TEXT|onlineMapAttribution/);
+  assert.match(mapViewSource, /attributionPosition=\{MAP_ATTRIBUTION_POSITION\}/);
+  assert.match(mapViewSource, /scaleBar/);
+  assert.match(mapViewSource, /scaleBarPosition=\{MAP_SCALE_BAR_POSITION\}/);
+  assert.doesNotMatch(mapViewSource, /ONLINE_MAP_ATTRIBUTION_TEXT/);
   assert.match(source, /classifyOnlineMapFailure/);
   // T5e: floating controls over the full-screen map, per the owner's revised destination.
   assert.match(source, /Hospital más cercano/);

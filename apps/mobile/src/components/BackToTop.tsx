@@ -25,11 +25,13 @@ import { useTheme } from "../theme.tsx";
  * this button landed on top of it — "Volver arriba" opened Search instead.
  * `backToTopOverlapsSearchCapsule` keeps that honest in `tests/`.
  */
-export function BackToTop({ visible, onPress, bottom, label = "Volver arriba" }: {
+export function BackToTop({ visible, onPress, bottom, left, label = "Volver arriba" }: {
   visible: boolean;
   onPress: () => void;
   /** Override for a surface with no tab bar underneath it, e.g. the procedure reader. */
   bottom?: number;
+  /** Override for a surface whose companion control has a different width, e.g. the reader capsule. */
+  left?: number;
   label?: string;
 }) {
   const palette = useTheme();
@@ -63,7 +65,7 @@ export function BackToTop({ visible, onPress, bottom, label = "Volver arriba" }:
   return (
     <Animated.View
       pointerEvents={visible ? "auto" : "none"}
-      style={[styles.container, bottom === undefined ? null : { bottom }, { opacity: progress }, transform ? { transform } : null]}
+      style={[styles.container, bottom === undefined ? null : { bottom }, left === undefined ? null : { left }, { opacity: progress }, transform ? { transform } : null]}
     >
       <Pressable
         onPress={() => {
