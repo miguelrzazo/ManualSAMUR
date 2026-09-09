@@ -99,6 +99,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [isBackgroundRefreshing, setIsBackgroundRefreshing] = useState(false);
   const refreshController = useRef<AbortController | null>(null);
   const refreshTask = useRef<Promise<void> | null>(null);
+  const automaticRefreshStarted = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -264,9 +265,18 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       }
     })();
     refreshTask.current = task;
-    void task.finally(() => { if (refreshTask.current === task) refreshTask.current = null; });
+    void task.then(
+      () => { if (refreshTask.current === task) refreshTask.current = null; },
+      () => { if (refreshTask.current === task) refreshTask.current = null; },
+    );
     return task;
   }, [persistCheck, snapshot]);
+
+  useEffect(() => {
+    if (!isHydrated || automaticRefreshStarted.current || stagedPackage) return;
+    automaticRefreshStarted.current = true;
+    scheduleAfterFirstFrame(() => { void refresh({ background: true }); });
+  }, [isHydrated, refresh, stagedPackage]);
 
   const cancelRefresh = useCallback(() => {
     // Once activation starts, cancellation is disabled so the pointer write
