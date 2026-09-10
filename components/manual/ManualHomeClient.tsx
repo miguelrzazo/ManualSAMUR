@@ -15,6 +15,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ContentDiff } from "@/components/manual/ContentDiff";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
 import {
   FAVORITES_COOKIE,
@@ -29,6 +30,7 @@ import type { ProcedureNavMeta, ProcedureSidebarSection } from "@/lib/content";
 import { applyRecencyWindow, parseLocalDate, type ManualSyncClientMetadata, type UpdatePillEvent } from "@/lib/manual-updates-logic";
 import { useNow } from "@/lib/hooks/use-now";
 import type { ManualHistoryEntry, ManualUpdateEvent } from "@/lib/manual-sync";
+import { readableChangeKindLabel } from "@/packages/manual-content/src/content-diff";
 
 const SECTIONS_PRIORITY = ["SVA", "SVB", "Operativos", "DRP", "Intervinientes", "Técnicas", "Comunicaciones", "Psicológicos", "Administrativos"];
 
@@ -481,7 +483,6 @@ export function ManualHomeClient({
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [historyTab, setHistoryTab] = useState<"novedades" | "historial">("novedades");
   const [historyPage, setHistoryPage] = useState(1);
-  const [expandedDiffs, setExpandedDiffs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -607,15 +608,6 @@ export function ManualHomeClient({
       });
   }, [updateEvents, recentEventIdSet]);
 
-  function handleExpandDiff(eventId: string) {
-    setExpandedDiffs((prev) => {
-      const next = new Set(prev);
-      if (next.has(eventId)) next.delete(eventId);
-      else next.add(eventId);
-      return next;
-    });
-  }
-
   function openHistoryModal() {
     setHistoryModalOpen(true);
     // Abrir el historial marca como vistas todas las novedades. Antes se excluían
@@ -676,10 +668,10 @@ export function ManualHomeClient({
           <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/40 flex-shrink-0">
             <DialogTitle className="flex items-center gap-2 text-base font-semibold">
               <History className="h-4 w-4" />
-              Historial de actualizaciones
+              Cambios del manual
             </DialogTitle>
             <div className="flex gap-0 mt-3 -mb-4 border-b border-border/40">
-              {([["novedades", `Novedades${livePillEvents.length ? ` (${livePillEvents.length})` : ""}`], ["historial", `Historial completo${historyEntries ? ` (${historyEntries.length})` : ""}`]] as const).map(([key, label]) => (
+              {([["novedades", `Novedades${livePillEvents.length ? ` (${livePillEvents.length})` : ""}`], ["historial", `Cambios anteriores${historyEntries ? ` (${historyEntries.length})` : ""}`]] as const).map(([key, label]) => (
                 <button
                   key={key}
                   onClick={() => setHistoryTab(key)}
@@ -719,7 +711,7 @@ export function ManualHomeClient({
                     <div className="flex items-center gap-2.5 mb-4 -ml-7">
                       <div className="h-5 w-5 rounded-full border-2 border-primary bg-background flex-shrink-0 z-10" />
                       <span className="text-sm font-semibold text-foreground/70">
-                        Sync — {formatSyncDate(group.date)}
+                        Actualización del manual · {formatSyncDate(group.date)}
                       </span>
                     </div>
 
@@ -733,79 +725,16 @@ export function ManualHomeClient({
                           </div>
                           <div className="grid gap-2 pl-1">
                             {catGroup.events.map((event) => {
-                              const isUnseen = recentEventIdSet.has(event.eventId) && !seenEventIds.includes(event.eventId);
-                              const isExpanded = expandedDiffs.has(event.eventId);
-                              return (
-                                <div
-                                  key={event.eventId}
-                                  className={`rounded-lg border overflow-hidden ${
-                                    isUnseen
-                                      ? "border-red-200/70 bg-red-50/30 dark:border-red-900/40 dark:bg-red-950/10"
-                                      : "border-border/40 bg-background/40"
-                                  }`}
-                                >
-                                  <div className="flex items-start gap-2.5 px-4 py-3">
-                                    {isUnseen && (
-                                      <div className="h-2 w-2 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
-                                    )}
-                                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[event.changeKind] ?? KIND_BADGE.sync}`}>
-                                      {event.changeKind.toUpperCase()}
-                                    </span>
-                                    {(() => {
-                                      const cat = event.category ?? "procedure";
-                                      const pid = event.procedureIds[0];
-                                      const href = cat === "codigo"
-                                        ? "/codigos"
-                                        : cat === "vademecum"
-                                          ? "/vademecum"
-                                          : pid && idToSlug.has(pid)
-                                            ? `/manual/${idToSlug.get(pid)}`
-                                            : null;
-                                      return href ? (
-                                        <button
-                                          onClick={() => { router.push(href); setHistoryModalOpen(false); }}
-                                          className="text-sm flex-1 text-foreground/80 min-w-0 text-left hover:text-primary hover:underline transition-colors active:scale-[0.98] leading-snug"
-                                        >
-                                          {event.summary}
-                                        </button>
-                                      ) : (
-                                        <span className="text-sm flex-1 text-foreground/80 min-w-0 leading-snug">{event.summary}</span>
-                                      );
-                                    })()}
-                                    {event.diff && (
-                                      <button
-                                        onClick={() => handleExpandDiff(event.eventId)}
-                                        className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors active:scale-95 mt-0.5"
-                                      >
-                                        {isExpanded ? "Ocultar" : "Ver diff"}
-                                        <ChevronDown className={`h-3 w-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                                      </button>
-                                    )}
-                                  </div>
-                                  {event.diff && (
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[400px]" : "max-h-0"}`}>
-                                      <div className="border-t border-border/60 bg-muted/20 px-4 py-3 font-mono text-xs leading-relaxed overflow-x-auto overflow-y-auto max-h-[400px]">
-                                        {event.diff.split("\n").map((line, i) => (
-                                          <div
-                                            key={i}
-                                            className={`whitespace-pre px-1 rounded-sm ${
-                                              line.startsWith("+") && !line.startsWith("+++")
-                                                ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20"
-                                                : line.startsWith("-") && !line.startsWith("---")
-                                                ? "text-red-700 dark:text-red-400 bg-red-50/60 dark:bg-red-950/20"
-                                                : line.startsWith("@@")
-                                                ? "text-blue-600 dark:text-blue-400 font-semibold"
-                                                : "text-muted-foreground"
-                                            }`}
-                                          >
-                                            {line || " "}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              );
+                              const cat = event.category ?? "procedure";
+                              const pid = event.procedureIds[0];
+                              const href = cat === "codigo"
+                                ? "/codigos"
+                                : cat === "vademecum"
+                                  ? "/vademecum"
+                                  : pid && idToSlug.has(pid)
+                                    ? `/manual/${idToSlug.get(pid)}`
+                                    : undefined;
+                              return <ContentDiff key={event.eventId} changeKind={event.changeKind} changedAt={event.approvedAt ?? event.effectiveDate} summary={event.summary} diff={event.diff} procedureHref={href} unread={recentEventIdSet.has(event.eventId) && !seenEventIds.includes(event.eventId)} />;
                             })}
                           </div>
                         </div>
@@ -816,14 +745,14 @@ export function ManualHomeClient({
               </div>
             </div>
 
-            {/* Historial completo — lee manual-history.json, incluye "revisado" */}
+            {/* Cambios anteriores — lee manual-history.json, incluye revisiones */}
             {!dataError && historyEntries && historyTab === "historial" && (
               <div className="grid gap-2">
                 {historyEntries.slice(0, historyPage * HISTORY_PAGE_SIZE).map((entry) => (
                   <div key={entry.id} className="rounded-lg border border-border/40 bg-background/40 px-4 py-3">
                     <div className="flex items-start gap-2.5">
                       <span className={`rounded-full px-2 py-0.5 text-xs font-bold tracking-wide flex-shrink-0 mt-0.5 ${KIND_BADGE[entry.changeKind] ?? KIND_BADGE.sync}`}>
-                        {entry.changeKind.toUpperCase()}
+                        {readableChangeKindLabel(entry.changeKind)}
                       </span>
                       <div className="min-w-0 flex-1">
                         {(() => {

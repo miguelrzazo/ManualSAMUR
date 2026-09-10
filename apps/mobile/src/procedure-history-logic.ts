@@ -4,17 +4,10 @@ import {
   sortManualHistorial,
   type ManualUpdateEvent,
 } from "./manual-tree-logic.ts";
+import { readableChangeKindLabel } from "../../../packages/manual-content/src/content-diff.ts";
 
-export const PROCEDURE_HISTORY_TITLE = "Historial de este procedimiento";
+export const PROCEDURE_HISTORY_TITLE = "Cambios de este procedimiento";
 export const PROCEDURE_HISTORY_EMPTY_MESSAGE = "Sin cambios registrados";
-
-const CHANGE_KIND_LABELS: Readonly<Record<string, string>> = {
-  nuevo: "Nuevo",
-  actualizado: "Actualizado",
-  revisado: "Revisado",
-  eliminado: "Eliminado",
-  sync: "Sincronizado",
-};
 
 export interface ProcedureHistoryItem {
   event: ManualUpdateEvent;
@@ -48,11 +41,7 @@ export function selectProcedureHistory(
 }
 
 export function procedureHistoryChangeLabel(changeKind: string): string {
-  const normalized = changeKind.trim().toLocaleLowerCase("es");
-  const known = CHANGE_KIND_LABELS[normalized];
-  if (known) return known;
-  if (!normalized) return "Cambio";
-  return normalized.charAt(0).toLocaleUpperCase("es") + normalized.slice(1);
+  return readableChangeKindLabel(changeKind);
 }
 
 export function procedureHistoryDate(event: ManualUpdateEvent): string {

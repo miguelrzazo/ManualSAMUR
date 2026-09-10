@@ -61,18 +61,18 @@ test("procedure history hides diff-less updates while predicates support code ro
 });
 
 test("known change kinds have Spanish labels and unknown kinds get a readable fallback", () => {
-  assert.equal(procedureHistoryChangeLabel("nuevo"), "Nuevo");
-  assert.equal(procedureHistoryChangeLabel("actualizado"), "Actualizado");
-  assert.equal(procedureHistoryChangeLabel("revisado"), "Revisado");
-  assert.equal(procedureHistoryChangeLabel("eliminado"), "Eliminado");
-  assert.equal(procedureHistoryChangeLabel("sync"), "Sincronizado");
-  assert.equal(procedureHistoryChangeLabel("correccion editorial"), "Correccion editorial");
+  assert.equal(procedureHistoryChangeLabel("nuevo"), "Contenido añadido");
+  assert.equal(procedureHistoryChangeLabel("actualizado"), "Contenido actualizado");
+  assert.equal(procedureHistoryChangeLabel("revisado"), "Contenido revisado");
+  assert.equal(procedureHistoryChangeLabel("eliminado"), "Contenido retirado");
+  assert.equal(procedureHistoryChangeLabel("sync"), "Actualización del manual");
+  assert.equal(procedureHistoryChangeLabel("correccion editorial"), "Actualización del manual");
 });
 
 test("the view-model contract always describes the section and its empty state", () => {
   const model = buildProcedureHistoryModel([], "101");
   assert.equal(model.title, PROCEDURE_HISTORY_TITLE);
-  assert.equal(model.title, "Historial de este procedimiento");
+  assert.equal(model.title, "Cambios de este procedimiento");
   assert.equal(model.emptyMessage, PROCEDURE_HISTORY_EMPTY_MESSAGE);
   assert.equal(model.emptyMessage, "Sin cambios registrados");
   assert.deepEqual(model.items, []);

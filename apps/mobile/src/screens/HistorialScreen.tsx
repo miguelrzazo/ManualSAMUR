@@ -13,6 +13,7 @@ import { usePreferences } from "../preferences.tsx";
 import { useTheme, useThemedStyles } from "../theme.tsx";
 import type { RootStackParamList } from "../navigation-types.ts";
 import { loadRemoteHistoryPage } from "../remote-history-logic.ts";
+import { readableChangeKindLabel, readableChangeTitle } from "../../../../packages/manual-content/src/content-diff.ts";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Historial">;
 type HistoryTab = "novedades" | "historial";
@@ -83,8 +84,8 @@ export function HistorialScreen({ navigation }: Props) {
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} contentInsetAdjustmentBehavior="automatic">
       <View style={styles.tabs} accessibilityRole="tablist">
-        <Press onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
-        <Press onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Historial · {historyEvents.length}{historyTotalPages > 1 ? "+" : ""}</Text></Press>
+        <Press testID="novedades-tab" onPress={() => setTab("novedades")} style={[styles.tab, tab === "novedades" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "novedades" }}><Text style={[styles.tabText, tab === "novedades" && styles.tabTextActive]}>Novedades · {recentEvents.length}</Text></Press>
+        <Press testID="historial-tab" onPress={() => setTab("historial")} style={[styles.tab, tab === "historial" && styles.tabActive]} accessibilityRole="tab" accessibilityState={{ selected: tab === "historial" }}><Text style={[styles.tabText, tab === "historial" && styles.tabTextActive]}>Cambios anteriores · {historyEvents.length}{historyTotalPages > 1 ? "+" : ""}</Text></Press>
       </View>
       {tab === "novedades" && unreadRecentEvents.length > 0 && (
         <Press
@@ -119,8 +120,8 @@ export function HistorialScreen({ navigation }: Props) {
 
 function HistoryEvent({ event, unread, onOpen, palette, styles }: { event: ManualUpdateEvent; unread: boolean; onOpen: () => void; palette: ReturnType<typeof useTheme>; styles: ReturnType<typeof createStyles> }) {
   const kindColor = event.changeKind === "nuevo" ? palette.green : event.changeKind === "eliminado" ? palette.danger : palette.primary;
-  const kindLabel = event.category === "codigo" ? "Código" : displayChangeKind(event.changeKind);
-  const affectedTitle = event.summary.includes(":") ? event.summary.slice(event.summary.indexOf(":") + 1).trim() : event.summary;
+  const kindLabel = event.category === "codigo" ? "Código" : readableChangeKindLabel(event.changeKind);
+  const affectedTitle = readableChangeTitle(event.summary);
   const body = <View style={styles.eventCopy}>
     <View style={styles.eventHeader}>
       <Badge label={kindLabel} tone="accent" color={kindColor} background={event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash} />
@@ -140,10 +141,6 @@ function formatDate(value: string): string {
   return Number.isNaN(parsed.getTime()) ? dateValue : parsed.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
 }
 
-function displayChangeKind(value: string): string {
-  return value ? `${value[0].toLocaleUpperCase("es")}${value.slice(1)}` : "Cambio";
-}
-
 function createStyles(palette: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: palette.paper },
@@ -153,8 +150,8 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     tabActive: { borderBottomColor: palette.primary },
     tabText: { color: palette.inkMuted, fontSize: 12, fontWeight: "700" },
     tabTextActive: { color: palette.primary },
-    markAll: { alignSelf: "flex-end", minHeight: 40, justifyContent: "center", paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.dangerWash },
-    markAllText: { color: palette.dangerDark, fontSize: 12, fontWeight: "800" },
+    markAll: { alignSelf: "flex-end", minHeight: 40, justifyContent: "center", paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: palette.primaryWash },
+    markAllText: { color: palette.primary, fontSize: 12, fontWeight: "800" },
     group: { gap: spacing.sm },
     date: { color: palette.ink, fontSize: 17, lineHeight: 22, fontWeight: "900", letterSpacing: -0.2, marginTop: spacing.sm },
     event: { backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.line, borderRadius: radii.md, padding: spacing.md },
@@ -163,7 +160,7 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     eventUnread: { borderColor: palette.primary, backgroundColor: palette.primaryWash },
     eventCopy: { gap: spacing.sm },
     eventHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
-    unreadLabel: { color: palette.dangerDark, fontSize: 11, fontWeight: "800" },
+    unreadLabel: { color: palette.primary, fontSize: 11, fontWeight: "800" },
     readLabel: { color: palette.inkMuted, fontSize: 11, fontWeight: "700" },
     summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },
     historyStatus: { color: palette.inkMuted, fontSize: 12, lineHeight: 18 },
