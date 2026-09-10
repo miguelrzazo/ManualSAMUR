@@ -4,6 +4,7 @@ import {
   readableChangeKindLabel,
   readableChangeTitle,
   readableContentChange,
+  readableUpdateViewModel,
 } from "../packages/manual-content/src/content-diff.ts";
 
 test("readable change titles remove the feed prefix", () => {
@@ -39,4 +40,33 @@ test("readable content changes mark separate paragraphs instead of stitching the
     before: ["Primera pauta", "…", "Segunda pauta"],
     after: ["Primera pauta revisada", "…", "Segunda pauta revisada"],
   });
+});
+
+test("the shared update adapter routes categories and switches procedures to a complete view", () => {
+  const added = readableUpdateViewModel({
+    eventId: "procedure-added",
+    procedureIds: ["701"],
+    category: "procedure",
+    changeKind: "nuevo",
+    summary: "Nuevo: 701 Procedimiento de ejemplo",
+    effectiveDate: "2026-09-10",
+    sections: [{ title: "Objeto", body: "Actuación coordinada." }],
+  });
+  assert.equal(added.scope, "procedimiento");
+  assert.deepEqual(added.destination, { category: "procedure", procedureId: "701" });
+  assert.equal(added.sections[0]?.title, "Objeto");
+
+  const code = readableUpdateViewModel({
+    eventId: "code-updated",
+    procedureIds: [],
+    category: "codigo",
+    routeKey: "code:sva:13",
+    changeKind: "actualizado",
+    summary: "codigos actualizado: Código 13",
+    effectiveDate: "2026-09-10",
+    diff: "-Antiguo\n+Nuevo",
+  });
+  assert.equal(code.scope, "fragmento");
+  assert.deepEqual(code.destination, { category: "codigo", routeKey: "code:sva:13" });
+  assert.deepEqual(code.comparison, { before: ["Antiguo"], after: ["Nuevo"] });
 });

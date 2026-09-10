@@ -21,10 +21,13 @@ import {
 import { readContentBoot, scheduleAfterFirstFrame, validateBootSnapshot, validateSnapshotOnce } from "./content-boot";
 import {
   CONTENT_CHECK_STORAGE_KEY,
+  automaticRefreshAllowed,
+  AUTOMATIC_REFRESH_COOLDOWN_MS,
   contentCheckRecordFor,
   parseContentCheckRecord,
   serializeContentCheckRecord,
   userFacingContentCheckError,
+  shouldRefreshOnResume,
   type ContentCheckRecord,
 } from "./content-update-logic";
 import { checkAndStageContent, ContentUpdateRuntimeError } from "./content-update-runtime";
@@ -101,7 +104,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const refreshController = useRef<AbortController | null>(null);
   const refreshTask = useRef<Promise<void> | null>(null);
   const automaticRefreshStarted = useRef(false);
-  const lastAutomaticRefreshAt = useRef(0);
+  const lastAutomaticRefreshAt = useRef<number | undefined>(undefined);
+  const previousAppState = useRef<AppStateStatus>(AppState.currentState);
   const recoveredPackageNeedsActivation = useRef(false);
 
   useEffect(() => {
@@ -218,6 +222,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const controller = new AbortController();
       refreshController.current = controller;
       setIsRefreshing(true);
+      if (background) lastAutomaticRefreshAt.current = Date.now();
       setIsBackgroundRefreshing(background);
       setLastError(undefined);
       setSyncState("checking");
@@ -292,18 +297,19 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     if (!isHydrated || automaticRefreshStarted.current || stagedPackage) return;
     automaticRefreshStarted.current = true;
     scheduleAfterFirstFrame(() => {
-      lastAutomaticRefreshAt.current = Date.now();
+      if (!automaticRefreshAllowed(lastAutomaticRefreshAt.current)) return;
       void refresh({ background: true });
     });
   }, [isHydrated, refresh, stagedPackage]);
 
   useEffect(() => {
     if (!isHydrated) return;
-    const minRefreshIntervalMs = 6 * 60 * 60 * 1000;
     const onAppStateChange = (status: AppStateStatus) => {
-      if (status !== "active" || stagedPackage || refreshTask.current) return;
-      if (Date.now() - lastAutomaticRefreshAt.current < minRefreshIntervalMs) return;
-      lastAutomaticRefreshAt.current = Date.now();
+      const previous = previousAppState.current;
+      previousAppState.current = status;
+      const now = Date.now();
+      if (stagedPackage || refreshTask.current || !shouldRefreshOnResume(previous, status, lastAutomaticRefreshAt.current, now, AUTOMATIC_REFRESH_COOLDOWN_MS)) return;
+      lastAutomaticRefreshAt.current = now;
       void refresh({ background: true });
     };
     const subscription = AppState.addEventListener("change", onAppStateChange);

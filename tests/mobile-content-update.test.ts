@@ -4,11 +4,14 @@ import test from "node:test";
 import type { MobileSnapshot } from "../packages/manual-content/src/index.ts";
 import { STAGED_PACKAGE_KEY, type ContentStorage } from "../apps/mobile/src/content-transaction.ts";
 import {
+  automaticRefreshAllowed,
+  AUTOMATIC_REFRESH_COOLDOWN_MS,
   contentIdentity,
   contentUpdateNeeded,
   parseContentCheckRecord,
   serializeContentCheckRecord,
   type PublishedContentMetadata,
+  shouldRefreshOnResume,
 } from "../apps/mobile/src/content-update-logic.ts";
 import { checkAndStageContent, ContentUpdateRuntimeError } from "../apps/mobile/src/content-update-runtime.ts";
 
@@ -146,4 +149,14 @@ test("network errors classify as offline without touching the active package", a
     (error: unknown) => error instanceof ContentUpdateRuntimeError && error.outcome === "offline",
   );
   assert.equal(storage.values.has(STAGED_PACKAGE_KEY), false);
+});
+
+test("automatic lifecycle checks only run after the cooldown and on a real resume", () => {
+  const now = 1_000_000;
+  assert.equal(automaticRefreshAllowed(undefined, now), true);
+  assert.equal(automaticRefreshAllowed(now - AUTOMATIC_REFRESH_COOLDOWN_MS + 1, now), false);
+  assert.equal(automaticRefreshAllowed(now - AUTOMATIC_REFRESH_COOLDOWN_MS, now), true);
+  assert.equal(shouldRefreshOnResume("active", "active", undefined, now), false);
+  assert.equal(shouldRefreshOnResume("background", "active", now - AUTOMATIC_REFRESH_COOLDOWN_MS, now), true);
+  assert.equal(shouldRefreshOnResume("inactive", "background", undefined, now), false);
 });

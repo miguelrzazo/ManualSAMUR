@@ -7,13 +7,12 @@ import { TAB_BAR_INSET, radii, spacing } from "@manual-samur/design-tokens";
 import { Press } from "../components/Press.tsx";
 import { Badge } from "../components/Badge.tsx";
 import { UpdateDiff } from "../components/UpdateDiff.tsx";
-import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
+import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, manualUpdateDestination, manualUpdateView, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
 import { useContentData } from "../content.tsx";
 import { usePreferences } from "../preferences.tsx";
 import { useTheme, useThemedStyles } from "../theme.tsx";
 import type { RootStackParamList } from "../navigation-types.ts";
 import { loadRemoteHistoryPage } from "../remote-history-logic.ts";
-import { readableChangeKindLabel, readableChangeTitle } from "../../../../packages/manual-content/src/content-diff.ts";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Historial">;
 type HistoryTab = "novedades" | "historial";
@@ -77,8 +76,13 @@ export function HistorialScreen({ navigation }: Props) {
 
   const openEvent = (event: ManualUpdateEvent) => {
     markEventSeen(event.eventId);
-    if (event.category === "codigo" && event.routeKey) navigation.push("Code", { routeKey: event.routeKey });
-    else if (event.procedureIds[0]) navigation.push("Procedure", { id: event.procedureIds[0] });
+    const destination = manualUpdateDestination(event);
+    if (destination?.category === "codigo" && destination.routeKey) navigation.push("Code", { routeKey: destination.routeKey });
+    else if (destination?.category === "vademecum" && destination.routeKey) {
+      const drugPrefix = "vademecum:drug:";
+      if (destination.routeKey.startsWith(drugPrefix)) navigation.push("Drug", { id: destination.routeKey.slice(drugPrefix.length) });
+      else navigation.push("Vademecum", { routeKey: destination.routeKey });
+    } else if (destination?.procedureId) navigation.push("Procedure", { id: destination.procedureId });
   };
 
   return (
@@ -119,16 +123,20 @@ export function HistorialScreen({ navigation }: Props) {
 }
 
 function HistoryEvent({ event, unread, onOpen, palette, styles }: { event: ManualUpdateEvent; unread: boolean; onOpen: () => void; palette: ReturnType<typeof useTheme>; styles: ReturnType<typeof createStyles> }) {
+  const view = manualUpdateView(event);
   const kindColor = event.changeKind === "nuevo" ? palette.green : event.changeKind === "eliminado" ? palette.danger : palette.primary;
-  const kindLabel = event.category === "codigo" ? "Código" : readableChangeKindLabel(event.changeKind);
-  const affectedTitle = readableChangeTitle(event.summary);
+  const kindLabel = view.changeLabel;
+  const affectedTitle = view.title;
   const body = <View style={styles.eventCopy}>
     <View style={styles.eventHeader}>
-      <Badge label={kindLabel} tone="accent" color={kindColor} background={event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash} />
+      <View style={styles.badges}>
+        <Badge label={kindLabel} tone="accent" color={kindColor} background={event.changeKind === "nuevo" ? palette.greenWash : event.changeKind === "eliminado" ? palette.dangerWash : palette.primaryWash} />
+        <Badge label={view.categoryLabel} />
+      </View>
       <Text style={unread ? styles.unreadLabel : styles.readLabel}>{unread ? "Sin leer" : "Leído"}</Text>
     </View>
     <Text style={styles.summary}>{affectedTitle}</Text>
-    {event.diff ? <UpdateDiff diff={event.diff} palette={palette} compact /> : null}
+    {(event.diff || view.scope === "procedimiento") ? <UpdateDiff event={event} diff={event.diff} palette={palette} compact /> : null}
   </View>;
   return <Press onPress={onOpen} style={[styles.event, unread && styles.eventUnread]} accessibilityRole="button" accessibilityLabel={`${event.summary}${unread ? ", sin leer" : ""}`}>
     {body}
@@ -159,7 +167,8 @@ function createStyles(palette: ReturnType<typeof useTheme>) {
     // ficha que solo estaba sin abrir se leia como un cambio problematico.
     eventUnread: { borderColor: palette.primary, backgroundColor: palette.primaryWash },
     eventCopy: { gap: spacing.sm },
-    eventHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
+    eventHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.sm },
+    badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, flex: 1 },
     unreadLabel: { color: palette.primary, fontSize: 11, fontWeight: "800" },
     readLabel: { color: palette.inkMuted, fontSize: 11, fontWeight: "700" },
     summary: { color: palette.ink, fontSize: 17, lineHeight: 23, fontWeight: "800", letterSpacing: -0.2 },

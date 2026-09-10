@@ -16,7 +16,7 @@
  * (see tests/mobile-manual-tree.test.ts).
  */
 
-import type { MobileUpdateEvent } from "../../../packages/manual-content/src/index.ts";
+import { readableUpdateViewModel, type MobileUpdateEvent, type ReadableUpdateDestination, type ReadableUpdateViewModel } from "../../../packages/manual-content/src/index.ts";
 
 // ─── Section ordering and grouping rules (mirrors lib/content.ts + lib/manual-data.ts) ──
 
@@ -337,7 +337,9 @@ const USER_FACING_CHANGE_KINDS = new Set(["nuevo", "actualizado", "eliminado"]);
 
 /** History policy shared by the global timeline, Novedades and detail screens. */
 export function isUserFacingUpdate(event: ManualUpdateEvent): boolean {
-  if (event.category === "codigo") return USER_FACING_CHANGE_KINDS.has(event.changeKind);
+  if (event.category === "codigo" || event.category === "vademecum") {
+    return Boolean(event.routeKey) && USER_FACING_CHANGE_KINDS.has(event.changeKind);
+  }
   if (event.category && event.category !== "procedure") return false;
   if (event.procedureIds.length === 0) return false;
   if (event.changeKind === "nuevo" || event.changeKind === "eliminado") return true;
@@ -364,12 +366,49 @@ export function asManualUpdateEvents(values: unknown): ManualUpdateEvent[] {
       effectiveDate: typeof v.effectiveDate === "string" ? v.effectiveDate : "",
       approvedAt: typeof v.approvedAt === "string" ? v.approvedAt : undefined,
       isRecent: typeof v.isRecent === "boolean" ? v.isRecent : undefined,
-      category: typeof v.category === "string" ? v.category : undefined,
+      category: parseCategory(v.category),
       routeKey: typeof v.routeKey === "string" ? v.routeKey : undefined,
       diff: typeof v.diff === "string" ? v.diff : undefined,
       newHash: typeof v.newHash === "string" ? v.newHash : undefined,
+      scope: parseScope(v.scope),
+      sections: parseSectionSummaries(v.sections),
+      sectionSummaries: parseSectionSummaries(v.sectionSummaries),
+      replacementGuidance: typeof v.replacementGuidance === "string" ? v.replacementGuidance : undefined,
     }))
     .filter((event) => event.eventId.length > 0 && event.summary.length > 0);
+}
+
+function parseSectionSummaries(value: unknown): ManualUpdateEvent["sections"] {
+  if (!Array.isArray(value)) return undefined;
+  return value.flatMap((section) => {
+    if (!section || typeof section !== "object" || Array.isArray(section)) return [];
+    const candidate = section as Record<string, unknown>;
+    const title = typeof candidate.title === "string"
+      ? candidate.title.trim()
+      : typeof candidate.heading === "string" ? candidate.heading.trim() : "";
+    const body = typeof candidate.body === "string"
+      ? candidate.body.trim()
+      : typeof candidate.summary === "string" ? candidate.summary.trim() : "";
+    return title && body ? [{ title, body }] : [];
+  });
+}
+
+function parseScope(value: unknown): ManualUpdateEvent["scope"] {
+  return value === "fragmento" || value === "procedimiento" ? value : undefined;
+}
+
+function parseCategory(value: unknown): ManualUpdateEvent["category"] {
+  return value === "procedure" || value === "codigo" || value === "vademecum" ? value : undefined;
+}
+
+/** Shared event adapter exposed to native screens and tests. */
+export function manualUpdateView(event: ManualUpdateEvent): ReadableUpdateViewModel {
+  return readableUpdateViewModel(event);
+}
+
+/** Resolve the native destination without making UI components parse route keys. */
+export function manualUpdateDestination(event: ManualUpdateEvent): ReadableUpdateDestination | undefined {
+  return readableUpdateViewModel(event).destination;
 }
 
 /** Matches `lib/manual-updates-logic.ts`'s RECENT_WINDOW_DAYS. */

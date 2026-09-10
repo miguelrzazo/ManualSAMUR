@@ -16,6 +16,8 @@ import {
   manualSectionKey,
   manualTreeRowCorners,
   manualSectionProcedureCount,
+  manualUpdateDestination,
+  manualUpdateView,
   MANUAL_SECTIONS_PRIORITY,
   manualSidebarMeta,
   sortManualHistorial,
@@ -176,6 +178,31 @@ test("user-facing history excludes dataset events even when legacy ids are prese
     makeEvent({ eventId: "procedure", summary: "Procedimiento", category: "procedure" }),
   ]);
   assert.deepEqual(sortManualHistorial(events).map((event) => event.eventId), ["procedure"]);
+});
+
+test("user-facing history includes routable code and Vademécum changes, but rejects malformed reference events", () => {
+  const events = applyManualRecencyWindow([
+    makeEvent({ eventId: "code", summary: "Código", category: "codigo", procedureIds: [], routeKey: "code:sva:13" }),
+    makeEvent({ eventId: "drug", summary: "Fármaco", category: "vademecum", procedureIds: [], routeKey: "vademecum:drug:adrenalina" }),
+    makeEvent({ eventId: "bad", summary: "Sin destino", category: "vademecum", procedureIds: [] }),
+  ]);
+  assert.deepEqual(sortManualHistorial(events).map((event) => event.eventId), ["drug", "code"]);
+  assert.deepEqual(manualUpdateDestination(events[0]), { category: "codigo", routeKey: "code:sva:13" });
+});
+
+test("complete procedure events preserve section summaries and never expose raw diff syntax", () => {
+  const [event] = asManualUpdateEvents([{
+    eventId: "retired",
+    procedureIds: ["701"],
+    category: "procedure",
+    changeKind: "eliminado",
+    summary: "Eliminado: 701 Procedimiento retirado",
+    effectiveDate: "2026-09-10",
+    sections: [{ title: "Objeto", body: "Último resumen disponible." }],
+    diff: "@@ -1 +0 @@\n-Texto antiguo",
+  }]);
+  assert.equal(manualUpdateView(event).scope, "procedimiento");
+  assert.deepEqual(manualUpdateView(event).sections, [{ title: "Objeto", body: "Último resumen disponible." }]);
 });
 
 test("groupManualEventsByDate groups by day, most recent day first", () => {

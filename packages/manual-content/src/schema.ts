@@ -7,6 +7,9 @@ export const MOBILE_SNAPSHOT_VERSION = 3 as const;
 export const MOBILE_ATTACHMENT_MANIFEST_SCHEMA = "samur-manual.mobile-attachments" as const;
 export const MOBILE_ATTACHMENT_MANIFEST_VERSION = 1 as const;
 
+export type MobileUpdateCategory = "procedure" | "codigo" | "vademecum";
+export type MobileUpdateScope = "fragmento" | "procedimiento";
+
 export interface MobileAttachment {
   id: string;
   sourceUrl: string;
@@ -40,10 +43,22 @@ export interface MobileUpdateEvent {
   effectiveDate: string;
   approvedAt?: string;
   isRecent?: boolean;
-  category?: string;
+  category?: MobileUpdateCategory;
   routeKey?: string;
   diff?: string;
   newHash?: string;
+  /** `fragmento` keeps a readable before/after; `procedimiento` is a whole card. */
+  scope?: MobileUpdateScope;
+  /** Bounded headings and summaries for complete procedure additions/retirements. */
+  sections?: MobileUpdateSectionSummary[];
+  /** Compatibility name accepted while publishers migrate to `sections`. */
+  sectionSummaries?: MobileUpdateSectionSummary[];
+  replacementGuidance?: string;
+}
+
+export interface MobileUpdateSectionSummary {
+  title: string;
+  body: string;
 }
 
 export interface MobileProcedureMention {
@@ -274,8 +289,19 @@ export function isValidMobileUpdateEvent(value: unknown): value is MobileUpdateE
   if (typeof event.eventId !== "string" || !event.eventId) return false;
   if (!Array.isArray(event.procedureIds) || event.procedureIds.some((id) => typeof id !== "string" || !id)) return false;
   if (typeof event.changeKind !== "string" || typeof event.summary !== "string" || typeof event.effectiveDate !== "string") return false;
-  for (const key of ["origin", "officialUrl", "approvedAt", "category", "routeKey", "diff", "newHash"] as const) {
+  for (const key of ["origin", "officialUrl", "approvedAt", "category", "routeKey", "diff", "newHash", "replacementGuidance"] as const) {
     if (event[key] !== undefined && typeof event[key] !== "string") return false;
+  }
+  if (event.category !== undefined && event.category !== "procedure" && event.category !== "codigo" && event.category !== "vademecum") return false;
+  if (event.scope !== undefined && event.scope !== "fragmento" && event.scope !== "procedimiento") return false;
+  for (const key of ["sections", "sectionSummaries"] as const) {
+    if (event[key] !== undefined && (!Array.isArray(event[key]) || event[key].some((section) => {
+      if (!section || typeof section !== "object" || Array.isArray(section)) return true;
+      const candidate = section as Record<string, unknown>;
+      const title = typeof candidate.title === "string" ? candidate.title : candidate.heading;
+      const body = typeof candidate.body === "string" ? candidate.body : candidate.summary;
+      return typeof title !== "string" || !title.trim() || typeof body !== "string" || !body.trim();
+    }))) return false;
   }
   return event.isRecent === undefined || typeof event.isRecent === "boolean";
 }

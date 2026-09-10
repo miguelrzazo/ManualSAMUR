@@ -64,8 +64,8 @@ function ProcedureHistoryRow({
         </Text>
         <Text style={styles.date}>{item.date}</Text>
       </View>
-      <Text style={styles.summary}>{item.event.summary}</Text>
-      {item.diff ? <UpdateDiff diff={item.diff} palette={palette} compact /> : null}
+      <Text style={styles.summary}>{item.view.title}</Text>
+      {(item.diff || item.view.scope === "procedimiento") ? <UpdateDiff event={item.event} diff={item.diff} palette={palette} compact /> : null}
     </View>
   );
 }

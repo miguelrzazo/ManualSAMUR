@@ -4,7 +4,7 @@ import {
   sortManualHistorial,
   type ManualUpdateEvent,
 } from "./manual-tree-logic.ts";
-import { readableChangeKindLabel } from "../../../packages/manual-content/src/content-diff.ts";
+import { readableChangeKindLabel, readableUpdateViewModel, type ReadableUpdateViewModel } from "../../../packages/manual-content/src/content-diff.ts";
 
 export const PROCEDURE_HISTORY_TITLE = "Cambios de este procedimiento";
 export const PROCEDURE_HISTORY_EMPTY_MESSAGE = "Sin cambios registrados";
@@ -14,6 +14,7 @@ export interface ProcedureHistoryItem {
   date: string;
   changeLabel: string;
   diff?: string;
+  view: ReadableUpdateViewModel;
 }
 
 export interface ProcedureHistoryModel {
@@ -66,6 +67,7 @@ export function buildProcedureHistoryModel(
       date: procedureHistoryDate(event),
       changeLabel: procedureHistoryChangeLabel(event.changeKind),
       diff: procedureHistoryDiff(event),
+      view: readableUpdateViewModel(event),
     })),
   };
 }

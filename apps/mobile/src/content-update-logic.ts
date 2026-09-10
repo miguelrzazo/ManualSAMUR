@@ -2,6 +2,8 @@ import type { MobileSnapshot } from "../../../packages/manual-content/src/index.
 import { MOBILE_SNAPSHOT_SCHEMA, MOBILE_SNAPSHOT_VERSION } from "../../../packages/manual-content/src/index.ts";
 
 export const CONTENT_CHECK_STORAGE_KEY = "manualsamur.content.check.v1";
+/** Automatic checks are intentionally sparse so resuming the app does not spam the source. */
+export const AUTOMATIC_REFRESH_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
 export type ContentCheckOutcome = "up-to-date" | "update-available" | "offline" | "invalid-response" | "incompatible" | "failure";
 
@@ -104,4 +106,20 @@ export function userFacingContentCheckError(outcome: ContentCheckOutcome): strin
     case "failure": return "No se pudo comprobar el contenido; se mantiene el último paquete local.";
     default: return "";
   }
+}
+
+export function automaticRefreshAllowed(lastAttemptAt: number | undefined, now = Date.now(), cooldownMs = AUTOMATIC_REFRESH_COOLDOWN_MS): boolean {
+  if (lastAttemptAt === undefined || !Number.isFinite(lastAttemptAt)) return true;
+  return now - lastAttemptAt >= cooldownMs;
+}
+
+/** Only a real background/inactive → active transition triggers a resume check. */
+export function shouldRefreshOnResume(
+  previous: string,
+  next: string,
+  lastAttemptAt: number | undefined,
+  now = Date.now(),
+  cooldownMs = AUTOMATIC_REFRESH_COOLDOWN_MS,
+): boolean {
+  return next === "active" && previous !== "active" && automaticRefreshAllowed(lastAttemptAt, now, cooldownMs);
 }
