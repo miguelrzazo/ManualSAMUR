@@ -195,6 +195,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
           <>
             <View style={styles.secondaryRow}>
               <Pressable
+                testID="novedades-entry"
                 onPress={openHistory}
                 style={[styles.secondaryChip, unreadNovedades.length > 0 && styles.secondaryChipAlert]}
                 accessibilityRole="button"

@@ -107,7 +107,7 @@ export function SettingsModal({
         <PageHeader
           title="Ajustes"
           trailing={
-            <Press onPress={onClose} style={styles.closeButton} accessibilityRole="button" accessibilityLabel="Cerrar ajustes" accessibilityHint={accessibilityHints.dismiss}>
+            <Press testID="close-settings" onPress={onClose} style={styles.closeButton} accessibilityRole="button" accessibilityLabel="Cerrar ajustes" accessibilityHint={accessibilityHints.dismiss}>
               <MaterialCommunityIcons name="close" size={24} color={palette.ink} />
             </Press>
           }
@@ -154,7 +154,7 @@ export function SettingsModal({
             {(["system", "light", "dark"] as const).map((option) => {
               const selected = appearance === option;
               const label = option === "system" ? "Sistema" : option === "light" ? "Claro" : "Oscuro";
-              return <Press key={option} onPress={() => setAppearance(option)} style={[styles.segmentOption, selected && styles.segmentOptionSelected]} accessibilityRole="radio" accessibilityState={{ selected }}><Text style={[styles.segmentText, selected && styles.segmentTextSelected]}>{label}</Text></Press>;
+              return <Press key={option} testID={`appearance-${option}`} onPress={() => setAppearance(option)} style={[styles.segmentOption, selected && styles.segmentOptionSelected]} accessibilityRole="radio" accessibilityState={{ selected }}><Text style={[styles.segmentText, selected && styles.segmentTextSelected]}>{label}</Text></Press>;
             })}
           </View>
           <Row icon="format-letter-case" tint={palette.green} title="Abreviaturas" meta="Consulta local por abreviatura o significado" onPress={onOpenAbbreviations} />

@@ -1,0 +1,130 @@
+# Light-mode App Store carousel capture flow.
+#
+# Captures the real app states used by panels 3–7 of the editorial carousel.
+# Panels 1–2 are composed from the generated lince cutout and the approved
+# real-uniform source photo.
+appId: es.madrid.samur.manual
+tags:
+  - store
+  - carousel
+  - ios
+---
+- launchApp:
+    clearState: true
+- swipe:
+    direction: DOWN
+    duration: 100
+
+# Development-client compatibility; no-op for a signed candidate.
+- tapOn:
+    text: "8081"
+    optional: true
+- runFlow:
+    when:
+      visible: "Enter URL manually"
+    commands:
+      - tapOn: "Enter URL manually"
+      - tapOn: "http://"
+      - inputText: "http://127.0.0.1:8081"
+      - tapOn: "Connect"
+
+# First-use disclosure and bundled APTA promo are adaptive because the signed
+# candidate may already have persisted these preferences.
+- runFlow:
+    when:
+      visible: "Entendido, abrir el manual"
+    commands:
+      - tapOn: "Entendido, abrir el manual"
+- runFlow:
+    when:
+      visible: "Continuar a la app"
+    commands:
+      - tapOn: "Continuar a la app"
+- extendedWaitUntil:
+    visible:
+      id: "app-interactive-shell"
+    timeout: 30000
+
+# Force light appearance for every real UI capture.
+- tapOn:
+    id: "settings-button"
+- extendedWaitUntil:
+    visible:
+      text: "Ajustes"
+    timeout: 5000
+- tapOn:
+    id: "appearance-light"
+- tapOn:
+    id: "close-settings"
+- extendedWaitUntil:
+    visible:
+      id: "novedades-entry"
+    timeout: 10000
+
+# 3 · Novedades
+- tapOn:
+    id: "novedades-entry"
+- extendedWaitUntil:
+    visible:
+      id: "novedades-tab"
+    timeout: 10000
+- assertVisible: "Novedades"
+- takeScreenshot: carousel-03-novedades
+- pressKey: BACK
+
+# 4 · Search
+- tapOn:
+    id: "tab-buscar"
+- extendedWaitUntil:
+    visible:
+      id: "manual-search-input"
+    timeout: 10000
+- tapOn:
+    id: "manual-search-input"
+- inputText: "304_02"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-304_02"
+    timeout: 15000
+- takeScreenshot: carousel-04-buscar
+
+# 5 · Procedure detail and clinical table
+- tapOn:
+    id: "procedure-row-304_02"
+- extendedWaitUntil:
+    visible:
+      text: "Contenido del procedimiento"
+    timeout: 10000
+- takeScreenshot: carousel-05-procedimiento
+- scrollUntilVisible:
+    element:
+      text: "Edad"
+    direction: DOWN
+    timeout: 15000
+- assertNotVisible: "| --- |"
+- takeScreenshot: carousel-05-procedimiento-tabla
+- pressKey: BACK
+
+# 6 · Vademécum
+- tapOn:
+    id: "tab-vademecum"
+- extendedWaitUntil:
+    visible:
+      text: "Vademécum"
+    timeout: 10000
+- takeScreenshot: carousel-06-vademecum
+
+# 7 · Local directory / map continuity
+- tapOn:
+    id: "tab-mapa"
+- extendedWaitUntil:
+    visible:
+      text: "Mapa"
+    timeout: 10000
+- tapOn:
+    text: "No permitir"
+    optional: true
+- tapOn:
+    text: "Don’t allow"
+    optional: true
+- takeScreenshot: carousel-07-mapa
