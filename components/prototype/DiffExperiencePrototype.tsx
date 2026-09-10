@@ -34,6 +34,8 @@ type Change = {
   before?: string;
   after?: string;
   category?: string;
+  scope?: "fragmento" | "procedimiento";
+  sections?: Array<{ title: string; body: string }>;
 };
 
 const CHANGE: Change = {
@@ -96,6 +98,35 @@ const MEDICATION_CHANGE: Change = {
   before: "Adultos: 1 mg IV cada 3–5 minutos.",
   after: "Adultos: 1 mg IV cada 3–5 minutos. Usar la presentación 1 mg / 10 ml.",
   category: "Vademécum",
+};
+
+const NEW_PROCEDURE: Change = {
+  kind: "nuevo",
+  label: "Procedimiento añadido",
+  date: "15 de agosto de 2026",
+  title: "Atención inicial ante golpe de calor",
+  summary: "Se incorpora un procedimiento completo para reconocer y actuar ante un golpe de calor desde la primera valoración.",
+  category: "Procedimiento completo",
+  scope: "procedimiento",
+  sections: [
+    { title: "1. Reconocer la situación", body: "Valore temperatura elevada, alteración del estado mental y exposición prolongada al calor." },
+    { title: "2. Actuar de inmediato", body: "Traslade al paciente a una zona fresca, retire el exceso de ropa e inicie medidas de enfriamiento." },
+    { title: "3. Coordinar la asistencia", body: "Comunique la evolución al equipo receptor y prepare el traslado según la respuesta clínica." },
+  ],
+};
+
+const REMOVED_PROCEDURE: Change = {
+  kind: "eliminado",
+  label: "Procedimiento retirado",
+  date: "12 de agosto de 2026",
+  title: "Traslado diferido por saturación de recursos",
+  summary: "Este procedimiento completo deja de formar parte del manual porque sus indicaciones se han integrado en el circuito operativo actualizado.",
+  category: "Procedimiento completo",
+  scope: "procedimiento",
+  sections: [
+    { title: "Cuándo aplicaba", body: "Se utilizaba cuando no había un recurso de traslado disponible de forma inmediata." },
+    { title: "Medidas provisionales", body: "Indicaba mantener la observación del paciente hasta recibir instrucciones del centro coordinador." },
+  ],
 };
 
 const EXAMPLE_CHANGES = [REMOVED_CHANGE, REVIEWED_FAR_APART_CHANGE, CODE_CHANGE, MEDICATION_CHANGE];
@@ -186,12 +217,17 @@ function Comparison({ change, compact = false }: { change: Change; compact?: boo
   return <div className={`grid gap-3 ${compact ? "text-sm" : "md:grid-cols-2"}`}><div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Antes</p><p className="mt-2 whitespace-pre-line leading-6 text-slate-600">{change.before}</p></div><div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">Ahora</p><p className="mt-2 whitespace-pre-line leading-6 text-blue-950">{change.after}</p></div></div>;
 }
 
+function ProcedureSections({ change }: { change: Change }) {
+  const isRemoved = change.kind === "eliminado";
+  return <div className={`rounded-2xl border p-4 ${isRemoved ? "border-rose-200 bg-rose-50/70" : "border-emerald-200 bg-emerald-50/70"}`}><div className="flex items-center justify-between gap-3"><p className={`text-[10px] font-black uppercase tracking-[0.18em] ${isRemoved ? "text-rose-700" : "text-emerald-700"}`}>{isRemoved ? "Ya no está disponible" : "Ahora incluye"}</p><span className={`rounded-full px-2 py-1 text-[10px] font-bold ${isRemoved ? "bg-white/70 text-rose-700" : "bg-white/70 text-emerald-700"}`}>{change.sections?.length ?? 0} apartados</span></div><div className="mt-3 grid gap-2">{change.sections?.map((section) => <div key={section.title} className="rounded-xl bg-white/70 p-3"><p className={`text-sm font-black ${isRemoved ? "text-rose-950" : "text-emerald-950"}`}>{section.title}</p><p className={`mt-1 text-sm leading-6 ${isRemoved ? "text-rose-900/80" : "text-emerald-900/80"}`}>{section.body}</p></div>)}</div>{isRemoved && <p className="mt-3 text-xs leading-5 text-rose-800">Sus indicaciones se encuentran ahora dentro del circuito operativo actualizado.</p>}</div>;
+}
+
 function OpenProcedure({ label = "Abrir procedimiento" }: { label?: string }) {
   return <button type="button" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 text-xs font-black text-white shadow-lg shadow-blue-900/15 transition hover:bg-blue-800">{label}<ArrowUpRight className="h-4 w-4" /></button>;
 }
 
 function ChangeGallery() {
-  return <section className="mx-auto mt-8 max-w-5xl"><div className="mb-4"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">Casos que debe resolver</p><h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">No todos los cambios se leen igual</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">La misma experiencia también debe explicar retiradas, revisiones alejadas dentro de un texto, códigos y pautas de medicación.</p></div><div className="grid gap-3 md:grid-cols-2">{EXAMPLE_CHANGES.map((change) => <article key={change.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><ChangeMeta change={change} /><h3 className="mt-3 text-base font-black leading-snug text-slate-950">{change.title}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{change.summary}</p><div className="mt-3"><Comparison change={change} compact /></div></article>)}</div></section>;
+  return <section className="mx-auto mt-8 max-w-5xl"><div className="mb-4"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">Casos que debe resolver</p><h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">No todos los cambios se leen igual</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">La misma experiencia también debe explicar retiradas, revisiones alejadas dentro de un texto, códigos y pautas de medicación.</p></div><div className="grid gap-3 md:grid-cols-2">{EXAMPLE_CHANGES.map((change) => <article key={change.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><ChangeMeta change={change} /><h3 className="mt-3 text-base font-black leading-snug text-slate-950">{change.title}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{change.summary}</p><div className="mt-3"><Comparison change={change} compact /></div></article>)}</div><div className="mt-8 mb-4"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-700">Cambios de alcance completo</p><h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">Cuando cambia un procedimiento entero</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">En estos casos no enseñamos una línea aislada: explicamos qué entra, qué sale y cómo orientarse.</p></div><div className="grid gap-3 md:grid-cols-2">{[NEW_PROCEDURE, REMOVED_PROCEDURE].map((change) => <article key={change.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><ChangeMeta change={change} /><h3 className="mt-3 text-base font-black leading-snug text-slate-950">{change.title}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{change.summary}</p><div className="mt-3"><ProcedureSections change={change} /></div><div className="mt-4 flex justify-end"><OpenProcedure label={change.kind === "nuevo" ? "Ver procedimiento" : "Ver cambios relacionados"} /></div></article>)}</div></section>;
 }
 
 function VariantA() {
