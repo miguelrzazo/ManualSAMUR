@@ -2,20 +2,17 @@
   {
     "code": "C.0.0",
     "name": "PCR-Recuperada / PCR-Código 9",
-    "category": "Cardiovascular",
-    "description": "Parada cardiorrespiratoria con ROSC"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.0.1",
     "name": "Dolor torácico de probable origen cardiaco",
-    "category": "Cardiovascular",
-    "description": "Parada cardiorrespiratoria sin recuperación"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.2.0",
     "name": "Síncope",
-    "category": "Cardiovascular",
-    "description": "Dolor torácico con sospecha de infarto"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.2.1",
@@ -25,518 +22,432 @@
   {
     "code": "C.3.0",
     "name": "Lectura de TA anormalmente alta",
-    "category": "Cardiovascular",
-    "description": "Pérdida transitoria del conocimiento"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.4.0",
     "name": "Lectura de TA anormalmente baja",
-    "category": "Cardiovascular",
-    "description": "Síncope durante o tras esfuerzo físico"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.5.0",
     "name": "Taquicardia",
-    "category": "Cardiovascular",
-    "description": "Urgencia hipertensiva"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.6.0",
     "name": "Bradicardia",
-    "category": "Cardiovascular",
-    "description": "Frecuencia cardiaca elevada sintomática"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.7.0",
     "name": "Arritmia",
-    "category": "Cardiovascular",
-    "description": "Frecuencia cardiaca baja sintomática"
+    "category": "Cardiovascular"
   },
   {
     "code": "C.8.0",
     "name": "Otros signos y/o síntomas cardiovasculares",
-    "category": "Cardiovascular",
-    "description": "Arritmia cardiaca de causa no especificada"
+    "category": "Cardiovascular"
   },
   {
     "code": "D.0.0",
     "name": "Diarrea",
-    "category": "Digestivo",
-    "description": "Diarrea aguda, con o sin vómitos"
+    "category": "Digestivo"
   },
   {
     "code": "D.1.0",
     "name": "Vómitos",
-    "category": "Digestivo",
-    "description": "Vómitos sin diarrea"
+    "category": "Digestivo"
   },
   {
     "code": "D.2.0",
     "name": "Hematemesis",
-    "category": "Digestivo",
-    "description": "Vómitos con sangre"
+    "category": "Digestivo"
   },
   {
     "code": "D.3.0",
     "name": "Melenas",
-    "category": "Digestivo",
-    "description": "Deposiciones negras y malolientes (hemorragia digestiva alta)"
+    "category": "Digestivo"
   },
   {
     "code": "D.4.0",
     "name": "Dolor abdominal no traumático",
-    "category": "Digestivo",
-    "description": "Dolor abdominal de inicio agudo"
+    "category": "Digestivo"
   },
   {
     "code": "D.5.0",
     "name": "Otros signos y/o síntomas del aparato digestivo",
-    "category": "Digestivo",
-    "description": "Otros síntomas del aparato digestivo"
+    "category": "Digestivo"
   },
   {
     "code": "F.0.0",
     "name": "Hipotermia",
-    "category": "Agentes físicos",
-    "description": "Hipotermia accidental"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.1.0",
     "name": "Lesiones congelación no especificados",
-    "category": "Agentes físicos",
-    "description": "Lesión por exposición al frío"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.0",
     "name": "En cara/cabeza/cuero cabelludo",
-    "category": "Agentes físicos",
-    "description": "Quemadura térmica o química"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.1",
     "name": "En tronco",
-    "category": "Agentes físicos",
-    "description": "en tronco"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.2",
     "name": "En miembro superior",
-    "category": "Agentes físicos",
-    "description": "en miembro superior"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.3",
     "name": "En muñeca y mano",
-    "category": "Agentes físicos",
-    "description": "en muñeca y mano"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.4",
     "name": "De miembro inferior",
-    "category": "Agentes físicos",
-    "description": "de miembro inferior"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.5",
     "name": "En múltiples sitios / GRAN QUEMADO",
-    "category": "Agentes físicos",
-    "description": "en múltiples sitios / GRAN QUEMADO"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.2.6",
     "name": "En múltiples sitios",
-    "category": "Agentes físicos",
-    "description": "en múltiples sitios"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.3.0",
     "name": "Químicas",
-    "category": "Agentes físicos",
-    "description": "Lesión por descarga eléctrica"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.3.1",
     "name": "Nes por electricidad descarga",
-    "category": "Agentes físicos",
-    "description": "porelectricidad descarga"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.3.2",
     "name": "Por rayo",
-    "category": "Agentes físicos",
-    "description": "porrayo"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.4.0",
     "name": "Hipertermia de origen ambiental",
-    "category": "Agentes físicos",
-    "description": "Hipertermia por exposición al calor"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.4.1",
     "name": "Calor Síncope de calor",
-    "category": "Agentes físicos",
-    "description": "Síncope de calor"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.4.2",
     "name": "Otros efectos especificados del calor",
-    "category": "Agentes físicos",
-    "description": "Otros efectos especificados del calor"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.5.0",
     "name": "Ahogamiento por inmersión",
-    "category": "Agentes físicos",
-    "description": "Sumersión con compromiso respiratorio"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.5.1",
     "name": "Asfixia por ahorcamiento/soterramiento/presión",
-    "category": "Agentes físicos",
-    "description": "Asfixia por ahorcamiento/soterramiento/presión"
+    "category": "Agentes físicos"
   },
   {
     "code": "F.6.0",
     "name": "Efectos por presión aire por explosión",
-    "category": "Agentes físicos",
-    "description": "Lesiones por onda expansiva u explosión"
+    "category": "Agentes físicos"
   },
   {
     "code": "G.0.0",
     "name": "Parto normal",
-    "category": "Obstétrico",
-    "description": "Parto eutócico inminente o en curso"
+    "category": "Obstétrico"
   },
   {
     "code": "G.0.1",
     "name": "Parto de nalgas",
-    "category": "Obstétrico",
-    "description": "Presentación podálica inminente"
+    "category": "Obstétrico"
   },
   {
     "code": "G.0.2",
     "name": "Amenaza de parto",
-    "category": "Obstétrico",
-    "description": "Contracciones con feto prematuro"
+    "category": "Obstétrico"
   },
   {
     "code": "G.1.0",
     "name": "Recién nacido único",
-    "category": "Obstétrico",
-    "description": "Asistencia al recién nacido único"
+    "category": "Obstétrico"
   },
   {
     "code": "G.1.1",
     "name": "Recién nacido gemelo, co gemelo",
-    "category": "Obstétrico",
-    "description": "Asistencia a recién nacidos múltiples (gemelos, etc.)"
+    "category": "Obstétrico"
   },
   {
     "code": "G.2.0",
     "name": "Hemorragia embarazada después de 22 semanas",
-    "category": "Obstétrico",
-    "description": "Hemorragia durante el embarazo"
+    "category": "Obstétrico"
   },
   {
     "code": "G.2.1",
     "name": "Hemorragia embarazada hasta 22 semanas",
-    "category": "Obstétrico",
-    "description": "Hemorragia tras el parto"
+    "category": "Obstétrico"
   },
   {
     "code": "G.2.2",
     "name": "Hemorragia ginecológica",
-    "category": "Obstétrico",
-    "description": "Hemorragia ginecológica"
+    "category": "Obstétrico"
   },
   {
     "code": "G.3.0",
     "name": "HTA en embarazo",
-    "category": "Obstétrico",
-    "description": "Hipertensión en gestante o preeclampsia"
+    "category": "Obstétrico"
   },
   {
     "code": "G.4.0",
     "name": "Vómitos que complican el embarazo",
-    "category": "Obstétrico",
-    "description": "Hiperémesis gravídica u otros vómitos en la gestante"
+    "category": "Obstétrico"
   },
   {
     "code": "G.5.0",
     "name": "Otras complicaciones del embarazo",
-    "category": "Obstétrico",
-    "description": "Otras urgencias obstétricas"
+    "category": "Obstétrico"
   },
   {
     "code": "G.6.0",
     "name": "Dolor origen gine. periodo menst. (dismenorrea)",
-    "category": "Obstétrico",
-    "description": "Dolor pélvico o ginecológico agudo"
+    "category": "Obstétrico"
   },
   {
     "code": "G.6.1",
     "name": "Dolor origen ginecológico periodo no menstrual",
-    "category": "Obstétrico",
-    "description": "Metrorragia no relacionada con el embarazo"
+    "category": "Obstétrico"
   },
   {
     "code": "G.6.2",
     "name": "Otros signos y/o síntomas rel. órg. genitales fem.",
-    "category": "Obstétrico",
-    "description": "Otros signos y/o síntomas rel. órg. genitales fem."
+    "category": "Obstétrico"
   },
   {
     "code": "I.0.0",
     "name": "Etílicas",
-    "category": "Intoxicaciones",
-    "description": "Intoxicación aguda por alcohol"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.1.0",
     "name": "No especificados",
-    "category": "Intoxicaciones",
-    "description": "Intoxicación aguda por drogas de abuso"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.1.1",
     "name": "Monóxido de carbono",
-    "category": "Intoxicaciones",
-    "description": "monóxido de carbono"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.1.2",
     "name": "Cloro",
-    "category": "Intoxicaciones",
-    "description": "cloro"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.1.3",
     "name": "Butano / propano / ciudad",
-    "category": "Intoxicaciones",
-    "description": "Butano / propano / ciudad"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.2.0",
     "name": "Farmacológicas",
-    "category": "Intoxicaciones",
-    "description": "Intoxicación por inhalación (CO, etc.)"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.3.1",
     "name": "Químicas",
-    "category": "Intoxicaciones",
-    "description": "Químicas"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.4.0",
     "name": "Otras",
-    "category": "Intoxicaciones",
-    "description": "Sobredosis o intoxicación medicamentosa"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.4.1",
     "name": "Drogas Cocaína",
-    "category": "Intoxicaciones",
-    "description": "Cocaína"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.4.2",
     "name": "Heroína",
-    "category": "Intoxicaciones",
-    "description": "Heroína"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.4.3",
     "name": "Politoxicomanías",
-    "category": "Intoxicaciones",
-    "description": "Politoxicomanías"
+    "category": "Intoxicaciones"
   },
   {
     "code": "I.5.0",
     "name": "Intoxicación alimentaria",
-    "category": "Intoxicaciones",
-    "description": "Intoxicación por otras sustancias"
+    "category": "Intoxicaciones"
   },
   {
     "code": "M.0.0",
     "name": "Dolor músculo-esquelético",
-    "category": "Miscelánea",
-    "description": "Dolor de origen musculoesquelético no traumático"
+    "category": "Miscelánea"
   },
   {
     "code": "M.1.0",
     "name": "Reacción alérgica",
-    "category": "Miscelánea",
-    "description": "Reacción alérgica sin componente anafiláctico grave"
+    "category": "Miscelánea"
   },
   {
     "code": "M.2.0",
     "name": "Infecciones",
-    "category": "Miscelánea",
-    "description": "Sospecha de infección aguda"
+    "category": "Miscelánea"
   },
   {
     "code": "M.3.0",
     "name": "Enfermedades de la piel",
-    "category": "Miscelánea",
-    "description": "Patología cutánea aguda"
+    "category": "Miscelánea"
   },
   {
     "code": "M.4.0",
     "name": "Antecedentes diabetes y/o sintomatología",
-    "category": "Miscelánea",
-    "description": "Síntomas de hiper o hipoglucemia"
+    "category": "Miscelánea"
   },
   {
     "code": "M.5.0",
     "name": "Otros signos y síntomas aparato genitourinario",
-    "category": "Miscelánea",
-    "description": "Urgencia genitourinaria"
+    "category": "Miscelánea"
   },
   {
     "code": "N.0.0",
     "name": "Disminución grave nivel de conciencia",
-    "category": "Neurológico",
-    "description": "GCS bajo o paciente no reactivo"
+    "category": "Neurológico"
   },
   {
     "code": "N.1.0",
     "name": "Convulsiones",
-    "category": "Neurológico",
-    "description": "Crisis convulsiva o epiléptica"
+    "category": "Neurológico"
   },
   {
     "code": "N.2.0",
     "name": "Alteraciones en el habla",
-    "category": "Neurológico",
-    "description": "Dificultad para hablar o afasia"
+    "category": "Neurológico"
   },
   {
     "code": "N.3.0",
     "name": "Falta de coordinación",
-    "category": "Neurológico",
-    "description": "Ataxia, incoordinación o inestabilidad"
+    "category": "Neurológico"
   },
   {
     "code": "N.4.0",
     "name": "Déficit motor y sensitivo",
-    "category": "Neurológico",
-    "description": "Debilidad o entumecimiento en extremidades"
+    "category": "Neurológico"
   },
   {
     "code": "N.5.0",
     "name": "Vértigos",
-    "category": "Neurológico",
-    "description": "Vértigo o mareos intensos"
+    "category": "Neurológico"
   },
   {
     "code": "N.6.0",
     "name": "Temblor",
-    "category": "Neurológico",
-    "description": "Temblor de reposo o de acción"
+    "category": "Neurológico"
   },
   {
     "code": "N.7.0",
     "name": "Cefalea",
-    "category": "Neurológico",
-    "description": "Cefalea de inicio brusco o de gran intensidad"
+    "category": "Neurológico"
   },
   {
     "code": "N.8.0",
     "name": "Otros signos y/o síntomas que afectan al SN",
-    "category": "Neurológico",
-    "description": "Otros signos y/o síntomas que afectan al SN"
+    "category": "Neurológico"
   },
   {
     "code": "PS.0.0",
     "name": "Crisis nerviosa / trastornos de ansiedad",
-    "category": "Psiquiátrico",
-    "description": "Crisis de ansiedad o pánico"
+    "category": "Psiquiátrico"
   },
   {
     "code": "PS.0.1",
     "name": "Paciente agitado y/o violento",
-    "category": "Psiquiátrico",
-    "description": "Agitación psicomotriz de cualquier causa"
+    "category": "Psiquiátrico"
   },
   {
     "code": "PS.0.2",
     "name": "Intento autolítico (incluye ideas suicidas)",
-    "category": "Psiquiátrico",
-    "description": "Paciente con ideación autolítica activa"
+    "category": "Psiquiátrico"
   },
   {
     "code": "PS.0.3",
     "name": "Alucinaciones",
-    "category": "Psiquiátrico",
-    "description": "Alucinaciones auditivas, visuales u otras"
+    "category": "Psiquiátrico"
   },
   {
     "code": "PS.0.4",
     "name": "Otros signos y síntomas",
-    "category": "Psiquiátrico",
-    "description": "Otros síntomas de origen psiquiátrico"
+    "category": "Psiquiátrico"
   },
   {
     "code": "R.0.0",
     "name": "Parada Respiratoria/Bradipnea",
-    "category": "Respiratorio",
-    "description": "Parada o frecuencia respiratoria gravemente disminuida"
+    "category": "Respiratorio"
   },
   {
     "code": "R.1.0",
     "name": "Dolor torácico de origen no cardiaco",
-    "category": "Respiratorio",
-    "description": "Dolor torácico de origen no cardiogénico"
+    "category": "Respiratorio"
   },
   {
     "code": "R.2.0",
     "name": "Obstrucción x cuerpo extraño (atragantamiento)",
-    "category": "Respiratorio",
-    "description": "Cuerpo extraño ocular"
+    "category": "Respiratorio"
   },
   {
     "code": "R.2.1",
     "name": "Cuerpo extraño en ojo",
-    "category": "Respiratorio",
-    "description": "Cuerpo extraño en fosa nasal"
+    "category": "Respiratorio"
   },
   {
     "code": "R.2.2",
     "name": "Cuerpo extraño en nariz",
-    "category": "Respiratorio",
-    "description": "Cuerpo extraño en canal auditivo"
+    "category": "Respiratorio"
   },
   {
     "code": "R.2.3",
     "name": "Cuerpo extraño en oído",
-    "category": "Respiratorio",
-    "description": "Cuerpo extraño en oído"
+    "category": "Respiratorio"
   },
   {
     "code": "R.3.0",
     "name": "Disnea",
-    "category": "Respiratorio",
-    "description": "Dificultad respiratoria de causa no especificada"
+    "category": "Respiratorio"
   },
   {
     "code": "R.4.0",
     "name": "Epistaxis",
-    "category": "Respiratorio",
-    "description": "Hemorragia nasal (epistaxis)"
+    "category": "Respiratorio"
   },
   {
     "code": "R.5.0",
     "name": "Taquipnea",
-    "category": "Respiratorio",
-    "description": "Frecuencia respiratoria elevada"
+    "category": "Respiratorio"
   },
   {
     "code": "R.6.0",
     "name": "Hemoptisis",
-    "category": "Respiratorio",
-    "description": "Expectoración con sangre"
+    "category": "Respiratorio"
   },
   {
     "code": "R.6.1",
@@ -561,8 +472,7 @@
   {
     "code": "R.7.0",
     "name": "Otros síntomas que afectan respiración / tórax",
-    "category": "Respiratorio",
-    "description": "Otros síntomas del aparato respiratorio"
+    "category": "Respiratorio"
   },
   {
     "code": "T.0.0",
@@ -1079,32 +989,32 @@
   },
   {
     "code": "T.8.0",
-    "name": "Traumatismo de Facial (incluye cuello)",
+    "name": "Traumatismo Facial (incluye cuello)",
     "category": "Trauma"
   },
   {
     "code": "T.8.1",
-    "name": "Traumatismo de Torácico",
+    "name": "Traumatismo Torácico",
     "category": "Trauma"
   },
   {
     "code": "T.8.2",
-    "name": "Traumatismo de Abdominal",
+    "name": "Traumatismo Abdominal",
     "category": "Trauma"
   },
   {
     "code": "T.8.3",
-    "name": "Traumatismo de Pélvico (incluye cadera y muslo)",
+    "name": "Traumatismo Pélvico (incluye cadera y muslo)",
     "category": "Trauma"
   },
   {
     "code": "T.8.4",
-    "name": "Traumatismo de Medular",
+    "name": "Traumatismo Medular",
     "category": "Trauma"
   },
   {
     "code": "T.8.5",
-    "name": "Traumatismo de Mayor / Politrauma",
+    "name": "Traumatismo Mayor / Politrauma",
     "category": "Trauma"
   },
   {
@@ -1130,76 +1040,65 @@
   {
     "code": "W.0.0",
     "name": "Probable éxitus sin asistencia",
-    "category": "Cierre",
-    "description": "Fallecimiento confirmado sin asistencia"
+    "category": "Cierre"
   },
   {
     "code": "W.0.1",
     "name": "Éxitus con asistencia",
-    "category": "Cierre",
-    "description": "Fallecimiento tras maniobras de resucitación"
+    "category": "Cierre"
   },
   {
     "code": "W.1.0",
     "name": "Otros",
     "category": "Cierre",
-    "description": "Otros",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.1",
     "name": "Por 091",
     "category": "Cierre",
-    "description": "por 091",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.2",
     "name": "Por 092",
     "category": "Cierre",
-    "description": "por 092",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.3",
     "name": "Por 112",
     "category": "Cierre",
-    "description": "por 112",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.4",
     "name": "Por SUMMA112",
     "category": "Cierre",
-    "description": "por SUMMA112",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.5",
     "name": "Por 080",
     "category": "Cierre",
-    "description": "por 080",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.6",
     "name": "Tras rellamada",
     "category": "Cierre",
-    "description": "tras rellamada",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.7",
     "name": "Por demandante",
     "category": "Cierre",
-    "description": "por demandante",
     "group": "Suspendido en Ruta por..."
   },
   {
     "code": "W.1.8",
     "name": "Por recurso más cercano",
     "category": "Cierre",
-    "description": "por recurso más cercano",
     "group": "Suspendido en Ruta por..."
   },
   {
@@ -1223,20 +1122,17 @@
   {
     "code": "W.5.0",
     "name": "No precisa asistencia/negativo incidente sanitario",
-    "category": "Cierre",
-    "description": "Servicio de contenido social"
+    "category": "Cierre"
   },
   {
     "code": "W.6.0",
     "name": "Problema social",
-    "category": "Cierre",
-    "description": "Problema social"
+    "category": "Cierre"
   },
   {
     "code": "W.7.0",
     "name": "Actuación riesgos previsibles sin heridos (4.6)",
-    "category": "Cierre",
-    "description": "Actuación riesgos previsibles sin heridos (4.6)"
+    "category": "Cierre"
   },
   {
     "code": "W.7.1",
@@ -1247,31 +1143,26 @@
   {
     "code": "W.8.0",
     "name": "Paciente renuncia ser atendido",
-    "category": "Cierre",
-    "description": "El paciente rechaza la asistencia médica"
+    "category": "Cierre"
   },
   {
     "code": "W.8.1",
     "name": "Paciente renuncia ser atendido-AGRESIVO",
-    "category": "Cierre",
-    "description": "Paciente renuncia ser atendido-AGRESIVO"
+    "category": "Cierre"
   },
   {
     "code": "W.8.2",
     "name": "Paciente renuncia ser atendido-NIEGA FILIACIÓN",
-    "category": "Cierre",
-    "description": "Paciente renuncia ser atendido-NIEGA FILIACIÓN"
+    "category": "Cierre"
   },
   {
     "code": "W.10.0",
     "name": "Otros motivos de Clave 0",
-    "category": "Cierre",
-    "description": "Otros motivos de Clave 0"
+    "category": "Cierre"
   },
   {
     "code": "W.11.0",
     "name": "Se hace cargo otra institución",
-    "category": "Cierre",
-    "description": "Se hace cargo otra institución"
+    "category": "Cierre"
   }
 ]

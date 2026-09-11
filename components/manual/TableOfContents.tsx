@@ -42,7 +42,7 @@ export function TableOfContents({ articleId = "procedure-content", pageTitle, co
 
   if (collapsible) {
     return (
-      <details className="rounded-2xl border border-border/60 bg-card/70 shadow-sm group">
+      <details className="rounded-[14px] border border-border/60 bg-card/70 shadow-sm group">
         <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none select-none">
           <div className="flex min-w-0 items-center gap-2">
             <List className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -63,7 +63,7 @@ export function TableOfContents({ articleId = "procedure-content", pageTitle, co
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm">
+    <div className="rounded-[14px] border border-border/60 bg-card/70 p-4 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <List className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         <span className="text-sm font-semibold text-foreground">Contenido</span>

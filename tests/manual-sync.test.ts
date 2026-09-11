@@ -8,6 +8,7 @@ import {
   filterUserFacingTickerEvents,
   getDefaultManualVersion,
   appendSyncRun,
+  capManualUpdateEvents,
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
@@ -16,14 +17,41 @@ import {
   rewriteAttachmentLinks,
   resolveStableProcedureId,
   resolveStableProcedureIdForSource,
+  isContainerSpace,
+  xwikiToMarkdown,
   stableContentHash,
 } from "../lib/manual-sync.ts";
+import { assertCodeDatasetIsPlausible, diffCodeDataset, CodeDatasetImplausibleError } from "../lib/codigos-sync-logic.ts";
 
 test("stableContentHash ignores insignificant whitespace changes", () => {
   assert.equal(
     stableContentHash("## Título\n\nDosis:  1 mg\n"),
     stableContentHash("## Título\r\n\r\nDosis: 1 mg"),
   );
+});
+
+test("manual update history is capped to the newest events", () => {
+  const events = Array.from({ length: 4 }, (_, index) => ({
+    eventId: `event-${index}`,
+    procedureIds: ["101"],
+    changeKind: "nuevo" as const,
+    origin: "wiki" as const,
+    isRecent: false,
+    summary: `Evento ${index}`,
+    effectiveDate: `2026-01-0${index + 1}`,
+  }));
+  assert.deepEqual(capManualUpdateEvents(events, 2).map((event) => event.eventId), ["event-3", "event-2"]);
+});
+
+test("code dataset diffs emit routable per-code events and guard parser mass loss", () => {
+  const before = [{ code: "13", name: "Antiguo", category: "sva" }, { code: "14", name: "Igual" }];
+  const after = [{ code: "13", name: "Nuevo", category: "sva" }, { code: "15", name: "Añadido" }];
+  assert.deepEqual(diffCodeDataset(before, after, "sva"), [
+    { id: "code:sva:13", routeKey: "code:sva:13", title: "Nuevo", changeType: "updated", changeKind: "actualizado", category: "codigo" },
+    { id: "code:sva:14", routeKey: "code:sva:14", title: "Igual", changeType: "deleted", changeKind: "eliminado", category: "codigo" },
+    { id: "code:sva:15", routeKey: "code:sva:15", title: "Añadido", changeType: "created", changeKind: "nuevo", category: "codigo" },
+  ]);
+  assert.throws(() => assertCodeDatasetIsPlausible(10, 7), CodeDatasetImplausibleError);
 });
 
 test("classifyProcedureChange detects new, unchanged and updated procedures", () => {
@@ -323,13 +351,13 @@ test("markAttachmentUnavailable retains the local path and official source", () 
 });
 
 test("resolveStableProcedureId prefers known SAMUR procedure codes over title slugs", () => {
-  assert.equal(resolveStableProcedureId("Código Crisis"), "214g");
-  assert.equal(resolveStableProcedureId("Código VISNNA"), "214h");
-  assert.equal(resolveStableProcedureId("Código 18: Código SEPSIS"), "214f");
-  assert.equal(resolveStableProcedureId("Hiponatremia"), "312_02b");
+  assert.equal(resolveStableProcedureId("Código Crisis"), "214_06");
+  assert.equal(resolveStableProcedureId("Código VISNNA"), "214_07");
+  assert.equal(resolveStableProcedureId("Código 18: Código SEPSIS"), "214_05");
+  assert.equal(resolveStableProcedureId("Hiponatremia"), "312_03");
   assert.equal(resolveStableProcedureId("Manejo avanzado de vía aérea"), "302");
-  assert.equal(resolveStableProcedureId("Síndrome Coronario Agudo sin elevación del SR (SCACEST)"), "309_02b");
-  assert.equal(resolveStableProcedureId("Código 15.1"), "214c");
+  assert.equal(resolveStableProcedureId("Síndrome Coronario Agudo sin elevación del SR (SCACEST)"), "309_03");
+  assert.equal(resolveStableProcedureId("Código 15.1"), "214_03");
   assert.equal(resolveStableProcedureId("Procedimiento desconocido"), null);
 });
 
@@ -353,6 +381,74 @@ test("resolveStableProcedureIdForSource disambiguates repeated SVA and SVB title
       "Valoración del niño grave",
       "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20asistenciales/Procedimientos%20SVB/Valoraci%C3%B3n%20del%20ni%C3%B1o%20grave/",
     ),
-    "402b",
+    "402_01",
   );
+});
+
+/**
+ * El wiki devuelve 244 espacios y solo 224 son fichas: el resto son carpetas
+ * ("Urgencias cardiovasculares", "Vasculares", "Sondajes"...). La regla para
+ * distinguirlas no puede ser solo "tiene hijos", porque "Actuaciones conjuntas"
+ * tiene hijos (217_01..217_10) y además ES el procedimiento 217. Por eso la
+ * condición lleva las dos mitades: tener hijos y no tener id.
+ */
+const space = (title: string, url: string) => ({ title, url, section: "SVA", depth: 3 });
+const WIKI = "https://servpub.madrid.es/manualsamur/bin/view";
+
+test("una carpeta del wiki no se confunde con una ficha, ni al reves", () => {
+  const carpeta = space("Urgencias cardiovasculares", `${WIKI}/Procedimientos%20SVA/Urgencias%20cardiovasculares/`);
+  const hija = space("Crisis hipertensivas", `${WIKI}/Procedimientos%20SVA/Urgencias%20cardiovasculares/Crisis%20hipertensivas/`);
+  const hoja = space("Disturbios urbanos", `${WIKI}/Procedimientos%20Operativos/Disturbios%20urbanos/`);
+  const all = [carpeta, hija, hoja];
+  const sinId = () => false;
+
+  assert.equal(isContainerSpace(carpeta, all, sinId), true, "tiene hijos y no tiene id: es carpeta");
+  assert.equal(isContainerSpace(hija, all, sinId), false, "no tiene hijos: es ficha");
+  assert.equal(isContainerSpace(hoja, all, sinId), false, "sin hijos ni id: sigue siendo ficha");
+
+  // La mitad que importa: un espacio con id es ficha aunque tenga hijos.
+  const conId = (candidate: { title: string }) => candidate.title === "Urgencias cardiovasculares";
+  assert.equal(isContainerSpace(carpeta, all, conId), false, "217 tiene hijos y aun asi es un procedimiento");
+});
+
+test("el prefijo de url se compara por segmento, no por texto", () => {
+  const a = space("Trauma", `${WIKI}/T%C3%A9cnicas/Trauma/`);
+  const b = space("Traumatismos", `${WIKI}/T%C3%A9cnicas/Traumatismos/`);
+  // "Traumatismos" empieza por "Trauma" como texto, pero no es hijo suyo.
+  assert.equal(isContainerSpace(a, [a, b], () => false), false);
+});
+
+/**
+ * Las tres formas de marcado de XWiki que llegaban al lector como texto literal.
+ * El fragmento es marcado real de «Valoración del niño grave».
+ */
+test("el marcado de XWiki no se cuela en el texto de la ficha", () => {
+  const raw = [
+    "* (((",
+    "[[image:314_00.jpg||alt=\"Triángulo de evaluación pediátrica\"]]",
+    ")))",
+    "[[Ver anexo - Medicación intranasal pediátrica>>attach:314_MedicacionIntranasal.pdf||target=\"_blank\"]]",
+    "[[⇧ Inicio página>>doc:]]",
+  ].join("\n");
+
+  const markdown = xwikiToMarkdown(raw);
+
+  for (const leak of [">>", "(((", ")))", "[[", "]]", "||", "Inicio página"]) {
+    assert.ok(!markdown.includes(leak), `"${leak}" no puede llegar al texto: ${JSON.stringify(markdown)}`);
+  }
+  // El anexo conserva su enlace; `attach:` lo resuelve despues rewriteAttachmentLinks.
+  assert.match(markdown, /\[Ver anexo - Medicación intranasal pediátrica\]\(attach:314_MedicacionIntranasal\.pdf\)/);
+  // La imagen se queda en la forma que rewriteAttachmentLinks sabe convertir.
+  assert.match(markdown, /image:314_00\.jpg/);
+});
+
+test("un enlace de anexo acaba apuntando a la ruta local, no a attach:", () => {
+  const raw = '[[Ver anexo>>attach:x.pdf||target="_blank"]]';
+  const url = "https://servpub.madrid.es/manualsamur/bin/view/Procedimientos%20Operativos/Algo/";
+  const markdown = xwikiToMarkdown(raw);
+  const attachments = extractAttachmentLinks(raw + "\n" + markdown, url, "301");
+  const finalBody = rewriteAttachmentLinks(markdown, attachments);
+
+  assert.match(finalBody, /\[Ver anexo\]\(\/docs\/procedures\/301\/x\.pdf\)/);
+  assert.ok(!finalBody.includes("attach:"), "no debe quedar el esquema attach: en el cuerpo");
 });

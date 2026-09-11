@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureNavMeta } from "@/lib/content";
 
 interface Props {
-  prev: ProcedureMeta | null;
-  next: ProcedureMeta | null;
+  prev: ProcedureNavMeta | null;
+  next: ProcedureNavMeta | null;
 }
 
 export function ProcedureNav({ prev, next }: Props) {

@@ -1,549 +1,113 @@
-import fs from "node:fs";
-import path from "node:path";
-import matter from "gray-matter";
 import {
-  buildAutoSynonyms,
-  buildAutoTags,
-  buildBacklinks,
-  buildOutgoingRelations,
-  buildSuggestedRelations,
-  type ProcedureRelation,
-  type ProcedureEditorialBlock,
-  getProcedureSidebarMeta,
-  normalizeProcedureContent,
-  stripMarkdownToText,
-} from "./manual-data.ts";
-import type { ManualAttachment } from "./manual-sync.ts";
-import { buildVademecumHref, resolveDrugIdReference, type VademecumDrugReference } from "./vademecum-utils.ts";
+  getProcedureCatalog,
+  getProcedureRelationViews,
+  type Procedure,
+  type ProcedureMeta,
+  type ProcedureNavMeta,
+  type ProcedureSidebarSection,
+} from "./procedure-catalog.ts";
 
-const PROCEDURES_DIR = path.join(process.cwd(), "content/procedures");
-const PUBLIC_DIR = path.join(process.cwd(), "public");
-// Apaño: la página de origen tiene el nombre de fichero mal escrito y el PDF
-// espejado lo comparten los procedimientos pediátricos vecinos.
-//
-// Su sitio no es esta capa. Lo correcto es corregirlo en `downloadAttachments`
-// (scripts/sync-manualsamur.ts) para que el espejo se guarde ya con el nombre
-// bueno y el render no tenga que saber nada de erratas de origen. Mientras siga
-// aquí, cada errata nueva de la wiki añade una entrada a mano a este mapa.
-const LOCAL_ASSET_ALIASES: Record<string, string> = {
-  "14_MedicacionIntranasal.pdf": "314_MedicacionIntranasal.pdf",
-};
+export { compileProcedureCorpus } from "./procedure-compiler.ts";
+export {
+  clearProcedureCatalogCache,
+  getProcedureCatalog,
+  getProcedureRelationViews,
+  getProcedureRouteData,
+} from "./procedure-catalog.ts";
+export type { ProcedureSourceRecord, CompiledProcedure } from "./procedure-compiler.ts";
+export type {
+  Procedure,
+  ProcedureMeta,
+  ProcedureNavMeta,
+  ProcedureRelationViews,
+  ProcedureRouteData,
+  ProcedureSidebarGroup,
+  ProcedureSidebarSection,
+  ProcedureSidebarSubgroup,
+} from "./procedure-catalog.ts";
 
-// Se lee del disco en vez de `import ... from "@/content/data/vademecum.json"`
-// para que este módulo sea ejecutable tanto por Next como por Node a secas
-// (scripts/generate-search-index.ts): el ESM de Node exige atributos de
-// importación para JSON, y no resuelve el alias "@/".
-const VADEMECUM_DRUGS = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "content/data/vademecum.json"), "utf8"),
-) as VademecumDrugReference[];
-
-function walkMarkdownFiles(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  const files: string[] = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const entryPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...walkMarkdownFiles(entryPath));
-    else if (entry.isFile() && entry.name.endsWith(".md")) files.push(entryPath);
-  }
-  return files;
-}
-
-function readProcedureEditorialBlocks(filePath: string): ProcedureEditorialBlock[] {
-  const blockPath = filePath.replace(/\.md$/, ".blocks.json");
-  if (!fs.existsSync(blockPath)) return [];
-
-  try {
-    const raw = fs.readFileSync(blockPath, "utf8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function walkPublicAssets(dir: string, relativeDir = ""): string[] {
-  if (!fs.existsSync(dir)) return [];
-
-  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const absolutePath = path.join(dir, entry.name);
-    const relativePath = path.join(relativeDir, entry.name);
-    if (entry.isDirectory()) return walkPublicAssets(absolutePath, relativePath);
-    return entry.isFile() ? [relativePath] : [];
-  });
-}
-
-let publicAssetIndex: Map<string, string[]> | null = null;
-
-function getPublicAssetIndex() {
-  // Igual que el memo de getAllProcedures: en desarrollo no se cachea, porque si
-  // no, un PDF añadido a public/docs/procedures/ con `npm run dev` levantado se
-  // queda en "no disponible" hasta reiniciar el servidor.
-  if (publicAssetIndex && process.env.NODE_ENV !== "development") return publicAssetIndex;
-
-  publicAssetIndex = new Map<string, string[]>();
-  for (const relativePath of walkPublicAssets(PUBLIC_DIR)) {
-    if (!/^docs\/procedures\/|^images\/procedures\//.test(relativePath)) continue;
-    const filename = path.basename(relativePath);
-    const matches = publicAssetIndex.get(filename) ?? [];
-    matches.push(`/${relativePath.split(path.sep).join("/")}`);
-    publicAssetIndex.set(filename, matches);
-  }
-
-  return publicAssetIndex;
-}
-
-function filenameFromAttachment(sourceUrl: string, localPath: string) {
-  const localFilename = path.basename(localPath);
-  try {
-    const sourceFilename = decodeURIComponent(new URL(sourceUrl).pathname.split("/").at(-1) ?? "");
-    return sourceFilename.split("@").at(-1) || localFilename;
-  } catch {
-    return localFilename;
-  }
-}
-
-function resolveLocalAttachmentPath(sourceUrl: string, localPath: string): string | null {
-  const directPath = path.join(PUBLIC_DIR, localPath.replace(/^\/+/, ""));
-  if (fs.existsSync(directPath)) return localPath;
-
-  const filename = filenameFromAttachment(sourceUrl, localPath);
-  const index = getPublicAssetIndex();
-  const exactMatch = index.get(filename)?.[0];
-  if (exactMatch) return exactMatch;
-
-  const alias = LOCAL_ASSET_ALIASES[filename];
-  return alias ? index.get(alias)?.[0] ?? null : null;
-}
-
-function normalizeWikiPagePath(value: string): string | null {
-  try {
-    const pathname = new URL(value, "https://manual.invalid").pathname;
-    const marker = pathname.toLowerCase().indexOf("/bin/view/");
-    if (marker < 0) return null;
-    return decodeURIComponent(pathname.slice(marker))
-      .replace(/\/WebHome\/?$/i, "")
-      .replace(/\/+$/, "");
-  } catch {
-    return null;
-  }
-}
-
-function normalizeAttachments(value: unknown): ManualAttachment[] {
-  if (!Array.isArray(value)) return [];
-
-  return value.flatMap((attachment) => {
-    if (!attachment || typeof attachment !== "object") return [];
-
-    const sourceUrl = typeof (attachment as { sourceUrl?: unknown }).sourceUrl === "string"
-      ? (attachment as { sourceUrl: string }).sourceUrl
-      : "";
-    const originalLocalPath = typeof (attachment as { localPath?: unknown }).localPath === "string"
-      ? (attachment as { localPath: string }).localPath
-      : "";
-    const kind = typeof (attachment as { kind?: unknown }).kind === "string"
-      ? (attachment as { kind: ManualAttachment["kind"] }).kind
-      : "other";
-    const error = typeof (attachment as { error?: unknown }).error === "string"
-      ? (attachment as { error: string }).error
-      : undefined;
-
-    if (!sourceUrl || !originalLocalPath) return [];
-    const resolvedLocalPath = resolveLocalAttachmentPath(sourceUrl, originalLocalPath);
-    const localPath = resolvedLocalPath ?? originalLocalPath;
-    const availability = resolvedLocalPath ? "available" : "unavailable";
-    return [{
-      sourceUrl,
-      localPath,
-      kind,
-      availability,
-      ...((error || availability === "unavailable")
-        ? { error: error ?? "No hay una copia local disponible." }
-        : {}),
-    }];
-  });
-}
-
-export interface Procedure {
-  id: string;
-  title: string;
-  section: string;
-  sidebarGroup: string;
-  sidebarSubgroup: string;
-  slug: string;
-  tags: string[];
-  synonyms: string[];
-  related: string[];
-  backlinks: string[];
-  relations: ProcedureRelation[];
-  updated: string;
-  sourceUpdated: string;
-  contentHash: string;
-  source?: string;
-  attachments: ManualAttachment[];
-  editorialBlocks: ProcedureEditorialBlock[];
-  searchText: string;
-  content: string;
-}
-
-export type ProcedureMeta = Omit<Procedure, "content">;
-
-/** Identidad mínima de un procedimiento: lo único que la navegación necesita en cliente. */
-export type ProcedureNavMeta = Pick<Procedure, "id" | "title" | "slug" | "section">;
-
-export interface ProcedureSidebarSubgroup {
-  name: string;
-  // Nav meta, no ProcedureMeta: la sidebar se renderiza en app/manual/layout.tsx,
-  // así que su contenido viaja en las 232 páginas de procedimiento. Con ProcedureMeta
-  // arrastraba el searchText de todo el corpus a cada una.
-  procedures: ProcedureNavMeta[];
-}
-
-export interface ProcedureSidebarGroup {
-  name: string;
-  subgroups: ProcedureSidebarSubgroup[];
-}
-
-export interface ProcedureSidebarSection {
-  section: string;
-  groups: ProcedureSidebarGroup[];
-}
-
-const SECTIONS_ORDER = [
-  "Administrativos",
-  "Comunicaciones",
-  "Operativos",
-  "DRP",
-  "Intervinientes",
-  "SVA",
-  "SVB",
-  "Psicológicos",
-  "Técnicas",
-];
-
-// El corpus es inmutable durante un build, y cada accesor de este módulo pasa por
-// aquí (~5 veces por página × 232 páginas). Memoizamos a nivel de módulo para
-// recorrer y parsear los 234 ficheros una sola vez por worker. En desarrollo lo
-// desactivamos para que los cambios en content/procedures/ se reflejen al recargar.
-let allProceduresCache: Procedure[] | null = null;
-
+/** Existing web entry point, now backed by the shared compiler. */
 export function getAllProcedures(): Procedure[] {
-  if (allProceduresCache && process.env.NODE_ENV !== "development") {
-    return allProceduresCache;
-  }
-
-  if (!fs.existsSync(PROCEDURES_DIR)) return [];
-
-  const procedures: Procedure[] = walkMarkdownFiles(PROCEDURES_DIR)
-    .map((filePath: string) => {
-      const filename = path.basename(filePath);
-      const raw = fs.readFileSync(filePath, "utf8");
-      const { data, content } = matter(raw);
-      return {
-        id: data.id ?? filename.replace(".md", ""),
-        title: data.title ?? filename,
-        section: data.section ?? "General",
-        sidebarGroup: "",
-        sidebarSubgroup: "",
-        slug: data.slug ?? filename.replace(".md", ""),
-        tags: Array.isArray(data.tags) ? data.tags : [],
-        synonyms: Array.isArray(data.synonyms) ? data.synonyms : [],
-        related: Array.isArray(data.related) ? data.related : [],
-        backlinks: [],
-        relations: [],
-        updated: data.updated ?? "",
-        sourceUpdated: data.sourceUpdated ?? "",
-        contentHash: data.contentHash ?? "",
-        source: data.source,
-        attachments: normalizeAttachments(data.attachments),
-        editorialBlocks: readProcedureEditorialBlocks(filePath),
-        searchText: "",
-        content,
-      } as Procedure;
-    })
-    .sort((a: Procedure, b: Procedure) => {
-      const si = SECTIONS_ORDER.indexOf(a.section);
-      const sj = SECTIONS_ORDER.indexOf(b.section);
-      if (si !== sj) return si - sj;
-      return a.id.localeCompare(b.id, "es", { numeric: true });
-    });
-
-  const validIds = new Set<string>(procedures.map((procedure) => procedure.id));
-  const idToSlug = new Map<string, string>(procedures.map((procedure) => [procedure.id, procedure.slug]));
-  const slugToId = new Map<string, string>(procedures.map((procedure) => [procedure.slug, procedure.id]));
-  const wikiPathToSlug = new Map<string, string>();
-  for (const procedure of procedures) {
-    const sourcePath = procedure.source ? normalizeWikiPagePath(procedure.source) : null;
-    if (sourcePath) wikiPathToSlug.set(sourcePath, procedure.slug);
-  }
-
-  const attachmentHrefMap = new Map<string, string>();
-  for (const procedure of procedures) {
-    for (const attachment of procedure.attachments) {
-      const href = attachment.availability === "unavailable"
-        ? attachment.sourceUrl
-        : attachment.localPath;
-      attachmentHrefMap.set(attachment.localPath, href);
-      attachmentHrefMap.set(attachment.sourceUrl, href);
-    }
-  }
-
-  const resolveInternalHref = (href: string) => {
-    const attachmentHref = attachmentHrefMap.get(href);
-    if (attachmentHref) return attachmentHref;
-
-    const wikiPath = normalizeWikiPagePath(href);
-    const slug = wikiPath ? wikiPathToSlug.get(wikiPath) : null;
-    if (slug) return `/manual/${slug}`;
-
-    if (/\.pdf(?:[?#].*)?$/i.test(href)) {
-      return resolveLocalAttachmentPath("", href) ?? null;
-    }
-
-    return null;
-  };
-
-  const baseProcedures = procedures.map((procedure: Procedure) => {
-    const content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
-      currentProcedureId: procedure.id,
-      procedureTitle: procedure.title,
-      resolveInternalHref,
-      resolveDrugHref(reference) {
-        const drugId = resolveDrugIdReference(reference, VADEMECUM_DRUGS);
-        return drugId ? buildVademecumHref(drugId) : null;
-      },
-    });
-    const sidebarMeta = getProcedureSidebarMeta(procedure.section, procedure.id, procedure.title);
-    const outgoingRelations = buildOutgoingRelations({
-      procedureId: procedure.id,
-      editorialIds: procedure.related,
-      rawContent: procedure.content,
-      normalizedContent: content,
-      validIds,
-      slugToId,
-    });
-    const related = outgoingRelations.map((relation) => relation.id);
-    const tags = procedure.tags.length
-      ? procedure.tags
-      : buildAutoTags(procedure.section, procedure.title, content);
-    const synonyms = procedure.synonyms.length
-      ? procedure.synonyms
-      : buildAutoSynonyms(procedure.id, procedure.title);
-    const searchText = stripMarkdownToText(content);
-
-    return {
-      ...procedure,
-      content,
-      related,
-      relations: outgoingRelations,
-      sidebarGroup: sidebarMeta.group,
-      sidebarSubgroup: sidebarMeta.subgroup,
-      tags,
-      synonyms,
-      searchText,
-    };
-  });
-
-  const backlinks = buildBacklinks(baseProcedures);
-  const outgoingById = new Map(
-    baseProcedures.map((procedure) => [procedure.id, procedure.relations]),
-  );
-
-  const resolved = baseProcedures.map((procedure: Procedure) => {
-    const suggestedRelations = buildSuggestedRelations(
-      {
-        id: procedure.id,
-        section: procedure.section,
-        sidebarGroup: procedure.sidebarGroup,
-        sidebarSubgroup: procedure.sidebarSubgroup,
-        related: procedure.related,
-        backlinks: backlinks[procedure.id] ?? [],
-      },
-      baseProcedures.map((candidate) => ({
-        id: candidate.id,
-        section: candidate.section,
-        sidebarGroup: candidate.sidebarGroup,
-        sidebarSubgroup: candidate.sidebarSubgroup,
-        related: candidate.related,
-        backlinks: backlinks[candidate.id] ?? [],
-      })),
-    );
-
-    const incomingRelations = (backlinks[procedure.id] ?? []).flatMap((sourceId) => {
-      const sourceRelations = outgoingById.get(sourceId) ?? [];
-      const directRelation = sourceRelations.find((relation) =>
-        relation.id === procedure.id && relation.direction === "outgoing" && relation.kind !== "suggested",
-      );
-
-      if (!directRelation) return [];
-
-      return [{
-        id: sourceId,
-        direction: "incoming" as const,
-        kind: directRelation.kind,
-        strength: directRelation.strength,
-      }];
-    });
-
-    return {
-      ...procedure,
-      backlinks: backlinks[procedure.id] ?? [],
-      relations: [...procedure.relations, ...incomingRelations, ...suggestedRelations],
-    };
-  });
-
-  allProceduresCache = resolved;
-  return resolved;
+  return getProcedureCatalog().procedures;
 }
 
 export function getProcedureBySlug(slug: string): Procedure | null {
-  const all = getAllProcedures();
-  return all.find((p) => p.slug === slug) ?? null;
+  return getProcedureCatalog().bySlug.get(slug) ?? null;
 }
 
 export function getProcedureById(id: string): Procedure | null {
-  const all = getAllProcedures();
-  return all.find((p) => p.id === id) ?? null;
+  return getProcedureCatalog().byId.get(id) ?? null;
 }
 
 export function getProcedureMeta(): ProcedureMeta[] {
-  return getAllProcedures().map((procedure) => {
-    const { content, ...meta } = procedure;
-    void content;
-    return meta;
-  });
+  return getProcedureCatalog().metadata;
 }
 
-/**
- * Variante ligera de getProcedureMeta() para lo que cruza a componentes cliente
- * desde el layout raíz.
- *
- * getProcedureMeta() solo descarta `content`: conserva `searchText`, el cuerpo
- * completo de cada procedimiento. Al pasarlo a <NavBar> (cliente) se serializaba
- * el corpus entero en cada página del sitio. El índice de búsqueda vive ahora en
- * /search-index.json y se descarga bajo demanda, así que la navegación solo
- * necesita los campos de identidad.
- */
+/** Variante ligera para lo que cruza a componentes cliente desde el layout raíz. */
 export function getProcedureNavMeta(): ProcedureNavMeta[] {
-  return getAllProcedures().map((procedure) => ({
-    id: procedure.id,
-    title: procedure.title,
-    slug: procedure.slug,
-    section: procedure.section,
-  }));
+  return getProcedureCatalog().nav;
 }
 
 export function getProceduresBySection(): Record<string, ProcedureMeta[]> {
-  const meta = getProcedureMeta();
-  const result: Record<string, ProcedureMeta[]> = {};
-  for (const p of meta) {
-    if (!result[p.section]) result[p.section] = [];
-    result[p.section].push(p);
-  }
-  return result;
+  return getProcedureCatalog().proceduresBySection;
 }
 
 export function getProcedureSidebarSections(): ProcedureSidebarSection[] {
-  const meta = getProcedureMeta();
-  const grouped = new Map<string, Map<string, Map<string, ProcedureNavMeta[]>>>();
-
-  for (const procedure of meta) {
-    if (!grouped.has(procedure.section)) {
-      grouped.set(procedure.section, new Map());
-    }
-
-    const sectionGroups = grouped.get(procedure.section)!;
-    if (!sectionGroups.has(procedure.sidebarGroup)) {
-      sectionGroups.set(procedure.sidebarGroup, new Map());
-    }
-
-    const subgroupMap = sectionGroups.get(procedure.sidebarGroup)!;
-    if (!subgroupMap.has(procedure.sidebarSubgroup)) {
-      subgroupMap.set(procedure.sidebarSubgroup, []);
-    }
-
-    subgroupMap.get(procedure.sidebarSubgroup)!.push({
-      id: procedure.id,
-      title: procedure.title,
-      slug: procedure.slug,
-      section: procedure.section,
-    });
-  }
-
-  return [...grouped.entries()].map(([section, groups]) => ({
-    section,
-    groups: [...groups.entries()].map(([name, subgroups]) => ({
-      name,
-      subgroups: [...subgroups.entries()].map(([subgroupName, procedures]) => ({
-        name: subgroupName,
-        procedures,
-      })),
-    })),
-  }));
+  return getProcedureCatalog().sidebarSections;
 }
 
 export function getRelatedProcedures(procedure: Procedure): ProcedureMeta[] {
-  const outgoingIds = procedure.relations
-    .filter((relation) => relation.direction === "outgoing" && relation.kind !== "suggested")
-    .map((relation) => relation.id);
-  if (!outgoingIds.length) return [];
-  const all = getProcedureMeta();
-  return outgoingIds
-    .map((id) => all.find((p) => p.id === id))
-    .filter(Boolean) as ProcedureMeta[];
+  const catalog = getProcedureCatalog();
+  return getProcedureRelationViews(procedure).related.flatMap((item) => {
+    const meta = catalog.metadataById.get(item.id);
+    return meta ? [meta] : [];
+  });
 }
 
 export function getBacklinkProcedures(procedure: Procedure): ProcedureMeta[] {
-  const incomingIds = procedure.relations
-    .filter((relation) => relation.direction === "incoming")
-    .map((relation) => relation.id);
-  if (!incomingIds.length) return [];
-  const all = getProcedureMeta();
-  return incomingIds
-    .map((id) => all.find((p) => p.id === id))
-    .filter(Boolean) as ProcedureMeta[];
+  const catalog = getProcedureCatalog();
+  return getProcedureRelationViews(procedure).backlinks.flatMap((item) => {
+    const meta = catalog.metadataById.get(item.id);
+    return meta ? [meta] : [];
+  });
 }
 
 export function getSuggestedProcedures(procedure: Procedure): ProcedureMeta[] {
-  const suggestedIds = procedure.relations
-    .filter((relation) => relation.direction === "outgoing" && relation.kind === "suggested")
-    .map((relation) => relation.id);
-  if (!suggestedIds.length) return [];
-  const all = getProcedureMeta();
-  return suggestedIds
-    .map((id) => all.find((p) => p.id === id))
-    .filter(Boolean) as ProcedureMeta[];
+  const catalog = getProcedureCatalog();
+  return getProcedureRelationViews(procedure).suggested.flatMap((item) => {
+    const meta = catalog.metadataById.get(item.id);
+    return meta ? [meta] : [];
+  });
 }
 
 export function getAdjacentProcedures(id: string): { prev: ProcedureMeta | null; next: ProcedureMeta | null } {
-  const all = getProcedureMeta();
-  const idx = all.findIndex((p) => p.id === id);
-  if (idx === -1) return { prev: null, next: null };
+  const catalog = getProcedureCatalog();
+  const idx = catalog.indexById.get(id);
+  if (idx === undefined) return { prev: null, next: null };
   return {
-    prev: idx > 0 ? all[idx - 1] : null,
-    next: idx < all.length - 1 ? all[idx + 1] : null,
+    prev: idx > 0 ? catalog.metadata[idx - 1] : null,
+    next: idx < catalog.metadata.length - 1 ? catalog.metadata[idx + 1] : null,
   };
 }
 
 export function buildGraphData(procedures: ProcedureMeta[]) {
-  const nodes = procedures.map((p) => ({
-    id: p.id,
-    data: { label: p.title, section: p.section, slug: p.slug },
+  const nodes = procedures.map((procedure) => ({
+    id: procedure.id,
+    data: { label: procedure.title, section: procedure.section, slug: procedure.slug },
     position: { x: 0, y: 0 },
     type: "procedure",
   }));
 
   const edgeSet = new Set<string>();
   const edges: { id: string; source: string; target: string }[] = [];
-
-  for (const p of procedures) {
-    for (const rel of p.related) {
-      const edgeId = [p.id, rel].sort().join("--");
-      if (!edgeSet.has(edgeId) && procedures.find((q) => q.id === rel)) {
+  for (const procedure of procedures) {
+    for (const relatedId of procedure.related) {
+      const edgeId = [procedure.id, relatedId].sort().join("--");
+      if (!edgeSet.has(edgeId) && procedures.find((candidate) => candidate.id === relatedId)) {
         edgeSet.add(edgeId);
-        edges.push({ id: edgeId, source: p.id, target: rel });
+        edges.push({ id: edgeId, source: procedure.id, target: relatedId });
       }
     }
   }
-
   return { nodes, edges };
 }

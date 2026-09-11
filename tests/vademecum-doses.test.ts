@@ -72,3 +72,32 @@ test("ninguna dosis se quedo dentro del campo indication", () => {
 
   assert.deepEqual(trapped, [], `Dosis atrapada en 'indication': ${trapped.join(", ")}`);
 });
+
+/**
+ * Un principio activo, una ficha.
+ *
+ * Había dos del ácido acetilsalicílico —"Ácido Acetil salicílico" y "Ácido
+ * Acetilsalicílico"— con posologías distintas: una la analgésica y otra la del
+ * SCA. En la lista salían seguidas, y quien buscaba "AAS" tenía que elegir entre
+ * dos fichas sin saber cuál miraba. Se fusionaron en `acido-acetilsalicilico`.
+ *
+ * El importador no vuelve a crearlas porque `resolveExistingDrugId` empareja por
+ * nombre y sinónimos con un umbral de 0.55, y la ficha superviviente los tiene
+ * todos; pero si alguna vez entra un duplicado, salta aquí y no en la app.
+ */
+test("ningun principio activo aparece dos veces en el vademecum", () => {
+  const normalize = (value: string) =>
+    value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  const byName = new Map<string, string[]>();
+  for (const drug of drugs) {
+    const key = normalize(drug.name);
+    byName.set(key, [...(byName.get(key) ?? []), drug.id]);
+  }
+
+  const duplicates = [...byName.values()].filter((ids) => ids.length > 1);
+  assert.deepEqual(duplicates, [], "estas fichas comparten nombre normalizado");
+
+  const ids = drugs.map((drug) => drug.id);
+  assert.equal(new Set(ids).size, ids.length, "hay ids repetidos en vademecum.json");
+});

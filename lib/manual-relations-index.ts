@@ -1,5 +1,6 @@
 import { collectCitedDrugs, stripMarkdownToText } from "./manual-data.ts";
 import { resolveDrugIdReference } from "./vademecum-utils.ts";
+import { collectReferenceMentions } from "./reference-links.ts";
 
 export interface CodeReferenceSource {
   code: string;
@@ -169,9 +170,11 @@ export function buildManualRelationsIndex({
   for (const procedure of procedures) {
     const content = procedure.content ?? procedure.searchText ?? "";
     const preview = buildPreview(content, procedure.searchText ?? procedure.title);
+    const mentions = collectReferenceMentions(content, drugs);
     const drugIds = uniqBy(
-      collectCitedDrugs(content)
+      [...collectCitedDrugs(content), ...mentions.drugIds]
         .map((reference) => resolveDrugIdReference(reference, drugs))
+        .concat(mentions.drugIds)
         .filter((id): id is string => Boolean(id)),
       (id) => id,
     );

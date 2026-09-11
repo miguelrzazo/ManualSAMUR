@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getAllProcedures } from "../lib/content.ts";
+import { compileProcedureCorpus } from "../lib/procedure-compiler.ts";
 import { readManualHistoryDataset, readManualUpdatesDataset } from "../lib/manual-sync.ts";
+import { buildMobileContentSnapshot } from "../lib/mobile-snapshot.ts";
+import type { ManualHistoryEntry } from "../lib/manual-sync.ts";
 import type { ProcedureSearchDoc } from "../lib/search.ts";
 
 /**
@@ -12,7 +14,7 @@ import type { ProcedureSearchDoc } from "../lib/search.ts";
  *   public/manual-history.json — historial completo de cambios
  *
  * Ambos existen por el mismo motivo. Viajaban dentro del payload RSC de cada página
- * (el índice de búsqueda desde el layout raíz, los 630 eventos con sus diffs desde
+ * (el índice de búsqueda desde el layout raíz, los eventos con sus diffs desde
  * /manual), lo que inflaba el HTML a varios MB. Sacarlos a ficheros estáticos hace
  * que se descarguen solo cuando hacen falta —al abrir la búsqueda o el historial— y
  * que el navegador los cachee entre visitas.
@@ -33,7 +35,7 @@ function mb(bytes: number): string {
 
 // ─── Índice de búsqueda ───────────────────────────────────────────────────────
 
-const searchIndex: ProcedureSearchDoc[] = getAllProcedures().map((procedure) => ({
+const searchIndex: ProcedureSearchDoc[] = compileProcedureCorpus().map((procedure) => ({
   id: procedure.id,
   title: procedure.title,
   slug: procedure.slug,
@@ -54,8 +56,9 @@ console.log(`[generate-client-data] ${searchIndex.length} procedimientos → pub
 
 // ─── Eventos de novedades ─────────────────────────────────────────────────────
 
-// Los 630 eventos, con ~663 KB de diffs, se serializaban en el HTML de /manual.
-// El diálogo los descarga al abrirse; la página solo lleva lo justo para la píldora.
+// Los eventos, con sus diffs, se descargan solo al abrir el historial; además,
+// readManualUpdatesDataset aplica el límite de 500 para no publicar un stream
+// que crezca sin límite.
 const updates = readManualUpdatesDataset();
 const updateBytes = writeJson("manual-updates.json", updates);
 console.log(`[generate-client-data] ${updates.events.length} eventos → public/manual-updates.json (${mb(updateBytes)})`);
@@ -71,6 +74,63 @@ const entries = [...history.entries].sort((a, b) => b.changedAt.localeCompare(a.
 const historyBytes = writeJson("manual-history.json", { generatedAt: history.generatedAt, entries });
 console.log(`[generate-client-data] ${entries.length} entradas de historial → public/manual-history.json (${mb(historyBytes)})`);
 
+// ─── Historial móvil paginado ────────────────────────────────────────────────
+
+// The complete history stays online. Only the recent Novedades projection is
+// embedded in the mobile snapshot, so adding years of history does not grow the
+// installed app package.
+const mobilePublication = buildMobileContentSnapshot();
+const mobileHistoryPageSize = 100;
+const mobileHistoryEvents = entries.map(historyEntryToMobileEvent);
+const mobileHistoryPageCount = Math.max(1, Math.ceil(mobileHistoryEvents.length / mobileHistoryPageSize));
+const mobileHistoryRoot = path.join(OUT_DIR, "mobile-history");
+const mobileHistoryReleaseRoot = path.join(mobileHistoryRoot, mobilePublication.packageHash ?? mobilePublication.hash);
+fs.mkdirSync(mobileHistoryReleaseRoot, { recursive: true });
+
+const mobileHistoryPages = Array.from({ length: mobileHistoryPageCount }, (_, page) => {
+  const pageEvents = mobileHistoryEvents.slice(page * mobileHistoryPageSize, (page + 1) * mobileHistoryPageSize);
+  const fileName = `page-${String(page).padStart(4, "0")}.json`;
+  const bytes = writeJson(path.join("mobile-history", mobilePublication.packageHash ?? mobilePublication.hash, fileName), {
+    schema: "samur-manual.mobile-history",
+    version: 1,
+    publicationIdentity: mobilePublication.packageHash ?? mobilePublication.hash,
+    page,
+    pageSize: mobileHistoryPageSize,
+    totalEvents: mobileHistoryEvents.length,
+    totalPages: mobileHistoryPageCount,
+    events: pageEvents,
+  });
+  return { page, path: `/mobile-history/${mobilePublication.packageHash ?? mobilePublication.hash}/${fileName}`, bytes };
+});
+
+const mobileHistoryIndexBytes = writeJson("mobile-history/index.json", {
+  schema: "samur-manual.mobile-history",
+  version: 1,
+  publicationIdentity: mobilePublication.packageHash ?? mobilePublication.hash,
+  generatedAt: history.generatedAt,
+  pageSize: mobileHistoryPageSize,
+  totalEvents: mobileHistoryEvents.length,
+  totalPages: mobileHistoryPageCount,
+  pages: mobileHistoryPages.map(({ page, path: pagePath }) => ({ page, path: pagePath })),
+});
+console.log(`[generate-client-data] ${mobileHistoryEvents.length} eventos de historial móvil en ${mobileHistoryPageCount} páginas → public/mobile-history/index.json (${mb(mobileHistoryIndexBytes)})`);
+
 if (!entries.length) {
   console.warn("[generate-client-data] Aviso: manual-history.json no tiene entradas; el diálogo de historial saldrá vacío.");
+}
+
+function historyEntryToMobileEvent(entry: ManualHistoryEntry) {
+  return {
+    eventId: entry.id,
+    origin: "wiki",
+    procedureIds: entry.procedureId ? [entry.procedureId] : [],
+    changeKind: entry.changeKind,
+    summary: entry.summary,
+    effectiveDate: entry.changedAt,
+    approvedAt: entry.changedAt,
+    isRecent: false,
+    ...(entry.diff ? { diff: entry.diff } : {}),
+    ...(entry.category ? { category: entry.category } : {}),
+    ...(entry.routeKey ? { routeKey: entry.routeKey } : {}),
+  };
 }

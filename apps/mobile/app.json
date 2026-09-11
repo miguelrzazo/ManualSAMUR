@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "Manual SAMUR",
+    "slug": "manualsamur",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "manualsamur",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B4FA8"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "es.madrid.samur.manual",
+      "infoPlist": {
+        "CFBundleDisplayName": "Manual SAMUR",
+        "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "deploymentTarget": "16.4",
+      "buildNumber": "8",
+      "icon": {
+        "light": "./assets/icon-ios-light.png",
+        "dark": "./assets/icon-ios-dark.png",
+        "tinted": "./assets/icon-ios-tinted.png"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon-foreground.png",
+        "backgroundColor": "#1B4FA8"
+      },
+      "package": "es.madrid.samur.manual",
+      "label": "Manual SAMUR",
+      "versionCode": 3
+    },
+    "plugins": [
+      "expo-status-bar",
+      "expo-font",
+      "./plugins/with-ios-launch-screen",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1B4FA8",
+          "image": "./assets/splash.png",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
+        }
+      ],
+      "./plugins/with-ios-scene-lifecycle",
+      "./plugins/with-ios-podfile-safe-scripts",
+      "./plugins/with-ios-attachment-assets",
+      "./plugins/with-android-attachment-assets",
+      "@maplibre/maplibre-react-native",
+      "./plugins/with-android-release-signing",
+      "expo-sharing"
+    ],
+    "extra": {
+      "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v3",
+      "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata",
+      "contentOrigin": "https://manual-proced-spc.vercel.app"
+    }
+  }
+}

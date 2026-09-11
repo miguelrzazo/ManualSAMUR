@@ -18,6 +18,10 @@ const eslintConfig = defineConfig([
     // pdf.worker.min.mjs es un bundle minificado de pdfjs-dist copiado por
     // scripts/sync-public-docs.ts, no código fuente de este repo.
     "public/pdf.worker.min.mjs",
+    // Los config plugins de Expo los carga el prebuild con `require`, así que
+    // tienen que ser CommonJS. La config de Next los mide con reglas de módulo
+    // ES y marca cada import como error.
+    "apps/mobile/plugins/**",
   ]),
 ]);
 

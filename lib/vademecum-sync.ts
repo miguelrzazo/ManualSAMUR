@@ -313,7 +313,7 @@ function scoreNameSimilarity(left: string, right: string) {
   return union === 0 ? 0 : intersection / union;
 }
 
-function resolveExistingDrugId(importedDrug: WikiDrugEntry, existingDrugs: DrugRecord[]) {
+export function resolveExistingDrugId(importedDrug: WikiDrugEntry, existingDrugs: DrugRecord[]) {
   let bestMatch: { id: string; score: number } | null = null;
 
   for (const existingDrug of existingDrugs) {
@@ -354,6 +354,7 @@ export function startsDoseBlock(line: string): boolean {
 export function mergeImportedDrugs(
   existingDrugs: DrugRecord[],
   importedDrugs: WikiDrugEntry[],
+  previouslyImportedIds: readonly string[] = [],
 ): DrugRecord[] {
   const existingById = new Map(existingDrugs.map((drug) => [drug.id, drug]));
   const mergedById = new Map<string, DrugRecord>();
@@ -366,8 +367,14 @@ export function mergeImportedDrugs(
       id: resolvedId,
       name: importedDrug.name,
       synonyms: existingDrug?.synonyms ?? [],
-      category: existingDrug?.category ?? "Pendiente de clasificar",
-      subcategory: existingDrug?.subcategory ?? "Revisar manualmente",
+      // A newly imported drug has no local taxonomy yet. It used to be filed under
+      // "Pendiente de clasificar" / "Revisar manualmente", which are not categories —
+      // they are a note to the maintainer, and they surfaced to responders as two
+      // filter chips in the vademécum alongside "Cardiovascular" and "Antídotos".
+      // `Otros` is a real category that already exists in the dataset; the fact that a
+      // drug is new is visible in the sync PR diff, which is where a maintainer reads it.
+      category: existingDrug?.category ?? "Otros",
+      subcategory: existingDrug?.subcategory ?? "",
       presentation: importedDrug.presentation || existingDrug?.presentation || "",
       funcion: importedDrug.funcion || existingDrug?.funcion,
       indication: importedDrug.indication || existingDrug?.indication || "",
@@ -383,7 +390,7 @@ export function mergeImportedDrugs(
   }
 
   for (const existingDrug of existingDrugs) {
-    if (!mergedById.has(existingDrug.id)) {
+    if (!mergedById.has(existingDrug.id) && !previouslyImportedIds.includes(existingDrug.id)) {
       mergedById.set(existingDrug.id, existingDrug);
     }
   }

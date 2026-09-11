@@ -12,20 +12,21 @@
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import matter from "gray-matter";
-import { normalizeProcedureContent } from "../lib/manual-data.ts";
+import { compileProcedureCorpus, loadProcedureSources } from "../lib/procedure-compiler.ts";
 import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "../lib/markdown-export.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, "..");
 
-const PROCEDURES_DIR = path.join(__dirname, "../content/procedures");
 const PUBLIC_DIR = path.join(__dirname, "../public");
 
 const SECTIONS_ORDER = [
   "Administrativos",
   "Comunicaciones",
   "Operativos",
+  "DRP",
+  "Intervinientes",
   "SVA",
   "SVB",
   "Psicológicos",
@@ -33,7 +34,7 @@ const SECTIONS_ORDER = [
   "General",
 ];
 
-interface ProcedureMeta {
+export interface ProcedureMeta {
   id: string;
   title: string;
   section: string;
@@ -48,36 +49,27 @@ interface ProcedureMeta {
   filePath: string;
 }
 
-function walkMarkdownFiles(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  const files: string[] = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const entryPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...walkMarkdownFiles(entryPath));
-    else if (entry.isFile() && entry.name.endsWith(".md")) files.push(entryPath);
-  }
-  return files;
-}
-
 function loadProcedures(): ProcedureMeta[] {
-  const files = walkMarkdownFiles(PROCEDURES_DIR);
-  return files.map((filePath) => {
-    const raw = fs.readFileSync(filePath, "utf8");
-    const { data, content } = matter(raw);
-    const filename = path.basename(filePath, ".md");
+  const sources = loadProcedureSources(ROOT_DIR);
+  const compiled = compileProcedureCorpus(ROOT_DIR, sources);
+  const sourcesById = new Map(sources.map((source) => [source.id, source]));
+
+  return compiled.map((procedure) => {
+    const source = sourcesById.get(procedure.id);
+    if (!source) throw new Error(`Compiled procedure ${procedure.id} has no source record`);
     return {
-      id: String(data.id ?? filename),
-      title: String(data.title ?? filename),
-      section: String(data.section ?? "General"),
-      slug: String(data.slug ?? filename),
-      updated: String(data.updated ?? ""),
-      source: typeof data.source === "string" ? data.source : undefined,
-      tags: Array.isArray(data.tags) ? data.tags.map(String) : undefined,
-      synonyms: Array.isArray(data.synonyms) ? data.synonyms.map(String) : undefined,
-      related: Array.isArray(data.related) ? data.related.map(String) : undefined,
-      attachments: Array.isArray(data.attachments) ? data.attachments : undefined,
-      content,
-      filePath,
+      id: source.id,
+      title: source.title,
+      section: source.section,
+      slug: source.slug,
+      updated: source.updated,
+      source: source.source,
+      tags: source.tags,
+      synonyms: source.synonyms,
+      related: source.related,
+      attachments: source.attachments,
+      content: procedure.content,
+      filePath: source.filePath,
     };
   });
 }
@@ -90,20 +82,7 @@ function sortProcedures(procedures: ProcedureMeta[]): ProcedureMeta[] {
   });
 }
 
-function normalizeWikiPagePath(value: string): string | null {
-  try {
-    const pathname = new URL(value, "https://manual.invalid").pathname;
-    const marker = pathname.toLowerCase().indexOf("/bin/view/");
-    if (marker < 0) return null;
-    return decodeURIComponent(pathname.slice(marker))
-      .replace(/\/WebHome\/?$/i, "")
-      .replace(/\/+$/, "");
-  } catch {
-    return null;
-  }
-}
-
-function generateLlmsTxt(procedures: ProcedureMeta[]): string {
+export function generateLlmsTxt(procedures: ProcedureMeta[], updatedDate = latestUpdatedDate(procedures)): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const grouped = new Map<string, ProcedureMeta[]>();
   for (const proc of procedures) {
@@ -118,7 +97,7 @@ function generateLlmsTxt(procedures: ProcedureMeta[]): string {
     "> Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección Civil de Madrid.",
     "> Contenido clínico © SAMUR-PC / Ayuntamiento de Madrid.",
     "",
-    `Última actualización: ${new Date().toISOString().split("T")[0]}`,
+    `Última actualización: ${updatedDate}`,
     `Total procedimientos: ${procedures.length}`,
     "",
     "## Recursos principales",
@@ -163,7 +142,7 @@ function latestUpdatedDate(procedures: ProcedureMeta[]): string {
   return dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : "desconocida";
 }
 
-function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
+export function generateLlmsFullTxt(procedures: ProcedureMeta[], updatedDate = latestUpdatedDate(procedures)): string {
   const baseUrl = resolveCanonicalSiteUrl();
   const header = [
     "# SAMUR Manual — Contenido Completo",
@@ -176,7 +155,7 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
     // modificado en todos los PR sin que hubiera cambiado nada, y la guarda de
     // deriva de ci.yml no podría pasar nunca. Además es la fecha que de verdad
     // le sirve a quien consume el corpus.
-    `Actualizado: ${latestUpdatedDate(procedures)}`,
+    `Actualizado: ${updatedDate}`,
     `Total procedimientos: ${procedures.length}`,
     "",
     "---",
@@ -199,11 +178,20 @@ function generateLlmsFullTxt(procedures: ProcedureMeta[]): string {
   return header + sections.join("\n");
 }
 
-function copyProceduresMd(procedures: ProcedureMeta[]): void {
-  const destDir = path.join(PUBLIC_DIR, "procedures");
+export function copyProceduresMd(procedures: ProcedureMeta[], destDir = path.join(PUBLIC_DIR, "procedures")): void {
+  if (procedures.length === 0) throw new Error("Refusing to replace the public corpus with an empty dataset");
+  const expected = new Set(procedures.map((proc) => `${proc.id}.md`));
+  if (expected.size !== procedures.length || procedures.some((proc) => !/^[a-zA-Z0-9_-]+$/.test(proc.id))) {
+    throw new Error("Invalid or duplicate procedure IDs in public export");
+  }
   fs.mkdirSync(destDir, { recursive: true });
   for (const proc of procedures) {
     fs.writeFileSync(path.join(destDir, `${proc.id}.md`), canonicalProcedureMarkdown(proc), "utf8");
+  }
+  for (const entry of fs.readdirSync(destDir, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith(".md") && !expected.has(entry.name)) {
+      fs.unlinkSync(path.join(destDir, entry.name));
+    }
   }
 }
 
@@ -212,29 +200,9 @@ function main() {
   const procedures = sortProcedures(loadProcedures());
   console.log(`  ${procedures.length} procedimientos encontrados`);
 
-  const idToSlug = new Map(procedures.map((procedure) => [procedure.id, procedure.slug]));
-  const wikiPathToSlug = new Map<string, string>();
-  for (const procedure of procedures) {
-    const sourcePath = procedure.source ? normalizeWikiPagePath(procedure.source) : null;
-    if (sourcePath) wikiPathToSlug.set(sourcePath, procedure.slug);
-  }
-
-  const resolveInternalHref = (href: string) => {
-    const wikiPath = normalizeWikiPagePath(href);
-    const slug = wikiPath ? wikiPathToSlug.get(wikiPath) : null;
-    return slug ? `/manual/${slug}` : null;
-  };
-
-  for (const procedure of procedures) {
-    procedure.content = normalizeProcedureContent(procedure.content, idToSlug, procedure.source, {
-      currentProcedureId: procedure.id,
-      procedureTitle: procedure.title,
-      resolveInternalHref,
-    });
-  }
-
-  const llmsTxt = generateLlmsTxt(procedures);
-  const llmsFullTxt = generateLlmsFullTxt(procedures);
+  const updatedDate = latestUpdatedDate(procedures);
+  const llmsTxt = generateLlmsTxt(procedures, updatedDate);
+  const llmsFullTxt = generateLlmsFullTxt(procedures, updatedDate);
 
   fs.writeFileSync(path.join(PUBLIC_DIR, "llms.txt"), llmsTxt, "utf8");
   console.log("  → public/llms.txt generado");
@@ -248,4 +216,4 @@ function main() {
   console.log("Listo.");
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) main();

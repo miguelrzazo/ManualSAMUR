@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { capMobileUpdateEvents, MAX_MOBILE_UPDATE_EVENTS } from "../packages/manual-content/src/index.ts";
 
 const _MONTHS_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
@@ -16,6 +17,8 @@ export function getDefaultManualVersion(referenceNow = new Date()): string {
 }
 export const DEFAULT_MANUAL_METADATA_PATH = "content/data/manual-sync.json";
 export const DEFAULT_MANUAL_UPDATES_PATH = "content/data/manual-updates.json";
+/** Keep the shipped event stream bounded; it is embedded in every mobile package. */
+export const MAX_MANUAL_UPDATE_EVENTS = MAX_MOBILE_UPDATE_EVENTS;
 
 export type SyncDomain = "procedures" | "vademecum" | "codigos" | "main";
 export type ChangeType = "created" | "updated" | "unchanged" | "blocked_by_editorial" | "deleted";
@@ -66,6 +69,10 @@ export interface SyncChange {
   sourceUpdated?: string;
   source?: string;
   diff?: string;
+  category?: ManualUpdateCategory;
+  routeKey?: string;
+  /** Hash of the changed reference body/record, used for idempotent events. */
+  sourceHash?: string;
 }
 
 export interface SyncDomainSummary {
@@ -118,8 +125,10 @@ export interface ManualUpdateEvent {
   effectiveDate: string;
   approvedAt?: string;
   isRecent: boolean;
+  routeKey?: string;
   diff?: string;
   category?: ManualUpdateCategory;
+  newHash?: string;
 }
 
 export interface ManualUpdatesDataset {
@@ -138,6 +147,7 @@ export interface ManualHistoryEntry {
   summary: string;
   diff?: string;
   category?: string;
+  routeKey?: string;
 }
 
 export interface ManualHistoryDataset {
@@ -182,7 +192,7 @@ const SYSTEM_SPACE_RE = /^(xwiki|main|blog|menu|authservice|panels|exportar|etiq
 const CATEGORY_SPACE_RE = /^(Procedimientos SVA|Procedimientos SVB|Procedimientos Administrativos|Procedimientos Operativos|Procedimientos asistenciales)$/i;
 
 const STABLE_PROCEDURE_IDS: Record<string, string> = {
-  "actuacion en casos de violencia de genero": "209c",
+  "actuacion en casos de violencia de genero": "209_02",
   "administracion de comprimido bucodispersable": "601_05",
   "administracion de farmacos por via inhalatoria": "602_11",
   "administracion de farmacos con camara de inhalacion": "602_14",
@@ -192,21 +202,21 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "asistencia psicologica en violencia de genero": "509",
   "atencion al menor bajo los efectos de alcohol o drogas": "314_09",
   "atencion sociosanitaria a menores": "209",
-  "atencion sociosanitaria a mayores": "209b",
+  "atencion sociosanitaria a mayores": "209_01",
   "autoproteccion en casos sospechos de viruela del mono": "114",
-  "circulacion de unidades en convoy": "206b",
-  "canalizacion de vias venosas perifericas": "604_02",
-  "canalizacion de vias venosas perifericas guiada por ecografia": "604_02b",
-  "codigo 18 codigo sepsis": "214f",
-  "codigo 19 codigo tep": "214e",
-  "codigo 15 1": "214c",
-  "codigo 151": "214c",
-  "codigo 16": "213a",
+  "circulacion de unidades en convoy": "206_01",
+  "canalizacion de vias venosas perifericas": "604_03",
+  "canalizacion de vias venosas perifericas guiada por ecografia": "604_04",
+  "codigo 18 codigo sepsis": "214_05",
+  "codigo 19 codigo tep": "214_04",
+  "codigo 15 1": "214_03",
+  "codigo 151": "214_03",
+  "codigo 16": "213_01",
   "codigo 9 donacion en asistolia": "212",
-  "codigo crisis": "214g",
+  "codigo crisis": "214_06",
   "codigo infarto": "213",
   "codigo visem": "211",
-  "codigo visnna": "214h",
+  "codigo visnna": "214_07",
   "colico renoureteral nefritico": "307_01",
   "columna vertebral": "412_02",
   "conduccion de vehiculos sanitarios en emergencias": "203",
@@ -214,72 +224,72 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "codigos 13131 reperfusion precoz en el ictus agudo": "214",
   "crisis estatus epileptico": "306_03",
   "crisis convulsivas": "314_05",
-  "determinacion de inr medidor mission": "604_11",
-  "desfibrilacion de doble secuencia": "603_02b",
+  "determinacion de inr medidor mission": "604_14",
+  "desfibrilacion de doble secuencia": "603_03",
   "dificultad respiratoria": "314_04",
   "disturbios urbanos y actos antisociales": "217_00",
-  "con bomberos": "217_03",
-  "con metro": "217_08",
+  "con bomberos": "217_04",
+  "con metro": "217_09",
   "con policia municipal": "217_01",
-  "con policia nacional": "217_06",
-  "con renfe": "217_07",
-  "con samur social": "217_05",
-  "con seam": "217_04",
-  "con uapf": "217_02",
-  "con unidad de medio ambiente": "217_09",
+  "con policia nacional": "217_07",
+  "con renfe": "217_08",
+  "con samur social": "217_06",
+  "con seam": "217_05",
+  "con uapf": "217_03",
+  "con unidad de medio ambiente": "217_10",
   "actuaciones conjuntas": "217",
-  "via intraosea sistema ez io": "604_05b",
-  "via intraosea sistema ez-io": "604_05b",
-  "dispositivo de compresiones toracicas automatico lucas 3": "603_09",
-  "edema agudo de pulmon": "309_03",
+  "via intraosea sistema ez io": "604_07",
+  "via intraosea sistema ez-io": "604_07",
+  "dispositivo de compresiones toracicas automatico lucas 3": "603_10",
+  "edema agudo de pulmon": "309_05",
   "electrocardiograma de 12 derivaciones": "603_01",
   "electrodiagrama de 12 derivaciones": "603_01",
   "episiotomia mediolateral": "609_02",
   "episotomia mediolateral": "609_02",
   "exploracion ecografica extrahospitalaria": "607",
   "extraccion de lentes de contacto rigidas y blandas": "608_02",
-  "hiponatremia": "312_02b",
-  "hipotermia terapeutica en la parada cardiaca": "603_08",
+  "hiponatremia": "312_03",
+  "hipotermia terapeutica en la parada cardiaca": "603_09",
   "incidentes con multiples victimas y triaje imv": "207",
   "instrumental adultos": "403",
   "instrumental pediatrico": "404",
   "introductor de frova 140 fr adultos": "602_04",
   "introductor de frova 14 0 fr adultos": "602_04",
-  "inmovilizacion nino sipe": "606_07",
-  "insuficiencia cardiaca aguda cronica agudizada": "309_02c",
+  "inmovilizacion nino sipe": "606_09",
+  "insuficiencia cardiaca aguda cronica agudizada": "309_04",
   "manejo del ictus en la edad pediatrica": "314_07",
-  "marcapasos temporal no invasivo": "603_04",
+  "marcapasos temporal no invasivo": "603_05",
   "manejo avanzado de via aerea": "302",
-  "medicion de temperatura central mediante sonda esofagica": "601_03b",
+  "medicion de temperatura central mediante sonda esofagica": "601_04",
   "obstruccion de la via aerea por cuerpo extrano": "405",
-  "parche oclusivo toracico": "606_03a",
+  "parche oclusivo toracico": "606_04",
   "patologias de origen cardiovascular": "407",
-  "pcr traumatica": "301b",
+  "pcr traumatica": "301_02",
   "parada cardiorrespiratoria": "301",
-  "policia municipal dispositivo electrico de control dec": "217_01b",
-  "posible enfermedad vascular cerebral aguda ictus": "410a",
-  "procedimiento de comunicaciones en un drp": "126a",
-  "procedimiento general de los drp": "drp_01",
-  "procedimiento de despliege de un drp": "drp_02",
-  "procedimiento de despliegue de un drp": "drp_02",
-  "procedimiento de cecor en un dispositivo de riesgo previsible": "drp_03",
-  "procedimiento de \"cecor\" en un dispositivo de riesgo previsible": "drp_03",
+  "policia municipal dispositivo electrico de control dec": "217_02",
+  "posible enfermedad vascular cerebral aguda ictus": "410_01",
+  "procedimiento de comunicaciones en un drp": "126_01",
+  "procedimiento general de los drp": "700_01",
+  "procedimiento de despliege de un drp": "700_02",
+  "procedimiento de despliegue de un drp": "700_02",
+  "procedimiento de cecor en un dispositivo de riesgo previsible": "700_03",
+  "procedimiento de \"cecor\" en un dispositivo de riesgo previsible": "700_03",
   "procedimiento de incidentes complejos codigo pic": "217",
   "procedimiento de incidentes complejos": "217",
-  "procedimiento en caso de accidente con unidades": "203b",
+  "procedimiento en caso de accidente con unidades": "203_01",
   "reaccion alergica": "316",
   "sindrome escrotal agudo": "307_02",
   "sindrome coronario agudo con elevacion del st scacest": "309_02",
-  "sindrome coronario agudo sin elevacion del sr scacest": "309_02b",
-  "sindrome coronario agudo sin elevacion del st scacest": "309_02b",
-  "test de troponina de alta sensibilidad analizador siemens healthineers": "604_12",
+  "sindrome coronario agudo sin elevacion del sr scacest": "309_03",
+  "sindrome coronario agudo sin elevacion del st scacest": "309_03",
+  "test de troponina de alta sensibilidad analizador siemens healthineers": "604_15",
   "test rapido de antigeno de sars cov 2": "601_06",
-  "tecnica de escarotomia": "606_04a",
+  "tecnica de escarotomia": "606_06",
   "toracico": "412_03",
-  "toracostomia con sonda kit de drenaje toracico portex": "602_08",
-  "traumatismo pelvico": "304_08",
-  "traumatismo craneoencefalico": "304_02",
-  "traumatismos vertebro medulares": "304_05",
+  "toracostomia con sonda kit de drenaje toracico portex": "602_07",
+  "traumatismo pelvico": "304_09",
+  "traumatismo craneoencefalico": "304_03",
+  "traumatismos vertebro medulares": "304_06",
   "urticaria angioedema y anafilaxia en pediatria": "314_08",
   "valoracion del nino grave": "314_00",
   "valoracion del paciente adulto": "402",
@@ -402,7 +412,7 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
       // (se han llegado a mostrar 117 novedades de hace 47 días). Se fuerza a false y
       // el cliente recalcula con el reloj del usuario mediante applyRecencyWindow.
       events: Array.isArray(parsed.events)
-        ? (parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isRecent: false }))
+        ? capManualUpdateEvents((parsed.events as ManualUpdateEvent[]).map((event) => ({ ...event, isRecent: false })))
         : [],
     };
   } catch {
@@ -413,7 +423,11 @@ export function readManualUpdatesDataset(cwd = process.cwd()): ManualUpdatesData
 export function writeManualUpdatesDataset(dataset: ManualUpdatesDataset, cwd = process.cwd()) {
   const filePath = path.join(cwd, DEFAULT_MANUAL_UPDATES_PATH);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, `${JSON.stringify(dataset, null, 2)}\n`, "utf8");
+  fs.writeFileSync(filePath, `${JSON.stringify({ ...dataset, events: capManualUpdateEvents(dataset.events) }, null, 2)}\n`, "utf8");
+}
+
+export function capManualUpdateEvents(events: readonly ManualUpdateEvent[], maxEvents = MAX_MANUAL_UPDATE_EVENTS): ManualUpdateEvent[] {
+  return capMobileUpdateEvents(events, maxEvents) as ManualUpdateEvent[];
 }
 
 export const DEFAULT_MANUAL_HISTORY_PATH = "content/data/manual-history.json";
@@ -434,7 +448,7 @@ export function readManualHistoryDataset(cwd = process.cwd()): ManualHistoryData
 
 export function appendToManualHistory(
   newEntries: ManualHistoryEntry[],
-  maxEntries = 500,
+  maxEntries = Number.MAX_SAFE_INTEGER,
   cwd = process.cwd(),
 ): void {
   if (newEntries.length === 0) return;
@@ -466,6 +480,42 @@ export function normalizeProcedureLookupKey(value: string): string {
     .trim();
 }
 
+/**
+ * Expuesto solo para que un test pueda comprobar que ningún valor de la tabla se
+ * queda apuntando a un id que ya no existe. No lo uses en runtime: la resolución
+ * correcta pasa por `resolveStableProcedureIdForSource`, que además desambigua
+ * los títulos repetidos entre SVA y SVB.
+ */
+export const STABLE_PROCEDURE_IDS_FOR_TESTS: Readonly<Record<string, string>> = STABLE_PROCEDURE_IDS;
+
+/**
+ * ¿Es este espacio una carpeta del wiki y no una ficha?
+ *
+ * El wiki agrupa los procedimientos en carpetas ("Urgencias cardiovasculares",
+ * "Vasculares", "Sondajes"...) que el descubrimiento devuelve mezcladas con las
+ * fichas reales. Son 20 de los 244 espacios. Antes se colaban y acababan con
+ * `slugify(titulo)` de identificador; la alternativa era ir listándolas a mano en
+ * `CATEGORY_SPACE_RE`, que hay que mantener cada vez que el wiki añade una.
+ *
+ * La regla es estructural: una carpeta es un espacio que tiene hijos. Pero no
+ * basta con eso —"Actuaciones conjuntas" tiene hijos (217_01..217_10) y además es
+ * el procedimiento 217—, así que la condición es *tener hijos y no tener id
+ * asignado*. Un espacio con id es una ficha, tenga hijos o no.
+ */
+export function isContainerSpace(
+  space: ProcedureSpace,
+  allSpaces: readonly ProcedureSpace[],
+  hasAssignedId: (space: ProcedureSpace) => boolean,
+): boolean {
+  if (hasAssignedId(space)) return false;
+  const prefix = `${normalizeSpaceUrl(space.url)}/`;
+  return allSpaces.some((other) => other.url !== space.url && normalizeSpaceUrl(other.url).startsWith(prefix));
+}
+
+function normalizeSpaceUrl(url: string): string {
+  return decodeURIComponent(url).replace(/\/+$/, "");
+}
+
 export function resolveStableProcedureId(title: string): string | null {
   return STABLE_PROCEDURE_IDS[normalizeProcedureLookupKey(title)] ?? null;
 }
@@ -479,7 +529,7 @@ export function resolveStableProcedureIdForSource(title: string, sourceUrl: stri
   }
 
   if (key === "valoracion del nino grave") {
-    return decodedSource.includes("procedimientos svb") ? "402b" : "314_00";
+    return decodedSource.includes("procedimientos svb") ? "402_01" : "314_00";
   }
 
   return resolveStableProcedureId(title);
@@ -670,17 +720,45 @@ export function filterUserFacingTickerEvents(events: ManualUpdateEvent[]): Manua
 // componentes cliente puedan usarlo sin arrastrar node:fs al bundle del navegador.
 export { applyRecencyWindow, RECENT_WINDOW_MS, isTickerWithinWindow } from "./manual-updates-logic.ts";
 
+/**
+ * La seccion sale de la carpeta raiz del wiki, no de cualquier parte de la URL.
+ *
+ * Antes se comprobaban los patrones contra la URL entera y por orden, asi que
+ * "Central de Comunicaciones/Tecnicas de comunicacion/" casaba con /Técnicas/ —
+ * que va antes— y el procedimiento 123 se archivaba en Tecnicas. Como el fichero
+ * se escribia en la carpeta de su seccion, aparecia un `tecnicas/123.md` junto al
+ * `comunicaciones/123.md` que ya existia: dos ficheros con el mismo id, y el
+ * paquete movil dejaba de validar por ids duplicados.
+ *
+ * Solo SVA y SVB necesitan mirar el segundo segmento, porque cuelgan de la misma
+ * raiz ("Procedimientos asistenciales").
+ */
 export function getSectionFromXWikiUrl(url: string): string {
   const decoded = decodeURIComponent(url);
-  if (/Dispositivos de Riesgo Previsible|DRP/i.test(decoded)) return "DRP";
-  if (/Procedimientos SVA|SVA/i.test(decoded)) return "SVA";
-  if (/Procedimientos SVB|SVB/i.test(decoded)) return "SVB";
-  if (/Técnicas/i.test(decoded)) return "Técnicas";
-  if (/Procedimientos Operativos/i.test(decoded)) return "Operativos";
-  if (/Procedimientos Administrativos/i.test(decoded)) return "Administrativos";
-  if (/Central de Comunicaciones|Comunicaciones/i.test(decoded)) return "Comunicaciones";
-  if (/\/Intervinientes\//i.test(decoded)) return "Intervinientes";
-  if (/Psicol/i.test(decoded)) return "Psicológicos";
+  const pathMatch = decoded.match(/\/bin\/view\/(.+?)\/?$/);
+  const segments = (pathMatch ? pathMatch[1] : decoded)
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter((segment) => segment && segment !== "WebHome");
+  const root = segments[0] ?? "";
+  const rest = segments.slice(1).join("/");
+
+  if (/Dispositivos de Riesgo Previsible|DRP/i.test(root)) return "DRP";
+  // El wiki tambien expone SVA y SVB como raiz, sin colgar de "asistenciales".
+  if (/Procedimientos SVA|\bSVA\b/i.test(root)) return "SVA";
+  if (/Procedimientos SVB|\bSVB\b/i.test(root)) return "SVB";
+  if (/Procedimientos asistenciales/i.test(root)) {
+    if (/Procedimientos SVA|\bSVA\b/i.test(rest)) return "SVA";
+    if (/Procedimientos SVB|\bSVB\b/i.test(rest)) return "SVB";
+    if (/Psicol/i.test(rest)) return "Psicológicos";
+    return "General";
+  }
+  if (/^Técnicas$/i.test(root)) return "Técnicas";
+  if (/Procedimientos Operativos/i.test(root)) return "Operativos";
+  if (/Procedimientos Administrativos/i.test(root)) return "Administrativos";
+  if (/Central de Comunicaciones|Comunicaciones/i.test(root)) return "Comunicaciones";
+  if (/Intervinientes/i.test(root)) return "Intervinientes";
+  if (/Psicol/i.test(root)) return "Psicológicos";
   return "General";
 }
 
@@ -715,6 +793,101 @@ export function parseProcedureSpacesXml(xml: string): ProcedureSpace[] {
     seen.add(space.url);
     return true;
   });
+}
+
+/**
+ * Marcado de XWiki a markdown.
+ *
+ * Vive aqui, y no en el script del sync, porque es logica pura y es donde las
+ * pruebas pueden alcanzarla: el script ejecuta `main()` al importarlo.
+ *
+ * Tres formas se le escapaban y llegaban al lector como texto:
+ *
+ *  - `[[etiqueta>>attach:fichero||target="_blank"]]` perdia los corchetes y se
+ *    quedaba en `etiqueta>>/docs/...`, con el `>>` a la vista. Eran 440.
+ *  - `[[⇧ Inicio pagina>>doc:]]` trae el destino vacio, y el patron de `doc:`
+ *    exigia al menos un caracter detras. Eran 262, una al pie de casi cada ficha.
+ *  - `(((` y `)))` solo se quitaban solos en su linea, y en el corpus casi
+ *    siempre vienen dentro de una viñeta (`* (((`). Eran 600.
+ *
+ * Los anexos salen como `attach:fichero` y las imagenes como `image:fichero` a
+ * proposito: `rewriteAttachmentLinks` es quien los convierte despues en la ruta
+ * local, y hacerlo aqui duplicaria esa decision.
+ */
+export function xwikiToMarkdown(raw: string) {
+  return raw
+    .replace(/\r\n/g, "\n")
+    // XWiki escapa un caracter poniendole `~` delante. Se aparta antes de tocar
+    // los enlaces y se restaura al final: si no, un `~]` dentro de una etiqueta
+    // cuenta como el `]` que cierra el enlace y el patron corta donde no debe,
+    // que es como "Ver Anexo I (... ~[NNA~])" se quedaba sin convertir.
+    .replace(/~\[/g, "\u0001").replace(/~\]/g, "\u0002").replace(/~\|/g, "\u0003")
+    // Los gif transparentes de 1x1 que el wiki usa para separar. No son contenido.
+    .replace(/image:data:image\/[a-z]+;base64,[A-Za-z0-9+/=]+(?:\|\|[^\n]*)?/gi, "")
+    .replace(/\{\{html[\s\S]*?\{\{\/html\}\}/gi, "")
+    .replace(/\(%[\s\S]*?%\)/g, "")
+    .replace(/^\s*\(%[^)]*%\)\s*$/gm, "")
+    // Los marcadores de grupo de XWiki. Antes solo se quitaban cuando estaban
+    // solos en su linea, y en el corpus casi siempre vienen dentro de una viñeta
+    // ("* ((("), asi que 600 de ellos llegaban al lector como texto literal.
+    .replace(/^(\s*\*+\s+)?\(\(\(\s*$/gm, "")
+    .replace(/^(\s*\*+\s+)?\)\)\)\s*$/gm, "")
+    .replace(/\(\(\(\s*/g, "")
+    .replace(/\s*\)\)\)/g, "")
+    .replace(/^======\s*(.+?)\s*======\s*$/gm, "##### $1")
+    .replace(/^=====\s*(.+?)\s*=====\s*$/gm, "##### $1")
+    .replace(/^====\s*(.+?)\s*====\s*$/gm, "#### $1")
+    .replace(/^===\s*(.+?)\s*===\s*$/gm, "### $1")
+    .replace(/^==\s*(.+?)\s*==\s*$/gm, "## $1")
+    .replace(/^=\s*(.+?)\s*=\s*$/gm, "# $1")
+    .replace(/^(\*+)\s+(.+)$/gm, (_match, stars: string, text: string) => `${"  ".repeat(stars.length - 1)}* ${text}`)
+    .replace(/\/\/([^/\n]+?)\/\//g, "*$1*")
+    .replace(/__([^_\n]+?)__/g, "*$1*")
+    .replace(/,,([^,\n]*?),,/g, "$1")
+    .replace(/\^\^([^\^\n]*?)\^\^/g, "$1")
+    .replace(/\{\{popoverV[^}]*?(?:anchorId|link)="([^"]+)"[^}]*?\}\}\{\{\/popoverV\}\}/g, (_match, drugName: string) => `<DrugLink name="${drugName}" />`)
+    .replace(/\[\[([^\]]+?)>>url:([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    .replace(/\[\[([^\]]+?)>>(https?:[^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    // El destino de un enlace `doc:` puede venir vacio —asi es el "Inicio pagina"
+    // que remata casi todas las fichas—, y el `+` de antes no casaba con eso: 262
+    // enlaces se quedaban en el texto como "Inicio pagina>>doc:".
+    .replace(/\[\[([^\]]+?)>>doc:[^\]]*?\]\]/g, "$1")
+    // Un anexo conserva su enlace en lugar de perder los corchetes y quedarse en
+    // "etiqueta>>attach:fichero". `rewriteAttachmentLinks` convierte despues
+    // `attach:fichero` en la ruta local, con lo que sale un enlace de verdad.
+    .replace(/\[\[([^\]]+?)>>(attach:[^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    // Una imagen se queda como `image:fichero`, que es lo que rewriteAttachmentLinks
+    // sabe convertir en `![](ruta)`. Aqui solo se le quitan corchetes y parametros.
+    // El salto de linea no es cosmetico: dos imagenes seguidas se pegaban en
+    // "image:aimage:b", y el extractor de adjuntos leia eso como un solo fichero
+    // con un nombre imposible que despues daba 404 al descargarlo.
+    .replace(/\[\[image:([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "\nimage:$1\n")
+    // Cualquier otro esquema: se conserva como enlace en vez de dejar el ">>" suelto.
+    .replace(/\[\[([^\]]+?)>>([^\]|]+?)(?:\|\|[^\]]*)?\]\]/g, "[$1]($2)")
+    .replace(/\[\[([^\]]+?)(?:\|\|[^\]]*)?\]\]/g, "$1")
+    // "Inicio pagina" es la navegacion del wiki, no contenido de la ficha. Puede
+    // venir partida en varias lineas dentro de los corchetes, asi que se limpia
+    // sobre el texto completo y no linea a linea.
+    .replace(/\[?\[?\s*[⇧↑]?\s*Inicio p[aá]gina\s*(?:>>doc:[^\]\n]*)?\s*\]?\]?/gi, "")
+    // Una imagen que solo existe como URL remota: `rewriteAttachmentLinks` no la
+    // sustituye si la descarga falla, y se quedaba como texto "image:https://...".
+    // Como markdown al menos es una imagen, y el linter admite origen servpub.
+    .replace(/image:(https?:\/\/[^\s|)\]]+)(?:\|\|[^\n]*)?/gi, "![]($1)")
+    .replace(/^\s*\[\[\s*$/gm, "")
+    .replace(/\{\{[^}]+\}\}/g, "")
+    .replace(/<(?!\/?DrugLink\b)/g, "&lt;")
+    // Red de seguridad. El marcado del wiki no siempre viene bien formado —hay
+    // enlaces partidos en dos lineas y corchetes de apertura que no existen— y lo
+    // que quede suelto no significa nada en markdown, solo se ve como ruido.
+    .replace(/^\s*Inicio p[aá]gina.*$/gim, "")
+    .replace(/>>doc:[^\s\]]*/g, "")
+    .replace(/\[\[|\]\]/g, "")
+    // Una viñeta que se ha quedado sin contenido. Pasa cuando lo unico que
+    // contenia era una imagen y esta se ha separado a su propia linea.
+    .replace(/^\s*(?:[*-]|\d+[.)])\s*$\n?/gm, "")
+    .replace(/\u0001/g, "[").replace(/\u0002/g, "]").replace(/\u0003/g, "|")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export function extractAttachmentLinks(

@@ -6,6 +6,13 @@ const BARE_PROCEDURE_LINK_RE = /(?:^|[\s(])(?:https?:\/\/[^\s)]+\/)?([0-9][A-Za-
 const LEGACY_PRINT_BUTTON_RE = /^.*!\[[^\]]*\]\([^)]*print\.gif[^)]*\).*$/gim;
 const LEGACY_IMAGE_LINE_RE = /^\s*!\[[^\]]*]\(((?:\.\.\/|\.\/)?images\/[^)]+)\)\s*$/gim;
 const STANDALONE_BANG_RE = /^!\s*$/gm;
+/**
+ * XWiki's own image macro, `image:<src>||attr="…" attr="…"`, which the scrape leaves
+ * verbatim when the source used it outside a link. A real `/images/...` path becomes a
+ * markdown image (alt text recovered from the options); a base64 spacer GIF is layout
+ * padding with nothing to show, so it is dropped.
+ */
+const XWIKI_IMAGE_MACRO_RE = /^\s*image:(\S+?)(?:\|\|(.*))?$/gim;
 const ÚLTIMA_MODIFICACIÓN_RE = /^\*\*Última modificación[^\n*]*\*\*\s*\.?\s*$/gim;
 const PRINT_EMOJI_RE = /^🖨️?\s*Imprimir\s+esta\s+página\s*$/gim;
 const CONTENIDO_STANDALONE_RE = /^Contenido\s*$/gm;
@@ -373,31 +380,30 @@ function rewriteLegacyArrowLinks(content: string): string {
 const SAFE_CODE_LINKS: Array<{ pattern: RegExp; procedureId: string }> = [
   { pattern: /(^|[^\[])(C[oó]digo\s+13\.1)(?![\d])/gi, procedureId: "214" },
   { pattern: /(^|[^\[])(C[oó]digo\s+13)(?![.\d])/gi, procedureId: "214" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+16\.1)(?![\d])/gi, procedureId: "213a" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+16\.2)(?![\d])/gi, procedureId: "213a" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+16\.3)(?![\d])/gi, procedureId: "213a" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+16)(?![.\d])/gi, procedureId: "213a" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+19\.1)(?![\d])/gi, procedureId: "214e" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+19\.2)(?![\d])/gi, procedureId: "214e" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+19)(?![.\d])/gi, procedureId: "214e" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+100)(?![.\d])/gi, procedureId: "214d" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+16\.1)(?![\d])/gi, procedureId: "213_01" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+16\.2)(?![\d])/gi, procedureId: "213_01" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+16\.3)(?![\d])/gi, procedureId: "213_01" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+16)(?![.\d])/gi, procedureId: "213_01" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+19\.1)(?![\d])/gi, procedureId: "214_04" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+19\.2)(?![\d])/gi, procedureId: "214_04" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+19)(?![.\d])/gi, procedureId: "214_04" },
   { pattern: /(^|[^\[])(C[oó]digo\s+infarto)\b/gi, procedureId: "213" },
-  { pattern: /(^|[^\[])(C[oó]digo\s+TEP)\b/gi, procedureId: "214e" },
+  { pattern: /(^|[^\[])(C[oó]digo\s+TEP)\b/gi, procedureId: "214_04" },
 ];
 
 const PROCEDURE_KEYWORD_LINKS: Array<{ patterns: RegExp[]; id: string; anchor?: string }> = [
-  { patterns: [/\bvías? venosas? periféricas?\b/gi, /\bvías? periféricas?\b/gi], id: "604_02" },
-  { patterns: [/\bvías? venosas? centrales?\b/gi, /\bvías? centrales?\b/gi], id: "604_04" },
-  { patterns: [/\bvías? intraóseas?\b/gi], id: "604_05b" },
-  { patterns: [/\banalítica venosa\b/gi, /\banalítica sanguínea\b/gi, /\banalítica arterial\b/gi], id: "604_09" },
-  { patterns: [/\bmedición de (?:la )?glucemia\b/gi, /\bglucemia capilar\b/gi], id: "604_10" },
+  { patterns: [/\bvías? venosas? periféricas?\b/gi, /\bvías? periféricas?\b/gi], id: "604_03" },
+  { patterns: [/\bvías? venosas? centrales?\b/gi, /\bvías? centrales?\b/gi], id: "604_06" },
+  { patterns: [/\bvías? intraóseas?\b/gi], id: "604_07" },
+  { patterns: [/\banalítica venosa\b/gi, /\banalítica sanguínea\b/gi, /\banalítica arterial\b/gi], id: "604_12" },
+  { patterns: [/\bmedición de (?:la )?glucemia\b/gi, /\bglucemia capilar\b/gi], id: "604_13" },
   { patterns: [/\bintubación endotraqueal\b/gi, /\bintubacion endotraqueal\b/gi], id: "602_03" },
   { patterns: [/\bdesfibrilación\b/gi, /\bdesfibrilar\b/gi], id: "603_02" },
   { patterns: [/\bECG de 12 derivaciones\b/g, /\belectrocardiograma de 12 derivaciones\b/gi], id: "603_01" },
-  { patterns: [/\bvía intravenosa\b/gi], id: "604_03" },
-  { patterns: [/\bpulsioximetría\b/gi], id: "602_09" },
-  { patterns: [/\bEscala de Wells\b/g], id: "214e", anchor: "escala-de-wells" },
-  { patterns: [/\bEscala de Glasgow\b/gi], id: "301a", anchor: "escala-de-glasgow" },
+  { patterns: [/\bvía intravenosa\b/gi], id: "604_05" },
+  { patterns: [/\bpulsioximetría\b/gi], id: "602_08" },
+  { patterns: [/\bEscala de Wells\b/g], id: "214_04", anchor: "escala-de-wells" },
+  { patterns: [/\bEscala de Glasgow\b/gi], id: "301_01", anchor: "escala-de-glasgow" },
 ];
 
 const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
@@ -437,7 +443,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   ], id: "302" },
   { patterns: [
     /\bver procedimiento Manejo de la vía aérea difícil/gi,
-  ], id: "302a" },
+  ], id: "302_01" },
 
   // SVA - Ictus
   { patterns: [
@@ -472,10 +478,10 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // SVA - Traumatismos
   { patterns: [
     /\bver procedimiento traumatismos ortopédicos/gi,
-  ], id: "304_06" },
+  ], id: "304_07" },
   { patterns: [
     /\bVer procedimiento de Traumatismo Vertebral\. Manejo de shock neurogénico/g,
-  ], id: "304_05" },
+  ], id: "304_06" },
   { patterns: [
     /\bver procedimiento (?:de )?urgencias traumáticas/gi,
   ], id: "304_01" },
@@ -503,7 +509,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // SVA / Técnicas - Marcapasos
   { patterns: [
     /\bver procedimiento (?:de )?marcapasos transcutaneo/gi,
-  ], id: "603_04" },
+  ], id: "603_05" },
 
   // SVA - Tromboembolismo pulmonar
   { patterns: [
@@ -514,7 +520,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // SVA - Arritmias
   { patterns: [
     /\bver procedimientos? de arritmia/gi,
-  ], id: "309_04" },
+  ], id: "309_06" },
 
   // SVA - IAM / SCACEST / SCASEST
   { patterns: [
@@ -529,7 +535,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // SVA - Crisis hipertensivas
   { patterns: [
     /\bver procedimiento de Urgencias cardiovasculares: Crisis hipertensivas/gi,
-  ], id: "309_05" },
+  ], id: "309_07" },
 
   // SVB - Valoración del paciente
   { patterns: [
@@ -580,7 +586,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // Técnicas - Parche oclusivo torácico
   { patterns: [
     /\bver procedimiento colocación parche oclusivo torácico/gi,
-  ], id: "606_03a" },
+  ], id: "606_04" },
 
   // Técnicas - Intubación endotraqueal
   { patterns: [
@@ -590,27 +596,27 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // Técnicas - Toracocentesis
   { patterns: [
     /\bver procedimiento (?:de )?toracocentesis/gi,
-  ], id: "602_07" },
+  ], id: "602_06" },
 
   // Técnicas - Toracostomía
   { patterns: [
     /\bver procedimiento (?:de )?toracostomía/gi,
-  ], id: "602_08" },
+  ], id: "602_07" },
 
   // Técnicas - Vía intraósea EZ-IO
   { patterns: [
     /\bver procedimiento (?:de )?vía intraósea con dispositivo EZ-IO/gi,
-  ], id: "604_05b" },
+  ], id: "604_07" },
 
   // Técnicas - Saturación de oxígeno
   { patterns: [
     /\bver procedimiento 'Técnica de medición de la saturación de oxígeno'/gi,
-  ], id: "602_09" },
+  ], id: "602_08" },
 
   // Técnicas - Desfibrilación de Doble Secuencia
   { patterns: [
     /\bver procedimiento técnico Desfibrilación de Doble Secuencia \(DDS\)/gi,
-  ], id: "603_02b" },
+  ], id: "603_03" },
 
   // SVB - Valoración inicial del paciente politraumatizado
   { patterns: [
@@ -625,12 +631,12 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // Operativos - Actuación conjunta con SAMUR Social
   { patterns: [
     /\bver procedimiento de Actuación conjunta con SAMUR-Social/gi,
-  ], id: "217_05" },
+  ], id: "217_06" },
 
   // Operativos - Bomberos
   { patterns: [
     /\bver procedimiento (?:de )?actuación con Bomberos/gi,
-  ], id: "217_03" },
+  ], id: "217_04" },
 
   // Operativos - NRBQ
   { patterns: [
@@ -682,7 +688,7 @@ const PROCEDURE_MENTION_LINKS: Array<{ patterns: RegExp[]; id: string }> = [
   // DRP - CECOR en dispositivo de riesgo previsible
   { patterns: [
     /\bver procedimiento de CECOR en un dispositivo de riesgo previsible/gi,
-  ], id: "drp_03" },
+  ], id: "700_03" },
 
   // SVA - Complicaciones de la diabetes (extended pattern)
   { patterns: [
@@ -986,13 +992,51 @@ export function filterTableOfContentsHeadings(
   });
 }
 
+/**
+ * XWiki wraps the body of a list item in `(((` … `)))` when the item was authored as a
+ * multi-block cell. The scrape keeps those wrappers, so a list item arrives split across
+ * two lines: the marker alone (`* (((`) and its text underneath.
+ *
+ * The blanket `(((`/`)))` strip further down used to delete the wrapper and leave a bare
+ * `* `, which `/^[*\-]\s*$/gm` then blanked out — silently demoting the item's text to a
+ * paragraph and dropping the first entry of 375 lists across the corpus. Fold the wrapper
+ * back into its marker instead, so the item survives as an item.
+ *
+ * Only lines that already carry a list marker are touched; `normalizeXWikiTables` owns
+ * everything starting with `|`. When the wrapped block opens with a heading (or nothing at
+ * all) there is no text to fold up, so the orphan marker is dropped outright.
+ */
+function foldXWikiCellWrappers(text: string): string {
+  const MARKER_WRAPPER_RE = /^(\s*)((?:[*-]|\d+[.)])\s+)(\*\*\s*)?\(\(\(\s*$/;
+  const lines = text.split("\n");
+  const out: string[] = [];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const match = MARKER_WRAPPER_RE.exec(lines[i]);
+    if (!match) {
+      out.push(lines[i]);
+      continue;
+    }
+
+    const [, indent, marker, bold = ""] = match;
+    const next = lines[i + 1] ?? "";
+    const foldable = next.trim().length > 0 && !/^#{1,6}\s/.test(next.trim()) && !next.startsWith("|");
+    if (!foldable) continue;
+
+    out.push(`${indent}${marker}${bold}${next.trim()}`);
+    i += 1;
+  }
+
+  return out.join("\n");
+}
+
 export function normalizeProcedureContent(
   content: string,
   idToSlug = new Map<string, string>(),
   sourceUrl?: string,
   options: ProcedureContentNormalizationOptions = {},
 ): string {
-  const normalized = normalizeXWikiTables(content.replace(/\r\n/g, "\n"))
+  const normalized = foldXWikiCellWrappers(normalizeXWikiTables(content.replace(/\r\n/g, "\n")))
     .replace(/\{\{box[\s\S]*?\}\}/g, "")
     .replace(/^(=+)\s+(.+?)\s+=*\s*$/gm, (_m, eq: string, text: string) => "#".repeat(Math.min(eq.length + 1, 6)) + " " + text.trim())
     .replace(/^# /gm, "## ")
@@ -1014,6 +1058,11 @@ export function normalizeProcedureContent(
     .replace(XWIKI_EXTERNAL_LINK_RE, (_match, label: string, url: string) => {
       const cleanLabel = label.replace(/!\[[^\]]*\]\([^)]+\)/g, "").replace(/~\[[^\]]*~\]/g, "").trim();
       return cleanLabel ? `[${cleanLabel}](${url})` : url;
+    })
+    .replace(XWIKI_IMAGE_MACRO_RE, (_match, src: string, options = "") => {
+      if (/^data:/i.test(src)) return "";
+      const alt = /alt="([^"]*)"/i.exec(options ?? "")?.[1] ?? "";
+      return `![${alt}](${resolveRelativeUrl(src, sourceUrl)})`;
     })
     .replace(STANDALONE_BANG_RE, "")
     .replace(/^[*\-]\s*$/gm, "")
@@ -1198,7 +1247,7 @@ export function getProcedureSidebarMeta(
   title: string,
 ): ProcedureSidebarMeta {
   const normalizedTitle = title.toLowerCase();
-  // Extract numeric prefix: "304_01a" → 304, "309_02b" → 309, "217_01" → 217
+  // Extract numeric prefix: "304_02" → 304, "309_03" → 309, "217_01" → 217
   const num = parseInt(id.split("_")[0].replace(/[^0-9]/g, "") || "0");
 
   switch (section) {
@@ -1243,7 +1292,12 @@ export function getProcedureSidebarMeta(
       if (num === 313) return { group: "Urgencias específicas", subgroup: "Urgencias por agentes físicos" };
       if (num === 314) return { group: "Urgencias específicas", subgroup: "Urgencias pediátricas" };
       if (num === 315) return { group: "Urgencias específicas", subgroup: "Intoxicaciones" };
-      return { group: "Urgencias específicas", subgroup: "Otras urgencias" };
+      // Red de seguridad: ningún id del corpus actual debería llegar aquí (todos los
+      // procedimientos SVA casan con una regla explícita arriba). Si un futuro sync de la
+      // wiki añade un id nuevo (p. ej. 317) sin clasificar, cae en este cajón; debe
+      // permanecer vacío. tests/manual-taxonomy.test.ts falla si algo aterriza aquí, para
+      // que una persona clasifique el procedimiento en lugar de perderlo en un subgrupo fantasma.
+      return { group: "Urgencias específicas", subgroup: "Sin clasificar" };
 
     case "SVB":
       if (/^412/.test(id)) {

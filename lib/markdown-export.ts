@@ -1,4 +1,4 @@
-export const DEFAULT_SITE_URL = "https://manual-samur.vercel.app";
+export const DEFAULT_SITE_URL = "https://manual-proced-spc.vercel.app";
 
 export interface CanonicalProcedureMarkdown {
   id: string;

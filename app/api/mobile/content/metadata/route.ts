@@ -1,6 +1,6 @@
 import { buildMobileContentSnapshot } from "@/lib/mobile-snapshot";
 
-export const revalidate = 3600;
+export const dynamic = "force-static";
 
 export async function GET() {
   const snapshot = buildMobileContentSnapshot();
@@ -9,8 +9,10 @@ export async function GET() {
       schema: snapshot.schema,
       version: snapshot.version,
       hash: snapshot.hash,
+      packageHash: snapshot.packageHash,
       generatedAt: snapshot.generatedAt,
+      contentUrl: "/api/mobile/content/v3",
     },
-    { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } },
+    { headers: { "Cache-Control": "public, max-age=0, must-revalidate" } },
   );
 }

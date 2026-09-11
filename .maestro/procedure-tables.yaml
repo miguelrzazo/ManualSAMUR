@@ -1,0 +1,87 @@
+# Procedure tables render as aligned, horizontally scrollable native tables.
+# Prerequisites: installed mobile build and a running iOS simulator or Android emulator.
+appId: es.madrid.samur.manual
+tags:
+  - ci
+  - smoke
+  - procedure-tables
+---
+- launchApp:
+    clearState: true
+
+# Expo development clients start on the server picker when no bundle is loaded.
+# This is a no-op on a standalone build and optional so CI can use its own app binary.
+- tapOn:
+    text: "8081"
+    optional: true
+
+# First-use disclosure is only shown on a fresh local install.
+- tapOn:
+    text: "Entendido, abrir el manual"
+    optional: true
+
+# Avoid the iOS cold-boot accessibility race and wait for the navigation shell.
+- swipe:
+    direction: DOWN
+    duration: 100
+- extendedWaitUntil:
+    visible:
+      text: "Buscar en el manual"
+    timeout: 15000
+- tapOn:
+    text: "Buscar en el manual"
+
+- tapOn:
+    id: "manual-search-input"
+- inputText: "304_02"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-304_02"
+    timeout: 5000
+- tapOn:
+    id: "procedure-row-304_02"
+
+# The table is below the procedure introduction on a phone-sized viewport.
+- scrollUntilVisible:
+    element:
+      text: "Alto riesgo"
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "Alto riesgo"
+- assertVisible: "Edad"
+- assertNotVisible: "| --- |"
+- takeScreenshot: procedure-table-left-columns
+
+# The right side is reachable without changing the row/column alignment.
+- swipe:
+    direction: LEFT
+    duration: 500
+- assertVisible: "Mínimo riesgo"
+- takeScreenshot: procedure-table-right-columns
+
+# A simpler two-column table verifies that the renderer also handles narrow tables.
+- back
+- extendedWaitUntil:
+    visible:
+      id: "manual-search-input"
+    timeout: 5000
+- tapOn:
+    id: "manual-search-input"
+- eraseText: 10
+- inputText: "314_06"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-314_06"
+    timeout: 5000
+- tapOn:
+    id: "procedure-row-314_06"
+- scrollUntilVisible:
+    element:
+      text: "Niño"
+    direction: DOWN
+    timeout: 10000
+- assertVisible: "Niño"
+- assertVisible: "Cabeza"
+- assertVisible: "18%"
+- assertNotVisible: "| --- |"
+- takeScreenshot: procedure-table-two-columns

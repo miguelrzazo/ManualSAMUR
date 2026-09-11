@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import { NavBar } from "@/components/shared/NavBar";
@@ -10,14 +9,19 @@ import { getProcedureNavMeta } from "@/lib/content";
 import { readMainLinksData } from "@/lib/main-content";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Manual Procedimientos SAMUR-PC",
   description: "Manual de procedimientos SAMUR-Protección Civil (Versión NO Oficial)",
   manifest: "/manifest.json",
-  icons: { icon: "/favicon.png", apple: "/favicon.png" },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    // apple-touch-icon has to be its own 180x180: iOS ignores sizes it has to
+    // downscale itself, and the old value pointed at a 1254px favicon.
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
+  },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Manual SAMUR" },
 };
 
@@ -37,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const mainLinks = readMainLinksData();
 
   return (
-    <html lang="es" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="es" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ViewportHeightObserver />

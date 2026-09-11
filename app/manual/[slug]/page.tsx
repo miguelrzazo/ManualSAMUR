@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  getAdjacentProcedures,
-  getAllProcedures,
-  getBacklinkProcedures,
   getProcedureBySlug,
-  getProcedureMeta,
-  getRelatedProcedures,
-  getSuggestedProcedures,
+  getProcedureNavMeta,
+  getProcedureRouteData,
 } from "@/lib/content";
 import {
   groupProcedureEditorialBlocks,
@@ -24,7 +20,7 @@ import {
 import { ProcedureLinkCard } from "@/components/manual/ProcedureLinkCard";
 import { ProcedureVisitTracker } from "@/components/manual/ProcedureVisitTracker";
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
-import { PrintButton } from "@/components/manual/PrintButton";
+import { ShareButton } from "@/components/manual/ShareButton";
 import {
   AlgoritmoLabel,
   Caution,
@@ -52,8 +48,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { readManualUpdatesDataset } from "@/lib/manual-sync";
 import { toCapitalCase } from "@/lib/title-case";
-import { canonicalProcedureMarkdown } from "@/lib/markdown-export";
-import { CopyMarkdownButton } from "@/components/manual/CopyMarkdownButton";
+import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "@/lib/markdown-export";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -109,7 +104,7 @@ const mdxComponents = {
 };
 
 export async function generateStaticParams() {
-  const procedures = getAllProcedures();
+  const procedures = getProcedureNavMeta();
   return procedures.map((p) => ({ slug: p.slug }));
 }
 
@@ -125,17 +120,23 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProcedurePage({ params }: Props) {
   const { slug } = await params;
-  const procedure = getProcedureBySlug(slug);
-  if (!procedure) notFound();
+  const routeData = getProcedureRouteData(slug);
+  if (!routeData) notFound();
 
-  const related = getRelatedProcedures(procedure);
-  const backlinks = getBacklinkProcedures(procedure);
-  const suggested = getSuggestedProcedures(procedure);
-  const allProcedures = getProcedureMeta();
+  const {
+    procedure,
+    related,
+    backlinks,
+    suggested,
+    prev,
+    next,
+    procedureNav,
+    validProcedureIds,
+    previewByProcedureId,
+  } = routeData;
   const updateEvents = readManualUpdatesDataset().events
     .filter((event) => event.procedureIds.includes(procedure.id))
     .sort((a, b) => `${b.effectiveDate}|${b.approvedAt ?? ""}`.localeCompare(`${a.effectiveDate}|${a.approvedAt ?? ""}`));
-  const { prev, next } = getAdjacentProcedures(procedure.id);
   const hasEditorialBlocks = procedure.editorialBlocks.length > 0;
   // 101 y 102 son organigramas: su contenido ES el PDF adjunto y el cuerpo viene
   // vacío. Sin esto se pintaba una tarjeta en blanco encima de «Anexos» y el
@@ -167,11 +168,6 @@ export default async function ProcedurePage({ params }: Props) {
     "Psicológicos": "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
     Técnicas: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
   };
-  const previewByProcedureId = allProcedures.reduce<Record<string, string>>((acc, item) => {
-    const text = item.searchText.replace(/\s+/g, " ").trim();
-    acc[item.id] = text.length > 260 ? `${text.slice(0, 257).trim()}...` : text;
-    return acc;
-  }, {});
   // updateEvents ya viene ordenado por effectiveDate descendente, así que el primer
   // evento no-"revisado" es el candidato más reciente. Si ese no entra en la ventana,
   // ninguno lo hace. La comparación temporal la resuelve RecentUpdateBadge en cliente.
@@ -185,7 +181,7 @@ export default async function ProcedurePage({ params }: Props) {
       <TableOfContentsRail articleId="procedure-content" pageTitle={procedure.title} />
       <ProcedureVisitTracker
         procedureId={procedure.id}
-        validIds={allProcedures.map((item) => item.id)}
+        validIds={validProcedureIds}
       />
       {/* Main content */}
       {/* El id vive en el div del cuerpo, no aquí: el índice ("En esta página")
@@ -200,7 +196,7 @@ export default async function ProcedurePage({ params }: Props) {
           subgroup={procedure.sidebarSubgroup}
         />
         {/* Header */}
-        <div className="mb-5 rounded-lg border border-border/60 bg-card/50 p-4 md:p-5">
+        <div className="mb-6 rounded-[14px] border border-border/60 bg-card/50 p-4 md:p-5">
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-sm text-muted-foreground">{procedure.id}</span>
@@ -215,12 +211,15 @@ export default async function ProcedurePage({ params }: Props) {
               )}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
-              <PrintButton />
-              <CopyMarkdownButton markdown={canonicalProcedureMarkdown(procedure)} />
+              <ShareButton
+                title={procedure.title}
+                url={`${resolveCanonicalSiteUrl()}/manual/${procedure.slug}`}
+                markdown={canonicalProcedureMarkdown(procedure)}
+              />
               <FavoriteButton
                 procedureId={procedure.id}
-                validIds={allProcedures.map((item) => item.id)}
-                className="h-9 w-9 p-0"
+                validIds={validProcedureIds}
+                className="h-9 w-9 p-0 print:hidden"
               />
             </div>
           </div>
@@ -242,17 +241,17 @@ export default async function ProcedurePage({ params }: Props) {
         {/* Índice desplegable. Se muestra hasta xl, que es donde entra el
             minimapa lateral; el corte debe coincidir con el de
             TableOfContentsRail o habría anchuras sin ningún índice. */}
-        <div className="xl:hidden mb-4" data-print-hide>
+        <div className="xl:hidden mb-6" data-print-hide>
           <TableOfContents articleId="procedure-content" pageTitle={procedure.title} collapsible />
         </div>
 
         {/* MDX Content */}
         {hasBody && (
-        <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-2xl border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
+        <div data-manual-body id="procedure-content" className="prose prose-sm md:prose-base dark:prose-invert max-w-none rounded-[14px] border border-border/60 bg-background/70 px-4 py-6 md:px-8 md:py-8
           prose-headings:font-bold prose-headings:tracking-tight prose-headings:scroll-mt-24
-          prose-h2:text-[1.75rem] md:prose-h2:text-[2.1rem] prose-h2:mt-12 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-primary/25 prose-h2:pb-3 prose-h2:leading-snug prose-h2:text-foreground
-          prose-h3:text-[1.2rem] md:prose-h3:text-[1.4rem] prose-h3:mt-9 prose-h3:mb-3 prose-h3:text-foreground/85 prose-h3:font-semibold prose-h3:leading-snug
-          prose-h4:text-[1rem] md:prose-h4:text-[1.1rem] prose-h4:mt-7 prose-h4:mb-2 prose-h4:font-semibold prose-h4:text-foreground/75
+          prose-h2:text-[1.75rem] md:prose-h2:text-[2.1rem] prose-h2:mt-6 prose-h2:mb-5 prose-h2:border-b-2 prose-h2:border-primary/25 prose-h2:pb-3 prose-h2:leading-snug prose-h2:text-foreground
+          prose-h3:text-[1.2rem] md:prose-h3:text-[1.4rem] prose-h3:mt-6 prose-h3:mb-3 prose-h3:text-foreground/85 prose-h3:font-semibold prose-h3:leading-snug
+          prose-h4:text-[1rem] md:prose-h4:text-[1.1rem] prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-semibold prose-h4:text-foreground/75
           prose-h5:text-[0.9rem] prose-h5:mt-5 prose-h5:mb-1.5 prose-h5:font-medium prose-h5:text-foreground/65
           prose-p:leading-7 prose-p:text-foreground/90 prose-p:my-4
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline
@@ -281,7 +280,7 @@ export default async function ProcedurePage({ params }: Props) {
                       key={block.id}
                       block={block}
                       procedure={procedure}
-                      allProcedures={allProcedures}
+                      allProcedures={procedureNav}
                     />
                   ))}
                   {section.content ? (
@@ -296,7 +295,7 @@ export default async function ProcedurePage({ params }: Props) {
                       key={block.id}
                       block={block}
                       procedure={procedure}
-                      allProcedures={allProcedures}
+                      allProcedures={procedureNav}
                     />
                   ))}
                 </div>
@@ -306,7 +305,7 @@ export default async function ProcedurePage({ params }: Props) {
                   key={block.id}
                   block={block}
                   procedure={procedure}
-                  allProcedures={allProcedures}
+                  allProcedures={procedureNav}
                 />
               ))}
             </>

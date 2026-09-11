@@ -24,7 +24,7 @@ const SECTION_COLORS: Record<string, { dot: string; accent: string }> = {
   General:         { dot: "bg-slate-400",  accent: "text-slate-500 dark:text-slate-400" },
 };
 const DEFAULT_COLORS = SECTION_COLORS.General;
-const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes"]);
+const FLAT_SECTIONS = new Set(["Administrativos", "Comunicaciones", "DRP", "Intervinientes", "Psicológicos"]);
 
 export function ProcedureSidebar({ sections }: Props) {
   const pathname = usePathname();

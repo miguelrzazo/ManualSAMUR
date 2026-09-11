@@ -201,8 +201,10 @@ test("mergeImportedDrugs preserves local taxonomy and marks new drugs for review
 
   const urapidil = merged.find((drug) => drug.id === "urapidil");
   assert.ok(urapidil);
-  assert.equal(urapidil.category, "Pendiente de clasificar");
-  assert.equal(urapidil.subcategory, "Revisar manualmente");
+  // New imports land in a real category with no invented subcategory: the placeholder
+  // buckets used to render as filter chips in the app.
+  assert.equal(urapidil.category, "Otros");
+  assert.equal(urapidil.subcategory, "");
   assert.deepEqual(urapidil.route, []);
 });
 

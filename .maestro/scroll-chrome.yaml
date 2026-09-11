@@ -1,0 +1,171 @@
+# Collapsing headers, the animated back-to-top control, the Vademécum A-Z
+# scrollspy, the Códigos annotation footer and the global search result rows.
+#
+# Covers issues #75, #77, #78 and #79 and produces the screenshots attached to
+# them. Prerequisites are the same as `procedure-tables.yaml`: an installed
+# mobile build and a running iOS simulator or Android emulator.
+appId: es.madrid.samur.manual
+tags:
+  - ci
+  - smoke
+  - scroll-chrome
+---
+- launchApp
+
+# Expo development clients start on the server picker when no bundle is loaded.
+- tapOn:
+    text: "8081"
+    optional: true
+# First-use disclosure is only shown on a fresh local install.
+- tapOn:
+    text: "Entendido, abrir el manual"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 20000
+
+# ─── #75 / #77 · Códigos ────────────────────────────────────────────────────
+- tapOn: "Códigos"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos y claves"
+    timeout: 10000
+- takeScreenshot: codigos-chrome-expanded
+
+# Scrolling down folds the large title, the search field, the domain tabs and the
+# group pills into the compact bar; that bar and the list's own sticky group
+# header both stay.
+- swipe:
+    # Explicit start/end: the default UP swipe begins at the vertical centre and
+    # ends near the tab bar, which on this layout barely moves the list.
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- assertNotVisible: "Buscar código, nombre o categoría"
+# …but the bar itself stays: a collapsed header is a compact bar, not no bar.
+- assertVisible: "Códigos y claves"
+- takeScreenshot: codigos-chrome-collapsed
+
+# The back-to-top control is offered past 400pt and brings the chrome back.
+- tapOn:
+    text: "Volver arriba"
+- extendedWaitUntil:
+    visible:
+      text: "Buscar código, nombre o categoría"
+    timeout: 5000
+- takeScreenshot: codigos-chrome-restored
+
+# ─── #78 · annotations at the foot of the list ──────────────────────────────
+# 130 codes: `scrollUntilVisible` cannot cover that inside its own timeout, so
+# the list is driven to the end with explicit swipes first.
+- repeat:
+    times: 90
+    commands:
+      - swipe:
+          start: "50%, 85%"
+          end: "50%, 15%"
+          duration: 80
+- assertVisible: ".*TETRA y llamada de voz.*"
+# Reaching the end of a list must not spring the chrome back open.
+- assertNotVisible: "Buscar código, nombre o categoría"
+- takeScreenshot: codigos-annotation-footer
+
+# ─── #79 · Vademécum A-Z scrollspy ──────────────────────────────────────────
+- tapOn: "Vademécum"
+- extendedWaitUntil:
+    visible:
+      text: "Vademécum"
+    timeout: 10000
+- takeScreenshot: vademecum-alphabet-at-a
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+# Scroll back up a little so the index is on screen again: the highlighted
+# letter is the point of the shot, and the chrome collapses on the way down.
+- swipe:
+    start: "50%, 30%"
+    end: "50%, 60%"
+    duration: 400
+- takeScreenshot: vademecum-alphabet-active-letter
+
+# ─── Global search: kind icons, one scope row, full-text excerpts ───────────
+- tapOn:
+    id: "manual-search-input"
+    optional: true
+- tapOn:
+    text: "Buscar en el manual"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "manual-search-input"
+    timeout: 10000
+- tapOn:
+    id: "manual-search-input"
+- inputText: "atropello"
+# A body-only hit is explained by the sentence it was found in, with the match
+# marked — the title says nothing about atropellos.
+- extendedWaitUntil:
+    visible:
+      text: ".*Gestión de llamadas de emergencia.*"
+    timeout: 15000
+- assertVisible: ".*Atropello.*"
+- takeScreenshot: search-fulltext-snippets
+# Choosing the Vademécum scope must not open a second row of pills repeating the
+# Vademécum tab's own domain switcher.
+- tapOn:
+    text: "Vademécum"
+    index: 0
+- assertNotVisible: "Comerciales"
+- takeScreenshot: search-single-scope-row
+- tapOn:
+    text: "Todo"
+
+# ─── Procedure reader: title handoff and back-to-top ────────────────────────
+- tapOn:
+    id: "manual-search-input"
+- eraseText: 12
+- inputText: "304_02"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-304_02"
+    timeout: 10000
+# The row groups into one accessible element, so its label is what can be
+# asserted here; that the id moved off the tile and onto the meta line is
+# checked against the source in `tests/mobile-scroll-chrome.test.ts`.
+- assertVisible: "304_02, Traumatismo craneoencefálico"
+- tapOn:
+    id: "procedure-row-304_02"
+# The push animation has to finish before the shot, or this captures Buscar.
+- extendedWaitUntil:
+    visible:
+      # The contents card, which only the procedure reader renders.
+      text: "Contenido del procedimiento"
+    timeout: 10000
+- takeScreenshot: procedure-title-at-top
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- swipe:
+    start: "50%, 75%"
+    end: "50%, 25%"
+    duration: 400
+- takeScreenshot: procedure-title-in-top-bar

@@ -15,6 +15,13 @@
  */
 export const MAX_DELETION_RATIO = 0.2;
 
+/** Absence from an index alone is never proof of withdrawal. */
+export function assertConfirmedWithdrawal(status: number, source: string): void {
+  if (status !== 404 && status !== 410) {
+    throw new Error(`Withdrawal not confirmed for ${source}: HTTP ${status}. Preserve the local procedure and investigate discovery.`);
+  }
+}
+
 /**
  * ¿Puede este sync declarar de baja el procedimiento si deja de aparecer?
  *
@@ -24,8 +31,10 @@ export const MAX_DELETION_RATIO = 0.2;
  * sido retirado.
  *
  * En la primera ejecución real esto separaba 2 bajas verdaderas (ambas 404 en
- * origen) de 9 falsos positivos: 7 importaciones de samurpc.net y 2 fichas con
- * source truncado que nunca se sincronizaron.
+ * origen) de 9 falsos positivos: 7 importaciones del manual retirado y 2 fichas
+ * con source truncado que nunca se sincronizaron. Esas 7 ya no existen —el corpus
+ * es solo del wiki—, pero el guarda sigue siendo necesario: una ficha del wiki
+ * que falte del descubrimiento por un fallo de red no es una baja.
  */
 export function isDeletionCandidate(source: string, contentHash: string, wikiHost: string): boolean {
   return source.includes(wikiHost) && contentHash.trim().length > 0;

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+apps/*/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -46,7 +47,22 @@ yarn-error.log*
 /public/manual-updates.json
 /public/manual-history.json
 
+# Native content package — generated from content/data during mobile builds.
+apps/mobile/src/data/snapshot.json
+apps/mobile/src/data/attachment-manifest.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 HistoricoActualizaciones_abril 2026.pdf.pdf
+# Expo local state and generated native projects (Continuous Native Generation).
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+
+# Simulator/device screenshots captured while manually verifying mobile builds.
+/.claude-screenshots/
+
+# Release build outputs and evidence written by mobile:release:evidence / local builds.
+# The IPA alone is 72 MB; provenance lives in the evidence JSON, not in git.
+/artifacts/

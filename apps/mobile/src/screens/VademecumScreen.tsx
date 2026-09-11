@@ -1,0 +1,686 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FlatList,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type SectionListData,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { circle, radii, spacing, TAB_BAR_INSET, typography } from "@manual-samur/design-tokens";
+import { accessibilityHints, accessibilityTargetStyle, type AdaptivePalette } from "../accessibility";
+import { useTheme } from "../theme";
+import { displayTitle } from "../title-case";
+import { animateNextLayout, useReduceMotion } from "../hooks/motion";
+import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
+import { useSectionJump } from "../hooks/use-section-jump";
+import { selectionTick } from "../hooks/haptics";
+import { BackToTop, Chip, CompactHeader, Press } from "../components";
+import { useContentData } from "../content";
+import { buildVademecumReferences, searchMobileReferences, type MobileReferenceSearchResult } from "../reference-search-logic";
+import {
+  activeSectionKey,
+  buildAlphabetSections,
+  buildCategorySections,
+  categoryAccent,
+  categoryOf,
+  filterByCategory,
+  filterByTab,
+  resolveActiveLetter,
+  supportsAlphabetNav,
+  uniqueCategories,
+  VADEMECUM_TABS,
+  type VademecumAlphabetSection,
+  type VademecumCategorySection,
+  type VademecumTabKey,
+} from "../vademecum-logic";
+import type { RootStackParamList, TabsParamList } from "../navigation-types";
+
+/**
+ * The Vademécum destination: four domains (fármacos, perfusiones, fluidos,
+ * comerciales) organised and filterable the way `VademecumView.tsx` organises
+ * them on the web — category chips and an A-Z index for fármacos/comerciales,
+ * category chips alone for perfusiones — expressed as a SectionList with sticky
+ * headers rather than a DOM port, the same shape `CodigosScreen` established for
+ * the Códigos tab. Fluidos se agrupa por tipo pero no lleva filtro: ver
+ * `showCategoryChips`.
+ *
+ * Aquí ya no hay calculadora de dosis. `DoseUtilityCard` se retiró de `DrugScreen`
+ * (ver el comentario en App.tsx, sobre `DrugScreen`): pedía peso, unidad, vía y dos
+ * confirmaciones para devolver una conversión que su propio aviso llamaba
+ * orientativa. La posología sigue en la ficha, que es de donde salen las pautas
+ * reales. `dose-logic.ts` se queda por sus ayudantes de formato y su auditoría.
+ */
+export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
+  const { content } = useContentData();
+  const palette = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
+
+  const [activeTab, setActiveTab] = useState<VademecumTabKey>("farmacos");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const sectionListRef = useRef<SectionList<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection>>(null);
+  const searchListRef = useRef<FlatList<MobileReferenceSearchResult>>(null);
+  const chrome = useScrollChrome();
+
+  const references = useMemo(() => buildVademecumReferences(content), [content]);
+  const tabCounts = useMemo(
+    () => Object.fromEntries(VADEMECUM_TABS.map((tab) => [tab.key, filterByTab(references, tab.key).length])) as Record<VademecumTabKey, number>,
+    [references],
+  );
+
+  const switchTab = useCallback((key: VademecumTabKey) => {
+    setActiveTab(key);
+    setActiveCategory(null);
+    sectionListRef.current?.scrollToLocation?.({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: false });
+    // The new domain starts at its own top, so the chrome comes back with it.
+    chrome.reset();
+  }, [chrome]);
+
+  const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+
+  const openReference = useCallback(
+    (reference: MobileReferenceSearchResult) => {
+      if (reference.kind === "drug" && reference.targetId) {
+        parentNavigation?.navigate("Drug", { id: reference.targetId });
+        return;
+      }
+      parentNavigation?.navigate("Vademecum", { routeKey: reference.routeKey });
+    },
+    [parentNavigation],
+  );
+
+  const searching = query.trim().length > 0;
+  const searchResults = useMemo(() => {
+    if (!searching) return [];
+    const inTab = filterByTab(references, activeTab);
+    return searchMobileReferences(inTab, query, 500);
+  }, [activeTab, query, references, searching]);
+
+  return (
+    <SafeAreaView style={styles.screen} edges={["top"]}>
+      {/* Title, search and the domain switcher give way to the list on a downward
+          scroll, collapsing into the compact bar; the sticky letter/category header
+          stays behind it. */}
+      {chrome.collapsed && <CompactHeader title="Vademécum" onExpand={chrome.expand} />}
+      {!chrome.collapsed && (
+      <View style={styles.expandedChrome}>
+        <View style={styles.header}>
+          <Text style={styles.pageTitle}>Vademécum</Text>
+          <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
+        </View>
+
+        <View style={styles.topTabsRow} accessibilityRole="tablist" accessibilityLabel="Dominios del vademécum">
+          <FlatList
+            horizontal
+            data={VADEMECUM_TABS}
+            keyExtractor={(tab) => tab.key}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.topTabsContent}
+            renderItem={({ item: tab }) => {
+              const focused = activeTab === tab.key;
+              return (
+                <Pressable
+                  onPress={() => switchTab(tab.key)}
+                  style={[styles.topTab, focused && styles.topTabActive, accessibilityTargetStyle()]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: focused }}
+                  accessibilityLabel={`${tab.label}, ${tabCounts[tab.key]} referencias`}
+                  accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
+                >
+                  <MaterialCommunityIcons name={tab.icon} size={15} color={focused ? palette.primary : palette.inkMuted} />
+                  <Text style={[styles.topTabLabel, focused && { color: palette.primary }]}>{tab.label}</Text>
+                  <Text style={styles.topTabCount}>{tabCounts[tab.key]}</Text>
+                </Pressable>
+              );
+            }}
+          />
+        </View>
+      </View>
+      )}
+
+      {searching ? (
+        <FlatList
+          ref={searchListRef}
+          data={searchResults}
+          keyExtractor={(item) => item.routeKey}
+          onScroll={chrome.onScroll}
+          scrollEventThrottle={chrome.scrollEventThrottle}
+          contentContainerStyle={styles.sectionListContent}
+          ListEmptyComponent={
+            <EmptyState title="Sin coincidencias" detail="Prueba con el nombre, un sinónimo o la categoría publicada." palette={palette} styles={styles} />
+          }
+          renderItem={({ item }) => <VademecumRow reference={item} palette={palette} styles={styles} onPress={() => openReference(item)} />}
+        />
+      ) : (
+        <DomainContent
+          tab={activeTab}
+          references={filterByTab(references, activeTab)}
+          activeCategory={activeCategory}
+          onSelectCategory={setActiveCategory}
+          onOpen={openReference}
+          palette={palette}
+          styles={styles}
+          sectionListRef={sectionListRef}
+          chrome={chrome}
+        />
+      )}
+
+      <BackToTop
+        visible={chrome.showBackToTop}
+        onPress={() => {
+          if (searching) searchListRef.current?.scrollToOffset({ offset: 0, animated: true });
+          else sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, viewPosition: 0, animated: true });
+          chrome.reset();
+        }}
+      />
+    </SafeAreaView>
+  );
+}
+
+// ─── Domain content (category chips + A-Z index or category sections) ──────
+
+function DomainContent({
+  tab,
+  references,
+  activeCategory,
+  onSelectCategory,
+  onOpen,
+  palette,
+  styles,
+  sectionListRef,
+  chrome,
+}: {
+  tab: VademecumTabKey;
+  references: MobileReferenceSearchResult[];
+  activeCategory: string | null;
+  onSelectCategory: (category: string | null) => void;
+  onOpen: (reference: MobileReferenceSearchResult) => void;
+  palette: AdaptivePalette;
+  styles: ReturnType<typeof createStyles>;
+  sectionListRef: React.RefObject<SectionList<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> | null>;
+  chrome: ScrollChrome;
+}) {
+  // Fármacos filters by category *and* shows an A-Z index (mirrors the web:
+  // both controls are visible together for this domain only). Comerciales
+  // shows the A-Z index alone; perfusiones shows category chips alone.
+  //
+  // Fluidos, no. Son una lista corta que cabe entera en dos pantallas, y sus
+  // "categorías" son el propio `type` de cada fluido: el filtro dividía nueve filas
+  // en grupos de tres y añadía una fila de pastillas encima para no ahorrar ningún
+  // desplazamiento. La lista sigue agrupada por tipo con sus cabeceras; lo que se ha
+  // ido es el control para esconder parte de ella.
+  const showCategoryChips = tab === "farmacos" || tab === "perfusiones";
+  const reduceMotion = useReduceMotion();
+  // Open when a filter is already applied, so a narrowed list never looks
+  // unfiltered behind a collapsed control.
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const showAlphabetIndex = supportsAlphabetNav(tab);
+
+  const categories = useMemo(() => uniqueCategories(references), [references]);
+  const filtered = useMemo(() => filterByCategory(references, activeCategory), [references, activeCategory]);
+
+  const sections = useMemo<(VademecumAlphabetSection | VademecumCategorySection)[]>(
+    () => (showAlphabetIndex ? buildAlphabetSections(filtered) : buildCategorySections(filtered)),
+    [filtered, showAlphabetIndex],
+  );
+  const alphabetRef = useRef<FlatList<VademecumAlphabetSection | VademecumCategorySection>>(null);
+  // What the list says we are looking at…
+  const [observedKey, setObservedKey] = useState<string | null>(null);
+  // …and what a tap says we asked for, which wins until the jump settles.
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const activeKey = resolveActiveLetter(pendingKey, observedKey);
+
+  // `onViewableItemsChanged` is read once by the list and must never change
+  // identity afterwards, or RN throws "Changing onViewableItemsChanged on the
+  // fly is not supported".
+  const [onViewableItemsChanged] = useState(() => ({ viewableItems }: { viewableItems: { section?: { key?: string } }[] }) => {
+    setObservedKey(activeSectionKey(viewableItems.map((entry) => ({ sectionKey: entry.section?.key }))));
+  });
+  const [viewabilityConfig] = useState(() => ({ itemVisiblePercentThreshold: 0 }));
+
+  const jump = useSectionJump(sectionListRef);
+  // Cambiar de pestaña o de categoría cambia las secciones: las posiciones guardadas
+  // dejan de valer.
+  useEffect(() => { jump.resetSections(sections.map((section) => section.key)); }, [jump, sections]);
+
+  const scrollToSection = useCallback(
+    (sectionIndex: number) => {
+      const key = sections[sectionIndex]?.key ?? null;
+      setPendingKey(key);
+      if (key) jump.jumpTo(key, sectionIndex);
+    },
+    [jump, sections],
+  );
+
+  // Keep the highlighted pill on screen: on fármacos the row is twenty-odd
+  // letters long, so the active one is usually scrolled out of the index itself.
+  useEffect(() => {
+    if (!activeKey) return;
+    const index = sections.findIndex((section) => section.key === activeKey);
+    if (index < 0) return;
+    alphabetRef.current?.scrollToIndex({ index, viewPosition: 0.5, animated: true });
+  }, [activeKey, sections]);
+
+  return (
+    <View style={styles.flexFill}>
+      {!chrome.collapsed && showCategoryChips && categories.length > 1 && (
+        <View style={styles.categoryRow}>
+          <Press
+            onPress={() => { selectionTick(); animateNextLayout(reduceMotion); setCategoriesOpen((open) => !open); }}
+            style={styles.categoryToggle}
+            accessibilityRole="button"
+            accessibilityLabel={activeCategory ? `Filtro: ${activeCategory}` : "Filtrar por categoría"}
+            accessibilityState={{ expanded: categoriesOpen }}
+          >
+            <MaterialCommunityIcons name="tune-variant" size={15} color={activeCategory ? categoryAccent(activeCategory) : palette.inkMuted} />
+            <Text style={[styles.categoryToggleText, activeCategory && { color: categoryAccent(activeCategory) }]}>
+              {activeCategory ?? "Todas las categorías"}
+            </Text>
+            <MaterialCommunityIcons name={categoriesOpen ? "chevron-up" : "chevron-down"} size={16} color={palette.inkMuted} />
+          </Press>
+          {activeCategory && (
+            <Press onPress={() => { selectionTick(); onSelectCategory(null); }} style={styles.categoryClear} accessibilityRole="button" accessibilityLabel="Quitar el filtro de categoría">
+              <MaterialCommunityIcons name="close-circle" size={17} color={palette.inkMuted} />
+            </Press>
+          )}
+        </View>
+      )}
+      {!chrome.collapsed && showCategoryChips && categories.length > 1 && categoriesOpen && (
+        <View style={styles.categoryListRow} accessibilityRole="tablist" accessibilityLabel="Filtrar por categoría">
+          <FlatList
+            horizontal
+            data={[null, ...categories]}
+            keyExtractor={(category) => category ?? "__all__"}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryContent}
+            renderItem={({ item: category }) => (
+              <Chip
+                label={category ?? "Todas"}
+                selected={activeCategory === category}
+                onPress={() => onSelectCategory(category)}
+                dotColor={category ? categoryAccent(category) : undefined}
+              />
+            )}
+          />
+        </View>
+      )}
+
+      {!chrome.collapsed && showAlphabetIndex && sections.length > 1 && (
+        <View style={styles.alphabetRow} accessibilityRole="tablist" accessibilityLabel="Ir a una letra">
+          <FlatList
+            ref={alphabetRef}
+            horizontal
+            data={sections}
+            keyExtractor={(section) => section.key}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.alphabetContent}
+            // La tira de letras es otra lista: un fallo aquí es cosmético y no debe
+            // conectarse al manejador del SectionList.
+            onScrollToIndexFailed={() => undefined}
+            renderItem={({ item: section, index }) => {
+              const selected = section.key === activeKey;
+              return (
+                <Press
+                  onPress={() => { selectionTick(); scrollToSection(index); }}
+                  style={styles.alphabetHit}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`Ir a la letra ${section.key}`}
+                >
+                  <View style={[styles.alphabetChip, selected && styles.alphabetChipActive]}>
+                    <Text style={[styles.alphabetChipText, selected && styles.alphabetChipTextActive]}>{section.key}</Text>
+                  </View>
+                </Press>
+              );
+            }}
+          />
+        </View>
+      )}
+
+      <SectionList
+        ref={sectionListRef}
+        sections={sections}
+        keyExtractor={(item) => item.routeKey}
+        stickySectionHeadersEnabled
+        contentContainerStyle={styles.sectionListContent}
+        onScroll={chrome.onScroll}
+        scrollEventThrottle={chrome.scrollEventThrottle}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        // A tapped letter stops overriding the scrollspy once the jump has landed.
+        onMomentumScrollEnd={() => setPendingKey(null)}
+        onScrollEndDrag={() => setPendingKey(null)}
+        onScrollToIndexFailed={jump.onScrollToIndexFailed}
+        ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
+        renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
+          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} testID={`vademecum-section-${section.key}`} accessibilityRole="header">
+            {!showAlphabetIndex && <View style={[styles.sectionHeaderDot, { backgroundColor: categoryAccent(section.key) }]} />}
+            <Text style={styles.sectionHeaderLabel}>{section.key}</Text>
+            <Text style={styles.sectionHeaderCount}>{section.data.length}</Text>
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <VademecumRow
+            reference={item}
+            palette={palette}
+            styles={styles}
+            onPress={() => onOpen(item)}
+          />
+        )}
+      />
+    </View>
+  );
+}
+
+// ─── Row renderers ───────────────────────────────────────────────────────────
+
+function stringDetail(reference: MobileReferenceSearchResult, ...keys: string[]): string {
+  const detail = reference.detail ?? {};
+  for (const key of keys) {
+    const value = detail[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return "";
+}
+
+function arrayDetail(reference: MobileReferenceSearchResult, key: string): string[] {
+  const value = reference.detail?.[key];
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+/** One row for any of the four domains — content only, no internal identifiers. */
+function VademecumRow({
+  reference,
+  palette,
+  styles,
+  onPress,
+}: {
+  reference: MobileReferenceSearchResult;
+  palette: AdaptivePalette;
+  styles: ReturnType<typeof createStyles>;
+  onPress: () => void;
+}) {
+  const category = categoryOf(reference);
+  const accent = reference.kind === "drug" || reference.kind === "perfusion" ? categoryAccent(category) : palette.amber;
+
+  if (reference.kind === "fluid") {
+    const stats: [string, string][] = [
+      ["Osmolaridad", stringDetail(reference, "osmolarity")],
+      ["Na", stringDetail(reference, "sodium")],
+      ["Cl", stringDetail(reference, "chloride")],
+      ["Glucosa", stringDetail(reference, "glucose")],
+      ["K", stringDetail(reference, "potassium")],
+      ["pH", stringDetail(reference, "ph")],
+    ].filter(([, value]) => value.length > 0) as [string, string][];
+    const contraindications = arrayDetail(reference, "contraindications");
+    return (
+      <Pressable
+        onPress={onPress}
+        style={[styles.fluidCard, accessibilityTargetStyle()]}
+        accessibilityRole="button"
+        accessibilityLabel={`${reference.title}, ${reference.subtitle}`}
+        accessibilityHint={accessibilityHints.openDetail}
+      >
+        <View style={styles.fluidCardHeader}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
+            <Text style={styles.rowMeta}>{stringDetail(reference, "presentation")}</Text>
+          </View>
+          <View style={styles.fluidTypeBadge}>
+            <Text style={styles.fluidTypeBadgeText}>{category}</Text>
+          </View>
+        </View>
+        <View style={styles.fluidStatsRow}>
+          {stats.map(([label, value]) => (
+            <View key={label} style={styles.fluidStat}>
+              <Text style={styles.fluidStatLabel}>{label}</Text>
+              <Text style={styles.fluidStatValue}>{value}</Text>
+            </View>
+          ))}
+        </View>
+        {contraindications.length > 0 && (
+          <View style={styles.fluidChipsRow}>
+            {contraindications.map((item) => (
+              <View key={item} style={styles.fluidWarningChip}>
+                <Text style={styles.fluidWarningChipText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </Pressable>
+    );
+  }
+
+  if (reference.kind === "commercialName") {
+    const brandNames = arrayDetail(reference, "brandNames");
+    return (
+      <Pressable
+        onPress={onPress}
+        style={[styles.commercialCard, accessibilityTargetStyle()]}
+        accessibilityRole="button"
+        accessibilityLabel={`${reference.title}, nombres comerciales`}
+        accessibilityHint={accessibilityHints.openDetail}
+      >
+        <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
+        <Text style={styles.rowMeta}>{stringDetail(reference, "presentation")}</Text>
+        <View style={styles.fluidChipsRow}>
+          {brandNames.map((brand) => (
+            <View key={brand} style={styles.brandChip}>
+              <Text style={styles.brandChipText}>{brand}</Text>
+            </View>
+          ))}
+        </View>
+      </Pressable>
+    );
+  }
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[styles.resourceRow, accessibilityTargetStyle()]}
+      accessibilityRole="button"
+      accessibilityLabel={`${reference.title}. ${reference.subtitle}`}
+      accessibilityHint={accessibilityHints.openDetail}
+    >
+      {/* No leading glyph. Every row in a domain carried the same one — `pill` on
+          all of fármacos, `iv-bag` on all of perfusiones — so it identified the tab
+          the reader had already chosen, not the row. The accent bar stays: it
+          carries the category, which does vary inside a tab. */}
+      <View style={[styles.rowAccentBar, { backgroundColor: accent }]} />
+      <View style={styles.rowCopy}>
+        <Text style={styles.rowTitle}>{displayTitle(reference.title)}</Text>
+        <Text style={styles.rowMeta} numberOfLines={reference.kind === "perfusion" ? 1 : 2}>
+          {reference.kind === "perfusion" ? stringDetail(reference, "dilucion") || reference.subtitle : reference.subtitle}
+        </Text>
+      </View>
+      <MaterialCommunityIcons name="chevron-right" size={20} color={palette.inkMuted} accessibilityElementsHidden />
+    </Pressable>
+  );
+}
+
+// ─── Shared bits ─────────────────────────────────────────────────────────────
+
+function SearchField({
+  value,
+  onChangeText,
+  palette,
+  styles,
+}: {
+  value: string;
+  onChangeText: (value: string) => void;
+  palette: AdaptivePalette;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <View style={styles.searchBar}>
+      <MaterialCommunityIcons name="magnify" size={18} color={palette.inkMuted} />
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder="Buscar fármaco, perfusión o fluido"
+        placeholderTextColor={palette.inkMuted}
+        style={styles.searchInput}
+        accessibilityLabel="Buscar en el vademécum"
+        accessibilityHint={accessibilityHints.search}
+        autoCorrect={false}
+        returnKeyType="search"
+      />
+      {value.length > 0 && (
+        <Pressable onPress={() => onChangeText("")} style={accessibilityTargetStyle(32)} accessibilityRole="button" accessibilityLabel="Borrar búsqueda">
+          <MaterialCommunityIcons name="close-circle" size={18} color={palette.inkMuted} />
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
+function EmptyState({
+  title,
+  detail,
+  palette,
+  styles,
+}: {
+  title: string;
+  detail: string;
+  palette: AdaptivePalette;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <View style={styles.emptyState}>
+      <MaterialCommunityIcons name="text-search" size={26} color={palette.inkMuted} />
+      <Text style={styles.emptyTitle}>{title}</Text>
+      <Text style={styles.emptyDetail}>{detail}</Text>
+    </View>
+  );
+}
+
+function createStyles(palette: AdaptivePalette) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: palette.paper },
+    flexFill: { flex: 1 },
+    header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm },
+    pageTitle: { color: palette.ink, fontSize: typography.largeTitle.fontSize, lineHeight: typography.largeTitle.lineHeight, fontWeight: "700", letterSpacing: -0.8 },
+    searchBar: {
+      minHeight: 46,
+      borderRadius: radii.md,
+      backgroundColor: palette.surface,
+      borderWidth: 1,
+      borderColor: palette.line,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: spacing.md,
+      gap: spacing.sm,
+      marginTop: spacing.md,
+    },
+    searchInput: { flex: 1, color: palette.ink, fontSize: 14, paddingVertical: 0 },
+    topTabsRow: { borderBottomWidth: 1, borderBottomColor: palette.line },
+    expandedChrome: { overflow: "hidden" },
+    topTabsContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
+    topTab: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    topTabActive: { borderBottomColor: palette.primary },
+    topTabLabel: { color: palette.inkMuted, fontSize: 13, fontWeight: "700" },
+    topTabCount: { color: palette.inkMuted, fontSize: 12, fontWeight: "500", fontVariant: ["tabular-nums"] },
+    categoryToggle: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, minHeight: 36, borderRadius: radii.pill, backgroundColor: palette.surfaceMuted, flexShrink: 1 },
+    categoryToggleText: { flexShrink: 1, fontSize: 13, fontWeight: "500", color: palette.inkMuted },
+    categoryClear: { alignItems: "center", justifyContent: "center" },
+    categoryListRow: { paddingVertical: spacing.xs },
+    categoryRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+    categoryContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, gap: spacing.xs },
+    categoryDot: circle(7),
+    alphabetRow: { paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: palette.line },
+    alphabetContent: { paddingHorizontal: spacing.lg, gap: 4 },
+    alphabetChip: {
+      ...circle(30),
+      backgroundColor: palette.surfaceMuted,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    alphabetHit: { alignItems: "center", justifyContent: "center" },
+    alphabetChipActive: { backgroundColor: palette.ink },
+    alphabetChipText: { color: palette.ink, fontSize: 12, fontWeight: "700" },
+    // `paper`, not `white`: in dark mode the active fill is `ink`, which is near-white.
+    alphabetChipTextActive: { color: palette.paper },
+    sectionListContent: { paddingBottom: TAB_BAR_INSET },
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      backgroundColor: palette.paper,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: palette.line,
+    },
+    sectionHeaderDot: circle(8),
+    sectionHeaderLabel: { flex: 1, color: palette.ink, fontSize: 13, fontWeight: "700" },
+    sectionHeaderCount: { color: palette.inkMuted, fontSize: 11, fontWeight: "600" },
+    resourceRow: {
+      minHeight: 56,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: palette.line,
+    },
+    rowAccentBar: { width: 3, alignSelf: "stretch", borderRadius: radii.pill },
+    rowCopy: { flex: 1 },
+    rowTitle: { color: palette.ink, fontSize: 14, fontWeight: "700" },
+    rowMeta: { color: palette.inkMuted, fontSize: 11, marginTop: 2, lineHeight: 15 },
+    fluidCard: {
+      marginHorizontal: spacing.lg,
+      marginTop: spacing.md,
+      padding: spacing.md,
+      borderRadius: radii.md,
+      borderWidth: 1,
+      borderColor: palette.line,
+      backgroundColor: palette.surface,
+      gap: spacing.sm,
+    },
+    fluidCardHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: spacing.sm },
+    fluidTypeBadge: { backgroundColor: palette.surfaceMuted, borderRadius: radii.pill, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+    fluidTypeBadgeText: { ...typography.caption, color: palette.ink, fontWeight: "600" },
+    fluidStatsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+    fluidStat: { minWidth: 74, borderRadius: radii.sm, borderWidth: 1, borderColor: palette.lineStrong, paddingHorizontal: spacing.sm, paddingVertical: 6 },
+    fluidStatLabel: { color: palette.inkMuted, fontSize: 12, fontWeight: "500" },
+    fluidStatValue: { color: palette.ink, fontSize: 12, fontWeight: "700", marginTop: 2 },
+    fluidChipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+    // Una contraindicacion puede no caber en una linea, y truncarla esconderia
+    // informacion de seguridad. Asi que envuelve: por eso `radii.sm` en vez de
+    // `radii.pill` (una pildora de dos lineas se ve como una caja mal redondeada)
+    // y por eso el relleno vertical sale de la escala y no de un 4 suelto.
+    fluidWarningChip: { backgroundColor: palette.dangerWash, borderRadius: radii.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2 },
+    fluidWarningChipText: { ...typography.caption, color: palette.dangerDark, fontWeight: "600" },
+    commercialCard: {
+      marginHorizontal: spacing.lg,
+      marginTop: spacing.md,
+      padding: spacing.md,
+      borderRadius: radii.md,
+      borderWidth: 1,
+      borderColor: palette.line,
+      backgroundColor: palette.surface,
+      gap: spacing.sm,
+    },
+    brandChip: { backgroundColor: palette.amberWash, borderRadius: radii.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2 },
+    brandChipText: { ...typography.caption2, color: palette.amber, fontWeight: "700" },
+    emptyState: { alignItems: "center", padding: spacing.xl, gap: spacing.sm },
+    emptyTitle: { color: palette.ink, fontWeight: "800", fontSize: 15 },
+    emptyDetail: { color: palette.inkMuted, textAlign: "center", fontSize: 12, lineHeight: 17 },
+  });
+}

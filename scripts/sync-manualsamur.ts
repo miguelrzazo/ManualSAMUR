@@ -2,13 +2,14 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 import * as cheerio from "cheerio";
 import TurndownService from "turndown";
 import { createPatch } from "diff";
-import { assertDatasetNotEmptied, assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
+import { assertConfirmedWithdrawal, assertDatasetNotEmptied, assertDiscoveryIsPlausible, isDeletionCandidate } from "../lib/sync-guards.ts";
 // @ts-expect-error CJS default export
 import gfmPkg from "turndown-plugin-gfm";
 const { gfm } = gfmPkg as { gfm: unknown };
@@ -17,14 +18,17 @@ import {
   applyRecencyWindow,
   approvePendingChanges,
   buildTickerFromEvents,
+  capManualUpdateEvents,
   classifyProcedureChange,
   classifyProcedureUpdateKind,
   extractAttachmentLinks,
+  xwikiToMarkdown,
   getSectionFromXWikiUrl,
   parseProcedureSpacesXml,
   readManualSyncMetadata,
   readManualUpdatesDataset,
   resolveStableProcedureIdForSource,
+  isContainerSpace,
   rewriteAttachmentLinks,
   markAttachmentUnavailable,
   stableContentHash,
@@ -53,6 +57,9 @@ import {
   parseMainLinksFromHtml,
   readMainLinksData,
 } from "../lib/main-content.ts";
+import { diffCodeDataset } from "../lib/codigos-sync-logic.ts";
+import { buildCodeDatasetCandidates, CODE_SOURCE_FILES } from "../lib/code-dataset-candidates.ts";
+import { diffReferenceDataset, referenceRecordDiff } from "../lib/reference-dataset-sync.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,7 +67,7 @@ const ROOT_DIR = path.join(__dirname, "..");
 const WIKI_BASE = "https://servpub.madrid.es/manualsamur";
 const REST_BASE = `${WIKI_BASE}/rest/wikis/xwiki`;
 // Host del wiki, para distinguir los procedimientos que este sync puede dar de baja
-// de los importados de otras fuentes (p. ej. samurpc.net), que nunca descubre.
+// de los que nunca descubre por no venir de él. Hoy el corpus es 100% de este wiki.
 const WIKI_BASE_HOST = "servpub.madrid.es";
 const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
 const METADATA_PATH = path.join(ROOT_DIR, "content/data/manual-sync.json");
@@ -219,8 +226,9 @@ function loadExistingTitleMap() {
  * no por haber sido dado de baja.
  *
  * Sin este filtro, la primera ejecución real marcaba 11 bajas de las que 7 eran
- * importaciones antiguas de samurpc.net —que el scraper del wiki jamás puede
- * encontrar— y 2 fichas que nunca llegaron a sincronizarse (source truncado,
+ * importaciones del manual retirado —que el scraper del wiki jamás puede
+ * encontrar, y que ya se han dado de baja— y 2 fichas que nunca llegaron a
+ * sincronizarse (source truncado,
  * contentHash vacío). Solo 2 eran reales, y ambas responden 404 en origen.
  * Un 64% de falsos positivos, por debajo del suelo del 20%, así que el guarda
  * no habría llegado a saltar.
@@ -243,8 +251,41 @@ function loadDeletionCandidates() {
   return map;
 }
 
-function resolveProcedureId(space: ProcedureSpace, existingTitleMap: Map<string, string>) {
-  return resolveStableProcedureIdForSource(space.title, space.url) ?? existingTitleMap.get(normalizeTitle(space.title)) ?? slugify(space.title);
+/**
+ * El identificador tiene que respetar el estándar `NNN` / `NNN_NN`, porque es a
+ * la vez el nombre del fichero, la clave de la URL y el ancla de los enlaces
+ * internos. Antes, una página nueva que no estuviera en `STABLE_PROCEDURE_IDS`
+ * ni coincidiera de título con ninguna ficha local caía en `slugify(title)`, que
+ * devuelve texto ("disturbios-urbanos"), no un número: entraba en el corpus un id
+ * que ningún validador acepta y que había que arreglar a mano después.
+ *
+ * Ahora se para el sync y se pide número explícito. Es deliberadamente ruidoso:
+ * numerar una ficha nueva es una decisión editorial, no algo que deba improvisar
+ * un scraper a las tres de la mañana del día 1.
+ */
+function resolveProcedureId(space: ProcedureSpace, existingTitleMap: Map<string, string>): string | null {
+  return resolveStableProcedureIdForSource(space.title, space.url) ?? existingTitleMap.get(normalizeTitle(space.title)) ?? null;
+}
+
+/**
+ * Se listan TODAS las páginas sin id de una vez, no la primera.
+ *
+ * Abortar en la primera obliga a un ciclo de "arregla una, vuelve a recorrer el
+ * wiki entero" que cuesta varios minutos por vuelta, con 650 ms de espera por
+ * página. Casi siempre son espacios contenedores nuevos (una carpeta del wiki que
+ * agrupa fichas, no una ficha), y aparecen en tandas.
+ */
+function assertEveryProcedureHasId(spaces: ProcedureSpace[], existingTitleMap: Map<string, string>) {
+  const unassigned = spaces.filter((space) => !resolveProcedureId(space, existingTitleMap));
+  if (unassigned.length === 0) return;
+
+  const list = unassigned.map((space) => `  - "${space.title}"\n    ${space.url}`).join("\n");
+  throw new Error(
+    `${unassigned.length} página(s) del wiki sin identificador asignado:\n${list}\n\n` +
+    `Si es una ficha, añádela a STABLE_PROCEDURE_IDS en lib/manual-sync.ts con un id ` +
+    `del estándar NNN o NNN_NN. Si es una carpeta que solo agrupa fichas, añádela a ` +
+    `CATEGORY_SPACE_RE para que el descubrimiento la ignore.`,
+  );
 }
 
 function findProcedureFilePath(id: string): string | null {
@@ -326,36 +367,6 @@ function extractSourceUpdated(rawMarkup: string) {
   if (!match) return new Date().toISOString().slice(0, 10);
   const [, day, month, year] = match;
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-}
-
-function xwikiToMarkdown(raw: string) {
-  return raw
-    .replace(/\r\n/g, "\n")
-    .replace(/\{\{html[\s\S]*?\{\{\/html\}\}/gi, "")
-    .replace(/\(%[\s\S]*?%\)/g, "")
-    .replace(/^\s*\(%[^)]*%\)\s*$/gm, "")
-    .replace(/^\s*\(\(\(\s*$/gm, "")
-    .replace(/^\s*\)\)\)\s*$/gm, "")
-    .replace(/^======\s*(.+?)\s*======\s*$/gm, "##### $1")
-    .replace(/^=====\s*(.+?)\s*=====\s*$/gm, "##### $1")
-    .replace(/^====\s*(.+?)\s*====\s*$/gm, "#### $1")
-    .replace(/^===\s*(.+?)\s*===\s*$/gm, "### $1")
-    .replace(/^==\s*(.+?)\s*==\s*$/gm, "## $1")
-    .replace(/^=\s*(.+?)\s*=\s*$/gm, "# $1")
-    .replace(/^(\*+)\s+(.+)$/gm, (_match, stars: string, text: string) => `${"  ".repeat(stars.length - 1)}* ${text}`)
-    .replace(/\/\/([^/\n]+?)\/\//g, "*$1*")
-    .replace(/__([^_\n]+?)__/g, "*$1*")
-    .replace(/,,([^,\n]*?),,/g, "$1")
-    .replace(/\^\^([^\^\n]*?)\^\^/g, "$1")
-    .replace(/\{\{popoverV[^}]*?(?:anchorId|link)="([^"]+)"[^}]*?\}\}\{\{\/popoverV\}\}/g, (_match, drugName: string) => `<DrugLink name="${drugName}" />`)
-    .replace(/\[\[([^\]]+?)>>url:([^\]]+?)\]\]/g, "[$1]($2)")
-    .replace(/\[\[([^\]]+?)>>(https?:[^\]]+?)\]\]/g, "[$1]($2)")
-    .replace(/\[\[([^\]]+?)>>doc:[^\]]+?\]\]/g, "$1")
-    .replace(/\[\[([^\]]+?)\]\]/g, "$1")
-    .replace(/\{\{[^}]+\}\}/g, "")
-    .replace(/<(?!\/?DrugLink\b)/g, "&lt;")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
 }
 
 function htmlToMarkdown(html: string): string {
@@ -481,8 +492,8 @@ async function discoverFromAllDocs(): Promise<ProcedureSpace[]> {
     });
 
     return spaces;
-  } catch {
-    return [];
+  } catch (error) {
+    throw new Error(`Incomplete AllDocs discovery: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -522,8 +533,15 @@ async function downloadAttachments(attachments: ManualAttachment[], dryRun: bool
 async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>): Promise<DomainResult> {
   fs.mkdirSync(PROCEDURES_DIR, { recursive: true });
 
-  const spaces = await discoverProcedureSpaces();
+  const discovered = await discoverProcedureSpaces();
   const existingTitleMap = loadExistingTitleMap();
+  // Las carpetas del wiki no son fichas: se descartan antes de nada (ver
+  // isContainerSpace). Lo que queda tiene que tener id, o se para el sync: antes
+  // se inventaba `slugify(titulo)` y metía un identificador de texto en el corpus.
+  const spaces = discovered.filter(
+    (space) => !isContainerSpace(space, discovered, (candidate) => resolveProcedureId(candidate, existingTitleMap) !== null),
+  );
+  assertEveryProcedureHasId(spaces, existingTitleMap);
   const changes: SyncChange[] = [];
   const errors: string[] = [];
   const attachmentFailuresForReport: AttachmentDownloadFailure[] = [];
@@ -534,7 +552,8 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     await sleep(DELAY_MS);
 
     try {
-      const id = resolveProcedureId(space, existingTitleMap);
+      // No puede ser null: assertEveryProcedureHasId ya lo ha comprobado para todas.
+      const id = resolveProcedureId(space, existingTitleMap)!;
       if (allowedProcedureIds && !allowedProcedureIds.has(id)) {
         skipped++;
         continue;
@@ -590,7 +609,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         const newBody = markdown.trim();
         if (oldBody !== newBody) {
           const patch: string = createPatch(id, oldBody, newBody, "", "", { context: 3 });
-          contentDiff = patch.split("\n").slice(0, 150).join("\n");
+          contentDiff = patch;
         }
       }
 
@@ -604,6 +623,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         sourceUpdated,
         source: space.url,
         diff: contentDiff,
+        sourceHash: snapshot.contentHash,
       });
 
       if (!dryRun && changeType !== "unchanged") {
@@ -625,10 +645,17 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         }
 
         const slug = `${id}-${slugify(space.title)}`.slice(0, 90);
-        const subfolder = sectionToSubfolder(space.section);
-        const procedureDir = path.join(PROCEDURES_DIR, subfolder);
-        fs.mkdirSync(procedureDir, { recursive: true });
-        fs.writeFileSync(path.join(procedureDir, `${id}.md`), buildProcedureFile(snapshot, space.section, slug, markdown), "utf8");
+        // Una ficha que ya existe se reescribe donde esta. El sync no reorganiza el
+        // corpus: la carpeta la decidimos nosotros, no el wiki.
+        //
+        // Escribir siempre en la carpeta de la seccion deducida creaba un segundo
+        // fichero con el mismo id cuando esa deduccion cambiaba —salieron a la vez
+        // `tecnicas/123.md` y `comunicaciones/123.md`—, y el paquete movil deja de
+        // validar en cuanto hay ids duplicados.
+        const existingPath = findProcedureFilePath(id);
+        const targetPath = existingPath ?? path.join(PROCEDURES_DIR, sectionToSubfolder(space.section), `${id}.md`);
+        fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+        fs.writeFileSync(targetPath, buildProcedureFile(snapshot, space.section, slug, markdown), "utf8");
       }
     } catch (error) {
       failed++;
@@ -638,7 +665,10 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
 
   // Detect procedures that existed locally but were not discovered in this sync run
   if (!allowedProcedureIds) {
-    const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)));
+    if (failed > 0 || errors.length > 0) {
+      throw new Error(`Incomplete procedure sync; refusing withdrawals and publication: ${errors.join("; ")}`);
+    }
+    const discoveredIds = new Set(spaces.map((s) => resolveProcedureId(s, existingTitleMap)!));
     // Antes esto era Object.entries(loadExistingTitleMap()), y ese helper devuelve
     // un Map: Object.entries() sobre un Map da [], así que el bloque nunca llegó a
     // ejecutarse y ninguna baja real se detectaba. Además el destructuring estaba
@@ -653,14 +683,29 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
     // changelog público quedaría corrupto tras un PR grande y verosímil.
     assertDiscoveryIsPlausible(spaces.length, existingEntries.length, missing.length);
 
+    // Verify the complete withdrawal set before removing a single local file.
+    const withdrawals = [];
     for (const [existingId, existingTitle] of missing) {
+      const existing = readExistingProcedureMeta(existingId);
+      if (!existing || typeof existing.data.source !== "string") throw new Error(`Missing withdrawal provenance: ${existingId}`);
+      const response = await fetch(existing.data.source, { headers: HEADERS, signal: AbortSignal.timeout(20000) });
+      await response.body?.cancel();
+      assertConfirmedWithdrawal(response.status, existing.data.source);
+      withdrawals.push({ existingId, existingTitle, existing });
+    }
+    for (const { existingId, existingTitle, existing } of withdrawals) {
       changes.push({
         id: existingId,
         title: existingTitle,
         changeType: "deleted",
         changeKind: "eliminado",
+        source: String(existing.data.source),
+        procedurePath: existing.filePath,
+        diff: createPatch(existingId, existing.content.trim(), "", "", "", { context: 3 }),
         sourceUpdated: new Date().toISOString().slice(0, 10),
+        sourceHash: typeof existing.data.contentHash === "string" ? existing.data.contentHash : undefined,
       });
+      if (!dryRun) fs.unlinkSync(existing.filePath);
     }
   }
 
@@ -696,7 +741,7 @@ async function syncVademecum(dryRun: boolean): Promise<DomainResult> {
     "content/data/fluidos.json",
     "content/data/vademecum-comerciales.json",
   ];
-  const before = hashFiles(files);
+  const before = new Map(files.map((file) => [file, readJsonDataset(file) as Array<Record<string, unknown>>]));
 
   if (!dryRun) {
     execFileSync(process.execPath, ["--experimental-strip-types", "scripts/scrape-vademecum.ts"], {
@@ -705,8 +750,8 @@ async function syncVademecum(dryRun: boolean): Promise<DomainResult> {
     });
   }
 
-  const after = hashFiles(files);
-  const changes = diffHashes(before, after);
+  const kinds = ["drug", "perfusion", "fluid", "commercial"];
+  const changes = files.flatMap((file, index) => diffReferenceDataset(before.get(file) ?? [], readJsonDataset(file) as Array<Record<string, unknown>>, kinds[index]).map((change) => ({ ...change, source: file })));
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
 }
 
@@ -714,35 +759,54 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
   const files = [
     "content/data/codigos-incidente.json",
     "content/data/codigos-indicativos.json",
-    "content/data/codigos-claves.json",
+    "content/data/codigos-pc.json",
     "content/data/codigos-sva.json",
     "content/data/codigos-svb.json",
     "content/data/codigos-upsi.json",
     "content/data/codigos-upsq.json",
     "content/data/codigos-icao.json",
     "content/data/codigos-cheatsheet.json",
+    "content/data/codigos-lima.json",
   ];
-  const before = hashFiles(files);
+  const before = new Map(files.map((file) => [file, readJsonDataset(file)]));
 
   if (!dryRun) {
-    fs.mkdirSync(path.join(ROOT_DIR, "docs"), { recursive: true });
-    const knownOfficialDocs = [
-      "https://servpub.madrid.es/manualsamur/bin/download/Menu/Cabecera%20principal/Hoja%20resumen%20procedimiento%20radiotelef%C3%B3nico%20SAMUR-PC%20USVA/WebHome/Hoja-resumen-procedimiento-radiotelefonico-SAMUR-PC-USVA_202604.pdf",
-      "https://servpub.madrid.es/manualsamur/bin/download/Menu/Cabecera%20principal/Hoja%20resumen%20procedimiento%20radiotelef%C3%B3nico%20SAMUR-PC%20USVB/WebHome/Hoja-resumen-procedimiento-radiotelefonico-SAMUR-PC-USVB_202604.pdf",
-    ];
-
-    for (const url of knownOfficialDocs) {
-      try {
-        fs.writeFileSync(path.join(ROOT_DIR, "docs", decodeURIComponent(url.split("/").at(-1) ?? "codigos.pdf")), await fetchBuffer(url));
-      } catch {
-        // ignore
-      }
-    }
+    const procedure = readExistingProcedureMeta("121");
+    if (!procedure) throw new Error("Missing canonical radio procedure 121");
+    const attachments = procedure.data.attachments as ManualAttachment[];
+    const required = CODE_SOURCE_FILES.map((name) => {
+      const attachment = attachments.find((item) => item.localPath.endsWith(`/${name}`));
+      if (!attachment) throw new Error(`Missing official code source: ${name}`);
+      return attachment;
+    });
+    const failures = await downloadAttachments(required, false);
+    if (failures.length) throw new Error(`Code source download failed: ${failures.map((item) => item.sourceUrl).join(", ")}`);
+    const statePath = path.join(ROOT_DIR, "content/data/code-source-state.json");
+    const prior = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : {};
+    const { hashes, candidates } = buildCodeDatasetCandidates(ROOT_DIR, procedure.content, prior);
+    // Every candidate has passed coverage, uniqueness and loss checks before any JSON is written.
+    for (const [group, rows] of candidates) writeJsonDataset(`content/data/codigos-${group}.json`, rows);
+    if (JSON.stringify(prior) !== JSON.stringify(hashes)) fs.writeFileSync(statePath, JSON.stringify(hashes, null, 2) + "\n");
   }
 
-  const after = hashFiles(files);
-  const changes = diffHashes(before, after);
+  const changes = files.flatMap((file) => {
+    const group = path.basename(file, ".json").replace(/^codigos-/, "");
+    const codeGroup = group === "pc" ? "claves" : group;
+    return diffCodeDataset(before.get(file), readJsonDataset(file), codeGroup).map((change) => ({
+      ...change,
+      source: file,
+      diff: referenceRecordDiff(change.id,
+        (before.get(file) as Array<{ code: string }>).find((row) => `code:${codeGroup}:${row.code}` === change.id),
+        (readJsonDataset(file) as Array<{ code: string }>).find((row) => `code:${codeGroup}:${row.code}` === change.id)),
+    }));
+  });
   return { summary: summarizeChanges(changes, files.length), changes, errors: [] };
+}
+
+function readJsonDataset(relativePath: string): unknown {
+  const fullPath = path.join(ROOT_DIR, relativePath);
+  if (!fs.existsSync(fullPath)) return [];
+  try { return JSON.parse(fs.readFileSync(fullPath, "utf8")); } catch { return null; }
 }
 
 function writeJsonDataset(filePath: string, data: unknown) {
@@ -833,11 +897,7 @@ function emptyDomainResult(): DomainResult {
 function mergeEvents(existing: ManualUpdateEvent[], incoming: ManualUpdateEvent[]) {
   const byId = new Map(existing.map((event) => [event.eventId, event]));
   for (const event of incoming) byId.set(event.eventId, event);
-  return [...byId.values()].sort((a, b) => {
-    const ak = `${a.effectiveDate}|${a.approvedAt ?? ""}`;
-    const bk = `${b.effectiveDate}|${b.approvedAt ?? ""}`;
-    return bk.localeCompare(ak);
-  });
+  return capManualUpdateEvents([...byId.values()]);
 }
 
 function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpdateEvent[] {
@@ -859,8 +919,14 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         ? `${label}: ${change.id} ${change.title}`
         : `${domain} actualizado: ${change.title}`;
 
+      const identity = change.sourceHash
+        ?? (change.diff
+          ? createHash("sha256").update(change.diff).digest("hex")
+          : createHash("sha256").update(`${domain}:${change.id}:${change.changeType}:${change.title}`).digest("hex"));
       events.push({
-        eventId: `wiki:${run.id}:${domain}:${change.id}`,
+        // Do not include the sync timestamp: rerunning the same CI job must
+        // update the same event rather than append a duplicate.
+        eventId: `wiki:${domain}:${change.id}:${identity}`,
         origin: "wiki",
         officialUrl: change.source,
         procedureIds: domain === "procedures" ? [change.id] : [],
@@ -870,6 +936,9 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
         approvedAt,
         isRecent: false,
         diff: change.diff,
+        newHash: change.sourceHash,
+        category: change.category ?? (domain === "procedures" ? "procedure" : domain === "vademecum" ? "vademecum" : undefined),
+        routeKey: change.routeKey ?? (change.category === "codigo" ? change.id : undefined),
       });
     }
   }
@@ -953,6 +1022,10 @@ async function executeSync(options: SyncOptions) {
   if (options.domains.has("main")) results.main = await syncMain(options.dryRun);
 
   const finishedAt = new Date().toISOString();
+  const failures = Object.values(results).flatMap((result) => result.errors);
+  if (failures.length || Object.values(results).some((result) => result.summary.failed > 0)) {
+    throw new Error(`Incomplete sync; no approved snapshot will be published: ${failures.join("; ")}`);
+  }
   const run: ManualSyncRun = {
     id: finishedAt,
     startedAt,

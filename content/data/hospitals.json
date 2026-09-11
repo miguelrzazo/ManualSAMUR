@@ -6,11 +6,13 @@
     "shortName": "La Concepción",
     "address": "Av. Reyes Católicos, 2",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "lat": 40.4386,
     "lng": -3.719,
     "type": "public",
     "status4": 1,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HGM",
@@ -19,11 +21,13 @@
     "shortName": "Gregorio Marañón",
     "address": "C/ del Doctor Esquerdo, 46",
     "district": "Retiro",
+    "districtNumber": 3,
     "lat": 40.4186,
     "lng": -3.671,
     "type": "public",
     "status4": 2,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HDO",
@@ -32,11 +36,13 @@
     "shortName": "12 de Octubre",
     "address": "Av. de Córdoba, s/n",
     "district": "Usera",
+    "districtNumber": 12,
     "lat": 40.377429,
     "lng": -3.6966,
     "type": "public",
     "status4": 3,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HCL",
@@ -45,11 +51,13 @@
     "shortName": "Clínico San Carlos",
     "address": "C/ del Prof. Martín Lagos, s/n",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "lat": 40.4401,
     "lng": -3.7194,
     "type": "public",
     "status4": 5,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HLP",
@@ -58,11 +66,13 @@
     "shortName": "La Paz",
     "address": "Paseo de la Castellana, 261",
     "district": "Fuencarral-El Pardo",
+    "districtNumber": 8,
     "lat": 40.4818,
     "lng": -3.6872,
     "type": "public",
     "status4": 6,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HRC",
@@ -71,11 +81,13 @@
     "shortName": "Ramón y Cajal",
     "address": "Ctra. de Colmenar Viejo, km 9,100",
     "district": "Hortaleza",
+    "districtNumber": 16,
     "lat": 40.4865,
     "lng": -3.694,
     "type": "public",
     "status4": 7,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HPR",
@@ -84,11 +96,13 @@
     "shortName": "La Princesa",
     "address": "C/ de Diego de León, 62",
     "district": "Salamanca",
+    "districtNumber": 4,
     "lat": 40.4337,
     "lng": -3.6755,
     "type": "public",
     "status4": 8,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HIL",
@@ -97,11 +111,13 @@
     "shortName": "Infanta Leonor",
     "address": "Av. de la Gran Vía del Este, 80",
     "district": "Puente de Vallecas",
+    "districtNumber": 13,
     "lat": 40.386431,
     "lng": -3.616262,
     "type": "public",
     "status4": 9,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HGU",
@@ -110,11 +126,13 @@
     "shortName": "Gómez Ulla",
     "address": "Glorieta del Ejército, 1",
     "district": "Carabanchel",
-    "lat": 40.388770, 
+    "districtNumber": 11,
+    "lat": 40.38877,
     "lng": -3.748063,
     "type": "public",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": true
   },
   {
     "id": "HRB",
@@ -123,11 +141,13 @@
     "shortName": "Ruber Juan Bravo",
     "address": "C/ Juan Bravo, 49",
     "district": "Salamanca",
+    "districtNumber": 4,
     "lat": 40.4326,
     "lng": -3.6761,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HVA",
@@ -136,11 +156,13 @@
     "shortName": "Vithas Arturo Soria",
     "address": "C/ Arturo Soria, 103",
     "district": "Ciudad Lineal",
+    "districtNumber": 15,
     "lat": 40.4496,
-    "lng": -3.6520,
+    "lng": -3.652,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HLL",
@@ -149,11 +171,13 @@
     "shortName": "La Luz",
     "address": "C/ General Rodrigo, 8",
     "district": "Chamberí",
+    "districtNumber": 7,
     "lat": 40.4441,
     "lng": -3.7137,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HRI",
@@ -162,11 +186,13 @@
     "shortName": "Ruber Internacional",
     "address": "C/ de la Maso, 38",
     "district": "Fuencarral-El Pardo",
+    "districtNumber": 8,
     "lat": 40.4898,
     "lng": -3.7156,
     "type": "private",
     "status4": null,
-    "emergency": true
+    "emergency": true,
+    "autoDestination": false
   },
   {
     "id": "HCN",
@@ -175,11 +201,13 @@
     "shortName": "Clínica Navarra",
     "address": "C/ Marquesado de Santa Marta, 1",
     "district": "Moncloa-Aravaca",
+    "districtNumber": 9,
     "lat": 40.4485,
     "lng": -3.6246,
     "type": "private",
     "status4": null,
-    "emergency": false
+    "emergency": false,
+    "autoDestination": false
   },
   {
     "id": "HMD",
@@ -188,11 +216,13 @@
     "shortName": "MD Anderson",
     "address": "C/ Arturo Soria, 270",
     "district": "Hortaleza",
-    "lat": 40.4690,
+    "districtNumber": 16,
+    "lat": 40.469,
     "lng": -3.6533,
     "type": "private",
     "status4": null,
-    "emergency": false
+    "emergency": false,
+    "autoDestination": false
   },
   {
     "id": "HNJ",
@@ -201,76 +231,87 @@
     "shortName": "Niño Jesús",
     "address": "Av. Menéndez Pelayo, 65",
     "district": "Retiro",
+    "districtNumber": 3,
     "lat": 40.4138,
     "lng": -3.6768,
     "type": "public",
     "status4": null,
     "emergency": true,
-    "specialty": "pediatrics"
+    "specialty": "pediatrics",
+    "autoDestination": false
   },
-{
-  "id": "HSR",
-  "code": null,
-  "name": "Hospital San Rafael",
-  "shortName": "San Rafael",
-  "address": "Calle Serrano, 199",
-  "district": "Salamanca",
-  "lat": 40.437,
-  "lng": -3.687,
-  "type": "private",
-  "status4": null,
-  "emergency": true
-},
-{
-  "id": "HLM",
-  "code": null,
-  "name": "Hospital La Milagrosa",
-  "shortName": "La Milagrosa",
-  "address": "Calle Manuel Silvela, 19",
-  "district": "Salamanca",
-  "lat": 40.433,
-  "lng": -3.679,
-  "type": "private",
-  "status4": null,
-  "emergency": true
-},
-{
-  "id": "HMS",
-  "code": null,
-  "name": "Hospital Universitario HM Sanchinarro",
-  "shortName": "HM Sanchinarro",
-  "address": "Calle Oña, 10",
-  "district": "Hortaleza",
-  "lat": 40.4897,
-  "lng": -3.667,
-  "type": "private",
-  "status4": null,
-  "emergency": true
-},
-{
-  "id": "HSM",
-  "code": null,
-  "name": "Hospital Sanitas La Moraleja",
-  "shortName": "Sanitas La Moraleja",
-  "address": "Av Franciso Pi y Margall, 83",
-  "district": "Hortaleza",
-  "lat": 40.4923,
-  "lng": -3.663,
-  "type": "private",
-  "status4": null,
-  "emergency": true
-},
-{
-  "id": "HGE",
-  "code": null,
-  "name": "Hospital Universitario de Getafe",
-  "shortName": "Getafe",
-  "address": "Ctra. de Toledo, km 12,500",
-  "district": "Getafe",
-  "lat": 40.3128,
-  "lng": -3.7419,
-  "type": "public",
-  "status4": null,
-  "emergency": true
-}
+  {
+    "id": "HSR",
+    "code": null,
+    "name": "Hospital San Rafael",
+    "shortName": "San Rafael",
+    "address": "Calle Serrano, 199",
+    "district": "Salamanca",
+    "districtNumber": 4,
+    "lat": 40.437,
+    "lng": -3.687,
+    "type": "private",
+    "status4": null,
+    "emergency": true,
+    "autoDestination": false
+  },
+  {
+    "id": "HLM",
+    "code": null,
+    "name": "Hospital La Milagrosa",
+    "shortName": "La Milagrosa",
+    "address": "Calle Manuel Silvela, 19",
+    "district": "Salamanca",
+    "districtNumber": 4,
+    "lat": 40.433,
+    "lng": -3.679,
+    "type": "private",
+    "status4": null,
+    "emergency": true,
+    "autoDestination": false
+  },
+  {
+    "id": "HMS",
+    "code": null,
+    "name": "Hospital Universitario HM Sanchinarro",
+    "shortName": "HM Sanchinarro",
+    "address": "Calle Oña, 10",
+    "district": "Hortaleza",
+    "districtNumber": 16,
+    "lat": 40.4897,
+    "lng": -3.667,
+    "type": "private",
+    "status4": null,
+    "emergency": true,
+    "autoDestination": false
+  },
+  {
+    "id": "HSM",
+    "code": null,
+    "name": "Hospital Sanitas La Moraleja",
+    "shortName": "Sanitas La Moraleja",
+    "address": "Av Franciso Pi y Margall, 83",
+    "district": "Hortaleza",
+    "districtNumber": 16,
+    "lat": 40.4923,
+    "lng": -3.663,
+    "type": "private",
+    "status4": null,
+    "emergency": true,
+    "autoDestination": false
+  },
+  {
+    "id": "HGE",
+    "code": null,
+    "name": "Hospital Universitario de Getafe",
+    "shortName": "Getafe",
+    "address": "Ctra. de Toledo, km 12,500",
+    "district": "Getafe",
+    "lat": 40.3128,
+    "lng": -3.7419,
+    "type": "public",
+    "status4": null,
+    "emergency": true,
+    "autoDestination": false
+  }
 ]

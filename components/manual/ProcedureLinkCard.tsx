@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ProcedureMeta } from "@/lib/content";
+import type { ProcedureNavMeta } from "@/lib/content";
 
 const SECTION_COLORS: Record<string, string> = {
   Administrativos: "text-slate-500",
@@ -17,7 +17,7 @@ const SECTION_COLORS: Record<string, string> = {
 interface Props {
   title: string;
   icon: React.ReactNode;
-  procedures: ProcedureMeta[];
+  procedures: ProcedureNavMeta[];
   emptyLabel?: string;
   previewByProcedureId?: Record<string, string>;
 }

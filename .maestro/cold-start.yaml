@@ -1,0 +1,38 @@
+# Cold-start regression: the shell must become interactive before deferred
+# content integrity work can monopolise the React Native JS thread.
+appId: es.madrid.samur.manual
+tags:
+  - ci
+  - smoke
+  - cold-start
+---
+- stopApp
+- launchApp
+
+# Expo development clients start on the server picker when no bundle is loaded.
+- tapOn:
+    text: "8081"
+    optional: true
+
+# First-use disclosure is only shown on a fresh local install.
+- tapOn:
+    text: "Entendido, abrir el manual"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: "app-interactive-shell"
+    timeout: 1500
+- assertVisible:
+    id: "settings-button"
+- assertVisible: "Inicio"
+- assertVisible: "Códigos"
+- assertVisible: "Vademécum"
+- assertVisible: "Mapa"
+- tapOn:
+    id: "settings-button"
+- extendedWaitUntil:
+    visible:
+      text: "Información y ajustes"
+    timeout: 1000
+- assertVisible: "Apariencia"

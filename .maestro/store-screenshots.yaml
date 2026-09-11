@@ -1,0 +1,144 @@
+# Capturas para la ficha de la App Store, tomadas de la candidata firmada.
+#
+# Se ejecuta contra un iPhone de 6,9" (17 Pro Max), que es el unico tamano que
+# Apple exige. Solo toca contenido del propio manual y elementos guardados que
+# crea este mismo recorrido: no hay datos de pacientes, ni identificadores
+# personales, ni banners de desarrollo.
+#
+# Las capturas salen en el directorio desde el que se lanza Maestro. La lista
+# larga de doce escenas de `apps/mobile/release/screenshot-shot-list-es.md` es
+# evidencia de release; esto es el subconjunto que se publica.
+appId: es.madrid.samur.manual
+tags:
+  - store
+---
+- launchApp:
+    clearState: true
+
+# Un cliente de desarrollo arranca en el selector de servidor; en la candidata
+# firmada no aparece, de ahi que sea opcional.
+- tapOn:
+    text: "8081"
+    optional: true
+
+# El cliente de desarrollo puede no descubrir el servidor local automáticamente.
+# Solo se usa como ruta provisional cuando no hay una candidata firmada instalada.
+- runFlow:
+    when:
+      visible: "Enter URL manually"
+    commands:
+      - tapOn: "Enter URL manually"
+      - tapOn: "http://"
+      - inputText: "http://[::1]:8081"
+      - tapOn: "Connect"
+
+# ─── 1 · Primer arranque: el aviso de que no es oficial ─────────────────────
+- extendedWaitUntil:
+    visible:
+      text: "Entendido, abrir el manual"
+    timeout: 30000
+- takeScreenshot: store-01-primer-arranque
+- tapOn: "Entendido, abrir el manual"
+
+# La candidata actual puede mostrar el intersticial de APTA Academy en el primer
+# arranque; el recorrido de la ficha debe continuar sin convertirlo en una escena
+# de producto ni depender de que el slot promocional esté habilitado.
+- runFlow:
+    when:
+      visible: "Continuar a la app"
+    commands:
+      - tapOn: "Continuar a la app"
+
+# ─── 2 · Inicio: el manual entero, disponible sin conexion ──────────────────
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 20000
+- takeScreenshot: store-02-inicio
+
+# ─── 3 · Procedimiento con tabla clinica ────────────────────────────────────
+- tapOn:
+    id: "manual-search-input"
+    optional: true
+- tapOn:
+    text: "Buscar en el manual"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "manual-search-input"
+    timeout: 10000
+- tapOn:
+    id: "manual-search-input"
+- inputText: "304_02"
+- extendedWaitUntil:
+    visible:
+      id: "procedure-row-304_02"
+    timeout: 15000
+- takeScreenshot: store-03-buscar
+- tapOn:
+    id: "procedure-row-304_02"
+- extendedWaitUntil:
+    visible:
+      text: "Contenido del procedimiento"
+    timeout: 10000
+- takeScreenshot: store-04-procedimiento
+
+# La tabla se busca bajando: es lo que distingue a este lector de un visor de
+# markdown cualquiera, asi que merece su propia captura.
+- repeat:
+    times: 6
+    commands:
+      - swipe:
+          start: "50%, 80%"
+          end: "50%, 20%"
+          duration: 200
+- takeScreenshot: store-05-tabla-clinica
+
+# El detalle de procedimiento es un stack screen y no muestra la barra de tabs;
+# usa su control flotante Inicio antes de recorrer las referencias hermanas.
+- tapOn:
+    point: "7%, 94%"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 10000
+
+# ─── 4 · Vademecum ──────────────────────────────────────────────────────────
+- tapOn: "Vademécum"
+- extendedWaitUntil:
+    visible:
+      text: "Vademécum"
+    timeout: 10000
+- takeScreenshot: store-06-vademecum
+
+# ─── 5 · Codigos ────────────────────────────────────────────────────────────
+- tapOn: "Códigos"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos y claves"
+    timeout: 10000
+- takeScreenshot: store-07-codigos
+
+# ─── 6 · Mapa ───────────────────────────────────────────────────────────────
+# Sin conceder la ubicacion: la captura tiene que ensenar que el directorio y el
+# esquema funcionan igual, que es justo lo que promete la ficha.
+- tapOn: "Mapa"
+- extendedWaitUntil:
+    visible:
+      text: "Mapa"
+    timeout: 10000
+- takeScreenshot: store-08-mapa
+
+# ─── 7 · Ajustes: estado de sincronizacion y fuente oficial ────────────────
+- tapOn: "Inicio"
+- extendedWaitUntil:
+    visible:
+      text: "Códigos"
+    timeout: 10000
+- tapOn:
+    text: "Ajustes"
+    optional: true
+- tapOn:
+    id: "open-settings"
+    optional: true
+- takeScreenshot: store-09-ajustes

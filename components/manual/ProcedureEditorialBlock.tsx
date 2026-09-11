@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight, FileText, GalleryVerticalEnd, Network, NotebookPen, Paperclip, Pill, Siren, Stethoscope, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { ProcedureMeta } from "@/lib/content";
+import type { Procedure, ProcedureNavMeta } from "@/lib/content";
 import {
   Checklist,
   MermaidDiagram,
@@ -19,8 +19,8 @@ import { toCapitalCase } from "@/lib/title-case";
 
 interface Props {
   block: ProcedureEditorialBlock;
-  procedure: ProcedureMeta & { content: string; attachments: ManualAttachment[] };
-  allProcedures: ProcedureMeta[];
+  procedure: Procedure;
+  allProcedures: ProcedureNavMeta[];
 }
 
 function filenameFromPath(pathname: string) {
@@ -108,7 +108,7 @@ function RelatedLinks({
   procedures,
 }: {
   items: ProcedureEditorialBlock["items"];
-  procedures: ProcedureMeta[];
+  procedures: ProcedureNavMeta[];
 }) {
   const procedureById = new Map(procedures.map((procedure) => [procedure.id, procedure]));
   const resolved = [
