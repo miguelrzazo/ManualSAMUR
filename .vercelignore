@@ -13,6 +13,11 @@ tests
 # La app Expo es un workspace aparte, con su propio package.json. No forma parte
 # del despliegue web y sin excluirla Next intenta compilarla.
 apps/mobile
+!apps/mobile/
+apps/mobile/*
+!apps/mobile/assets/
+apps/mobile/assets/*
+!apps/mobile/assets/apta-blue-tutor.png
 HistoricoActualizaciones_abril 2026.pdf.pdf
 *.log
 *.tmp
