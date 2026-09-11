@@ -21,7 +21,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "deploymentTarget": "16.4",
-      "buildNumber": "7",
+      "buildNumber": "8",
       "icon": {
         "light": "./assets/icon-ios-light.png",
         "dark": "./assets/icon-ios-dark.png",
