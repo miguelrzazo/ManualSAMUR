@@ -4,7 +4,8 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, ExternalLink, Sparkles } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import aptaBlueTutor from "../../apps/mobile/assets/apta-blue-tutor.png";
+
+const aptaBlueTutor = "/assets/apta-blue-tutor.png";
 
 // PROTOTYPE — three APTA Academy placements for Settings, switchable with ?variant=.
 const VARIANTS = ["A", "B", "C"] as const;
@@ -55,7 +56,7 @@ function AppHeader() {
 }
 
 function Mascot({ className = "h-48 w-40" }: { className?: string }) {
-  return <Image src={aptaBlueTutor} alt="Lince azul de APTA Academy" className={`object-contain ${className}`} />;
+  return <Image src={aptaBlueTutor} alt="Lince azul de APTA Academy" width={1254} height={1254} className={`object-contain ${className}`} />;
 }
 
 function VariantA() {

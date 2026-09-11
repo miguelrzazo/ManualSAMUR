@@ -10,8 +10,9 @@ tests
 # cualquier profundidad, public/docs/ incluido, y eso dejaba TODOS los PDF del
 # sitio en 404 en producción: los adjuntos de las fichas nunca se subían.
 /docs
-# La web comparte un recurso estático con la app Expo; no excluimos el workspace
-# porque el prototipo de academia importa esa imagen durante el build web.
+# La app Expo es un workspace aparte, con su propio package.json. No forma parte
+# del despliegue web.
+apps/mobile
 HistoricoActualizaciones_abril 2026.pdf.pdf
 *.log
 *.tmp
