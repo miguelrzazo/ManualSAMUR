@@ -32,7 +32,7 @@ function shapedSnapshot(digit: string): MobileSnapshot {
     hash: digit.repeat(64),
     contentHash: digit.repeat(64),
     packageHash: digit.repeat(64),
-    content: { procedures: [], relationsIndex: { codes: {} } } as MobileSnapshot["content"],
+    content: { procedures: [], relationsIndex: { codes: {} } } as unknown as MobileSnapshot["content"],
   };
 }
 

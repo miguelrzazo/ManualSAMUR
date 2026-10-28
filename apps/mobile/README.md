@@ -168,3 +168,14 @@ review accessibility and reference-device evidence, provide signed iOS and Andro
 hash/size/signing provenance, and explicitly approve TestFlight and Google Play internal testing.
 App Store and Play submission, production rollout, pause/halt, and rollback remain separate human
 decisions; the repository's release tooling never performs those actions.
+
+
+### Origen Cloudflare y anexos actualizables
+
+Configura `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` con el origen HTTPS real de la publicación Cloudflare, sin ruta. La configuración nativa incorpora este valor al compilar; cambiarlo requiere una nueva build. No hay origen Vercel ni puente de compatibilidad. Las builds con `EAS_BUILD_PROFILE=production` o `NODE_ENV=production` fallan si falta el valor. En desarrollo, el contenido incluido sigue disponible y la comprobación remota muestra el error de configuración.
+
+La app comprueba metadatos al abrirse y al volver al primer plano según el intervalo existente. Después de activar contenido, al abrirse o al recuperar Wi-Fi, actualiza los anexos nuevos o modificados mientras está activa. En Ajustes se muestra el almacenamiento local y se ofrece «Descargar ahora (permite datos móviles)». La autorización de datos móviles corresponde a esa ejecución; las ejecuciones automáticas siguientes vuelven a exigir Wi-Fi. La descarga automática se cancela al perder Wi-Fi o pasar la app a segundo plano.
+
+Cada archivo se valida por tamaño y SHA-256. Las revisiones usan nombres distintos y la anterior permanece utilizable hasta guardar la nueva verificada. Los fallos, descargas interrumpidas o archivos corruptos no sustituyen una copia válida. Una copia antigua se identifica en el visor; los recursos incluidos en el binario se verifican contra sus metadatos incluidos y nunca se sobrescriben.
+
+Esto requiere una nueva build nativa para enlazar `expo-network`. No se promete ejecución ni comprobación periódica con la aplicación cerrada. Debe verificarse en un dispositivo real el cambio de Wi-Fi a datos y la recuperación tras cerrar la app durante una descarga.

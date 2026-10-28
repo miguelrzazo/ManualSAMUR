@@ -938,6 +938,7 @@ export function rewriteAttachmentLinks(content: string, attachments: ManualAttac
     const escapedFilename = escapeRegExp(decodeURIComponent(attachment.sourceUrl.split("/").at(-1)?.split("?")[0] ?? ""));
 
     return nextContent
+      .replace(new RegExp(`attach:[^\\n)\\]]*?@${escapedFilename}(?:\\|\\|[^\\n\\]]+)?`, "g"), attachment.localPath)
       .replace(new RegExp(`attach:${escapedFilename}(?:\\|\\|[^\\n\\]]+)?`, "g"), attachment.localPath)
       .replace(new RegExp(`attach:${escapedFilename}(?=\\]\\])`, "g"), attachment.localPath)
       .replace(new RegExp(`attach:${escapedFilename}`, "g"), attachment.localPath)
@@ -967,7 +968,7 @@ function addAttachment(
   if (!isSupportedAttachment(filename)) return;
 
   const source = isRemoteUrl(filename) ? filename : buildXWikiAttachmentUrl(sourceUrl, filename);
-  const localFilename = isRemoteUrl(filename) ? remoteFilename(filename) : filename;
+  const localFilename = isRemoteUrl(filename) ? remoteFilename(filename) : filename.split("@").at(-1)!;
   attachments.set(source, {
     sourceUrl: source,
     localPath: localAttachmentPath(procedureId, localFilename),
@@ -998,6 +999,14 @@ function remoteFilename(value: string) {
 }
 
 function buildXWikiAttachmentUrl(sourceUrl: string, filename: string) {
+  const separator = filename.lastIndexOf("@");
+  if (separator >= 0) {
+    const document = filename.slice(0, separator).replace(/^xwiki:/, "");
+    const attachment = filename.slice(separator + 1);
+    const parts = document.split(/(?<!\\)\./).map((part) => part.replace(/\\(.)/g, "$1"));
+    const base = new URL(sourceUrl);
+    return `${base.origin}/manualsamur/bin/download/${parts.map(encodeURIComponent).join("/")}/${encodeURIComponent(attachment)}`;
+  }
   const pagePath = sourceUrl
     .replace("/bin/view/", "/bin/download/")
     .replace(/\/WebHome\/?$/i, "")

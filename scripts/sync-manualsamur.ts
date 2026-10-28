@@ -30,7 +30,6 @@ import {
   resolveStableProcedureIdForSource,
   isContainerSpace,
   rewriteAttachmentLinks,
-  markAttachmentUnavailable,
   stableContentHash,
   summarizeChanges,
   withPendingChanges,
@@ -57,20 +56,23 @@ import {
   parseMainLinksFromHtml,
   readMainLinksData,
 } from "../lib/main-content.ts";
+import { recoverAttachmentDownload } from "../lib/sync-attachments.ts";
+import { withSyncWorkspace, mergeProcedureSourceFields } from "../lib/sync-workspace.ts";
 import { diffCodeDataset } from "../lib/codigos-sync-logic.ts";
 import { buildCodeDatasetCandidates, CODE_SOURCE_FILES } from "../lib/code-dataset-candidates.ts";
 import { diffReferenceDataset, referenceRecordDiff } from "../lib/reference-dataset-sync.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT_DIR = path.join(__dirname, "..");
+const CHECKOUT_DIR = path.join(__dirname, "..");
+let ROOT_DIR = CHECKOUT_DIR;
 const WIKI_BASE = "https://servpub.madrid.es/manualsamur";
 const REST_BASE = `${WIKI_BASE}/rest/wikis/xwiki`;
 // Host del wiki, para distinguir los procedimientos que este sync puede dar de baja
 // de los que nunca descubre por no venir de él. Hoy el corpus es 100% de este wiki.
 const WIKI_BASE_HOST = "servpub.madrid.es";
-const PROCEDURES_DIR = path.join(ROOT_DIR, "content/procedures");
-const METADATA_PATH = path.join(ROOT_DIR, "content/data/manual-sync.json");
+function proceduresDir() { return path.join(ROOT_DIR, "content/procedures"); }
+function metadataPath() { return path.join(ROOT_DIR, "content/data/manual-sync.json"); }
 const DELAY_MS = 650;
 const MAIN_PAGE_URL = `${WIKI_BASE}/bin/view/Main/`;
 const MAIN_ABBREVIATIONS_URL = `${WIKI_BASE}/bin/view/Menu/Cabecera%20principal/Abreviaturas/WebHome`;
@@ -91,6 +93,7 @@ const HEADERS = {
 interface SyncOptions {
   command: "detect" | "apply" | "ingest-official-pdf";
   dryRun: boolean;
+  propose: boolean;
   domains: Set<SyncDomain>;
   ids: Set<string>;
   officialPdfUrl?: string;
@@ -132,6 +135,7 @@ function parseArgs(argv: string[]): SyncOptions {
   return {
     command,
     dryRun,
+    propose: args.includes("--propose"),
     domains: requested,
     ids,
     officialPdfUrl,
@@ -184,7 +188,7 @@ function normalizeTitle(value: string) {
 
 function walkProceduresDir(): string[] {
   const files: string[] = [];
-  if (!fs.existsSync(PROCEDURES_DIR)) return files;
+  if (!fs.existsSync(proceduresDir())) return files;
   function walk(dir: string) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, entry.name);
@@ -192,7 +196,7 @@ function walkProceduresDir(): string[] {
       else if (entry.isFile() && entry.name.endsWith(".md")) files.push(p);
     }
   }
-  walk(PROCEDURES_DIR);
+  walk(proceduresDir());
   return files;
 }
 
@@ -289,7 +293,7 @@ function assertEveryProcedureHasId(spaces: ProcedureSpace[], existingTitleMap: M
 }
 
 function findProcedureFilePath(id: string): string | null {
-  const flat = path.join(PROCEDURES_DIR, `${id}.md`);
+  const flat = path.join(proceduresDir(), `${id}.md`);
   if (fs.existsSync(flat)) return flat;
   for (const filePath of walkProceduresDir()) {
     const raw = fs.readFileSync(filePath, "utf8");
@@ -308,7 +312,7 @@ function readExistingProcedureSnapshot(id: string): ProcedureSnapshot | null {
 
   return {
     id: typeof data.id === "string" ? data.id : id,
-    title: typeof data.title === "string" ? data.title : id,
+    title: typeof data.sourceTitle === "string" ? data.sourceTitle : typeof data.title === "string" ? data.title : id,
     source: typeof data.source === "string" ? data.source : "",
     sourceUpdated: typeof data.sourceUpdated === "string" ? data.sourceUpdated : typeof data.updated === "string" ? data.updated : "",
     contentHash: typeof data.contentHash === "string" ? data.contentHash : stableContentHash(parsed.content),
@@ -325,22 +329,6 @@ function readExistingProcedureMeta(id: string): { filePath: string; content: str
     content: parsed.content,
     data: parsed.data as Record<string, unknown>,
   };
-}
-
-function writeProcedureMetadataOnly(
-  existing: { filePath: string; content: string; data: Record<string, unknown> },
-  snapshot: ProcedureSnapshot,
-) {
-  const frontmatter = {
-    ...existing.data,
-    updated: snapshot.sourceUpdated,
-    sourceUpdated: snapshot.sourceUpdated,
-    source: snapshot.source,
-    contentHash: snapshot.contentHash,
-    attachments: snapshot.attachments,
-  };
-  const output = matter.stringify(`${existing.content.trim()}\n`, frontmatter);
-  fs.writeFileSync(existing.filePath, output, "utf8");
 }
 
 function extractRawFromPlainPage(html: string) {
@@ -412,11 +400,13 @@ function validateProcedure(title: string, markdown: string, attachments: ManualA
   return [];
 }
 
-function buildProcedureFile(snapshot: ProcedureSnapshot, section: string, slug: string, markdown: string) {
+function buildProcedureFile(snapshot: ProcedureSnapshot, section: string, slug: string, markdown: string, existing?: Record<string, unknown>) {
   const frontmatter = {
     id: snapshot.id,
     title: snapshot.title,
+    sourceTitle: snapshot.title,
     section,
+    sourceSection: section,
     slug,
     tags: [],
     synonyms: [],
@@ -431,7 +421,7 @@ function buildProcedureFile(snapshot: ProcedureSnapshot, section: string, slug: 
     lastApprovedOfficialUpdateAt: "",
   };
 
-  return matter.stringify(`${markdown.trim()}\n`, frontmatter);
+  return matter.stringify(`${markdown.trim()}\n`, mergeProcedureSourceFields(frontmatter, existing));
 }
 
 async function discoverProcedureSpaces() {
@@ -530,8 +520,8 @@ async function downloadAttachments(attachments: ManualAttachment[], dryRun: bool
   return failures;
 }
 
-async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>): Promise<DomainResult> {
-  fs.mkdirSync(PROCEDURES_DIR, { recursive: true });
+async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>, propose = false): Promise<DomainResult> {
+  fs.mkdirSync(proceduresDir(), { recursive: true });
 
   const discovered = await discoverProcedureSpaces();
   const existingTitleMap = loadExistingTitleMap();
@@ -619,7 +609,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         changeType,
         changeKind,
         blockedByEditorial,
-        procedurePath: existingMeta?.filePath,
+        procedurePath: existingMeta ? path.relative(ROOT_DIR, existingMeta.filePath) : undefined,
         sourceUpdated,
         source: space.url,
         diff: contentDiff,
@@ -627,21 +617,22 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
       });
 
       if (!dryRun && changeType !== "unchanged") {
-        if (blockedByEditorial && existingMeta) {
-          writeProcedureMetadataOnly(existingMeta, snapshot);
-          continue;
-        }
+        if (blockedByEditorial && !propose) continue;
 
         const attachmentFailures = await downloadAttachments(attachments, false);
         attachmentFailuresForReport.push(...attachmentFailures);
         const unavailableBySource = new Map(attachmentFailures.map((failure) => [failure.sourceUrl, failure]));
         snapshot.attachments = snapshot.attachments.map((attachment) => {
           const failure = unavailableBySource.get(attachment.sourceUrl);
-          if (failure) markdown = markdown.replaceAll(attachment.localPath, attachment.sourceUrl);
-          return failure ? markAttachmentUnavailable(attachment, failure) : attachment;
+          if (!failure) return attachment;
+          const recovered = recoverAttachmentDownload(attachment, existingSnapshot?.attachments ?? [], failure,
+            (localPath) => fs.existsSync(path.join(ROOT_DIR, "public", localPath.replace(/^\/+/, ""))));
+          markdown = markdown.replaceAll(attachment.localPath,
+            recovered.availability === "unavailable" ? attachment.sourceUrl : recovered.localPath);
+          return recovered;
         });
         for (const failure of attachmentFailures) {
-          errors.push(`${space.title}: adjunto no descargado ${failure.sourceUrl} (${failure.error})`);
+          console.error(`[sync] ${space.title}: adjunto no descargado ${failure.sourceUrl} (${failure.error})`);
         }
 
         const slug = `${id}-${slugify(space.title)}`.slice(0, 90);
@@ -653,9 +644,9 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         // `tecnicas/123.md` y `comunicaciones/123.md`—, y el paquete movil deja de
         // validar en cuanto hay ids duplicados.
         const existingPath = findProcedureFilePath(id);
-        const targetPath = existingPath ?? path.join(PROCEDURES_DIR, sectionToSubfolder(space.section), `${id}.md`);
+        const targetPath = existingPath ?? path.join(proceduresDir(), sectionToSubfolder(space.section), `${id}.md`);
         fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-        fs.writeFileSync(targetPath, buildProcedureFile(snapshot, space.section, slug, markdown), "utf8");
+        fs.writeFileSync(targetPath, buildProcedureFile(snapshot, space.section, slug, markdown, existingMeta?.data), "utf8");
       }
     } catch (error) {
       failed++;
@@ -700,7 +691,7 @@ async function syncProcedures(dryRun: boolean, allowedProcedureIds?: Set<string>
         changeType: "deleted",
         changeKind: "eliminado",
         source: String(existing.data.source),
-        procedurePath: existing.filePath,
+        procedurePath: path.relative(ROOT_DIR, existing.filePath),
         diff: createPatch(existingId, existing.content.trim(), "", "", "", { context: 3 }),
         sourceUpdated: new Date().toISOString().slice(0, 10),
         sourceHash: typeof existing.data.contentHash === "string" ? existing.data.contentHash : undefined,
@@ -744,8 +735,9 @@ async function syncVademecum(dryRun: boolean): Promise<DomainResult> {
   const before = new Map(files.map((file) => [file, readJsonDataset(file) as Array<Record<string, unknown>>]));
 
   if (!dryRun) {
-    execFileSync(process.execPath, ["--experimental-strip-types", "scripts/scrape-vademecum.ts"], {
-      cwd: ROOT_DIR,
+    execFileSync(process.execPath, ["--experimental-strip-types", path.join(CHECKOUT_DIR, "scripts/scrape-vademecum.ts")], {
+      cwd: CHECKOUT_DIR,
+      env: { ...process.env, MANUALSAMUR_SYNC_ROOT: ROOT_DIR },
       stdio: "inherit",
     });
   }
@@ -835,6 +827,7 @@ async function syncMain(dryRun: boolean): Promise<DomainResult> {
       const abbreviationSections = parseAbbreviationsFromHtml(abbreviationsHtml);
       const collaborators = parseCollaboratorsFromHtml(collaboratorsHtml, MAIN_COLLABORATORS_URL);
       const mainLinks = parseMainLinksFromHtml(mainHtml, MAIN_PAGE_URL);
+      if (!mainLinks.manualVersion) throw new Error("Official manual version missing from homepage; refusing to infer an edition from its edit date");
 
       // Antes de escribir: si el parser no saco nada de una pagina que si traia
       // contenido y antes habia datos, es que el marcado cambio. Abortar en vez de
@@ -947,7 +940,7 @@ function runChangesToEvents(run: ManualSyncRun, approvedAt?: string): ManualUpda
 }
 
 function saveMetadata(metadata: ReturnType<typeof readManualSyncMetadata>) {
-  fs.writeFileSync(METADATA_PATH, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
+  fs.writeFileSync(metadataPath(), `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
 }
 
 function extractDateFromPath(filePath: string) {
@@ -1008,15 +1001,15 @@ async function executeSync(options: SyncOptions) {
     main: emptyDomainResult(),
   };
 
-  const applyMode = options.command === "apply";
+  const applyMode = options.command === "apply" && !options.propose;
   const metadataBefore = readManualSyncMetadata(ROOT_DIR);
 
   let allowedProcedureIds: Set<string> | undefined;
-  if (applyMode && options.ids.size > 0) {
+  if (options.command === "apply" && options.ids.size > 0) {
     allowedProcedureIds = options.ids;
   }
 
-  if (options.domains.has("procedures")) results.procedures = await syncProcedures(options.dryRun, allowedProcedureIds);
+  if (options.domains.has("procedures")) results.procedures = await syncProcedures(options.dryRun, allowedProcedureIds, options.propose);
   if (options.domains.has("vademecum")) results.vademecum = await syncVademecum(options.dryRun);
   if (options.domains.has("codigos")) results.codigos = await syncCodigos(options.dryRun);
   if (options.domains.has("main")) results.main = await syncMain(options.dryRun);
@@ -1111,7 +1104,12 @@ async function main() {
     return;
   }
 
-  await executeSync(options);
+  if (options.dryRun) await executeSync(options);
+  else await withSyncWorkspace(CHECKOUT_DIR, async (candidate) => {
+    ROOT_DIR = candidate;
+    try { await executeSync(options); }
+    finally { ROOT_DIR = CHECKOUT_DIR; }
+  });
 }
 
 main().catch((error) => {

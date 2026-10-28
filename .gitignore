@@ -66,3 +66,8 @@ apps/mobile/android/
 # Release build outputs and evidence written by mobile:release:evidence / local builds.
 # The IPA alone is 72 MB; provenance lives in the evidence JSON, not in git.
 /artifacts/
+/.wrangler/
+/.cloudflare/
+.dev.vars*
+/backend/worker-configuration.d.ts
+/worker-startup.cpuprofile
