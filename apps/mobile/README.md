@@ -172,7 +172,7 @@ decisions; the repository's release tooling never performs those actions.
 
 ### Origen Cloudflare y anexos actualizables
 
-Configura `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` con el origen HTTPS real de la publicación Cloudflare, sin ruta. La configuración nativa incorpora este valor al compilar; cambiarlo requiere una nueva build. No hay origen Vercel ni puente de compatibilidad. Las builds con `EAS_BUILD_PROFILE=production` o `NODE_ENV=production` fallan si falta el valor. En desarrollo, el contenido incluido sigue disponible y la comprobación remota muestra el error de configuración.
+Las nuevas builds ya toman por defecto `https://manualsamur.miguelrzazo13.workers.dev`, la publicación Cloudflare desplegada. Puedes sobrescribirlo con `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` para probar otro entorno HTTPS, sin ruta. La configuración nativa incorpora este valor al compilar; cambiarlo requiere una nueva build. No hay origen Vercel ni puente de compatibilidad. Las builds de producción rechazan un origen ausente o inválido.
 
 La app comprueba metadatos al abrirse y al volver al primer plano según el intervalo existente. Después de activar contenido, al abrirse o al recuperar Wi-Fi, actualiza los anexos nuevos o modificados mientras está activa. En Ajustes se muestra el almacenamiento local y se ofrece «Descargar ahora (permite datos móviles)». La autorización de datos móviles corresponde a esa ejecución; las ejecuciones automáticas siguientes vuelven a exigir Wi-Fi. La descarga automática se cancela al perder Wi-Fi o pasar la app a segundo plano.
 

@@ -3,7 +3,7 @@
 const { expo } = require("./app.json");
 
 module.exports = () => {
-  const origin = process.env.EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN;
+  const origin = process.env.EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN || expo.extra?.manualContentOrigin;
   if ((process.env.EAS_BUILD_PROFILE === "production" || process.env.NODE_ENV === "production") && !origin) {
     throw new Error("Configura EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN con el origen Cloudflare antes de generar la release.");
   }

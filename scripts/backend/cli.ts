@@ -37,11 +37,21 @@ function runWrangler(argv: string[], capture = false): string {
 }
 
 function execute<T = Record<string, unknown>>(text: string, read = false): T[] {
+  const base = ['d1', 'execute', 'DB', ...environmentArgs, remote ? '--remote' : '--local'];
+  if (read) {
+    // Remote --file uses the SQL-import API: it emits progress even with --json
+    // and returns import statistics, not SELECT rows. Queries must use --command.
+    // These are fixed SELECT statements containing only non-secret identifiers.
+    const output = runWrangler([...base, '--command', text, '--json'], true);
+    const results = JSON.parse(output) as Array<{ results?: T[]; success?: boolean }>;
+    if (results.some((result) => result.success === false)) throw new Error('D1 rejected the query.');
+    return results.flatMap((result) => result.results || []);
+  }
   const file = path.join(tmp, `${randomUUID()}.sql`); fs.writeFileSync(file, text, { mode: 0o600 });
-  const output = runWrangler(['d1', 'execute', 'DB', ...environmentArgs, remote ? '--remote' : '--local', '--file', file, '--yes', '--json'], true);
-  const results = JSON.parse(output) as Array<{ results?: T[]; success?: boolean }>;
-  if (results.some((result) => result.success === false)) throw new Error('D1 rejected the operation.');
-  return read ? results.flatMap((result) => result.results || []) : [];
+  // Mutation bodies stay in private files rather than process arguments. Wrangler
+  // exits nonzero on import failure; do not parse the human progress stream.
+  runWrangler([...base, '--file', file, '--yes', '--json'], true);
+  return [];
 }
 
 function seed() {

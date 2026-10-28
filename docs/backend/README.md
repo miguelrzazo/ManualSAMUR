@@ -69,6 +69,9 @@ Las pruebas usan claves y bases SQLite sintéticas.
 
 ## Primer despliegue por CLI
 
+Los permisos y la entrada segura de credenciales están detallados en
+[credentials.md](credentials.md).
+
 1. Renovar OAuth con `npx wrangler login`. La cuenta debe continuar en Workers Free.
 2. Crear la base con `npx wrangler d1 create manualsamur-production` y guardar el
    `database_id` devuelto en `wrangler.jsonc`, binding `env.production.DB`.
@@ -107,8 +110,9 @@ Las pruebas usan claves y bases SQLite sintéticas.
    pendientes; la UI conserva los cambios y explica que no puede publicar.
 7. Comprobar la salud, el contrato móvil, una descarga de adjunto, el PDF público,
    la denegación de acceso anónimo y el acceso de la identidad autorizada.
-8. Configurar `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` con el origen Cloudflare real
-   antes de las nuevas builds móviles. No existe puente con la URL antigua de Vercel.
+8. Las nuevas builds móviles ya usan el origen Cloudflare de producción registrado
+   en `apps/mobile/app.json`. `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` permite probar otro
+   entorno. No existe puente con la URL antigua de Vercel.
 
 Las configuraciones remotas, Access y los jobs GitHub deben probarse con las
 credenciales reales antes de considerar el sistema desplegado.

@@ -64,6 +64,8 @@
       "./plugins/with-android-release-signing",
       "expo-sharing"
     ],
-    "extra": {}
+    "extra": {
+      "manualContentOrigin": "https://manualsamur.miguelrzazo13.workers.dev"
+    }
   }
 }
