@@ -16,7 +16,7 @@ Publicación coherente
 ```
 
 La PR es la frontera editorial: hasta que no se aprueba y se mezcla, un cambio está
-detectado pero no publicado. Vercel despliega el resultado del merge; la publicación se
+detectado pero no publicado. Cloudflare Workers despliega el resultado del merge; la publicación se
 considera correcta cuando metadata, paquete y contenido web comparten la misma identidad.
 
 ## Qué es cada cosa

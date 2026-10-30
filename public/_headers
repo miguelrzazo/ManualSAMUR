@@ -1,0 +1,6 @@
+# Cloudflare Workers static assets headers (replaces the old vercel.json).
+# Official PDFs open inline in the browser and are never content-sniffed.
+/docs/*
+  Content-Type: application/pdf
+  Content-Disposition: inline
+  X-Content-Type-Options: nosniff

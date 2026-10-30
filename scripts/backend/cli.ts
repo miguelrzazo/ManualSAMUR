@@ -10,6 +10,7 @@ import { loadProcedureSources } from '../../lib/procedure-compiler.ts';
 import { canonicalJson, contentHash, isMobileContentSnapshot, mobileAttachmentEntries, packageHash, type MobileContentSnapshot, type MobileProcedure, type MobileUpdateEvent } from '../../packages/manual-content/src/index.ts';
 import { chunks, codeFiles, datasetFiles, hash, importDocuments, proposalSql, sql, stageText } from './core.ts';
 import { retainFrozenAsset, rewriteAssetPaths as rewritePaths } from './assets.ts';
+import { buildPublicDatasetArtifacts } from './public-datasets.ts';
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -247,6 +248,7 @@ function artifactsSql(release: Release, snapshot: MobileContentSnapshot, rows: F
     ['llms.txt', chunks(`# Manual SAMUR\n\nAdaptación no oficial.\n\n${snapshot.content.procedures.map((procedure) => `- [${procedure.id}: ${procedure.title}](/procedures/${procedure.slug}.md)`).join('\n')}`)],
     ['llms-full.txt', chunks(snapshot.content.procedures.map((procedure) => `# ${procedure.id}: ${procedure.title}\n\n${procedure.content}`).join('\n\n---\n\n'))],
   ];
+  for (const [name, body] of buildPublicDatasetArtifacts(snapshot, release.id).files) artifacts.push([name, chunks(body)]);
   const history = new Map(snapshot.content.updates.map((event) => [event.eventId, event]));
   for (const prior of execute<{ id: string }>("SELECT id FROM releases WHERE status='published';", true))
     for (const event of readSnapshot(prior.id)?.content.updates || []) history.set(event.eventId, event);
@@ -305,9 +307,31 @@ async function publish() {
   }
 }
 
+/**
+ * Adds the per-dataset artifacts and manifest.json to an already published
+ * release, derived from its own frozen snapshot (no content changes). Used once
+ * for releases activated before the public data API existed.
+ */
+function backfillDatasets() {
+  const index = args.indexOf('--release');
+  const pointer = execute<{ release_id: string }>('SELECT release_id FROM publication_pointer WHERE singleton=1;', true)[0];
+  const id = index >= 0 ? args[index + 1] : pointer?.release_id;
+  if (!id || !/^[a-zA-Z0-9-]+$/.test(id)) throw new Error('No active release to backfill.');
+  const existing = execute(`SELECT 1 FROM release_artifacts WHERE release_id=${sql(id)} AND name='manifest.json' LIMIT 1;`, true);
+  if (existing.length) { console.log(`Release ${id} already has a public manifest.`); return; }
+  const snapshot = readSnapshot(id);
+  if (!snapshot || !isMobileContentSnapshot(snapshot)) throw new Error('Release snapshot missing or invalid.');
+  const statements: string[] = [];
+  for (const [name, body] of buildPublicDatasetArtifacts(snapshot, id).files)
+    chunks(body).forEach((part, part_) => statements.push(`INSERT OR REPLACE INTO release_artifacts VALUES(${sql(id)},${sql(name)},${part_},${sql(part)});`));
+  execute(statements.join('\n'));
+  console.log(`Public datasets and manifest added to release ${id}.`);
+}
+
 try {
   if (command === 'seed') seed();
+  else if (command === 'backfill-datasets') backfillDatasets();
   else if (command === 'propose') await propose();
   else if (command === 'publish') await publish();
-  else throw new Error('Usage: cli.ts seed|propose|publish [--remote] [--env staging|production] [--release id]');
+  else throw new Error('Usage: cli.ts seed|propose|publish|backfill-datasets [--remote] [--env staging|production] [--release id]');
 } finally { fs.rmSync(tmp, { recursive: true, force: true }); }

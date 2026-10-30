@@ -86,9 +86,10 @@ O accede a /manual/301-parada-cardiorrespiratoria para leer un procedimiento.
 
 El trabajo sobre `main` exige una aprobación y el check requerido `build`. El workflow
 `.github/workflows/ci.yml` conserva ese nombre, ejecuta lint, IDs, tests y build, y admite
-ejecución manual. Vercel mantiene despliegues Preview para pull requests; el PR mensual
-usa `CONTENT_PR_TOKEN` cuando está configurado para que el check `build` se dispare también
-en cambios automáticos.
+ejecución manual. La producción se sirve desde Cloudflare Workers y se despliega con
+`.github/workflows/deploy.yml` en cada push a `main`. El workflow mensual
+`update-content.yml` ya no abre PRs: valida el candidato oficial y lo encola como
+propuesta en el editor privado (D1) para su revisión y publicación.
 
 ## Stack técnico
 

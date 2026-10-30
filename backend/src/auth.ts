@@ -13,8 +13,20 @@ function decodePart(value: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
-/** Verify at the origin too: knowing the hidden editor URL grants no access. */
+/** Owner-only check kept for provisioning tests: verified token AND the bootstrap admin. */
 export async function authenticate(request: Request, env: AccessConfig): Promise<string | null> {
+  if (!env.EDITOR_EMAIL) return null;
+  const email = await verifyAccessIdentity(request, env);
+  return email && email.toLowerCase() === env.EDITOR_EMAIL.toLowerCase() ? email : null;
+}
+
+/**
+ * Verify at the origin too: knowing the hidden editor URL grants no access.
+ * Returns the identity Cloudflare Access signed for, without deciding whether
+ * that identity may edit (the worker authorises it against the editors table).
+ */
+export async function verifyAccessIdentity(request: Request, env: AccessConfig): Promise<string | null> {
+  // EDITOR_EMAIL is required: without a bootstrap admin the editor stays closed.
   if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD || !env.EDITOR_EMAIL) return null;
   if (!/^[a-z0-9-]+\.cloudflareaccess\.com$/.test(env.ACCESS_TEAM_DOMAIN)) return null;
   const token = request.headers.get('Cf-Access-Jwt-Assertion');
@@ -31,7 +43,7 @@ export async function authenticate(request: Request, env: AccessConfig): Promise
     if (header.alg !== 'RS256' || !header.kid || claims.iss !== issuer || !Array.isArray(claims.aud)
       || !claims.aud.includes(env.ACCESS_AUD) || typeof claims.exp !== 'number' || claims.exp <= now
       || (typeof claims.nbf === 'number' && claims.nbf > now + 30)
-      || claims.email?.toLowerCase() !== env.EDITOR_EMAIL.toLowerCase()) return null;
+      || typeof claims.email !== 'string' || !/^[^\s@]+@[^\s@]+$/.test(claims.email)) return null;
     let cached = keyCache.get(issuer);
     if (!cached || cached.expires < Date.now()) {
       const response = await fetch(`${issuer}/cdn-cgi/access/certs`, { signal: AbortSignal.timeout(5000) });

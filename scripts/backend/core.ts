@@ -55,13 +55,13 @@ export function proposalSql(documents: ImportedDocument[], existingIds: string[]
     const staged = stageText(batch, document.id, canonical); statements.push(...staged.statements);
     statements.push(`INSERT INTO documents(id,category,title,data_json,status,source_json,source_hash,updated_at)
       VALUES(${sql(document.id)},${sql(document.category)},${sql(document.title)},${staged.expression},'draft',${staged.expression},${sql(hash(canonical))},${sql(now)})
-      ON CONFLICT(id) DO UPDATE SET incoming_source_json=excluded.source_json,revision=documents.revision+1,updated_at=excluded.updated_at
+      ON CONFLICT(id) DO UPDATE SET incoming_source_json=excluded.source_json,updated_by=NULL,revision=documents.revision+1,updated_at=excluded.updated_at
       WHERE documents.source_hash IS NOT excluded.source_hash AND documents.incoming_source_json IS NOT excluded.source_json;`);
-    statements.push(`UPDATE documents SET incoming_source_json=NULL,revision=revision+1,updated_at=${sql(now)} WHERE id=${sql(document.id)} AND source_hash=${sql(hash(canonical))} AND incoming_source_json IS NOT NULL;`);
+    statements.push(`UPDATE documents SET incoming_source_json=NULL,updated_by=NULL,revision=revision+1,updated_at=${sql(now)} WHERE id=${sql(document.id)} AND source_hash=${sql(hash(canonical))} AND incoming_source_json IS NOT NULL;`);
   }
   const present = new Set(documents.map((document) => document.id));
   for (const id of existingIds.filter((id) => id.startsWith('procedure:') && !present.has(id))) {
-    statements.push(`UPDATE documents SET incoming_source_json='{"$removed":true}',revision=revision+1,updated_at=${sql(now)} WHERE id=${sql(id)} AND source_json IS NOT NULL AND source_json IS NOT '{"$removed":true}' AND incoming_source_json IS NOT '{"$removed":true}';`);
+    statements.push(`UPDATE documents SET incoming_source_json='{"$removed":true}',updated_by=NULL,revision=revision+1,updated_at=${sql(now)} WHERE id=${sql(id)} AND source_json IS NOT NULL AND source_json IS NOT '{"$removed":true}' AND incoming_source_json IS NOT '{"$removed":true}';`);
   }
   statements.push(`DELETE FROM ingest_parts WHERE batch=${sql(batch)};`);
   return statements.join('\n');

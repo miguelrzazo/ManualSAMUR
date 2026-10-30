@@ -34,8 +34,6 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
 
 # pdf.js worker — generated from node_modules during build
 /public/pdf.worker.min.mjs

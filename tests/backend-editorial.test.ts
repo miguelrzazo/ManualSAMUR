@@ -21,7 +21,8 @@ const { DatabaseSync } = createRequire(import.meta.url)('node:sqlite') as { Data
 
 function database() {
   const sqlite = new DatabaseSync(':memory:');
-  sqlite.exec(fs.readFileSync(new URL('../backend/migrations/0001_editorial.sql', import.meta.url), 'utf8'));
+  for (const migration of ['0001_editorial.sql', '0002_editors_audit.sql'])
+    sqlite.exec(fs.readFileSync(new URL(`../backend/migrations/${migration}`, import.meta.url), 'utf8'));
   const prepare = (sql: string) => {
     let bindings: unknown[] = [];
     const statement = {
