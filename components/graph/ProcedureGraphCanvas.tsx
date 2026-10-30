@@ -169,8 +169,8 @@ export default function ProcedureGraphCanvas({
     }
 
     const simulation: Simulation<SimNode, SimLink> = forceSimulation(nodes)
-      .force("link", forceLink<SimNode, SimLink>(links).distance(local ? 80 : 38).strength(local ? 0.5 : 0.4))
-      .force("charge", forceManyBody<SimNode>().strength(local ? -260 : -55).distanceMax(local ? 600 : 320))
+      .force("link", forceLink<SimNode, SimLink>(links).distance(local ? 120 : 38).strength(local ? 0.5 : 0.4))
+      .force("charge", forceManyBody<SimNode>().strength(local ? -420 : -55).distanceMax(local ? 600 : 320))
       .force("x", forceX<SimNode>(0).strength(local ? 0.03 : 0.07))
       .force("y", forceY<SimNode>(0).strength(local ? 0.03 : 0.07))
       .force("collide", forceCollide<SimNode>().radius((node) => node.r + 3))
@@ -273,13 +273,19 @@ export default function ProcedureGraphCanvas({
         const id = node.data.id;
         const important =
           id === active || id === focus || Boolean(active && activeNeighbours?.has(id)) || (searching && found.has(id) && found.size <= 40);
-        if (important || local || zoomedIn) labelled.push(node);
+        // Con algo resaltado, las etiquetas atenuadas solo estorban: se omiten.
+        const dimmed = (active || searching) && !lit(id);
+        if (important || ((local || zoomedIn) && !dimmed)) labelled.push(node);
       }
       // Lo atenuado primero para que lo resaltado quede encima.
       labelled.sort((a, b) => Number(lit(a.data.id)) - Number(lit(b.data.id)));
       for (const node of labelled) {
         const id = node.data.id;
-        const label = `${id} · ${truncate(node.data.title, local || id === active ? 40 : 28)}`;
+        // Sin zoom, los vecinos y resultados muestran solo el número para no
+        // solaparse; el nodo activo/foco siempre lleva el título.
+        // En el grafo local estrecho (móvil) los vecinos llevan solo el número.
+        const full = (local && size.width >= 640) || zoomedIn || id === active || id === focus || (searching && !active && found.size <= 6);
+        const label = full ? `${id} · ${truncate(node.data.title, id === active || id === focus ? 40 : local ? 22 : 28)}` : id;
         const y = node.y! + node.r + 3 / k;
         ctx.globalAlpha = lit(id) ? 1 : 0.3;
         ctx.strokeStyle = palette.background;
@@ -333,7 +339,7 @@ export default function ProcedureGraphCanvas({
     function fitTarget() {
       const bounds = visibleBounds();
       if (!bounds || !size.width) return { ...view };
-      const pad = local ? 70 : 32;
+      const pad = local ? 40 : 32;
       const w = bounds.maxX - bounds.minX || 1;
       const h = bounds.maxY - bounds.minY || 1;
       const k = Math.max(MIN_ZOOM, Math.min(local ? 1.6 : 2.2, Math.min((size.width - pad * 2) / w, (size.height - pad * 2) / h)));
@@ -410,7 +416,8 @@ export default function ProcedureGraphCanvas({
     observer.observe(container);
     resize();
 
-    if (!reduceMotion) simulation.alpha(0.12).restart();
+    // El layout ya está asentado: la simulación solo se reanima al arrastrar un
+    // nodo, para que nada se mueva bajo el puntero mientras se lee o se pulsa.
 
     // ── Puntero: arrastrar nodos, desplazar, pellizcar y hover ───────────────
     const pointers = new Map<number, { x: number; y: number }>();
