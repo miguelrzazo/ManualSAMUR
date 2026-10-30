@@ -63,5 +63,10 @@
   },
   "engines": {
     "node": ">=22.13.0 <23"
+  },
+  "overrides": {
+    "expo-app-intents": {
+      "@expo/ui": "~57.0.26"
+    }
   }
 }
