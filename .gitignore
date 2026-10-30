@@ -59,6 +59,8 @@ HistoricoActualizaciones_abril 2026.pdf.pdf
 apps/mobile/.expo/
 apps/mobile/ios/
 apps/mobile/android/
+# Apple Watch offline seed, regenerated from content/data on every prebuild.
+apps/mobile/targets/watch/watch-seed.json
 
 # Simulator/device screenshots captured while manually verifying mobile builds.
 /.claude-screenshots/
