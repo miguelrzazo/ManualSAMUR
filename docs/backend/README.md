@@ -2,13 +2,20 @@
 
 ## Decisiones acordadas
 
-D1 es la fuente editorial. Una única identidad autenticada con Cloudflare Access
-prepara, revisa y publica. La ruta `/gestion-editorial` no aparece en la navegación,
+D1 es la fuente editorial. Varias personas editoras, autenticadas con Cloudflare
+Access, preparan, revisan y publican. Hay dos roles: **Administración** (además da de
+alta, cambia de rol o retira usuarios y consulta el registro de cambios) y **Edición**.
+`EDITOR_EMAIL` (secreto del Worker) es la persona propietaria: siempre administradora,
+no se puede desactivar desde la interfaz. El resto vive en la tabla `editors`. La ruta `/gestion-editorial` no aparece en la navegación,
 el lanzador de Access ni los buscadores. La autenticación se valida también dentro
 del Worker; ocultar la ruta no constituye un control de acceso.
 
-Estados: borrador → en revisión → listo → publicado; archivo y restauración crean
-nuevas revisiones. No hay cuentas de lectores, registro ni roles. Las notas privadas
+Estados: borrador → en revisión → listo para publicar → publicado (activo) →
+archivado; archivo y restauración crean nuevas revisiones. Cada revisión guarda su
+autoría (`revisions.author`; `Sistema` para importaciones oficiales y activaciones) y
+cada acción queda en `audit_log`, que es solo de inserción y no contiene textos ni
+notas. No hay cuentas de lectores ni registro público: la web solo muestra la
+publicación activa. Las notas privadas
 y el historial completo solo salen por las APIs autenticadas. Las publicaciones
 contienen una proyección pública independiente, nunca filas editoriales completas.
 
@@ -93,7 +100,8 @@ Los permisos y la entrada segura de credenciales están detallados en
    `Access: Apps and Policies Write`, además de los permisos de Workers necesarios
    para guardar secretos. No introducir valores de credenciales en argumentos.
    Debe existir una organización Zero Trust Free. Cargar también
-   `CLOUDFLARE_ACCOUNT_ID`, `EDITOR_EMAIL` (el correo único acordado),
+   `CLOUDFLARE_ACCOUNT_ID`, `EDITOR_EMAIL` (la persona propietaria),
+   `ACCESS_ALLOWED_EMAILS` (opcional, resto de correos editoriales separados por comas),
    `ACCESS_TEAM_DOMAIN` y `PUBLICATION_ORIGIN` (el origen HTTPS real del Worker).
    Ejecutar `npm run backend:access -- production`. El script configura las rutas
    editorial y API bajo la misma aplicación/audiencia y guarda los tres secretos
@@ -159,3 +167,22 @@ Fuentes: [Wrangler](https://developers.cloudflare.com/workers/wrangler/),
 [límites D1](https://developers.cloudflare.com/d1/platform/limits/),
 [precios Workers](https://developers.cloudflare.com/workers/platform/pricing/),
 [Access API](https://developers.cloudflare.com/api/resources/zero_trust/subresources/access/subresources/applications/).
+
+## Usuarios editoriales
+
+1. Una persona administradora da de alta el correo en **Gestión editorial → Usuarios**.
+2. El correo debe estar también en la política de Access: vuelve a ejecutar
+   `npm run backend:access -- production` con `ACCESS_ALLOWED_EMAILS` actualizado.
+   Access protege el borde; el Worker vuelve a comprobar la firma y la tabla
+   `editors`, así que retirar el acceso en la interfaz es inmediato aunque Access
+   siga dejando pasar el correo.
+3. **Registro de cambios** (solo administración) muestra quién hizo qué y cuándo.
+
+## Despliegue continuo
+
+`.github/workflows/deploy.yml` compila la web, aplica las migraciones D1 y ejecuta
+`wrangler deploy --env production` en cada push a `main`, y comprueba las rutas
+principales en vivo. Necesita los secretos de repositorio `CLOUDFLARE_API_TOKEN`
+(D1 Edit + Workers Scripts Edit + Account Settings Read) y `CLOUDFLARE_ACCOUNT_ID`.
+Las cabeceras de `/docs/*.pdf` que antes estaban en `vercel.json` viven ahora en
+`public/_headers`. La API pública para clientes está en [public-api.md](public-api.md).

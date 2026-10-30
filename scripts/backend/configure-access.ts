@@ -32,9 +32,14 @@ if (existing && existing.name !== name) throw new Error('Another Access applicat
 const config = { name, domain, type: 'self_hosted', app_launcher_visible: false, session_duration: '8h',
   self_hosted_domains: [domain, `${domain}/*`, `${url.hostname}/api/editor/*`] };
 const app = existing ? await api<Application>(`apps/${existing.id}`, 'PUT', config) : await api<Application>('apps', 'POST', config);
-const policy = { name: 'Única identidad editorial', decision: 'allow', precedence: 1, include: [{ email: { email } }] };
+// The Worker authorises each request against the editors table; Access only needs
+// to let every editorial address reach it.
+const allowed = [email, ...(process.env.ACCESS_ALLOWED_EMAILS || '').split(',').map((value) => value.trim()).filter(Boolean)];
+if (allowed.some((value) => !/^[^\s@]+@[^\s@]+$/.test(value))) throw new Error('ACCESS_ALLOWED_EMAILS must be a comma-separated list of emails.');
+const policy = { name: 'Equipo editorial', decision: 'allow', precedence: 1, include: [...new Set(allowed.map((value) => value.toLowerCase()))].map((value) => ({ email: { email: value } })) };
 const policies = await api<Array<{ id: string; name: string }>>(`apps/${app.id}/policies`);
-if (policies.length > 1 || (policies.length === 1 && policies[0].name !== policy.name))
+const ownPolicyNames = [policy.name, 'Única identidad editorial'];
+if (policies.length > 1 || (policies.length === 1 && !ownPolicyNames.includes(policies[0].name)))
   throw new Error('Unexpected Access policies exist; refusing to change another access policy.');
 if (policies.length) await api(`apps/${app.id}/policies/${policies[0].id}`, 'PUT', policy);
 else await api(`apps/${app.id}/policies`, 'POST', policy);
