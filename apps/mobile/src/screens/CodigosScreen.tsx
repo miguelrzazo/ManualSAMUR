@@ -325,9 +325,8 @@ function CodeGroupList({
   const legendNotes = useMemo(() => codeLegendNotes(tabKey, codes), [tabKey, codes]);
 
   const jump = useSectionJump(sectionListRef);
-  // Un cambio de pestaña o de filtro cambia las secciones: las posiciones guardadas
-  // dejan de valer y se descartan antes de que nadie salte a una de ellas.
-  useEffect(() => { jump.resetSections(sections.map((section) => section.key)); }, [jump, sections]);
+  // Cancel a pending retry whenever the section data changes.
+  useEffect(() => { jump.resetSections(); }, [jump, sections]);
 
   return (
     <View style={styles.flexFill}>
@@ -351,7 +350,7 @@ function CodeGroupList({
                   // colapsada, la fila de fichas desaparece justo cuando el lector
                   // acaba de usarla, y la siguiente ya no está donde estaba.
                   chrome.expand();
-                  jump.jumpTo(target.key, sections.findIndex((section) => section.key === target.key));
+                  jump.jumpTo(sections.findIndex((section) => section.key === target.key));
                 }}
                 accessibilityLabel={`Ir al grupo ${target.label}`}
                 accessibilityHint="Desplaza la lista hasta este grupo."
@@ -378,7 +377,7 @@ function CodeGroupList({
         }
         ListFooterComponent={<AnnotationFooter notes={legendNotes} palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<CodigosRow, CodigosSection> }) => (
-          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} accessibilityRole="header">
+          <View style={styles.sectionHeader} accessibilityRole="header">
             <View
               style={[
                 styles.sectionHeaderBadge,

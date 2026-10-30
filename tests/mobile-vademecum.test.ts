@@ -180,10 +180,10 @@ test("offscreen alphabet jumps keep the virtualized-list retry handler connected
   assert.match(sectionList, /onScrollToIndexFailed=\{jump\.onScrollToIndexFailed\}/);
   assert.doesNotMatch(sectionList, /onScrollToIndexFailed=\{\(\) => undefined\}/);
   assert.match(source, /useSectionJump\(sectionListRef\)/);
-  assert.match(source, /onLayout=\{jump\.registerSection\(section\.key\)\}/);
+  assert.doesNotMatch(source, /jump\.registerSection/);
   // SectionList adds header and footer cells to its flattened index. Guessed
-  // row geometry therefore drifts for every later letter; measured headers and
-  // the shared retry path are the only supported jump mechanism here.
+  // row geometry therefore drifts for every later letter; RN cell measurements
+  // and the shared retry path are the supported jump mechanism here.
   assert.doesNotMatch(source, /getItemLayout|preferSectionIndex|initialNumToRender|measuredLengths|layoutIndexes/);
 });
 

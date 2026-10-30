@@ -70,6 +70,8 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
   const chrome = useScrollChrome();
 
   const references = useMemo(() => buildVademecumReferences(content), [content]);
+  // Chrome changes during a jump must not rebuild sections and cancel its retry.
+  const tabReferences = useMemo(() => filterByTab(references, activeTab), [references, activeTab]);
   const tabCounts = useMemo(
     () => Object.fromEntries(VADEMECUM_TABS.map((tab) => [tab.key, filterByTab(references, tab.key).length])) as Record<VademecumTabKey, number>,
     [references],
@@ -161,7 +163,7 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
       ) : (
         <DomainContent
           tab={activeTab}
-          references={filterByTab(references, activeTab)}
+          references={tabReferences}
           activeCategory={activeCategory}
           onSelectCategory={setActiveCategory}
           onOpen={openReference}
@@ -246,15 +248,14 @@ function DomainContent({
   const [viewabilityConfig] = useState(() => ({ itemVisiblePercentThreshold: 0 }));
 
   const jump = useSectionJump(sectionListRef);
-  // Cambiar de pestaña o de categoría cambia las secciones: las posiciones guardadas
-  // dejan de valer.
-  useEffect(() => { jump.resetSections(sections.map((section) => section.key)); }, [jump, sections]);
+  // Cancel a pending retry whenever the section data changes.
+  useEffect(() => { jump.resetSections(); }, [jump, sections]);
 
   const scrollToSection = useCallback(
     (sectionIndex: number) => {
       const key = sections[sectionIndex]?.key ?? null;
       setPendingKey(key);
-      if (key) jump.jumpTo(key, sectionIndex);
+      if (key) jump.jumpTo(sectionIndex);
     },
     [jump, sections],
   );
@@ -360,7 +361,7 @@ function DomainContent({
         onScrollToIndexFailed={jump.onScrollToIndexFailed}
         ListEmptyComponent={<EmptyState title="Sin resultados" detail="No hay referencias para este filtro." palette={palette} styles={styles} />}
         renderSectionHeader={({ section }: { section: SectionListData<MobileReferenceSearchResult, VademecumAlphabetSection | VademecumCategorySection> }) => (
-          <View style={styles.sectionHeader} onLayout={jump.registerSection(section.key)} testID={`vademecum-section-${section.key}`} accessibilityRole="header">
+          <View style={styles.sectionHeader} testID={`vademecum-section-${section.key}`} accessibilityRole="header">
             {!showAlphabetIndex && <View style={[styles.sectionHeaderDot, { backgroundColor: categoryAccent(section.key) }]} />}
             <Text style={styles.sectionHeaderLabel}>{section.key}</Text>
             <Text style={styles.sectionHeaderCount}>{section.data.length}</Text>
