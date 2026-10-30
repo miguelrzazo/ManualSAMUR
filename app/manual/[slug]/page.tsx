@@ -43,6 +43,7 @@ import { ProcedureNav } from "@/components/manual/ProcedureNav";
 import { ProcedureEditorialBlockRenderer } from "@/components/manual/ProcedureEditorialBlock";
 import { ProcedureAttachments } from "@/components/manual/ProcedureAttachments";
 import { RecentUpdateBadge } from "@/components/manual/RecentUpdateBadge";
+import { LocalGraphPanel } from "@/components/graph/LocalGraphPanel";
 import type { ComponentPropsWithoutRef } from "react";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -339,6 +340,8 @@ export default async function ProcedurePage({ params }: Props) {
         ) : null}
 
         <ProcedureNav prev={prev} next={next} />
+
+        <LocalGraphPanel procedureId={procedure.id} />
 
         {/* Enlaces relacionados: una sola declaración. Antes existían dos copias
             (esta para móvil y otra idéntica en la barra lateral de escritorio).

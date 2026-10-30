@@ -89,25 +89,3 @@ export function getAdjacentProcedures(id: string): { prev: ProcedureMeta | null;
     next: idx < catalog.metadata.length - 1 ? catalog.metadata[idx + 1] : null,
   };
 }
-
-export function buildGraphData(procedures: ProcedureMeta[]) {
-  const nodes = procedures.map((procedure) => ({
-    id: procedure.id,
-    data: { label: procedure.title, section: procedure.section, slug: procedure.slug },
-    position: { x: 0, y: 0 },
-    type: "procedure",
-  }));
-
-  const edgeSet = new Set<string>();
-  const edges: { id: string; source: string; target: string }[] = [];
-  for (const procedure of procedures) {
-    for (const relatedId of procedure.related) {
-      const edgeId = [procedure.id, relatedId].sort().join("--");
-      if (!edgeSet.has(edgeId) && procedures.find((candidate) => candidate.id === relatedId)) {
-        edgeSet.add(edgeId);
-        edges.push({ id: edgeId, source: procedure.id, target: relatedId });
-      }
-    }
-  }
-  return { nodes, edges };
-}
