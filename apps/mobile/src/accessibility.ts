@@ -52,21 +52,55 @@ export function accessibilityTargetStyle(minimum = 44) {
 }
 
 export interface AdaptiveLayout {
+  /** Window width at or above `WIDE_LAYOUT_MIN_WIDTH`: the tab bar becomes a vertical rail. */
   isWideLayout: boolean;
+  /**
+   * The area beside the rail is itself wide: Manual, Vademécum and Códigos show the list
+   * and the detail side by side instead of pushing the detail over the list.
+   */
+  isTwoPane: boolean;
   singleColumn: boolean;
   listMaxWidth: number;
   readingMaxWidth: number;
+  /** Width the vertical rail takes from the window; 0 when navigation sits at the bottom. */
+  railWidth: number;
+  /** Width of the list column in a two-pane layout; the full width otherwise. */
+  listPaneWidth: number;
 }
 
-/** Deterministic same-IA layout policy for phones, tablets, and large text. */
+/**
+ * One breakpoint for the whole app. A closed iPhone Duo (466 pt), any iPhone in portrait
+ * and iPad Slide Over / narrow Split View stay below it; an open iPhone Duo, iPad full
+ * screen and wide Split View clear it.
+ */
+export const WIDE_LAYOUT_MIN_WIDTH = 600;
+/** The vertical navigation rail, laid out beside the content (not over it). */
+export const NAVIGATION_RAIL_WIDTH = 94;
+
+/**
+ * Deterministic same-IA layout policy for phones, tablets, foldables and large text.
+ *
+ * Two-pane reuses the same breakpoint, applied to what is left after the rail: the
+ * list and the detail only split once the content area alone is as wide as the
+ * window that earned the rail. An open iPhone Duo in landscape (951 pt), iPad full
+ * screen in either orientation and two-thirds Split View split; an open Duo held in
+ * portrait (669 pt) keeps the rail with a single, readable column.
+ */
 export function adaptiveLayout(width: number, fontScale: number): AdaptiveLayout {
-  const isWideLayout = width >= 600;
+  const isWideLayout = width >= WIDE_LAYOUT_MIN_WIDTH;
+  const railWidth = isWideLayout ? NAVIGATION_RAIL_WIDTH : 0;
+  const contentWidth = width - railWidth;
+  const isTwoPane = isWideLayout && contentWidth >= WIDE_LAYOUT_MIN_WIDTH;
   const singleColumn = width < 420 || fontScale >= 1.75;
+  const listPaneWidth = isTwoPane ? Math.round(Math.min(400, Math.max(320, contentWidth * 0.38))) : contentWidth;
   return {
     isWideLayout,
+    isTwoPane,
     singleColumn,
     listMaxWidth: isWideLayout ? 1040 : width,
     readingMaxWidth: isWideLayout ? 720 : width,
+    railWidth,
+    listPaneWidth,
   };
 }
 

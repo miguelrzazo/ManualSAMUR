@@ -1,6 +1,4 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -40,7 +38,7 @@ import {
   type VademecumCategorySection,
   type VademecumTabKey,
 } from "../vademecum-logic";
-import type { RootStackParamList, TabsParamList } from "../navigation-types";
+import { useOpenDetail } from "../split-view";
 
 /**
  * The Vademécum destination: four domains (fármacos, perfusiones, fluidos,
@@ -57,7 +55,7 @@ import type { RootStackParamList, TabsParamList } from "../navigation-types";
  * orientativa. La posología sigue en la ficha, que es de donde salen las pautas
  * reales. `dose-logic.ts` se queda por sus ayudantes de formato y su auditoría.
  */
-export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamList, "VademecumList">) {
+export function VademecumScreen() {
   const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
@@ -85,17 +83,17 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
     chrome.reset();
   }, [chrome]);
 
-  const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-
+  // Wide windows show the entry beside the list; narrow ones push it as before.
+  const openDetail = useOpenDetail("VademecumList");
   const openReference = useCallback(
     (reference: MobileReferenceSearchResult) => {
       if (reference.kind === "drug" && reference.targetId) {
-        parentNavigation?.navigate("Drug", { id: reference.targetId });
+        openDetail({ screen: "Drug", params: { id: reference.targetId } });
         return;
       }
-      parentNavigation?.navigate("Vademecum", { routeKey: reference.routeKey });
+      openDetail({ screen: "Vademecum", params: { routeKey: reference.routeKey } });
     },
-    [parentNavigation],
+    [openDetail],
   );
 
   const searching = query.trim().length > 0;

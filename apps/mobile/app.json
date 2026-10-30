@@ -13,7 +13,8 @@
       "backgroundColor": "#1B4FA8"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
+      "requireFullScreen": false,
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",

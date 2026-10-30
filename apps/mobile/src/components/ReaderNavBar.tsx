@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { motion, radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, navigationTestID, routeAccessibilityLabels } from "../accessibility.ts";
@@ -51,8 +51,6 @@ export function ReaderNavBar({ expanded, onToggle, onNavigate, palette }: {
   palette: AdaptivePalette;
 }) {
   const reduceMotion = useReduceMotion();
-  const { width } = useWindowDimensions();
-  const vertical = width >= 600;
   const [scale] = useState(() => new Animated.Value(1));
 
   /**
@@ -86,18 +84,18 @@ export function ReaderNavBar({ expanded, onToggle, onNavigate, palette }: {
   };
 
   return (
-    <View pointerEvents="box-none" style={[styles.wrapper, vertical && styles.verticalWrapper]}>
-      <Animated.View style={[styles.layer, vertical && styles.verticalLayer, expanded && (vertical ? styles.verticalExpandedLayer : styles.expandedLayer), { transform: [{ scale }] }]}>
+    <View pointerEvents="box-none" style={styles.wrapper}>
+      <Animated.View style={[styles.layer, expanded && styles.expandedLayer, { transform: [{ scale }] }]}>
         {expanded ? (
           <>
-            <GlassCapsule palette={palette} style={[styles.tabCapsule, vertical && styles.verticalTabCapsule]}>
-              <View style={[styles.tabRow, vertical && styles.verticalTabRow]} accessibilityRole="tablist" accessibilityLabel="Navegación principal">
+            <GlassCapsule palette={palette} style={styles.tabCapsule}>
+              <View style={styles.tabRow} accessibilityRole="tablist" accessibilityLabel="Navegación principal">
                 {READER_NAV_DESTINATIONS.map((destination) => (
                   <Press
                     key={destination.route}
                     testID={navigationTestID(destination.route)}
                     onPress={() => go(destination.route)}
-                    style={[styles.tabItem, vertical && styles.verticalTabItem, accessibilityTargetStyle()]}
+                    style={[styles.tabItem, accessibilityTargetStyle()]}
                     accessibilityRole="tab"
                     accessibilityLabel={destination.label}
                     accessibilityHint={accessibilityHints.switchTab}
@@ -108,7 +106,7 @@ export function ReaderNavBar({ expanded, onToggle, onNavigate, palette }: {
                 ))}
               </View>
             </GlassCapsule>
-            <GlassCapsule palette={palette} style={[styles.searchCapsule, vertical && styles.verticalSearchCapsule]}>
+            <GlassCapsule palette={palette} style={styles.searchCapsule}>
               <Press
                 onPress={() => go("Buscar")}
                 style={styles.searchButton}
@@ -141,23 +139,16 @@ export function ReaderNavBar({ expanded, onToggle, onNavigate, palette }: {
 
 const styles = StyleSheet.create({
   wrapper: { position: "absolute", left: 0, right: 0, bottom: READER_NAV_CAPSULE.bottom, paddingHorizontal: READER_NAV_CAPSULE.left },
-  verticalWrapper: { left: -94, right: undefined, top: 0, bottom: 0, width: 88, paddingHorizontal: spacing.xs, paddingVertical: spacing.lg },
   // La cápsula crece desde su esquina inferior izquierda, que es donde estaba cuando
   // estaba minimizada.
   layer: { position: "absolute", left: READER_NAV_CAPSULE.left, bottom: 0, transformOrigin: "bottom left" },
-  verticalLayer: { top: 0, bottom: 0, left: 0, width: 80, justifyContent: "center", transformOrigin: "top left" },
   expandedLayer: { right: READER_NAV_CAPSULE.left, flexDirection: "row", alignItems: "center", columnGap: spacing.xl },
-  verticalExpandedLayer: { right: undefined, flexDirection: "column", alignItems: "center", rowGap: spacing.md },
   minimizedCapsule: { borderRadius: radii.pill, width: READER_NAV_CAPSULE.size, height: READER_NAV_CAPSULE.size, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   minimizedButton: { width: READER_NAV_CAPSULE.size, height: READER_NAV_CAPSULE.size, alignItems: "center", justifyContent: "center" },
   tabCapsule: { flex: 1, borderRadius: radii.pill, overflow: "hidden" },
-  verticalTabCapsule: { flex: 0, width: 72 },
   tabRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingVertical: spacing.sm, paddingHorizontal: spacing.sm },
-  verticalTabRow: { flexDirection: "column", paddingHorizontal: 2, paddingVertical: spacing.xs },
   tabItem: { flex: 1, alignItems: "center", justifyContent: "center", minHeight: 48, gap: 2, paddingVertical: 2 },
-  verticalTabItem: { flex: 0, width: 64, minHeight: 60 },
   tabItemLabel: { ...typography.caption2, fontWeight: "500" },
   searchCapsule: { borderRadius: radii.pill, width: 56, height: 56, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  verticalSearchCapsule: { width: 56, height: 56 },
   searchButton: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
 });

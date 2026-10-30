@@ -11,6 +11,7 @@ import type { ContentCheckRecord } from "../content-update-logic.ts";
 import {
   ABOUT_AUTHOR,
   ADAPTATION_DISCLAIMER,
+  INDEPENDENCE_DISCLAIMER,
   SETTINGS_LEGAL_METADATA,
   isPendingSettingsMetadata,
   type SettingsLegalMetadata,
@@ -113,6 +114,14 @@ export function SettingsModal({
           }
         />
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {/* Primero, antes que nada: qué es y qué no es esta app. */}
+          <View style={styles.independenceNotice} accessible accessibilityRole="text" accessibilityLabel={`Aviso. ${INDEPENDENCE_DISCLAIMER}`} testID="independence-disclaimer">
+            <MaterialCommunityIcons name="information-outline" size={24} color={palette.primary} />
+            <View style={styles.copy}>
+              <Text style={styles.rowTitle}>Guía no oficial</Text>
+              <Text style={styles.noticeText}>{INDEPENDENCE_DISCLAIMER}</Text>
+            </View>
+          </View>
           {academySlot && shouldShowAcademyEntry(academySlot) && (
             <AcademySettingsCard slot={academySlot} onPress={() => open(String(academySlot.url))} />
           )}
@@ -164,7 +173,7 @@ export function SettingsModal({
               diciendo lo mismo en dos tarjetas seguidas; este es el texto que la web
               lleva publicado desde el principio. */}
           <Notice icon="shield-alert-outline">{ADAPTATION_DISCLAIMER}</Notice>
-          <Notice icon="medical-bag">El contenido y los cálculos son material de referencia: no sustituyen a los protocolos vigentes, a las instrucciones operativas ni al criterio profesional.</Notice>
+          <Notice icon="medical-bag">El contenido y los cálculos son material de referencia: no sustituyen a los protocolos oficiales vigentes, a las instrucciones operativas ni al juicio clínico.</Notice>
 
           <SectionTitle>Enlaces oficiales</SectionTitle>
           <Row icon="alert-outline" tint={palette.amber} title="Aviso importante" meta="Documento oficial en PDF" external onPress={() => open(content.links.avisoImportanteUrl)} />
@@ -288,6 +297,7 @@ function useStyles(palette: AdaptivePalette) {
     // El aviso no es una tarjeta: es texto sobre el papel, con su icono al margen. Un
     // aviso con la misma superficie y la misma sombra que una fila pulsable se lee como
     // una fila pulsable que no responde.
+    independenceNotice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md, padding: spacing.lg, borderRadius: radii.md, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: palette.primary, backgroundColor: palette.surface },
     notice: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.xs },
     noticeText: { flex: 1, ...typography.footnote, color: palette.inkMuted },
     avatar: { ...circle(40), backgroundColor: palette.primaryWash, alignItems: "center", justifyContent: "center" },

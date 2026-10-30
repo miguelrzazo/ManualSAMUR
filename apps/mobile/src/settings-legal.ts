@@ -29,6 +29,15 @@ export const ABOUT_AUTHOR = {
 export const ADAPTATION_DISCLAIMER =
   "Esta es una adaptación NO oficial del Manual de Procedimientos de SAMUR-Protección Civil de la ciudad de Madrid, con el fin de hacer una lectura más cómoda, especialmente para dispositivos móviles. Todo el contenido clínico pertenece a SAMUR-PC, sus autores y al Ayuntamiento de Madrid.";
 
+/**
+ * Aviso de independencia, visible en Información y ajustes. Lo exige la ficha de la
+ * App Store: el nombre visible sigue siendo "Manual SAMUR", así que la app tiene que
+ * decir sin rodeos que no es de SAMUR-PC ni del Ayuntamiento y que no sustituye a
+ * nada clínico.
+ */
+export const INDEPENDENCE_DISCLAIMER =
+  "Guía independiente y no oficial. No está afiliada, patrocinada ni avalada por SAMUR-Protección Civil ni por el Ayuntamiento de Madrid. No sustituye al juicio clínico ni a los protocolos oficiales vigentes.";
+
 export const PENDING_SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = {
   publisher: SETTINGS_METADATA_PENDING,
   privacyPolicyUrl: SETTINGS_METADATA_PENDING,

@@ -1,6 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNavigationContainerRef } from "@react-navigation/native";
+import { NavigationContainer, NavigationIndependentTree, StackActions, type NavigationAction, type NavigationState } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
@@ -8,7 +7,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { StatusBar } from "expo-status-bar";
 import * as AppIntents from "expo-app-intents";
-import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   Animated,
@@ -71,7 +70,7 @@ import { APPROVED_ONLINE_MAP_POLICY, mapPinsFromLocations } from "./src/online-m
 import { mapCameraTargetFor } from "./src/mapa-logic";
 import { OnlineMapView } from "./src/online-map-view";
 import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type ResolvedSavedReference, type SavedReference } from "./src/saved-logic";
-import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
+import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
 import { Image } from "expo-image";
 import aptaBlueTutor from "./assets/apta-blue-tutor.png";
 import manualIcon from "./assets/icon.png";
@@ -96,10 +95,12 @@ import { HistorialScreen } from "./src/screens/HistorialScreen";
 // (e.g. CodigosScreen, InicioScreen) can type their own navigation/route props against
 // the same lists.
 import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
+import { InDetailPaneContext, navigationRef, SplitSelectionProvider, useAdaptiveLayout, useSplitSelections } from "./src/split-view";
+import { detailRouteKey, planSizeTransition, sectionToDeselect, type RootStackSnapshot, type SplitSection } from "./src/split-view-logic";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const navigationRef = createNavigationContainerRef<RootStackParamList>();
+const PaneStack = createNativeStackNavigator<RootStackParamList>();
 
 /**
  * Origen del sitio web canónico, para construir el enlace y el pie del PDF de
@@ -844,6 +845,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const { content } = useContentData();
   const { favorites, toggleFavorite, remember } = useContentPreferences();
   const reduceMotion = useReduceMotion();
+  const inDetailPane = useContext(InDetailPaneContext);
   const [attachmentError, setAttachmentError] = useState<string>();
   const [attachmentRecovery, setAttachmentRecovery] = useState<MobileProcedure["attachments"][number]>();
   const [attachmentRecords, setAttachmentRecords] = useState<Record<string, AttachmentRecord>>({});
@@ -1195,12 +1197,14 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     left={READER_BACK_TO_TOP_PLACEMENT.left}
     bottom={READER_BACK_TO_TOP_PLACEMENT.bottom}
   />
-  <ReaderNavBar
+  {/* Beside a list the rail is already on screen; a second, floating tab bar inside
+      the detail pane would only cover the text. */}
+  {!inDetailPane && <ReaderNavBar
     expanded={navExpanded}
     onToggle={expandNav}
     onNavigate={(screen) => { expandNav(false); navigation.navigate("Tabs", { screen } as never); }}
     palette={palette}
-  />
+  />}
   <Menu
     visible={Boolean(share.anchor)}
     anchor={share.anchor}
@@ -1546,19 +1550,123 @@ const styles_tabIcon = StyleSheet.create({
   overlay: { position: "absolute", top: 0, left: 0 },
 });
 
+/**
+ * Pushed detail screens use the platform header: a large title that collapses on
+ * scroll, the system back button with its swipe affordance, and the favourite as
+ * `headerRight`. This replaces six hand-rolled [←][CENTERED CAPS][☆] bars that all
+ * rendered the screen's category twice — once in the bar and again as a red caps
+ * line forty points below it. Tab screens keep their own headers because they carry
+ * the brand lockup and the settings entry point.
+ */
+function useDetailHeaderOptions() {
+  const palette = useTheme();
+  return useMemo(() => ({
+    headerShown: true,
+    headerLargeTitle: true,
+    headerBackButtonDisplayMode: "minimal",
+    headerTintColor: palette.primary,
+    headerTitleStyle: { color: palette.ink },
+    headerLargeTitleStyle: { color: palette.ink },
+    headerStyle: { backgroundColor: palette.paper },
+    headerTransparent: false,
+  } as const), [palette]);
+}
+
+const SPLIT_PLACEHOLDERS: Record<SplitSection, { icon: keyof typeof MaterialCommunityIcons.glyphMap; title: string; detail: string }> = {
+  Inicio: { icon: "book-open-page-variant-outline", title: "Elige un procedimiento", detail: "Se abrirá aquí, junto al índice del manual." },
+  VademecumList: { icon: "pill", title: "Elige un fármaco", detail: "Su ficha se abrirá aquí, junto a la lista." },
+  Codigos: { icon: "radio-handheld", title: "Elige un código", detail: "Los códigos con ficha se abren aquí, junto a la lista." },
+};
+
+/** Actions a pane cannot handle (back to Buscar, open Historial…) go to the root stack. */
+function forwardToRoot(action: NavigationAction) {
+  if (navigationRef.isReady()) navigationRef.dispatch(action);
+}
+
+/**
+ * The right-hand pane of a split tab. It is its own navigation tree: a link inside a
+ * procedure pushes within the pane, with a back button there, and leaves the list
+ * alone. A new selection remounts the tree so it always starts at the chosen detail.
+ */
+function DetailPane({ section }: { section: SplitSection }) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  const reduceMotion = useReduceMotion();
+  const detailHeader = useDetailHeaderOptions();
+  const { selections } = useSplitSelections();
+  const selection = selections[section];
+  if (!selection) {
+    const placeholder = SPLIT_PLACEHOLDERS[section];
+    return <SafeAreaView style={[styles.screen, styles.splitPlaceholder]} edges={["top", "right", "bottom"]} testID={`detail-pane-empty-${section}`}>
+      <MaterialCommunityIcons name={placeholder.icon} size={40} color={palette.inkMuted} />
+      <Text style={styles.emptyTitle}>{placeholder.title}</Text>
+      <Text style={styles.emptyDetail}>{placeholder.detail}</Text>
+    </SafeAreaView>;
+  }
+  const initialParams = (screen: keyof RootStackParamList) => (selection.screen === screen ? selection.params : undefined) as never;
+  return <InDetailPaneContext.Provider value>
+    <NavigationIndependentTree key={detailRouteKey(selection)}>
+      <NavigationContainer onUnhandledAction={forwardToRoot}>
+        <PaneStack.Navigator initialRouteName={selection.screen} screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", contentStyle: { backgroundColor: palette.paper } }}>
+          <PaneStack.Screen name="Procedure" component={ProcedureScreen} initialParams={initialParams("Procedure")} options={detailHeader} />
+          <PaneStack.Screen name="Drug" component={DrugScreen} initialParams={initialParams("Drug")} options={detailHeader} />
+          <PaneStack.Screen name="Vademecum" component={VademecumReferenceScreen} initialParams={initialParams("Vademecum")} options={detailHeader} />
+          <PaneStack.Screen name="Code" component={CodeScreen} initialParams={initialParams("Code")} options={detailHeader} />
+          <PaneStack.Screen name="Location" component={LocationDetailScreen} initialParams={initialParams("Location")} options={detailHeader} />
+          <PaneStack.Screen name="Status4" component={Status4Screen} options={{ ...detailHeader, title: "Status 4" }} />
+          <PaneStack.Screen name="Anexo" component={AnexoScreen} initialParams={initialParams("Anexo")} options={detailHeader} />
+        </PaneStack.Navigator>
+      </NavigationContainer>
+    </NavigationIndependentTree>
+  </InDetailPaneContext.Provider>;
+}
+
+/**
+ * A split tab: the list on the left and, on wide windows, the detail on the right.
+ * The list keeps the same position in the tree in both layouts, so its scroll offset,
+ * search text and open sections survive a rotation or a Split View resize.
+ */
+function SplitTab({ section, children }: { section: SplitSection; children: React.ReactNode }) {
+  const palette = useTheme();
+  const layout = useAdaptiveLayout();
+  return <View style={splitStyles.row}>
+    <View style={layout.isTwoPane ? [splitStyles.list, { width: layout.listPaneWidth, borderRightColor: palette.line }] : splitStyles.fill}>{children}</View>
+    {layout.isTwoPane && <View style={splitStyles.fill} testID={`detail-pane-${section}`}><DetailPane section={section} /></View>}
+  </View>;
+}
+
+const splitStyles = StyleSheet.create({
+  row: { flex: 1, flexDirection: "row" },
+  fill: { flex: 1 },
+  list: { borderRightWidth: StyleSheet.hairlineWidth },
+});
+
+function ManualTab(props: BottomTabScreenProps<TabsParamList, "Inicio">) {
+  return <SplitTab section="Inicio"><HomeScreen {...props} /></SplitTab>;
+}
+function CodigosTab(props: BottomTabScreenProps<TabsParamList, "Codigos">) {
+  return <SplitTab section="Codigos"><CodigosScreen {...props} /></SplitTab>;
+}
+function VademecumTab() {
+  return <SplitTab section="VademecumList"><VademecumScreen /></SplitTab>;
+}
+
 function MainTabs() {
   const palette = useTheme();
+  const layout = useAdaptiveLayout();
   // Five destinations. Buscar used to be the odd one out: a detached capsule beside the
   // tab pill opening a modal, which is the only part of the app you could not get back to
   // by looking at the tab bar.
+  // Wide windows (iPad, an open iPhone Duo) move the bar into a vertical rail that owns
+  // its own column on the left; narrow ones keep the floating bottom capsules.
   return <Tabs.Navigator
     backBehavior="history"
     tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
-    screenOptions={{ headerShown: false }}
+    screenOptions={{ headerShown: false, tabBarPosition: layout.isWideLayout ? "left" : "bottom" }}
   >
-    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused, size }) => <TabIcon name="pill" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Inicio" component={ManualTab} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Codigos" component={CodigosTab} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumTab} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused, size }) => <TabIcon name="pill" color={color} focused={focused} size={size} /> }} />
     <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused, size }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} size={size} /> }} />
     <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color, size }) => <TabIcon name="magnify" color={color} size={size} /> }} />
   </Tabs.Navigator>;
@@ -1642,32 +1750,43 @@ function ManualAppIntentBridge({ enabled }: { enabled: boolean }) {
   return null;
 }
 
+/**
+ * Moves the open detail between the pane and the root stack when the window crosses
+ * the two-pane breakpoint (rotation, Split View resize, folding an iPhone Duo), and
+ * forgets a selection the user closed with Back on a narrow window. The rules live in
+ * `split-view-logic.ts`.
+ */
+function useSplitSizeTransitions(isTwoPane: boolean, navigationReady: boolean) {
+  const { selections, select } = useSplitSelections();
+  const previousTwoPane = useRef(isTwoPane);
+  const previousIndex = useRef(0);
+  const selectionsRef = useRef(selections);
+  useEffect(() => { selectionsRef.current = selections; }, [selections]);
+  useEffect(() => {
+    const wasTwoPane = previousTwoPane.current;
+    previousTwoPane.current = isTwoPane;
+    if (!navigationReady || !navigationRef.isReady()) return;
+    const plan = planSizeTransition({ wasTwoPane, isTwoPane, state: navigationRef.getRootState() as RootStackSnapshot | undefined, selections: selectionsRef.current });
+    if (plan.kind === "push") (navigationRef.navigate as (screen: string, params?: object) => void)(plan.detail.screen, plan.detail.params);
+    else if (plan.kind === "popToTop") navigationRef.dispatch(StackActions.popToTop());
+  }, [isTwoPane, navigationReady]);
+  return useCallback((state: NavigationState | undefined) => {
+    const snapshot = state as RootStackSnapshot | undefined;
+    const section = sectionToDeselect({ isTwoPane: previousTwoPane.current, previousIndex: previousIndex.current, state: snapshot });
+    previousIndex.current = snapshot?.index ?? 0;
+    if (section) select(section, undefined);
+  }, [select]);
+}
+
 function AppNavigation() {
-  const palette = useTheme();
   const styles = useAppStyles();
   const reduceMotion = useReduceMotion();
   const [navigationReady, setNavigationReady] = useState(false);
-  const { width, fontScale } = useWindowDimensions();
-  const layout = adaptiveLayout(width, fontScale);
+  const layout = useAdaptiveLayout();
   const wideLayout = layout.isWideLayout;
-  const verticalNavigation = wideLayout;
-  // Pushed detail screens use the platform header: a large title that collapses on
-  // scroll, the system back button with its swipe affordance, and the favourite as
-  // `headerRight`. This replaces six hand-rolled [←][CENTERED CAPS][☆] bars that all
-  // rendered the screen's category twice — once in the bar and again as a red caps
-  // line forty points below it. Tab screens keep their own headers because they carry
-  // the brand lockup and the settings entry point.
-  const detailHeader = {
-    headerShown: true,
-    headerLargeTitle: true,
-    headerBackButtonDisplayMode: "minimal",
-    headerTintColor: palette.primary,
-    headerTitleStyle: { color: palette.ink },
-    headerLargeTitleStyle: { color: palette.ink },
-    headerStyle: { backgroundColor: palette.paper },
-    headerTransparent: false,
-  } as const;
-  return <NavigationContainer ref={navigationRef} onReady={() => setNavigationReady(true)}><><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor, ...(verticalNavigation ? { paddingLeft: 94 } : {}) }, presentation: wideLayout ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: wideLayout ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator>{navigationReady && <ManualAppIntentBridge enabled={navigationReady} />}</></NavigationContainer>;
+  const detailHeader = useDetailHeaderOptions();
+  const onStateChange = useSplitSizeTransitions(layout.isTwoPane, navigationReady);
+  return <NavigationContainer ref={navigationRef} onReady={() => setNavigationReady(true)} onStateChange={onStateChange}><><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: wideLayout ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Changelog" component={ChangelogScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: wideLayout ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator>{navigationReady && <ManualAppIntentBridge enabled={navigationReady} />}</></NavigationContainer>;
 }
 
 function AppGate() {
@@ -1685,7 +1804,7 @@ function AppGate() {
   // during this render, so the only way to get the tree to see a theme change was to
   // remount the whole navigator — which threw away wherever the user had navigated to.
   // `useTheme()` re-renders instead.
-  return <ContentProvider><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
+  return <ContentProvider><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><SplitSelectionProvider><AppNavigation /></SplitSelectionProvider></View></ContentProvider>;
 }
 
 function IconFontPreloader() {
@@ -1732,6 +1851,7 @@ function createStyles(palette: AdaptivePalette) {
   detailContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 720 },
   // `brandHeader`/`brandLockup`/`brandName` ya no existen: la cabecera de Inicio es
   // `PageHeader`, la misma que las demás pestañas, y ya no lleva el icono de la app.
+  splitPlaceholder: { alignItems: "center", justifyContent: "center", gap: spacing.sm, padding: spacing.xl },
   logoMark: { width: 94, height: 94, borderRadius: 27, backgroundColor: palette.primary, overflow: "hidden" },
   logoMarkSmall: { width: 38, height: 38, borderRadius: 11 },
   iconButton: { ...circle(44), alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },

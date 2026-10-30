@@ -1,6 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -57,7 +56,8 @@ import { codeRouteKey, searchCodes, type MobileReferenceSearchResult } from "../
 import { codeRouteHasDetail } from "../codigos-logic";
 import { displayTitle } from "../title-case";
 import { hasHospitalOwnership, locationVisual, normalizeHospitalOwnership } from "../location-logic";
-import type { RootStackParamList, TabsParamList } from "../navigation-types";
+import type { TabsParamList } from "../navigation-types";
+import { useOpenDetail } from "../split-view";
 
 /**
  * The narrow slice of a list instance the back-to-top control needs. Códigos
@@ -71,7 +71,7 @@ interface ScrollToTopHandle {
   scrollToLocation?(params: { sectionIndex: number; itemIndex: number; viewPosition?: number; animated?: boolean }): void;
 }
 
-export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsParamList, "Codigos">) {
+export function CodigosScreen({ route }: BottomTabScreenProps<TabsParamList, "Codigos">) {
   const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
@@ -119,12 +119,11 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
     chrome.reset();
   }, [chrome]);
 
+  // Wide windows show the code beside the list; narrow ones push it as before.
+  const openDetail = useOpenDetail("Codigos");
   const openCode = useCallback(
-    (routeKey: string) => {
-      const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-      parentNavigation?.navigate("Code", { routeKey });
-    },
-    [navigation],
+    (routeKey: string) => openDetail({ screen: "Code", params: { routeKey } }),
+    [openDetail],
   );
 
   /** Ver codeRouteHasDetail: la mayoría de los códigos no llevan a ningún sitio. */
@@ -133,10 +132,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
     [content.relationsIndex],
   );
 
-  const openStatus4 = useCallback(() => {
-    const parentNavigation = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-    parentNavigation?.navigate("Status4");
-  }, [navigation]);
+  const openStatus4 = useCallback(() => openDetail({ screen: "Status4", params: undefined }), [openDetail]);
 
   if (query.trim()) {
     return (

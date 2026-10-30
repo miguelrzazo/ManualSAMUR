@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle, useColorScheme, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radii, spacing, typography } from "@manual-samur/design-tokens";
-import { accessibilityHints, accessibilityTargetStyle, navigationTestID, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
+import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, navigationTestID, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
 import { selectionTick } from "./hooks/haptics";
 
 /**
@@ -96,8 +96,11 @@ type GlassTabBarProps = BottomTabBarProps & {
 const SEARCH_ROUTE = "Buscar";
 export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTabBarProps) {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const vertical = width >= 600;
+  const { width, fontScale } = useWindowDimensions();
+  // The same policy `MainTabs` uses to put the bar on the left: one breakpoint, read in
+  // one place, so the rail and its reserved column can never disagree.
+  const layout = adaptiveLayout(width, fontScale);
+  const vertical = layout.isWideLayout;
 
   const pillRoutes = state.routes.filter((route) => route.name !== SEARCH_ROUTE);
   const searchRoute = state.routes.find((route) => route.name === SEARCH_ROUTE);
@@ -164,7 +167,12 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
   // between the tab bar and the search button even at spacing 0. They are separate
   // controls and must read as separate objects.
   return (
-    <View pointerEvents="box-none" style={[styles.wrapper, vertical ? [styles.verticalWrapper, { paddingLeft: Math.max(insets.left, spacing.sm), paddingTop: Math.max(insets.top, spacing.sm), paddingBottom: Math.max(insets.bottom, spacing.sm) }] : { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
+    <View pointerEvents="box-none" style={vertical
+      // In flow, beside the screens (`tabBarPosition: "left"`), not floating over them:
+      // the rail owns its column, so no screen has to pad for it. The column also
+      // absorbs the left safe area (an iPhone in landscape with the island on the left).
+      ? [styles.verticalWrapper, { width: layout.railWidth + insets.left, paddingLeft: insets.left, paddingTop: Math.max(insets.top, spacing.sm), paddingBottom: Math.max(insets.bottom, spacing.sm), backgroundColor: palette.paper }]
+      : [styles.wrapper, { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
       <View style={[styles.row, vertical && styles.verticalRow]}>
         <GlassCapsule palette={palette} style={[styles.tabCapsule, vertical && styles.verticalTabCapsule]}>{tabButtons}</GlassCapsule>
         {searchButton && <GlassCapsule palette={palette} style={styles.searchCapsule}>{searchButton}</GlassCapsule>}
@@ -190,7 +198,7 @@ const fallbackShadow = Platform.select({
 
 const styles = StyleSheet.create({
   wrapper: { position: "absolute", left: 0, right: 0, bottom: 0, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
-  verticalWrapper: { left: -94, top: 0, right: undefined, bottom: 0, width: 94, paddingHorizontal: spacing.xs, paddingVertical: spacing.md, justifyContent: "center" },
+  verticalWrapper: { height: "100%", alignItems: "center", justifyContent: "center" },
   row: { flexDirection: "row", alignItems: "center", justifyContent: "center", columnGap: spacing.xl },
   verticalRow: { flexDirection: "column", rowGap: spacing.md },
   tabCapsule: { flex: 1, borderRadius: radii.pill, overflow: "hidden" },
