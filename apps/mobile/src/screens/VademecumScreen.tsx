@@ -106,7 +106,7 @@ export function VademecumScreen({ navigation }: BottomTabScreenProps<TabsParamLi
   }, [activeTab, query, references, searching]);
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       {/* Title, search and the domain switcher give way to the list on a downward
           scroll, collapsing into the compact bar; the sticky letter/category header
           stays behind it. */}

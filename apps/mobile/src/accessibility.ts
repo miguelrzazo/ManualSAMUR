@@ -52,7 +52,7 @@ export function accessibilityTargetStyle(minimum = 44) {
 }
 
 export interface AdaptiveLayout {
-  isTablet: boolean;
+  isWideLayout: boolean;
   singleColumn: boolean;
   listMaxWidth: number;
   readingMaxWidth: number;
@@ -60,13 +60,13 @@ export interface AdaptiveLayout {
 
 /** Deterministic same-IA layout policy for phones, tablets, and large text. */
 export function adaptiveLayout(width: number, fontScale: number): AdaptiveLayout {
-  const isTablet = width >= 768;
+  const isWideLayout = width >= 600;
   const singleColumn = width < 420 || fontScale >= 1.75;
   return {
-    isTablet,
+    isWideLayout,
     singleColumn,
-    listMaxWidth: isTablet ? 1040 : width,
-    readingMaxWidth: isTablet ? 720 : width,
+    listMaxWidth: isWideLayout ? 1040 : width,
+    readingMaxWidth: isWideLayout ? 720 : width,
   };
 }
 

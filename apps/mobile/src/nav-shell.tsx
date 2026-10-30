@@ -2,7 +2,7 @@ import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { GlassView, isGlassEffectAPIAvailable, isLiquidGlassAvailable } from "expo-glass-effect";
 import React, { useEffect, useMemo, useState } from "react";
-import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle, useColorScheme } from "react-native";
+import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle, useColorScheme, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radii, spacing, typography } from "@manual-samur/design-tokens";
 import { accessibilityHints, accessibilityTargetStyle, navigationTestID, routeAccessibilityLabels, type AdaptivePalette } from "./accessibility";
@@ -96,6 +96,8 @@ type GlassTabBarProps = BottomTabBarProps & {
 const SEARCH_ROUTE = "Buscar";
 export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const vertical = width >= 600;
 
   const pillRoutes = state.routes.filter((route) => route.name !== SEARCH_ROUTE);
   const searchRoute = state.routes.find((route) => route.name === SEARCH_ROUTE);
@@ -112,7 +114,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
   };
 
   const tabButtons = (
-    <View style={styles.tabRow} accessibilityRole="tablist" accessibilityLabel="Navegación principal">
+    <View style={[styles.tabRow, vertical && styles.verticalTabRow]} accessibilityRole="tablist" accessibilityLabel="Navegación principal">
       {pillRoutes.map((route) => {
         // `state.routes` and `descriptors` are two separate props and are not guaranteed to
         // agree mid-transition: a route can be in the array a frame before its descriptor
@@ -130,7 +132,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
             key={route.key}
             testID={navigationTestID(route.name)}
             onPress={() => goTo(route, focused)}
-            style={[styles.tabItem, accessibilityTargetStyle()]}
+            style={[styles.tabItem, vertical && styles.verticalTabItem, accessibilityTargetStyle()]}
             accessibilityRole="tab"
             accessibilityLabel={label}
             accessibilityHint={focused ? undefined : accessibilityHints.switchTab}
@@ -162,9 +164,9 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
   // between the tab bar and the search button even at spacing 0. They are separate
   // controls and must read as separate objects.
   return (
-    <View pointerEvents="box-none" style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
-      <View style={styles.row}>
-        <GlassCapsule palette={palette} style={styles.tabCapsule}>{tabButtons}</GlassCapsule>
+    <View pointerEvents="box-none" style={[styles.wrapper, vertical ? [styles.verticalWrapper, { paddingLeft: Math.max(insets.left, spacing.sm), paddingTop: Math.max(insets.top, spacing.sm), paddingBottom: Math.max(insets.bottom, spacing.sm) }] : { paddingBottom: Math.max(insets.bottom, spacing.sm) }]}>
+      <View style={[styles.row, vertical && styles.verticalRow]}>
+        <GlassCapsule palette={palette} style={[styles.tabCapsule, vertical && styles.verticalTabCapsule]}>{tabButtons}</GlassCapsule>
         {searchButton && <GlassCapsule palette={palette} style={styles.searchCapsule}>{searchButton}</GlassCapsule>}
       </View>
     </View>
@@ -188,13 +190,18 @@ const fallbackShadow = Platform.select({
 
 const styles = StyleSheet.create({
   wrapper: { position: "absolute", left: 0, right: 0, bottom: 0, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+  verticalWrapper: { left: -94, top: 0, right: undefined, bottom: 0, width: 94, paddingHorizontal: spacing.xs, paddingVertical: spacing.md, justifyContent: "center" },
   row: { flexDirection: "row", alignItems: "center", justifyContent: "center", columnGap: spacing.xl },
+  verticalRow: { flexDirection: "column", rowGap: spacing.md },
   tabCapsule: { flex: 1, borderRadius: radii.pill, overflow: "hidden" },
+  verticalTabCapsule: { flex: 0, width: 76 },
   tabRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", paddingVertical: spacing.sm, paddingHorizontal: spacing.sm },
+  verticalTabRow: { flexDirection: "column", paddingHorizontal: 2, paddingVertical: spacing.xs },
   // `minHeight: 48` on the item, `spacing.sm` above and below the row: 64pt of capsule,
   // which is the height a system tab bar actually has. The old 44 came from
   // `accessibilityTargetStyle()` alone — a floor for reachability, never a size.
   tabItem: { flex: 1, alignItems: "center", justifyContent: "center", minHeight: 48, gap: 2, paddingVertical: 2 },
+  verticalTabItem: { flex: 0, width: 68, minHeight: 60 },
   searchCapsule: { borderRadius: radii.pill, width: 56, height: 56, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   searchButton: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
   tabItemLabel: { ...typography.caption2, fontWeight: "500" },

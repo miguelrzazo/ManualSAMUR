@@ -1,11 +1,13 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
+import { createNavigationContainerRef } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { StatusBar } from "expo-status-bar";
+import * as AppIntents from "expo-app-intents";
 import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
@@ -33,7 +35,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { ContentProvider, findProcedure, useContentData, useContentPreferences } from "./src/content";
+import { ContentProvider, findProcedure, useContentData, useContentPreferences, useContentSync } from "./src/content";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
@@ -43,14 +45,14 @@ import type { MobileAttachment, MobileProcedure } from "../../packages/manual-co
 import { displayTitle } from "./src/title-case";
 import { APP_CHANGELOG } from "./src/app-changelog";
 import { DRUG_DETAIL_FIELDS, DRUG_NOTE_FIELDS, DRUG_SAFETY_FIELDS, drugFieldText, parseDrugRoutes, parseMedicationDose, type MedicationDoseSection } from "./src/drug-detail-logic";
-import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures } from "./src/procedure-logic";
+import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, resolveProcedureReference, searchProcedures } from "./src/procedure-logic";
 import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
 import { highlightSegments, snippetText, type SearchSnippet } from "./src/search-snippet-logic";
 import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
 import { activeHeadingIdAtOffset, parseProcedureDocument, type MeasuredHeadingOffset, type ParsedProcedureDocument, type ParsedProcedureSection } from "./src/procedure-document.ts";
 import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
-import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
+import { buildCodeReferences, buildVademecumReferences, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
@@ -97,6 +99,7 @@ import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 /**
  * Origen del sitio web canónico, para construir el enlace y el pie del PDF de
@@ -328,7 +331,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
       <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} onOpenChangelog={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Changelog"); }} contentOrigin={CONTENT_ORIGIN} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "1.0.0"} />
@@ -348,14 +351,15 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
  * the scope chips (so the user can see what is searchable at a glance) and the last
  * queries and references they opened.
  */
-function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+function BuscarScreen({ navigation, route }: BottomTabScreenProps<TabsParamList, "Buscar">) {
   const styles = useAppStyles();
   const { content } = useContentData();
   const { recents, recentQueries, rememberQuery, forgetQuery } = useContentPreferences();
   const stack = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
   const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(route.params?.query ?? "");
+  useEffect(() => { if (route.params?.query !== undefined) setQuery(route.params.query); }, [route.params?.query]);
   const [filter, setFilter] = useState<SearchScope>("Todo");
   const chrome = useScrollChrome();
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
@@ -372,7 +376,7 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
   const resultsRef = useRef<FlatList<(typeof rows)[number]>>(null);
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       {/* Title, field and scope chips give way to the results on a downward
           scroll, collapsing into the compact bar — see `useScrollChrome`. */}
       {chrome.collapsed && <CompactHeader title="Buscar" onExpand={chrome.expand} />}
@@ -556,7 +560,7 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
   // navigator or gives over the radio; the coordinates are a fallback nobody dictates
   // to five decimal places. They used to be the only block on the screen with a label
   // and a heading, above nothing, while the address was a grey meta line.
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     <LocationMapPreview location={location} label={visual.label + " " + locationDisplayName(location)} />
     <View style={[styles.locationTypeBadge, { backgroundColor: visual.wash }]} accessibilityLabel={visual.label}>
       <MaterialCommunityIcons name={visual.icon} size={18} color={visual.color} />
@@ -1109,7 +1113,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     navigation.push("Anexo", { attachmentId: attachment.id });
   };
 
-  return <SafeAreaView style={styles.screen} edges={[]}>
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}>
   {findOpen && (
     <ProcedureFindBar
       query={findQuery}
@@ -1267,7 +1271,7 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const safetyRows = DRUG_SAFETY_FIELDS.map(([label, key]) => ({ label, value: drugFieldText(drug[key]) }))
     .filter((row) => row.value.length > 0)
     .map((row) => ({ ...row, tone: row.label === "Contraindicaciones" ? "danger" as const : row.label === "Efectos secundarios" || row.label === "Precauciones" ? "warning" as const : "neutral" as const }));
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     <View style={styles.drugTaxonomy}>
       {[drug.category, drug.subcategory].filter((value): value is string => typeof value === "string" && value.length > 0).map((value) => (
         <Badge key={value} label={value} />
@@ -1323,7 +1327,7 @@ function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<
   if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{reference.subtitle}</Text>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{reference.subtitle}</Text>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
 }
 
 function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Code">) {
@@ -1344,7 +1348,7 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const extraFields = Object.entries(details).filter(([key, value]) => !["code", "name", "title", "category", "description"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 8);
   const relatedProcedures = content.relationsIndex.codes[route.params.routeKey.replace(/^code:/, "")] ?? [];
   const codeEvents = content.updates.filter((event) => event.category === "codigo" && event.routeKey === route.params.routeKey);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailTitle}>{[reference.badge, reference.title].filter(Boolean).join(" · ")}</Text><Text style={styles.detailMeta}>{category || "Código"}</Text>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}{relatedProcedures.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedProcedures.map((item) => { const procedure = findProcedure(content, item.procedureId); return procedure ? <ProcedureRow key={item.procedureId} procedure={procedure} onPress={() => navigation.push("Procedure", { id: item.procedureId })} /> : null; })}</View></>}{codeEvents.length > 0 && <ProcedureHistorySection predicate={(event) => event.category === "codigo" && event.routeKey === route.params.routeKey} updates={content.updates} />}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailTitle}>{[reference.badge, reference.title].filter(Boolean).join(" · ")}</Text><Text style={styles.detailMeta}>{category || "Código"}</Text>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}{relatedProcedures.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedProcedures.map((item) => { const procedure = findProcedure(content, item.procedureId); return procedure ? <ProcedureRow key={item.procedureId} procedure={procedure} onPress={() => navigation.push("Procedure", { id: item.procedureId })} /> : null; })}</View></>}{codeEvents.length > 0 && <ProcedureHistorySection predicate={(event) => event.category === "codigo" && event.routeKey === route.params.routeKey} updates={content.updates} />}</ScrollView></SafeAreaView>;
 }
 
 // Status 4 is a reusable component (src/components/Status4Cheatsheet.tsx) so a later
@@ -1358,7 +1362,7 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
   const hospitals = useMemo(() => asCodigosHospitals(content.hospitals), [content.hospitals]);
   const status4 = useMemo(() => asStatus4Entries(content.status4), [content.status4]);
   const entries = useMemo(() => buildHospitalList(hospitals, status4), [hospitals, status4]);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Status4Cheatsheet status4={status4} hospitals={entries} palette={palette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Status4Cheatsheet status4={status4} hospitals={entries} palette={palette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
 }
 
 // The placeholder flat/searchable list (T5a) that used to live here is gone:
@@ -1375,7 +1379,7 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
 function ChangelogScreen({ navigation }: NativeStackScreenProps<RootStackParamList, "Changelog">) {
   const styles = useAppStyles();
   useDetailHeader({ navigation, title: "Novedades" });
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     {APP_CHANGELOG.length === 0
       ? <EmptyState title="Sin novedades todavía" detail={`Estás en la versión ${Constants.expoConfig?.version ?? "1.0.0"}. Aquí aparecerá lo que cambie en la aplicación a partir de la siguiente.`} />
       : APP_CHANGELOG.map((release) => (
@@ -1395,7 +1399,7 @@ function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootS
   const { content } = useContentData();
   const [query, setQuery] = useState(route.params?.query ?? "");
   const entries = useMemo(() => searchAbbreviations(content.abbreviations, query, 1000), [content.abbreviations, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
 }
 
 /** "PDF" is an acronym; "IMAGE" was the enum shouted at the reader. */
@@ -1552,13 +1556,93 @@ function MainTabs() {
   </Tabs.Navigator>;
 }
 
+function ManualAppIntentBridge({ enabled }: { enabled: boolean }) {
+  const { content } = useContentData();
+  const { isHydrated } = useContentSync();
+  const ready = enabled && isHydrated;
+
+  useEffect(() => {
+    if (!ready || Platform.OS !== "ios" || !AppIntents.isAvailable()) return;
+    const references = [
+      ...buildVademecumReferences(content),
+      ...buildCodeReferences(content.codes),
+    ];
+    const procedures = content.procedures.map((procedure) => ({
+      id: procedure.routeKey,
+      title: procedure.title,
+      subtitle: procedure.section,
+      synonyms: procedure.synonyms.slice(0, 8),
+    }));
+    const catalog = [...procedures, ...references.map((reference) => ({
+      id: reference.routeKey ?? reference.id,
+      title: reference.title,
+      subtitle: reference.subtitle,
+      synonyms: reference.kind === "abbreviation" ? [] : [reference.badge, reference.id].filter((value): value is string => Boolean(value)),
+    }))];
+    void AppIntents.setEntityCatalogAsync("manualReference", catalog).catch((error) => {
+      console.warn("No se pudo actualizar el índice de referencias de Manual SAMUR.", error);
+    });
+  }, [content, ready]);
+
+  AppIntents.useAppIntents(async (pendingIntents) => {
+    if (!ready || !navigationRef.isReady()) return;
+    for (const invocation of pendingIntents) {
+      try {
+        if (invocation.name === "searchManual") {
+          const query = invocation.params.query;
+          if (typeof query !== "string") {
+            console.warn("Descartando búsqueda de App Intent no válida", invocation.id);
+            await AppIntents.removePendingInvocationAsync(invocation.id);
+            continue;
+          }
+          navigationRef.navigate("Tabs", { screen: "Buscar", params: { query } });
+        } else if (invocation.name === "openManualReference") {
+          const routeKey = invocation.params.routeKey;
+          if (typeof routeKey !== "string") {
+            console.warn("Descartando referencia de App Intent no válida", invocation.id);
+            await AppIntents.removePendingInvocationAsync(invocation.id);
+            continue;
+          }
+          const procedure = resolveProcedureReference(content.procedures, routeKey);
+          if (procedure) {
+            navigationRef.navigate("Procedure", { id: procedure.id });
+          } else if (routeKey.startsWith("code:")) {
+            const reference = resolveCodeReference(content.codes, routeKey);
+            if (!reference) {
+              await AppIntents.removePendingInvocationAsync(invocation.id);
+              continue;
+            }
+            navigationRef.navigate("Code", { routeKey: reference.routeKey });
+          } else {
+            const reference = resolveVademecumReference(content, routeKey);
+            if (!reference) {
+              await AppIntents.removePendingInvocationAsync(invocation.id);
+              continue;
+            }
+            if (reference.kind === "drug" && reference.targetId) navigationRef.navigate("Drug", { id: reference.targetId });
+            else navigationRef.navigate("Vademecum", { routeKey: reference.routeKey });
+          }
+        } else {
+          continue;
+        }
+        await AppIntents.removePendingInvocationAsync(invocation.id);
+      } catch (error) {
+        console.warn("App Intent pendiente de reintento", invocation.id, error);
+      }
+    }
+  });
+  return null;
+}
+
 function AppNavigation() {
   const palette = useTheme();
   const styles = useAppStyles();
   const reduceMotion = useReduceMotion();
+  const [navigationReady, setNavigationReady] = useState(false);
   const { width, fontScale } = useWindowDimensions();
   const layout = adaptiveLayout(width, fontScale);
-  const tablet = layout.isTablet;
+  const wideLayout = layout.isWideLayout;
+  const verticalNavigation = wideLayout;
   // Pushed detail screens use the platform header: a large title that collapses on
   // scroll, the system back button with its swipe affordance, and the favourite as
   // `headerRight`. This replaces six hand-rolled [←][CENTERED CAPS][☆] bars that all
@@ -1575,7 +1659,7 @@ function AppNavigation() {
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
   } as const;
-  return <NavigationContainer><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Changelog" component={ChangelogScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  return <NavigationContainer ref={navigationRef} onReady={() => setNavigationReady(true)}><><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor, ...(verticalNavigation ? { paddingLeft: 94 } : {}) }, presentation: wideLayout ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: wideLayout ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator>{navigationReady && <ManualAppIntentBridge enabled={navigationReady} />}</></NavigationContainer>;
 }
 
 function AppGate() {

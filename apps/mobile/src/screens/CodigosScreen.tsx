@@ -140,7 +140,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
 
   if (query.trim()) {
     return (
-      <SafeAreaView style={styles.screen} edges={["top"]}>
+      <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
         {chrome.collapsed ? (
           <CompactHeader title="Códigos y claves" onExpand={chrome.expand} />
         ) : (
@@ -209,7 +209,7 @@ export function CodigosScreen({ route, navigation }: BottomTabScreenProps<TabsPa
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       {/* The large title, the search field and both filter rows give way to the
           list on a downward scroll, collapsing into the compact bar — the standard
           large-title behaviour on both platforms. The bar itself never leaves, and
