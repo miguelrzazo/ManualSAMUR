@@ -59,6 +59,11 @@ export function GlobalGraphView() {
   }, [graph]);
 
   const visibleCount = graph ? graph.nodes.filter((node) => !hidden.has(node.section)).length : 0;
+  const visibleEdges = graph
+    ? graph.edges.filter(
+        (edge) => !hidden.has(nodesById.get(edge.source)?.section ?? "") && !hidden.has(nodesById.get(edge.target)?.section ?? ""),
+      ).length
+    : 0;
 
   return (
     <div className="map-route-shell relative overflow-hidden bg-background">
@@ -87,7 +92,7 @@ export function GlobalGraphView() {
             <h1 className="text-sm font-semibold tracking-tight">Grafo de procedimientos</h1>
             {graph && (
               <span className="ml-auto text-[11px] tabular-nums text-muted-foreground">
-                {visibleCount} nodos · {graph.edges.length} enlaces
+                {visibleCount} nodos · {visibleEdges} enlaces
               </span>
             )}
           </div>
