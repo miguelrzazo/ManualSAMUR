@@ -42,18 +42,23 @@ private struct Status4Row: View {
                 .foregroundStyle(.tint)
                 .frame(minWidth: 26)
             VStack(alignment: .leading, spacing: 0) {
-                Text(entry.hospitalName)
+                Text(entry.title)
                     .font(.footnote.weight(.semibold))
                     .lineLimit(2)
                 if let id = entry.hospitalId {
                     Text(id)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+                } else if let meaning = entry.meaning {
+                    Text(meaning)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
                 }
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Status \(entry.status): \(entry.hospitalName)")
+        .accessibilityLabel("Status \(entry.status): \(entry.title)")
     }
 }
 
@@ -66,10 +71,10 @@ private struct Status4DetailView: View {
                 Text("Status 4 + \(entry.status)")
                     .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
                     .foregroundStyle(.tint)
-                Text(entry.hospitalName)
+                Text(entry.title)
                     .font(.headline)
                 DetailBlock(title: "Código", text: entry.hospitalId)
-                DetailBlock(title: "Descripción", text: entry.description)
+                DetailBlock(title: "Significado", text: entry.meaning)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

@@ -148,10 +148,22 @@ struct CommercialName: Codable, Hashable, Sendable {
 struct Status4Entry: Codable, Hashable, Identifiable, Sendable {
     let status: Int
     let hospitalId: String?
-    let hospitalName: String
+    let hospitalName: String?
     let description: String?
 
     var id: Int { status }
+
+    /// Status 4 + 4 has no destination hospital ("no operativo").
+    var title: String { hospitalName ?? "Sin hospital" }
+
+    /// The part of the description after the arrow, e.g. "No operativo, solo se pasa clave cuatro".
+    var meaning: String? {
+        guard let description else { return nil }
+        if let range = description.range(of: "→") {
+            return description[range.upperBound...].trimmingCharacters(in: .whitespaces)
+        }
+        return description
+    }
 }
 
 // MARK: - Persisted Watch copy
