@@ -31,9 +31,11 @@ struct ManualReferenceEntity: AppEntity {
 
   init(record: AppIntentEntityRecord) {
     id = record.id
-    name = record.title
     subtitle = record.subtitle
     synonyms = record.synonyms
+    // `name` goes through the `@Property` wrapper's setter, which reads `self`: every
+    // plain stored property must be initialised first.
+    name = record.title
   }
 
   func matches(_ text: String) -> Bool {
