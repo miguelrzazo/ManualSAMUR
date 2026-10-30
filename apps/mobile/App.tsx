@@ -34,6 +34,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { ContentProvider, findProcedure, useContentData, useContentPreferences } from "./src/content";
+import { WatchSnapshotSync } from "./src/watch-sync";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
@@ -1593,7 +1594,7 @@ function AppGate() {
   // during this render, so the only way to get the tree to see a theme change was to
   // remount the whole navigator — which threw away wherever the user had navigated to.
   // `useTheme()` re-renders instead.
-  return <ContentProvider><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
+  return <ContentProvider><WatchSnapshotSync /><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
 }
 
 function IconFontPreloader() {

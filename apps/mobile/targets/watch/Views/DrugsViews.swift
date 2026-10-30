@@ -2,10 +2,10 @@ import SwiftUI
 
 struct DrugsTab: View {
     @Environment(ContentStore.self) private var store
-    @State private var query = ""
+    @State private var query = DebugLaunch.string("DebugSearchDrugs")
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 if let content = store.content {
                     DrugsList(content: content, query: query)
@@ -16,9 +16,6 @@ struct DrugsTab: View {
             .navigationTitle("Vademécum")
             .searchable(text: $query, prompt: "Fármaco o nombre comercial")
             .toolbar { AboutToolbarItem() }
-            .navigationDestination(for: Drug.self) { drug in
-                DrugDetailView(drug: drug, commercial: store.content?.commercialNames.filter { $0.drugId == drug.id } ?? [])
-            }
         }
     }
 }
@@ -42,7 +39,7 @@ private struct DrugsList: View {
                         if let via = match.matchedAlias {
                             Text(via)
                                 .font(.caption2)
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Color.samurAccent)
                                 .lineLimit(1)
                         } else if let category = match.drug.subcategory ?? match.drug.category {
                             Text(category)

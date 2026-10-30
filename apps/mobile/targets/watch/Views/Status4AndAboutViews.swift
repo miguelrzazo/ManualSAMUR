@@ -4,7 +4,7 @@ struct Status4Tab: View {
     @Environment(ContentStore.self) private var store
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 if let content = store.content {
                     List {
@@ -25,9 +25,6 @@ struct Status4Tab: View {
             }
             .navigationTitle("Status 4")
             .toolbar { AboutToolbarItem() }
-            .navigationDestination(for: Status4Entry.self) { entry in
-                Status4DetailView(entry: entry)
-            }
         }
     }
 }
@@ -39,7 +36,7 @@ private struct Status4Row: View {
         HStack(spacing: 8) {
             Text("\(entry.status)")
                 .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
-                .foregroundStyle(.tint)
+                .foregroundStyle(Color.samurAccent)
                 .frame(minWidth: 26)
             VStack(alignment: .leading, spacing: 0) {
                 Text(entry.title)
@@ -62,7 +59,7 @@ private struct Status4Row: View {
     }
 }
 
-private struct Status4DetailView: View {
+struct Status4DetailView: View {
     let entry: Status4Entry
 
     var body: some View {
@@ -70,7 +67,7 @@ private struct Status4DetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Status 4 + \(entry.status)")
                     .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(Color.samurAccent)
                 Text(entry.title)
                     .font(.headline)
                 DetailBlock(title: "Código", text: entry.hospitalId)
@@ -103,9 +100,9 @@ struct AboutView: View {
                     Text("Sin datos guardados")
                 }
                 if let checked = store.lastSuccessfulCheck {
-                    LabeledContent("Comprobado") {
-                        Text(checked, format: .relative(presentation: .named))
-                    }
+                    Text("Comprobado \(checked.formatted(.relative(presentation: .named).locale(Locale(identifier: "es_ES"))))")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             }
             DataStatusSection()

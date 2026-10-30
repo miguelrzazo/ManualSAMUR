@@ -35,9 +35,7 @@ struct DataStatusSection: View {
 struct AboutToolbarItem: ToolbarContent {
     var body: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            NavigationLink {
-                AboutView()
-            } label: {
+            NavigationLink(value: AppRoute.about) {
                 Image(systemName: "info.circle")
             }
             .accessibilityLabel("Acerca de")
@@ -75,5 +73,16 @@ struct DetailBlock: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
         }
+    }
+}
+
+/// Launch-argument hooks for simulator verification and screenshots; empty in Release.
+enum DebugLaunch {
+    static func string(_ key: String) -> String {
+        #if DEBUG
+        return UserDefaults.standard.string(forKey: key) ?? ""
+        #else
+        return ""
+        #endif
     }
 }

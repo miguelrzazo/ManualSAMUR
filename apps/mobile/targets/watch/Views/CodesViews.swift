@@ -8,10 +8,10 @@ enum CodeRoute: Hashable {
 
 struct CodesTab: View {
     @Environment(ContentStore.self) private var store
-    @State private var query = ""
+    @State private var query = DebugLaunch.string("DebugSearchCodes")
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 if let content = store.content {
                     CodesRootList(content: content, query: query)
@@ -22,18 +22,6 @@ struct CodesTab: View {
             .navigationTitle("Códigos")
             .searchable(text: $query, prompt: "Código o nombre")
             .toolbar { AboutToolbarItem() }
-            .navigationDestination(for: CodeRoute.self) { route in
-                switch route {
-                case .group(let key):
-                    if let group = store.content?.codeGroups.first(where: { $0.key == key }) {
-                        CodeGroupView(group: group)
-                    }
-                case .cheatsheet:
-                    CheatsheetView(sections: store.content?.cheatsheet ?? [])
-                case .code(let groupTitle, let entry):
-                    CodeDetailView(groupTitle: groupTitle, entry: entry)
-                }
-            }
         }
     }
 }
@@ -131,7 +119,7 @@ struct CodeRow: View {
             HStack(spacing: 4) {
                 Text(entry.code)
                     .font(.system(.headline, design: .rounded).monospacedDigit())
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(Color.samurAccent)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 if entry.tetra == true {
@@ -201,7 +189,7 @@ struct CodeDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(entry.code)
                     .font(.system(.title2, design: .rounded).weight(.bold).monospacedDigit())
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(Color.samurAccent)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
                 Text(entry.name)
