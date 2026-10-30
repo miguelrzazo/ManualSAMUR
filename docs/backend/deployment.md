@@ -45,3 +45,20 @@ publicando contra esta base remota.
 
 El estado de Access y automatización debe actualizarse con evidencia real cuando se
 complete su configuración; publicar la API no demuestra que esos pasos estén listos.
+
+# Despliegue verificado — 30/31 de octubre de 2026 (PR #115, Cloudflare como producción)
+
+- Worker principal: versión `8ed6c825-31fe-4074-ae1d-4e0cf82b0c1f` (`wrangler deploy --env production`).
+- Migración `0002_editors_audit.sql` aplicada en remoto. Marcador Time Travel previo:
+  `00000015-00000000-00005114-d5c67f05e6d06cbd8182aa8fccba199a`
+  (`wrangler d1 time-travel restore manualsamur-production --bookmark=…` para volver).
+- `cli.ts backfill-datasets` añadió los 22 conjuntos y `manifest.json` a la
+  publicación activa `19ab0247-66da-447f-9b5d-cc3a987dd042` sin cambiar su contenido.
+- Verificado en vivo: `/`, `/manual`, `/manual/301-parada-cardiorrespiratoria`,
+  `/vademecum`, `/codigos`, `/mapa`, `/acerca-de`, `/cambios`, `/privacidad` → 200;
+  `/gestion-editorial`, `/api/editor/*` anónimos → 401; manifiesto 200 y `304` con
+  `If-None-Match`; los 22 conjuntos coinciden en SHA-256 y bytes con el manifiesto;
+  `contentHash` del manifiesto = hash del snapshot; `OPTIONS` → 204 con CORS;
+  `/docs/*.pdf` → `application/pdf`, `inline`, `nosniff` desde `public/_headers`.
+- Vercel deja de ser producción. El proyecto Vercel `manual-samur` sigue existiendo y
+  su integración Git sigue creando despliegues Preview hasta desconectarla en Vercel.

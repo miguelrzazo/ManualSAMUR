@@ -259,6 +259,9 @@ const STABLE_PROCEDURE_IDS: Record<string, string> = {
   "insuficiencia cardiaca aguda cronica agudizada": "309_04",
   "manejo del ictus en la edad pediatrica": "314_07",
   "marcapasos temporal no invasivo": "603_05",
+  // Alta en el wiki el 29/10/2026 (título con doble espacio y ®). Sin id, el
+  // sync mensual abortaba en assertEveryProcedureHasId (#112).
+  "mascarilla laringea canula supraglotica i gel": "602_15",
   "manejo avanzado de via aerea": "302",
   "medicion de temperatura central mediante sonda esofagica": "601_04",
   "obstruccion de la via aerea por cuerpo extrano": "405",
@@ -487,6 +490,16 @@ export function normalizeProcedureLookupKey(value: string): string {
  * los títulos repetidos entre SVA y SVB.
  */
 export const STABLE_PROCEDURE_IDS_FOR_TESTS: Readonly<Record<string, string>> = STABLE_PROCEDURE_IDS;
+
+/**
+ * Ids reservados para páginas nuevas del wiki que todavía no están en el corpus
+ * del repositorio. Desde el backend editorial, el sync mensual las entrega como
+ * propuesta en D1 (con sus adjuntos en el Worker de archivos) y no como fichero
+ * en Git: 602_15 trae 71 MB de fotografías sin comprimir que no deben entrar en
+ * el repositorio ni en el paquete móvil empaquetado. Al aceptarse en el editor y
+ * publicarse, la ficha existe en la publicación activa.
+ */
+export const NEW_UPSTREAM_PROCEDURE_IDS: ReadonlySet<string> = new Set(["602_15"]);
 
 /**
  * ¿Es este espacio una carpeta del wiki y no una ficha?

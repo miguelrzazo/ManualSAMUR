@@ -83,6 +83,10 @@ jobs:
           PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN }}
         run: |
           set -euo pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN repository secret is missing; the validated candidate could not be queued (docs/backend/credentials.md)."
+            exit 1
+          fi
           npm run backend:propose -- --remote 2>&1 | tee /tmp/manual-update-diagnostics/proposals.log
 
       - name: Generate update report
