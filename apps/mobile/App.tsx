@@ -352,14 +352,21 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
  * queries and references they opened.
  */
 function BuscarScreen({ navigation, route }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+  const initialQuery = route.params?.query ?? "";
+  return <BuscarScreenContent key={initialQuery} navigation={navigation} initialQuery={initialQuery} />;
+}
+
+function BuscarScreenContent({ navigation, initialQuery }: {
+  navigation: BottomTabScreenProps<TabsParamList, "Buscar">["navigation"];
+  initialQuery: string;
+}) {
   const styles = useAppStyles();
   const { content } = useContentData();
   const { recents, recentQueries, rememberQuery, forgetQuery } = useContentPreferences();
   const stack = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
   const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
-  const [query, setQuery] = useState(route.params?.query ?? "");
-  useEffect(() => { if (route.params?.query !== undefined) setQuery(route.params.query); }, [route.params?.query]);
+  const [query, setQuery] = useState(initialQuery);
   const [filter, setFilter] = useState<SearchScope>("Todo");
   const chrome = useScrollChrome();
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
