@@ -352,6 +352,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
  * queries and references they opened.
  */
 function BuscarScreen({ navigation, route }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+  // Search accessibility labels and input hints live in the keyed screen content below.
   const initialQuery = route.params?.query ?? "";
   return <BuscarScreenContent key={initialQuery} navigation={navigation} initialQuery={initialQuery} />;
 }
