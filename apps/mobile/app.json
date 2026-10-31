@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "es.madrid.samur.manual",
+      "appleTeamId": "FC8DH72682",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación.",
