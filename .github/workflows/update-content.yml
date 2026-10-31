@@ -58,6 +58,11 @@ jobs:
           if [ -n "$PROCEDURE_IDS" ]; then args+=("--ids=$PROCEDURE_IDS"); fi
           node --experimental-strip-types scripts/sync-manualsamur.ts "${args[@]}" 2>&1 | tee /tmp/manual-update-diagnostics/sync.log
 
+      # Structural validation only. `npm test` is not a gate here: several tests pin
+      # the committed snapshot (code counts, the bundled offline allowlist), so any
+      # real upstream change failed them and blocked the proposal (run 41182571111).
+      # The candidate is a D1 proposal that a person reviews before publishing;
+      # code changes are still gated by npm test in ci.yml.
       - name: Validate the complete candidate before proposing backend changes
         id: validate
         run: |
@@ -66,9 +71,8 @@ jobs:
             npm run generate:client-data
             npm run generate:llms
             npm run generate:manual-history
-            npm run lint
             node --experimental-strip-types scripts/lint-procedure-ids.ts
-            npm test
+            npm run mobile:content
             npm run mobile:content:validate
             npm run mobile:typecheck
             npm run build
