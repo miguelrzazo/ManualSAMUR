@@ -151,6 +151,7 @@ export function GlassTabBar({ state, descriptors, navigation, palette }: GlassTa
 
   const searchButton = searchRoute ? (
     <Pressable
+      testID={navigationTestID(searchRoute.name)}
       onPress={() => goTo(searchRoute, searchFocused)}
       style={[styles.searchButton, accessibilityTargetStyle()]}
       accessibilityRole="tab"
