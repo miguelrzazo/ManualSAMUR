@@ -1,5 +1,5 @@
 import { stableRouteKey, type MobileProcedure } from "../../../packages/manual-content/src/index.ts";
-import { buildSearchSnippet, readableSnippetSource, type SearchSnippet } from "./search-snippet-logic.ts";
+import { HTML_ENTITY_PATTERN, buildSearchSnippet, decodeHtmlEntity, readableSnippetSource, type SearchSnippet } from "./search-snippet-logic.ts";
 import { getMobileSearchIndex, type MobileSearchIndex } from "./reference-search-logic.ts";
 
 export interface ProcedureSearchResult {
@@ -393,9 +393,14 @@ export function readableMarkdownLine(line: string): string {
     .replace(/\*\*/g, "")
     .replace(/__/g, "")
     .replace(/>>\S+/g, "")
+    // El corpus trae entidades HTML escapadas (`TAS &lt; 90 mmHg`, ~390 veces): la web
+    // las decodifica al renderizar el HTML y aqui se leian tal cual. Va despues de
+    // quitar etiquetas para que un `&lt;b&gt;` decodificado no se tome por una.
+    .replace(HTML_ENTITY_PATTERN, decodeHtmlEntity)
     .replace(/\s+/g, " ")
     .trim();
 }
+
 
 export function readableMarkdownCell(cell: string): string {
   return cell

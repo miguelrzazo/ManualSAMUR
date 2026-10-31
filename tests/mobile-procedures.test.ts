@@ -8,6 +8,8 @@ import {
   parseMarkdownTableAt,
   procedureHeadings,
   procedureRouteKey,
+  readableMarkdownCell,
+  readableMarkdownLine,
   resolveProcedureReference,
   searchProcedures,
   splitMarkdownBlocks,
@@ -306,4 +308,12 @@ test("la cabecera de una tabla cabe en una linea aunque las celdas sean cortas",
   assert.ok(columnWidthFor("Nº", ["texto bastante mas largo que la cabecera"]) > conCabeceraLarga);
   // Y nada se pasa del maximo.
   assert.ok(columnWidthFor("x", ["y".repeat(500)]) <= 300);
+});
+
+test("the reader and search snippets decode the HTML entities the corpus escapes", () => {
+  assert.equal(readableMarkdownLine("- evitando TAS &lt; 90 mmHg y TAM &lt; 65 mmHg"), "evitando TAS < 90 mmHg y TAM < 65 mmHg");
+  assert.equal(readableMarkdownLine("Na &gt; 145 &amp; K &lt;3,5"), "Na > 145 & K <3,5");
+  assert.equal(readableMarkdownLine("&lt;b&gt;texto&lt;/b&gt;"), "<b>texto</b>");
+  assert.equal(readableMarkdownCell("SatO2 &lt; 94%<br>FC &gt; 100"), "SatO2 < 94%\nFC > 100");
+  assert.equal(readableSnippetSource("TAS &lt; 90 mmHg"), "TAS < 90 mmHg");
 });
