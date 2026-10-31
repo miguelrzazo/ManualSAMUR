@@ -775,7 +775,9 @@ async function syncCodigos(dryRun: boolean): Promise<DomainResult> {
     if (failures.length) throw new Error(`Code source download failed: ${failures.map((item) => item.sourceUrl).join(", ")}`);
     const statePath = path.join(ROOT_DIR, "content/data/code-source-state.json");
     const prior = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : {};
-    const { hashes, candidates } = buildCodeDatasetCandidates(ROOT_DIR, procedure.content, prior);
+    const { hashes, candidates, skipped } = buildCodeDatasetCandidates(ROOT_DIR, procedure.content, prior);
+    for (const item of skipped)
+      console.error(`[sync] códigos ${item.group}: candidato descartado, se conserva el dataset revisado (${item.reason})`);
     // Every candidate has passed coverage, uniqueness and loss checks before any JSON is written.
     for (const [group, rows] of candidates) writeJsonDataset(`content/data/codigos-${group}.json`, rows);
     if (JSON.stringify(prior) !== JSON.stringify(hashes)) fs.writeFileSync(statePath, JSON.stringify(hashes, null, 2) + "\n");
