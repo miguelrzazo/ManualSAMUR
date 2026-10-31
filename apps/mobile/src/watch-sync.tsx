@@ -13,9 +13,9 @@ import { useContentData } from "./content-context";
 export function WatchSnapshotSync(): null {
   const { snapshot } = useContentData();
   const latest = useRef(snapshot);
-  latest.current = snapshot;
 
   useEffect(() => {
+    latest.current = snapshot;
     sendSnapshotToWatch(snapshot).catch(() => undefined);
     // Re-sending the same hash is a no-op on the native side.
   }, [snapshot]);

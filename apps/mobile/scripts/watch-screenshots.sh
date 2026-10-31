@@ -4,7 +4,7 @@
 #   sh apps/mobile/scripts/watch-screenshots.sh <simulator-udid> <size-label> [content-origin]
 #
 # Expects a Debug build of the ManualSAMURWatch target already installed on the simulator
-# (see apps/mobile/targets/watch/README.md). Pass an unreachable content origin such as
+# (xcodebuild -target ManualSAMURWatch -sdk watchsimulator after expo prebuild). Pass an unreachable content origin such as
 # http://127.0.0.1:9 to capture the offline state. Uses the DEBUG-only launch arguments
 # -DebugRoute / -DebugSearchCodes / -DebugSearchDrugs / -ContentOrigin.
 set -eu
