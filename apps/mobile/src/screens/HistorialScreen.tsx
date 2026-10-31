@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
+import { manualContentOrigin } from "../content-origin";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -43,15 +43,11 @@ export function HistorialScreen({ navigation }: Props) {
 
   const loadHistoryPage = useCallback(async (page: number) => {
     if (historyLoading) return;
-    const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
-    const origin = typeof process.env.EXPO_PUBLIC_CONTENT_ORIGIN === "string"
-      ? process.env.EXPO_PUBLIC_CONTENT_ORIGIN
-      : typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "";
     setHistoryAttempted(true);
     setHistoryLoading(true);
     setHistoryError(undefined);
     try {
-      const result = await loadRemoteHistoryPage({ origin, page, storage: AsyncStorage });
+      const result = await loadRemoteHistoryPage({ origin: manualContentOrigin(), page, storage: AsyncStorage });
       setRemoteHistory((current) => {
         const byId = new Map(current.map((event) => [event.eventId, event]));
         for (const event of asManualUpdateEvents(result.page.events)) byId.set(event.eventId, event);

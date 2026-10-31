@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "manualsamur-files-local",
+  "compatibility_date": "2026-10-27",
+  "assets": { "directory": "../.cloudflare/attachments" },
+  "env": {
+    "staging": { "name": "manualsamur-files-staging" },
+    "production": { "name": "manualsamur-files" }
+  }
+}

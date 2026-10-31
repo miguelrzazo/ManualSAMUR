@@ -4,13 +4,16 @@ Adaptación digital no oficial del Manual de Procedimientos de SAMUR-Protección
 
 El contenido clínico pertenece a SAMUR-PC / Ayuntamiento de Madrid. Esta aplicación no tiene relación oficial con SAMUR.
 
+El backend editorial, la base D1 y el despliegue gratuito por CLI se documentan en
+[docs/backend/README.md](docs/backend/README.md).
+
 ## Características
 
-- 234 procedimientos de emergencias prehospitalarias (SVA, SVB, Operativos, Técnicas, Comunicaciones, Psicológicos, Administrativos, DRP, Intervinientes)
+- Procedimientos de emergencias prehospitalarias (SVA, SVB, Operativos, Técnicas, Comunicaciones, Psicológicos, Administrativos, DRP, Intervinientes)
 - Vademécum de fármacos con dosis y vías de administración
 - Códigos radio y claves de comunicación
 - Mapa interactivo de hospitales y bases
-- Grafo de relaciones entre procedimientos
+- Relaciones entre procedimientos; rediseño del grafo previsto en #29
 - Búsqueda global con filtros por tipo (`:p` procedimientos · `:c` códigos · `:v` medicamentos) y búsqueda a texto completo dentro de los procedimientos
 - Abreviaturas y colaboradores
 - Historial de actualizaciones y avisos de novedades
@@ -38,13 +41,15 @@ npm run mobile:content           # Regenerar el paquete offline de la app Expo
 npm run mobile:typecheck         # Typecheck de la superficie nativa
 ```
 
-Los cambios de contenido se publican con el despliegue existente de Vercel. La app nativa
-consulta primero `/api/mobile/content/metadata`, descarga y verifica el paquete solo si cambia,
-lo deja preparado y espera confirmación explícita para activarlo. Los anexos se sirven desde el
-mismo origen de Vercel cuando no están ya incluidos offline; no se añade ningún servicio externo.
+Los cambios editoriales se publican desde D1 mediante un paquete verificado compartido
+por la web y la app, sin reconstruir el frontend. La app consulta
+`/api/mobile/content/metadata` y activa automáticamente las actualizaciones verificadas,
+conservando la última copia válida sin conexión. Los adjuntos nuevos se descargan por Wi-Fi;
+su descarga con datos móviles es manual.
 
-La sincronización mensual corre en `.github/workflows/update-content.yml` y abre un PR
-de revisión únicamente si hay cambios de contenido reales.
+La sincronización mensual en `.github/workflows/update-content.yml` crea propuestas de
+origen pendientes de revisión editorial. `publish-content.yml` compila las revisiones
+aprobadas y despliega sus adjuntos con Wrangler antes de activar la publicación.
 
 ## Acceso para LLMs
 
@@ -56,9 +61,9 @@ El contenido está disponible en formato [llms.txt](https://llmstxt.org) para us
 Ejemplo de uso con Claude u otro LLM:
 
 ```
-Fetch https://manual-proced-spc.vercel.app/llms.txt para obtener el índice de procedimientos.
-Fetch https://manual-proced-spc.vercel.app/llms-full.txt para el contenido completo.
-O accede a un procedimiento individual: https://manual-proced-spc.vercel.app/manual/301-parada-cardiorrespiratoria
+Consulta /llms.txt en el origen Cloudflare configurado para obtener el índice.
+Consulta /llms-full.txt para el contenido completo de la publicación activa.
+O accede a /manual/301-parada-cardiorrespiratoria para leer un procedimiento.
 ```
 
 ## Arquitectura
@@ -81,9 +86,10 @@ O accede a un procedimiento individual: https://manual-proced-spc.vercel.app/man
 
 El trabajo sobre `main` exige una aprobación y el check requerido `build`. El workflow
 `.github/workflows/ci.yml` conserva ese nombre, ejecuta lint, IDs, tests y build, y admite
-ejecución manual. Vercel mantiene despliegues Preview para pull requests; el PR mensual
-usa `CONTENT_PR_TOKEN` cuando está configurado para que el check `build` se dispare también
-en cambios automáticos.
+ejecución manual. La producción se sirve desde Cloudflare Workers y se despliega con
+`.github/workflows/deploy.yml` en cada push a `main`. El workflow mensual
+`update-content.yml` ya no abre PRs: valida el candidato oficial y lo encola como
+propuesta en el editor privado (D1) para su revisión y publicación.
 
 ## Stack técnico
 

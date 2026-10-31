@@ -1,65 +1,31 @@
-// SAMUR Manual — Service Worker
-// Simple caching strategy: network-first for pages, cache-first for assets and map tiles.
-
-const CACHE_NAME = "samur-v3";
-const MAP_CACHE = "samur-map-v3";
-const STATIC_ASSETS = ["/", "/manual", "/codigos", "/vademecum", "/mapa", "/manifest.json", "/llms.txt"];
-
+// Public static shell only. Publication verification and persistence belong to the app.
+const CACHE_NAME = "samur-public-v4";
+const STATIC_ASSETS = ["/", "/manual", "/codigos", "/vademecum", "/mapa", "/manifest.json"];
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => Promise.allSettled(STATIC_ASSETS.map(async (path) => {
+    const response = await fetch(path);
+    if (response.ok && response.type === "basic") await cache.put(path, response);
+  }))));
   self.skipWaiting();
 });
-
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== CACHE_NAME && k !== MAP_CACHE)
-          .map((k) => caches.delete(k))
-      )
-    )
-  );
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))));
   self.clients.claim();
 });
-
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
-
-  const url = new URL(event.request.url);
-
-  // Cache map tiles (CartoCDN)
-  if (url.hostname.includes("cartocdn.com") || url.hostname.includes("cartodb.com")) {
-    event.respondWith(
-      caches.open(MAP_CACHE).then((cache) =>
-        cache.match(event.request).then(
-          (cached) =>
-            cached ||
-            fetch(event.request).then((res) => {
-              if (res.ok) cache.put(event.request, res.clone());
-              return res;
-            })
-        )
-      )
-    );
-    return;
-  }
-
-  // Network-first for same-origin pages/API
-  if (url.origin === location.origin) {
-    event.respondWith(
-      fetch(event.request)
-        .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
-          return res;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== location.origin) return;
+  // Never cache editor pages, authenticated requests, or mutable/immutable API responses.
+  // The verified complete snapshot is stored atomically in IndexedDB instead.
+  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/gestion-editorial") || request.headers.has("Authorization")) return;
+  const publicPath = /^\/(?:$|manual(?:\/|$)|codigos(?:\/|$)|vademecum(?:\/|$)|abreviaturas(?:\/|$)|mapa(?:\/|$)|acerca-de(?:\/|$)|cambios(?:\/|$)|privacidad(?:\/|$)|soporte(?:\/|$)|colaboradores(?:\/|$)|_next\/static\/|assets\/|icons\/|docs\/|images\/|favicon\.|apple-touch-icon\.|manifest\.json$)/;
+  if (!publicPath.test(url.pathname)) return;
+  event.respondWith(fetch(request).then((response) => {
+    if (response.ok && response.type === "basic" && !/private|no-store/i.test(response.headers.get("Cache-Control") || "")) {
+      const copy = response.clone();
+      event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
+    }
+    return response;
+  }).catch(async () => (await caches.match(request)) || Response.error()));
 });

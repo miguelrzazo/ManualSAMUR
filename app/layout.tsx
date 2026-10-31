@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { ThemeProvider } from "next-themes";
+import { PublicationShell } from "@/components/publication/PublicationShell";
 import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
 import { SuppressNextThemesWarning } from "@/components/shared/SuppressNextThemesWarning";
@@ -46,12 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ViewportHeightObserver />
           <SuppressNextThemesWarning />
-          <div className="flex flex-col min-h-screen">
-            <NavBar procedures={procedures} mainLinks={mainLinks} />
-            <main className="min-h-0 flex-1 pb-16 md:pb-0">
-              {children}
-            </main>
-          </div>
+          <PublicationShell fallbackNavigation={<NavBar procedures={procedures} mainLinks={mainLinks} />}>
+            {children}
+          </PublicationShell>
           <Toaster />
         </ThemeProvider>
         <Script id="sw-registration" strategy="afterInteractive">

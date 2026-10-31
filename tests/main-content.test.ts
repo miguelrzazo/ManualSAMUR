@@ -122,3 +122,28 @@ test("parseAbbreviationsFromHtml sigue aceptando el formato antiguo con h1", () 
   </div>`;
   assert.equal(parseAbbreviationsFromHtml(html).length, 1);
 });
+
+test("manual edition comes from the current footer independently of the page edit date", () => {
+  const parsed = parseMainLinksFromHtml(`<html data-xwiki-version="28.1"><body>
+    <div>Última modificación por <a>Adil</a> el 21/07/2026 07:01</div>
+    <div id="xwikiplatformversion">© 2026 SAMUR‑Protección Civil Manual de procedimientos V2.0 junio de 2026</div>
+    </body></html>`);
+  assert.equal(parsed.manualVersion, "v2.0 junio 2026");
+  assert.equal(parsed.updatedAt, "21/07/2026");
+});
+
+test("legacy version labels remain supported and dates alone never become editions", () => {
+  assert.equal(parseMainLinksFromHtml("<p>Manual de Procedimientos 2026 versión 1.1 – de Mayo</p>").manualVersion, "v1.1 mayo 2026");
+  const parsed = parseMainLinksFromHtml('<html data-xwiki-version="28.1"><p>Última modificación el 21/07/2026</p></html>');
+  assert.equal(parsed.manualVersion, undefined);
+  assert.equal(parseMainLinksFromHtml("<p>Versión 28.1 por Adil el 21/07/2026</p>").manualVersion, undefined);
+  assert.equal(parsed.updatedAt, "21/07/2026");
+  assert.equal(parseMainLinksFromHtml("<p>Edición junio de 2026, acto celebrado 25/06/2026</p>").updatedAt, "");
+});
+
+
+test("the official edition footer takes priority over a historical version mentioned in body copy", () => {
+  const parsed = parseMainLinksFromHtml(`<p>Manual de Procedimientos 2025 versión 1.1 – de Mayo</p>
+    <footer id="xwikiplatformversion">Manual de procedimientos V2.0 junio de 2026</footer>`);
+  assert.equal(parsed.manualVersion, "v2.0 junio 2026");
+});

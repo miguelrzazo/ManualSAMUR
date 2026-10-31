@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
+import { manualContentOrigin } from "./content-origin";
+import bundledSnapshot from "./data/snapshot.json";
 import { Directory, File, Paths } from "expo-file-system";
 import * as Crypto from "expo-crypto";
 import {
@@ -38,11 +39,6 @@ export interface AttachmentDownloadOptions {
 
 const ATTACHMENT_DIRECTORY_NAME = "manualsamur-attachments";
 
-function publishedContentOrigin(): string {
-  if (typeof process.env.EXPO_PUBLIC_CONTENT_ORIGIN === "string") return process.env.EXPO_PUBLIC_CONTENT_ORIGIN;
-  const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
-  return typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "https://manual-proced-spc.vercel.app";
-}
 
 function recordsKey(attachment: MobileAttachment): string {
   return attachmentStorageKey(attachment.id);
@@ -108,7 +104,8 @@ export async function readAttachmentRecord(attachment: MobileAttachment, storage
 
 /** Reconcile state after an interrupted or killed download before rendering it. */
 export async function reconcileAttachmentRecord(attachment: MobileAttachment, storage: AttachmentRecordStorage = AsyncStorage, now = new Date().toISOString()): Promise<AttachmentRecord> {
-  const record = await loadRecord(storage, attachment, now);
+  let record = await loadRecord(storage, attachment, now);
+  if (record.status !== "available" && record.lastGood) record = { ...record.lastGood, lastGood: undefined };
   // Permanently unresolvable (no approved byteLength/sha256, e.g. confirmed 404 upstream):
   // never leave this pending/"available on demand" — pin it as failed with a clear,
   // stable Spanish reason so the UI can offer the external sourceUrl link instead.
@@ -119,6 +116,7 @@ export async function reconcileAttachmentRecord(attachment: MobileAttachment, st
     return failed;
   }
   const bundledFile = new File(Paths.bundle, attachment.localPath.slice(1));
+  const bundledMetadata = bundledSnapshot.content.procedures.flatMap((procedure) => procedure.attachments).find((candidate) => candidate.id === attachment.id) as MobileAttachment | undefined;
   if (bundledFile.exists && attachment.byteLength !== undefined && attachment.sha256) {
     try {
       const actual = await inspectFile(bundledFile);
@@ -126,19 +124,26 @@ export async function reconcileAttachmentRecord(attachment: MobileAttachment, st
       await saveRecord(storage, available);
       return available;
     } catch {
-      // A bundled candidate with missing or corrupt bytes must not be reported local.
+      if (bundledMetadata?.sha256 && bundledMetadata.byteLength !== undefined && record.status !== "available") {
+        try {
+          const actual = await inspectFile(bundledFile);
+          const previous = markAttachmentAvailable(record, { localUri: bundledFile.uri, ...actual }, bundledMetadata, now);
+          await saveRecord(storage, previous);
+          return { ...previous, error: "Se muestra la copia incluida en la app; hay una actualización pendiente." };
+        } catch { /* Never present a mismatching bundle as verified. */ }
+      }
     }
   }
   if (record.status === "available" && record.localUri) {
     const file = new File(record.localUri);
     let available = false;
-    if (file.exists && isLocallyAvailable(record, attachment)) {
+    if (file.exists && record.sha256 && record.byteLength !== undefined) {
       try {
         const actual = await inspectFile(file);
-        available = actual.byteLength === attachment.byteLength && actual.sha256 === attachment.sha256;
+        available = actual.byteLength === record.byteLength && actual.sha256 === record.sha256;
       } catch { /* A corrupt/unreadable file is unavailable and retryable. */ }
     }
-    const next = available ? record : recoverAttachment(record, false, now);
+    const next = available ? { ...record, error: isLocallyAvailable(record, attachment) ? undefined : "Se muestra la última copia verificada; hay una actualización pendiente." } : recoverAttachment(record, false, now);
     if (next !== record) await saveRecord(storage, next);
     return next;
   }
@@ -150,7 +155,23 @@ export async function reconcileAttachmentRecord(attachment: MobileAttachment, st
   return record;
 }
 
-export async function downloadOptionalAttachment(
+const activeDownloads = new Map<string, Promise<AttachmentRecord>>();
+
+/** Serialize competing viewer and automatic downloads for each persistent record. */
+export async function downloadOptionalAttachment(attachment: MobileAttachment, options: AttachmentDownloadOptions = {}): Promise<AttachmentRecord> {
+  const active = activeDownloads.get(attachment.id);
+  if (active) {
+    await active;
+    if (options.signal?.aborted) return reconcileAttachmentRecord(attachment, options.storage);
+    return downloadOptionalAttachment(attachment, options);
+  }
+  const task = performAttachmentDownload(attachment, options);
+  activeDownloads.set(attachment.id, task);
+  try { return await task; }
+  finally { if (activeDownloads.get(attachment.id) === task) activeDownloads.delete(attachment.id); }
+}
+
+async function performAttachmentDownload(
   attachment: MobileAttachment,
   options: AttachmentDownloadOptions = {},
 ): Promise<AttachmentRecord> {
@@ -162,19 +183,21 @@ export async function downloadOptionalAttachment(
     await saveRecord(storage, failed);
     return failed;
   }
-  if (isLocallyAvailable(record, attachment)) return record;
+  const verified = await reconcileAttachmentRecord(attachment, storage, now());
+  if (isLocallyAvailable(verified, attachment)) return verified;
+  const lastGood = verified.status === "available" ? verified : undefined;
   if (storage.getAllKeys) {
     const keys = await storage.getAllKeys();
     const installed = await Promise.all(keys.filter((key) => key.startsWith("manualsamur.attachments.v1.") && key !== recordsKey(attachment)).map(async (key) => parseRecord(await storage.getItem(key))));
     const installedBytes = installed.reduce((total, candidate) => total + (candidate?.status === "available" ? candidate.byteLength ?? 0 : 0), 0);
     // isAttachmentUnavailableUpstream already returned above when metadata is missing.
     if (installedBytes + (attachment.byteLength as number) > V1_INSTALLED_ATTACHMENT_CAP_BYTES) {
-      const failed = markAttachmentFailed(record, "Se alcanzó el límite V1 de anexos instalados (150 MB).", now());
+      const failed = lastGood ? { ...lastGood, error: "Se mantiene la última copia verificada: no hay espacio dentro del límite de anexos (150 MB)." } : markAttachmentFailed(record, "Se alcanzó el límite V1 de anexos instalados (150 MB).", now());
       await saveRecord(storage, failed);
       return failed;
     }
   }
-  record = startAttachmentDownload(record, now());
+  record = { ...startAttachmentDownload(record, now()), lastGood };
   await saveRecord(storage, record);
   const destination = attachmentFile(attachment);
   const parent = destination.parentDirectory;
@@ -184,7 +207,8 @@ export async function downloadOptionalAttachment(
   let finished = false;
   let progressWrite: Promise<void> = Promise.resolve();
   try {
-    const downloadUrl = publishedAttachmentUrl(attachment, publishedContentOrigin()) ?? attachment.sourceUrl;
+    const downloadUrl = publishedAttachmentUrl(attachment, manualContentOrigin());
+    if (!downloadUrl) throw new Error("El anexo no tiene una ruta de publicación válida.");
     task = File.createDownloadTask(downloadUrl, destination, {
       sessionType: "background",
       signal: options.signal,
@@ -196,7 +220,7 @@ export async function downloadOptionalAttachment(
     const file = await task.downloadAsync();
     if (!file) {
       finished = true;
-      const paused = markAttachmentPaused(record, undefined, attachment.byteLength, now());
+      const paused = lastGood ?? markAttachmentPaused(record, undefined, attachment.byteLength, now());
       await saveRecord(storage, paused);
       return paused;
     }
@@ -204,19 +228,23 @@ export async function downloadOptionalAttachment(
     await progressWrite;
     const actual = await inspectFile(file);
     const available = markAttachmentAvailable(record, { localUri: file.uri, ...actual }, attachment, now());
-    await saveRecord(storage, available);
+    await saveRecord(storage, { ...available, lastGood: undefined });
+    if (lastGood?.localUri && lastGood.localUri !== file.uri && !lastGood.localUri.startsWith(Paths.bundle.uri)) {
+      try { const old = new File(lastGood.localUri); if (old.exists) old.delete(); } catch { /* A stale file can be removed later. */ }
+    }
     return available;
   } catch (error) {
     finished = true;
     await progressWrite;
     if (options.signal?.aborted || task?.state === "cancelled") {
       if (destination.exists) destination.delete();
-      const cancelled = markAttachmentCancelled(record, now());
+      const cancelled = lastGood ?? markAttachmentCancelled(record, now());
       await saveRecord(storage, cancelled);
       return cancelled;
     }
     if (destination.exists) destination.delete();
-    const failed = markAttachmentFailed(record, error instanceof Error ? error.message : "No se pudo descargar el anexo.", now());
+    const message = error instanceof Error ? error.message : "No se pudo descargar el anexo.";
+    const failed = lastGood ? { ...lastGood, error: `Se mantiene la última copia verificada. ${message}` } : markAttachmentFailed(record, message, now());
     await saveRecord(storage, failed);
     return failed;
   } finally {
@@ -226,7 +254,7 @@ export async function downloadOptionalAttachment(
 
 export async function removeAttachmentRecord(attachment: MobileAttachment, storage: AttachmentRecordStorage = AsyncStorage): Promise<void> {
   const record = await readAttachmentRecord(attachment, storage);
-  if (record.localUri) {
+  if (record.localUri && !record.localUri.startsWith(Paths.bundle.uri)) {
     const file = new File(record.localUri);
     if (file.exists) file.delete();
   }

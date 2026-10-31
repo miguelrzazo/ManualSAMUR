@@ -1,4 +1,4 @@
-export const DEFAULT_SITE_URL = "https://manual-proced-spc.vercel.app";
+export const DEFAULT_SITE_URL = "https://manualsamur.miguelrzazo13.workers.dev";
 
 export interface CanonicalProcedureMarkdown {
   id: string;
@@ -17,7 +17,7 @@ export interface CanonicalProcedureMarkdown {
 
 /** Resolve and normalize the origin used by every agent-facing URL. */
 export function resolveCanonicalSiteUrl(env: Record<string, string | undefined> = process.env): string {
-  const value = env.SITE_URL || env.NEXT_PUBLIC_SITE_URL || (env.VERCEL_URL ? `https://${env.VERCEL_URL}` : DEFAULT_SITE_URL);
+  const value = env.SITE_URL || env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL;
   return value.trim().replace(/\/+$/, "");
 }
 

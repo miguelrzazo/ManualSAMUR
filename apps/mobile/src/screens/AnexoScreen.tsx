@@ -11,7 +11,7 @@ import { useContentData } from "../content";
 import {
   attachmentStatusLabel,
   isAttachmentUnavailableUpstream,
-  isLocallyAvailable,
+  isReadableOffline,
   type AttachmentRecord,
 } from "../attachment-logic";
 import { downloadOptionalAttachment, reconcileAttachmentRecord } from "../attachment-runtime";
@@ -51,7 +51,7 @@ export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootSt
   const load = useCallback(async (target: MobileAttachment) => {
     setError(undefined);
     const reconciled = await reconcileAttachmentRecord(target);
-    if (isLocallyAvailable(reconciled, target) && reconciled.localUri) {
+    if (isReadableOffline(reconciled) && reconciled.localUri) {
       setRecord(reconciled);
       return;
     }
@@ -99,7 +99,7 @@ export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootSt
   }
 
   const uri = record?.localUri;
-  const ready = Boolean(uri) && isLocallyAvailable(record, attachment);
+  const ready = Boolean(uri) && isReadableOffline(record);
 
   if (error) {
     return (
@@ -144,6 +144,7 @@ export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootSt
         minimumZoomScale={1}
         centerContent
       >
+        {record?.error ? <Text style={styles.message}>{record.error}</Text> : null}
         <Image
           source={{ uri }}
           style={styles.image}
@@ -158,6 +159,7 @@ export function AnexoScreen({ route, navigation }: NativeStackScreenProps<RootSt
 
   return (
     <View style={styles.fill} accessibilityLabel={`Anexo ${attachment.filename}`}>
+      {record?.error ? <Text style={styles.message}>{record.error}</Text> : null}
       <Pdf
         source={{ uri }}
         style={styles.fill}

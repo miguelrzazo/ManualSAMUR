@@ -1,0 +1,42 @@
+name: Publish reviewed editorial release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_id:
+        description: Frozen release prepared in the private editor
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: editorial-publication-production
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      # Compilation is off-worker to stay within Workers Free CPU limits.
+      # This publishes content/assets only; it never rebuilds the Next frontend.
+      - name: Compile, verify and atomically activate publication
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN }}
+          RELEASE_ID: ${{ inputs.release_id }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          npm run backend:publish -- --remote --env production --release "$RELEASE_ID"

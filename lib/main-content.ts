@@ -75,22 +75,22 @@ function toAbsoluteUrl(href: string | undefined): string {
   return href;
 }
 
-function extractManualVersion(text: string): string | undefined {
-  // Full pattern: "Manual de Procedimientos 2026 versión 1.1 – de Mayo"
-  const full = text.match(/Manual\s+de\s+Procedimientos\s+(\d{4})\s+versi[oó]n\s+([0-9.]+)\s*[–\-]\s*de\s+(\w+)/i);
-  if (full) return `v${full[2]} ${full[3].trim()} ${full[1]}`;
-  // Simpler fallback: "versión 1.1"
-  const simple = text.match(/versi[oó]n\s+([0-9]+\.[0-9]+)/i);
-  if (simple) return `v${simple[1]}`;
-  return undefined;
+export function extractManualVersion(text: string): string | undefined {
+  const normalized = cleanText(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  // The manual edition is independent from XWiki's page revision and edit date.
+  const months = "enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre";
+  const legacy = normalized.match(new RegExp(`Manual\\s+de\\s+Procedimientos\\s+(20\\d{2})\\s+version\\s+(\\d+(?:\\.\\d+)+)\\s*[–—-]?\\s*(?:de\\s+)?(${months})`, "i"));
+  if (legacy) return `v${legacy[2]} ${legacy[3].toLowerCase()} ${legacy[1]}`;
+  const current = normalized.match(new RegExp(`Manual\\s+de\\s+Procedimientos\\s+(?:version\\s*|v\\s*)(\\d+(?:\\.\\d+)+)\\s*[–—-]?\\s*(${months})\\s+(?:de\\s+)?(20\\d{2})`, "i"));
+  if (current) return `v${current[1]} ${current[2].toLowerCase()} ${current[3]}`;
+  const simple = normalized.match(/Manual\s+de\s+Procedimientos(?:\s+20\d{2})?\s+(?:version\s*|v\s*)(\d+\.\d+)\b/i);
+  return simple ? `v${simple[1]}` : undefined;
 }
 
 function extractUpdatedAt(text: string): string {
-  const tagged = text.match(/ultima modificaci[oó]n[^\d]*(\d{2}\/\d{2}\/\d{4})/i);
-  if (tagged?.[1]) return tagged[1];
-
-  const fallback = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
-  return fallback?.[1] ?? "";
+  const normalized = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const tagged = normalized.match(/ultima modificacion[^\n]*?\b(\d{1,2})\/(\d{1,2})\/(\d{4})/i);
+  return tagged ? `${tagged[1].padStart(2, "0")}/${tagged[2].padStart(2, "0")}/${tagged[3]}` : "";
 }
 
 function toLeadKey(value: string): "coordination" | "technicalReview" | "designAndProgramming" | null {
@@ -219,7 +219,7 @@ export function parseMainLinksFromHtml(html: string, sourceUrl = ""): MainLinksD
     officialWebUrl: officialWebUrl || DEFAULT_MAIN_LINKS_DATA.officialWebUrl,
     abbreviationsUrl,
     collaboratorsUrl,
-    manualVersion: extractManualVersion(bodyText),
+    manualVersion: extractManualVersion(cleanText($("#xwikiplatformversion").text())) ?? extractManualVersion(bodyText),
   };
 }
 

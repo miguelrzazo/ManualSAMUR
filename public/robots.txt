@@ -1,4 +1,6 @@
 User-agent: *
+Disallow: /gestion-editorial
+Disallow: /api/editor/
 Allow: /
 
 # AI/LLM crawlers — contenido disponible en formato AI-friendly
@@ -6,5 +8,7 @@ User-agent: GPTBot
 User-agent: ClaudeBot
 User-agent: PerplexityBot
 User-agent: Googlebot
+Disallow: /gestion-editorial
+Disallow: /api/editor/
 Allow: /llms.txt
 Allow: /llms-full.txt
