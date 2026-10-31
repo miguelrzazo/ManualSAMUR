@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "react-native";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { hasAcknowledgedDisclosure, parseAppearancePreference, type AppearancePreference } from "./preferences-logic";
+import { NOVEDADES_BASELINE_KEY, hasAcknowledgedDisclosure, parseAppearancePreference, resolveNovedadesBaseline, type AppearancePreference } from "./preferences-logic";
 import { addSeenEventIds, parseSeenEventIds, serializeSeenEventIds } from "./manual-tree-logic";
 
 export const FIRST_USE_DISCLOSURE_KEY = "manualsamur.firstUseDisclosure.v1";
@@ -20,6 +20,8 @@ type PreferencesContextValue = {
   appearance: AppearancePreference;
   setAppearance: (preference: AppearancePreference) => void;
   seenEventIds: string[];
+  /** Install moment on fresh installs: events published before it count as read. */
+  novedadesBaselineAt?: string;
   markEventSeen: (eventId: string) => void;
   markAllEventsSeen: (eventIds: readonly string[]) => void;
 };
@@ -38,18 +40,23 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const [hasSeenAcademyPromo, setHasSeenAcademyPromo] = useState(false);
   const [appearance, setAppearanceState] = useState<AppearancePreference>("system");
   const [seenEventIds, setSeenEventIds] = useState<string[]>([]);
+  const [novedadesBaselineAt, setNovedadesBaselineAt] = useState<string>();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [disclosure, academyPromoSeen, storedAppearance, storedSeenEvents] = await Promise.all([
+        const [disclosure, academyPromoSeen, storedAppearance, storedSeenEvents, storedBaseline] = await Promise.all([
           AsyncStorage.getItem(FIRST_USE_DISCLOSURE_KEY),
           AsyncStorage.getItem(ACADEMY_PROMO_SEEN_KEY),
           AsyncStorage.getItem(APPEARANCE_PREFERENCE_KEY),
           AsyncStorage.getItem(SEEN_EVENTS_STORAGE_KEY),
+          AsyncStorage.getItem(NOVEDADES_BASELINE_KEY),
         ]);
         if (cancelled) return;
+        const baseline = resolveNovedadesBaseline({ storedBaseline, storedDisclosure: disclosure, storedSeenEvents, now: new Date() });
+        setNovedadesBaselineAt(baseline.baselineAt);
+        if (baseline.persist) void AsyncStorage.setItem(NOVEDADES_BASELINE_KEY, baseline.persist);
         setHasAcknowledgedFirstUse(hasAcknowledgedDisclosure(disclosure));
         setHasSeenAcademyPromo(academyPromoSeen === "seen");
         setAppearanceState(parseAppearancePreference(storedAppearance));
@@ -112,9 +119,10 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     appearance,
     setAppearance,
     seenEventIds,
+    novedadesBaselineAt,
     markEventSeen,
     markAllEventsSeen,
-  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, hasSeenAcademyPromo, isHydrated, markAcademyPromoSeen, markAllEventsSeen, markEventSeen, seenEventIds, setAppearance]);
+  }), [acknowledgeFirstUse, appearance, hasAcknowledgedFirstUse, hasSeenAcademyPromo, isHydrated, markAcademyPromoSeen, markAllEventsSeen, markEventSeen, novedadesBaselineAt, seenEventIds, setAppearance]);
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
 }

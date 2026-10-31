@@ -40,6 +40,7 @@ import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { lightImpact } from "../hooks/haptics";
 import { useContentData, useContentPreferences } from "../content";
 import { usePreferences } from "../preferences.tsx";
+import { isUnreadNovedad } from "../preferences-logic.ts";
 import { procedureRouteKey } from "../procedure-logic";
 import {
   selectProcedureReferences,
@@ -76,7 +77,7 @@ function savedReferenceDetail(item: SavedReference): DetailRoute {
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   const { content } = useContentData();
   const { favorites, recents, toggleFavorite } = useContentPreferences();
-  const { seenEventIds } = usePreferences();
+  const { seenEventIds, novedadesBaselineAt } = usePreferences();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
@@ -108,7 +109,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
   );
   const novedades = useMemo(() => manualNovedades(updateEvents), [updateEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
-  const unreadNovedades = useMemo(() => novedades.filter((event) => !seen.has(event.eventId)), [novedades, seen]);
+  const unreadNovedades = useMemo(() => novedades.filter((event) => isUnreadNovedad(event, seen, novedadesBaselineAt)), [novedades, seen, novedadesBaselineAt]);
 
 
   const favoriteItems = useMemo(() => selectSavedReferences(content, favorites).slice(0, 8), [content, favorites]);
