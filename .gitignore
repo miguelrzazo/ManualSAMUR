@@ -50,6 +50,7 @@ yarn-error.log*
 # Native content package — generated from content/data during mobile builds.
 apps/mobile/src/data/snapshot.json
 apps/mobile/src/data/attachment-manifest.json
+apps/mobile/src/data/seed.json
 
 # typescript
 *.tsbuildinfo

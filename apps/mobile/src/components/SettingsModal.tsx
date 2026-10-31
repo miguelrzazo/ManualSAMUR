@@ -7,7 +7,8 @@ import { accessibilityHints } from "../accessibility.ts";
 import { useContentData, useContentSync, type SyncState } from "../content.tsx";
 import { contentFreshness } from "../content-transaction.ts";
 import { usePreferences } from "../preferences.tsx";
-import type { ContentCheckRecord } from "../content-update-logic.ts";
+import { formatCheckedAt, formatDataDate, type ContentCheckRecord } from "../content-update-logic.ts";
+import { manualVersionOf } from "../content-release.ts";
 import {
   ABOUT_AUTHOR,
   ADAPTATION_DISCLAIMER,
@@ -56,16 +57,22 @@ export interface SettingsModalProps {
 
 type SyncStatus = { icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"]; title: string; detail: string; color: keyof AdaptivePalette };
 
-function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: ContentCheckRecord, isRefreshing = false, staged = false): SyncStatus {
+function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: ContentCheckRecord, isRefreshing = false, staged = false, isSeed = false): SyncStatus {
   if (isRefreshing) {
-    if (syncState === "downloading") return { icon: "cloud-download-outline", title: "Descargando contenido", detail: "El contenido anterior sigue disponible", color: "primary" };
-    if (syncState === "validating") return { icon: "shield-check-outline", title: "Verificando el paquete", detail: "Comprobando integridad antes de activarlo", color: "primary" };
+    if (syncState === "downloading") return { icon: "cloud-download-outline", title: "Descargando datos", detail: "Los datos actuales siguen disponibles", color: "primary" };
+    if (syncState === "validating") return { icon: "shield-check-outline", title: "Verificando los datos", detail: "Comprobando integridad antes de activarlos", color: "primary" };
+    if (syncState === "activating") return { icon: "database-sync-outline", title: "Activando datos", detail: "Sustituyendo la copia anterior", color: "primary" };
     return { icon: "cloud-search-outline", title: "Comprobando actualizaciones", detail: "La aplicación sigue disponible mientras se comprueba", color: "primary" };
+  }
+  if (isSeed && !staged) {
+    return lastCheck?.outcome === "offline" || syncState === "offline"
+      ? { icon: "cloud-off-outline", title: "Datos incluidos en la app", detail: "Sin conexión: se descargará la última publicación en cuanto haya red", color: "amber" }
+      : { icon: "package-variant-closed", title: "Datos incluidos en la app", detail: "Aún no se ha descargado ninguna publicación", color: "amber" };
   }
   if (staged) return { icon: "backup-restore", title: "Actualización pendiente de activar", detail: "Hay contenido verificado listo para activar", color: "amber" };
   if (lastCheck?.outcome === "update-available") return { icon: "cloud-upload-outline", title: "Actualización disponible", detail: "Busca la actualización para descargarla y verificarla", color: "amber" };
-  if (lastCheck?.outcome === "up-to-date") return { icon: "check-circle-outline", title: "Contenido al día", detail: "La última comprobación no encontró cambios", color: "green" };
-  if (lastCheck?.outcome === "offline") return { icon: "cloud-off-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la conexión", color: "amber" };
+  if (lastCheck?.outcome === "up-to-date") return { icon: "check-circle-outline", title: "Datos al día", detail: "Coinciden con la última publicación", color: "green" };
+  if (lastCheck?.outcome === "offline") return { icon: "cloud-off-outline", title: "Sin conexión", detail: "Se usan los datos guardados en el dispositivo", color: "amber" };
   if (lastCheck?.outcome === "incompatible") return { icon: "cellphone-arrow-down", title: "Actualiza la aplicación", detail: "La publicación requiere una versión nueva", color: "amber" };
   if (lastCheck?.outcome === "invalid-response" || lastCheck?.outcome === "failure") return { icon: "alert-circle-outline", title: "Contenido local disponible", detail: "No se pudo comprobar la actualización", color: "amber" };
   switch (syncState) {
@@ -79,10 +86,6 @@ function syncStatus(syncState: SyncState, generatedAt: string, lastCheck?: Conte
   }
 }
 
-function formattedDate(value: string): string {
-  const time = new Date(value);
-  return Number.isFinite(time.getTime()) ? time.toLocaleDateString("es-ES") : "Fecha no disponible";
-}
 
 export function SettingsModal({
   visible, onClose, onOpenAbbreviations, onOpenChangelog, appVersion, contentOrigin,
@@ -94,8 +97,12 @@ export function SettingsModal({
   const sync = useContentSync();
   const attachments = useAttachmentUpdates();
   const { appearance, setAppearance } = usePreferences();
-  const { isRefreshing, lastError, syncState, syncProgress, stagedPackage, lastCheck } = sync;
-  const status = syncStatus(syncState, snapshot.generatedAt, lastCheck, isRefreshing, Boolean(stagedPackage));
+  const { isRefreshing, lastError, syncState, syncProgress, stagedPackage, lastCheck, release, isSeed } = sync;
+  const status = syncStatus(syncState, snapshot.generatedAt, lastCheck, isRefreshing, Boolean(stagedPackage), isSeed);
+  const dataDate = formatDataDate(release?.publishedAt ?? snapshot.generatedAt);
+  const manualVersion = manualVersionOf(snapshot, release);
+  const checkedAt = formatCheckedAt(lastCheck?.checkedAt);
+  const dataLine = `${isSeed ? "Datos incluidos del" : "Datos del"} ${dataDate}`;
   const progress = syncProgress.totalBytes && syncProgress.downloadedBytes !== undefined
     ? Math.min(100, Math.round((syncProgress.downloadedBytes / syncProgress.totalBytes) * 100))
     : undefined;
@@ -128,12 +135,14 @@ export function SettingsModal({
             <AcademySettingsCard slot={academySlot} onPress={() => open(String(academySlot.url))} />
           )}
           <SectionTitle>Contenido</SectionTitle>
-          <View style={styles.card} accessible accessibilityLabel={`${status.title}. ${lastError ?? status.detail}`} accessibilityLiveRegion="polite" testID="content-status-card">
+          <View style={styles.card} accessible accessibilityLabel={`${dataLine}${manualVersion ? `, manual ${manualVersion}` : ""}. ${status.title}. ${lastError ?? status.detail}. ${checkedAt ? `Última comprobación: ${checkedAt}` : "Aún sin comprobar"}`} accessibilityLiveRegion="polite" testID="content-status-card">
             <MaterialCommunityIcons name={status.icon} size={26} color={palette[status.color]} />
             <View style={styles.copy}>
-              <Text style={styles.rowTitle}>{status.title}</Text>
+              <Text style={styles.rowTitle} testID="content-data-date">{dataLine}</Text>
+              {manualVersion ? <Text style={styles.meta} testID="content-manual-version">Manual {manualVersion}</Text> : null}
+              <Text style={[styles.meta, { color: palette[status.color] }]}>{status.title}</Text>
               <Text style={styles.meta}>{lastError ?? status.detail}</Text>
-              <Text style={styles.revision}>{formattedDate(snapshot.generatedAt)} · revisión {snapshot.packageHash?.slice(0, 10) ?? "no disponible"}{lastCheck?.checkedAt ? ` · comprobado ${formattedDate(lastCheck.checkedAt)}` : ""}</Text>
+              <Text style={styles.revision} testID="content-last-checked">{checkedAt ? `Última comprobación: ${checkedAt}` : "Aún sin comprobar"}{release ? ` · publicación ${release.releaseId.slice(0, 8)}` : snapshot.packageHash ? ` · revisión ${snapshot.packageHash.slice(0, 8)}` : ""}</Text>
               {progress !== undefined ? (
                 <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: progress }}>
                   <View style={[styles.progressFill, { width: `${progress}%` }]} />
@@ -146,8 +155,8 @@ export function SettingsModal({
               <Text style={styles.primaryButtonText}>{syncState === "activating" ? "Aplicando actualización…" : sync.isBackgroundRefreshing ? "Comprobando…" : "Cancelar actualización"}</Text>
             </Press>
           ) : (
-            <Press onPress={() => void sync.refresh()} style={styles.primaryButton} accessibilityRole="button">
-              <Text style={styles.primaryButtonText}>Buscar actualización</Text>
+            <Press testID="refresh-content" onPress={() => void sync.refresh()} style={styles.primaryButton} accessibilityRole="button" accessibilityHint="Comprueba si hay una publicación nueva y la descarga.">
+              <Text style={styles.primaryButtonText}>Actualizar datos</Text>
             </Press>
           )}
           {stagedPackage ? (

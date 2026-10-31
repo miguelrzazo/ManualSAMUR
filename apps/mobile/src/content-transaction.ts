@@ -1,4 +1,5 @@
 import { isMobileContentSnapshotShape, type MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
+import { isReleaseInfo, type ReleaseInfo } from "./content-release.ts";
 
 /**
  * The pointer is the only record changed during activation. Content packages
@@ -26,6 +27,12 @@ export interface PackageEnvelope {
   version: typeof CONTENT_STORAGE_VERSION;
   packageHash: string;
   snapshot: MobileSnapshot;
+  /**
+   * Public release this package was downloaded as. Kept inside the immutable
+   * envelope so the pointer switch changes snapshot and release identity in
+   * one write; it can never describe a different release from its snapshot.
+   */
+  release?: ReleaseInfo;
 }
 
 export interface ActivePointer {
@@ -52,6 +59,7 @@ export interface StagedPackage {
 export interface TransactionReadResult {
   active?: ActivePointer;
   snapshot?: MobileSnapshot;
+  release?: ReleaseInfo;
   staged?: StagedPackage;
   stagedSnapshot?: MobileSnapshot;
   warning?: string;
@@ -105,7 +113,8 @@ export function isPackageEnvelope(value: unknown): value is PackageEnvelope {
     && candidate.version === CONTENT_STORAGE_VERSION
     && isHash(candidate.packageHash)
     && Boolean(candidate.snapshot)
-    && (candidate.snapshot as MobileSnapshot).packageHash === candidate.packageHash;
+    && (candidate.snapshot as MobileSnapshot).packageHash === candidate.packageHash
+    && (candidate.release === undefined || (isReleaseInfo(candidate.release) && candidate.release.packageHash === candidate.packageHash));
 }
 
 export function isActivePointer(value: unknown): value is ActivePointer {
@@ -144,6 +153,7 @@ export async function readTransaction(
     const envelope = parseJson<unknown>(await storage.getItem(pointer.packageKey));
     if (isPackageEnvelope(envelope) && envelope.packageHash === pointer.packageHash && await validate(envelope.snapshot)) {
       result.snapshot = envelope.snapshot;
+      if (envelope.release) result.release = envelope.release;
     } else {
       result.warning = "El paquete activo no supera la validación; se conserva el último contenido conocido.";
     }
@@ -179,6 +189,7 @@ export async function readTransactionMetadata(storage: ContentStorage): Promise<
     const envelope = parseJson<unknown>(await storage.getItem(pointer.packageKey));
     if (isPackageEnvelope(envelope) && envelope.packageHash === pointer.packageHash && isMobileContentSnapshotShape(envelope.snapshot)) {
       result.snapshot = envelope.snapshot;
+      if (envelope.release) result.release = envelope.release;
     } else {
       result.warning = "El paquete activo no supera las comprobaciones locales; se conserva el último contenido conocido.";
     }
@@ -205,6 +216,7 @@ export async function stagePackage(
   now = new Date().toISOString(),
   progress: StageProgress = {},
   signal?: AbortSignal,
+  release?: ReleaseInfo,
 ): Promise<StagedPackage> {
   throwIfCancelled(signal);
   if (!await validate(snapshot)) throw new Error("El paquete no supera la validación de integridad");
@@ -217,6 +229,7 @@ export async function stagePackage(
     version: CONTENT_STORAGE_VERSION,
     packageHash,
     snapshot,
+    ...(release && release.packageHash === packageHash ? { release } : {}),
   };
   // Content is written before its tiny recovery record. Neither write can
   // alter the package selected by the active pointer.
@@ -276,6 +289,7 @@ export async function activateStagedPackage(
   // that changes what the reader considers active. Once this point is reached
   // the UI disables Cancel while the tiny pointer commit completes.
   throwIfCancelled(signal);
+  const previous = parseJson<unknown>(await storage.getItem(ACTIVE_POINTER_KEY));
   const pointer: ActivePointer = {
     schema: CONTENT_STORAGE_SCHEMA,
     version: CONTENT_STORAGE_VERSION,
@@ -287,6 +301,11 @@ export async function activateStagedPackage(
   // Cleanup is best effort. A process death here is harmless: the active
   // pointer already selects a valid package and the staged record is resumable.
   try { await storage.removeItem(STAGED_PACKAGE_KEY); } catch { /* retry cleanup on next refresh */ }
+  // The superseded package is only dropped after the new pointer is durable,
+  // so a failure anywhere above leaves the last good copy in place.
+  if (isActivePointer(previous) && previous.packageKey !== pointer.packageKey) {
+    try { await storage.removeItem(previous.packageKey); } catch { /* orphan is harmless */ }
+  }
   return pointer;
 }
 
@@ -294,13 +313,13 @@ export async function resumeStagedPackage(
   storage: ContentStorage,
   validate: SnapshotValidator,
   now = new Date().toISOString(),
-): Promise<{ pointer: ActivePointer; snapshot: MobileSnapshot } | undefined> {
+): Promise<{ pointer: ActivePointer; snapshot: MobileSnapshot; release?: ReleaseInfo } | undefined> {
   const staged = parseJson<unknown>(await storage.getItem(STAGED_PACKAGE_KEY));
   if (!isStagedPackage(staged)) return undefined;
   const pointer = await activateStagedPackage(storage, staged, validate, now);
   const envelope = parseJson<unknown>(await storage.getItem(pointer.packageKey));
   if (!isPackageEnvelope(envelope)) throw new Error("El paquete activado no está disponible");
-  return { pointer, snapshot: envelope.snapshot };
+  return { pointer, snapshot: envelope.snapshot, ...(envelope.release ? { release: envelope.release } : {}) };
 }
 
 export async function discardStagedPackage(storage: ContentStorage): Promise<void> {

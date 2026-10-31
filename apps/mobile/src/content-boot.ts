@@ -66,7 +66,12 @@ export function validateSnapshotOnce(
       ? isMobileContentPackage(candidate, expectedManifest)
       : isMobileContentSnapshot(candidate),
   );
-  if (key) validationCache.set(key, validation);
+  if (key) {
+    validationCache.set(key, validation);
+    // Only successes are memoised: a rebuilt snapshot that fails verification
+    // must not poison the full download of the same release that follows it.
+    void validation.then((valid) => { if (!valid && validationCache.get(key) === validation) validationCache.delete(key); }, () => validationCache.delete(key));
+  }
   return validation;
 }
 
