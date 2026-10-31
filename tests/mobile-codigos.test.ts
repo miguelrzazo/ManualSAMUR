@@ -279,6 +279,15 @@ test("the códigos annotations render under the list, never above it", () => {
   assert.doesNotMatch(source, /showTetraLegend|showNoReportLegend/);
 });
 
+test("typing in the códigos search keeps the same field mounted", () => {
+  // The results view and the list view must put the header in the same child slot,
+  // or the first character swaps the TextInput and every later keystroke is lost.
+  const source = readFileSync(path.join(process.cwd(), "apps/mobile/src/screens/CodigosScreen.tsx"), "utf8");
+  assert.doesNotMatch(source, /chrome\.collapsed \? \(/);
+  assert.equal((source.match(/\{chrome\.collapsed && <CompactHeader title="Códigos y claves"/g) ?? []).length, 2);
+  assert.equal((source.match(/\{!chrome\.collapsed && \(/g) ?? []).length, 2);
+});
+
 // El campo `description` de SVA/SVB venía de una extracción del PDF que quedó
 // desalineada: describía un código distinto del que nombra `name`. C.0.1 "Dolor
 // torácico de probable origen cardiaco" se describía como "Parada
