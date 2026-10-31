@@ -48,7 +48,8 @@ complete su configuración; publicar la API no demuestra que esos pasos estén l
 
 # Despliegue verificado — 30/31 de octubre de 2026 (PR #115, Cloudflare como producción)
 
-- Worker principal: versión `8ed6c825-31fe-4074-ae1d-4e0cf82b0c1f` (`wrangler deploy --env production`).
+- Worker principal: versión `e4702e46-dcc6-4580-a529-e6b2372a7eae` (`wrangler deploy --env production`
+  desde el commit `f4bdae7`, que ya incluye el grafo de #118; `/grafo` → 200).
 - Migración `0002_editors_audit.sql` aplicada en remoto. Marcador Time Travel previo:
   `00000015-00000000-00005114-d5c67f05e6d06cbd8182aa8fccba199a`
   (`wrangler d1 time-travel restore manualsamur-production --bookmark=…` para volver).
