@@ -62,10 +62,10 @@ test("adaptive palette maintains readable light and dark foreground/background p
   }
 });
 
-test("adaptive layout reflows controls at large text and separates tablet list/detail widths", () => {
-  assert.deepEqual(adaptiveLayout(390, 1), { isTablet: false, singleColumn: true, listMaxWidth: 390, readingMaxWidth: 390 });
+test("adaptive layout reflows controls at large text and separates wide list/detail widths", () => {
+  assert.deepEqual(adaptiveLayout(390, 1), { isWideLayout: false, isTwoPane: false, singleColumn: true, listMaxWidth: 390, readingMaxWidth: 390, railWidth: 0, listPaneWidth: 390 });
   assert.equal(adaptiveLayout(390, 2).singleColumn, true);
-  assert.deepEqual(adaptiveLayout(1024, 1), { isTablet: true, singleColumn: false, listMaxWidth: 1040, readingMaxWidth: 720 });
+  assert.deepEqual(adaptiveLayout(1024, 1), { isWideLayout: true, isTwoPane: true, singleColumn: false, listMaxWidth: 1040, readingMaxWidth: 720, railWidth: 94, listPaneWidth: 353 });
   assert.equal(adaptiveLayout(1024, 2).singleColumn, true);
 });
 
