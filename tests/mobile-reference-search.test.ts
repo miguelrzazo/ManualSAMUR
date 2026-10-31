@@ -9,6 +9,7 @@ import {
   buildVademecumReferences,
   codeRouteKey,
   getMobileSearchIndex,
+  orderAllResults,
   relatedProcedureIdsForDrug,
   resolveCodeReference,
   resolveVademecumReference,
@@ -17,8 +18,22 @@ import {
   searchVademecum,
 } from "../apps/mobile/src/reference-search-logic.ts";
 import type { MobileContent } from "../apps/mobile/src/data/schema.ts";
+import { searchProcedures } from "../apps/mobile/src/procedure-logic.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as { content: MobileContent };
+
+test("Todo puts a drug named by the query ahead of procedures that only mention it", () => {
+  const procedures = searchProcedures(snapshot.content.procedures, "adrenalina");
+  const references = [...searchVademecum(snapshot.content, "adrenalina"), ...searchCodes(snapshot.content.codes, "adrenalina")];
+  assert.ok(procedures.length > 5, "several procedures mention adrenalina in their body");
+  const rows = orderAllResults(procedures, references, "adrenalina");
+  assert.equal(rows.length, procedures.length + references.length);
+  assert.equal(rows[0]?.kind, "reference");
+  assert.equal(rows[0]?.kind === "reference" ? rows[0].item.title : "", "Adrenalina");
+  // An ID or title hit still beats any drug or code.
+  const byId = orderAllResults(searchProcedures(snapshot.content.procedures, "301"), searchCodes(snapshot.content.codes, "301"), "301");
+  assert.equal(byId[0]?.kind === "procedure" ? byId[0].result.procedure.id : "", "301");
+});
 
 test("the bundled vademécum search index includes medicines, perfusions, fluids and commercial names", () => {
   const references = buildVademecumReferences(snapshot.content);

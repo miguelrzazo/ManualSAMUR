@@ -434,6 +434,36 @@ export const SEARCH_SCOPES = ["Todo", "Procedimientos", "Vademécum", "Códigos"
 export type SearchScope = (typeof SEARCH_SCOPES)[number];
 
 /**
+ * Orders the "Todo" list. It used to show every procedure hit before any drug or
+ * code, so "adrenalina" listed some twenty procedures that merely mention it before
+ * the Adrenalina card itself. A direct name hit now comes first whatever its source:
+ *
+ *   1. procedures matched by ID, exact title, title prefix or synonym (rank ≤ 5);
+ *   2. drugs and codes whose name is the query or starts with it;
+ *   3. the remaining procedures (title fragment, tags, body text);
+ *   4. the remaining drugs and codes.
+ *
+ * Each group keeps the order its own search returned.
+ */
+export function orderAllResults<T extends { rank: number }>(
+  procedures: readonly T[],
+  references: readonly MobileReferenceSearchResult[],
+  query: string,
+): ({ kind: "procedure"; result: T } | { kind: "reference"; item: MobileReferenceSearchResult })[] {
+  const normalizedQuery = normalize(query);
+  const strongProcedure = (result: T) => result.rank <= 5;
+  const strongReference = (item: MobileReferenceSearchResult) => Boolean(normalizedQuery) && normalize(item.title).startsWith(normalizedQuery);
+  const procedureRow = (result: T) => ({ kind: "procedure" as const, result });
+  const referenceRow = (item: MobileReferenceSearchResult) => ({ kind: "reference" as const, item });
+  return [
+    ...procedures.filter(strongProcedure).map(procedureRow),
+    ...references.filter(strongReference).map(referenceRow),
+    ...procedures.filter((result) => !strongProcedure(result)).map(procedureRow),
+    ...references.filter((item) => !strongReference(item)).map(referenceRow),
+  ];
+}
+
+/**
  * There is deliberately no second scope tier here any more.
  *
  * `VADEMECUM_SCOPES` ("Todos · Fármacos · Comerciales · Perfusiones · Fluidos")

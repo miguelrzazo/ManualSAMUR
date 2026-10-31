@@ -53,7 +53,7 @@ import { highlightSegments, snippetText, type SearchSnippet } from "./src/search
 import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
 import { activeHeadingIdAtOffset, parseProcedureDocument, type MeasuredHeadingOffset, type ParsedProcedureDocument, type ParsedProcedureSection } from "./src/procedure-document.ts";
 import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
-import { buildCodeReferences, buildVademecumReferences, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
+import { buildCodeReferences, buildVademecumReferences, orderAllResults, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
@@ -379,11 +379,9 @@ function BuscarScreenContent({ navigation, initialQuery }: {
   const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults;
   const visibleVademecum = filter === "Todo" || filter === "Vademécum" ? vademecumResults : [];
   const visibleCodes = filter === "Todo" || filter === "Códigos" ? codeResults : [];
-  const rows = [
-    ...visibleProcedures.map((result) => ({ kind: "procedure" as const, item: result.procedure, snippet: result.snippet })),
-    ...visibleVademecum.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
-    ...visibleCodes.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
-  ];
+  const rows = orderAllResults(visibleProcedures, [...visibleVademecum, ...visibleCodes], query).map((row) => row.kind === "procedure"
+    ? { kind: "procedure" as const, item: row.result.procedure, snippet: row.result.snippet }
+    : { kind: "reference" as const, item: row.item, snippet: undefined });
   const resultsRef = useRef<FlatList<(typeof rows)[number]>>(null);
 
   return (
