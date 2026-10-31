@@ -167,6 +167,11 @@ export function decodeHtmlEntity(match: string, name: string): string {
 
 export function readableSnippetSource(markdown: string): string {
   return String(markdown ?? "")
+    // Same tag handling as the reader (`readableMarkdownLine`): a drug link reads as
+    // its name, any other tag goes. Without it a search for "adrenalina" showed
+    // `<DrugLink name="Noradrenalina" />` verbatim in every snippet.
+    .replace(/<DrugLink\s+name="([^"]+)"\s*\/>/g, "$1")
+    .replace(/<[^>]+>/g, "")
     .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     // Table separator rows carry no content at all.
