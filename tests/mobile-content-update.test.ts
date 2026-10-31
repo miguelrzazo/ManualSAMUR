@@ -254,6 +254,21 @@ test("no network keeps the last good copy and classifies as offline", async () =
   assert.equal(boot.snapshot.hash, releaseA.snapshot.hash);
 });
 
+test("any failure to get an HTTP response is offline, whatever the platform message", async () => {
+  const { storage, active } = await installed(releaseA);
+  const dnsFailure = (async () => { throw new Error("A server with the specified hostname could not be found."); }) as typeof fetch;
+  await assert.rejects(
+    () => syncContentRelease(options(active, storage, dnsFailure)),
+    (error: unknown) => error instanceof ContentUpdateRuntimeError && error.outcome === "offline",
+  );
+  const seedStorage = new MemoryStorage();
+  await assert.rejects(
+    () => syncContentRelease(options({ snapshot: buildSeedSnapshot(releaseA.snapshot), isSeed: true }, seedStorage, dnsFailure)),
+    (error: unknown) => error instanceof ContentUpdateRuntimeError && error.outcome === "offline",
+  );
+  assert.equal(seedStorage.values.size, 0, "the seed stays the active content");
+});
+
 test("a stalled request times out as offline", async () => {
   const { storage, active } = await installed(releaseA);
   const hanging = ((_url: string, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {

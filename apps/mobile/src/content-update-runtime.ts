@@ -96,6 +96,9 @@ class ServerError extends Error {
 class TimeoutError extends Error {
   constructor(message: string) { super(message); this.name = "TimeoutError"; }
 }
+class NetworkError extends Error {
+  constructor(message: string) { super(message); this.name = "NetworkError"; }
+}
 
 interface Fetched { status: number; text: string }
 
@@ -128,7 +131,11 @@ async function fetchText(
   } catch (error) {
     if (options.signal?.aborted) throw new ContentUpdateCancelledError();
     if (timedOut) throw new TimeoutError("Se agotó el tiempo de espera de la conexión");
-    throw error;
+    // No usable HTTP response: DNS failure, no route, TLS or a dropped
+    // connection. iOS reports these with assorted NSURLError messages ("A
+    // server with the specified hostname could not be found."), so classify by
+    // where it failed rather than by the wording.
+    throw new NetworkError(error instanceof Error ? error.message : "Sin conexión");
   } finally {
     clearTimeout(timer);
     options.signal?.removeEventListener("abort", forwardAbort);
@@ -150,7 +157,7 @@ function classify(error: unknown): ContentCheckOutcome {
   if (error instanceof ManifestError) return error.problem === "incompatible" ? "incompatible" : "invalid-response";
   if (error instanceof InvalidResponseError) return "invalid-response";
   if (error instanceof ServerError) return "failure";
-  if (error instanceof TimeoutError || error instanceof TypeError) return "offline";
+  if (error instanceof TimeoutError || error instanceof NetworkError || error instanceof TypeError) return "offline";
   if (error instanceof Error && /network request failed|network unavailable|offline|could not connect|internet connection/i.test(error.message)) return "offline";
   return "failure";
 }
