@@ -1,5 +1,5 @@
 import { createNavigationContainerRef } from "@react-navigation/native";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Linking } from "react-native";
 import { clearCurrentActivity, getCurrentActivity, setCurrentActivity } from "../../modules/manual-handoff";
 import { useContentData } from "../content";
@@ -15,12 +15,12 @@ let initialUrlConsumed = false;
  *  - publishes the focused screen as an `NSUserActivity` (Handoff to Safari on the Mac);
  *  - routes incoming universal links (and `manualsamur://` links) to their screen.
  *
- * Lives outside the screens so App.tsx only passes three props to NavigationContainer.
+ * Lives outside the screens; App.tsx passes its root navigation ref and forwards
+ * `onReady` / `onStateChange` from NavigationContainer.
  */
-export function useWebRouteBridge() {
-  // useState, not useRef: the container ref object is created once and handed to
-  // NavigationContainer during render, which a plain ref may not be.
-  const [navigation] = useState(() => createNavigationContainerRef<RootStackParamList>());
+type NavigationRef = ReturnType<typeof createNavigationContainerRef<RootStackParamList>>;
+
+export function useWebRouteBridge(navigation: NavigationRef) {
 
   const { content } = useContentData();
   const contentRef = useRef(content);
@@ -77,7 +77,7 @@ export function useWebRouteBridge() {
   return { navigation, onReady, onStateChange: publish };
 }
 
-function navigate(navigationRef: ReturnType<typeof createNavigationContainerRef<RootStackParamList>>, target: AppRouteTarget) {
+function navigate(navigationRef: NavigationRef, target: AppRouteTarget) {
   // web-route-mapping.ts checks AppRouteTarget against RootStackParamList at compile
   // time; React Navigation's overloads cannot narrow a union of [screen, params] pairs.
   const go = navigationRef.navigate as (screen: string, params?: object) => void;

@@ -1,13 +1,14 @@
 import { manualContentOrigin } from "./src/content-origin";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, NavigationIndependentTree, StackActions, type NavigationAction, type NavigationState } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { StatusBar } from "expo-status-bar";
-import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import * as AppIntents from "expo-app-intents";
+import React, { forwardRef, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   Animated,
@@ -34,7 +35,8 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { circle, motion, radii, spacing, TAB_BAR_INSET, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
-import { ContentProvider, findProcedure, useContentData, useContentPreferences } from "./src/content";
+import { ContentProvider, findProcedure, useContentData, useContentPreferences, useContentSync } from "./src/content";
+import { WatchSnapshotSync } from "./src/watch-sync";
 import { PreferencesProvider, usePreferences } from "./src/preferences";
 import { ThemeProvider, useTheme, useThemedStyles } from "./src/theme";
 import { animateNextLayout, useReduceMotion } from "./src/hooks/motion";
@@ -44,14 +46,14 @@ import type { MobileAttachment, MobileProcedure } from "../../packages/manual-co
 import { displayTitle } from "./src/title-case";
 import { APP_CHANGELOG } from "./src/app-changelog";
 import { DRUG_DETAIL_FIELDS, DRUG_NOTE_FIELDS, DRUG_SAFETY_FIELDS, drugFieldText, parseDrugRoutes, parseMedicationDose, type MedicationDoseSection } from "./src/drug-detail-logic";
-import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, searchProcedures } from "./src/procedure-logic";
+import { procedureRouteKey, readableMarkdownCell, readableMarkdownLine, readingPositions, resolveProcedureReference, searchProcedures } from "./src/procedure-logic";
 import { buildProcedureShareHtml, buildProcedureShareUrl } from "./src/procedure-share.ts";
 import { activeSectionKey } from "./src/vademecum-logic";
 import { highlightSegments, snippetText, type SearchSnippet } from "./src/search-snippet-logic";
 import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
 import { activeHeadingIdAtOffset, parseProcedureDocument, type MeasuredHeadingOffset, type ParsedProcedureDocument, type ParsedProcedureSection } from "./src/procedure-document.ts";
 import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
-import { relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
+import { buildCodeReferences, buildVademecumReferences, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
@@ -70,7 +72,7 @@ import { APPROVED_ONLINE_MAP_POLICY, mapPinsFromLocations } from "./src/online-m
 import { mapCameraTargetFor } from "./src/mapa-logic";
 import { OnlineMapView } from "./src/online-map-view";
 import { canRecordRecent, savedReferenceIcon, selectSavedReferences, type ResolvedSavedReference, type SavedReference } from "./src/saved-logic";
-import { accessibilityHints, accessibilityTargetStyle, adaptiveLayout, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
+import { accessibilityHints, accessibilityTargetStyle, routeAccessibilityLabels, procedureTextAlign } from "./src/accessibility";
 import { Image } from "expo-image";
 import aptaBlueTutor from "./assets/apta-blue-tutor.png";
 import manualIcon from "./assets/icon.png";
@@ -96,9 +98,12 @@ import { useWebRouteBridge } from "./src/hooks/use-web-route-bridge";
 // (e.g. CodigosScreen, InicioScreen) can type their own navigation/route props against
 // the same lists.
 import type { TabsParamList, RootStackParamList } from "./src/navigation-types";
+import { InDetailPaneContext, navigationRef, SplitSelectionProvider, useAdaptiveLayout, useSplitSelections } from "./src/split-view";
+import { detailRouteKey, planSizeTransition, sectionToDeselect, type RootStackSnapshot, type SplitSection } from "./src/split-view-logic";
 
 const Tabs = createBottomTabNavigator<TabsParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const PaneStack = createNativeStackNavigator<RootStackParamList>();
 
 /**
  * Origen del sitio web canónico, para construir el enlace y el pie del PDF de
@@ -329,7 +334,7 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <BrandHeader settingsRef={settingsTriggerRef} onSettings={() => setSettingsOpen(true)} />
       <InicioScreen navigation={navigation} />
       <SettingsModal visible={settingsOpen} onClose={() => { setSettingsOpen(false); restoreAccessibilityFocus(settingsTriggerRef); }} onOpenAbbreviations={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Abbreviations"); }} onOpenChangelog={() => { setSettingsOpen(false); navigation.getParent()?.navigate("Changelog"); }} contentOrigin={CONTENT_ORIGIN} reduceMotion={reduceMotion} appVersion={Constants.expoConfig?.version ?? "1.0.0"} />
@@ -349,14 +354,23 @@ function HomeScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Inicio"
  * the scope chips (so the user can see what is searchable at a glance) and the last
  * queries and references they opened.
  */
-function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+function BuscarScreen({ navigation, route }: BottomTabScreenProps<TabsParamList, "Buscar">) {
+  // Search accessibilityLabel and input hints live in the keyed screen content below.
+  const initialQuery = route.params?.query ?? "";
+  return <BuscarScreenContent key={initialQuery} navigation={navigation} initialQuery={initialQuery} />;
+}
+
+function BuscarScreenContent({ navigation, initialQuery }: {
+  navigation: BottomTabScreenProps<TabsParamList, "Buscar">["navigation"];
+  initialQuery: string;
+}) {
   const styles = useAppStyles();
   const { content } = useContentData();
   const { recents, recentQueries, rememberQuery, forgetQuery } = useContentPreferences();
   const stack = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
   const recentReferences = useMemo(() => selectSavedReferences(content, recents).slice(0, 6), [content, recents]);
   const openProcedure = (id: string) => stack?.navigate("Procedure", { id });
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [filter, setFilter] = useState<SearchScope>("Todo");
   const chrome = useScrollChrome();
   const procedureResults = useMemo(() => searchProcedures(content.procedures, query), [content.procedures, query]);
@@ -373,7 +387,7 @@ function BuscarScreen({ navigation }: BottomTabScreenProps<TabsParamList, "Busca
   const resultsRef = useRef<FlatList<(typeof rows)[number]>>(null);
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top"]}>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       {/* Title, field and scope chips give way to the results on a downward
           scroll, collapsing into the compact bar — see `useScrollChrome`. */}
       {chrome.collapsed && <CompactHeader title="Buscar" onExpand={chrome.expand} />}
@@ -557,7 +571,7 @@ function LocationDetailScreen({ route, navigation }: NativeStackScreenProps<Root
   // navigator or gives over the radio; the coordinates are a fallback nobody dictates
   // to five decimal places. They used to be the only block on the screen with a label
   // and a heading, above nothing, while the address was a grey meta line.
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     <LocationMapPreview location={location} label={visual.label + " " + locationDisplayName(location)} />
     <View style={[styles.locationTypeBadge, { backgroundColor: visual.wash }]} accessibilityLabel={visual.label}>
       <MaterialCommunityIcons name={visual.icon} size={18} color={visual.color} />
@@ -833,6 +847,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
   const { content } = useContentData();
   const { favorites, toggleFavorite, remember } = useContentPreferences();
   const reduceMotion = useReduceMotion();
+  const inDetailPane = useContext(InDetailPaneContext);
   const [attachmentError, setAttachmentError] = useState<string>();
   const [attachmentRecovery, setAttachmentRecovery] = useState<MobileProcedure["attachments"][number]>();
   const [attachmentRecords, setAttachmentRecords] = useState<Record<string, AttachmentRecord>>({});
@@ -1110,7 +1125,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     navigation.push("Anexo", { attachmentId: attachment.id });
   };
 
-  return <SafeAreaView style={styles.screen} edges={[]}>
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}>
   {findOpen && (
     <ProcedureFindBar
       query={findQuery}
@@ -1184,12 +1199,14 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
     left={READER_BACK_TO_TOP_PLACEMENT.left}
     bottom={READER_BACK_TO_TOP_PLACEMENT.bottom}
   />
-  <ReaderNavBar
+  {/* Beside a list the rail is already on screen; a second, floating tab bar inside
+      the detail pane would only cover the text. */}
+  {!inDetailPane && <ReaderNavBar
     expanded={navExpanded}
     onToggle={expandNav}
     onNavigate={(screen) => { expandNav(false); navigation.navigate("Tabs", { screen } as never); }}
     palette={palette}
-  />
+  />}
   <Menu
     visible={Boolean(share.anchor)}
     anchor={share.anchor}
@@ -1268,7 +1285,7 @@ function DrugScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const safetyRows = DRUG_SAFETY_FIELDS.map(([label, key]) => ({ label, value: drugFieldText(drug[key]) }))
     .filter((row) => row.value.length > 0)
     .map((row) => ({ ...row, tone: row.label === "Contraindicaciones" ? "danger" as const : row.label === "Efectos secundarios" || row.label === "Precauciones" ? "warning" as const : "neutral" as const }));
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     <View style={styles.drugTaxonomy}>
       {[drug.category, drug.subcategory].filter((value): value is string => typeof value === "string" && value.length > 0).map((value) => (
         <Badge key={value} label={value} />
@@ -1324,7 +1341,7 @@ function VademecumReferenceScreen({ route, navigation }: NativeStackScreenProps<
   if (!reference) return <MissingResource title="Referencia de Vademécum no disponible" detail="Esta entrada no está incluida en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const fields = Object.entries(details).filter(([key, value]) => !["id", "drugId", "drug", "brandNames", "activeIngredient"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 12);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{reference.subtitle}</Text>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailMeta}>{reference.subtitle}</Text>{fields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.join(" · ") : String(value)}</Text></View>)}</ScrollView></SafeAreaView>;
 }
 
 function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParamList, "Code">) {
@@ -1345,7 +1362,7 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
   const extraFields = Object.entries(details).filter(([key, value]) => !["code", "name", "title", "category", "description"].includes(key) && (typeof value === "string" || typeof value === "number" || Array.isArray(value))).slice(0, 8);
   const relatedProcedures = content.relationsIndex.codes[route.params.routeKey.replace(/^code:/, "")] ?? [];
   const codeEvents = content.updates.filter((event) => event.category === "codigo" && event.routeKey === route.params.routeKey);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailTitle}>{[reference.badge, reference.title].filter(Boolean).join(" · ")}</Text><Text style={styles.detailMeta}>{category || "Código"}</Text>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}{relatedProcedures.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedProcedures.map((item) => { const procedure = findProcedure(content, item.procedureId); return procedure ? <ProcedureRow key={item.procedureId} procedure={procedure} onPress={() => navigation.push("Procedure", { id: item.procedureId })} /> : null; })}</View></>}{codeEvents.length > 0 && <ProcedureHistorySection predicate={(event) => event.category === "codigo" && event.routeKey === route.params.routeKey} updates={content.updates} />}</ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Text style={styles.detailTitle}>{[reference.badge, reference.title].filter(Boolean).join(" · ")}</Text><Text style={styles.detailMeta}>{category || "Código"}</Text>{description ? <View style={styles.infoBlock}><Text style={styles.infoLabel}>Descripción</Text><Text style={styles.infoValue}>{description}</Text></View> : null}{extraFields.map(([key, value]) => <View key={key} style={styles.infoBlock}><Text style={styles.infoLabel}>{fieldLabel(key)}</Text><Text style={styles.infoValue}>{Array.isArray(value) ? value.map((item) => typeof item === "object" ? JSON.stringify(item) : String(item)).join(" · ") : String(value)}</Text></View>)}{relatedProcedures.length > 0 && <><SectionHeading title="Procedimientos relacionados" /><View style={styles.cardList}>{relatedProcedures.map((item) => { const procedure = findProcedure(content, item.procedureId); return procedure ? <ProcedureRow key={item.procedureId} procedure={procedure} onPress={() => navigation.push("Procedure", { id: item.procedureId })} /> : null; })}</View></>}{codeEvents.length > 0 && <ProcedureHistorySection predicate={(event) => event.category === "codigo" && event.routeKey === route.params.routeKey} updates={content.updates} />}</ScrollView></SafeAreaView>;
 }
 
 // Status 4 is a reusable component (src/components/Status4Cheatsheet.tsx) so a later
@@ -1359,7 +1376,7 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
   const hospitals = useMemo(() => asCodigosHospitals(content.hospitals), [content.hospitals]);
   const status4 = useMemo(() => asStatus4Entries(content.status4), [content.status4]);
   const entries = useMemo(() => buildHospitalList(hospitals, status4), [hospitals, status4]);
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Status4Cheatsheet status4={status4} hospitals={entries} palette={palette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic"><Status4Cheatsheet status4={status4} hospitals={entries} palette={palette} onSelectHospital={(hospital) => navigation.navigate("Location", { routeKey: locationRouteKey({ kind: "hospital", id: hospital.id }) })} /></ScrollView></SafeAreaView>;
 }
 
 // The placeholder flat/searchable list (T5a) that used to live here is gone:
@@ -1376,7 +1393,7 @@ function Status4Screen({ navigation }: NativeStackScreenProps<RootStackParamList
 function ChangelogScreen({ navigation }: NativeStackScreenProps<RootStackParamList, "Changelog">) {
   const styles = useAppStyles();
   useDetailHeader({ navigation, title: "Novedades" });
-  return <SafeAreaView style={styles.screen} edges={[]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
+  return <SafeAreaView style={styles.screen} edges={["left", "right"]}><ScrollView contentContainerStyle={styles.detailContent} contentInsetAdjustmentBehavior="automatic">
     {APP_CHANGELOG.length === 0
       ? <EmptyState title="Sin novedades todavía" detail={`Estás en la versión ${Constants.expoConfig?.version ?? "1.0.0"}. Aquí aparecerá lo que cambie en la aplicación a partir de la siguiente.`} />
       : APP_CHANGELOG.map((release) => (
@@ -1396,7 +1413,7 @@ function AbbreviationsScreen({ route, navigation }: NativeStackScreenProps<RootS
   const { content } = useContentData();
   const [query, setQuery] = useState(route.params?.query ?? "");
   const entries = useMemo(() => searchAbbreviations(content.abbreviations, query, 1000), [content.abbreviations, query]);
-  return <SafeAreaView style={styles.screen} edges={["top"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
+  return <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}><FlatList data={entries} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} ListHeaderComponent={<><Pressable onPress={() => navigation.goBack()} style={styles.minimumTarget} accessibilityRole="button" accessibilityLabel="Volver"><MaterialCommunityIcons name="arrow-left" size={24} color={palette.ink} /></Pressable><Text style={styles.pageTitle}>Abreviaturas</Text><View style={styles.detailSearch}><SearchField value={query} onChangeText={setQuery} placeholder="Buscar abreviaturas" /></View></>} ListEmptyComponent={<EmptyState title="Sin coincidencias" detail="Prueba con la abreviatura o su significado." />} renderItem={({ item }) => <View style={styles.abbreviationRow}><Text style={styles.abbreviation}>{item.title}</Text><View style={styles.resourceCopy}><Text style={styles.resourceTitle}>{item.subtitle}</Text><Text style={styles.resourceMeta}>Letra {item.badge ?? "—"}</Text></View></View>} /></SafeAreaView>;
 }
 
 /** "PDF" is an acronym; "IMAGE" was the enum shouted at the reader. */
@@ -1535,40 +1552,17 @@ const styles_tabIcon = StyleSheet.create({
   overlay: { position: "absolute", top: 0, left: 0 },
 });
 
-function MainTabs() {
+/**
+ * Pushed detail screens use the platform header: a large title that collapses on
+ * scroll, the system back button with its swipe affordance, and the favourite as
+ * `headerRight`. This replaces six hand-rolled [←][CENTERED CAPS][☆] bars that all
+ * rendered the screen's category twice — once in the bar and again as a red caps
+ * line forty points below it. Tab screens keep their own headers because they carry
+ * the brand lockup and the settings entry point.
+ */
+function useDetailHeaderOptions() {
   const palette = useTheme();
-  // Five destinations. Buscar used to be the odd one out: a detached capsule beside the
-  // tab pill opening a modal, which is the only part of the app you could not get back to
-  // by looking at the tab bar.
-  return <Tabs.Navigator
-    backBehavior="history"
-    tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
-    screenOptions={{ headerShown: false }}
-  >
-    <Tabs.Screen name="Inicio" component={HomeScreen} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="Codigos" component={CodigosScreen} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="VademecumList" component={VademecumScreen} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused, size }) => <TabIcon name="pill" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused, size }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} size={size} /> }} />
-    <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color, size }) => <TabIcon name="magnify" color={color} size={size} /> }} />
-  </Tabs.Navigator>;
-}
-
-function AppNavigation() {
-  const palette = useTheme();
-  const styles = useAppStyles();
-  const reduceMotion = useReduceMotion();
-  const { width, fontScale } = useWindowDimensions();
-  const layout = adaptiveLayout(width, fontScale);
-  const tablet = layout.isTablet;
-  // Handoff (focused screen → NSUserActivity) and universal links (URL → screen).
-  const { navigation: webRouteNavigation, onReady: onWebRoutesReady, onStateChange: onWebRouteChange } = useWebRouteBridge();
-  // Pushed detail screens use the platform header: a large title that collapses on
-  // scroll, the system back button with its swipe affordance, and the favourite as
-  // `headerRight`. This replaces six hand-rolled [←][CENTERED CAPS][☆] bars that all
-  // rendered the screen's category twice — once in the bar and again as a red caps
-  // line forty points below it. Tab screens keep their own headers because they carry
-  // the brand lockup and the settings entry point.
-  const detailHeader = {
+  return useMemo(() => ({
     headerShown: true,
     headerLargeTitle: true,
     headerBackButtonDisplayMode: "minimal",
@@ -1577,8 +1571,238 @@ function AppNavigation() {
     headerLargeTitleStyle: { color: palette.ink },
     headerStyle: { backgroundColor: palette.paper },
     headerTransparent: false,
-  } as const;
-  return <NavigationContainer ref={webRouteNavigation} onReady={onWebRoutesReady} onStateChange={onWebRouteChange}><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: tablet ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Changelog" component={ChangelogScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: tablet ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator></NavigationContainer>;
+  } as const), [palette]);
+}
+
+const SPLIT_PLACEHOLDERS: Record<SplitSection, { icon: keyof typeof MaterialCommunityIcons.glyphMap; title: string; detail: string }> = {
+  Inicio: { icon: "book-open-page-variant-outline", title: "Elige un procedimiento", detail: "Se abrirá aquí, junto al índice del manual." },
+  VademecumList: { icon: "pill", title: "Elige un fármaco", detail: "Su ficha se abrirá aquí, junto a la lista." },
+  Codigos: { icon: "radio-handheld", title: "Elige un código", detail: "Los códigos con ficha se abren aquí, junto a la lista." },
+};
+
+/** Actions a pane cannot handle (back to Buscar, open Historial…) go to the root stack. */
+function forwardToRoot(action: NavigationAction) {
+  if (navigationRef.isReady()) navigationRef.dispatch(action);
+}
+
+/**
+ * The right-hand pane of a split tab. It is its own navigation tree: a link inside a
+ * procedure pushes within the pane, with a back button there, and leaves the list
+ * alone. A new selection remounts the tree so it always starts at the chosen detail.
+ */
+function DetailPane({ section }: { section: SplitSection }) {
+  const palette = useTheme();
+  const styles = useAppStyles();
+  const reduceMotion = useReduceMotion();
+  const detailHeader = useDetailHeaderOptions();
+  const { selections } = useSplitSelections();
+  const selection = selections[section];
+  if (!selection) {
+    const placeholder = SPLIT_PLACEHOLDERS[section];
+    return <SafeAreaView style={[styles.screen, styles.splitPlaceholder]} edges={["top", "right", "bottom"]} testID={`detail-pane-empty-${section}`}>
+      <MaterialCommunityIcons name={placeholder.icon} size={40} color={palette.inkMuted} />
+      <Text style={styles.emptyTitle}>{placeholder.title}</Text>
+      <Text style={styles.emptyDetail}>{placeholder.detail}</Text>
+    </SafeAreaView>;
+  }
+  const initialParams = (screen: keyof RootStackParamList) => (selection.screen === screen ? selection.params : undefined) as never;
+  return <InDetailPaneContext.Provider value>
+    <NavigationIndependentTree key={detailRouteKey(selection)}>
+      <NavigationContainer onUnhandledAction={forwardToRoot}>
+        <PaneStack.Navigator initialRouteName={selection.screen} screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", contentStyle: { backgroundColor: palette.paper } }}>
+          <PaneStack.Screen name="Procedure" component={ProcedureScreen} initialParams={initialParams("Procedure")} options={detailHeader} />
+          <PaneStack.Screen name="Drug" component={DrugScreen} initialParams={initialParams("Drug")} options={detailHeader} />
+          <PaneStack.Screen name="Vademecum" component={VademecumReferenceScreen} initialParams={initialParams("Vademecum")} options={detailHeader} />
+          <PaneStack.Screen name="Code" component={CodeScreen} initialParams={initialParams("Code")} options={detailHeader} />
+          <PaneStack.Screen name="Location" component={LocationDetailScreen} initialParams={initialParams("Location")} options={detailHeader} />
+          <PaneStack.Screen name="Status4" component={Status4Screen} options={{ ...detailHeader, title: "Status 4" }} />
+          <PaneStack.Screen name="Anexo" component={AnexoScreen} initialParams={initialParams("Anexo")} options={detailHeader} />
+        </PaneStack.Navigator>
+      </NavigationContainer>
+    </NavigationIndependentTree>
+  </InDetailPaneContext.Provider>;
+}
+
+/**
+ * A split tab: the list on the left and, on wide windows, the detail on the right.
+ * The list keeps the same position in the tree in both layouts, so its scroll offset,
+ * search text and open sections survive a rotation or a Split View resize.
+ */
+function SplitTab({ section, children }: { section: SplitSection; children: React.ReactNode }) {
+  const palette = useTheme();
+  const layout = useAdaptiveLayout();
+  // Each column is its own SafeAreaProvider: the native provider reads UIKit's
+  // frame-aware `safeAreaInsets`, so the list (away from the window edges) gets no side
+  // inset and the detail only the right one. One root provider would hand both columns
+  // the window's insets and pad them twice.
+  return <View style={splitStyles.row}>
+    <View style={layout.isTwoPane ? [splitStyles.list, { width: layout.listPaneWidth, borderRightColor: palette.line }] : splitStyles.fill}><SafeAreaProvider>{children}</SafeAreaProvider></View>
+    {layout.isTwoPane && <View style={splitStyles.fill} testID={`detail-pane-${section}`}><SafeAreaProvider><DetailPane section={section} /></SafeAreaProvider></View>}
+  </View>;
+}
+
+const splitStyles = StyleSheet.create({
+  row: { flex: 1, flexDirection: "row" },
+  fill: { flex: 1 },
+  list: { borderRightWidth: StyleSheet.hairlineWidth },
+});
+
+function ManualTab(props: BottomTabScreenProps<TabsParamList, "Inicio">) {
+  return <SplitTab section="Inicio"><HomeScreen {...props} /></SplitTab>;
+}
+function CodigosTab(props: BottomTabScreenProps<TabsParamList, "Codigos">) {
+  return <SplitTab section="Codigos"><CodigosScreen {...props} /></SplitTab>;
+}
+function VademecumTab() {
+  return <SplitTab section="VademecumList"><VademecumScreen /></SplitTab>;
+}
+
+function MainTabs() {
+  const palette = useTheme();
+  const layout = useAdaptiveLayout();
+  // Five destinations. Buscar used to be the odd one out: a detached capsule beside the
+  // tab pill opening a modal, which is the only part of the app you could not get back to
+  // by looking at the tab bar.
+  // Wide windows (iPad, an open iPhone Duo) move the bar into a vertical rail that owns
+  // its own column on the left; narrow ones keep the floating bottom capsules.
+  return <Tabs.Navigator
+    backBehavior="history"
+    tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
+    screenOptions={{ headerShown: false, tabBarPosition: layout.isWideLayout ? "left" : "bottom" }}
+    // Beside the rail a screen no longer touches the window's left edge; a local provider
+    // measures its own insets instead of inheriting the window's (the rail already
+    // absorbs the left one, e.g. an iPhone in landscape with the island on that side).
+    screenLayout={layout.isWideLayout ? ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider> : undefined}
+  >
+    <Tabs.Screen name="Inicio" component={ManualTab} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Codigos" component={CodigosTab} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="VademecumList" component={VademecumTab} options={{ tabBarLabel: "Vademécum", tabBarIcon: ({ color, focused, size }) => <TabIcon name="pill" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Mapa" component={MapaScreen} options={{ tabBarLabel: "Mapa", tabBarIcon: ({ color, focused, size }) => <TabIcon name="map-outline" activeName="map" color={color} focused={focused} size={size} /> }} />
+    <Tabs.Screen name="Buscar" component={BuscarScreen} options={{ tabBarLabel: "Buscar", tabBarIcon: ({ color, size }) => <TabIcon name="magnify" color={color} size={size} /> }} />
+  </Tabs.Navigator>;
+}
+
+function ManualAppIntentBridge({ enabled }: { enabled: boolean }) {
+  const { content } = useContentData();
+  const { isHydrated } = useContentSync();
+  const ready = enabled && isHydrated;
+
+  useEffect(() => {
+    if (!ready || Platform.OS !== "ios" || !AppIntents.isAvailable()) return;
+    const references = [
+      ...buildVademecumReferences(content),
+      ...buildCodeReferences(content.codes),
+    ];
+    const procedures = content.procedures.map((procedure) => ({
+      id: procedure.routeKey,
+      title: procedure.title,
+      subtitle: procedure.section,
+      synonyms: procedure.synonyms.slice(0, 8),
+    }));
+    const entries = [...procedures, ...references.map((reference) => ({
+      id: reference.routeKey ?? reference.id,
+      title: reference.title,
+      subtitle: reference.subtitle,
+      synonyms: reference.kind === "abbreviation" ? [] : [reference.badge, reference.id].filter((value): value is string => Boolean(value)),
+    }))];
+    // The code datasets repeat some route keys (e.g. `code:incidente:15.1` appears twice),
+    // and expo-app-intents rejects the whole catalog on a duplicate id. Keep the first.
+    const seenIds = new Set<string>();
+    const catalog = entries.filter((entry) => !seenIds.has(entry.id) && Boolean(seenIds.add(entry.id)));
+    void AppIntents.setEntityCatalogAsync("manualReference", catalog).catch((error) => {
+      console.warn("No se pudo actualizar el índice de referencias de Manual SAMUR.", error);
+    });
+  }, [content, ready]);
+
+  AppIntents.useAppIntents(async (pendingIntents) => {
+    if (!ready || !navigationRef.isReady()) return;
+    for (const invocation of pendingIntents) {
+      try {
+        if (invocation.name === "searchManual") {
+          const query = invocation.params.query;
+          if (typeof query !== "string") {
+            console.warn("Descartando búsqueda de App Intent no válida", invocation.id);
+            await AppIntents.removePendingInvocationAsync(invocation.id);
+            continue;
+          }
+          navigationRef.navigate("Tabs", { screen: "Buscar", params: { query } });
+        } else if (invocation.name === "openManualReference") {
+          const routeKey = invocation.params.routeKey;
+          if (typeof routeKey !== "string") {
+            console.warn("Descartando referencia de App Intent no válida", invocation.id);
+            await AppIntents.removePendingInvocationAsync(invocation.id);
+            continue;
+          }
+          const procedure = resolveProcedureReference(content.procedures, routeKey);
+          if (procedure) {
+            navigationRef.navigate("Procedure", { id: procedure.id });
+          } else if (routeKey.startsWith("code:")) {
+            const reference = resolveCodeReference(content.codes, routeKey);
+            if (!reference) {
+              await AppIntents.removePendingInvocationAsync(invocation.id);
+              continue;
+            }
+            navigationRef.navigate("Code", { routeKey: reference.routeKey });
+          } else {
+            const reference = resolveVademecumReference(content, routeKey);
+            if (!reference) {
+              await AppIntents.removePendingInvocationAsync(invocation.id);
+              continue;
+            }
+            if (reference.kind === "drug" && reference.targetId) navigationRef.navigate("Drug", { id: reference.targetId });
+            else navigationRef.navigate("Vademecum", { routeKey: reference.routeKey });
+          }
+        } else {
+          continue;
+        }
+        await AppIntents.removePendingInvocationAsync(invocation.id);
+      } catch (error) {
+        console.warn("App Intent pendiente de reintento", invocation.id, error);
+      }
+    }
+  });
+  return null;
+}
+
+/**
+ * Moves the open detail between the pane and the root stack when the window crosses
+ * the two-pane breakpoint (rotation, Split View resize, folding an iPhone Duo), and
+ * forgets a selection the user closed with Back on a narrow window. The rules live in
+ * `split-view-logic.ts`.
+ */
+function useSplitSizeTransitions(isTwoPane: boolean, navigationReady: boolean) {
+  const { selections, select } = useSplitSelections();
+  const previousTwoPane = useRef(isTwoPane);
+  const previousIndex = useRef(0);
+  const selectionsRef = useRef(selections);
+  useEffect(() => { selectionsRef.current = selections; }, [selections]);
+  useEffect(() => {
+    const wasTwoPane = previousTwoPane.current;
+    previousTwoPane.current = isTwoPane;
+    if (!navigationReady || !navigationRef.isReady()) return;
+    const plan = planSizeTransition({ wasTwoPane, isTwoPane, state: navigationRef.getRootState() as RootStackSnapshot | undefined, selections: selectionsRef.current });
+    if (plan.kind === "push") (navigationRef.navigate as (screen: string, params?: object) => void)(plan.detail.screen, plan.detail.params);
+    else if (plan.kind === "popToTop") navigationRef.dispatch(StackActions.popToTop());
+  }, [isTwoPane, navigationReady]);
+  return useCallback((state: NavigationState | undefined) => {
+    const snapshot = state as RootStackSnapshot | undefined;
+    const section = sectionToDeselect({ isTwoPane: previousTwoPane.current, previousIndex: previousIndex.current, state: snapshot });
+    previousIndex.current = snapshot?.index ?? 0;
+    if (section) select(section, undefined);
+  }, [select]);
+}
+
+function AppNavigation() {
+  const styles = useAppStyles();
+  const reduceMotion = useReduceMotion();
+  const [navigationReady, setNavigationReady] = useState(false);
+  const layout = useAdaptiveLayout();
+  const wideLayout = layout.isWideLayout;
+  const detailHeader = useDetailHeaderOptions();
+  const onSplitStateChange = useSplitSizeTransitions(layout.isTwoPane, navigationReady);
+  // Handoff (focused screen → NSUserActivity) and universal links (URL → screen).
+  const webRoutes = useWebRouteBridge(navigationRef);
+  return <NavigationContainer ref={navigationRef} onReady={() => { setNavigationReady(true); webRoutes.onReady(); }} onStateChange={(state) => { onSplitStateChange(state); webRoutes.onStateChange(); }}><><Stack.Navigator screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", gestureEnabled: true, fullScreenGestureEnabled: true, contentStyle: { backgroundColor: styles.screen.backgroundColor }, presentation: wideLayout ? "card" : undefined }}><Stack.Screen name="Tabs" component={MainTabs} /><Stack.Screen name="Procedure" component={ProcedureScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Location" component={LocationDetailScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Drug" component={DrugScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Vademecum" component={VademecumReferenceScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Code" component={CodeScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Anexo" component={AnexoScreen} options={{ presentation: "card", ...detailHeader }} /><Stack.Screen name="Status4" component={Status4Screen} options={{ presentation: "card", ...detailHeader, title: "Status 4" }} /><Stack.Screen name="Historial" component={HistorialScreen} options={{ presentation: "card", ...detailHeader, title: "Historial" }} /><Stack.Screen name="Changelog" component={ChangelogScreen} options={{ presentation: "card", ...detailHeader, title: "Novedades" }} /><Stack.Screen name="Abbreviations" component={AbbreviationsScreen} options={{ presentation: wideLayout ? "card" : "formSheet", gestureDirection: "vertical" }} /></Stack.Navigator>{navigationReady && <ManualAppIntentBridge enabled={navigationReady} />}</></NavigationContainer>;
 }
 
 function AppGate() {
@@ -1596,7 +1820,7 @@ function AppGate() {
   // during this render, so the only way to get the tree to see a theme change was to
   // remount the whole navigator — which threw away wherever the user had navigated to.
   // `useTheme()` re-renders instead.
-  return <ContentProvider><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><AppNavigation /></View></ContentProvider>;
+  return <ContentProvider><WatchSnapshotSync /><View testID="app-interactive-shell" style={[styles.appSurface, { backgroundColor: palette.paper }]}><StatusBar style={dark ? "light" : "dark"} /><SplitSelectionProvider><AppNavigation /></SplitSelectionProvider></View></ContentProvider>;
 }
 
 function IconFontPreloader() {
@@ -1643,6 +1867,7 @@ function createStyles(palette: AdaptivePalette) {
   detailContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: TAB_BAR_INSET, alignSelf: "center", width: "100%", maxWidth: 720 },
   // `brandHeader`/`brandLockup`/`brandName` ya no existen: la cabecera de Inicio es
   // `PageHeader`, la misma que las demás pestañas, y ya no lleva el icono de la app.
+  splitPlaceholder: { alignItems: "center", justifyContent: "center", gap: spacing.sm, padding: spacing.xl },
   logoMark: { width: 94, height: 94, borderRadius: 27, backgroundColor: palette.primary, overflow: "hidden" },
   logoMarkSmall: { width: 38, height: 38, borderRadius: 11 },
   iconButton: { ...circle(44), alignItems: "center", justifyContent: "center", backgroundColor: palette.surface, borderWidth: 1, borderColor: palette.lineStrong },

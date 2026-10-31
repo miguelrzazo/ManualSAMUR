@@ -23,3 +23,23 @@ resolución original y anotar plataforma, modelo, OS, versión, commit y SHA-256
 Las capturas son evidencia de comportamiento de la build y no sustituyen la revisión humana de
 accesibilidad, tamaño, rendimiento, batería o instalación.
 
+## App Store en iPhone Duo
+
+Preparar capturas de la interfaz real en español, sin marcos de dispositivo ni textos promocionales
+superpuestos. Guardar los PNG originales bajo `release/app-store/iphone-duo/es/` y separarlos por
+pantalla (`outer` / `inner`) y pose (`portrait` / `landscape`). Apple acepta estas dimensiones:
+
+| Pantalla | Vertical | Horizontal |
+| --- | ---: | ---: |
+| Exterior | 1398 × 2034 px | 2034 × 1398 px |
+| Interior | 2007 × 2853 px | 2853 × 2007 px |
+
+Para cada una de las cuatro combinaciones, capturar Inicio, Buscar con una consulta breve, un
+procedimiento, Vademécum y Códigos. Añadir también la serie de iPhone grande existente y registrar
+modelo, versión de iOS, versión de la app, commit y SHA-256 con cada lote. Validar dimensiones y
+ausencia de canal alfa antes de subir a App Store Connect. La interfaz debe adaptarse al cambio de
+ancho disponible: la navegación pasa a una columna lateral cuando el espacio permite presentarla.
+
+Estado: lista y rutas de entrega preparadas; faltan las capturas del simulador Duo y la validación
+visual en ambos displays.
+

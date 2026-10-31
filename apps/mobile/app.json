@@ -3,7 +3,7 @@
     "name": "Manual SAMUR",
     "slug": "manualsamur",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "userInterfaceStyle": "automatic",
     "scheme": "manualsamur",
     "icon": "./assets/icon.png",
@@ -13,8 +13,10 @@
       "backgroundColor": "#1B4FA8"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
+      "requireFullScreen": false,
       "bundleIdentifier": "es.madrid.samur.manual",
+      "appleTeamId": "FC8DH72682",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicaci\u00f3n solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicaci\u00f3n.",
@@ -69,10 +71,20 @@
       "./plugins/with-android-attachment-assets",
       "@maplibre/maplibre-react-native",
       "./plugins/with-android-release-signing",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-app-intents",
+      "@bacons/apple-targets",
+      "./plugins/with-watch-companion"
     ],
     "extra": {
       "manualContentOrigin": "https://manualsamur.miguelrzazo13.workers.dev"
+    },
+    "experiments": {
+      "inlineModules": {
+        "watchedDirectories": [
+          "app-intents"
+        ]
+      }
     }
   }
 }

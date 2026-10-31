@@ -13,7 +13,7 @@ export type TabsParamList = {
   VademecumList: undefined;
   Mapa: undefined;
   /** Buscar is a tab now, not a modal opened from a capsule beside the tab bar. */
-  Buscar: undefined;
+  Buscar: { query?: string } | undefined;
 };
 
 export type RootStackParamList = {
