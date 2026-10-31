@@ -45,6 +45,18 @@ test("managed Expo config carries the iOS scene lifecycle boundary", () => {
   assert.match(plugin, /UIApplicationSupportsMultipleScenes: false/);
   assert.match(plugin, /class SceneDelegate: UIResponder, UIWindowSceneDelegate/);
   assert.match(plugin, /reactNativeFactory[\s\S]*startReactNative/);
+  // Universal links and Handoff reach the scene as user activities, cold and warm.
+  assert.match(plugin, /connectionOptions\.userActivities\.compactMap\(\{ \$0\.webpageURL \}\)/);
+  assert.match(plugin, /func scene\(_ scene: UIScene, continue userActivity: NSUserActivity\)/);
+});
+
+test("iOS config claims the web domain for universal links and Handoff", () => {
+  const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as { expo?: { ios?: { associatedDomains?: string[]; infoPlist?: { NSUserActivityTypes?: string[] } } } };
+  assert.deepEqual(appConfig.expo?.ios?.associatedDomains, [
+    "applinks:manualsamur.miguelrzazo13.workers.dev",
+    "activitycontinuation:manualsamur.miguelrzazo13.workers.dev",
+  ]);
+  assert.deepEqual(appConfig.expo?.ios?.infoPlist?.NSUserActivityTypes, ["es.madrid.samur.manual.view"]);
 });
 
 test("managed Expo config uses the approved display name without changing app identity keys", () => {

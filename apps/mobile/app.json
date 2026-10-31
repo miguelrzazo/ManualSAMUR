@@ -20,8 +20,15 @@
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
         "NSLocationWhenInUseUsageDescription": "Usa tu ubicaci\u00f3n solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicaci\u00f3n.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSUserActivityTypes": [
+          "es.madrid.samur.manual.view"
+        ]
       },
+      "associatedDomains": [
+        "applinks:manualsamur.miguelrzazo13.workers.dev",
+        "activitycontinuation:manualsamur.miguelrzazo13.workers.dev"
+      ],
       "deploymentTarget": "16.4",
       "buildNumber": "8",
       "icon": {

@@ -1,0 +1,29 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["FC8DH72682.es.madrid.samur.manual"],
+        "components": [
+          { "/": "/gestion-editorial*", "exclude": true, "comment": "Editorial back office stays in the browser" },
+          { "/": "/api/*", "exclude": true, "comment": "API responses are never app content" },
+          { "/": "/manual" },
+          { "/": "/manual/" },
+          { "/": "/manual/*" },
+          { "/": "/vademecum" },
+          { "/": "/vademecum/" },
+          { "/": "/codigos" },
+          { "/": "/codigos/" },
+          { "/": "/mapa" },
+          { "/": "/mapa/" },
+          { "/": "/abreviaturas" },
+          { "/": "/abreviaturas/" },
+          { "/": "/cambios" },
+          { "/": "/cambios/" }
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": ["FC8DH72682.es.madrid.samur.manual"]
+  }
+}
