@@ -249,12 +249,17 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
    */
   trailing?: () => React.ReactNode;
 }) {
+  // Inside an iPad/Duo detail pane UIKit lays the large title out with no leading
+  // margin, flush against the divider (the pane's navigation controller does not sit
+  // at the window edge, so it inherits no layout margin). The inline title is placed
+  // correctly, so the pane uses that.
+  const inDetailPane = useContext(InDetailPaneContext);
   useLayoutEffect(() => {
     navigation.setOptions({
       // Titles here come from the corpus (a drug name, a location's short name), which
       // mixes shouted and sentence-cased entries — `displayTitle` levels them.
       title: displayTitle(title),
-      headerLargeTitle: largeTitle,
+      headerLargeTitle: largeTitle && !inDetailPane,
       headerTitle,
       headerRight: onToggleFavorite || trailing
         ? () => (
@@ -265,7 +270,7 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
           )
         : undefined,
     });
-  }, [navigation, title, favorite, onToggleFavorite, largeTitle, headerTitle, trailing]);
+  }, [navigation, title, favorite, onToggleFavorite, largeTitle, inDetailPane, headerTitle, trailing]);
 }
 
 function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
@@ -1352,7 +1357,8 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
     if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
   }, [content, reference, remember, route.params.routeKey]);
   const onToggleFavorite = useCallback(() => toggleFavorite(route.params.routeKey), [toggleFavorite, route.params.routeKey]);
-  useDetailHeader({ navigation, title: reference?.badge ?? reference?.title ?? "Código", favorite, onToggleFavorite });
+  // The body opens with "13 · Ictus agudo"; a large "13" above it said the same thing twice.
+  useDetailHeader({ navigation, title: reference?.badge ?? reference?.title ?? "Código", favorite, onToggleFavorite, largeTitle: false });
   if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const description = typeof details.description === "string" ? details.description : "";
