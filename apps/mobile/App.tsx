@@ -1603,8 +1603,9 @@ function DetailPane({ section }: { section: SplitSection }) {
   const selection = selections[section];
   // A pane in a background tab (or under a pushed screen) must not hold Handoff.
   const tabFocused = useIsFocused();
-  // One ref per pane tree: a new selection remounts the tree (see the key below).
-  const paneNavigation = useMemo(() => createNavigationContainerRef<RootStackParamList>(), [selection]);
+  // One ref for the pane's lifetime: a new selection remounts the container under it
+  // (see the key below), which re-attaches the ref and reports through onReady.
+  const [paneNavigation] = useState(() => createNavigationContainerRef<RootStackParamList>());
   const handoff = useDetailPaneHandoff(paneNavigation, tabFocused && Boolean(selection));
   if (!selection) {
     const placeholder = SPLIT_PLACEHOLDERS[section];
