@@ -1,3 +1,4 @@
+import { manualContentOrigin } from "./src/content-origin";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer, NavigationIndependentTree, StackActions, type NavigationAction, type NavigationState } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -109,8 +110,7 @@ const PaneStack = createNativeStackNavigator<RootStackParamList>();
  * valor que ya usa la descarga de anexos en `attachment-runtime.ts`.
  */
 const CONTENT_ORIGIN = (() => {
-  const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
-  return typeof extra?.contentOrigin === "string" ? extra.contentOrigin : "https://manual-proced-spc.vercel.app";
+  try { return manualContentOrigin(); } catch { return ""; }
 })();
 
 /**

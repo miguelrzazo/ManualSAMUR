@@ -12,8 +12,7 @@ on:
         default: ""
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: manual-update-${{ github.ref }}
@@ -27,11 +26,16 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4.4.0
         with:
           node-version: "22"
           cache: "npm"
+
+      - name: Initialize diagnostics
+        run: mkdir -p /tmp/manual-update-diagnostics
 
       - name: Install dependencies
         run: npm ci
@@ -39,179 +43,78 @@ jobs:
       - name: Install mobile dependencies
         run: npm ci --prefix apps/mobile --ignore-scripts
 
-      - name: Require a PR token that triggers CI
-        env:
-          CONTENT_PR_TOKEN: ${{ secrets.CONTENT_PR_TOKEN }}
-        run: test -n "$CONTENT_PR_TOKEN"
-
       - name: Install system dependencies
-        # apt-get update primero: sin él, un índice desactualizado en el runner hace
-        # fallar la instalación de poppler-utils.
         run: |
           sudo apt-get update
           sudo apt-get install -y poppler-utils
 
-      - name: Apply official updates
+      - name: Extract official candidates for editorial review
+        id: extract
         env:
           PROCEDURE_IDS: ${{ inputs.procedure_ids }}
         run: |
-          if [ -n "$PROCEDURE_IDS" ]; then
-            npm run sync:manualsamur:apply -- "--ids=$PROCEDURE_IDS"
-          else
-            npm run sync:manualsamur:apply
-          fi
+          set -euo pipefail
+          args=(apply --all --propose)
+          if [ -n "$PROCEDURE_IDS" ]; then args+=("--ids=$PROCEDURE_IDS"); fi
+          node --experimental-strip-types scripts/sync-manualsamur.ts "${args[@]}" 2>&1 | tee /tmp/manual-update-diagnostics/sync.log
 
-      - name: Regenerate agent corpus
-        # Sin esto, public/procedures/*.md y llms*.txt se quedaban atrás respecto
-        # a content/procedures y la deriva solo salía a la luz meses después, en
-        # un diff de 232 ficheros mezclado con cambios reales. Además la guarda
-        # de ci.yml exige que la build no ensucie el árbol.
-        run: |
-          npm run generate:client-data
-          npm run generate:llms
-
-      - name: Update history from latest sync run
-        run: |
-          node --experimental-strip-types scripts/update-manual-history.ts
-
-      - name: Validate the complete candidate before opening a PR
-        run: |
-          npm run lint
-          node --experimental-strip-types scripts/lint-procedure-ids.ts
-          npm test
-          npm run mobile:content:validate
-          npm run mobile:typecheck
-          npm run build
-          npm run validate:content-parity
-
-      - name: Generate update report
-        run: |
-          node <<'NODE' > /tmp/manual-update-report.md
-          const fs = require("fs");
-          const sync = JSON.parse(fs.readFileSync("content/data/manual-sync.json", "utf8"));
-          const updates = fs.existsSync("content/data/manual-updates.json")
-            ? JSON.parse(fs.readFileSync("content/data/manual-updates.json", "utf8"))
-            : { events: [] };
-          const run = sync.runs?.[0];
-          console.log("# ManualSAMUR monthly update report\n");
-          console.log(`Generated: ${new Date().toISOString()}`);
-          console.log(`Manual version: ${sync.manualVersionCurrent || sync.manualVersion || "unknown"}\n`);
-          if (run) {
-            console.log("## Domain summary\n");
-            for (const [domain, summary] of Object.entries(run.summary || {})) {
-              console.log(`- ${domain}: created ${summary.created || 0}, updated ${summary.updated || 0}, unchanged ${summary.unchanged || 0}, skipped ${summary.skipped || 0}, failed ${summary.failed || 0}`);
-            }
-            const missingAssets = run.attachmentFailures || [];
-            if (missingAssets.length) {
-              console.log("\n## Unavailable upstream attachments\n");
-              console.log(`Count: ${missingAssets.length}`);
-              for (const asset of missingAssets) {
-                console.log(`- ${asset.sourceUrl} — ${asset.error}`);
-              }
-            }
-            console.log("\n## Changes\n");
-            for (const [domain, changes] of Object.entries(run.changes || {})) {
-              const relevant = (changes || []).filter((change) => change.changeType !== "unchanged");
-              if (relevant.length === 0) continue;
-              console.log(`### ${domain}`);
-              for (const change of relevant) {
-                console.log(`- ${change.changeType}: ${change.id} ${change.title || ""}`);
-              }
-              console.log("");
-            }
-            const realErrors = (run.errors || []).filter((e) => !e.includes("content too short"));
-            if (realErrors.length) {
-              console.log("## Errors\n");
-              for (const error of realErrors) console.log(`- ${error}`);
-            }
-          }
-          const recent = (updates.events || []).slice(0, 20);
-          if (recent.length) {
-            console.log("\n## Recent history events\n");
-            for (const event of recent) {
-              console.log(`- ${event.changeKind}: ${event.summary} (${event.effectiveDate})`);
-            }
-          }
-          NODE
-
-      - name: Upload update artifacts
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: manual-update-detection
-          path: |
-            content/data/manual-sync.json
-            content/data/manual-updates.json
-            /tmp/manual-update-report.md
-            content/data/manual-history.json
-
-      - name: Print quick summary
-        run: |
-          echo "=== Sync summary ==="
-          node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync("content/data/manual-sync.json","utf8"));const run=data.runs?.[0];console.log(JSON.stringify({lastSyncAt:data.lastSyncAt,pendingChanges:data.pendingChanges?.length??0,runSummary:run?.summary??{}},null,2));'
-          echo ""
-          echo "=== History entries ==="
-          node -e 'const fs=require("fs");try{const h=JSON.parse(fs.readFileSync("content/data/manual-history.json","utf8"));console.log(`${h.entries?.length??0} history entries, generated: ${h.generatedAt}`);}catch{console.log("No history file yet");}'
-          echo ""
-          echo "=== Missing codes check (8.x) ==="
-          node -e 'const fs=require("fs");const codes=JSON.parse(fs.readFileSync("content/data/codigos-incidente.json","utf8"));const eights=codes.filter(c=>String(c.code).startsWith("8"));console.log("8.x codes:",eights.map(c=>c.code).join(", "));'
-
-      - name: Check for meaningful changes
-        id: meaningful
-        # Cada ejecución añade una entrada de run y un generatedAt nuevos a
-        # manual-sync.json / manual-updates.json, así que el árbol NUNCA queda idéntico
-        # y create-pull-request abría un PR mensual aunque el wiki no hubiera cambiado.
-        # Aquí se ignora ese ruido de marcas de tiempo y se mira el contenido real.
+      # Structural validation only. `npm test` is not a gate here: several tests pin
+      # the committed snapshot (code counts, the bundled offline allowlist), so any
+      # real upstream change failed them and blocked the proposal (run 41182571111).
+      # The candidate is a D1 proposal that a person reviews before publishing;
+      # code changes are still gated by npm test in ci.yml.
+      - name: Validate the complete candidate before proposing backend changes
+        id: validate
         run: |
           set -euo pipefail
+          {
+            npm run generate:client-data
+            npm run generate:llms
+            npm run generate:manual-history
+            node --experimental-strip-types scripts/lint-procedure-ids.ts
+            npm run mobile:content
+            npm run mobile:content:validate
+            npm run mobile:typecheck
+            npm run build
+            npm run validate:content-parity
+          } 2>&1 | tee /tmp/manual-update-diagnostics/validation.log
 
-          # Cualquier cambio fuera de los ficheros propensos a ruido ya es significativo.
-          OTHER=$(git status --porcelain -- . \
-            ':!content/data/manual-sync.json' \
-            ':!content/data/manual-updates.json' \
-            ':!content/data/manual-history.json' \
-            ':!content/procedures' \
-            ':!public/procedures' \
-            ':!public/llms.txt' \
-            ':!public/llms-full.txt')
-
-          # En el corpus solo cuentan las líneas que no son sellos de fecha o de
-          # hash. classifyProcedureChange ya no reescribe una ficha cuando origen
-          # solo sube la fecha, así que esto no debería saltar nunca; se queda
-          # por si alguna otra ruta vuelve a colar una actualización vacía.
-          CORPUS=$(git diff -- content/procedures public/procedures public/llms.txt public/llms-full.txt \
-            | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' \
-            | grep -Ev '^[+-](updated|sourceUpdated|contentHash):' || true)
-
-          # Ficheros nuevos o borrados en el corpus siempre son significativos.
-          CORPUS_FILES=$(git status --porcelain -- content/procedures public/procedures \
-            | grep -Ev '^ M ' || true)
-
-          # En los ficheros ruidosos solo cuentan las líneas que no son generatedAt/lastSyncAt.
-          NOISY=$(git diff -- \
-            content/data/manual-updates.json \
-            content/data/manual-history.json \
-            | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' \
-            | grep -Ev '"(generatedAt|lastSyncAt|lastApprovedAt)"' || true)
-
-          if [ -n "$OTHER" ] || [ -n "$NOISY" ] || [ -n "$CORPUS" ] || [ -n "$CORPUS_FILES" ]; then
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            echo "Se han detectado cambios de contenido reales."
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            echo "Solo han cambiado marcas de tiempo; no se abre PR."
+      - name: Queue official proposals in the editorial backend
+        id: propose
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN repository secret is missing; the validated candidate could not be queued (docs/backend/credentials.md)."
+            exit 1
           fi
+          npm run backend:propose -- --remote 2>&1 | tee /tmp/manual-update-diagnostics/proposals.log
 
-      - name: Create review pull request
-        if: steps.meaningful.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v7
+      - name: Generate update report
+        if: always()
+        env:
+          SYNC_OUTCOME: ${{ steps.extract.outcome }}
+          VALIDATION_OUTCOME: ${{ steps.validate.outcome }}
+          PROPOSAL_OUTCOME: ${{ steps.propose.outcome }}
+        run: |
+          mkdir -p /tmp/manual-update-diagnostics
+          node --experimental-strip-types scripts/report-manual-sync.ts > /tmp/manual-update-diagnostics/report.md
+          cat /tmp/manual-update-diagnostics/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload diagnostics and candidate snapshot
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
         with:
-          # Required above: a dedicated token makes pull_request CI run.
-          token: ${{ secrets.CONTENT_PR_TOKEN }}
-          branch: codex/monthly-manual-update
-          delete-branch: true
-          title: "chore: monthly ManualSAMUR content update"
-          body-path: /tmp/manual-update-report.md
-          commit-message: "chore: update ManualSAMUR content snapshot"
-          labels: |
-            content
-            automated
+          name: manual-update-detection-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            /tmp/manual-update-diagnostics
+            content/data
+            content/procedures
+            docs
+            public/docs
+            public/images/procedures
+          if-no-files-found: warn

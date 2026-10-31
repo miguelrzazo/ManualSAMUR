@@ -452,3 +452,14 @@ test("un enlace de anexo acaba apuntando a la ruta local, no a attach:", () => {
   assert.match(finalBody, /\[Ver anexo\]\(\/docs\/procedures\/301\/x\.pdf\)/);
   assert.ok(!finalBody.includes("attach:"), "no debe quedar el esquema attach: en el cuerpo");
 });
+
+test("cross-page XWiki attachment references use their document path and filename", () => {
+  const raw = "[[Anexo>>attach:Procedimientos asistenciales.Tipos de asistencia.WebHome@509.1_Clasificacion.pdf]]";
+  const attachments = extractAttachmentLinks(raw, "https://servpub.madrid.es/manualsamur/bin/view/Otra/Pagina", "509");
+  assert.equal(attachments.length, 1);
+  assert.equal(attachments[0].sourceUrl, "https://servpub.madrid.es/manualsamur/bin/download/Procedimientos%20asistenciales/Tipos%20de%20asistencia/WebHome/509.1_Clasificacion.pdf");
+  assert.equal(attachments[0].localPath, "/docs/procedures/509/509.1_Clasificacion.pdf");
+  const rewritten = rewriteAttachmentLinks(xwikiToMarkdown(raw), attachments);
+  assert.ok(!rewritten.includes("attach:"));
+  assert.ok(rewritten.includes(attachments[0].localPath));
+});

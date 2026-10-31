@@ -18,7 +18,7 @@
       "bundleIdentifier": "es.madrid.samur.manual",
       "infoPlist": {
         "CFBundleDisplayName": "Manual SAMUR",
-        "NSLocationWhenInUseUsageDescription": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación.",
+        "NSLocationWhenInUseUsageDescription": "Usa tu ubicaci\u00f3n solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicaci\u00f3n.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "deploymentTarget": "16.4",
@@ -54,7 +54,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Usa tu ubicación solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicación."
+          "locationWhenInUsePermission": "Usa tu ubicaci\u00f3n solo cuando lo solicites para ordenar hospitales y bases cercanos. El directorio y el esquema funcionan sin ubicaci\u00f3n."
         }
       ],
       "./plugins/with-ios-scene-lifecycle",
@@ -67,9 +67,7 @@
       "expo-app-intents"
     ],
     "extra": {
-      "contentEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/v3",
-      "metadataEndpoint": "https://manual-proced-spc.vercel.app/api/mobile/content/metadata",
-      "contentOrigin": "https://manual-proced-spc.vercel.app"
+      "manualContentOrigin": "https://manualsamur.miguelrzazo13.workers.dev"
     },
     "experiments": {
       "inlineModules": {

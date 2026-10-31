@@ -8,6 +8,7 @@ import {
   ESSENTIAL_ATTACHMENT_CAP_BYTES,
   V1_INSTALLED_ATTACHMENT_CAP_BYTES,
   attachmentDownloadFilename,
+  automaticAttachmentDownloadsAllowed,
   attachmentStatusLabel,
   attachmentUnavailableUpstreamNotice,
   assertAttachmentReleaseReady,
@@ -16,6 +17,7 @@ import {
   isAttachmentUnavailableUpstream,
   isExpectedAttachmentMetadata,
   isLocallyAvailable,
+  isReadableOffline,
   isViewableInApp,
   markAttachmentAvailable,
   publishedAttachmentUrl,
@@ -55,7 +57,7 @@ const attachment: MobileManifestAttachment = {
   procedureId: "301",
 };
 
-test("published attachment URLs stay on the configured Vercel origin", () => {
+test("published attachment URLs stay on the configured publication origin", () => {
   assert.equal(
     publishedAttachmentUrl({ localPath: "/docs/procedures/301/manual.pdf" }, "https://manual.example/"),
     "https://manual.example/docs/procedures/301/manual.pdf",
@@ -64,7 +66,7 @@ test("published attachment URLs stay on the configured Vercel origin", () => {
 });
 
 test("attachment identity is stable and does not use the mutable source URL as a filename", () => {
-  assert.equal(attachmentDownloadFilename(attachment), "attachment-1-manual.pdf");
+  assert.equal(attachmentDownloadFilename(attachment), `attachment-1-${sha256}-manual.pdf`);
   assert.equal(attachmentStatusLabel("not-downloaded"), "Disponible bajo demanda");
   assert.equal(attachmentStatusLabel("paused"), "Descarga interrumpida");
   assert.equal(isExpectedAttachmentMetadata(attachment), true);
@@ -221,4 +223,29 @@ test("a figure that is not bundled stays reachable instead of disappearing from 
   assert.doesNotMatch(figure, /if \(!uri \|\| failed\) return null;/, "an unavailable figure must not render nothing");
   assert.match(figure, /figurePlaceholder/);
   assert.match(figure, /accessibilityLabel=\{`Ver figura \$\{attachment\.filename\}`\}/);
+});
+
+
+test("changed attachment bytes use a different file and preserve a readable last-good revision", () => {
+  const available = markAttachmentAvailable(createAttachmentRecord(attachment, "now"), { localUri: "file:///good.pdf", byteLength: 1024, sha256 }, attachment, "now");
+  const changed = { ...attachment, sha256: "b".repeat(64) };
+  assert.notEqual(attachmentDownloadFilename(attachment), attachmentDownloadFilename(changed));
+  assert.equal(isLocallyAvailable(available, changed), false);
+  assert.equal(isReadableOffline(available), true);
+  assert.throws(() => markAttachmentAvailable(available, { localUri: "file:///bad.pdf", byteLength: 1024, sha256: "c".repeat(64) }, changed, "later"), /SHA-256/);
+  assert.equal(available.localUri, "file:///good.pdf");
+  assert.equal(available.sha256, sha256);
+});
+
+test("publication URL requires a configured origin and never falls back to Vercel", () => {
+  assert.equal(publishedAttachmentUrl(attachment), undefined);
+});
+
+
+test("automatic attachment downloads require connected Wi-Fi; cellular needs the manual action", () => {
+  assert.equal(automaticAttachmentDownloadsAllowed({ type: "WIFI", isConnected: true, isInternetReachable: true }), true);
+  assert.equal(automaticAttachmentDownloadsAllowed({ type: "WIFI", isConnected: false }), false);
+  assert.equal(automaticAttachmentDownloadsAllowed({ type: "WIFI", isConnected: true, isInternetReachable: false }), false);
+  for (const type of ["CELLULAR", "UNKNOWN", "VPN", "NONE"]) assert.equal(automaticAttachmentDownloadsAllowed({ type, isConnected: true }), false);
+  assert.equal(automaticAttachmentDownloadsAllowed(undefined), false);
 });

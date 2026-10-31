@@ -52,7 +52,7 @@ test("la promoción de academia aparece una sola vez después del primer uso", a
   assert.equal(shouldShowAcademyEntry(undefined), false);
   assert.equal(shouldShowAcademySplash(undefined, true, false), false);
 
-  const configurado = { title: "Academia", detail: "Cursos", url: "https://ejemplo.example", splashImage: "a.png" };
+  const configurado = { title: "Academia", detail: "Cursos", url: "https://ejemplo.example", splashImage: { uri: "https://ejemplo.example/a.png" } };
   assert.equal(shouldShowAcademyEntry(configurado), true);
   // Nunca antes de aceptar el aviso de primer uso.
   assert.equal(shouldShowAcademySplash(configurado, false, false), false);

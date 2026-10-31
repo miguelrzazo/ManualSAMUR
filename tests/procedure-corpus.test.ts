@@ -50,7 +50,7 @@ test("manual sync metadata does not point at removed duplicate procedure paths",
  * el repositorio.
  */
 test("every id the monthly sync can assign matches the standard and exists in the corpus", async () => {
-  const { STABLE_PROCEDURE_IDS_FOR_TESTS } = await import("../lib/manual-sync.ts");
+  const { STABLE_PROCEDURE_IDS_FOR_TESTS, NEW_UPSTREAM_PROCEDURE_IDS } = await import("../lib/manual-sync.ts");
   const ids = new Set(readProcedureCorpus(proceduresDir).map((record) => record.id));
   const standard = /^\d{3}(_\d{2})?$/;
 
@@ -60,8 +60,10 @@ test("every id the monthly sync can assign matches the standard and exists in th
   const offStandard = assignable.filter(([, id]) => !standard.test(id));
   assert.deepEqual(offStandard, [], "these titles would be assigned an id the corpus validator rejects");
 
-  const dangling = assignable.filter(([, id]) => !ids.has(id));
+  const dangling = assignable.filter(([, id]) => !ids.has(id) && !NEW_UPSTREAM_PROCEDURE_IDS.has(id));
   assert.deepEqual(dangling, [], "these titles point at an id no procedure file carries");
+  // No reverse check: in the monthly CI checkout the sync writes the new file,
+  // so a reserved id legitimately exists in the corpus there.
 });
 
 /**

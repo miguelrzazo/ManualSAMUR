@@ -39,7 +39,7 @@ const snapshot = (identity: string): MobileSnapshot => ({
   hash: hash(identity),
   contentHash: hash(identity),
   packageHash: hash(identity),
-  content: { procedures: [], relationsIndex: { codes: {} } } as MobileSnapshot["content"],
+  content: { procedures: [], relationsIndex: { codes: {} } } as unknown as MobileSnapshot["content"],
 });
 
 function response(value: unknown, status = 200): Response {
@@ -69,7 +69,7 @@ test("unchanged metadata avoids downloading the full content package", async () 
     storage,
     validate: async () => true,
     now: () => "2026-09-09T10:01:00.000Z",
-    fetchImpl: async (url) => { calls.push(url); return response(metadata("same")); },
+    fetchImpl: async (url) => { calls.push(String(url)); return response(metadata("same")); },
   });
   assert.equal(result.kind, "up-to-date");
   assert.deepEqual(calls, ["https://example.test/metadata"]);
@@ -87,8 +87,8 @@ test("changed metadata downloads, validates, and stages the new package", async 
     validate: async () => true,
     now: () => "2026-09-09T10:01:00.000Z",
     fetchImpl: async (url) => {
-      calls.push(url);
-      return url.endsWith("metadata") ? response(metadata("new")) : response(snapshot("new"));
+      calls.push(String(url));
+      return String(url).endsWith("metadata") ? response(metadata("new")) : response(snapshot("new"));
     },
   });
   assert.equal(result.kind, "staged");
@@ -121,7 +121,7 @@ test("incompatible published schema stops before downloading a stale package", a
       storage: new MemoryStorage(),
       validate: async () => true,
       fetchImpl: async (url) => {
-        calls.push(url);
+        calls.push(String(url));
         return response({
           schema: "samur-manual.mobile-content",
           version: 2,

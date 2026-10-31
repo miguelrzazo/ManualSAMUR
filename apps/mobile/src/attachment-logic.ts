@@ -2,7 +2,7 @@ import type { MobileAttachment, MobileManifestAttachment } from "../../../packag
 
 export const ESSENTIAL_ATTACHMENT_CAP_BYTES = 75 * 1024 * 1024;
 export const V1_INSTALLED_ATTACHMENT_CAP_BYTES = 150 * 1024 * 1024;
-export const DEFAULT_PUBLISHED_CONTENT_ORIGIN = "https://manual-proced-spc.vercel.app";
+export const DEFAULT_PUBLISHED_CONTENT_ORIGIN = "";
 
 export type AttachmentDownloadStatus =
   | "not-downloaded"
@@ -26,6 +26,7 @@ export interface AttachmentRecord {
   sha256?: string;
   error?: string;
   updatedAt: string;
+  lastGood?: AttachmentRecord;
 }
 
 export interface AttachmentReleasePolicy {
@@ -101,10 +102,10 @@ export function attachmentStorageKey(id: string): string {
 
 /** Keep downloaded files content-addressed by stable manifest identity, never by URL text. */
 export function attachmentDownloadFilename(attachment: MobileAttachment): string {
-  return `${attachment.id}-${attachment.filename}`;
+  return `${attachment.id}-${attachment.sha256 ?? "unverified"}-${attachment.filename}`;
 }
 
-/** Prefer the same Vercel publication that serves the content package. */
+/** Use the same Cloudflare publication that serves the content package. */
 export function publishedAttachmentUrl(
   attachment: Pick<MobileAttachment, "localPath">,
   origin = DEFAULT_PUBLISHED_CONTENT_ORIGIN,
@@ -115,6 +116,10 @@ export function publishedAttachmentUrl(
   } catch {
     return undefined;
   }
+}
+
+export function automaticAttachmentDownloadsAllowed(network: { type?: string; isConnected?: boolean; isInternetReachable?: boolean } | undefined): boolean {
+  return network?.type === "WIFI" && network.isConnected === true && network.isInternetReachable !== false;
 }
 
 export function attachmentStatusLabel(status: AttachmentDownloadStatus): string {
@@ -147,6 +152,11 @@ export function isLocallyAvailable(record: AttachmentRecord | undefined, attachm
     && isExpectedAttachmentMetadata(attachment)
     && record.byteLength === attachment.byteLength
     && record.sha256 === attachment.sha256);
+}
+
+/** Reconciliation verifies these bytes against their own recorded digest before use. */
+export function isReadableOffline(record: AttachmentRecord | undefined): boolean {
+  return Boolean(record?.status === "available" && record.localUri && record.sha256 && record.byteLength !== undefined);
 }
 
 export function startAttachmentDownload(record: AttachmentRecord, now: string): AttachmentRecord {

@@ -26,8 +26,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const VADEMECUM_URL = "https://servpub.madrid.es/manualsamur/bin/view/Menu/Cabecera%20principal/Vadem%C3%A9cum/WebHome";
-const DATA_DIR = path.join(__dirname, "../content/data");
-const DOCS_DIR = path.join(__dirname, "../docs");
+const ROOT_DIR = process.env.MANUALSAMUR_SYNC_ROOT || path.join(__dirname, "..");
+const DATA_DIR = path.join(ROOT_DIR, "content/data");
+const DOCS_DIR = path.join(ROOT_DIR, "docs");
 
 interface PerfusionRecord {
   id: string;

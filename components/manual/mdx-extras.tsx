@@ -184,7 +184,7 @@ export function MermaidDiagram({ chart, title }: { chart: string; title?: string
     mermaid.initialize({
       startOnLoad: false,
       theme: resolvedTheme === "dark" ? "dark" : "default",
-      securityLevel: "loose",
+      securityLevel: "strict",
     });
 
     mermaid.render(`m${uid}`, chart).then(({ svg }) => {

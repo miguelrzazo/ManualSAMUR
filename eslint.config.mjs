@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".wrangler/**",
+    ".cloudflare/**",
+    "backend/worker-configuration.d.ts",
     // Worktrees de agentes: contienen sus propios .next/out y copias del árbol,
     // que inundaban `npm run lint` con cientos de errores de ficheros generados.
     ".claude/**",

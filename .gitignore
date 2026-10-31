@@ -34,8 +34,6 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
 
 # pdf.js worker — generated from node_modules during build
 /public/pdf.worker.min.mjs
@@ -46,6 +44,8 @@ yarn-error.log*
 /public/search-index.json
 /public/manual-updates.json
 /public/manual-history.json
+# Grafo de procedimientos — lo regenera `npm run generate:graph` en cada build.
+/public/graph.json
 
 # Native content package — generated from content/data during mobile builds.
 apps/mobile/src/data/snapshot.json
@@ -66,3 +66,8 @@ apps/mobile/android/
 # Release build outputs and evidence written by mobile:release:evidence / local builds.
 # The IPA alone is 72 MB; provenance lives in the evidence JSON, not in git.
 /artifacts/
+/.wrangler/
+/.cloudflare/
+.dev.vars*
+/backend/worker-configuration.d.ts
+/worker-startup.cpuprofile

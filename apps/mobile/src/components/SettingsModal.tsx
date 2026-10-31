@@ -16,6 +16,7 @@ import {
   isPendingSettingsMetadata,
   type SettingsLegalMetadata,
 } from "../settings-legal.ts";
+import { useAttachmentUpdates } from "../attachment-updates";
 import { useTheme } from "../theme.tsx";
 import { Press } from "./Press.tsx";
 import { PageHeader } from "./PageHeader.tsx";
@@ -85,12 +86,13 @@ function formattedDate(value: string): string {
 
 export function SettingsModal({
   visible, onClose, onOpenAbbreviations, onOpenChangelog, appVersion, contentOrigin,
-  legalMetadata = SETTINGS_LEGAL_METADATA, reduceMotion = false,
+  legalMetadata = { ...SETTINGS_LEGAL_METADATA, ...(contentOrigin ? { privacyPolicyUrl: `${contentOrigin}/privacidad`, supportUrl: `${contentOrigin}/soporte` } : {}) }, reduceMotion = false,
 }: SettingsModalProps) {
   const palette = useTheme();
   const styles = useStyles(palette);
   const { content, snapshot } = useContentData();
   const sync = useContentSync();
+  const attachments = useAttachmentUpdates();
   const { appearance, setAppearance } = usePreferences();
   const { isRefreshing, lastError, syncState, syncProgress, stagedPackage, lastCheck } = sync;
   const status = syncStatus(syncState, snapshot.generatedAt, lastCheck, isRefreshing, Boolean(stagedPackage));
@@ -157,6 +159,20 @@ export function SettingsModal({
               </View>
             </View>
           ) : null}
+
+          <SectionTitle>Anexos sin conexión</SectionTitle>
+          <View style={styles.card} accessibilityLiveRegion="polite">
+            <MaterialCommunityIcons name="download-network-outline" size={26} color={palette.primary} />
+            <View style={styles.copy}>
+              <Text style={styles.rowTitle}>{attachments.state.running ? "Actualizando anexos…" : `${attachments.state.available} de ${attachments.state.total} disponibles offline`}</Text>
+              <Text style={styles.meta}>{(attachments.state.bytes / 1024 / 1024).toFixed(1)} MB guardados · {attachments.state.pending} pendientes</Text>
+              <Text style={styles.meta}>Los anexos nuevos o modificados se descargan con Wi-Fi mientras usas la app. Se verifica cada archivo y se conserva la última copia válida.</Text>
+              {attachments.state.error ? <Text style={styles.meta}>{attachments.state.error}</Text> : null}
+            </View>
+          </View>
+          <Press onPress={() => void attachments.downloadNow()} disabled={attachments.state.running} style={[styles.secondaryButton, attachments.state.running && styles.disabled]} accessibilityRole="button" accessibilityState={{ disabled: attachments.state.running }}>
+            <Text style={styles.secondaryButtonText}>Descargar ahora (permite datos móviles)</Text>
+          </Press>
 
           <SectionTitle>Preferencias</SectionTitle>
           <View style={styles.segment} accessibilityRole="radiogroup" accessibilityLabel="Apariencia de la aplicación">

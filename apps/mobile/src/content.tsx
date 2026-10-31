@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
+import { manualContentOrigin } from "./content-origin";
 import { AppState, type AppStateStatus } from "react-native";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { AttachmentUpdatesProvider } from "./attachment-updates";
 import bundledSnapshot from "./data/snapshot.json";
 import {
   type MobileContent,
@@ -58,10 +59,7 @@ export type ContentContextValue = ContentDataContextValue & ContentPreferencesCo
 export type { SyncProgress, SyncState } from "./content-context";
 
 function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
-  const envName = name === "contentEndpoint" ? "EXPO_PUBLIC_CONTENT_ENDPOINT" : "EXPO_PUBLIC_METADATA_ENDPOINT";
-  if (typeof process.env[envName] === "string") return process.env[envName];
-  const extra = Constants.expoConfig?.extra as Record<string, unknown> | undefined;
-  return typeof extra?.[name] === "string" ? extra[name] as string : "";
+  return `${manualContentOrigin()}/api/mobile/content/${name === "contentEndpoint" ? "v3" : "metadata"}`;
 }
 
 /**
@@ -276,7 +274,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             ? error.record
             : contentCheckRecordFor(outcome, new Date().toISOString());
           persistCheck(record);
-          setLastError(error instanceof ContentUpdateRuntimeError ? userFacingContentCheckError(error.outcome) : "No se pudo comprobar el contenido; se mantiene el último paquete local.");
+          setLastError(error instanceof ContentUpdateRuntimeError ? userFacingContentCheckError(error.outcome) : error instanceof Error && error.message.includes("EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN") ? error.message : "No se pudo comprobar el contenido; se mantiene el último paquete local.");
           setSyncState(outcome === "offline" ? "offline" : "failure");
         }
       } finally {
@@ -395,7 +393,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     <ContentDataContext.Provider value={dataValue}>
       <ContentPreferencesContext.Provider value={preferencesValue}>
         <ContentSyncContext.Provider value={syncValue}>
-          {children}
+          <AttachmentUpdatesProvider content={snapshot.content} enabled={isHydrated}>{children}</AttachmentUpdatesProvider>
         </ContentSyncContext.Provider>
       </ContentPreferencesContext.Provider>
     </ContentDataContext.Provider>
