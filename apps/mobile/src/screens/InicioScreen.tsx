@@ -60,16 +60,17 @@ import {
   type ManualTreeRow,
 } from "../manual-tree-logic";
 import type { RootStackParamList, TabsParamList } from "../navigation-types";
+import { useOpenDetail } from "../split-view";
+import type { DetailRoute } from "../split-view-logic";
 
 type InicioNavigation = BottomTabScreenProps<TabsParamList, "Inicio">["navigation"];
 
-function openSavedReference(navigation: InicioNavigation, item: SavedReference) {
-  const parent = navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-  if (item.kind === "procedure") parent?.navigate("Procedure", { id: item.id });
-  else if (item.kind === "drug") parent?.navigate("Drug", { id: item.id });
-  else if (item.kind === "code") parent?.navigate("Code", { routeKey: item.routeKey });
-  else if (item.kind === "hospital" || item.kind === "base") parent?.navigate("Location", { routeKey: item.routeKey });
-  else parent?.navigate("Vademecum", { routeKey: item.routeKey });
+function savedReferenceDetail(item: SavedReference): DetailRoute {
+  if (item.kind === "procedure") return { screen: "Procedure", params: { id: item.id } };
+  if (item.kind === "drug") return { screen: "Drug", params: { id: item.id } };
+  if (item.kind === "code") return { screen: "Code", params: { routeKey: item.routeKey } };
+  if (item.kind === "hospital" || item.kind === "base") return { screen: "Location", params: { routeKey: item.routeKey } };
+  return { screen: "Vademecum", params: { routeKey: item.routeKey } };
 }
 
 export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
@@ -115,7 +116,9 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
 
   const openHistory = () => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Historial");
 
-  const openProcedure = (id: string) => navigation.getParent<NativeStackNavigationProp<RootStackParamList>>()?.navigate("Procedure", { id });
+  // Wide windows show the procedure beside the index; narrow ones push it as before.
+  const openDetail = useOpenDetail("Inicio");
+  const openProcedure = (id: string) => openDetail({ screen: "Procedure", params: { id } });
 
   const renderRow = ({ item, index }: ListRenderItemInfo<ManualTreeRow>) => {
     // Las esquinas de la tarjeta de cada seccion. Ver `manualTreeRowCorners`: el
@@ -216,7 +219,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
                 items={favoriteItems}
                 favorites={favorites}
                 onToggleFavorite={toggleFavorite}
-                onPress={(item) => openSavedReference(navigation, item)}
+                onPress={(item) => openDetail(savedReferenceDetail(item))}
                 palette={palette}
                 styles={styles}
               />
@@ -229,7 +232,7 @@ export function InicioScreen({ navigation }: { navigation: InicioNavigation }) {
                 items={recentItems}
                 favorites={favorites}
                 onToggleFavorite={toggleFavorite}
-                onPress={(item) => openSavedReference(navigation, item)}
+                onPress={(item) => openDetail(savedReferenceDetail(item))}
                 palette={palette}
                 styles={styles}
               />
