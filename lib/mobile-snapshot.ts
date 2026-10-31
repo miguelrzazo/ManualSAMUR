@@ -124,7 +124,7 @@ function codeReferenceSources(codes: Record<string, unknown[]>): CodeReferenceSo
   }));
 }
 
-function buildMobileRelationsIndex(procedures: MobileProcedure[], codes: Record<string, unknown[]>): MobileContent["relationsIndex"] {
+export function buildMobileRelationsIndex(procedures: MobileProcedure[], codes: Record<string, unknown[]>): MobileContent["relationsIndex"] {
   return buildCodeRelationsIndex(procedures, codeReferenceSources(codes) as MobileCodeReferenceSource[]);
 }
 

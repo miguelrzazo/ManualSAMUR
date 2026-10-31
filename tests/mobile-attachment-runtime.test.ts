@@ -34,7 +34,7 @@ const mocks: Record<string, string> = {
   "expo-file-system": "export const { File, Directory } = globalThis.__attachmentTest; export const Paths = { document: new Directory('file:///documents'), bundle: new Directory('file:///bundle') };",
   "expo-crypto": "export const digest = globalThis.__attachmentTest.digest; export const CryptoDigestAlgorithm = { SHA256: 'sha256' };",
   "./content-origin": "export const manualContentOrigin = () => 'https://manual.example';",
-  "./data/snapshot.json": "export default globalThis.__attachmentTest.bundle;",
+  "./data/seed.json": "export default globalThis.__attachmentTest.bundle;",
 };
 // Compile this native boundary into an isolated module with explicit platform doubles.
 // This works on the supported Node 22.13 baseline without newer module-hook APIs.

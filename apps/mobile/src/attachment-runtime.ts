@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { manualContentOrigin } from "./content-origin";
-import bundledSnapshot from "./data/snapshot.json";
+// Attachment metadata of the files shipped in the binary; the seed keeps it intact.
+import bundledSnapshot from "./data/seed.json";
 import { Directory, File, Paths } from "expo-file-system";
 import * as Crypto from "expo-crypto";
 import {

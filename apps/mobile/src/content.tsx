@@ -1,9 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
+import * as Crypto from "expo-crypto";
 import { manualContentOrigin } from "./content-origin";
-import { AppState, type AppStateStatus } from "react-native";
+import { AppState, Platform, type AppStateStatus } from "react-native";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AttachmentUpdatesProvider } from "./attachment-updates";
-import bundledSnapshot from "./data/snapshot.json";
+import { OfflineDataBanner } from "./components/OfflineDataBanner";
+// Only the reduced first-launch seed is bundled (see content-seed.ts). The
+// full snapshot.json next to it is a build artefact for tests and release
+// evidence, never imported by the app.
+import bundledSeed from "./data/seed.json";
 import {
   type MobileContent,
   type MobileProcedure,
@@ -22,20 +28,19 @@ import {
 import { readContentBoot, scheduleAfterFirstFrame, validateBootSnapshot, validateSnapshotOnce } from "./content-boot";
 import {
   CONTENT_CHECK_STORAGE_KEY,
-  automaticRefreshAllowed,
-  AUTOMATIC_REFRESH_COOLDOWN_MS,
+  automaticSyncDue,
   contentCheckRecordFor,
+  mergeCheckRecord,
   parseContentCheckRecord,
   serializeContentCheckRecord,
   userFacingContentCheckError,
-  shouldRefreshOnResume,
   type ContentCheckRecord,
 } from "./content-update-logic";
-import { checkAndStageContent, ContentUpdateRuntimeError } from "./content-update-runtime";
+import { syncContentRelease, ContentUpdateRuntimeError } from "./content-update-runtime";
+import type { ReleaseInfo } from "./content-release";
 import { resolveProcedureReference } from "./procedure-logic";
 import {
   ContentUpdateCancelledError,
-  contentFreshness,
   discardStagedPackage,
   migrateLegacySnapshot,
   readTransaction,
@@ -58,9 +63,14 @@ import {
 export type ContentContextValue = ContentDataContextValue & ContentPreferencesContextValue & ContentSyncContextValue;
 export type { SyncProgress, SyncState } from "./content-context";
 
-function endpoint(name: "contentEndpoint" | "metadataEndpoint"): string {
-  return `${manualContentOrigin()}/api/mobile/content/${name === "contentEndpoint" ? "v3" : "metadata"}`;
+const seedSnapshot = bundledSeed as unknown as MobileSnapshot;
+
+/** Cloudflare blocks generic agents; identify the app and its version. */
+function contentUserAgent(): string {
+  return `ManualSAMUR-${Platform.OS === "ios" ? "iOS" : "Android"}/${Constants.expoConfig?.version ?? "1.0.0"}`;
 }
+
+const nativeSha256 = (text: string) => Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, text, { encoding: Crypto.CryptoEncoding.HEX });
 
 /**
  * Compatibility aggregate for existing screens. New consumers should choose
@@ -86,8 +96,15 @@ export {
   useContentSync,
 } from "./content-context";
 
+/**
+ * Owns the active content. `useContentData().snapshot` is always the single
+ * active snapshot: either the bundled seed (first launch, never synced) or a
+ * release downloaded from Cloudflare and verified before its pointer switch.
+ */
 export function ContentProvider({ children }: { children: React.ReactNode }) {
-  const [snapshot, setSnapshot] = useState<MobileSnapshot>(bundledSnapshot as unknown as MobileSnapshot);
+  const [snapshot, setSnapshot] = useState<MobileSnapshot>(seedSnapshot);
+  const [release, setRelease] = useState<ReleaseInfo>();
+  const [isSeed, setIsSeed] = useState(true);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
   const [recentQueries, setRecentQueries] = useState<string[]>([]);
@@ -102,9 +119,21 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const refreshController = useRef<AbortController | null>(null);
   const refreshTask = useRef<Promise<void> | null>(null);
   const automaticRefreshStarted = useRef(false);
-  const lastAutomaticRefreshAt = useRef<number | undefined>(undefined);
   const previousAppState = useRef<AppStateStatus>(AppState.currentState);
   const recoveredPackageNeedsActivation = useRef(false);
+  // Read by the AppState listener, which must not re-subscribe on every change.
+  const lastCheckRef = useRef<ContentCheckRecord | undefined>(undefined);
+  const isSeedRef = useRef(true);
+  useEffect(() => {
+    lastCheckRef.current = lastCheck;
+    isSeedRef.current = isSeed;
+  }, [isSeed, lastCheck]);
+
+  const activate = useCallback((next: MobileSnapshot, nextRelease: ReleaseInfo | undefined) => {
+    setSnapshot(next);
+    setRelease(nextRelease);
+    setIsSeed(false);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,13 +143,20 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         AsyncStorage.getItem(RECENTS_STORAGE_KEY),
         AsyncStorage.getItem(RECENT_QUERIES_STORAGE_KEY),
         AsyncStorage.getItem(CONTENT_CHECK_STORAGE_KEY),
-        readContentBoot(AsyncStorage, bundledSnapshot as unknown as MobileSnapshot),
+        readContentBoot(AsyncStorage, seedSnapshot),
       ]);
       if (cancelled) return;
       const transactionResult = transaction.transaction;
+      const check = parseContentCheckRecord(storedCheck);
       setRecentQueries(parseRecentQueries(storedQueries));
-      setLastCheck(parseContentCheckRecord(storedCheck));
-      if (transactionResult.snapshot) setSnapshot(transaction.snapshot);
+      setLastCheck(check);
+      lastCheckRef.current = check;
+      // Any downloaded release wins over the seed, whatever their dates: the
+      // seed is only ever a stand-in until the first successful sync.
+      if (transactionResult.snapshot) {
+        activate(transactionResult.snapshot, transactionResult.release);
+        isSeedRef.current = false;
+      }
       if (transactionResult.staged) {
         setStagedPackage(transactionResult.staged);
         setSyncProgress({ downloadedBytes: transactionResult.staged.downloadedBytes, totalBytes: transactionResult.staged.totalBytes });
@@ -129,10 +165,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       } else if (transactionResult.warning) {
         setLastError(transactionResult.warning);
         setSyncState("stale");
-      } else if (parseContentCheckRecord(storedCheck)?.outcome === "up-to-date") {
+      } else if (check?.outcome === "offline") {
+        setSyncState("offline");
+      } else if (check?.outcome === "up-to-date" && transactionResult.snapshot) {
         setSyncState("success");
-      } else if (contentFreshness(transactionResult.snapshot?.generatedAt ?? (bundledSnapshot as unknown as MobileSnapshot).generatedAt) !== "fresh") {
-        setSyncState("stale");
       }
       if (storedFavorites) {
         const migratedFavorites = parseSavedRouteKeys(storedFavorites);
@@ -149,24 +185,26 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       setIsHydrated(true);
       scheduleAfterFirstFrame(() => {
         if (transactionResult.snapshot) {
-          void validateBootSnapshot(transactionResult.snapshot, bundledSnapshot as unknown as MobileSnapshot)
+          void validateBootSnapshot(transactionResult.snapshot, seedSnapshot)
             .then((verifiedSnapshot) => {
               if (!cancelled && verifiedSnapshot !== transactionResult.snapshot) {
                 setSnapshot(verifiedSnapshot);
-                setLastError("El contenido activo no supera la validación; se mantiene el paquete local.");
+                setRelease(undefined);
+                setIsSeed(true);
+                setLastError("El contenido activo no supera la validación; se usan los datos incluidos en la app.");
                 setSyncState("stale");
               }
             })
             .catch(() => undefined);
         } else {
           void migrateLegacySnapshot(AsyncStorage, validateSnapshotOnce)
-            .then((migrated) => { if (!cancelled && migrated) setSnapshot(migrated); })
+            .then((migrated) => { if (!cancelled && migrated) activate(migrated, undefined); })
             .catch(() => undefined);
         }
       });
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [activate]);
 
   const toggleFavorite = useCallback((routeKey: string) => {
     setFavorites((current) => {
@@ -209,8 +247,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const persistCheck = useCallback((record: ContentCheckRecord) => {
-    setLastCheck(record);
-    void AsyncStorage.setItem(CONTENT_CHECK_STORAGE_KEY, serializeContentCheckRecord(record));
+    const merged = mergeCheckRecord(lastCheckRef.current, record);
+    lastCheckRef.current = merged;
+    setLastCheck(merged);
+    void AsyncStorage.setItem(CONTENT_CHECK_STORAGE_KEY, serializeContentCheckRecord(merged));
   }, []);
 
   const refresh = useCallback((options: { background?: boolean } = {}) => {
@@ -220,44 +260,31 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       const controller = new AbortController();
       refreshController.current = controller;
       setIsRefreshing(true);
-      if (background) lastAutomaticRefreshAt.current = Date.now();
       setIsBackgroundRefreshing(background);
       setLastError(undefined);
       setSyncState("checking");
       setSyncProgress({});
       try {
-        const result = await checkAndStageContent({
-          contentUrl: endpoint("contentEndpoint"),
-          metadataUrl: endpoint("metadataEndpoint"),
-          activeSnapshot: snapshot,
+        const result = await syncContentRelease({
+          origin: manualContentOrigin(),
+          userAgent: contentUserAgent(),
+          active: { snapshot, release, isSeed },
           storage: AsyncStorage,
           validate: validateSnapshotOnce,
+          sha256: nativeSha256,
           signal: controller.signal,
           onPhase: (phase) => setSyncState(phase),
           onProgress: (progress) => setSyncProgress(progress),
         });
+        if (result.kind === "updated") {
+          activate(result.snapshot, result.release);
+          isSeedRef.current = false;
+          setStagedPackage(undefined);
+        }
         persistCheck(result.record);
         setLastError(undefined);
-        if (result.kind === "up-to-date") {
-          setSyncProgress({});
-          setSyncState("success");
-        } else if (result.staged) {
-          setStagedPackage(result.staged);
-          setSyncProgress({ downloadedBytes: result.staged.downloadedBytes, totalBytes: result.staged.totalBytes });
-          setSyncState("activating");
-          const activated = await resumeStagedPackage(AsyncStorage, validateSnapshotOnce);
-          if (!activated) throw new Error("No hay ningún paquete pendiente de activar");
-          setSnapshot(activated.snapshot);
-          setStagedPackage(undefined);
-          persistCheck({
-            checkedAt: new Date().toISOString(),
-            outcome: "up-to-date",
-            remoteIdentity: activated.snapshot.packageHash,
-            remoteGeneratedAt: activated.snapshot.generatedAt,
-          });
-          setSyncProgress({});
-          setSyncState("success");
-        }
+        setSyncProgress({});
+        setSyncState("success");
       } catch (error) {
         if (controller.signal.aborted || error instanceof ContentUpdateCancelledError) {
           const transaction = await readTransaction(AsyncStorage, validateSnapshotOnce);
@@ -274,7 +301,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             ? error.record
             : contentCheckRecordFor(outcome, new Date().toISOString());
           persistCheck(record);
-          setLastError(error instanceof ContentUpdateRuntimeError ? userFacingContentCheckError(error.outcome) : error instanceof Error && error.message.includes("EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN") ? error.message : "No se pudo comprobar el contenido; se mantiene el último paquete local.");
+          setLastError(error instanceof ContentUpdateRuntimeError ? userFacingContentCheckError(error.outcome) : error instanceof Error && error.message.includes("EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN") ? error.message : "No se pudo comprobar el contenido; se mantienen los datos guardados.");
+          setSyncProgress({});
           setSyncState(outcome === "offline" ? "offline" : "failure");
         }
       } finally {
@@ -289,30 +317,34 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       () => { if (refreshTask.current === task) refreshTask.current = null; },
     );
     return task;
-  }, [persistCheck, snapshot]);
+  }, [activate, isSeed, persistCheck, release, snapshot]);
 
+  // Launch: check unless the persisted record says we did so recently. The
+  // seed is always due, so a first launch syncs as soon as there is network.
   useEffect(() => {
     if (!isHydrated || automaticRefreshStarted.current || stagedPackage) return;
     automaticRefreshStarted.current = true;
     scheduleAfterFirstFrame(() => {
-      if (!automaticRefreshAllowed(lastAutomaticRefreshAt.current)) return;
+      if (!automaticSyncDue(lastCheckRef.current, isSeedRef.current)) return;
       void refresh({ background: true });
     });
   }, [isHydrated, refresh, stagedPackage]);
 
+  // Foreground: same throttle (~6 h after a good check, sooner after a failure).
+  const refreshRef = useRef(refresh);
+  useEffect(() => { refreshRef.current = refresh; }, [refresh]);
   useEffect(() => {
     if (!isHydrated) return;
     const onAppStateChange = (status: AppStateStatus) => {
       const previous = previousAppState.current;
       previousAppState.current = status;
-      const now = Date.now();
-      if (stagedPackage || refreshTask.current || !shouldRefreshOnResume(previous, status, lastAutomaticRefreshAt.current, now, AUTOMATIC_REFRESH_COOLDOWN_MS)) return;
-      lastAutomaticRefreshAt.current = now;
-      void refresh({ background: true });
+      if (status !== "active" || previous === "active") return;
+      if (stagedPackage || refreshTask.current || !automaticSyncDue(lastCheckRef.current, isSeedRef.current)) return;
+      void refreshRef.current({ background: true });
     };
     const subscription = AppState.addEventListener("change", onAppStateChange);
     return () => subscription.remove();
-  }, [isHydrated, refresh, stagedPackage]);
+  }, [isHydrated, stagedPackage]);
 
   const cancelRefresh = useCallback(() => {
     // Once activation starts, cancellation is disabled so the pointer write
@@ -328,7 +360,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await resumeStagedPackage(AsyncStorage, validateSnapshotOnce);
       if (!result) throw new Error("No hay ningún paquete pendiente de recuperación");
-      setSnapshot(result.snapshot);
+      activate(result.snapshot, result.release);
+      isSeedRef.current = false;
       setStagedPackage(undefined);
       persistCheck({
         checkedAt: new Date().toISOString(),
@@ -343,7 +376,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsRefreshing(false);
     }
-  }, [persistCheck]);
+  }, [activate, persistCheck]);
 
   const discardStaged = useCallback(async () => {
     await discardStagedPackage(AsyncStorage);
@@ -383,17 +416,19 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     syncState,
     syncProgress,
     stagedPackage,
+    release,
+    isSeed,
     refresh,
     cancelRefresh,
     activateStagedUpdate,
     discardStaged,
-  }), [activateStagedUpdate, cancelRefresh, discardStaged, isBackgroundRefreshing, isHydrated, isRefreshing, lastCheck, lastError, refresh, stagedPackage, syncProgress, syncState]);
+  }), [activateStagedUpdate, cancelRefresh, discardStaged, isBackgroundRefreshing, isHydrated, isRefreshing, isSeed, lastCheck, lastError, refresh, release, stagedPackage, syncProgress, syncState]);
 
   return (
     <ContentDataContext.Provider value={dataValue}>
       <ContentPreferencesContext.Provider value={preferencesValue}>
         <ContentSyncContext.Provider value={syncValue}>
-          <AttachmentUpdatesProvider content={snapshot.content} enabled={isHydrated}>{children}</AttachmentUpdatesProvider>
+          <AttachmentUpdatesProvider content={snapshot.content} enabled={isHydrated}>{children}<OfflineDataBanner /></AttachmentUpdatesProvider>
         </ContentSyncContext.Provider>
       </ContentPreferencesContext.Provider>
     </ContentDataContext.Provider>

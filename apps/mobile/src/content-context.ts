@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import type { MobileContent, MobileSnapshot } from "../../../packages/manual-content/src/index.ts";
 import type { StagedPackage } from "./content-transaction";
+import type { ReleaseInfo } from "./content-release";
 import type { ContentCheckRecord } from "./content-update-logic";
 
 export type SyncState = "idle" | "checking" | "downloading" | "validating" | "activating" | "success" | "stale" | "offline" | "failure" | "recovery";
@@ -39,7 +40,11 @@ export interface ContentSyncContextValue {
   syncState: SyncState;
   syncProgress: SyncProgress;
   stagedPackage?: StagedPackage;
-  refresh: (options?: { background?: boolean }) => Promise<void>;
+  /** Public release behind the active snapshot; undefined for the seed or a pre-API download. */
+  release?: ReleaseInfo;
+  /** True while the bundled first-launch seed is active (no sync has succeeded yet). */
+  isSeed: boolean;
+  refresh:(options?: { background?: boolean }) => Promise<void>;
   cancelRefresh: () => void;
   activateStagedUpdate: () => Promise<void>;
   discardStaged: () => Promise<void>;
