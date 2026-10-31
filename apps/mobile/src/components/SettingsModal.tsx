@@ -101,7 +101,7 @@ export function SettingsModal({
 
   return (
     <Modal visible={visible} animationType={reduceMotion ? "none" : "slide"} presentationStyle="pageSheet" onRequestClose={onClose}>
-      <SafeAreaView style={styles.screen} edges={["top", "bottom"]} accessibilityViewIsModal>
+      <SafeAreaView style={styles.screen} edges={["top", "bottom", "left", "right"]} accessibilityViewIsModal>
         {/* La misma cabecera que las pestañas, con el cierre como icono en su hueco
             `trailing`. El "Cerrar" de texto era el único de la app y competía con el
             título por el ancho. */}

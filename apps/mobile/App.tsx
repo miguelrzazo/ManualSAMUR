@@ -1629,9 +1629,13 @@ function DetailPane({ section }: { section: SplitSection }) {
 function SplitTab({ section, children }: { section: SplitSection; children: React.ReactNode }) {
   const palette = useTheme();
   const layout = useAdaptiveLayout();
+  // Each column is its own SafeAreaProvider: the native provider reads UIKit's
+  // frame-aware `safeAreaInsets`, so the list (away from the window edges) gets no side
+  // inset and the detail only the right one. One root provider would hand both columns
+  // the window's insets and pad them twice.
   return <View style={splitStyles.row}>
-    <View style={layout.isTwoPane ? [splitStyles.list, { width: layout.listPaneWidth, borderRightColor: palette.line }] : splitStyles.fill}>{children}</View>
-    {layout.isTwoPane && <View style={splitStyles.fill} testID={`detail-pane-${section}`}><DetailPane section={section} /></View>}
+    <View style={layout.isTwoPane ? [splitStyles.list, { width: layout.listPaneWidth, borderRightColor: palette.line }] : splitStyles.fill}><SafeAreaProvider>{children}</SafeAreaProvider></View>
+    {layout.isTwoPane && <View style={splitStyles.fill} testID={`detail-pane-${section}`}><SafeAreaProvider><DetailPane section={section} /></SafeAreaProvider></View>}
   </View>;
 }
 
@@ -1663,6 +1667,10 @@ function MainTabs() {
     backBehavior="history"
     tabBar={(props) => <GlassTabBar {...props} palette={palette} />}
     screenOptions={{ headerShown: false, tabBarPosition: layout.isWideLayout ? "left" : "bottom" }}
+    // Beside the rail a screen no longer touches the window's left edge; a local provider
+    // measures its own insets instead of inheriting the window's (the rail already
+    // absorbs the left one, e.g. an iPhone in landscape with the island on that side).
+    screenLayout={layout.isWideLayout ? ({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider> : undefined}
   >
     <Tabs.Screen name="Inicio" component={ManualTab} options={{ tabBarLabel: "Inicio", tabBarIcon: ({ color, focused, size }) => <TabIcon name="home-variant-outline" activeName="home-variant" color={color} focused={focused} size={size} /> }} />
     <Tabs.Screen name="Codigos" component={CodigosTab} options={{ tabBarLabel: "Códigos", tabBarIcon: ({ color, focused, size }) => <TabIcon name="radio-handheld" color={color} focused={focused} size={size} /> }} />
@@ -1689,12 +1697,16 @@ function ManualAppIntentBridge({ enabled }: { enabled: boolean }) {
       subtitle: procedure.section,
       synonyms: procedure.synonyms.slice(0, 8),
     }));
-    const catalog = [...procedures, ...references.map((reference) => ({
+    const entries = [...procedures, ...references.map((reference) => ({
       id: reference.routeKey ?? reference.id,
       title: reference.title,
       subtitle: reference.subtitle,
       synonyms: reference.kind === "abbreviation" ? [] : [reference.badge, reference.id].filter((value): value is string => Boolean(value)),
     }))];
+    // The code datasets repeat some route keys (e.g. `code:incidente:15.1` appears twice),
+    // and expo-app-intents rejects the whole catalog on a duplicate id. Keep the first.
+    const seenIds = new Set<string>();
+    const catalog = entries.filter((entry) => !seenIds.has(entry.id) && Boolean(seenIds.add(entry.id)));
     void AppIntents.setEntityCatalogAsync("manualReference", catalog).catch((error) => {
       console.warn("No se pudo actualizar el índice de referencias de Manual SAMUR.", error);
     });
