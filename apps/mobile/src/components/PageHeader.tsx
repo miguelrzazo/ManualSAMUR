@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import { useTheme } from "../theme.tsx";
 import { displayTitle } from "../title-case.ts";
@@ -29,13 +30,25 @@ export function PageHeader({ title, trailing, leading, titleStyle }: {
 }) {
   const palette = useTheme();
   const styles = useStyles(palette);
+  // With no status bar above it (an iPhone in landscape, or an iPhone Duo pose whose
+  // status bar moves to a vertical bar at the side) the top inset is 0 and the title
+  // sat 8pt from the display edge, where the rounded corner clipped its first letters.
+  const topClearance = useTopClearance(spacing.sm);
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, topClearance]}>
       {leading}
       <Text style={[styles.title, titleStyle]} numberOfLines={2} accessibilityRole="header">{displayTitle(title)}</Text>
       <View style={styles.trailing}>{trailing}</View>
     </View>
   );
+}
+
+const MIN_TOP_CLEARANCE = 20;
+
+/** Extra top padding for a header whose screen has (almost) no top safe-area inset. */
+export function useTopClearance(basePadding: number): { paddingTop: number } | undefined {
+  const { top } = useSafeAreaInsets();
+  return top < MIN_TOP_CLEARANCE ? { paddingTop: MIN_TOP_CLEARANCE - top + basePadding } : undefined;
 }
 
 function useStyles(palette: AdaptivePalette) {

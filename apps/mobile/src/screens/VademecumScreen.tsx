@@ -19,7 +19,7 @@ import { animateNextLayout, useReduceMotion } from "../hooks/motion";
 import { useScrollChrome, type ScrollChrome } from "../hooks/use-scroll-chrome";
 import { useSectionJump } from "../hooks/use-section-jump";
 import { selectionTick } from "../hooks/haptics";
-import { BackToTop, Chip, CompactHeader, Press } from "../components";
+import { BackToTop, Chip, CompactHeader, Press, useTopClearance } from "../components";
 import { useContentData } from "../content";
 import { buildVademecumReferences, searchMobileReferences, type MobileReferenceSearchResult } from "../reference-search-logic";
 import {
@@ -56,6 +56,7 @@ import { useOpenDetail } from "../split-view";
  * reales. `dose-logic.ts` se queda por sus ayudantes de formato y su auditoría.
  */
 export function VademecumScreen() {
+  const topClearance = useTopClearance(spacing.md);
   const { content } = useContentData();
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
@@ -111,7 +112,7 @@ export function VademecumScreen() {
       {chrome.collapsed && <CompactHeader title="Vademécum" onExpand={chrome.expand} />}
       {!chrome.collapsed && (
       <View style={styles.expandedChrome}>
-        <View style={styles.header}>
+        <View style={[styles.header, topClearance]}>
           <Text style={styles.pageTitle}>Vademécum</Text>
           <SearchField value={query} onChangeText={setQuery} palette={palette} styles={styles} />
         </View>

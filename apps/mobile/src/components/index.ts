@@ -6,7 +6,7 @@ export { EmptyState } from "./EmptyState.tsx";
 export { Chip } from "./Chip.tsx";
 export { Badge } from "./Badge.tsx";
 export { Disclosure } from "./Disclosure.tsx";
-export { PageHeader } from "./PageHeader.tsx";
+export { PageHeader, useTopClearance } from "./PageHeader.tsx";
 export { Screen, ListGroup, contentInset } from "./Screen.tsx";
 export { LocationDirectory } from "./LocationDirectory.tsx";
 export { MarkdownTable } from "./MarkdownTable.tsx";
