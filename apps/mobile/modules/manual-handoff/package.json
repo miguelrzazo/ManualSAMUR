@@ -1,0 +1,8 @@
+{
+  "name": "manual-handoff",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Publishes the focused screen as an NSUserActivity so Handoff opens it in Safari.",
+  "main": "index.ts",
+  "license": "UNLICENSED"
+}

@@ -4,3 +4,9 @@
   Content-Type: application/pdf
   Content-Disposition: inline
   X-Content-Type-Options: nosniff
+
+# Universal links / Handoff. Apple's CDN fetches this without following
+# redirects and requires JSON; the file has no extension, so set the type here.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600

@@ -40,6 +40,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var launchOptions: [UIApplication.LaunchOptionsKey: Any] = [:]
     if let url = connectionOptions.urlContexts.first?.url {
       launchOptions[.url] = url
+    } else if let url = connectionOptions.userActivities.compactMap({ $0.webpageURL }).first {
+      // A universal link or a Handoff that cold-launches the app arrives as a user
+      // activity, not a URL context. Hand its https URL to Linking.getInitialURL().
+      launchOptions[.url] = url
     }
 
     let window = UIWindow(windowScene: windowScene)
@@ -57,6 +61,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   // delivers here instead of application(_:open:options:).
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
     guard let url = URLContexts.first?.url else { return }
+    RCTLinkingManager.application(UIApplication.shared, open: url, options: [:])
+  }
+
+  // Universal links (NSUserActivityTypeBrowsingWeb) and Handoff from another device
+  // running the app (our custom activity type) both carry the web URL; route it
+  // through Linking's "url" event like any other link.
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    guard let url = userActivity.webpageURL else { return }
     RCTLinkingManager.application(UIApplication.shared, open: url, options: [:])
   }
 }
