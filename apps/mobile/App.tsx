@@ -1,6 +1,6 @@
 import { manualContentOrigin } from "./src/content-origin";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { NavigationContainer, NavigationIndependentTree, StackActions, type NavigationAction, type NavigationState } from "@react-navigation/native";
+import { NavigationContainer, NavigationIndependentTree, StackActions, createNavigationContainerRef, useIsFocused, type NavigationAction, type NavigationState } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
@@ -90,7 +90,7 @@ import { shouldShowAcademySplash } from "./src/academy-slot.ts";
 import { academyBrand, academySlot } from "./src/academy-slot-config.ts";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 import { HistorialScreen } from "./src/screens/HistorialScreen";
-import { useWebRouteBridge } from "./src/hooks/use-web-route-bridge";
+import { useDetailPaneHandoff, useWebRouteBridge } from "./src/hooks/use-web-route-bridge";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
 // Its favorites/recents content now lives inside Inicio (src/screens/InicioScreen.tsx,
 // T5b) rather than a separate, unrouted `SavedScreen`.
@@ -1597,6 +1597,11 @@ function DetailPane({ section }: { section: SplitSection }) {
   const detailHeader = useDetailHeaderOptions();
   const { selections } = useSplitSelections();
   const selection = selections[section];
+  // A pane in a background tab (or under a pushed screen) must not hold Handoff.
+  const tabFocused = useIsFocused();
+  // One ref per pane tree: a new selection remounts the tree (see the key below).
+  const paneNavigation = useMemo(() => createNavigationContainerRef<RootStackParamList>(), [selection]);
+  const handoff = useDetailPaneHandoff(paneNavigation, tabFocused && Boolean(selection));
   if (!selection) {
     const placeholder = SPLIT_PLACEHOLDERS[section];
     return <SafeAreaView style={[styles.screen, styles.splitPlaceholder]} edges={["top", "right", "bottom"]} testID={`detail-pane-empty-${section}`}>
@@ -1608,7 +1613,7 @@ function DetailPane({ section }: { section: SplitSection }) {
   const initialParams = (screen: keyof RootStackParamList) => (selection.screen === screen ? selection.params : undefined) as never;
   return <InDetailPaneContext.Provider value>
     <NavigationIndependentTree key={detailRouteKey(selection)}>
-      <NavigationContainer onUnhandledAction={forwardToRoot}>
+      <NavigationContainer ref={paneNavigation} onReady={handoff.onReady} onStateChange={handoff.onStateChange} onUnhandledAction={forwardToRoot}>
         <PaneStack.Navigator initialRouteName={selection.screen} screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", contentStyle: { backgroundColor: palette.paper } }}>
           <PaneStack.Screen name="Procedure" component={ProcedureScreen} initialParams={initialParams("Procedure")} options={detailHeader} />
           <PaneStack.Screen name="Drug" component={DrugScreen} initialParams={initialParams("Drug")} options={detailHeader} />
