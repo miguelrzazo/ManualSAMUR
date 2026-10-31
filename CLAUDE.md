@@ -6,11 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Development & Building**
 - `npm run dev` — Start dev server (Turbopack-powered) on http://localhost:3000
-- `npm run build` — Full production build. Chains `sync:docs-public` → `generate:client-data` → `generate-llms` → `next build`
+- `npm run build` — Full production build. Chains `sync:docs-public` → `generate:client-data` → `generate:graph` → `generate-llms` → `next build`
 - `npm start` — Run production server
 - `npm run lint` — Run ESLint
 - `npm test` — Run the test suite (Node's built-in runner over `tests/*.test.ts`)
 - `npm run generate:client-data` — Emit the on-demand client datasets into `public/`
+- `npm run generate:graph` — Emit `public/graph.json` (procedure link graph for `/grafo` and the local graph)
 
 **Content sync**
 - `npm run sync:manualsamur:detect` — Dry run against the upstream wiki. Writes nothing.
@@ -57,7 +58,7 @@ The app is built with Next.js 16 (see AGENTS.md for breaking changes), React 19,
   - `data/` — JSON data files: hospitals.json, vademecum.json, codigos-*.json, fluidos.json, etc.
 
 - **`public/`** — Static assets and PWA manifest/service worker.
-  Note: `search-index.json`, `manual-updates.json`, `manual-history.json`, `llms.txt`, `llms-full.txt`, `procedures/` and `docs/` are **generated at build time** — do not hand-edit them.
+  Note: `search-index.json`, `manual-updates.json`, `manual-history.json`, `graph.json`, `llms.txt`, `llms-full.txt`, `procedures/` and `docs/` are **generated at build time** — do not hand-edit them.
 
 - **`tests/`** — 13 test files, run via `npm test`
 

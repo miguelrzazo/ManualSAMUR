@@ -13,6 +13,7 @@ import {
   History,
   LayoutGrid,
   Clock,
+  Network,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ContentDiff } from "@/components/manual/ContentDiff";
@@ -644,6 +645,13 @@ export function ManualHomeClient({
 
         {/* History pill — compact, low prominence */}
         <div className="flex items-center gap-2">
+          <Link
+            href="/grafo"
+            className="flex items-center gap-1.5 rounded-full border border-border/40 bg-muted/50 px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Network className="h-3 w-3" />
+            Grafo
+          </Link>
           {(historyCount > 0 || pillEvents.length > 0) && (
             <button
               onClick={openHistoryModal}

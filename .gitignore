@@ -44,6 +44,8 @@ yarn-error.log*
 /public/search-index.json
 /public/manual-updates.json
 /public/manual-history.json
+# Grafo de procedimientos — lo regenera `npm run generate:graph` en cada build.
+/public/graph.json
 
 # Native content package — generated from content/data during mobile builds.
 apps/mobile/src/data/snapshot.json
