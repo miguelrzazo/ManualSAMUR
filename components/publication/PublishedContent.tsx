@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Published slugs may not have static Next route assets; full navigation uses the Worker shell fallback. */
 "use client";
 
-import { useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import type { MobileContentSnapshot, MobileProcedure } from "@/packages/manual-content/src/schema";
 import { CodigosView } from "@/components/codigos/CodigosView";
 import { VademecumView } from "@/components/vademecum/VademecumView";
@@ -14,6 +14,8 @@ import { PublishedProcedureBody } from "./PublishedEditorialBlocks";
 import { ManualHomeClient } from "@/components/manual/ManualHomeClient";
 import { TableOfContents } from "@/components/manual/TableOfContents";
 import type { ProcedureNavMeta, ProcedureSidebarSection } from "@/lib/content";
+import type { ManualHomeData } from "@/lib/manual-updates-logic";
+import { BreakingNewsTicker } from "@/components/shared/BreakingNewsTicker";
 
 /** Preserve the established groups, while taking identities and titles from the active publication. */
 export function publicationSections(procedures: MobileProcedure[], original: ProcedureSidebarSection[]): ProcedureSidebarSection[] {
@@ -53,9 +55,26 @@ function Procedure({ procedure, snapshot }: { procedure: MobileProcedure; snapsh
   return <article className="mx-auto max-w-4xl px-4 py-8"><ProcedureVisitTracker procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><a href="/manual" className="text-sm text-primary underline">← Manual</a><p className="mt-6 text-sm text-muted-foreground">{procedure.id} · {procedure.section}</p><h1 className="mt-2 break-words text-3xl font-bold tracking-tight [overflow-wrap:anywhere]">{procedure.title}</h1><div className="my-5 flex items-center gap-3"><FavoriteButton procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><ShareButton title={procedure.title} url={typeof window === "undefined" ? `/manual/${encodeURIComponent(procedure.slug)}` : `${window.location.origin}/manual/${encodeURIComponent(procedure.slug)}`} markdown={procedure.content} /><span className="text-xs text-muted-foreground">Actualizado: {procedure.updated || snapshot.generatedAt.slice(0, 10)}</span></div><TableOfContents articleId="published-procedure-content" pageTitle={procedure.title} collapsible /><div id="published-procedure-content"><PublishedProcedureBody procedure={procedure} snapshot={snapshot} /></div>{procedure.attachments.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Documentos e imágenes</h2><ul>{procedure.attachments.map((attachment) => <li key={attachment.id}><a className="inline-flex min-h-11 items-center text-primary underline" href={attachment.localPath}>{attachment.filename}</a></li>)}</ul></section>}{related.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Procedimientos relacionados</h2>{related.map((item) => <a key={item.id} className="block py-3 text-primary underline" href={`/manual/${encodeURIComponent(item.slug)}`}>{item.id} · {item.title}</a>)}</section>}</article>;
 }
 
+const EMPTY_HOME: ManualHomeData = { syncMetadata: { manualVersionCurrent: "", lastSyncAt: "", ticker: { enabledUntil: "", items: [] }, tickerEnabled: false }, pillEvents: [], historyCount: 0, tickerEventIds: [] };
+
+/** The published home keeps the static page's red banner and update history, read from public/manual-home.json. */
+function PublishedHome({ snapshot, sidebarSections }: { snapshot: MobileContentSnapshot; sidebarSections: ProcedureSidebarSection[] }) {
+  const [home, setHome] = useState<ManualHomeData>(EMPTY_HOME);
+  useEffect(() => {
+    let active = true;
+    fetch("/manual-home.json").then((response) => response.ok ? response.json() as Promise<ManualHomeData> : null).then((data) => { if (active && data) setHome(data); }).catch((error) => console.error("No se pudo cargar el historial:", error));
+    return () => { active = false; };
+  }, []);
+  const syncMetadata = { ...home.syncMetadata, lastSyncAt: home.syncMetadata.lastSyncAt || snapshot.generatedAt };
+  return <>
+    <BreakingNewsTicker metadata={syncMetadata} recentEventIds={home.tickerEventIds} />
+    <ManualHomeClient sidebarSections={publicationSections(snapshot.content.procedures, sidebarSections)} allProcedures={snapshot.content.procedures} syncMetadata={syncMetadata} pillEvents={home.pillEvents} historyCount={home.historyCount} />
+  </>;
+}
+
 export function PublishedContent({ snapshot, pathname, sidebarSections }: { snapshot: MobileContentSnapshot; pathname: string; sidebarSections: ProcedureSidebarSection[] }) {
   const content = snapshot.content;
-  if (pathname === "/manual" || pathname === "/") return <ManualHomeClient sidebarSections={publicationSections(content.procedures, sidebarSections)} allProcedures={content.procedures} syncMetadata={{ manualVersionCurrent: "", lastSyncAt: snapshot.generatedAt, ticker: { enabledUntil: "", items: [] }, tickerEnabled: false }} pillEvents={[]} historyCount={0} />;
+  if (pathname === "/manual" || pathname === "/") return <PublishedHome snapshot={snapshot} sidebarSections={sidebarSections} />;
   if (pathname.startsWith("/manual/")) {
     let slug = pathname.slice("/manual/".length);
     try { slug = decodeURIComponent(slug); } catch { /* Unrecognised URL is handled below. */ }

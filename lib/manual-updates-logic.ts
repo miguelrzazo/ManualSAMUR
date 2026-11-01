@@ -24,6 +24,14 @@ export interface ManualSyncClientMetadata {
   tickerEnabled: boolean;
 }
 
+/** Props del banner y del historial de /manual; también public/manual-home.json. */
+export interface ManualHomeData {
+  syncMetadata: ManualSyncClientMetadata;
+  pillEvents: UpdatePillEvent[];
+  historyCount: number;
+  tickerEventIds: string[];
+}
+
 export const RECENT_WINDOW_DAYS = 30;
 export const RECENT_WINDOW_MS = RECENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 

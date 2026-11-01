@@ -2,7 +2,7 @@ import { ColaboradoresView } from "@/components/colaboradores/ColaboradoresView"
 import { readCollaboratorsData } from "@/lib/main-content";
 
 export const metadata = {
-  title: "Colaboradores — SAMUR Manual",
+  title: "Colaboradores originales del manual oficial — SAMUR Manual",
   description: "Listado de colaboradores del Manual SAMUR-Protección Civil",
 };
 

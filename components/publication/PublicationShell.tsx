@@ -6,7 +6,7 @@ import { isMobileContentSnapshot, type MobileContentSnapshot } from "@/packages/
 import { NavBar } from "@/components/shared/NavBar";
 import type { MainLinksData } from "@/lib/main-content";
 import type { ProcedureSidebarSection } from "@/lib/content";
-import { AcademyPromo } from "@/components/shared/AcademyPromo";
+import { SiteFooter } from "@/components/shared/SiteFooter";
 import { PublicationBoundary } from "./PublicationBoundary";
 import { PublishedContent } from "./PublishedContent";
 import { readVerifiedSnapshot, saveVerifiedSnapshot } from "./snapshot-cache";
@@ -67,6 +67,6 @@ export function PublicationShell({ children, fallbackNavigation, mainLinks, side
     {state.status === "static" ? fallbackNavigation : <NavBar procedures={snapshot?.content.procedures ?? []} mainLinks={mainLinks} snapshot={snapshot} />}
     {isContent && state.status === "cached" && <p role="status" className="border-b border-border bg-muted px-4 py-3 text-sm">Sin conexión con la publicación. Mostrando la última versión verificada: {snapshot?.generatedAt.slice(0, 10)}.</p>}
     <main className="min-h-0 flex-1 pb-16 md:pb-0">{!isContent || state.status === "static" ? children : snapshot ? <Suspense fallback={<p role="status" className="p-6">Cargando contenido…</p>}><PublicationBoundary key={`${snapshot.hash}:${pathname}`}><PublishedContent snapshot={snapshot} pathname={pathname} sidebarSections={sidebarSections} /></PublicationBoundary></Suspense> : <section className="mx-auto max-w-3xl px-4 py-12" role="status"><h1 className="text-2xl font-semibold">{state.status === "loading" ? "Cargando el manual publicado…" : "Publicación no disponible"}</h1>{state.status === "unavailable" && <><p className="mt-3">No se ha podido verificar una publicación. Comprueba la conexión e inténtalo de nuevo.</p><button type="button" onClick={() => window.location.reload()} className="mt-4 min-h-11 rounded-md border border-border px-4">Reintentar</button></>}</section>}</main>
-    <footer className="mx-auto w-full max-w-5xl space-y-4 px-4 py-8 pb-24 md:pb-8"><AcademyPromo /><nav aria-label="Información" className="flex flex-wrap gap-5 text-sm"><a href="/acerca-de" className="underline">Acerca de</a><a href="/cambios" className="underline">Cambios publicados</a><a href="/privacidad" className="underline">Privacidad</a><a href="/soporte" className="underline">Soporte</a></nav><p className="text-xs text-muted-foreground">Proyecto independiente. Versión no oficial del manual SAMUR-Protección Civil.</p></footer>
+    <SiteFooter mainLinks={mainLinks} />
   </div>;
 }
