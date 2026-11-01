@@ -12,11 +12,6 @@
   "d1_databases": [{ "binding": "DB", "database_name": "manualsamur-local", "migrations_dir": "backend/migrations" }],
   "vars": { "PUBLICATION_REPOSITORY": "miguelrzazo/ManualSAMUR", "PUBLICATION_REF": "main" },
   "env": {
-    "staging": {
-      "name": "manualsamur-staging",
-      "d1_databases": [{ "binding": "DB", "database_name": "manualsamur-staging", "migrations_dir": "backend/migrations" }],
-      "vars": { "PUBLICATION_REPOSITORY": "miguelrzazo/ManualSAMUR", "PUBLICATION_REF": "main" }
-    },
     "production": {
       "name": "manualsamur",
       // Canonical domain; workers.dev stays enabled for apps built before the move.
