@@ -1,6 +1,6 @@
 # API pública de datos (móvil, Watch y terceros)
 
-Origen de producción: `https://manualsamur.miguelrzazo13.workers.dev`
+Origen de producción: `https://manualsamur.apta-academy.com`
 
 Todo lo que sirve esta API procede de la **publicación activa** en D1: el contenido
 revisado y publicado desde la gestión editorial. Nunca incluye borradores, notas

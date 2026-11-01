@@ -8,262 +8,262 @@ Total procedimientos: 223
 
 ## Recursos principales
 
-- Procedimientos: https://manualsamur.miguelrzazo13.workers.dev/manual
-- Vademécum de fármacos: https://manualsamur.miguelrzazo13.workers.dev/vademecum
-- Códigos radio: https://manualsamur.miguelrzazo13.workers.dev/codigos
-- Mapa de hospitales y bases: https://manualsamur.miguelrzazo13.workers.dev/mapa
-- Contenido completo para LLMs: https://manualsamur.miguelrzazo13.workers.dev/llms-full.txt
-- Procedimientos individuales (Markdown): https://manualsamur.miguelrzazo13.workers.dev/procedures/{id}.md (ej: https://manualsamur.miguelrzazo13.workers.dev/procedures/101.md)
+- Procedimientos: https://manualsamur.apta-academy.com/manual
+- Vademécum de fármacos: https://manualsamur.apta-academy.com/vademecum
+- Códigos radio: https://manualsamur.apta-academy.com/codigos
+- Mapa de hospitales y bases: https://manualsamur.apta-academy.com/mapa
+- Contenido completo para LLMs: https://manualsamur.apta-academy.com/llms-full.txt
+- Procedimientos individuales (Markdown): https://manualsamur.apta-academy.com/procedures/{id}.md (ej: https://manualsamur.apta-academy.com/procedures/101.md)
 
 ## Administrativos (4 procedimientos)
 
-- [101] Organigrama Operativo: https://manualsamur.miguelrzazo13.workers.dev/manual/101-organigrama-operativo
-- [102] Organigrama Administrativo: https://manualsamur.miguelrzazo13.workers.dev/manual/102-organigrama-administrativo
-- [103] Funciones del personal de Guardia: https://manualsamur.miguelrzazo13.workers.dev/manual/103-funciones-del-personal-de-guardia
-- [104] UNIFORMIDAD y EPIs: https://manualsamur.miguelrzazo13.workers.dev/manual/104-uniformidad-y-epis
+- [101] Organigrama Operativo: https://manualsamur.apta-academy.com/manual/101-organigrama-operativo
+- [102] Organigrama Administrativo: https://manualsamur.apta-academy.com/manual/102-organigrama-administrativo
+- [103] Funciones del personal de Guardia: https://manualsamur.apta-academy.com/manual/103-funciones-del-personal-de-guardia
+- [104] UNIFORMIDAD y EPIs: https://manualsamur.apta-academy.com/manual/104-uniformidad-y-epis
 
 ## Comunicaciones (13 procedimientos)
 
-- [121] Procedimiento radiotelefónico: https://manualsamur.miguelrzazo13.workers.dev/manual/121-procedimiento-radiotelefonico
-- [122] Gestión de llamadas de emergencia: https://manualsamur.miguelrzazo13.workers.dev/manual/122-gestion-de-llamadas-de-emergencia
-- [123] Técnicas de comunicación: https://manualsamur.miguelrzazo13.workers.dev/manual/123-tecnicas-de-comunicacion
-- [124] Recomendaciones generales: https://manualsamur.miguelrzazo13.workers.dev/manual/124-recomendaciones-generales
-- [125_01] Sospecha de PCR y RCP transtelefónico: https://manualsamur.miguelrzazo13.workers.dev/manual/125_01-sospecha-de-pcr-y-rcp-transtelefonico
-- [125_02] Obstrucción de la vía aérea OVACE: https://manualsamur.miguelrzazo13.workers.dev/manual/125_02-obstruccion-de-la-via-aerea-ovace
-- [125_03] Sospecha de Síndrome Coronario Agudo (SCA): https://manualsamur.miguelrzazo13.workers.dev/manual/125_03-sospecha-de-sindrome-coronario-agudo-sca
-- [125_04] Sospecha de Ictus: https://manualsamur.miguelrzazo13.workers.dev/manual/125_04-sospecha-de-ictus
-- [125_05] Sospecha de Convulsiones: https://manualsamur.miguelrzazo13.workers.dev/manual/125_05-sospecha-de-convulsiones
-- [125_06] Foco de hemorragia activa: https://manualsamur.miguelrzazo13.workers.dev/manual/125_06-foco-de-hemorragia-activa
-- [125_07] Sospecha de parto en curso: https://manualsamur.miguelrzazo13.workers.dev/manual/125_07-sospecha-de-parto-en-curso
-- [125_08] Pacientes politraumatizados por accidente de tráfico: https://manualsamur.miguelrzazo13.workers.dev/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
-- [126] Gestión de recursos: https://manualsamur.miguelrzazo13.workers.dev/manual/126-gestion-de-recursos
+- [121] Procedimiento radiotelefónico: https://manualsamur.apta-academy.com/manual/121-procedimiento-radiotelefonico
+- [122] Gestión de llamadas de emergencia: https://manualsamur.apta-academy.com/manual/122-gestion-de-llamadas-de-emergencia
+- [123] Técnicas de comunicación: https://manualsamur.apta-academy.com/manual/123-tecnicas-de-comunicacion
+- [124] Recomendaciones generales: https://manualsamur.apta-academy.com/manual/124-recomendaciones-generales
+- [125_01] Sospecha de PCR y RCP transtelefónico: https://manualsamur.apta-academy.com/manual/125_01-sospecha-de-pcr-y-rcp-transtelefonico
+- [125_02] Obstrucción de la vía aérea OVACE: https://manualsamur.apta-academy.com/manual/125_02-obstruccion-de-la-via-aerea-ovace
+- [125_03] Sospecha de Síndrome Coronario Agudo (SCA): https://manualsamur.apta-academy.com/manual/125_03-sospecha-de-sindrome-coronario-agudo-sca
+- [125_04] Sospecha de Ictus: https://manualsamur.apta-academy.com/manual/125_04-sospecha-de-ictus
+- [125_05] Sospecha de Convulsiones: https://manualsamur.apta-academy.com/manual/125_05-sospecha-de-convulsiones
+- [125_06] Foco de hemorragia activa: https://manualsamur.apta-academy.com/manual/125_06-foco-de-hemorragia-activa
+- [125_07] Sospecha de parto en curso: https://manualsamur.apta-academy.com/manual/125_07-sospecha-de-parto-en-curso
+- [125_08] Pacientes politraumatizados por accidente de tráfico: https://manualsamur.apta-academy.com/manual/125_08-pacientes-politraumatizados-por-accidente-de-trafico
+- [126] Gestión de recursos: https://manualsamur.apta-academy.com/manual/126-gestion-de-recursos
 
 ## Operativos (40 procedimientos)
 
-- [201] Actuación General: https://manualsamur.miguelrzazo13.workers.dev/manual/201-actuacion-general
-- [203] Conducción de vehículos sanitarios en emergencias: https://manualsamur.miguelrzazo13.workers.dev/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
-- [203_01] Procedimiento en caso de accidente con Unidades: https://manualsamur.miguelrzazo13.workers.dev/manual/203_01-procedimiento-en-caso-de-accidente-con-unidades
-- [204] Farmacia Móvil: https://manualsamur.miguelrzazo13.workers.dev/manual/204-farmacia-movil
-- [205] Cumplimentación de los informes de asistencia: https://manualsamur.miguelrzazo13.workers.dev/manual/205-cumplimentacion-de-los-informes-de-asistencia
-- [206] Preaviso Hospitalario: https://manualsamur.miguelrzazo13.workers.dev/manual/206-preaviso-hospitalario
-- [206_01] Circulación de Unidades en Convoy: https://manualsamur.miguelrzazo13.workers.dev/manual/206_01-circulacion-de-unidades-en-convoy
-- [207] Incidentes con múltiples víctimas y Triaje (IMV): https://manualsamur.miguelrzazo13.workers.dev/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
-- [208] Primera respuesta NRBQ: https://manualsamur.miguelrzazo13.workers.dev/manual/208-primera-respuesta-nrbq
-- [209] Atención Sociosanitaria a menores: https://manualsamur.miguelrzazo13.workers.dev/manual/209-atencion-sociosanitaria-a-menores
-- [209_01] Atención sociosanitaria a mayores: https://manualsamur.miguelrzazo13.workers.dev/manual/209_01-atencion-sociosanitaria-a-mayores
-- [209_02] Actuación en casos de violencia de género: https://manualsamur.miguelrzazo13.workers.dev/manual/209_02-actuacion-en-casos-de-violencia-de-genero
-- [210] Huelga de hambre: https://manualsamur.miguelrzazo13.workers.dev/manual/210-huelga-de-hambre
-- [211] Código VISEM: https://manualsamur.miguelrzazo13.workers.dev/manual/211-codigo-visem
-- [212] Código 9: Donación en asistolia: https://manualsamur.miguelrzazo13.workers.dev/manual/212-codigo-9-donacion-en-asistolia
-- [212_01] Código 11: https://manualsamur.miguelrzazo13.workers.dev/manual/212_01-codigo-11
-- [213] Código Infarto: https://manualsamur.miguelrzazo13.workers.dev/manual/213-codigo-infarto
-- [213_01] Código 16: https://manualsamur.miguelrzazo13.workers.dev/manual/213_01-codigo-16
-- [214] Códigos 1313.1: Reperfusión precoz en el ictus agudo: https://manualsamur.miguelrzazo13.workers.dev/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo
-- [214_01] Código 15: https://manualsamur.miguelrzazo13.workers.dev/manual/214_01-codigo-15
-- [214_02] Código 33: https://manualsamur.miguelrzazo13.workers.dev/manual/214_02-codigo-33
-- [214_03] Código 15.1: https://manualsamur.miguelrzazo13.workers.dev/manual/214_03-codigo-151
-- [214_04] Código 19: Código TEP: https://manualsamur.miguelrzazo13.workers.dev/manual/214_04-codigo-19-codigo-tep
-- [214_05] Código 18: Código SEPSIS: https://manualsamur.miguelrzazo13.workers.dev/manual/214_05-codigo-18-codigo-sepsis
-- [214_06] Código Crisis: https://manualsamur.miguelrzazo13.workers.dev/manual/214_06-codigo-crisis
-- [214_07] Código VISNNA: https://manualsamur.miguelrzazo13.workers.dev/manual/214_07-codigo-visnna
-- [215] Diagnóstico de Muerte: https://manualsamur.miguelrzazo13.workers.dev/manual/215-diagnostico-de-muerte
-- [217] Procedimiento de Incidentes Complejos. Código PIC: https://manualsamur.miguelrzazo13.workers.dev/manual/217-procedimiento-de-incidentes-complejos-codigo-pic
-- [217_00] Disturbios urbanos y Actos antisociales: https://manualsamur.miguelrzazo13.workers.dev/manual/217_00-disturbios-urbanos-y-actos-antisociales
-- [217_01] Con Policía Municipal: https://manualsamur.miguelrzazo13.workers.dev/manual/217_01-con-policia-municipal
-- [217_02] Policía Municipal. Dispositivo Eléctrico de Control (DEC): https://manualsamur.miguelrzazo13.workers.dev/manual/217_02-policia-municipal-dispositivo-electrico-de-control-dec
-- [217_03] Con UAPF: https://manualsamur.miguelrzazo13.workers.dev/manual/217_03-con-uapf
-- [217_04] Con Bomberos: https://manualsamur.miguelrzazo13.workers.dev/manual/217_04-con-bomberos
-- [217_05] Con SEAM: https://manualsamur.miguelrzazo13.workers.dev/manual/217_05-con-seam
-- [217_06] Con SAMUR Social: https://manualsamur.miguelrzazo13.workers.dev/manual/217_06-con-samur-social
-- [217_07] Con Policía Nacional: https://manualsamur.miguelrzazo13.workers.dev/manual/217_07-con-policia-nacional
-- [217_08] Con RENFE: https://manualsamur.miguelrzazo13.workers.dev/manual/217_08-con-renfe
-- [217_09] Con Metro: https://manualsamur.miguelrzazo13.workers.dev/manual/217_09-con-metro
-- [217_10] Con Unidad de Medio Ambiente: https://manualsamur.miguelrzazo13.workers.dev/manual/217_10-con-unidad-de-medio-ambiente
-- [219] Transferencia de pacientes* entre profesionales sanitarios.: https://manualsamur.miguelrzazo13.workers.dev/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
+- [201] Actuación General: https://manualsamur.apta-academy.com/manual/201-actuacion-general
+- [203] Conducción de vehículos sanitarios en emergencias: https://manualsamur.apta-academy.com/manual/203-conduccion-de-vehiculos-sanitarios-en-emergencias
+- [203_01] Procedimiento en caso de accidente con Unidades: https://manualsamur.apta-academy.com/manual/203_01-procedimiento-en-caso-de-accidente-con-unidades
+- [204] Farmacia Móvil: https://manualsamur.apta-academy.com/manual/204-farmacia-movil
+- [205] Cumplimentación de los informes de asistencia: https://manualsamur.apta-academy.com/manual/205-cumplimentacion-de-los-informes-de-asistencia
+- [206] Preaviso Hospitalario: https://manualsamur.apta-academy.com/manual/206-preaviso-hospitalario
+- [206_01] Circulación de Unidades en Convoy: https://manualsamur.apta-academy.com/manual/206_01-circulacion-de-unidades-en-convoy
+- [207] Incidentes con múltiples víctimas y Triaje (IMV): https://manualsamur.apta-academy.com/manual/207-incidentes-con-multiples-victimas-y-triaje-imv
+- [208] Primera respuesta NRBQ: https://manualsamur.apta-academy.com/manual/208-primera-respuesta-nrbq
+- [209] Atención Sociosanitaria a menores: https://manualsamur.apta-academy.com/manual/209-atencion-sociosanitaria-a-menores
+- [209_01] Atención sociosanitaria a mayores: https://manualsamur.apta-academy.com/manual/209_01-atencion-sociosanitaria-a-mayores
+- [209_02] Actuación en casos de violencia de género: https://manualsamur.apta-academy.com/manual/209_02-actuacion-en-casos-de-violencia-de-genero
+- [210] Huelga de hambre: https://manualsamur.apta-academy.com/manual/210-huelga-de-hambre
+- [211] Código VISEM: https://manualsamur.apta-academy.com/manual/211-codigo-visem
+- [212] Código 9: Donación en asistolia: https://manualsamur.apta-academy.com/manual/212-codigo-9-donacion-en-asistolia
+- [212_01] Código 11: https://manualsamur.apta-academy.com/manual/212_01-codigo-11
+- [213] Código Infarto: https://manualsamur.apta-academy.com/manual/213-codigo-infarto
+- [213_01] Código 16: https://manualsamur.apta-academy.com/manual/213_01-codigo-16
+- [214] Códigos 1313.1: Reperfusión precoz en el ictus agudo: https://manualsamur.apta-academy.com/manual/214-codigos-13131-reperfusion-precoz-en-el-ictus-agudo
+- [214_01] Código 15: https://manualsamur.apta-academy.com/manual/214_01-codigo-15
+- [214_02] Código 33: https://manualsamur.apta-academy.com/manual/214_02-codigo-33
+- [214_03] Código 15.1: https://manualsamur.apta-academy.com/manual/214_03-codigo-151
+- [214_04] Código 19: Código TEP: https://manualsamur.apta-academy.com/manual/214_04-codigo-19-codigo-tep
+- [214_05] Código 18: Código SEPSIS: https://manualsamur.apta-academy.com/manual/214_05-codigo-18-codigo-sepsis
+- [214_06] Código Crisis: https://manualsamur.apta-academy.com/manual/214_06-codigo-crisis
+- [214_07] Código VISNNA: https://manualsamur.apta-academy.com/manual/214_07-codigo-visnna
+- [215] Diagnóstico de Muerte: https://manualsamur.apta-academy.com/manual/215-diagnostico-de-muerte
+- [217] Procedimiento de Incidentes Complejos. Código PIC: https://manualsamur.apta-academy.com/manual/217-procedimiento-de-incidentes-complejos-codigo-pic
+- [217_00] Disturbios urbanos y Actos antisociales: https://manualsamur.apta-academy.com/manual/217_00-disturbios-urbanos-y-actos-antisociales
+- [217_01] Con Policía Municipal: https://manualsamur.apta-academy.com/manual/217_01-con-policia-municipal
+- [217_02] Policía Municipal. Dispositivo Eléctrico de Control (DEC): https://manualsamur.apta-academy.com/manual/217_02-policia-municipal-dispositivo-electrico-de-control-dec
+- [217_03] Con UAPF: https://manualsamur.apta-academy.com/manual/217_03-con-uapf
+- [217_04] Con Bomberos: https://manualsamur.apta-academy.com/manual/217_04-con-bomberos
+- [217_05] Con SEAM: https://manualsamur.apta-academy.com/manual/217_05-con-seam
+- [217_06] Con SAMUR Social: https://manualsamur.apta-academy.com/manual/217_06-con-samur-social
+- [217_07] Con Policía Nacional: https://manualsamur.apta-academy.com/manual/217_07-con-policia-nacional
+- [217_08] Con RENFE: https://manualsamur.apta-academy.com/manual/217_08-con-renfe
+- [217_09] Con Metro: https://manualsamur.apta-academy.com/manual/217_09-con-metro
+- [217_10] Con Unidad de Medio Ambiente: https://manualsamur.apta-academy.com/manual/217_10-con-unidad-de-medio-ambiente
+- [219] Transferencia de pacientes* entre profesionales sanitarios.: https://manualsamur.apta-academy.com/manual/219-transferencia-de-pacientes-entre-profesionales-sanitarios
 
 ## DRP (4 procedimientos)
 
-- [126_01] Procedimiento de comunicaciones en un DRP: https://manualsamur.miguelrzazo13.workers.dev/manual/126_01-procedimiento-de-comunicaciones-en-un-drp
-- [700_01] Procedimiento General de los DRP: https://manualsamur.miguelrzazo13.workers.dev/manual/700_01-procedimiento-general-de-los-drp
-- [700_02] Procedimiento de despliege de un DRP: https://manualsamur.miguelrzazo13.workers.dev/manual/700_02-procedimiento-de-despliege-de-un-drp
-- [700_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible: https://manualsamur.miguelrzazo13.workers.dev/manual/700_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
+- [126_01] Procedimiento de comunicaciones en un DRP: https://manualsamur.apta-academy.com/manual/126_01-procedimiento-de-comunicaciones-en-un-drp
+- [700_01] Procedimiento General de los DRP: https://manualsamur.apta-academy.com/manual/700_01-procedimiento-general-de-los-drp
+- [700_02] Procedimiento de despliege de un DRP: https://manualsamur.apta-academy.com/manual/700_02-procedimiento-de-despliege-de-un-drp
+- [700_03] Procedimiento De “Cecor” En Un Dispositivo De Riesgo Previsible: https://manualsamur.apta-academy.com/manual/700_03-procedimiento-de-cecor-en-un-dispositivo-de-riesgo-previsible
 
 ## Intervinientes (4 procedimientos)
 
-- [114] Autoprotección en casos sospechos de viruela del mono: https://manualsamur.miguelrzazo13.workers.dev/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
-- [115] Apoyo psicológico a intervinientes: https://manualsamur.miguelrzazo13.workers.dev/manual/115-apoyo-psicologico-a-intervinientes
-- [216] Accidente laboral con riesgo biológico: https://manualsamur.miguelrzazo13.workers.dev/manual/216-accidente-laboral-con-riesgo-biologico
-- [216_01] Contacto con meningitis bacteriana: https://manualsamur.miguelrzazo13.workers.dev/manual/216_01-contacto-con-meningitis-bacteriana
+- [114] Autoprotección en casos sospechos de viruela del mono: https://manualsamur.apta-academy.com/manual/114-autoproteccion-en-casos-sospechos-de-viruela-del-mono
+- [115] Apoyo psicológico a intervinientes: https://manualsamur.apta-academy.com/manual/115-apoyo-psicologico-a-intervinientes
+- [216] Accidente laboral con riesgo biológico: https://manualsamur.apta-academy.com/manual/216-accidente-laboral-con-riesgo-biologico
+- [216_01] Contacto con meningitis bacteriana: https://manualsamur.apta-academy.com/manual/216_01-contacto-con-meningitis-bacteriana
 
 ## SVA (65 procedimientos)
 
-- [301] PARADA CARDIORRESPIRATORIA: https://manualsamur.miguelrzazo13.workers.dev/manual/301-parada-cardiorrespiratoria
-- [301_01] Cuidados postparada: https://manualsamur.miguelrzazo13.workers.dev/manual/301_01-cuidados-postparada
-- [301_02] PCR Traumática: https://manualsamur.miguelrzazo13.workers.dev/manual/301_02-pcr-traumatica
-- [302] Manejo avanzado de vía aérea: https://manualsamur.miguelrzazo13.workers.dev/manual/302-manejo-avanzado-de-via-aerea
-- [302_01] Manejo de la vía aérea difícil: https://manualsamur.miguelrzazo13.workers.dev/manual/302_01-manejo-de-la-via-aerea-dificil
-- [303] Analgesia y sedación: https://manualsamur.miguelrzazo13.workers.dev/manual/303-analgesia-y-sedacion
-- [304_01] Valoración inicial del paciente politraumatizado: https://manualsamur.miguelrzazo13.workers.dev/manual/304_01-valoracion-inicial-del-paciente-politraumatizado
-- [304_02] Shock hemorrágico de origen traumático: https://manualsamur.miguelrzazo13.workers.dev/manual/304_02-shock-hemorragico-de-origen-traumatico
-- [304_03] Traumatismo craneoencefálico: https://manualsamur.miguelrzazo13.workers.dev/manual/304_03-traumatismo-craneoencefalico
-- [304_04] Traumatismo de tórax: https://manualsamur.miguelrzazo13.workers.dev/manual/304_04-traumatismo-de-torax
-- [304_05] Traumatismo de abdomen: https://manualsamur.miguelrzazo13.workers.dev/manual/304_05-traumatismo-de-abdomen
-- [304_06] Traumatismos vertebro-medulares: https://manualsamur.miguelrzazo13.workers.dev/manual/304_06-traumatismos-vertebro-medulares
-- [304_07] Traumatismos ortopédicos: https://manualsamur.miguelrzazo13.workers.dev/manual/304_07-traumatismos-ortopedicos
-- [304_08] Síndrome de aplastamiento: https://manualsamur.miguelrzazo13.workers.dev/manual/304_08-sindrome-de-aplastamiento
-- [304_09] Traumatismo pélvico: https://manualsamur.miguelrzazo13.workers.dev/manual/304_09-traumatismo-pelvico
-- [305_01] Hemorragia digestiva aguda: https://manualsamur.miguelrzazo13.workers.dev/manual/305_01-hemorragia-digestiva-aguda
-- [305_02] Abdomen agudo: https://manualsamur.miguelrzazo13.workers.dev/manual/305_02-abdomen-agudo
-- [306_01] Coma: https://manualsamur.miguelrzazo13.workers.dev/manual/306_01-coma
-- [306_02] Enfermedad vascular cerebral aguda: https://manualsamur.miguelrzazo13.workers.dev/manual/306_02-enfermedad-vascular-cerebral-aguda
-- [306_03] Crisis  Estatus epiléptico: https://manualsamur.miguelrzazo13.workers.dev/manual/306_03-crisis-estatus-epileptico
-- [306_04] Estado confusional agudo: https://manualsamur.miguelrzazo13.workers.dev/manual/306_04-estado-confusional-agudo
-- [306_05] Síndrome vertiginoso: https://manualsamur.miguelrzazo13.workers.dev/manual/306_05-sindrome-vertiginoso
-- [306_06] Cefalea: https://manualsamur.miguelrzazo13.workers.dev/manual/306_06-cefalea
-- [306_07] Síndrome discinético: https://manualsamur.miguelrzazo13.workers.dev/manual/306_07-sindrome-discinetico
-- [307_01] Cólico renoureteral (nefrítico): https://manualsamur.miguelrzazo13.workers.dev/manual/307_01-colico-renoureteral-nefritico
-- [307_02] Síndrome escrotal agudo: https://manualsamur.miguelrzazo13.workers.dev/manual/307_02-sindrome-escrotal-agudo
-- [308_01] Urgencias obstétricas: https://manualsamur.miguelrzazo13.workers.dev/manual/308_01-urgencias-obstetricas
-- [308_02] Asistencia al parto: https://manualsamur.miguelrzazo13.workers.dev/manual/308_02-asistencia-al-parto
-- [309_01] Shock: https://manualsamur.miguelrzazo13.workers.dev/manual/309_01-shock
-- [309_02] Síndrome Coronario Agudo con elevación del ST SCACEST: https://manualsamur.miguelrzazo13.workers.dev/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
-- [309_03] Síndrome Coronario Agudo sin elevación del SR (SCACEST): https://manualsamur.miguelrzazo13.workers.dev/manual/309_03-sindrome-coronario-agudo-sin-elevacion-del-sr-scacest
-- [309_04] Insuficiencia cardiaca aguda  crónica agudizada: https://manualsamur.miguelrzazo13.workers.dev/manual/309_04-insuficiencia-cardiaca-aguda-cronica-agudizada
-- [309_05] Edema agudo de pulmón: https://manualsamur.miguelrzazo13.workers.dev/manual/309_05-edema-agudo-de-pulmon
-- [309_06] Arritmias: https://manualsamur.miguelrzazo13.workers.dev/manual/309_06-arritmias
-- [309_07] Crisis hipertensivas: https://manualsamur.miguelrzazo13.workers.dev/manual/309_07-crisis-hipertensivas
-- [309_08] Isquemia arterial aguda: https://manualsamur.miguelrzazo13.workers.dev/manual/309_08-isquemia-arterial-aguda
-- [309_09] Síncope: https://manualsamur.miguelrzazo13.workers.dev/manual/309_09-sincope
-- [310_01] Crisis asmática aguda: https://manualsamur.miguelrzazo13.workers.dev/manual/310_01-crisis-asmatica-aguda
-- [310_02] Exacerbaciones agudas del paciente con EPOC: https://manualsamur.miguelrzazo13.workers.dev/manual/310_02-exacerbaciones-agudas-del-paciente-con-epoc
-- [310_03] Tromboembolismo pulmonar: https://manualsamur.miguelrzazo13.workers.dev/manual/310_03-tromboembolismo-pulmonar
-- [311] Urgencias psiquiátricas: https://manualsamur.miguelrzazo13.workers.dev/manual/311-urgencias-psiquiatricas
-- [312_01] Complicaciones de la diabetes: https://manualsamur.miguelrzazo13.workers.dev/manual/312_01-complicaciones-de-la-diabetes
-- [312_02] Hiperglucemia por estrés: https://manualsamur.miguelrzazo13.workers.dev/manual/312_02-hiperglucemia-por-estres
-- [312_03] Hiponatremia: https://manualsamur.miguelrzazo13.workers.dev/manual/312_03-hiponatremia
-- [312_04] Hipopotasemia - Hiperpotasemia: https://manualsamur.miguelrzazo13.workers.dev/manual/312_04-hipopotasemia-hiperpotasemia
-- [312_05] Hipocalcemia - Hipercalcemia: https://manualsamur.miguelrzazo13.workers.dev/manual/312_05-hipocalcemia-hipercalcemia
-- [313_01] Paciente quemado: https://manualsamur.miguelrzazo13.workers.dev/manual/313_01-paciente-quemado
-- [313_02] Urgencias por calor: https://manualsamur.miguelrzazo13.workers.dev/manual/313_02-urgencias-por-calor
-- [313_03] Paciente con hipotermia: https://manualsamur.miguelrzazo13.workers.dev/manual/313_03-paciente-con-hipotermia
-- [313_04] Lesiones por electricidad. Electrocución: https://manualsamur.miguelrzazo13.workers.dev/manual/313_04-lesiones-por-electricidad-electrocucion
-- [313_05] Patologías por inmersión. Ahogamiento: https://manualsamur.miguelrzazo13.workers.dev/manual/313_05-patologias-por-inmersion-ahogamiento
-- [314_00] Valoración del niño grave: https://manualsamur.miguelrzazo13.workers.dev/manual/314_00-valoracion-del-nino-grave
-- [314_01] RCP pediátrica: https://manualsamur.miguelrzazo13.workers.dev/manual/314_01-rcp-pediatrica
-- [314_02] Asistencia al recién nacido: https://manualsamur.miguelrzazo13.workers.dev/manual/314_02-asistencia-al-recien-nacido
-- [314_03] Valoración del paciente pediátrico politraumatizado: https://manualsamur.miguelrzazo13.workers.dev/manual/314_03-valoracion-del-paciente-pediatrico-politraumatizado
-- [314_04] Dificultad respiratoria: https://manualsamur.miguelrzazo13.workers.dev/manual/314_04-dificultad-respiratoria
-- [314_05] Crisis convulsivas: https://manualsamur.miguelrzazo13.workers.dev/manual/314_05-crisis-convulsivas
-- [314_06] Quemaduras: https://manualsamur.miguelrzazo13.workers.dev/manual/314_06-quemaduras
-- [314_07] Manejo del ictus en la edad pediátrica: https://manualsamur.miguelrzazo13.workers.dev/manual/314_07-manejo-del-ictus-en-la-edad-pediatrica
-- [314_08] Urticaria, angioedema y anafilaxia en pediatría: https://manualsamur.miguelrzazo13.workers.dev/manual/314_08-urticaria-angioedema-y-anafilaxia-en-pediatria
-- [314_09] Atención al menor bajo los efectos de alcohol o drogas: https://manualsamur.miguelrzazo13.workers.dev/manual/314_09-atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas
-- [315_01] Manejo general del paciente intoxicado: https://manualsamur.miguelrzazo13.workers.dev/manual/315_01-manejo-general-del-paciente-intoxicado
-- [315_02] Intoxicación por humo: https://manualsamur.miguelrzazo13.workers.dev/manual/315_02-intoxicacion-por-humo
-- [315_03] Intoxicaciones más frecuentes: https://manualsamur.miguelrzazo13.workers.dev/manual/315_03-intoxicaciones-mas-frecuentes
-- [316] Reacción alérgica: https://manualsamur.miguelrzazo13.workers.dev/manual/316-reaccion-alergica
+- [301] PARADA CARDIORRESPIRATORIA: https://manualsamur.apta-academy.com/manual/301-parada-cardiorrespiratoria
+- [301_01] Cuidados postparada: https://manualsamur.apta-academy.com/manual/301_01-cuidados-postparada
+- [301_02] PCR Traumática: https://manualsamur.apta-academy.com/manual/301_02-pcr-traumatica
+- [302] Manejo avanzado de vía aérea: https://manualsamur.apta-academy.com/manual/302-manejo-avanzado-de-via-aerea
+- [302_01] Manejo de la vía aérea difícil: https://manualsamur.apta-academy.com/manual/302_01-manejo-de-la-via-aerea-dificil
+- [303] Analgesia y sedación: https://manualsamur.apta-academy.com/manual/303-analgesia-y-sedacion
+- [304_01] Valoración inicial del paciente politraumatizado: https://manualsamur.apta-academy.com/manual/304_01-valoracion-inicial-del-paciente-politraumatizado
+- [304_02] Shock hemorrágico de origen traumático: https://manualsamur.apta-academy.com/manual/304_02-shock-hemorragico-de-origen-traumatico
+- [304_03] Traumatismo craneoencefálico: https://manualsamur.apta-academy.com/manual/304_03-traumatismo-craneoencefalico
+- [304_04] Traumatismo de tórax: https://manualsamur.apta-academy.com/manual/304_04-traumatismo-de-torax
+- [304_05] Traumatismo de abdomen: https://manualsamur.apta-academy.com/manual/304_05-traumatismo-de-abdomen
+- [304_06] Traumatismos vertebro-medulares: https://manualsamur.apta-academy.com/manual/304_06-traumatismos-vertebro-medulares
+- [304_07] Traumatismos ortopédicos: https://manualsamur.apta-academy.com/manual/304_07-traumatismos-ortopedicos
+- [304_08] Síndrome de aplastamiento: https://manualsamur.apta-academy.com/manual/304_08-sindrome-de-aplastamiento
+- [304_09] Traumatismo pélvico: https://manualsamur.apta-academy.com/manual/304_09-traumatismo-pelvico
+- [305_01] Hemorragia digestiva aguda: https://manualsamur.apta-academy.com/manual/305_01-hemorragia-digestiva-aguda
+- [305_02] Abdomen agudo: https://manualsamur.apta-academy.com/manual/305_02-abdomen-agudo
+- [306_01] Coma: https://manualsamur.apta-academy.com/manual/306_01-coma
+- [306_02] Enfermedad vascular cerebral aguda: https://manualsamur.apta-academy.com/manual/306_02-enfermedad-vascular-cerebral-aguda
+- [306_03] Crisis  Estatus epiléptico: https://manualsamur.apta-academy.com/manual/306_03-crisis-estatus-epileptico
+- [306_04] Estado confusional agudo: https://manualsamur.apta-academy.com/manual/306_04-estado-confusional-agudo
+- [306_05] Síndrome vertiginoso: https://manualsamur.apta-academy.com/manual/306_05-sindrome-vertiginoso
+- [306_06] Cefalea: https://manualsamur.apta-academy.com/manual/306_06-cefalea
+- [306_07] Síndrome discinético: https://manualsamur.apta-academy.com/manual/306_07-sindrome-discinetico
+- [307_01] Cólico renoureteral (nefrítico): https://manualsamur.apta-academy.com/manual/307_01-colico-renoureteral-nefritico
+- [307_02] Síndrome escrotal agudo: https://manualsamur.apta-academy.com/manual/307_02-sindrome-escrotal-agudo
+- [308_01] Urgencias obstétricas: https://manualsamur.apta-academy.com/manual/308_01-urgencias-obstetricas
+- [308_02] Asistencia al parto: https://manualsamur.apta-academy.com/manual/308_02-asistencia-al-parto
+- [309_01] Shock: https://manualsamur.apta-academy.com/manual/309_01-shock
+- [309_02] Síndrome Coronario Agudo con elevación del ST SCACEST: https://manualsamur.apta-academy.com/manual/309_02-sindrome-coronario-agudo-con-elevacion-del-st-scacest
+- [309_03] Síndrome Coronario Agudo sin elevación del SR (SCACEST): https://manualsamur.apta-academy.com/manual/309_03-sindrome-coronario-agudo-sin-elevacion-del-sr-scacest
+- [309_04] Insuficiencia cardiaca aguda  crónica agudizada: https://manualsamur.apta-academy.com/manual/309_04-insuficiencia-cardiaca-aguda-cronica-agudizada
+- [309_05] Edema agudo de pulmón: https://manualsamur.apta-academy.com/manual/309_05-edema-agudo-de-pulmon
+- [309_06] Arritmias: https://manualsamur.apta-academy.com/manual/309_06-arritmias
+- [309_07] Crisis hipertensivas: https://manualsamur.apta-academy.com/manual/309_07-crisis-hipertensivas
+- [309_08] Isquemia arterial aguda: https://manualsamur.apta-academy.com/manual/309_08-isquemia-arterial-aguda
+- [309_09] Síncope: https://manualsamur.apta-academy.com/manual/309_09-sincope
+- [310_01] Crisis asmática aguda: https://manualsamur.apta-academy.com/manual/310_01-crisis-asmatica-aguda
+- [310_02] Exacerbaciones agudas del paciente con EPOC: https://manualsamur.apta-academy.com/manual/310_02-exacerbaciones-agudas-del-paciente-con-epoc
+- [310_03] Tromboembolismo pulmonar: https://manualsamur.apta-academy.com/manual/310_03-tromboembolismo-pulmonar
+- [311] Urgencias psiquiátricas: https://manualsamur.apta-academy.com/manual/311-urgencias-psiquiatricas
+- [312_01] Complicaciones de la diabetes: https://manualsamur.apta-academy.com/manual/312_01-complicaciones-de-la-diabetes
+- [312_02] Hiperglucemia por estrés: https://manualsamur.apta-academy.com/manual/312_02-hiperglucemia-por-estres
+- [312_03] Hiponatremia: https://manualsamur.apta-academy.com/manual/312_03-hiponatremia
+- [312_04] Hipopotasemia - Hiperpotasemia: https://manualsamur.apta-academy.com/manual/312_04-hipopotasemia-hiperpotasemia
+- [312_05] Hipocalcemia - Hipercalcemia: https://manualsamur.apta-academy.com/manual/312_05-hipocalcemia-hipercalcemia
+- [313_01] Paciente quemado: https://manualsamur.apta-academy.com/manual/313_01-paciente-quemado
+- [313_02] Urgencias por calor: https://manualsamur.apta-academy.com/manual/313_02-urgencias-por-calor
+- [313_03] Paciente con hipotermia: https://manualsamur.apta-academy.com/manual/313_03-paciente-con-hipotermia
+- [313_04] Lesiones por electricidad. Electrocución: https://manualsamur.apta-academy.com/manual/313_04-lesiones-por-electricidad-electrocucion
+- [313_05] Patologías por inmersión. Ahogamiento: https://manualsamur.apta-academy.com/manual/313_05-patologias-por-inmersion-ahogamiento
+- [314_00] Valoración del niño grave: https://manualsamur.apta-academy.com/manual/314_00-valoracion-del-nino-grave
+- [314_01] RCP pediátrica: https://manualsamur.apta-academy.com/manual/314_01-rcp-pediatrica
+- [314_02] Asistencia al recién nacido: https://manualsamur.apta-academy.com/manual/314_02-asistencia-al-recien-nacido
+- [314_03] Valoración del paciente pediátrico politraumatizado: https://manualsamur.apta-academy.com/manual/314_03-valoracion-del-paciente-pediatrico-politraumatizado
+- [314_04] Dificultad respiratoria: https://manualsamur.apta-academy.com/manual/314_04-dificultad-respiratoria
+- [314_05] Crisis convulsivas: https://manualsamur.apta-academy.com/manual/314_05-crisis-convulsivas
+- [314_06] Quemaduras: https://manualsamur.apta-academy.com/manual/314_06-quemaduras
+- [314_07] Manejo del ictus en la edad pediátrica: https://manualsamur.apta-academy.com/manual/314_07-manejo-del-ictus-en-la-edad-pediatrica
+- [314_08] Urticaria, angioedema y anafilaxia en pediatría: https://manualsamur.apta-academy.com/manual/314_08-urticaria-angioedema-y-anafilaxia-en-pediatria
+- [314_09] Atención al menor bajo los efectos de alcohol o drogas: https://manualsamur.apta-academy.com/manual/314_09-atencion-al-menor-bajo-los-efectos-de-alcohol-o-drogas
+- [315_01] Manejo general del paciente intoxicado: https://manualsamur.apta-academy.com/manual/315_01-manejo-general-del-paciente-intoxicado
+- [315_02] Intoxicación por humo: https://manualsamur.apta-academy.com/manual/315_02-intoxicacion-por-humo
+- [315_03] Intoxicaciones más frecuentes: https://manualsamur.apta-academy.com/manual/315_03-intoxicaciones-mas-frecuentes
+- [316] Reacción alérgica: https://manualsamur.apta-academy.com/manual/316-reaccion-alergica
 
 ## SVB (21 procedimientos)
 
-- [401] Valoración de la escena: https://manualsamur.miguelrzazo13.workers.dev/manual/401-valoracion-de-la-escena
-- [402] Valoración del paciente adulto: https://manualsamur.miguelrzazo13.workers.dev/manual/402-valoracion-del-paciente-adulto
-- [402_01] Valoración del niño grave: https://manualsamur.miguelrzazo13.workers.dev/manual/402_01-valoracion-del-nino-grave
-- [403] Instrumental adultos: https://manualsamur.miguelrzazo13.workers.dev/manual/403-instrumental-adultos
-- [404] Instrumental pediátrico: https://manualsamur.miguelrzazo13.workers.dev/manual/404-instrumental-pediatrico
-- [405] Obstrucción de la vía aérea por cuerpo extraño: https://manualsamur.miguelrzazo13.workers.dev/manual/405-obstruccion-de-la-via-aerea-por-cuerpo-extrano
-- [406] Desfibrilación externa automática: https://manualsamur.miguelrzazo13.workers.dev/manual/406-desfibrilacion-externa-automatica
-- [407] Patologías de origen cardiovascular: https://manualsamur.miguelrzazo13.workers.dev/manual/407-patologias-de-origen-cardiovascular
-- [408] Posible patología de origen respiratorio: https://manualsamur.miguelrzazo13.workers.dev/manual/408-posible-patologia-de-origen-respiratorio
-- [409] Posible intoxicación por drogas de abuso: https://manualsamur.miguelrzazo13.workers.dev/manual/409-posible-intoxicacion-por-drogas-de-abuso
-- [410] Convulsiones: https://manualsamur.miguelrzazo13.workers.dev/manual/410-convulsiones
-- [410_01] Posible enfermedad vascular cerebral aguda (ICTUS): https://manualsamur.miguelrzazo13.workers.dev/manual/410_01-posible-enfermedad-vascular-cerebral-aguda-ictus
-- [411] Posible shock hipovolémico: https://manualsamur.miguelrzazo13.workers.dev/manual/411-posible-shock-hipovolemico
-- [412_00] Valoración inicial del paciente politraumatizado: https://manualsamur.miguelrzazo13.workers.dev/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
-- [412_01] Craneoencefálico: https://manualsamur.miguelrzazo13.workers.dev/manual/412_01-craneoencefalico
-- [412_02] Columna vertebral: https://manualsamur.miguelrzazo13.workers.dev/manual/412_02-columna-vertebral
-- [412_03] Torácico: https://manualsamur.miguelrzazo13.workers.dev/manual/412_03-toracico
-- [412_04] Abdominal: https://manualsamur.miguelrzazo13.workers.dev/manual/412_04-abdominal
-- [413] Atención y traslado al paciente psiquiátrico: https://manualsamur.miguelrzazo13.workers.dev/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
-- [414] Solicitud de USVA: https://manualsamur.miguelrzazo13.workers.dev/manual/414-solicitud-de-usva
-- [415] Paciente con posible alteración de niveles de glucemia capilar: https://manualsamur.miguelrzazo13.workers.dev/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
+- [401] Valoración de la escena: https://manualsamur.apta-academy.com/manual/401-valoracion-de-la-escena
+- [402] Valoración del paciente adulto: https://manualsamur.apta-academy.com/manual/402-valoracion-del-paciente-adulto
+- [402_01] Valoración del niño grave: https://manualsamur.apta-academy.com/manual/402_01-valoracion-del-nino-grave
+- [403] Instrumental adultos: https://manualsamur.apta-academy.com/manual/403-instrumental-adultos
+- [404] Instrumental pediátrico: https://manualsamur.apta-academy.com/manual/404-instrumental-pediatrico
+- [405] Obstrucción de la vía aérea por cuerpo extraño: https://manualsamur.apta-academy.com/manual/405-obstruccion-de-la-via-aerea-por-cuerpo-extrano
+- [406] Desfibrilación externa automática: https://manualsamur.apta-academy.com/manual/406-desfibrilacion-externa-automatica
+- [407] Patologías de origen cardiovascular: https://manualsamur.apta-academy.com/manual/407-patologias-de-origen-cardiovascular
+- [408] Posible patología de origen respiratorio: https://manualsamur.apta-academy.com/manual/408-posible-patologia-de-origen-respiratorio
+- [409] Posible intoxicación por drogas de abuso: https://manualsamur.apta-academy.com/manual/409-posible-intoxicacion-por-drogas-de-abuso
+- [410] Convulsiones: https://manualsamur.apta-academy.com/manual/410-convulsiones
+- [410_01] Posible enfermedad vascular cerebral aguda (ICTUS): https://manualsamur.apta-academy.com/manual/410_01-posible-enfermedad-vascular-cerebral-aguda-ictus
+- [411] Posible shock hipovolémico: https://manualsamur.apta-academy.com/manual/411-posible-shock-hipovolemico
+- [412_00] Valoración inicial del paciente politraumatizado: https://manualsamur.apta-academy.com/manual/412_00-valoracion-inicial-del-paciente-politraumatizado
+- [412_01] Craneoencefálico: https://manualsamur.apta-academy.com/manual/412_01-craneoencefalico
+- [412_02] Columna vertebral: https://manualsamur.apta-academy.com/manual/412_02-columna-vertebral
+- [412_03] Torácico: https://manualsamur.apta-academy.com/manual/412_03-toracico
+- [412_04] Abdominal: https://manualsamur.apta-academy.com/manual/412_04-abdominal
+- [413] Atención y traslado al paciente psiquiátrico: https://manualsamur.apta-academy.com/manual/413-atencion-y-traslado-al-paciente-psiquiatrico
+- [414] Solicitud de USVA: https://manualsamur.apta-academy.com/manual/414-solicitud-de-usva
+- [415] Paciente con posible alteración de niveles de glucemia capilar: https://manualsamur.apta-academy.com/manual/415-paciente-con-posible-alteracion-de-niveles-de-glucemia-capilar
 
 ## Psicológicos (9 procedimientos)
 
-- [501] Activación y actuación del psicólogo de guardia: https://manualsamur.miguelrzazo13.workers.dev/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
-- [502] Intervención psicosocial en situaciones de crisis: https://manualsamur.miguelrzazo13.workers.dev/manual/502-intervencion-psicosocial-en-situaciones-de-crisis
-- [503] Comunicación de malas noticias, inicio y proceso de duelo: https://manualsamur.miguelrzazo13.workers.dev/manual/503-comunicacion-de-malas-noticias-inicio-y-proceso-de-duelo
-- [504] Crisis de ansiedad: https://manualsamur.miguelrzazo13.workers.dev/manual/504-crisis-de-ansiedad
-- [505] Asistencia psicológica en conducta suicida: https://manualsamur.miguelrzazo13.workers.dev/manual/505-asistencia-psicologica-en-conducta-suicida
-- [506] Situaciones de negociación: https://manualsamur.miguelrzazo13.workers.dev/manual/506-situaciones-de-negociacion
-- [507] Asistencia psicológica en Código 9: https://manualsamur.miguelrzazo13.workers.dev/manual/507-asistencia-psicologica-en-codigo-9
-- [508] Asistencia psicológica en agresión sexual: https://manualsamur.miguelrzazo13.workers.dev/manual/508-asistencia-psicologica-en-agresion-sexual
-- [509] Asistencia psicológica en violencia de género: https://manualsamur.miguelrzazo13.workers.dev/manual/509-asistencia-psicologica-en-violencia-de-genero
+- [501] Activación y actuación del psicólogo de guardia: https://manualsamur.apta-academy.com/manual/501-activacion-y-actuacion-del-psicologo-de-guardia
+- [502] Intervención psicosocial en situaciones de crisis: https://manualsamur.apta-academy.com/manual/502-intervencion-psicosocial-en-situaciones-de-crisis
+- [503] Comunicación de malas noticias, inicio y proceso de duelo: https://manualsamur.apta-academy.com/manual/503-comunicacion-de-malas-noticias-inicio-y-proceso-de-duelo
+- [504] Crisis de ansiedad: https://manualsamur.apta-academy.com/manual/504-crisis-de-ansiedad
+- [505] Asistencia psicológica en conducta suicida: https://manualsamur.apta-academy.com/manual/505-asistencia-psicologica-en-conducta-suicida
+- [506] Situaciones de negociación: https://manualsamur.apta-academy.com/manual/506-situaciones-de-negociacion
+- [507] Asistencia psicológica en Código 9: https://manualsamur.apta-academy.com/manual/507-asistencia-psicologica-en-codigo-9
+- [508] Asistencia psicológica en agresión sexual: https://manualsamur.apta-academy.com/manual/508-asistencia-psicologica-en-agresion-sexual
+- [509] Asistencia psicológica en violencia de género: https://manualsamur.apta-academy.com/manual/509-asistencia-psicologica-en-violencia-de-genero
 
 ## Técnicas (63 procedimientos)
 
-- [601_01] Relación con el paciente: https://manualsamur.miguelrzazo13.workers.dev/manual/601_01-relacion-con-el-paciente
-- [601_02] Técnicas y medidas higiénicas: https://manualsamur.miguelrzazo13.workers.dev/manual/601_02-tecnicas-y-medidas-higienicas
-- [601_03] Signos Vitales: https://manualsamur.miguelrzazo13.workers.dev/manual/601_03-signos-vitales
-- [601_04] Medición de Temperatura central mediante sonda esofágica: https://manualsamur.miguelrzazo13.workers.dev/manual/601_04-medicion-de-temperatura-central-mediante-sonda-esofagica
-- [601_05] Administración de comprimido bucodispersable: https://manualsamur.miguelrzazo13.workers.dev/manual/601_05-administracion-de-comprimido-bucodispersable
-- [601_06] Test rápido de antígeno de SARS-CoV-2: https://manualsamur.miguelrzazo13.workers.dev/manual/601_06-test-rapido-de-antigeno-de-sars-cov-2
-- [602_01] Permeabilización básica de la vía aérea: https://manualsamur.miguelrzazo13.workers.dev/manual/602_01-permeabilizacion-basica-de-la-via-aerea
-- [602_02] Aspiración de secreciones: https://manualsamur.miguelrzazo13.workers.dev/manual/602_02-aspiracion-de-secreciones
-- [602_03] Intubación Endotraqueal: https://manualsamur.miguelrzazo13.workers.dev/manual/602_03-intubacion-endotraqueal
-- [602_04] INTRODUCTOR DE FROVA 14,0 Fr (adultos): https://manualsamur.miguelrzazo13.workers.dev/manual/602_04-introductor-de-frova-140-fr-adultos
-- [602_05] CRICOTIROIDOTOMÍA: https://manualsamur.miguelrzazo13.workers.dev/manual/602_05-cricotiroidotomia
-- [602_06] TORACOCENTESIS: https://manualsamur.miguelrzazo13.workers.dev/manual/602_06-toracocentesis
-- [602_07] TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®: https://manualsamur.miguelrzazo13.workers.dev/manual/602_07-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
-- [602_08] Medición de satO2: https://manualsamur.miguelrzazo13.workers.dev/manual/602_08-medicion-de-sato2
-- [602_09] Medición de COHb: https://manualsamur.miguelrzazo13.workers.dev/manual/602_09-medicion-de-cohb
-- [602_10] Medición de ETCO2: https://manualsamur.miguelrzazo13.workers.dev/manual/602_10-medicion-de-etco2
-- [602_11] Administración de fármacos por vía inhalatoria: https://manualsamur.miguelrzazo13.workers.dev/manual/602_11-administracion-de-farmacos-por-via-inhalatoria
-- [602_12] Administración endotraqueal de medicamentos: https://manualsamur.miguelrzazo13.workers.dev/manual/602_12-administracion-endotraqueal-de-medicamentos
-- [602_13] Ventilación Mecánica No Invasiva: https://manualsamur.miguelrzazo13.workers.dev/manual/602_13-ventilacion-mecanica-no-invasiva
-- [602_14] Administración de fármacos con cámara de inhalación: https://manualsamur.miguelrzazo13.workers.dev/manual/602_14-administracion-de-farmacos-con-camara-de-inhalacion
-- [603_01] Electrodiagrama de 12 Derivaciones: https://manualsamur.miguelrzazo13.workers.dev/manual/603_01-electrodiagrama-de-12-derivaciones
-- [603_02] Desfibrilación: https://manualsamur.miguelrzazo13.workers.dev/manual/603_02-desfibrilacion
-- [603_03] Desfibrilación de doble secuencia: https://manualsamur.miguelrzazo13.workers.dev/manual/603_03-desfibrilacion-de-doble-secuencia
-- [603_04] Cardioversión: https://manualsamur.miguelrzazo13.workers.dev/manual/603_04-cardioversion
-- [603_05] Marcapasos temporal no invasivo: https://manualsamur.miguelrzazo13.workers.dev/manual/603_05-marcapasos-temporal-no-invasivo
-- [603_06] Masaje del seno carotídeo: https://manualsamur.miguelrzazo13.workers.dev/manual/603_06-masaje-del-seno-carotideo
-- [603_07] Pericardiocentesis: https://manualsamur.miguelrzazo13.workers.dev/manual/603_07-pericardiocentesis
-- [603_08] Toracotomía de reanimación: https://manualsamur.miguelrzazo13.workers.dev/manual/603_08-toracotomia-de-reanimacion
-- [603_09] Hipotermia terapéutica en la parada cardiaca: https://manualsamur.miguelrzazo13.workers.dev/manual/603_09-hipotermia-terapeutica-en-la-parada-cardiaca
-- [603_10] Dispositivo de compresiones torácicas automático LUCAS 3: https://manualsamur.miguelrzazo13.workers.dev/manual/603_10-dispositivo-de-compresiones-toracicas-automatico-lucas-3
-- [604_01] Preparación y manipulación de material de acceso vascular: https://manualsamur.miguelrzazo13.workers.dev/manual/604_01-preparacion-y-manipulacion-de-material-de-acceso-vascular
-- [604_02] Priorización de la localización de accesos vasculares: https://manualsamur.miguelrzazo13.workers.dev/manual/604_02-priorizacion-de-la-localizacion-de-accesos-vasculares
-- [604_03] Canalización de vías venosas periféricas: https://manualsamur.miguelrzazo13.workers.dev/manual/604_03-canalizacion-de-vias-venosas-perifericas
-- [604_04] Canalización de vías venosas periféricas guiada por ecografía: https://manualsamur.miguelrzazo13.workers.dev/manual/604_04-canalizacion-de-vias-venosas-perifericas-guiada-por-ecografia
-- [604_05] Administración de fármacos por vía intravenosa: https://manualsamur.miguelrzazo13.workers.dev/manual/604_05-administracion-de-farmacos-por-via-intravenosa
-- [604_06] Canalización de vías venosas centrales: https://manualsamur.miguelrzazo13.workers.dev/manual/604_06-canalizacion-de-vias-venosas-centrales
-- [604_07] Vía Intraósea, sistema EZ-IO: https://manualsamur.miguelrzazo13.workers.dev/manual/604_07-via-intraosea-sistema-ez-io
-- [604_08] Accesos vasculares especiales: https://manualsamur.miguelrzazo13.workers.dev/manual/604_08-accesos-vasculares-especiales
-- [604_09] Cateterización de la vena umbilical: https://manualsamur.miguelrzazo13.workers.dev/manual/604_09-cateterizacion-de-la-vena-umbilical
-- [604_10] Accesos vasculares en niños: https://manualsamur.miguelrzazo13.workers.dev/manual/604_10-accesos-vasculares-en-ninos
-- [604_11] Obtención de sangre arterial: https://manualsamur.miguelrzazo13.workers.dev/manual/604_11-obtencion-de-sangre-arterial
-- [604_12] Analítica de sangre: https://manualsamur.miguelrzazo13.workers.dev/manual/604_12-analitica-de-sangre
-- [604_13] Medición de la glucemia: https://manualsamur.miguelrzazo13.workers.dev/manual/604_13-medicion-de-la-glucemia
-- [604_14] Determinación de INR (MEDIDOR MISSION): https://manualsamur.miguelrzazo13.workers.dev/manual/604_14-determinacion-de-inr-medidor-mission
-- [604_15] Test de troponina de alta sensibilidad (Analizador SIEMENS Healthineers): https://manualsamur.miguelrzazo13.workers.dev/manual/604_15-test-de-troponina-de-alta-sensibilidad-analizador-siemens-healthineers
-- [605_01] Sondaje gástrico: https://manualsamur.miguelrzazo13.workers.dev/manual/605_01-sondaje-gastrico
-- [605_02] Lavado gástrico: https://manualsamur.miguelrzazo13.workers.dev/manual/605_02-lavado-gastrico
-- [605_03] Administración de carbón activado: https://manualsamur.miguelrzazo13.workers.dev/manual/605_03-administracion-de-carbon-activado
-- [605_04] Sondaje vesical: https://manualsamur.miguelrzazo13.workers.dev/manual/605_04-sondaje-vesical
-- [606_01] Tratamiento inicial de heridas: https://manualsamur.miguelrzazo13.workers.dev/manual/606_01-tratamiento-inicial-de-heridas
-- [606_02] Control de hemorragias: https://manualsamur.miguelrzazo13.workers.dev/manual/606_02-control-de-hemorragias
-- [606_03] Vendajes: https://manualsamur.miguelrzazo13.workers.dev/manual/606_03-vendajes
-- [606_04] Parche oclusivo torácico: https://manualsamur.miguelrzazo13.workers.dev/manual/606_04-parche-oclusivo-toracico
-- [606_05] Tratamiento inicial de las quemaduras: https://manualsamur.miguelrzazo13.workers.dev/manual/606_05-tratamiento-inicial-de-las-quemaduras
-- [606_06] Técnica de escarotomía: https://manualsamur.miguelrzazo13.workers.dev/manual/606_06-tecnica-de-escarotomia
-- [606_07] Técnicas de movilización de pacientes: https://manualsamur.miguelrzazo13.workers.dev/manual/606_07-tecnicas-de-movilizacion-de-pacientes
-- [606_08] Técnicas de inmovilización: https://manualsamur.miguelrzazo13.workers.dev/manual/606_08-tecnicas-de-inmovilizacion
-- [606_09] Inmovilización niño. SIPE®: https://manualsamur.miguelrzazo13.workers.dev/manual/606_09-inmovilizacion-nino-sipe
-- [607] EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA: https://manualsamur.miguelrzazo13.workers.dev/manual/607-exploracion-ecografica-extrahospitalaria
-- [608_01] Lavado Ocular: https://manualsamur.miguelrzazo13.workers.dev/manual/608_01-lavado-ocular
-- [608_02] Extracción de lentes de contacto (rígidas y blandas: https://manualsamur.miguelrzazo13.workers.dev/manual/608_02-extraccion-de-lentes-de-contacto-rigidas-y-blandas
-- [609_01] Cesárea postparada: https://manualsamur.miguelrzazo13.workers.dev/manual/609_01-cesarea-postparada
-- [609_02] Episotomía Mediolateral: https://manualsamur.miguelrzazo13.workers.dev/manual/609_02-episotomia-mediolateral
+- [601_01] Relación con el paciente: https://manualsamur.apta-academy.com/manual/601_01-relacion-con-el-paciente
+- [601_02] Técnicas y medidas higiénicas: https://manualsamur.apta-academy.com/manual/601_02-tecnicas-y-medidas-higienicas
+- [601_03] Signos Vitales: https://manualsamur.apta-academy.com/manual/601_03-signos-vitales
+- [601_04] Medición de Temperatura central mediante sonda esofágica: https://manualsamur.apta-academy.com/manual/601_04-medicion-de-temperatura-central-mediante-sonda-esofagica
+- [601_05] Administración de comprimido bucodispersable: https://manualsamur.apta-academy.com/manual/601_05-administracion-de-comprimido-bucodispersable
+- [601_06] Test rápido de antígeno de SARS-CoV-2: https://manualsamur.apta-academy.com/manual/601_06-test-rapido-de-antigeno-de-sars-cov-2
+- [602_01] Permeabilización básica de la vía aérea: https://manualsamur.apta-academy.com/manual/602_01-permeabilizacion-basica-de-la-via-aerea
+- [602_02] Aspiración de secreciones: https://manualsamur.apta-academy.com/manual/602_02-aspiracion-de-secreciones
+- [602_03] Intubación Endotraqueal: https://manualsamur.apta-academy.com/manual/602_03-intubacion-endotraqueal
+- [602_04] INTRODUCTOR DE FROVA 14,0 Fr (adultos): https://manualsamur.apta-academy.com/manual/602_04-introductor-de-frova-140-fr-adultos
+- [602_05] CRICOTIROIDOTOMÍA: https://manualsamur.apta-academy.com/manual/602_05-cricotiroidotomia
+- [602_06] TORACOCENTESIS: https://manualsamur.apta-academy.com/manual/602_06-toracocentesis
+- [602_07] TORACOSTOMÍA CON SONDA Kit de Drenaje Torácico Portex®: https://manualsamur.apta-academy.com/manual/602_07-toracostomia-con-sonda-kit-de-drenaje-toracico-portex
+- [602_08] Medición de satO2: https://manualsamur.apta-academy.com/manual/602_08-medicion-de-sato2
+- [602_09] Medición de COHb: https://manualsamur.apta-academy.com/manual/602_09-medicion-de-cohb
+- [602_10] Medición de ETCO2: https://manualsamur.apta-academy.com/manual/602_10-medicion-de-etco2
+- [602_11] Administración de fármacos por vía inhalatoria: https://manualsamur.apta-academy.com/manual/602_11-administracion-de-farmacos-por-via-inhalatoria
+- [602_12] Administración endotraqueal de medicamentos: https://manualsamur.apta-academy.com/manual/602_12-administracion-endotraqueal-de-medicamentos
+- [602_13] Ventilación Mecánica No Invasiva: https://manualsamur.apta-academy.com/manual/602_13-ventilacion-mecanica-no-invasiva
+- [602_14] Administración de fármacos con cámara de inhalación: https://manualsamur.apta-academy.com/manual/602_14-administracion-de-farmacos-con-camara-de-inhalacion
+- [603_01] Electrodiagrama de 12 Derivaciones: https://manualsamur.apta-academy.com/manual/603_01-electrodiagrama-de-12-derivaciones
+- [603_02] Desfibrilación: https://manualsamur.apta-academy.com/manual/603_02-desfibrilacion
+- [603_03] Desfibrilación de doble secuencia: https://manualsamur.apta-academy.com/manual/603_03-desfibrilacion-de-doble-secuencia
+- [603_04] Cardioversión: https://manualsamur.apta-academy.com/manual/603_04-cardioversion
+- [603_05] Marcapasos temporal no invasivo: https://manualsamur.apta-academy.com/manual/603_05-marcapasos-temporal-no-invasivo
+- [603_06] Masaje del seno carotídeo: https://manualsamur.apta-academy.com/manual/603_06-masaje-del-seno-carotideo
+- [603_07] Pericardiocentesis: https://manualsamur.apta-academy.com/manual/603_07-pericardiocentesis
+- [603_08] Toracotomía de reanimación: https://manualsamur.apta-academy.com/manual/603_08-toracotomia-de-reanimacion
+- [603_09] Hipotermia terapéutica en la parada cardiaca: https://manualsamur.apta-academy.com/manual/603_09-hipotermia-terapeutica-en-la-parada-cardiaca
+- [603_10] Dispositivo de compresiones torácicas automático LUCAS 3: https://manualsamur.apta-academy.com/manual/603_10-dispositivo-de-compresiones-toracicas-automatico-lucas-3
+- [604_01] Preparación y manipulación de material de acceso vascular: https://manualsamur.apta-academy.com/manual/604_01-preparacion-y-manipulacion-de-material-de-acceso-vascular
+- [604_02] Priorización de la localización de accesos vasculares: https://manualsamur.apta-academy.com/manual/604_02-priorizacion-de-la-localizacion-de-accesos-vasculares
+- [604_03] Canalización de vías venosas periféricas: https://manualsamur.apta-academy.com/manual/604_03-canalizacion-de-vias-venosas-perifericas
+- [604_04] Canalización de vías venosas periféricas guiada por ecografía: https://manualsamur.apta-academy.com/manual/604_04-canalizacion-de-vias-venosas-perifericas-guiada-por-ecografia
+- [604_05] Administración de fármacos por vía intravenosa: https://manualsamur.apta-academy.com/manual/604_05-administracion-de-farmacos-por-via-intravenosa
+- [604_06] Canalización de vías venosas centrales: https://manualsamur.apta-academy.com/manual/604_06-canalizacion-de-vias-venosas-centrales
+- [604_07] Vía Intraósea, sistema EZ-IO: https://manualsamur.apta-academy.com/manual/604_07-via-intraosea-sistema-ez-io
+- [604_08] Accesos vasculares especiales: https://manualsamur.apta-academy.com/manual/604_08-accesos-vasculares-especiales
+- [604_09] Cateterización de la vena umbilical: https://manualsamur.apta-academy.com/manual/604_09-cateterizacion-de-la-vena-umbilical
+- [604_10] Accesos vasculares en niños: https://manualsamur.apta-academy.com/manual/604_10-accesos-vasculares-en-ninos
+- [604_11] Obtención de sangre arterial: https://manualsamur.apta-academy.com/manual/604_11-obtencion-de-sangre-arterial
+- [604_12] Analítica de sangre: https://manualsamur.apta-academy.com/manual/604_12-analitica-de-sangre
+- [604_13] Medición de la glucemia: https://manualsamur.apta-academy.com/manual/604_13-medicion-de-la-glucemia
+- [604_14] Determinación de INR (MEDIDOR MISSION): https://manualsamur.apta-academy.com/manual/604_14-determinacion-de-inr-medidor-mission
+- [604_15] Test de troponina de alta sensibilidad (Analizador SIEMENS Healthineers): https://manualsamur.apta-academy.com/manual/604_15-test-de-troponina-de-alta-sensibilidad-analizador-siemens-healthineers
+- [605_01] Sondaje gástrico: https://manualsamur.apta-academy.com/manual/605_01-sondaje-gastrico
+- [605_02] Lavado gástrico: https://manualsamur.apta-academy.com/manual/605_02-lavado-gastrico
+- [605_03] Administración de carbón activado: https://manualsamur.apta-academy.com/manual/605_03-administracion-de-carbon-activado
+- [605_04] Sondaje vesical: https://manualsamur.apta-academy.com/manual/605_04-sondaje-vesical
+- [606_01] Tratamiento inicial de heridas: https://manualsamur.apta-academy.com/manual/606_01-tratamiento-inicial-de-heridas
+- [606_02] Control de hemorragias: https://manualsamur.apta-academy.com/manual/606_02-control-de-hemorragias
+- [606_03] Vendajes: https://manualsamur.apta-academy.com/manual/606_03-vendajes
+- [606_04] Parche oclusivo torácico: https://manualsamur.apta-academy.com/manual/606_04-parche-oclusivo-toracico
+- [606_05] Tratamiento inicial de las quemaduras: https://manualsamur.apta-academy.com/manual/606_05-tratamiento-inicial-de-las-quemaduras
+- [606_06] Técnica de escarotomía: https://manualsamur.apta-academy.com/manual/606_06-tecnica-de-escarotomia
+- [606_07] Técnicas de movilización de pacientes: https://manualsamur.apta-academy.com/manual/606_07-tecnicas-de-movilizacion-de-pacientes
+- [606_08] Técnicas de inmovilización: https://manualsamur.apta-academy.com/manual/606_08-tecnicas-de-inmovilizacion
+- [606_09] Inmovilización niño. SIPE®: https://manualsamur.apta-academy.com/manual/606_09-inmovilizacion-nino-sipe
+- [607] EXPLORACIÓN ECOGRÁFICA EXTRAHOSPITALARIA: https://manualsamur.apta-academy.com/manual/607-exploracion-ecografica-extrahospitalaria
+- [608_01] Lavado Ocular: https://manualsamur.apta-academy.com/manual/608_01-lavado-ocular
+- [608_02] Extracción de lentes de contacto (rígidas y blandas: https://manualsamur.apta-academy.com/manual/608_02-extraccion-de-lentes-de-contacto-rigidas-y-blandas
+- [609_01] Cesárea postparada: https://manualsamur.apta-academy.com/manual/609_01-cesarea-postparada
+- [609_02] Episotomía Mediolateral: https://manualsamur.apta-academy.com/manual/609_02-episotomia-mediolateral
 
 ## Notas para LLMs
 

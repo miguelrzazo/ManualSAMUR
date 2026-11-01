@@ -10,6 +10,7 @@ import {
   UNIVERSAL_LINK_EXCLUDED_PATHS,
   UNIVERSAL_LINK_PATHS,
   WEB_ORIGIN,
+  LEGACY_WEB_ORIGIN,
   appRouteToWebActivity,
   appRouteToWebPath,
   webUrlToAppRoute,
@@ -136,7 +137,9 @@ test("unknown ids fall back to the section root; foreign and excluded URLs are i
   assert.equal(webUrlToAppRoute(`${WEB_ORIGIN}/gestion-editorial`, content), null);
   assert.equal(webUrlToAppRoute(`${WEB_ORIGIN}/api/health`, content), null);
   assert.equal(webUrlToAppRoute("https://example.com/manual/301-parada-cardiorrespiratoria", content), null);
+  assert.equal(webUrlToAppRoute("http://manualsamur.apta-academy.com/manual", content), null);
   assert.equal(webUrlToAppRoute("http://manualsamur.miguelrzazo13.workers.dev/manual", content), null);
+  assert.deepEqual(webUrlToAppRoute("https://manualsamur.miguelrzazo13.workers.dev/mapa", content), { screen: "Tabs", params: { screen: "Mapa" } });
   assert.equal(webUrlToAppRoute("not a url", content), null);
   assert.equal(appRouteToWebPath({ name: "Changelog" }, content), null);
   assert.equal(appRouteToWebPath({ name: "Anexo", params: { attachmentId: "x" } }, content), null);
@@ -170,11 +173,12 @@ test("Cloudflare serves the association file as JSON", () => {
   assert.match(headers, /^\/\.well-known\/apple-app-site-association\n\s+Content-Type: application\/json$/m);
 });
 
-test("the app config, the mapping and the content origin agree on one domain", () => {
+test("the app config, the mapping and the content origin agree on the canonical domain, keeping the legacy one claimed", () => {
   const { expo } = JSON.parse(readFileSync("apps/mobile/app.json", "utf8"));
   const host = new URL(WEB_ORIGIN).host;
+  const legacyHost = new URL(LEGACY_WEB_ORIGIN).host;
   assert.equal(expo.extra.manualContentOrigin, WEB_ORIGIN);
-  assert.deepEqual(expo.ios.associatedDomains, [`applinks:${host}`, `activitycontinuation:${host}`]);
+  assert.deepEqual(expo.ios.associatedDomains, [`applinks:${host}`, `activitycontinuation:${host}`, `applinks:${legacyHost}`, `activitycontinuation:${legacyHost}`]);
   assert.ok(expo.ios.infoPlist.NSUserActivityTypes.includes(HANDOFF_ACTIVITY_TYPE));
   assert.equal(`FC8DH72682.${expo.ios.bundleIdentifier}`, APPLE_APP_ID);
 });

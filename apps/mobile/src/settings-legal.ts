@@ -47,8 +47,8 @@ export const PENDING_SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = 
 
 export const SETTINGS_LEGAL_METADATA: Readonly<SettingsLegalMetadata> = {
   publisher: "Miguel Rosa Zazo",
-  privacyPolicyUrl: "https://manualsamur.miguelrzazo13.workers.dev/privacidad",
-  supportUrl: "https://manualsamur.miguelrzazo13.workers.dev/soporte",
+  privacyPolicyUrl: "https://manualsamur.apta-academy.com/privacidad",
+  supportUrl: "https://manualsamur.apta-academy.com/soporte",
   // El mismo buzón que la web publica en "Sobre mí". Estaba vacío, y `isPendingSettingsMetadata`
   // trata la cadena vacía como pendiente, así que la app se declaraba sin contacto
   // mientras el sitio sí lo daba.

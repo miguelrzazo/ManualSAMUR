@@ -5,7 +5,7 @@ import { canonicalProcedureMarkdown, resolveCanonicalSiteUrl } from "../lib/mark
 test("resolveCanonicalSiteUrl prefers configured origins and normalizes slashes", () => {
   assert.equal(resolveCanonicalSiteUrl({ SITE_URL: "https://example.test///" }), "https://example.test");
   assert.equal(resolveCanonicalSiteUrl({ NEXT_PUBLIC_SITE_URL: "https://public.test/" }), "https://public.test");
-  assert.equal(resolveCanonicalSiteUrl({}), "https://manualsamur.miguelrzazo13.workers.dev");
+  assert.equal(resolveCanonicalSiteUrl({}), "https://manualsamur.apta-academy.com");
 });
 
 test("canonicalProcedureMarkdown preserves metadata, tables, links and attachment references", () => {

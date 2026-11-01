@@ -26,11 +26,13 @@
         ]
       },
       "associatedDomains": [
+        "applinks:manualsamur.apta-academy.com",
+        "activitycontinuation:manualsamur.apta-academy.com",
         "applinks:manualsamur.miguelrzazo13.workers.dev",
         "activitycontinuation:manualsamur.miguelrzazo13.workers.dev"
       ],
       "deploymentTarget": "16.4",
-      "buildNumber": "8",
+      "buildNumber": "10",
       "icon": {
         "light": "./assets/icon-ios-light.png",
         "dark": "./assets/icon-ios-dark.png",
@@ -77,7 +79,7 @@
       "./plugins/with-watch-companion"
     ],
     "extra": {
-      "manualContentOrigin": "https://manualsamur.miguelrzazo13.workers.dev"
+      "manualContentOrigin": "https://manualsamur.apta-academy.com"
     },
     "experiments": {
       "inlineModules": {

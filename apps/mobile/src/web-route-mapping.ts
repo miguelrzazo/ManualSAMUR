@@ -17,7 +17,9 @@ import type { MobileContent } from "./data/schema.ts";
 import type { RootStackParamList } from "./navigation-types.ts";
 import { resolveProcedureReference } from "./procedure-logic.ts";
 
-export const WEB_ORIGIN = "https://manualsamur.miguelrzazo13.workers.dev";
+export const WEB_ORIGIN = "https://manualsamur.apta-academy.com";
+/** Host used before the move to the APTA subdomain; links shared from it still open the app. */
+export const LEGACY_WEB_ORIGIN = "https://manualsamur.miguelrzazo13.workers.dev";
 export const HANDOFF_ACTIVITY_TYPE = "es.madrid.samur.manual.view";
 export const APPLE_APP_ID = "FC8DH72682.es.madrid.samur.manual";
 
@@ -182,7 +184,8 @@ export function appRouteToWebPath(route: FocusedRoute, content: WebRouteContent)
 }
 
 function hostMatches(url: URL, origin: string): boolean {
-  return url.protocol === "https:" && url.host === new URL(origin).host;
+  if (url.protocol !== "https:") return false;
+  return url.host === new URL(origin).host || (origin === WEB_ORIGIN && url.host === new URL(LEGACY_WEB_ORIGIN).host);
 }
 
 /**
