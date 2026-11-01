@@ -259,14 +259,14 @@ function ProcedureRow({
         className="h-7 w-7 p-0 flex-shrink-0"
         onToggle={onFavoritesChange}
       />
-      <Link
-        href={`/manual/${procedure.slug}`}
+      <a
+        href={`/manual/${encodeURIComponent(procedure.slug)}`}
         className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-muted/50 transition-colors group flex-1 min-w-0"
       >
         <span className="font-mono text-xs text-muted-foreground/50 w-10 flex-shrink-0 tabular-nums">{procedure.id}</span>
         <span className="flex-1 text-sm group-hover:text-primary transition-colors truncate">{procedure.title}</span>
         <ArrowRight className="h-3 w-3 text-muted-foreground/20 group-hover:text-primary/60 transition-all group-hover:translate-x-0.5 flex-shrink-0" />
-      </Link>
+      </a>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { NavBar } from "@/components/shared/NavBar";
 import { ViewportHeightObserver } from "@/components/shared/ViewportHeightObserver";
 import { SuppressNextThemesWarning } from "@/components/shared/SuppressNextThemesWarning";
 import { Toaster } from "@/components/ui/toaster";
-import { getProcedureNavMeta } from "@/lib/content";
+import { getProcedureNavMeta, getProcedureSidebarSections } from "@/lib/content";
 import { readMainLinksData } from "@/lib/main-content";
 import "./globals.css";
 
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ViewportHeightObserver />
           <SuppressNextThemesWarning />
-          <PublicationShell fallbackNavigation={<NavBar procedures={procedures} mainLinks={mainLinks} />}>
+          <PublicationShell fallbackNavigation={<NavBar procedures={procedures} mainLinks={mainLinks} />} mainLinks={mainLinks} sidebarSections={getProcedureSidebarSections()}>
             {children}
           </PublicationShell>
           <Toaster />

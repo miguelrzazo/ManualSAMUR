@@ -11,6 +11,30 @@ import { readCollectionCookie, FAVORITES_COOKIE, RECENT_COOKIE } from "@/lib/man
 import { FavoriteButton } from "@/components/manual/FavoriteButton";
 import { ShareButton } from "@/components/manual/ShareButton";
 import { PublishedProcedureBody } from "./PublishedEditorialBlocks";
+import { ManualHomeClient } from "@/components/manual/ManualHomeClient";
+import { TableOfContents } from "@/components/manual/TableOfContents";
+import type { ProcedureNavMeta, ProcedureSidebarSection } from "@/lib/content";
+
+/** Preserve the established groups, while taking identities and titles from the active publication. */
+export function publicationSections(procedures: MobileProcedure[], original: ProcedureSidebarSection[]): ProcedureSidebarSection[] {
+  const byId = new Map(procedures.map(({ id, title, slug, section }) => [id, { id, title, slug, section }]));
+  const seen = new Set<string>();
+  const sections = original.map(({ section, groups }) => ({ section, groups: groups.map(({ name, subgroups }) => ({ name, subgroups: subgroups.map(({ name, procedures }) => ({ name, procedures: procedures.flatMap((item) => {
+    const current = byId.get(item.id);
+    if (!current || current.section !== section || seen.has(item.id)) return [];
+    seen.add(item.id);
+    return [current];
+  }) })).filter((group) => group.procedures.length) })).filter((group) => group.subgroups.length) })).filter((section) => section.groups.length);
+  for (const item of byId.values()) {
+    if (seen.has(item.id)) continue;
+    let section = sections.find((entry) => entry.section === item.section);
+    if (!section) { section = { section: item.section, groups: [] }; sections.push(section); }
+    let group = section.groups.find((entry) => entry.name === "Otros");
+    if (!group) { group = { name: "Otros", subgroups: [{ name: "Otros", procedures: [] }] }; section.groups.push(group); }
+    group.subgroups[0].procedures.push(item as ProcedureNavMeta);
+  }
+  return sections;
+}
 
 export function PublicationSearch({ snapshot }: { snapshot: MobileContentSnapshot }) {
   const [query, setQuery] = useState("");
@@ -26,12 +50,12 @@ export function PublicationSearch({ snapshot }: { snapshot: MobileContentSnapsho
 function Procedure({ procedure, snapshot }: { procedure: MobileProcedure; snapshot: MobileContentSnapshot }) {
   const relatedIds = new Set([...procedure.related, ...procedure.backlinks]);
   const related = snapshot.content.procedures.filter((item) => relatedIds.has(item.id));
-  return <article className="mx-auto max-w-4xl px-4 py-8"><ProcedureVisitTracker procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><a href="/manual" className="text-sm text-primary underline">← Manual</a><p className="mt-6 text-sm text-muted-foreground">{procedure.id} · {procedure.section}</p><h1 className="mt-2 break-words text-3xl font-bold tracking-tight [overflow-wrap:anywhere]">{procedure.title}</h1><div className="my-5 flex items-center gap-3"><FavoriteButton procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><ShareButton title={procedure.title} url={typeof window === "undefined" ? `/manual/${encodeURIComponent(procedure.slug)}` : `${window.location.origin}/manual/${encodeURIComponent(procedure.slug)}`} markdown={procedure.content} /><span className="text-xs text-muted-foreground">Actualizado: {procedure.updated || snapshot.generatedAt.slice(0, 10)}</span></div><PublishedProcedureBody procedure={procedure} snapshot={snapshot} />{procedure.attachments.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Documentos e imágenes</h2><ul>{procedure.attachments.map((attachment) => <li key={attachment.id}><a className="inline-flex min-h-11 items-center text-primary underline" href={attachment.localPath}>{attachment.filename}</a></li>)}</ul></section>}{related.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Procedimientos relacionados</h2>{related.map((item) => <a key={item.id} className="block py-3 text-primary underline" href={`/manual/${encodeURIComponent(item.slug)}`}>{item.id} · {item.title}</a>)}</section>}</article>;
+  return <article className="mx-auto max-w-4xl px-4 py-8"><ProcedureVisitTracker procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><a href="/manual" className="text-sm text-primary underline">← Manual</a><p className="mt-6 text-sm text-muted-foreground">{procedure.id} · {procedure.section}</p><h1 className="mt-2 break-words text-3xl font-bold tracking-tight [overflow-wrap:anywhere]">{procedure.title}</h1><div className="my-5 flex items-center gap-3"><FavoriteButton procedureId={procedure.id} validIds={snapshot.content.procedures.map((item) => item.id)} /><ShareButton title={procedure.title} url={typeof window === "undefined" ? `/manual/${encodeURIComponent(procedure.slug)}` : `${window.location.origin}/manual/${encodeURIComponent(procedure.slug)}`} markdown={procedure.content} /><span className="text-xs text-muted-foreground">Actualizado: {procedure.updated || snapshot.generatedAt.slice(0, 10)}</span></div><TableOfContents articleId="published-procedure-content" pageTitle={procedure.title} collapsible /><div id="published-procedure-content"><PublishedProcedureBody procedure={procedure} snapshot={snapshot} /></div>{procedure.attachments.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Documentos e imágenes</h2><ul>{procedure.attachments.map((attachment) => <li key={attachment.id}><a className="inline-flex min-h-11 items-center text-primary underline" href={attachment.localPath}>{attachment.filename}</a></li>)}</ul></section>}{related.length > 0 && <section className="mt-8 border-t border-border pt-5"><h2 className="font-semibold">Procedimientos relacionados</h2>{related.map((item) => <a key={item.id} className="block py-3 text-primary underline" href={`/manual/${encodeURIComponent(item.slug)}`}>{item.id} · {item.title}</a>)}</section>}</article>;
 }
 
-export function PublishedContent({ snapshot, pathname }: { snapshot: MobileContentSnapshot; pathname: string }) {
+export function PublishedContent({ snapshot, pathname, sidebarSections }: { snapshot: MobileContentSnapshot; pathname: string; sidebarSections: ProcedureSidebarSection[] }) {
   const content = snapshot.content;
-  if (pathname === "/manual" || pathname === "/") return <section className="mx-auto max-w-5xl px-4 py-8"><h1 className="mb-6 text-3xl font-bold">Manual de procedimientos</h1><PublicationSearch snapshot={snapshot} /></section>;
+  if (pathname === "/manual" || pathname === "/") return <ManualHomeClient sidebarSections={publicationSections(content.procedures, sidebarSections)} allProcedures={content.procedures} syncMetadata={{ manualVersionCurrent: "", lastSyncAt: snapshot.generatedAt, ticker: { enabledUntil: "", items: [] }, tickerEnabled: false }} pillEvents={[]} historyCount={0} />;
   if (pathname.startsWith("/manual/")) {
     let slug = pathname.slice("/manual/".length);
     try { slug = decodeURIComponent(slug); } catch { /* Unrecognised URL is handled below. */ }

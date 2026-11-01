@@ -29,6 +29,16 @@ export function useHeadings(articleId: string, pageTitle?: string) {
     if (!article) return;
 
     const elements = Array.from(article.querySelectorAll("h2, h3")) as HTMLElement[];
+    const used = new Set(elements.map((element) => element.id).filter(Boolean));
+    for (const element of elements) {
+      if (element.id) continue;
+      const base = (element.textContent ?? "seccion").trim().toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "seccion";
+      let id = base;
+      let suffix = 2;
+      while (used.has(id) || document.getElementById(id)) id = `${base}-${suffix++}`;
+      element.id = id;
+      used.add(id);
+    }
     const parsed = elements
       .filter((el) => el.id)
       .map((el) => ({
