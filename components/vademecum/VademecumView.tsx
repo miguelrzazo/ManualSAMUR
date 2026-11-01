@@ -540,6 +540,7 @@ export function VademecumView({
   const [tab, setTab] = useState<Tab>("farmacos");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeLetter, setActiveLetter] = useState<string | null>(null);
+  const jumpedLetterRef = useRef<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const drugCategories = useMemo(() => [...new Set(drugs.map((drug) => drug.category))], [drugs]);
@@ -639,6 +640,14 @@ export function VademecumView({
     const section = container.querySelector<HTMLElement>(`[data-section-key="${letter}"]`);
     if (!section) return;
 
+    jumpedLetterRef.current = letter;
+    setActiveLetter(letter);
+    // When a parent doesn't bound our height the window scrolls, not the container.
+    if (container.scrollHeight <= container.clientHeight) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
     const containerTop = container.getBoundingClientRect().top;
     const sectionTop = section.getBoundingClientRect().top;
     container.scrollBy({
@@ -666,6 +675,13 @@ export function VademecumView({
       } else {
         break;
       }
+    }
+
+    // The last letters can't scroll to the top; at the bottom keep the one the user jumped to.
+    const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 2;
+    const jumped = jumpedLetterRef.current;
+    if (atBottom && jumped && sections.some((section) => section.dataset.sectionKey === jumped && section.getBoundingClientRect().top - containerTop < container.clientHeight)) {
+      currentSectionKey = jumped;
     }
 
     setActiveLetter(currentSectionKey);
