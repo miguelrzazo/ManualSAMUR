@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: editorial-publication-production
+  group: cloudflare-production-publication
   cancel-in-progress: false
 
 jobs:
@@ -28,13 +28,15 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
+      - name: Build static site for the single worker
+        run: npm run build
       # Compilation is off-worker to stay within Workers Free CPU limits.
-      # This publishes content/assets only; it never rebuilds the Next frontend.
+      # The release is activated only after the combined assets are deployed.
       - name: Compile, verify and atomically activate publication
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN }}
+          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN || 'https://manualsamur.apta-academy.com' }}
           RELEASE_ID: ${{ inputs.release_id }}
         run: |
           test -n "$CLOUDFLARE_API_TOKEN"

@@ -5,7 +5,6 @@ import { documentView, HttpError, transitions, validateSave, type DocumentRow } 
 export interface Env extends AccessConfig {
   DB: D1Database;
   ASSETS: { fetch(request: Request): Promise<Response> };
-  FILES?: { fetch(request: Request): Promise<Response> };
   PUBLICATION_GITHUB_TOKEN?: string;
   PUBLICATION_REPOSITORY?: string;
   PUBLICATION_REF?: string;
@@ -424,7 +423,6 @@ const worker = {
       if (pathname.startsWith('/api/editor/')) return await editor(request, env, pathname);
       if (pathname.startsWith('/api/')) return await publicApi(request, env, pathname);
       if (pathname.startsWith('/mobile-history/') || pathname.startsWith('/procedures/') || pathname === '/llms.txt' || pathname === '/llms-full.txt') return await publicApi(request, env, pathname);
-      if (/^\/(docs|images)\/_versions\//.test(pathname) && env.FILES) return env.FILES.fetch(request);
       if (pathname.startsWith('/gestion-editorial')) {
         if (!await resolveEditor(request, env)) return new Response('Acceso restringido.', { status: 401, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
         const asset = await env.ASSETS.fetch(request);

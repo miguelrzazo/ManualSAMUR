@@ -121,6 +121,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const automaticRefreshStarted = useRef(false);
   const previousAppState = useRef<AppStateStatus>(AppState.currentState);
   const recoveredPackageNeedsActivation = useRef(false);
+  const activationGeneration = useRef(0);
   // Read by the AppState listener, which must not re-subscribe on every change.
   const lastCheckRef = useRef<ContentCheckRecord | undefined>(undefined);
   const isSeedRef = useRef(true);
@@ -130,6 +131,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   }, [isSeed, lastCheck]);
 
   const activate = useCallback((next: MobileSnapshot, nextRelease: ReleaseInfo | undefined) => {
+    activationGeneration.current += 1;
     setSnapshot(next);
     setRelease(nextRelease);
     setIsSeed(false);
@@ -182,12 +184,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         const normalized = serializeSavedRouteKeys(migratedRecents);
         if (normalized !== storedRecents) void AsyncStorage.setItem(RECENTS_STORAGE_KEY, normalized);
       }
-      setIsHydrated(true);
+      if (transactionResult.snapshot) setIsHydrated(true);
+      const bootGeneration = activationGeneration.current;
       scheduleAfterFirstFrame(() => {
         if (transactionResult.snapshot) {
           void validateBootSnapshot(transactionResult.snapshot, seedSnapshot)
             .then((verifiedSnapshot) => {
-              if (!cancelled && verifiedSnapshot !== transactionResult.snapshot) {
+              if (!cancelled && activationGeneration.current === bootGeneration && verifiedSnapshot !== transactionResult.snapshot) {
                 setSnapshot(verifiedSnapshot);
                 setRelease(undefined);
                 setIsSeed(true);
@@ -198,8 +201,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             .catch(() => undefined);
         } else {
           void migrateLegacySnapshot(AsyncStorage, validateSnapshotOnce)
-            .then((migrated) => { if (!cancelled && migrated) activate(migrated, undefined); })
-            .catch(() => undefined);
+            .then((migrated) => { if (!cancelled && activationGeneration.current === bootGeneration && migrated) activate(migrated, undefined); })
+            .catch(() => undefined)
+            .finally(() => { if (!cancelled) setIsHydrated(true); });
         }
       });
     })();
@@ -254,6 +258,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refresh = useCallback((options: { background?: boolean } = {}) => {
+    if (!isHydrated) return Promise.resolve();
     if (refreshTask.current) return refreshTask.current;
     const background = options.background === true;
     const task = (async () => {
@@ -317,7 +322,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
       () => { if (refreshTask.current === task) refreshTask.current = null; },
     );
     return task;
-  }, [activate, isSeed, persistCheck, release, snapshot]);
+  }, [activate, isHydrated, isSeed, persistCheck, release, snapshot]);
 
   // Launch: check unless the persisted record says we did so recently. The
   // seed is always due, so a first launch syncs as soon as there is network.

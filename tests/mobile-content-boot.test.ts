@@ -106,13 +106,20 @@ test("malformed persisted content falls back to the bundled snapshot", async () 
   assert.match(result.transaction.warning ?? "", /comprobaciones locales/);
 });
 
-test("strict validation is cached by immutable package hash", async () => {
+test("strict validation is cached by object identity", async () => {
   const snapshot = validSnapshot();
   const first = validateSnapshotOnce(snapshot);
   const second = validateSnapshotOnce(snapshot);
 
   assert.strictEqual(first, second);
   assert.equal(await first, true);
+});
+
+test("a different object with copied hashes cannot reuse a validation", async () => {
+  const snapshot = validSnapshot();
+  assert.equal(await validateSnapshotOnce(snapshot), true);
+  const corrupted = { ...snapshot, content: { ...snapshot.content, extra: "tampered" } };
+  assert.equal(await validateSnapshotOnce(corrupted), false);
 });
 
 test("deferred validation falls back to the bundled snapshot when the active package is corrupted", async () => {

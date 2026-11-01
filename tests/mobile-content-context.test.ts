@@ -31,6 +31,7 @@ test("focused content selectors keep data, preferences, and sync state separate"
   };
   const sync: ContentSyncContextValue = {
     isHydrated: true,
+    isSeed: true,
     isRefreshing: false,
     isBackgroundRefreshing: false,
     syncState: "idle",
