@@ -88,7 +88,8 @@ async function propose() {
   // Preserve source attachment bytes before the CI candidate workspace disappears.
   // A later editorial publication must not depend on a new upstream download.
   await prepareAssets(snapshot);
-  if (remote) runWrangler(['deploy', '--config', 'backend/attachments.wrangler.jsonc', ...environmentArgs]);
+  await installAssets();
+  if (remote) runWrangler(['deploy', ...environmentArgs]);
   execute(proposalSql(documents, existing.map((document) => document.id), new Date().toISOString(), randomUUID()));
   console.log(`Checked ${documents.length} source candidates. Existing reviewed content and active publication were preserved.`);
 }
@@ -232,6 +233,18 @@ async function prepareAssets(snapshot: MobileContentSnapshot) {
   if (!isMobileContentSnapshot(snapshot)) throw new Error('Generated publication failed the native snapshot contract.');
 }
 
+/** Every deployment includes historical and draft immutable attachments. */
+async function installAssets() {
+  const out = path.join(cwd, 'out');
+  if (!fs.existsSync(path.join(out, 'index.html'))) throw new Error('Build the static site before installing publication assets.');
+  fs.cpSync(assetRoot, out, { recursive: true });
+}
+
+async function prepareDeploymentAssets() {
+  await prepareAssets(buildMobileContentSnapshot());
+  await installAssets();
+}
+
 function artifactsSql(release: Release, snapshot: MobileContentSnapshot, rows: FrozenRow[]) {
   const statements = [`DELETE FROM release_artifacts WHERE release_id=${sql(release.id)};`, `DELETE FROM public_documents WHERE release_id=${sql(release.id)};`];
   const pdf = new jsPDF();
@@ -289,11 +302,8 @@ async function publish() {
     const old = release.parent_id ? readSnapshot(release.parent_id) : undefined;
     const snapshot = await compileRelease(rows, release, old);
     await prepareAssets(snapshot);
-    if (remote) runWrangler(['deploy', '--config', 'backend/attachments.wrangler.jsonc', ...environmentArgs]);
-    else {
-      // Local main Worker serves the same versioned files from its asset binding.
-      fs.mkdirSync(path.join(cwd, 'out'), { recursive: true }); fs.cpSync(assetRoot, path.join(cwd, 'out'), { recursive: true });
-    }
+    await installAssets();
+    if (remote) runWrangler(['deploy', ...environmentArgs]);
     execute(artifactsSql(release, snapshot, rows));
     // A transactional conditional pointer update is the only visibility switch.
     // A trigger enforces the parent comparison and prevents stale jobs publishing.
@@ -331,7 +341,8 @@ function backfillDatasets() {
 try {
   if (command === 'seed') seed();
   else if (command === 'backfill-datasets') backfillDatasets();
+  else if (command === 'assets') await prepareDeploymentAssets();
   else if (command === 'propose') await propose();
   else if (command === 'publish') await publish();
-  else throw new Error('Usage: cli.ts seed|propose|publish|backfill-datasets [--remote] [--env staging|production] [--release id]');
+  else throw new Error('Usage: cli.ts seed|assets|propose|publish|backfill-datasets [--remote] [--env staging|production] [--release id]');
 } finally { fs.rmSync(tmp, { recursive: true, force: true }); }

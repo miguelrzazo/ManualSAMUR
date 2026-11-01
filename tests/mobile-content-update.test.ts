@@ -164,6 +164,17 @@ test("the bundled seed is superseded by the first successful sync, even with the
   assert.equal(boot.transaction.release?.manualVersion, "v1.1 Mayo 2026");
 });
 
+test("browser requests use the shared lifecycle without a forbidden User-Agent header", async () => {
+  const release = publish("browser-release", makeSnapshot(baseContent()));
+  const live = server(release);
+  const storage = new MemoryStorage();
+  const active = { snapshot: buildSeedSnapshot(release.snapshot), isSeed: true };
+  const result = await syncContentRelease(options(active, storage, live.fetchImpl, { userAgent: undefined }));
+  assert.equal(result.kind, "updated");
+  assert.ok(live.calls.every((call) => !("User-Agent" in call.headers)));
+  assert.equal((await readTransaction(storage, validate)).snapshot?.hash, release.snapshot.hash);
+});
+
 test("304 Not Modified stops after the manifest", async () => {
   const { storage, active } = await installed(releaseA);
   const live = server(releaseA);

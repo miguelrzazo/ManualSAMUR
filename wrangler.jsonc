@@ -14,7 +14,6 @@
   "env": {
     "staging": {
       "name": "manualsamur-staging",
-      "services": [{ "binding": "FILES", "service": "manualsamur-files-staging" }],
       "d1_databases": [{ "binding": "DB", "database_name": "manualsamur-staging", "migrations_dir": "backend/migrations" }],
       "vars": { "PUBLICATION_REPOSITORY": "miguelrzazo/ManualSAMUR", "PUBLICATION_REF": "main" }
     },
@@ -23,7 +22,6 @@
       // Canonical domain; workers.dev stays enabled for apps built before the move.
       "routes": [{ "pattern": "manualsamur.apta-academy.com", "custom_domain": true }],
       "workers_dev": true,
-      "services": [{ "binding": "FILES", "service": "manualsamur-files" }],
       "d1_databases": [{ "binding": "DB", "database_name": "manualsamur-production", "database_id": "dfb4af8a-3eab-4adf-98ba-2886f1d49272", "migrations_dir": "backend/migrations" }],
       "vars": { "PUBLICATION_REPOSITORY": "miguelrzazo/ManualSAMUR", "PUBLICATION_REF": "main" }
     }

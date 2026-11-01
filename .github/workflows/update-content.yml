@@ -15,13 +15,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: manual-update-${{ github.ref }}
+  group: cloudflare-production-publication
   cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
@@ -47,6 +47,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y poppler-utils
+
+      - name: Preserve the reviewed site assets
+        run: |
+          npm run build
+          tar -cf /tmp/manual-reviewed-site.tar -C out .
 
       - name: Extract official candidates for editorial review
         id: extract
@@ -84,13 +89,16 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN }}
+          PUBLICATION_ORIGIN: ${{ vars.PUBLICATION_ORIGIN || 'https://manualsamur.apta-academy.com' }}
         run: |
           set -euo pipefail
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::error::CLOUDFLARE_API_TOKEN repository secret is missing; the validated candidate could not be queued (docs/backend/credentials.md)."
             exit 1
           fi
+          rm -rf out
+          mkdir out
+          tar -xf /tmp/manual-reviewed-site.tar -C out
           npm run backend:propose -- --remote 2>&1 | tee /tmp/manual-update-diagnostics/proposals.log
 
       - name: Generate update report

@@ -49,7 +49,7 @@ otra publicación verificable; no borra el historial.
 Los paquetes JSON y PDF se almacenan divididos en filas D1. Cada sentencia de
 importación está por debajo de 100 KB. Los documentos y cada fuente están limitados
 a 450 KB para dejar margen al límite de fila de D1. Los archivos binarios se sirven
-mediante un segundo Worker de assets; sus rutas incluyen SHA-256. Un adjunto que ya
+desde el mismo Worker que la web; sus rutas incluyen SHA-256. Cada despliegue conserva los adjuntos históricos y de borradores antes de sustituir los assets. Un adjunto que ya
 no existe en origen y nunca tuvo bytes verificables sigue señalado como no disponible,
 sin inventar una copia offline. Los cambios en adjuntos verificables deben conservar
 los hashes aprobados: un archivo distinto en el checkout no puede sustituirlos.
@@ -181,7 +181,7 @@ Fuentes: [Wrangler](https://developers.cloudflare.com/workers/wrangler/),
 ## Despliegue continuo
 
 `.github/workflows/deploy.yml` compila la web, aplica las migraciones D1 y ejecuta
-`wrangler deploy --env production` en cada push a `main`, y comprueba las rutas
+la preparación de adjuntos y `wrangler deploy --env production` en cada push a `main`, y comprueba las rutas
 principales en vivo. Necesita los secretos de repositorio `CLOUDFLARE_API_TOKEN`
 (D1 Edit + Workers Scripts Edit + Account Settings Read) y `CLOUDFLARE_ACCOUNT_ID`.
 Las cabeceras de `/docs/*.pdf` que antes estaban en `vercel.json` viven ahora en
