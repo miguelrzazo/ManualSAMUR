@@ -24,7 +24,7 @@ evento no va a la web de APTA. Ver "Riesgo de revisión" abajo.
 | Objetivo (purpose) | Atraer nuevos usuarios | |
 | Prioridad | Alta (es el único evento; no compite con otro) | |
 | Coste | Ninguno: no requiere compra | |
-| Enlace (deep link) | `https://manualsamur.miguelrzazo13.workers.dev/manual` (enlace universal ya declarado en `UNIVERSAL_LINK_PATHS`; abre el índice del manual dentro de la app) | |
+| Enlace (deep link) | `https://manualsamur.apta-academy.com/manual` (enlace universal ya declarado en `UNIVERSAL_LINK_PATHS`; abre el índice del manual dentro de la app) | |
 
 Alternativa de nombre si App Review pide algo más distintivo y menos genérico:
 `Estudia el manual con el lince` (30/30).
