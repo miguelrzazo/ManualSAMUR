@@ -104,9 +104,9 @@ Criterios:
 
 | Campo | URL |
 | --- | --- |
-| Marketing | https://manualsamur.miguelrzazo13.workers.dev |
-| Soporte | https://manualsamur.miguelrzazo13.workers.dev/soporte |
-| Privacidad | https://manualsamur.miguelrzazo13.workers.dev/privacidad |
+| Marketing | https://manualsamur.apta-academy.com |
+| Soporte | https://manualsamur.apta-academy.com/soporte |
+| Privacidad | https://manualsamur.apta-academy.com/privacidad |
 
 `/soporte`, `/privacidad` y `/acerca-de` existen en `app/`. Desde esta red el dominio
 `workers.dev` no siempre respondía (ver más abajo), así que conviene abrir las tres URLs

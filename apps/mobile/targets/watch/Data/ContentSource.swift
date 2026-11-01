@@ -34,7 +34,7 @@ struct ContentManifest: Decodable, Sendable {
 /// 3. Decode, check the schema and that the snapshot's hash equals the manifest's,
 ///    and only then hand it back. Any failure throws and the caller keeps its copy.
 struct CloudflareContentSource: ContentSource {
-    static let productionOrigin = URL(string: "https://manualsamur.miguelrzazo13.workers.dev")!
+    static let productionOrigin = URL(string: "https://manualsamur.apta-academy.com")!
 
     let origin: URL
     let session: URLSession

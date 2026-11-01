@@ -399,9 +399,27 @@ async function publicApi(request: Request, env: Env, pathname: string): Promise<
   return json({ error: 'Ruta no encontrada.' }, 404, true);
 }
 
+/** Canonical public origin. The workers.dev host keeps serving data for installed apps. */
+export const CANONICAL_ORIGIN = 'https://manualsamur.apta-academy.com';
+const LEGACY_HOST = 'manualsamur.miguelrzazo13.workers.dev';
+// Apps and the Watch built before the move fetch these from the legacy host; never redirect them.
+const LEGACY_KEPT_PREFIXES = ['/api/', '/.well-known/', '/mobile-history/', '/procedures/', '/docs/', '/images/', '/_next/', '/assets/', '/gestion-editorial'];
+
+/** 301 for page navigations on the legacy host; `null` when the request must be served as is. */
+export function legacyHostRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.hostname !== LEGACY_HOST || (request.method !== 'GET' && request.method !== 'HEAD')) return null;
+  if (LEGACY_KEPT_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) return null;
+  // Pages have no extension; files (llms.txt, RSC payloads, icons) stay on the legacy host.
+  if (/\.[a-z0-9]+$/i.test(url.pathname)) return null;
+  return Response.redirect(`${CANONICAL_ORIGIN}${url.pathname}${url.search}`, 301);
+}
+
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
+      const redirect = legacyHostRedirect(request);
+      if (redirect) return redirect;
       const url = new URL(request.url); const pathname = url.pathname.replace(/\/$/, '') || '/';
       if (pathname.startsWith('/api/editor/')) return await editor(request, env, pathname);
       if (pathname.startsWith('/api/')) return await publicApi(request, env, pathname);
