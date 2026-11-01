@@ -1,71 +1,181 @@
 {
-  "_comment": "Caption copy and raw sources for tools/compose.py. Order is the App Store order. See ASO.md.",
+  "_comment": "Caption copy and raw sources for tools/compose.py. Order is the App Store order. See ASO.md. `lynx` puts an APTA lynx pose (from lynx/) peeking over the device top edge: pose, height (fraction of canvas height), x (centre, fraction of width), overlap (fraction hidden behind the device), flip. `gap` is the space between caption and device (fraction of height); `headline_scale` enlarges the caption for the search-result trio (01-03).",
   "sets": {
     "iphone-6.9": {
-      "size": [1320, 2868],
-      "device_width": 0.80,
+      "size": [
+        1320,
+        2868
+      ],
+      "device_width": 0.8,
       "corner": 0.115,
       "bezel": 0.022,
       "shots": [
-        { "id": "buscar", "raw": "iphone-6.9/iphone-01-buscar.png",
+        {
+          "id": "buscar",
+          "raw": "iphone-6.9/iphone-01-buscar.png",
           "headline": "Todo el manual en una búsqueda",
-          "subline": "Procedimientos, fármacos y códigos al instante" },
-        { "id": "procedimiento", "raw": "iphone-6.9/iphone-02-procedimiento.png",
+          "subline": "Procedimientos, fármacos y códigos al instante",
+          "headline_scale": 1.15,
+          "gap": 0.163,
+          "lynx": {
+            "pose": "point",
+            "height": 0.27,
+            "x": 0.69,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "procedimiento",
+          "raw": "iphone-6.9/iphone-02-procedimiento.png",
           "headline": "Ve directo a la sección",
-          "subline": "Cada procedimiento con su índice, a un toque" },
-        { "id": "vademecum", "raw": "iphone-6.9/iphone-03-vademecum.png",
+          "subline": "Cada procedimiento con su índice, a un toque",
+          "headline_scale": 1.15,
+          "gap": 0.163,
+          "lynx": {
+            "pose": "thumbs",
+            "height": 0.27,
+            "x": 0.31,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "vademecum",
+          "raw": "iphone-6.9/iphone-03-vademecum.png",
           "headline": "Dosis claras, sin rodeos",
-          "subline": "Adultos y niños, vías y presentaciones" },
-        { "id": "codigos", "raw": "iphone-6.9/iphone-04-codigos.png",
+          "subline": "Adultos y niños, vías y presentaciones",
+          "headline_scale": 1.15,
+          "gap": 0.163,
+          "lynx": {
+            "pose": "wave",
+            "height": 0.27,
+            "x": 0.7,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "codigos",
+          "raw": "iphone-6.9/iphone-04-codigos.png",
           "headline": "Códigos de radio a mano",
-          "subline": "Incidente, SVB, SVA, UPSI, claves e indicativos" },
-        { "id": "mapa", "raw": "iphone-6.9/iphone-05-mapa.png",
+          "subline": "Incidente, SVB, SVA, UPSI, claves e indicativos"
+        },
+        {
+          "id": "mapa",
+          "raw": "iphone-6.9/iphone-05-mapa.png",
           "headline": "Hospitales y bases en el mapa",
-          "subline": "Tu ubicación es opcional y no sale del iPhone" },
-        { "id": "sin-conexion", "raw": "iphone-6.9/iphone-06-ajustes.png",
+          "subline": "Tu ubicación es opcional y no sale del iPhone"
+        },
+        {
+          "id": "sin-conexion",
+          "raw": "iphone-6.9/iphone-06-ajustes.png",
           "headline": "Funciona sin cobertura",
-          "subline": "Todo va en el iPhone y se actualiza cada mes" },
-        { "id": "ipad", "raw": "ipad-13/ipad-02-procedimiento.png", "width_ratio": 0.88, "corner": 0.035,
+          "subline": "Todo va en el iPhone y se actualiza cada mes"
+        },
+        {
+          "id": "ipad",
+          "raw": "ipad-13/ipad-02-procedimiento.png",
+          "width_ratio": 0.88,
+          "corner": 0.035,
           "headline": "En iPad, lista y ficha a la vez",
-          "subline": "Dos columnas para no perder el sitio" },
-        { "id": "apple-watch", "layout": "watches",
-          "raw": ["watch/46mm-03-codigo-detalle.png", "watch/46mm-05-vademecum-detalle.png"],
+          "subline": "Dos columnas para no perder el sitio"
+        },
+        {
+          "id": "apple-watch",
+          "layout": "watches",
+          "raw": [
+            "watch/46mm-03-codigo-detalle.png",
+            "watch/46mm-05-vademecum-detalle.png"
+          ],
           "headline": "Y en tu muñeca",
-          "subline": "Códigos, vademécum y Status 4 en el Apple Watch" }
+          "subline": "Códigos, vademécum y Status 4 en el Apple Watch"
+        }
       ]
     },
     "ipad-13": {
-      "size": [2064, 2752],
+      "size": [
+        2064,
+        2752
+      ],
       "device_width": 0.78,
       "corner": 0.035,
       "bezel": 0.016,
       "text_scale": 1.05,
       "shots": [
-        { "id": "buscar", "raw": "ipad-13/ipad-01-buscar.png",
+        {
+          "id": "buscar",
+          "raw": "ipad-13/ipad-01-buscar.png",
           "headline": "Todo el manual en una búsqueda",
-          "subline": "Procedimientos, fármacos y códigos al instante" },
-        { "id": "procedimiento", "raw": "ipad-13/ipad-02-procedimiento.png",
+          "subline": "Procedimientos, fármacos y códigos al instante",
+          "headline_scale": 1.05,
+          "gap": 0.125,
+          "lynx": {
+            "pose": "point",
+            "height": 0.235,
+            "x": 0.76,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "procedimiento",
+          "raw": "ipad-13/ipad-02-procedimiento.png",
           "headline": "Índice y ficha, lado a lado",
-          "subline": "Elige en la lista y léelo a la derecha" },
-        { "id": "vademecum", "raw": "ipad-13/ipad-03-vademecum.png",
+          "subline": "Elige en la lista y léelo a la derecha",
+          "headline_scale": 1.05,
+          "gap": 0.125,
+          "lynx": {
+            "pose": "thumbs",
+            "height": 0.235,
+            "x": 0.24,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "vademecum",
+          "raw": "ipad-13/ipad-03-vademecum.png",
           "headline": "Dosis claras, sin rodeos",
-          "subline": "Adultos y niños, vías y presentaciones" },
-        { "id": "codigos", "raw": "ipad-13/ipad-04-codigos.png",
+          "subline": "Adultos y niños, vías y presentaciones",
+          "headline_scale": 1.05,
+          "gap": 0.125,
+          "lynx": {
+            "pose": "wave",
+            "height": 0.235,
+            "x": 0.77,
+            "overlap": 0.36
+          }
+        },
+        {
+          "id": "codigos",
+          "raw": "ipad-13/ipad-04-codigos.png",
           "headline": "Cada código, con su protocolo",
-          "subline": "Del código de radio a los procedimientos que lo citan" },
-        { "id": "mapa", "raw": "ipad-13/ipad-05-mapa.png",
+          "subline": "Del código de radio a los procedimientos que lo citan"
+        },
+        {
+          "id": "mapa",
+          "raw": "ipad-13/ipad-05-mapa.png",
           "headline": "Hospitales y bases en el mapa",
-          "subline": "Tu ubicación es opcional y no sale del iPad" },
-        { "id": "sin-conexion", "raw": "ipad-13/ipad-06-ajustes.png",
+          "subline": "Tu ubicación es opcional y no sale del iPad"
+        },
+        {
+          "id": "sin-conexion",
+          "raw": "ipad-13/ipad-06-ajustes.png",
           "headline": "Funciona sin cobertura",
-          "subline": "Todo va en el iPad y se actualiza cada mes" },
-        { "id": "horizontal", "raw": "ipad-13/ipad-07-landscape.png",
+          "subline": "Todo va en el iPad y se actualiza cada mes"
+        },
+        {
+          "id": "horizontal",
+          "raw": "ipad-13/ipad-07-landscape.png",
           "headline": "Lista y ficha a la vez",
-          "subline": "También en horizontal, con el índice siempre a mano" },
-        { "id": "apple-watch", "layout": "watches",
-          "raw": ["watch/46mm-03-codigo-detalle.png", "watch/46mm-05-vademecum-detalle.png"],
+          "subline": "También en horizontal, con el índice siempre a mano"
+        },
+        {
+          "id": "apple-watch",
+          "layout": "watches",
+          "raw": [
+            "watch/46mm-03-codigo-detalle.png",
+            "watch/46mm-05-vademecum-detalle.png"
+          ],
           "headline": "Y en tu muñeca",
-          "subline": "Códigos, vademécum y Status 4 en el Apple Watch" }
+          "subline": "Códigos, vademécum y Status 4 en el Apple Watch"
+        }
       ]
     }
   }

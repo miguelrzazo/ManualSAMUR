@@ -6,6 +6,10 @@ Reads `captions.json` and the PNGs under `raw/`, writes flattened sRGB PNGs (no 
 at the exact App Store Connect sizes under `framed/`. Needs Pillow and the SF Pro
 Display fonts in /Library/Fonts (installed with Apple's SF Pro package).
 
+Frames with a `lynx` entry in `captions.json` get the APTA Academy lynx (cutouts in
+`lynx/`, provenance in `apps/mobile/assets/APTA_ASSET_PROVENANCE.md`) peeking over the top
+edge of the device. It is drawn behind the device, so it never covers app UI.
+
 The device outline is drawn here (a plain rounded bezel), not taken from Apple's
 product imagery, and no official SAMUR or Ayuntamiento artwork is used anywhere.
 """
@@ -25,6 +29,7 @@ INK = (19, 35, 61)            # #13233D
 WASH = (231, 238, 250)        # #E7EEFA primaryWash
 WHITE = (255, 255, 255)
 BEZEL = (14, 22, 38)          # #0E1626 dark paper
+CREAM = (249, 241, 223)       # #F9F1DF APTA lynx cream
 
 
 def raw_path(path: str) -> str:
@@ -83,13 +88,13 @@ def wrap(draw: ImageDraw.ImageDraw, text: str, fnt: ImageFont.FreeTypeFont, max_
     return lines
 
 
-def draw_text_block(canvas: Image.Image, top: int, headline: str, subline: str, scale: float, width_ratio: float = 0.86) -> int:
+def draw_text_block(canvas: Image.Image, top: int, headline: str, subline: str, scale: float, width_ratio: float = 0.86, headline_scale: float = 1.0) -> int:
     """Centered headline + subline. Returns the y just below the block."""
     draw = ImageDraw.Draw(canvas)
     w = canvas.width
     max_w = int(w * width_ratio)
-    h_font = font("Heavy", int(118 * scale))
-    s_font = font("Medium", int(54 * scale))
+    h_font = font("Heavy", int(118 * scale * headline_scale))
+    s_font = font("Medium", int(54 * scale * headline_scale ** 0.5))
     y = top
     for line in wrap(draw, headline, h_font, max_w):
         tw = draw.textlength(line, font=h_font)
@@ -122,14 +127,43 @@ def device(shot: Image.Image, width: int, corner_ratio: float, bezel_ratio: floa
     return out
 
 
+def lynx_cutout(pose: str, height: int, flip: bool = False) -> Image.Image:
+    """An APTA lynx pose from `lynx/`, scaled to `height`, with a cream sticker outline
+    so the blue fur separates from the blue background (see APTA_ASSET_PROVENANCE.md)."""
+    src = Image.open(os.path.join(ROOT, "lynx", f"apta-lynx-{pose}.png")).convert("RGBA")
+    if flip:
+        src = src.transpose(Image.FLIP_LEFT_RIGHT)
+    img = src.resize((round(src.width * height / src.height), height), Image.LANCZOS)
+    stroke = max(4, round(height * 0.009))
+    pad = stroke * 3
+    out = Image.new("RGBA", (img.width + 2 * pad, img.height + 2 * pad), (0, 0, 0, 0))
+    alpha = Image.new("L", out.size, 0)
+    alpha.paste(img.getchannel("A"), (pad, pad))
+    ring = alpha.point(lambda v: 255 if v > 40 else 0).filter(ImageFilter.MaxFilter(stroke * 2 + 1)).filter(ImageFilter.GaussianBlur(1))
+    shadow = ring.filter(ImageFilter.GaussianBlur(stroke * 2)).point(lambda v: v * 90 // 255)
+    out.paste(Image.new("RGBA", out.size, (5, 15, 40, 255)), (0, round(stroke * 1.5)), shadow)
+    out.alpha_composite(Image.composite(Image.new("RGBA", out.size, CREAM + (255,)), Image.new("RGBA", out.size, (0, 0, 0, 0)), ring))
+    out.alpha_composite(img, (pad, pad))
+    return out
+
+
+def place_lynx(canvas: Image.Image, spec: dict, device_top: int) -> None:
+    """Peek over the top edge of the device: `overlap` of the lynx height sits behind it."""
+    W, H = canvas.size
+    lynx = lynx_cutout(spec["pose"], round(H * spec["height"]), spec.get("flip", False))
+    x = round(W * spec["x"]) - lynx.width // 2
+    y = device_top - round(lynx.height * (1 - spec.get("overlap", 0.45)))
+    canvas.alpha_composite(lynx, (x, y))
+
+
 def compose(spec: dict, item: dict, out_path: str) -> None:
     W, H = spec["size"]
     scale = W / 1320 if W < H else H / 1320
     scale *= spec.get("text_scale", 1.0)
     canvas = gradient((W, H), BLUE, BLUE_DARK).convert("RGBA")
     top = round(H * spec.get("text_top", 0.045))
-    below = draw_text_block(canvas, top, item["headline"], item["subline"], scale)
-    gap = round(H * 0.025)
+    below = draw_text_block(canvas, top, item["headline"], item["subline"], scale, headline_scale=item.get("headline_scale", 1.0))
+    gap = round(H * item.get("gap", 0.025))
     shots = item["raw"] if isinstance(item["raw"], list) else [item["raw"]]
     images = [Image.open(raw_path(p)) for p in shots]
     layout = item.get("layout", "single")
@@ -143,6 +177,11 @@ def compose(spec: dict, item: dict, out_path: str) -> None:
         if landscape:
             # A landscape iPad shot: centre it in the space left under the text.
             y = below + max(gap, (H - below - d.height) // 2)
+        if "lynx" in item:
+            # Behind the device: only the head, shoulders and gesture show above its edge,
+            # so the lynx never covers the app UI. `pad` is the device image's shadow margin.
+            pad = (d.width - round(W * ratio)) // 2
+            place_lynx(canvas, item["lynx"], y + pad)
         canvas.alpha_composite(d, (x, y))
     elif layout == "watches":
         # Two Apple Watch faces, large and overlapping on a diagonal.

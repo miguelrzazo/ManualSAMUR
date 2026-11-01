@@ -11,10 +11,13 @@ Connect: la carga la hace el propietario después de revisarlo.
 | `raw/` | Capturas reales sin marco, de la build Release en el simulador, en español y en modo claro. |
 | `framed/` | Capturas de marketing a tamaño exacto de App Store Connect (PNG sRGB sin alfa). Son las que se suben. |
 | `iphone-duo/es/` | Capturas de iPhone Duo sin marco ni texto, como pide `release/screenshot-shot-list-es.md`. |
-| `event/` | Medios y texto del evento integrado de lanzamiento. |
-| `captions.json`, `tools/compose.py` | Textos de las capturas y el script que las compone. `tools/event.py` genera los medios del evento. |
+| `event/` | Medios y texto del evento integrado "Lanzamiento con APTA Academy". |
+| `creative/` | Recursos creativos de iOS 27: cabecera de la ficha (3840 × 1646) y resultado de búsqueda (3840 × 2560). |
+| `lynx/` | Poses del lince de APTA Academy (PNG con alfa) que usan las capturas 01-03, la cabecera, el resultado de búsqueda y el evento. Procedencia en `apps/mobile/assets/APTA_ASSET_PROVENANCE.md`. |
+| `captions.json`, `tools/compose.py` | Textos de las capturas y el script que las compone. `tools/creative.py` genera la cabecera y el resultado de búsqueda; `tools/event.py`, los medios del evento. |
 
-Regenerar: `python3 apps/mobile/release/app-store/tools/compose.py` y
+Regenerar: `python3 apps/mobile/release/app-store/tools/compose.py`,
+`python3 apps/mobile/release/app-store/tools/creative.py` y
 `python3 apps/mobile/release/app-store/tools/event.py` (Pillow y las fuentes SF Pro Display
 instaladas en `/Library/Fonts`).
 
@@ -91,6 +94,60 @@ Criterios:
   dispositivo (`NSLocationWhenInUseUsageDescription`), Apple Watch con Códigos,
   Vademécum y Status 4.
 
+### El lince en el trío de búsqueda (01-03)
+
+Hasta iOS 26, y en iOS 27 si no se sube un recurso de resultado de búsqueda, la búsqueda
+enseña las tres primeras capturas. Para que el trío se lea como una unidad y se reconozca a
+tamaño miniatura:
+
+- El lince de APTA Academy hace de guía recurrente: **señala** en 01 (búsqueda), da el
+  **pulgar arriba** en 02 (procedimiento) y **saluda** en 03 (vademécum). Alterna derecha,
+  izquierda, derecha, de modo que en la fila de resultados el ojo recorre las tres.
+- Va **detrás** del dispositivo y asoma por el borde superior: solo se ven cabeza, hombros y
+  gesto. Nunca tapa la interfaz, que sigue siendo la protagonista; tampoco sobresale por los
+  lados del marco. Contorno crema para separarlo del fondo azul.
+- Titular un 15 % más grande en iPhone (5 % en iPad) en las tres primeras, y más aire entre
+  texto y dispositivo para dejar sitio al lince. Se mantiene el orden acordado y el texto.
+- 04-08 no cambian: mismo fondo, tipografía y marco, así que la serie sigue siendo coherente
+  y el lince queda como firma del primer pantallazo, no como ruido en todas.
+- Todo sale de `captions.json` (campos `lynx`, `gap`, `headline_scale`) y `compose.py`.
+
+## Cabecera y resultado de búsqueda (iOS 27)
+
+Desde el 5 de octubre de 2026 App Store Connect acepta **recursos creativos** opcionales
+para dos sitios nuevos de la tienda, que solo se ven en iOS 27 / iPadOS 27 o posterior. Se
+suben en la página de versión, en *Product Page Information* → *Header and Search Results*,
+o en *Asset Library* como envío independiente (sin nueva versión). Especificaciones de
+Apple ("Creative assets specifications"):
+
+| Sitio | Proporción | Tamaño | Archivo |
+| --- | --- | --- | --- |
+| Cabecera de la ficha | 21:9 | 3840 × 1646 | `creative/header-3840x1646.png` |
+| Resultado de búsqueda | 3:2 | de 1920 × 1280 a 3840 × 2560 | `creative/search-results-3840x2560.png` |
+| Universal (sirve para ambos) | 16:9 | 5244 × 2950, solo PNG | no se ha hecho |
+
+Sin alfa, PNG sRGB. Las zonas seguras vienen de las plantillas de Apple según el análisis
+de ObjectGraph (cabecera x 1097-2743, y 493-1154; búsqueda x 836-3004, y 765-1795): no se
+han podido abrir las plantillas oficiales, así que hay que confirmarlas con *Preview* en App
+Store Connect antes de enviar.
+
+- **Cabecera:** sin texto. Apple pide "una sola idea clara" y debajo ya van el icono y el
+  nombre. El lince saluda junto al iPhone con la búsqueda real; en los cortes anchos (iPad)
+  aparecen además el iPad en horizontal y el Apple Watch. Fondo azul de marca con manchas de
+  lince.
+- **Resultado de búsqueda:** Apple pide "state the obvious" y enseñar la interfaz. Titular
+  corto a la izquierda ("Todo el manual en una búsqueda", con "Protocolos, fármacos y
+  códigos, sin red" debajo), iPhone con la búsqueda real a la derecha y el lince asomando
+  detrás. Comprobado a 384 px de ancho, el tamaño aproximado en la búsqueda: el titular se lee.
+- Si no se sube el recurso de búsqueda, App Store enseña el evento, los vídeos o las capturas
+  (01-03), así que el trío sigue siendo necesario para iOS 26 y anteriores.
+- Ninguno lleva precio, URL, logotipos ajenos ni nada oficial de SAMUR o del Ayuntamiento.
+
+Fuentes: [Creative assets specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/creative-assets-specifications),
+[Manage your App Store assets](https://developer.apple.com/help/app-store-connect/manage-app-information/manage-your-app-store-assets/),
+[App Store asset best practices](https://developer.apple.com/app-store/asset-best-practices/),
+[ObjectGraph: zonas seguras](https://objectgraph.com/blog/ios-27-app-store-header-and-search-results-art/).
+
 ## Descripción, texto promocional y novedades
 
 - **Descripción:** gancho de dos líneas (lo que hace y que funciona sin cobertura), bloques
@@ -114,12 +171,23 @@ antes de enviar.
 
 ## Evento integrado
 
-Ver `event/event-es-ES.md`: distintivo Estreno, nombre `Manual SAMUR, ya disponible`
-(27/30), descripción breve (46/50) y larga (119/120), tarjeta 1920 × 1080 y detalle
-1080 × 1920 sin texto.
+Ver `event/event-es-ES.md`: distintivo Estreno, nombre `Lanzamiento con APTA Academy`
+(28/30), descripción breve (44/50) y larga (119/120), tarjeta 1920 × 1080 y detalle
+1080 × 1920 sin texto, con el lince.
+
+El evento es el estreno de la guía creada por APTA Academy y lleva al manual **dentro** de la
+app. No anuncia los cursos de APTA ni enlaza a su web: la guía 2.3.13 exige que el evento
+ocurra dentro de la app y que sus metadatos traten del evento, y la guía de eventos excluye
+las promociones generales. Anunciar APTA como servicio externo sería un rechazo casi seguro;
+el análisis de riesgo está en `event/event-es-ES.md`. Los medios ya no usan degradado: Apple
+pide no añadir degradados ni bordes.
 
 ## Comprobaciones antes de subir
 
 - `asc migrate validate --fastlane-dir apps/mobile/release/app-store`: VALIDATION PASSED.
 - Todas las capturas: PNG, sin alfa, tamaño exacto (ver tabla de inventario en la PR).
 - Abrir las URLs de soporte y privacidad desde una red que no bloquee `workers.dev`.
+- Cabecera y resultado de búsqueda: revisar con *Preview* en App Store Connect (iPhone e
+  iPad, ambas orientaciones) que el lince y el titular quedan dentro de la zona visible.
+- Evento: comprobar en un iPhone con la app instalada que el enlace del evento abre el
+  manual en la app y no Safari.
