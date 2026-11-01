@@ -3,6 +3,7 @@ import path from "node:path";
 import { compileProcedureCorpus } from "../lib/procedure-compiler.ts";
 import { readManualHistoryDataset, readManualUpdatesDataset } from "../lib/manual-sync.ts";
 import { buildMobileContentSnapshot } from "../lib/mobile-snapshot.ts";
+import { buildManualHomeData } from "../lib/manual-home-data.ts";
 import type { ManualHistoryEntry } from "../lib/manual-sync.ts";
 import type { ProcedureSearchDoc } from "../lib/search.ts";
 
@@ -73,6 +74,13 @@ const entries = [...history.entries].sort((a, b) => b.changedAt.localeCompare(a.
 
 const historyBytes = writeJson("manual-history.json", { generatedAt: history.generatedAt, entries });
 console.log(`[generate-client-data] ${entries.length} entradas de historial → public/manual-history.json (${mb(historyBytes)})`);
+
+// ─── Portada publicada ──────────────────────────────────────────────────────
+
+// La portada que monta PublicationShell no recibe las props de app/manual/page.tsx;
+// descarga esto para el banner rojo, la píldora de novedades y el historial.
+const homeBytes = writeJson("manual-home.json", buildManualHomeData());
+console.log(`[generate-client-data] banner y novedades → public/manual-home.json (${mb(homeBytes)})`);
 
 // ─── Historial móvil paginado ────────────────────────────────────────────────
 

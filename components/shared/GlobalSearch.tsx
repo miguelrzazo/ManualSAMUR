@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import type { MobileContentSnapshot } from "@/packages/manual-content/src/schema";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pill, Code, MapPin } from "lucide-react";
@@ -19,6 +20,7 @@ import {
 interface Props {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  snapshot?: MobileContentSnapshot | null;
 }
 
 const RESULT_ICONS = {
@@ -99,7 +101,7 @@ function parseQuery(raw: string): { term: string; filter: string | null } {
   return { term: raw, filter: null };
 }
 
-export function GlobalSearch({ isOpen, onOpenChange }: Props) {
+export function GlobalSearch({ isOpen, onOpenChange, snapshot }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,12 +116,20 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     drugs: any[]; codes: any[]; hospitals: any[]; bases: any[];
   } | null>(null);
+  const publishedData = useMemo(() => snapshot ? {
+    procedures: snapshot.content.procedures,
+    drugs: snapshot.content.drugs,
+    codes: Object.entries(snapshot.content.codes).flatMap(([source, records]) => records.map((record) => ({ ...(record as object), _source: source.toUpperCase() }))),
+    hospitals: snapshot.content.hospitals,
+    bases: snapshot.content.bases,
+  } : null, [snapshot]);
+  const searchData = publishedData ?? data;
 
   // Los datasets solo se cargan cuando el usuario abre la búsqueda: antes se
   // descargaban al montar, en todas las páginas, la abriera o no. El índice de
   // procedimientos es un asset estático (~MB) que el navegador cachea entre visitas.
   useEffect(() => {
-    if (!isOpen || data) return;
+    if (!isOpen || data || snapshot) return;
 
     let mounted = true;
     const load = async () => {
@@ -179,7 +189,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
     };
     load();
     return () => { mounted = false; };
-  }, [isOpen, data]);
+  }, [isOpen, data, snapshot]);
 
   useEffect(() => {
     const performSearch = async () => {
@@ -193,7 +203,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
       // antes de que llegue. Mostramos "Buscando..." en lugar de "sin resultados":
       // un falso negativo en una referencia clínica es peor que una espera. Al
       // resolverse `data` este efecto se vuelve a ejecutar y lanza la búsqueda.
-      if (!data) {
+      if (!searchData) {
         setIsLoading(true);
         return;
       }
@@ -203,7 +213,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
         // Fuse y el adaptador de búsqueda pesan más que la UI del diálogo. Se
         // cargan solo al ejecutar una consulta, no junto con la navegación global.
         const { globalSearch } = await import("@/lib/global-search");
-        const searchResults = await globalSearch(term, data.procedures, data.drugs, data.codes, data.hospitals, data.bases);
+        const searchResults = await globalSearch(term, searchData.procedures, searchData.drugs, searchData.codes, searchData.hospitals, searchData.bases);
         setResults(filter ? searchResults.filter((r) => r.type === filter) : searchResults);
       } catch (error) {
         console.error("Search failed:", error);
@@ -215,7 +225,7 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
 
     const id = setTimeout(performSearch, 150);
     return () => clearTimeout(id);
-  }, [term, filter, data]);
+  }, [term, filter, searchData]);
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, result) => {
     if (!acc[result.type]) acc[result.type] = [];
@@ -227,9 +237,10 @@ export function GlobalSearch({ isOpen, onOpenChange }: Props) {
     (result: SearchResult) => {
       onOpenChange(false);
       setQuery("");
-      router.push(result.href);
+      if (snapshot && result.type === "procedure") window.location.assign(result.href);
+      else router.push(result.href);
     },
-    [router, onOpenChange]
+    [router, onOpenChange, snapshot]
   );
 
   const handleOpenChange = useCallback((nextOpen: boolean) => {

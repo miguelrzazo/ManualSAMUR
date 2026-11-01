@@ -11,7 +11,6 @@ import {
   Bot,
   Users,
   TriangleAlert,
-  GitBranch,
 } from "lucide-react";
 import {
   Dialog,
@@ -21,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import type { MainLinksData } from "@/lib/main-content";
 
-const APP_VERSION = "0.1.0";
+const APP_VERSION = "1.0.0";
 
 interface Props {
   mainLinks: MainLinksData;
@@ -75,7 +74,7 @@ export function AppMenu({ mainLinks }: Props) {
             <section className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                 <Users className="h-3.5 w-3.5 text-muted-foreground" />
-                Colaboradores
+                Colaboradores originales del manual oficial
               </div>
               <button
                 onClick={() => openExternal("/colaboradores")}
@@ -161,32 +160,17 @@ export function AppMenu({ mainLinks }: Props) {
 
             <section className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                <GitBranch className="h-3.5 w-3.5 text-muted-foreground" />
-                Sobre mí
+                <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                Sugerencias
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">MR</div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-foreground">Miguel Rosa (Vol. 15970)</p>
-                  <p className="text-[11px] text-muted-foreground">Todo feedback es bienvenido, por favor, envia tus bugs o sugerencias al correo de contacto.</p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => openExternal("https://github.com/miguelrzazo")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
-                >
-                  <GitBranch className="h-3 w-3" />
-                  GitHub
-                </button>
-                <button
-                  onClick={() => openExternal("mailto:feedback_manual_proc.duchess916@passinbox.com")}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
-                >
-                  <Mail className="h-3 w-3" />
-                  Contacto
-                </button>
-              </div>
+              <p className="text-[11px] text-muted-foreground">Todo feedback es bienvenido. Envía tus errores o sugerencias al correo de contacto.</p>
+              <button
+                onClick={() => openExternal("mailto:feedback_manual_proc.duchess916@passinbox.com")}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors active:scale-95"
+              >
+                <Mail className="h-3 w-3" />
+                Contacto
+              </button>
             </section>
           </div>
         </DialogContent>

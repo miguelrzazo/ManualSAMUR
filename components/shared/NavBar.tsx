@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ProcedureNavMeta } from "@/lib/content";
 import type { MainLinksData } from "@/lib/main-content";
+import type { MobileContentSnapshot } from "@/packages/manual-content/src/schema";
 
 const navItems = [
   { href: "/manual", label: "Manual", icon: BookOpen },
@@ -22,9 +23,10 @@ const navItems = [
 interface Props {
   procedures: ProcedureNavMeta[];
   mainLinks: MainLinksData;
+  snapshot?: MobileContentSnapshot | null;
 }
 
-export function NavBar({ procedures, mainLinks }: Props) {
+export function NavBar({ procedures, mainLinks, snapshot }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -170,7 +172,7 @@ export function NavBar({ procedures, mainLinks }: Props) {
         })}
       </nav>
 
-      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} />
+      <GlobalSearch isOpen={searchOpen} onOpenChange={setSearchOpen} snapshot={snapshot} />
     </>
   );
 }

@@ -35,7 +35,7 @@ export function ColaboradoresView({ collaborators }: Props) {
   return (
     <div className="max-w-5xl mx-auto px-4 py-4 md:py-8">
       <div className="mb-5 md:mb-7">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Colaboradores</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Colaboradores originales del manual oficial</h1>
         <p className="text-sm text-muted-foreground mt-2">
           {filteredList.length} de {collaborators.list.length} colaboradores
         </p>

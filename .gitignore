@@ -43,6 +43,7 @@ yarn-error.log*
 # ocultaría los cambios clínicos reales, que es justo lo que se revisa a mano.
 /public/search-index.json
 /public/manual-updates.json
+/public/manual-home.json
 /public/manual-history.json
 # Grafo de procedimientos — lo regenera `npm run generate:graph` en cada build.
 /public/graph.json
