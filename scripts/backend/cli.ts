@@ -17,7 +17,7 @@ const command = args[0];
 const remote = args.includes('--remote');
 const envIndex = args.indexOf('--env');
 const environment = envIndex >= 0 ? args[envIndex + 1] : remote ? 'production' : undefined;
-if (environment && !['staging', 'production'].includes(environment)) throw new Error('Environment must be staging or production.');
+if (environment && environment !== 'production') throw new Error('Environment must be production.');
 const cwd = process.cwd();
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'manualsamur-backend-'));
 const wrangler = path.join(cwd, 'node_modules/wrangler/bin/wrangler.js');
@@ -344,5 +344,5 @@ try {
   else if (command === 'assets') await prepareDeploymentAssets();
   else if (command === 'propose') await propose();
   else if (command === 'publish') await publish();
-  else throw new Error('Usage: cli.ts seed|assets|propose|publish|backfill-datasets [--remote] [--env staging|production] [--release id]');
+  else throw new Error('Usage: cli.ts seed|assets|propose|publish|backfill-datasets [--remote] [--env production] [--release id]');
 } finally { fs.rmSync(tmp, { recursive: true, force: true }); }

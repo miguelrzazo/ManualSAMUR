@@ -11,7 +11,7 @@ const { CLOUDFLARE_ACCOUNT_ID: account, CLOUDFLARE_API_TOKEN: token, EDITOR_EMAI
   ACCESS_TEAM_DOMAIN: team, PUBLICATION_ORIGIN: origin } = process.env;
 const environment = process.argv[2] || 'production';
 if (!account || !token || !email || !team || !origin) throw new Error('Load account/token, EDITOR_EMAIL, ACCESS_TEAM_DOMAIN and PUBLICATION_ORIGIN securely from the environment.');
-if (!['production', 'staging'].includes(environment) || !/^[^\s@]+@[^\s@]+$/.test(email)
+if (environment !== 'production' || !/^[^\s@]+@[^\s@]+$/.test(email)
   || !/^[a-z0-9-]+\.cloudflareaccess\.com$/.test(team)) throw new Error('Invalid environment or Access identity configuration.');
 const url = new URL(origin);
 if (url.protocol !== 'https:' || url.pathname !== '/' || url.username || url.password || url.search || url.hash) throw new Error('PUBLICATION_ORIGIN must be an HTTPS origin.');

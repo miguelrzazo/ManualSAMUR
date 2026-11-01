@@ -82,7 +82,6 @@ Los permisos y la entrada segura de credenciales están detallados en
 1. Renovar OAuth con `npx wrangler login`. La cuenta debe continuar en Workers Free.
 2. Crear la base con `npx wrangler d1 create manualsamur-production` y guardar el
    `database_id` devuelto en `wrangler.jsonc`, binding `env.production.DB`.
-   Para staging, repetir con el recurso y entorno staging: las bases están separadas.
 3. Ejecutar:
 
    ```bash
