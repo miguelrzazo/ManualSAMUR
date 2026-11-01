@@ -30,7 +30,7 @@
         "activitycontinuation:manualsamur.miguelrzazo13.workers.dev"
       ],
       "deploymentTarget": "16.4",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "icon": {
         "light": "./assets/icon-ios-light.png",
         "dark": "./assets/icon-ios-dark.png",
