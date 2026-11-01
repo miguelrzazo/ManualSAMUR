@@ -8,6 +8,8 @@ import {
   parseMarkdownTableAt,
   procedureHeadings,
   procedureRouteKey,
+  readableMarkdownCell,
+  readableMarkdownLine,
   resolveProcedureReference,
   searchProcedures,
   splitMarkdownBlocks,
@@ -16,6 +18,7 @@ import {
 import { getMobileSearchIndex } from "../apps/mobile/src/reference-search-logic.ts";
 import { buildSearchSnippet, readableSnippetSource, snippetText } from "../apps/mobile/src/search-snippet-logic.ts";
 import type { MobileProcedure } from "../apps/mobile/src/data/schema.ts";
+import { buildMobileContentSnapshot } from "../lib/mobile-snapshot.ts";
 
 const snapshot = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/src/data/snapshot.json"), "utf8")) as {
   content: { procedures: MobileProcedure[] };
@@ -306,4 +309,24 @@ test("la cabecera de una tabla cabe en una linea aunque las celdas sean cortas",
   assert.ok(columnWidthFor("Nº", ["texto bastante mas largo que la cabecera"]) > conCabeceraLarga);
   // Y nada se pasa del maximo.
   assert.ok(columnWidthFor("x", ["y".repeat(500)]) <= 300);
+});
+
+test("the reader and search snippets decode the HTML entities the corpus escapes", () => {
+  assert.equal(readableMarkdownLine("- evitando TAS &lt; 90 mmHg y TAM &lt; 65 mmHg"), "evitando TAS < 90 mmHg y TAM < 65 mmHg");
+  assert.equal(readableMarkdownLine("Na &gt; 145 &amp; K &lt;3,5"), "Na > 145 & K <3,5");
+  assert.equal(readableMarkdownLine("&lt;b&gt;texto&lt;/b&gt;"), "<b>texto</b>");
+  assert.equal(readableMarkdownCell("SatO2 &lt; 94%<br>FC &gt; 100"), "SatO2 < 94%\nFC > 100");
+  assert.equal(readableSnippetSource("TAS &lt; 90 mmHg"), "TAS < 90 mmHg");
+});
+
+test("search snippets read a DrugLink as the drug's name, never as markup", () => {
+  const source = readableSnippetSource('Administre <DrugLink name="Adrenalina" /> iv 1 mg en bolo<br>cada 3-5 min');
+  assert.equal(source, "Administre Adrenalina iv 1 mg en bolocada 3-5 min");
+  const corpus = buildMobileContentSnapshot(process.cwd(), "2026-01-01T00:00:00.000Z").content.procedures;
+  const results = searchProcedures(corpus, "adrenalina");
+  assert.ok(results.length > 0);
+  for (const result of results) {
+    const text = result.snippet ? snippetText(result.snippet) : "";
+    assert.doesNotMatch(text, /DrugLink|name="/, `${result.procedure.id} snippet shows markup: ${text}`);
+  }
 });

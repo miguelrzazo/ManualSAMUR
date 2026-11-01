@@ -1,0 +1,41 @@
+El manual de procedimientos de SAMUR-Protección Civil, ordenado para consultarlo de un vistazo en la guardia: busca un protocolo, una dosis o un código de radio y tenlo delante en segundos, también sin cobertura.
+
+Manual SAMUR es una guía independiente y no oficial. Reúne en una sola app el contenido público del manual para que técnicos, enfermería, medicina y estudiantes lo lleven siempre encima.
+
+BUSCA EN TODO EL MANUAL
+• Una sola búsqueda recorre procedimientos, vademécum y códigos.
+• Encuentra por número (301), por nombre o por una palabra del texto.
+• Recientes y favoritos para volver a lo que más usas.
+
+PROCEDIMIENTOS FÁCILES DE LEER
+• Índice de secciones en cada procedimiento para saltar a lo que necesitas.
+• Tablas legibles, anexos y procedimientos relacionados.
+• Busca dentro del procedimiento abierto.
+
+VADEMÉCUM CON DOSIS
+• Fármacos, perfusiones y fluidos con dosis de adultos y niños.
+• Vías de administración, presentaciones y nombres comerciales.
+
+CÓDIGOS Y CLAVES DE RADIO
+• Códigos de incidente, SVB, SVA, UPSI, UPSQ, claves e indicativos.
+• Cada código enlaza con los procedimientos que lo mencionan.
+
+HOSPITALES Y BASES EN EL MAPA
+• Hospitales y bases de Madrid en el mapa y en un directorio.
+• La ubicación es opcional, se pide solo si la usas para ordenar por cercanía y no sale del dispositivo.
+
+FUNCIONA SIN CONEXIÓN
+• Todo el contenido va dentro de la app: abre, busca y lee sin red.
+• Cuando hay conexión comprueba si hay una versión nueva del manual y la descarga. El contenido se revisa cada mes.
+• Ajustes muestra la fecha de los datos que estás consultando.
+
+EN IPHONE, IPAD Y APPLE WATCH
+• En iPad, lista y ficha a la vez en dos columnas.
+• En el Apple Watch, códigos, vademécum y Status 4 en la muñeca.
+• Handoff: sigue en Safari del Mac la misma página que tienes abierta.
+• Siri y Atajos: «Buscar en Manual SAMUR» o abre una referencia por su nombre.
+
+Sin cuenta, sin registro y sin recoger datos de pacientes.
+
+AVISO
+Manual SAMUR es una guía independiente y no oficial. No está afiliada, patrocinada ni avalada por SAMUR-Protección Civil ni por el Ayuntamiento de Madrid. El contenido procede del manual público y puede no estar actualizado: contrástalo siempre con la fuente oficial. Es material de consulta y no sustituye los protocolos vigentes, la formación ni el juicio clínico profesional. No introduzcas datos de pacientes.

@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { radii, spacing, typography, type AdaptivePalette } from "@manual-samur/design-tokens";
 import React, { useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { adaptiveLayout } from "../accessibility";
 import { useContentData, useContentSync } from "../content-context";
 import { formatDataDate, isOfflineWithStaleData } from "../content-update-logic";
 import { useTheme } from "../theme";
@@ -21,6 +22,14 @@ export function OfflineDataBanner() {
   const palette = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const insets = useSafeAreaInsets();
+  const { width, fontScale } = useWindowDimensions();
+  // Narrow: float just above the bottom tab capsules. Wide: there is no bottom bar (the
+  // tabs are a rail on the left), so sit near the bottom edge, centred on the content
+  // column rather than across the rail.
+  const layout = adaptiveLayout(width, fontScale);
+  const placement = layout.isWideLayout
+    ? { bottom: insets.bottom + spacing.lg, left: layout.railWidth + insets.left }
+    : { bottom: insets.bottom + 84 };
   const { snapshot } = useContentData();
   const { lastCheck, isSeed, release, isHydrated } = useContentSync();
   const [dismissedFor, setDismissedFor] = useState<string>();
@@ -32,7 +41,7 @@ export function OfflineDataBanner() {
     ? `Sin conexión · Datos incluidos en la app (${date})`
     : `Sin conexión · Datos del ${date} sin verificar`;
   return (
-    <View pointerEvents="box-none" style={[styles.host, { bottom: insets.bottom + 84 }]}>
+    <View pointerEvents="box-none" style={[styles.host, placement]}>
       <Pressable
         testID="offline-data-banner"
         onPress={() => setDismissedFor(key)}

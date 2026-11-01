@@ -1,0 +1,8 @@
+Primera versión de Manual SAMUR para iPhone, iPad y Apple Watch.
+
+• Búsqueda en todo el manual: procedimientos, vademécum y códigos.
+• Procedimientos con índice de secciones y anexos.
+• Vademécum con dosis de adultos y niños.
+• Códigos y claves de radio, hospitales y bases en el mapa.
+• Funciona sin conexión y descarga las nuevas versiones del contenido.
+• iPad en dos columnas, Apple Watch, Handoff al Mac y Siri.

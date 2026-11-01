@@ -40,6 +40,12 @@ modelo, versión de iOS, versión de la app, commit y SHA-256 con cada lote. Val
 ausencia de canal alfa antes de subir a App Store Connect. La interfaz debe adaptarse al cambio de
 ancho disponible: la navegación pasa a una columna lateral cuando el espacio permite presentarla.
 
-Estado: lista y rutas de entrega preparadas; faltan las capturas del simulador Duo y la validación
-visual en ambos displays.
+Estado (31-10-2026, build Release 1.0.0 (8), simulador iPhone Duo con iOS 27.1, issue #101):
+capturada la combinación **exterior / vertical** (`outer/portrait/`, 1398 × 2034, sin alfa):
+Inicio, Buscar ("ictus"), procedimiento 301, Vademécum (adrenalina) y Códigos. El simulador
+arranca plegado y, sin la interfaz de Simulator, no se puede desplegar ni girar la pantalla
+exterior (XCTest no aplica la orientación horizontal en ese display), así que faltan las
+combinaciones **exterior / horizontal**, **interior / vertical** e **interior / horizontal**.
+Se capturan desde Simulator (Device > Unfold y rotación) con el mismo recorrido; la serie de
+iPhone grande está en `app-store/framed/iphone-6.9/`.
 

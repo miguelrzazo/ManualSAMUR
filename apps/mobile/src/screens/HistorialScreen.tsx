@@ -10,6 +10,7 @@ import { UpdateDiff } from "../components/UpdateDiff.tsx";
 import { applyManualRecencyWindow, asManualUpdateEvents, groupManualEventsByDate, manualNovedades, manualUpdateDestination, manualUpdateView, sortManualHistorial, type ManualUpdateEvent } from "../manual-tree-logic.ts";
 import { useContentData } from "../content.tsx";
 import { usePreferences } from "../preferences.tsx";
+import { isUnreadNovedad } from "../preferences-logic.ts";
 import { useTheme, useThemedStyles } from "../theme.tsx";
 import type { RootStackParamList } from "../navigation-types.ts";
 import { loadRemoteHistoryPage } from "../remote-history-logic.ts";
@@ -21,7 +22,7 @@ export function HistorialScreen({ navigation }: Props) {
   const palette = useTheme();
   const styles = useThemedStyles(createStyles);
   const { content } = useContentData();
-  const { seenEventIds, markEventSeen, markAllEventsSeen } = usePreferences();
+  const { seenEventIds, novedadesBaselineAt, markEventSeen, markAllEventsSeen } = usePreferences();
   const [tab, setTab] = useState<HistoryTab>("novedades");
   const [remoteHistory, setRemoteHistory] = useState<ManualUpdateEvent[]>([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
@@ -39,7 +40,8 @@ export function HistorialScreen({ navigation }: Props) {
   const groups = useMemo(() => groupManualEventsByDate(recentEvents), [recentEvents]);
   const historyGroups = useMemo(() => groupManualEventsByDate(historyEvents), [historyEvents]);
   const seen = useMemo(() => new Set(seenEventIds), [seenEventIds]);
-  const unreadRecentEvents = useMemo(() => recentEvents.filter((event) => !seen.has(event.eventId)), [recentEvents, seen]);
+  const isUnread = useCallback((event: ManualUpdateEvent) => isUnreadNovedad(event, seen, novedadesBaselineAt), [seen, novedadesBaselineAt]);
+  const unreadRecentEvents = useMemo(() => recentEvents.filter(isUnread), [recentEvents, isUnread]);
 
   const loadHistoryPage = useCallback(async (page: number) => {
     if (historyLoading) return;
@@ -102,7 +104,7 @@ export function HistorialScreen({ navigation }: Props) {
         <View key={group.date} style={styles.group}>
           <Text style={styles.date}>{formatDate(group.date)}</Text>
           {group.events.map((event) => (
-            <HistoryEvent key={event.eventId} event={event} unread={!seen.has(event.eventId)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />
+            <HistoryEvent key={event.eventId} event={event} unread={isUnread(event)} onOpen={() => openEvent(event)} palette={palette} styles={styles} />
           ))}
         </View>
       ))}

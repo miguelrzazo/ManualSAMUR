@@ -137,9 +137,12 @@ export function CodigosScreen({ route }: BottomTabScreenProps<TabsParamList, "Co
   if (query.trim()) {
     return (
       <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
-        {chrome.collapsed ? (
-          <CompactHeader title="Códigos y claves" onExpand={chrome.expand} />
-        ) : (
+        {/* Same child slots as the list view below (compact bar, then the header
+            fragment), so typing the first character keeps the very same TextInput.
+            A ternary here put the header in another slot, React remounted the field
+            and the keyboard dropped every keystroke after the first. */}
+        {chrome.collapsed && <CompactHeader title="Códigos y claves" onExpand={chrome.expand} />}
+        {!chrome.collapsed && (
           <>
             <PageHeader title="Códigos y claves" />
             <View style={styles.header}>

@@ -155,8 +155,23 @@ function collapse(value: string): string {
  * whatever string is excerpted, so cleaning afterwards would move the matches
  * out from under them.
  */
+/**
+ * The few HTML entities the corpus carries escaped (`TAS &lt; 90 mmHg`). The web decodes
+ * them when it renders HTML; the native reader draws plain text, so it decodes them here.
+ */
+export const HTML_ENTITY_PATTERN = /&(lt|gt|amp|quot|apos|nbsp|#39);/g;
+const HTML_ENTITIES: Record<string, string> = { lt: "<", gt: ">", amp: "&", quot: "\"", apos: "'", "#39": "'", nbsp: " " };
+export function decodeHtmlEntity(match: string, name: string): string {
+  return HTML_ENTITIES[name] ?? match;
+}
+
 export function readableSnippetSource(markdown: string): string {
   return String(markdown ?? "")
+    // Same tag handling as the reader (`readableMarkdownLine`): a drug link reads as
+    // its name, any other tag goes. Without it a search for "adrenalina" showed
+    // `<DrugLink name="Noradrenalina" />` verbatim in every snippet.
+    .replace(/<DrugLink\s+name="([^"]+)"\s*\/>/g, "$1")
+    .replace(/<[^>]+>/g, "")
     .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     // Table separator rows carry no content at all.
@@ -166,6 +181,7 @@ export function readableSnippetSource(markdown: string): string {
     .replace(/^[ \t]*>[ \t]?/gm, "")
     .replace(/\|/g, " · ")
     .replace(/[*_~`]/g, "")
+    .replace(HTML_ENTITY_PATTERN, decodeHtmlEntity)
     .replace(/\s+/g, " ")
     // Whitespace first: a table's row boundary is a newline between two pipes,
     // so the run of separators only becomes adjacent once it is collapsed.

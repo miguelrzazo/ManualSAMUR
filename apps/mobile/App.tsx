@@ -1,6 +1,6 @@
 import { manualContentOrigin } from "./src/content-origin";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { NavigationContainer, NavigationIndependentTree, StackActions, type NavigationAction, type NavigationState } from "@react-navigation/native";
+import { NavigationContainer, NavigationIndependentTree, StackActions, createNavigationContainerRef, useIsFocused, type NavigationAction, type NavigationState } from "@react-navigation/native";
 import { createBottomTabNavigator, type BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, type NativeStackNavigationProp, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
@@ -53,7 +53,7 @@ import { highlightSegments, snippetText, type SearchSnippet } from "./src/search
 import { findProcedureMatches, formatMatchCounter, isFindableQuery, stepMatchIndex } from "./src/procedure-find-logic";
 import { activeHeadingIdAtOffset, parseProcedureDocument, type MeasuredHeadingOffset, type ParsedProcedureDocument, type ParsedProcedureSection } from "./src/procedure-document.ts";
 import { COLLAPSE_TRIGGER, READER_BACK_TO_TOP_PLACEMENT } from "./src/scroll-chrome-logic";
-import { buildCodeReferences, buildVademecumReferences, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
+import { buildCodeReferences, buildVademecumReferences, orderAllResults, relatedProcedureIdsForDrug, resolveCodeReference, resolveVademecumReference, searchAbbreviations, searchCodes, searchVademecum, SEARCH_SCOPES, type MobileReferenceSearchResult, type SearchScope } from "./src/reference-search-logic";
 import { isLocallyAvailable, type AttachmentRecord } from "./src/attachment-logic";
 import { reconcileAttachmentRecord } from "./src/attachment-runtime";
 import {
@@ -90,7 +90,7 @@ import { shouldShowAcademySplash } from "./src/academy-slot.ts";
 import { academyBrand, academySlot } from "./src/academy-slot-config.ts";
 import { asCodigosHospitals, asStatus4Entries, buildHospitalList } from "./src/codigos-logic";
 import { HistorialScreen } from "./src/screens/HistorialScreen";
-import { useWebRouteBridge } from "./src/hooks/use-web-route-bridge";
+import { useDetailPaneHandoff, useWebRouteBridge } from "./src/hooks/use-web-route-bridge";
 // `Guardados` intentionally stays out of TabsParamList and off the tab bar (see T5a).
 // Its favorites/recents content now lives inside Inicio (src/screens/InicioScreen.tsx,
 // T5b) rather than a separate, unrouted `SavedScreen`.
@@ -249,12 +249,17 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
    */
   trailing?: () => React.ReactNode;
 }) {
+  // Inside an iPad/Duo detail pane UIKit lays the large title out with no leading
+  // margin, flush against the divider (the pane's navigation controller does not sit
+  // at the window edge, so it inherits no layout margin). The inline title is placed
+  // correctly, so the pane uses that.
+  const inDetailPane = useContext(InDetailPaneContext);
   useLayoutEffect(() => {
     navigation.setOptions({
       // Titles here come from the corpus (a drug name, a location's short name), which
       // mixes shouted and sentence-cased entries — `displayTitle` levels them.
       title: displayTitle(title),
-      headerLargeTitle: largeTitle,
+      headerLargeTitle: largeTitle && !inDetailPane,
       headerTitle,
       headerRight: onToggleFavorite || trailing
         ? () => (
@@ -265,7 +270,7 @@ function useDetailHeader({ navigation, title, favorite, onToggleFavorite, largeT
           )
         : undefined,
     });
-  }, [navigation, title, favorite, onToggleFavorite, largeTitle, headerTitle, trailing]);
+  }, [navigation, title, favorite, onToggleFavorite, largeTitle, inDetailPane, headerTitle, trailing]);
 }
 
 function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
@@ -379,11 +384,9 @@ function BuscarScreenContent({ navigation, initialQuery }: {
   const visibleProcedures = filter === "Vademécum" || filter === "Códigos" ? [] : procedureResults;
   const visibleVademecum = filter === "Todo" || filter === "Vademécum" ? vademecumResults : [];
   const visibleCodes = filter === "Todo" || filter === "Códigos" ? codeResults : [];
-  const rows = [
-    ...visibleProcedures.map((result) => ({ kind: "procedure" as const, item: result.procedure, snippet: result.snippet })),
-    ...visibleVademecum.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
-    ...visibleCodes.map((item) => ({ kind: "reference" as const, item, snippet: undefined })),
-  ];
+  const rows = orderAllResults(visibleProcedures, [...visibleVademecum, ...visibleCodes], query).map((row) => row.kind === "procedure"
+    ? { kind: "procedure" as const, item: row.result.procedure, snippet: row.result.snippet }
+    : { kind: "reference" as const, item: row.item, snippet: undefined });
   const resultsRef = useRef<FlatList<(typeof rows)[number]>>(null);
 
   return (
@@ -1160,7 +1163,7 @@ function ProcedureScreen({ route, navigation }: NativeStackScreenProps<RootStack
       <Text style={[styles.favoriteActionText, procedureFavorite && styles.favoriteActionTextOn]}>{procedureFavorite ? "Guardado" : "Guardar"}</Text>
     </Press>
     <Text style={styles.detailMeta}>{procedure.section} · {procedure.id}{procedure.updated ? ` · Actualizado ${procedure.updated}` : ""}{procedure.attachments.length ? ` · ${procedure.attachments.length} anexos` : ""}</Text>
-    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => { animateNextLayout(reduceMotion); setTocExpanded((expanded) => !expanded); }} style={styles.contentsHeader} accessibilityRole="button" accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : currentHeadingText}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
+    {headings.length > 0 && <View onLayout={(event) => { const { y, height } = event.nativeEvent.layout; setTocFrame({ y, height }); }} style={styles.contentsCard} accessibilityRole="summary" accessibilityLabel="Contenido del procedimiento"><Pressable onPress={() => { animateNextLayout(reduceMotion); setTocExpanded((expanded) => !expanded); }} style={styles.contentsHeader} accessibilityRole="button" accessibilityLabel={tocExpanded ? "Contenido" : `Contenido, ${currentHeadingText}`} accessibilityState={{ expanded: tocExpanded }}><Text style={styles.contentsTitle}>{tocExpanded ? "Contenido" : currentHeadingText}</Text><MaterialCommunityIcons name={tocExpanded ? "chevron-up" : "chevron-down"} size={18} color={palette.inkMuted} /></Pressable>{tocExpanded && headings.map((heading) => <Pressable key={heading.id} onPress={() => { const offset = sectionOffsets.current[heading.id]; setPendingHeadingKey(heading.id); setActiveHeadingKey(heading.id); if (typeof offset === "number") scrollRef.current?.scrollTo({ y: Math.max(0, offset - insetTop - spacing.md), animated: !reduceMotion }); }} style={[styles.contentsRow, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsRowActive]} accessibilityRole="button" accessibilityLabel={`Ir a ${heading.text}`} accessibilityHint="Salta a esta sección del procedimiento."><View style={[styles.contentsAccent, (pendingHeadingKey ?? activeHeadingKey) === heading.id && styles.contentsAccentActive]} /><Text style={[styles.contentsText, heading.level > 2 && styles.contentsTextNested]}>{heading.text}</Text></Pressable>)}</View>}
     <MarkdownContent
       sections={readerDocument.renderSections}
       onContainerLayout={(offset) => { markdownOrigin.current = offset; }}
@@ -1354,7 +1357,8 @@ function CodeScreen({ route, navigation }: NativeStackScreenProps<RootStackParam
     if (reference && canRecordRecent(content, route.params.routeKey)) remember(route.params.routeKey);
   }, [content, reference, remember, route.params.routeKey]);
   const onToggleFavorite = useCallback(() => toggleFavorite(route.params.routeKey), [toggleFavorite, route.params.routeKey]);
-  useDetailHeader({ navigation, title: reference?.badge ?? reference?.title ?? "Código", favorite, onToggleFavorite });
+  // The body opens with "13 · Ictus agudo"; a large "13" above it said the same thing twice.
+  useDetailHeader({ navigation, title: reference?.badge ?? reference?.title ?? "Código", favorite, onToggleFavorite, largeTitle: false });
   if (!reference) return <MissingResource title="Código no disponible" detail="Este código no está incluido en el paquete local." onRecover={() => navigation.navigate("Tabs", { screen: "Buscar" })} />;
   const details = reference.detail ?? {};
   const description = typeof details.description === "string" ? details.description : "";
@@ -1597,6 +1601,12 @@ function DetailPane({ section }: { section: SplitSection }) {
   const detailHeader = useDetailHeaderOptions();
   const { selections } = useSplitSelections();
   const selection = selections[section];
+  // A pane in a background tab (or under a pushed screen) must not hold Handoff.
+  const tabFocused = useIsFocused();
+  // One ref for the pane's lifetime: a new selection remounts the container under it
+  // (see the key below), which re-attaches the ref and reports through onReady.
+  const [paneNavigation] = useState(() => createNavigationContainerRef<RootStackParamList>());
+  const handoff = useDetailPaneHandoff(paneNavigation, tabFocused && Boolean(selection));
   if (!selection) {
     const placeholder = SPLIT_PLACEHOLDERS[section];
     return <SafeAreaView style={[styles.screen, styles.splitPlaceholder]} edges={["top", "right", "bottom"]} testID={`detail-pane-empty-${section}`}>
@@ -1608,7 +1618,7 @@ function DetailPane({ section }: { section: SplitSection }) {
   const initialParams = (screen: keyof RootStackParamList) => (selection.screen === screen ? selection.params : undefined) as never;
   return <InDetailPaneContext.Provider value>
     <NavigationIndependentTree key={detailRouteKey(selection)}>
-      <NavigationContainer onUnhandledAction={forwardToRoot}>
+      <NavigationContainer ref={paneNavigation} onReady={handoff.onReady} onStateChange={handoff.onStateChange} onUnhandledAction={forwardToRoot}>
         <PaneStack.Navigator initialRouteName={selection.screen} screenOptions={{ headerShown: false, animation: reduceMotion ? "none" : "slide_from_right", contentStyle: { backgroundColor: palette.paper } }}>
           <PaneStack.Screen name="Procedure" component={ProcedureScreen} initialParams={initialParams("Procedure")} options={detailHeader} />
           <PaneStack.Screen name="Drug" component={DrugScreen} initialParams={initialParams("Drug")} options={detailHeader} />
