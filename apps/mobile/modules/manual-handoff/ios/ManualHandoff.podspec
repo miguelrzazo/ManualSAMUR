@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description    = package['description']
   s.license        = package['license']
   s.author         = 'Manual SAMUR'
-  s.homepage       = 'https://manualsamur.miguelrzazo13.workers.dev'
+  s.homepage       = 'https://manualsamur.apta-academy.com'
   s.platforms      = { :ios => '16.4' }
   s.swift_version  = '5.9'
   s.source         = { git: '' }

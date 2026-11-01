@@ -1,4 +1,4 @@
-export const DEFAULT_SITE_URL = "https://manualsamur.miguelrzazo13.workers.dev";
+export const DEFAULT_SITE_URL = "https://manualsamur.apta-academy.com";
 
 export interface CanonicalProcedureMarkdown {
   id: string;

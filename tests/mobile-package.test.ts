@@ -53,6 +53,8 @@ test("managed Expo config carries the iOS scene lifecycle boundary", () => {
 test("iOS config claims the web domain for universal links and Handoff", () => {
   const appConfig = JSON.parse(readFileSync(path.join(process.cwd(), "apps/mobile/app.json"), "utf8")) as { expo?: { ios?: { associatedDomains?: string[]; infoPlist?: { NSUserActivityTypes?: string[] } } } };
   assert.deepEqual(appConfig.expo?.ios?.associatedDomains, [
+    "applinks:manualsamur.apta-academy.com",
+    "activitycontinuation:manualsamur.apta-academy.com",
     "applinks:manualsamur.miguelrzazo13.workers.dev",
     "activitycontinuation:manualsamur.miguelrzazo13.workers.dev",
   ]);
