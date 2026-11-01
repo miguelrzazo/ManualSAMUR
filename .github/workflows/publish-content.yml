@@ -28,6 +28,8 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
+      - name: Install mobile dependencies for type checking
+        run: npm ci --prefix apps/mobile --ignore-scripts
       - name: Build static site for the single worker
         run: npm run build
       # Compilation is off-worker to stay within Workers Free CPU limits.
