@@ -9,10 +9,12 @@ import type { ProcedureSidebarSection } from "@/lib/content";
 import { SiteFooter } from "@/components/shared/SiteFooter";
 import { PublicationBoundary } from "./PublicationBoundary";
 import { PublishedContent } from "./PublishedContent";
+import { PublicationSkeleton } from "./PublicationSkeleton";
 import { readVerifiedSnapshot, saveVerifiedSnapshot } from "./snapshot-cache";
 
 const contentRoute = (path: string) => path === "/" || path === "/manual" || path.startsWith("/manual/") || ["/codigos", "/vademecum", "/abreviaturas"].includes(path);
-type State = { status: "loading" | "live" | "cached" | "static" | "unavailable"; snapshot: MobileContentSnapshot | null };
+// "stale": the last verified snapshot, shown from IndexedDB while the network check runs.
+type State = { status: "loading" | "stale" | "live" | "cached" | "static" | "unavailable"; snapshot: MobileContentSnapshot | null };
 
 export function PublicationShell({ children, fallbackNavigation, mainLinks, sidebarSections }: { children: React.ReactNode; fallbackNavigation: React.ReactNode; mainLinks: MainLinksData; sidebarSections: ProcedureSidebarSection[] }) {
   const route = usePathname();
@@ -27,6 +29,10 @@ export function PublicationShell({ children, fallbackNavigation, mainLinks, side
     const refresh = async () => {
       if (refreshing) return;
       refreshing = true;
+      if (!active) {
+        active = await readVerifiedSnapshot();
+        if (active && !disposed) setState((current) => current.snapshot ? current : { status: "stale", snapshot: active });
+      }
       try {
         const response = await fetch("/api/mobile/content/metadata", { cache: "no-store", signal: AbortSignal.timeout(15000) });
         if (!response.ok) throw new Error("Publication metadata unavailable");
@@ -48,7 +54,6 @@ export function PublicationShell({ children, fallbackNavigation, mainLinks, side
         if (!disposed) setState({ status: "live", snapshot: candidate });
         await saveVerifiedSnapshot(candidate);
       } catch {
-        if (!active) active = await readVerifiedSnapshot();
         if (!disposed) setState({ status: active ? "cached" : "unavailable", snapshot: active });
       } finally { refreshing = false; }
     };
@@ -66,7 +71,7 @@ export function PublicationShell({ children, fallbackNavigation, mainLinks, side
   return <div className="flex min-h-screen flex-col">
     {state.status === "static" ? fallbackNavigation : <NavBar procedures={snapshot?.content.procedures ?? []} mainLinks={mainLinks} snapshot={snapshot} />}
     {isContent && state.status === "cached" && <p role="status" className="border-b border-border bg-muted px-4 py-3 text-sm">Sin conexión con la publicación. Mostrando la última versión verificada: {snapshot?.generatedAt.slice(0, 10)}.</p>}
-    <main className="min-h-0 flex-1 pb-16 md:pb-0">{!isContent || state.status === "static" ? children : snapshot ? <Suspense fallback={<p role="status" className="p-6">Cargando contenido…</p>}><PublicationBoundary key={`${snapshot.hash}:${pathname}`}><PublishedContent snapshot={snapshot} pathname={pathname} sidebarSections={sidebarSections} /></PublicationBoundary></Suspense> : <section className="mx-auto max-w-3xl px-4 py-12" role="status"><h1 className="text-2xl font-semibold">{state.status === "loading" ? "Cargando el manual publicado…" : "Publicación no disponible"}</h1>{state.status === "unavailable" && <><p className="mt-3">No se ha podido verificar una publicación. Comprueba la conexión e inténtalo de nuevo.</p><button type="button" onClick={() => window.location.reload()} className="mt-4 min-h-11 rounded-md border border-border px-4">Reintentar</button></>}</section>}</main>
+    <main className="min-h-0 flex-1 pb-16 md:pb-0">{!isContent || state.status === "static" ? children : snapshot ? <Suspense fallback={<PublicationSkeleton />}><PublicationBoundary key={`${snapshot.hash}:${pathname}`}><PublishedContent snapshot={snapshot} pathname={pathname} sidebarSections={sidebarSections} /></PublicationBoundary></Suspense> : state.status === "loading" ? <PublicationSkeleton /> : <section className="mx-auto max-w-3xl px-4 py-12" role="status"><h1 className="text-2xl font-semibold">Publicación no disponible</h1><p className="mt-3">No se ha podido verificar una publicación. Comprueba la conexión e inténtalo de nuevo.</p><button type="button" onClick={() => window.location.reload()} className="mt-4 min-h-11 rounded-md border border-border px-4">Reintentar</button></section>}</main>
     <SiteFooter mainLinks={mainLinks} />
   </div>;
 }

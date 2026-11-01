@@ -85,7 +85,7 @@ export function PublishedContent({ snapshot, pathname, sidebarSections }: { snap
     const props = { ...content.codes, bases: content.bases, hospitals: content.hospitals, status4: content.status4 } as unknown as ComponentProps<typeof CodigosView>;
     return <CodigosView {...props} />;
   }
-  if (pathname === "/vademecum") return <VademecumView {...({ drugs: content.drugs, perfusiones: content.perfusions, fluidos: content.fluids, comerciales: content.commercialNames } as unknown as ComponentProps<typeof VademecumView>)} />;
+  if (pathname === "/vademecum") return <div className="flex flex-col h-[calc(100vh-3.5rem-4rem)] md:h-[calc(100vh-3.5rem)]"><VademecumView {...({ drugs: content.drugs, perfusiones: content.perfusions, fluidos: content.fluids, comerciales: content.commercialNames } as unknown as ComponentProps<typeof VademecumView>)} /></div>;
   if (pathname === "/abreviaturas") return <AbreviaturasView sections={content.abbreviations as unknown as ComponentProps<typeof AbreviaturasView>["sections"]} />;
   return null;
 }
