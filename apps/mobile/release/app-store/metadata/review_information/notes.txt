@@ -8,6 +8,6 @@ Location is optional. It is requested only when the user taps a location action 
 
 How to see offline mode: open the app once with a connection, then enable Airplane Mode and relaunch. Search (magnifier button), procedures, vademécum and códigos all keep working. Settings > Contenido shows the date of the data in use and that the server could not be reached; the last valid copy is kept. The Mapa tab caches the Madrid map tiles in the background the first time the map loads online; the hospital and base directory works offline either way.
 
-Other features you may want to check: on iPad, Inicio, Códigos and Vademécum show list and detail side by side. The Apple Watch app (Códigos, Vademécum, Status 4) gets its data from the iPhone. Handoff publishes the open page so it can be continued in Safari on a Mac. Siri / Shortcuts: "Buscar en Manual SAMUR" opens search.
+Other features you may want to check: on iPad, Inicio, Códigos and Vademécum show list and detail side by side. The Apple Watch app (Códigos, Vademécum, Status 4) downloads the same public data from the backend, keeps the last copy for offline use, and can also receive it from the paired iPhone. Handoff publishes the open page so it can be continued in Safari on a Mac. Siri / Shortcuts: "Buscar en Manual SAMUR" opens search.
 
 Contact for review questions: miguelrzazo13@gmail.com
