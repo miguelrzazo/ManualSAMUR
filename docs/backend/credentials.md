@@ -1,54 +1,40 @@
-# Configurar las credenciales pendientes
+# Credenciales del backend editorial
 
-La sesión OAuth de Wrangler sirve para el despliegue interactivo, pero no incluye
-permisos de Cloudflare Access. Los workflows mensuales también necesitan una
-credencial propia que siga funcionando cuando esa sesión OAuth caduque.
+## Acceso con GitHub
 
-No pegues estos valores en el chat, en comandos ni en archivos de Git.
+La aplicación OAuth **Manual SAMUR · Administración** usa
+`https://manualsamur.apta-academy.com/auth/github/callback` como URL de retorno.
+El Worker de producción necesita los secretos `GITHUB_CLIENT_ID`,
+`GITHUB_CLIENT_SECRET` y `EDITOR_EMAIL`. Comprueba sus nombres con
+`npx wrangler secret list --env production`.
 
-## 1. Cloudflare Access
-
-En [API Tokens de Cloudflare](https://dash.cloudflare.com/profile/api-tokens), crea
-un token personalizado limitado a la cuenta donde está Manual SAMUR:
-
-- Account → Access: Apps and Policies → Edit.
-- Account → Access: Organizations, Identity Providers, and Groups → Edit.
-- Account → Workers Scripts → Edit, para guardar los secretos del Worker.
-
-Este token se usa para la configuración inicial del editor. No se guardará en
-GitHub ni en el Worker como credencial de administración.
-
-## 2. Automatización en GitHub
-
-Crea otro token de Cloudflare limitado a esa misma cuenta con:
-
-- Account → D1 → Edit.
-- Account → Workers Scripts → Edit.
-- Account → Account Settings → Read.
-
-Se guardará como secreto de GitHub Actions para importar propuestas y desplegar
-los adjuntos de las publicaciones. Mantenerlo separado evita dar permisos de
-administración de Access a los workflows.
-
-## 3. Publicar desde el editor
-
-En [tokens de GitHub](https://github.com/settings/personal-access-tokens/new), crea
-un token fine-grained, limitado al repositorio `miguelrzazo/ManualSAMUR`, con
-Repository permissions → Actions → Read and write. No necesita permisos de
-escritura de código. Se guardará como secreto del Worker para iniciar la compilación
-de una publicación revisada.
-
-## Introducirlos de forma segura
-
-En la terminal del servidor `localcomputer`:
+Si es necesario aprovisionar o rotar credenciales, configura la aplicación en
+[GitHub](https://github.com/settings/developers) y usa el asistente interactivo:
 
 ```bash
-python3 /home/miguel/development/ManualSAMUR/.cloudflare/enter-deployment-secrets.py
+python3 scripts/backend/setup-github.py
 ```
 
-El asistente pide los valores sin mostrarlos y los guarda con permisos privados en
-un archivo excluido de Git. Los dos últimos se pueden dejar vacíos para completar
-primero el acceso editorial. Avisa en el chat cuando termine; no compartas los valores.
+El asistente pide el secreto con entrada oculta y lo guarda en Cloudflare.
+Usa como correo propietario una dirección verificada por GitHub. Las demás
+cuentas se invitan desde **Usuarios**; solo necesitan verificar allí el correo
+de la invitación. No es necesario activar Cloudflare Zero Trust.
 
-Crear estos tokens no activa un plan de pago. El acceso editorial se configura
-para una única identidad; no se añaden suscripciones ni servicios de pago.
+En producción, abre [Administración](https://manualsamur.apta-academy.com/admin),
+comprueba el inicio de sesión y confirma que una ventana privada recibe un 401
+en `/api/editor/session`. No compartas secretos o códigos de acceso por chat.
+
+## Despliegues de código
+
+La ejecución interactiva usa `npx wrangler login`. GitHub `deploy.yml` conserva un
+token de Cloudflare separado y limitado a D1 Edit, Workers Scripts Edit, Workers KV
+Storage Edit y Account Settings Read, además de los permisos específicos que
+Cloudflare requiera para desplegar el Workflow. Su alcance debe seguir limitado a
+esta cuenta. No necesita permisos para administrar Access.
+
+La detección y publicación editorial ya no necesitan tokens de GitHub, secretos
+de CI para importar propuestas ni `PUBLICATION_GITHUB_TOKEN`. No retirar las
+credenciales usadas por despliegues de código u otros proyectos.
+
+Ninguno de estos pasos autoriza activar planes de pago. La publicación y sus
+adjuntos deben operar dentro del plan gratuito acordado.

@@ -19,6 +19,7 @@ const proyecto = [
   ["/colaboradores", "Colaboradores originales del manual oficial"],
   ["/soporte", "Soporte"],
   ["/privacidad", "Privacidad"],
+  ["/admin", "Administración"],
 ] as const;
 
 function Column({ title, children, className = "" }: { title: string; children: React.ReactNode; className?: string }) {
@@ -65,7 +66,7 @@ export function SiteFooter({ mainLinks }: { mainLinks: MainLinksData }) {
         </Column>
 
         <Column title="Proyecto">
-          {proyecto.map(([href, label]) => <li key={href}><Link href={href} className={linkClass}>{label}</Link></li>)}
+          {proyecto.map(([href, label]) => <li key={href}><Link href={href} prefetch={href === "/admin" ? false : undefined} className={linkClass}>{label}</Link></li>)}
         </Column>
 
         <Column title="Fuente oficial" className="col-span-2 md:col-span-1">

@@ -56,7 +56,7 @@ function execute<T = Record<string, unknown>>(text: string, read = false): T[] {
 }
 
 function seed() {
-  const existing = execute<{ id: string }>('SELECT id FROM documents LIMIT 1;', true);
+  const existing = execute<{ id: string }>("SELECT id FROM documents WHERE id!='dataset:updates' LIMIT 1;", true);
   if (existing.length) throw new Error('Seed is only allowed on an empty database; use propose for existing editorial data.');
   const snapshot = buildMobileContentSnapshot();
   const documents = importDocuments(structuredClone(snapshot));
@@ -189,6 +189,9 @@ function readSnapshot(releaseId: string): MobileContentSnapshot | undefined {
 
 const assetRoot = path.join(cwd, '.cloudflare/attachments');
 async function retainAsset(localPath: string, expectedHash: string, expectedSize?: number) {
+  // Cloudflare-native assets remain in KV across code deployments. Do not fetch
+  // private draft files through the anonymous public origin or move their paths.
+  if (/^\/docs\/_cloud\/[a-f0-9]{64}\/[^/]+$/.test(localPath)) return localPath;
   return retainFrozenAsset(localPath, expectedHash, expectedSize, { cwd, assetRoot, origin: process.env.PUBLICATION_ORIGIN });
 }
 

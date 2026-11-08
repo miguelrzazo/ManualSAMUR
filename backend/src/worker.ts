@@ -1,13 +1,13 @@
+import { githubAuth, githubConfigured, githubIdentity, type GithubAuthConfig } from './github-auth.ts';
+import { enqueueJob, jobRoutes, type JobEnv } from './jobs.ts';
+import { assetResponse } from './storage.ts';
 import { verifyAccessIdentity, type AccessConfig } from './auth.ts';
 import type { D1Database, D1Result } from '@cloudflare/workers-types';
 import { documentView, HttpError, transitions, validateSave, type DocumentRow } from './model.ts';
 
-export interface Env extends AccessConfig {
+export interface Env extends AccessConfig, JobEnv, GithubAuthConfig {
   DB: D1Database;
   ASSETS: { fetch(request: Request): Promise<Response> };
-  PUBLICATION_GITHUB_TOKEN?: string;
-  PUBLICATION_REPOSITORY?: string;
-  PUBLICATION_REF?: string;
 }
 
 function json(body: unknown, status = 200, publicResponse = false): Response {
@@ -45,7 +45,7 @@ export interface Editor { email: string; name: string; role: 'admin' | 'editor' 
 
 /** Access proves who it is; the bootstrap admin or the editors table decides what they may do. */
 async function resolveEditor(request: Request, env: Env): Promise<Editor | null> {
-  const email = await verifyAccessIdentity(request, env);
+  const email = await githubIdentity(request, env) || await verifyAccessIdentity(request, env);
   if (!email) return null;
   if (env.EDITOR_EMAIL && email.toLowerCase() === env.EDITOR_EMAIL.toLowerCase()) return { email, name: '', role: 'admin' };
   const row = await env.DB.prepare('SELECT email,name,role FROM editors WHERE email=? AND active=1').bind(email).first<Editor>();
@@ -72,22 +72,12 @@ function checkChanged(result: D1Result) {
   if (result.meta.changes !== 1) throw new HttpError(409, 'El documento cambió durante el guardado. Recarga y compara.');
 }
 
-async function dispatchPublication(env: Env, releaseId: string) {
-  const repo = env.PUBLICATION_REPOSITORY;
-  if (!env.PUBLICATION_GITHUB_TOKEN || !repo || !/^[\w.-]+\/[\w.-]+$/.test(repo))
-    throw new HttpError(503, 'La publicación todavía no está configurada. Los cambios permanecen guardados.');
-  const response = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/publish-content.yml/dispatches`, {
-    method: 'POST', headers: {
-      Authorization: `Bearer ${env.PUBLICATION_GITHUB_TOKEN}`, 'Content-Type': 'application/json',
-      Accept: 'application/vnd.github+json', 'User-Agent': 'ManualSAMUR-Publisher', 'X-GitHub-Api-Version': '2022-11-28',
-    }, body: JSON.stringify({ ref: env.PUBLICATION_REF || 'main', inputs: { release_id: releaseId } }),
-    signal: AbortSignal.timeout(10000),
-  });
-  if (!response.ok) throw new HttpError(502, 'No se pudo iniciar la publicación. Los cambios permanecen guardados.');
+async function dispatchPublication(env: Env, releaseId: string, actor: string) {
+  await enqueueJob(env, 'publish', { releaseId }, actor);
 }
 
 async function createRelease(env: Env, actor: string, summary: string, restoreId?: string) {
-  if (!env.PUBLICATION_GITHUB_TOKEN || !env.PUBLICATION_REPOSITORY)
+  if (!env.CONTENT_WORKFLOW || !env.CONTENT_ASSETS)
     throw new HttpError(503, 'La publicación todavía no está configurada. Los cambios permanecen guardados.');
   const pending = await env.DB.prepare("SELECT id FROM releases WHERE status='preparing'").first();
   if (pending) throw new HttpError(409, 'Ya hay una publicación en preparación.');
@@ -117,7 +107,7 @@ async function createRelease(env: Env, actor: string, summary: string, restoreId
     if (String(error).includes('UNIQUE')) throw new HttpError(409, 'Ya hay una publicación en preparación.');
     throw error;
   }
-  try { await dispatchPublication(env, id); }
+  try { await dispatchPublication(env, id, actor); }
   catch (error) {
     await env.DB.prepare("UPDATE releases SET status='failed',error=? WHERE id=? AND status='preparing'")
       .bind('No se pudo iniciar el proceso de publicación.', id).run();
@@ -176,6 +166,7 @@ async function editor(request: Request, env: Env, pathname: string): Promise<Res
     if (!origin || origin !== new URL(request.url).origin || request.headers.get('Sec-Fetch-Site') === 'cross-site')
       throw new HttpError(403, 'Origen no autorizado.');
   }
+  if (pathname === '/api/editor/checks' || pathname.startsWith('/api/editor/checks/')) return jobRoutes(request, env, pathname, me.role, email, request.method === 'POST' ? await input(request) : undefined);
   if (pathname === '/api/editor/session' && request.method === 'GET') return json({ email, name: me.name, role: me.role });
   if (pathname === '/api/editor/users' || pathname.startsWith('/api/editor/users/')) return users(request, env, pathname, me);
   if (pathname === '/api/editor/audit' && request.method === 'GET') {
@@ -184,7 +175,7 @@ async function editor(request: Request, env: Env, pathname: string): Promise<Res
     return json({ entries: results });
   }
   if (pathname === '/api/editor/documents' && request.method === 'GET') {
-    const { results } = await env.DB.prepare('SELECT id,category,title,status,revision,updated_at AS updatedAt FROM documents ORDER BY category,title').all();
+    const { results } = await env.DB.prepare('SELECT id,category,title,status,revision,updated_at AS updatedAt,incoming_source_json IS NOT NULL AS hasProposal FROM documents ORDER BY category,title').all();
     return json({ documents: results });
   }
   if (pathname === '/api/editor/documents' && request.method === 'POST') {
@@ -219,6 +210,7 @@ async function editor(request: Request, env: Env, pathname: string): Promise<Res
     const id = decodeURIComponent(cancelRelease[1]);
     const result = await env.DB.prepare("UPDATE releases SET status='failed',error='Preparación cancelada desde el editor.' WHERE id=? AND status='preparing'").bind(id).run();
     if (result.meta.changes !== 1) throw new HttpError(409, 'La publicación ya ha terminado o no está en preparación.');
+    await env.DB.prepare("UPDATE content_jobs SET status='cancelled',generation=generation+1,updated_at=? WHERE kind='publish' AND json_extract(scope_json,'$.releaseId')=? AND status IN ('queued','running')").bind(new Date().toISOString(),id).run();
     await audit(env, email, 'release.cancel', id).run();
     const release = await env.DB.prepare('SELECT id,status,summary,created_at AS createdAt,published_at AS publishedAt,error FROM releases WHERE id=?').bind(id).first();
     return json({ release });
@@ -402,7 +394,7 @@ async function publicApi(request: Request, env: Env, pathname: string): Promise<
 export const CANONICAL_ORIGIN = 'https://manualsamur.apta-academy.com';
 const LEGACY_HOST = 'manualsamur.miguelrzazo13.workers.dev';
 // Apps and the Watch built before the move fetch these from the legacy host; never redirect them.
-const LEGACY_KEPT_PREFIXES = ['/api/', '/.well-known/', '/mobile-history/', '/procedures/', '/docs/', '/images/', '/_next/', '/assets/', '/gestion-editorial'];
+const LEGACY_KEPT_PREFIXES = ['/api/', '/.well-known/', '/mobile-history/', '/procedures/', '/docs/', '/images/', '/_next/', '/assets/', '/gestion-editorial', '/auth/'];
 
 /** 301 for page navigations on the legacy host; `null` when the request must be served as is. */
 export function legacyHostRedirect(request: Request): Response | null {
@@ -415,16 +407,34 @@ export function legacyHostRedirect(request: Request): Response | null {
 }
 
 const worker = {
+  async scheduled(_event: unknown, env: Env) {
+    const prior = await env.DB.prepare("SELECT id FROM content_jobs WHERE kind='check' AND status IN ('queued','running') LIMIT 1").first();
+    if (!prior) await enqueueJob(env, 'check', { domains: ['procedures','vademecum','codigos','main'], ids: [] }, 'Sistema');
+  },
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
       const redirect = legacyHostRedirect(request);
       if (redirect) return redirect;
       const url = new URL(request.url); const pathname = url.pathname.replace(/\/$/, '') || '/';
+      const cloudAsset = pathname.match(/^\/docs\/_cloud\/([a-f0-9]{64})\/[^/]+$/);
+      if (cloudAsset) return assetResponse(request, env, cloudAsset[1], !!await resolveEditor(request, env));
+      if (pathname.startsWith('/auth/')) return await githubAuth(request,env,pathname);
+      if (pathname === '/admin') {
+        if (await resolveEditor(request,env)) return Response.redirect(new URL('/gestion-editorial',request.url).href,302);
+        if (githubConfigured(env)) return Response.redirect(new URL('/auth/github',request.url).href,302);
+        if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD || !env.EDITOR_EMAIL) return new Response('El acceso de administración está pendiente de configurar. El contenido público sigue disponible.', { status: 503, headers: { 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' } });
+        return Response.redirect(new URL('/gestion-editorial', request.url).href, 302);
+      }
       if (pathname.startsWith('/api/editor/')) return await editor(request, env, pathname);
       if (pathname.startsWith('/api/')) return await publicApi(request, env, pathname);
       if (pathname.startsWith('/mobile-history/') || pathname.startsWith('/procedures/') || pathname === '/llms.txt' || pathname === '/llms-full.txt') return await publicApi(request, env, pathname);
       if (pathname.startsWith('/gestion-editorial')) {
-        if (!await resolveEditor(request, env)) return new Response('Acceso restringido.', { status: 401, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
+        if (!await resolveEditor(request, env)) {
+          if (pathname === '/gestion-editorial' && request.method === 'GET' && githubConfigured(env)) {
+            return new Response(null, { status: 302, headers: { Location: new URL('/admin', env.AUTH_ORIGIN || url.origin).href, 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
+          }
+          return new Response('Acceso restringido.', { status: 401, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
+        }
         const asset = await env.ASSETS.fetch(request);
         const headers = new Headers(asset.headers); headers.set('Cache-Control', 'no-store'); headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
         return new Response(asset.body, { status: asset.status, headers });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { normalizeForSearch } from "@/lib/vademecum-utils";
 import type { CollaboratorsData } from "@/lib/main-content";
@@ -23,7 +23,17 @@ function Block({ title, members }: { title: string; members: string[] }) {
   );
 }
 
-export function ColaboradoresView({ collaborators }: Props) {
+export function ColaboradoresView({ collaborators: initialCollaborators }: Props) {
+  const [collaborators, setCollaborators] = useState(initialCollaborators);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/public/datasets/colaboradores.json", { signal: controller.signal }).then(async response => {
+      if (!response.ok) return;
+      const value = await response.json();
+      if (Array.isArray(value.list) && value.blocks && Array.isArray(value.blocks.coordination) && Array.isArray(value.blocks.technicalReview) && Array.isArray(value.blocks.designAndProgramming)) setCollaborators(value);
+    }).catch(() => {});
+    return () => controller.abort();
+  }, []);
   const [query, setQuery] = useState("");
   const normalizedQuery = normalizeForSearch(query);
 
