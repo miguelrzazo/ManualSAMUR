@@ -21,7 +21,7 @@ const { DatabaseSync } = createRequire(import.meta.url)('node:sqlite') as { Data
 
 function database() {
   const sqlite = new DatabaseSync(':memory:');
-  for (const migration of ['0001_editorial.sql', '0002_editors_audit.sql'])
+  for (const migration of fs.readdirSync(new URL('../backend/migrations/', import.meta.url)).filter(name => name.endsWith('.sql')).sort())
     sqlite.exec(fs.readFileSync(new URL(`../backend/migrations/${migration}`, import.meta.url), 'utf8'));
   const prepare = (sql: string) => {
     let bindings: unknown[] = [];
@@ -53,8 +53,8 @@ test('D1 revision guard and immutable history protect optimistic saves', () => {
   assert.throws(() => sqlite.exec("UPDATE documents SET title='Sin historial' WHERE id='procedure:301'"), /revision/);
   assert.equal(sqlite.prepare("UPDATE documents SET title='Primera edición',revision=revision+1 WHERE id='procedure:301' AND revision=1").run().changes, 1);
   assert.equal(sqlite.prepare("UPDATE documents SET title='Guardado concurrente',revision=revision+1 WHERE id='procedure:301' AND revision=1").run().changes, 0);
-  assert.equal(sqlite.prepare("SELECT count(*) AS n FROM revisions").get()?.n, 2);
-  assert.equal(sqlite.prepare("SELECT title FROM revisions WHERE revision=1").get()?.title, 'Ficha publicada');
+  assert.equal(sqlite.prepare("SELECT count(*) AS n FROM revisions WHERE document_id='procedure:301'").get()?.n, 2);
+  assert.equal(sqlite.prepare("SELECT title FROM revisions WHERE document_id='procedure:301' AND revision=1").get()?.title, 'Ficha publicada');
   sqlite.close();
 });
 
@@ -64,14 +64,14 @@ test('upstream proposals are idempotent, preserve edits and track removals separ
   const upstream = { ...fixture, content: 'Nuevo texto oficial' };
   const document = { id: 'procedure:301', category: 'procedure' as const, title: upstream.title, data: upstream };
   sqlite.exec(proposalSql([document], ['procedure:301'], '2026-10-27', 'batch1'));
-  const row = sqlite.prepare('SELECT * FROM documents').get()!;
+  const row = sqlite.prepare("SELECT * FROM documents WHERE id='procedure:301'").get()!;
   assert.equal(row.title, 'Mi título'); assert.equal(row.private_notes, privateNotes);
   assert.equal(JSON.parse(String(row.data_json)).content, 'Texto público');
   assert.equal(JSON.parse(String(row.incoming_source_json)).content, 'Nuevo texto oficial');
   sqlite.exec(proposalSql([document], ['procedure:301'], '2026-10-27', 'batch2'));
-  assert.equal(sqlite.prepare('SELECT revision FROM documents').get()?.revision, row.revision);
+  assert.equal(sqlite.prepare("SELECT revision FROM documents WHERE id='procedure:301'").get()?.revision, row.revision);
   sqlite.exec(proposalSql([], ['procedure:301'], '2026-10-27', 'batch3'));
-  assert.deepEqual(JSON.parse(String(sqlite.prepare('SELECT incoming_source_json FROM documents').get()?.incoming_source_json)), { $removed: true });
+  assert.deepEqual(JSON.parse(String(sqlite.prepare("SELECT incoming_source_json FROM documents WHERE id='procedure:301'").get()?.incoming_source_json)), { $removed: true });
   assert.equal(sqlite.prepare('SELECT count(*) AS n FROM publication_pointer').get()?.n, 0);
   assert.equal(sqlite.prepare('SELECT count(*) AS n FROM ingest_parts').get()?.n, 0);
   sqlite.close();
@@ -85,7 +85,7 @@ test('publication pointer rejects unverified and stale releases and preserves ac
   sqlite.exec("INSERT INTO release_documents VALUES('first','procedure:301',2)");
   sqlite.exec("INSERT INTO release_artifacts VALUES('first','snapshot.json',0,'{}'); INSERT INTO release_artifacts VALUES('first','changelog.pdf',0,'cGRm'); INSERT INTO public_documents VALUES('first','procedure:301','301-ficha','Ficha','{}'); UPDATE releases SET hash='verified',metadata_json='{}' WHERE id='first'; INSERT INTO publication_pointer VALUES(1,'first')");
   assert.equal(sqlite.prepare("SELECT status FROM releases WHERE id='first'").get()?.status, 'published');
-  assert.equal(sqlite.prepare('SELECT status FROM documents').get()?.status, 'published');
+  assert.equal(sqlite.prepare("SELECT status FROM documents WHERE id='procedure:301'").get()?.status, 'published');
   sqlite.exec("INSERT INTO releases(id,status,summary,created_at,parent_id,hash,metadata_json) VALUES('stale','preparing','Vieja','2026-10-27',NULL,'verified','{}'); INSERT INTO release_artifacts VALUES('stale','snapshot.json',0,'{}'); INSERT INTO release_artifacts VALUES('stale','changelog.pdf',0,'cGRm'); INSERT INTO public_documents VALUES('stale','procedure:301','301-ficha','Ficha','{}')");
   assert.throws(() => sqlite.exec("UPDATE publication_pointer SET release_id='stale'"), /stale/);
   assert.equal(sqlite.prepare('SELECT release_id FROM publication_pointer').get()?.release_id, 'first');
@@ -129,6 +129,8 @@ test('Cloudflare Access origin validation checks signature, owner, audience, exp
     const token = await signed();
     const request = (jwt: string) => new Request('https://manual.test/api/editor/session', { headers: { 'Cf-Access-Jwt-Assertion': jwt } });
     assert.equal(await authenticate(request(token), config), config.EDITOR_EMAIL);
+    assert.equal(await authenticate(new Request("https://manual.test/docs/_cloud/file", { headers: { Cookie: `CF_Authorization=${token}` } }), config), config.EDITOR_EMAIL);
+    assert.equal(await authenticate(new Request("https://manual.test/docs/_cloud/file", { headers: { Cookie: "CF_Authorization=forged.token.cookie" } }), config), null);
     for (const overrides of [{ aud: ['other'] }, { email: 'stranger@example.test' }, { exp: 1 }, { iss: 'https://attacker.test' }])
       assert.equal(await authenticate(request(await signed(overrides)), config), null);
     const parts = token.split('.'); parts[1] = encode({ email: config.EDITOR_EMAIL, aud: ['editor'], iss: 'https://fixture.cloudflareaccess.com', exp: Date.now() / 1000 + 9999 });
@@ -163,9 +165,9 @@ test('upstream returning to the accepted baseline clears obsolete proposals; loc
   const { sqlite } = database(); insert(sqlite);
   const source = { id: 'procedure:301', category: 'procedure' as const, title: fixture.title, data: fixture };
   sqlite.exec(proposalSql([{ ...source, data: { ...fixture, content: 'Temporal upstream change' } }], ['procedure:301'], '2026-10-27', 'first'));
-  assert.notEqual(sqlite.prepare('SELECT incoming_source_json FROM documents').get()?.incoming_source_json, null);
+  assert.notEqual(sqlite.prepare("SELECT incoming_source_json FROM documents WHERE id='procedure:301'").get()?.incoming_source_json, null);
   sqlite.exec(proposalSql([source], ['procedure:301'], '2026-10-27', 'revert'));
-  assert.equal(sqlite.prepare('SELECT incoming_source_json FROM documents').get()?.incoming_source_json, null);
+  assert.equal(sqlite.prepare("SELECT incoming_source_json FROM documents WHERE id='procedure:301'").get()?.incoming_source_json, null);
   sqlite.exec("INSERT INTO documents(id,category,title,data_json,updated_at) VALUES('procedure:local','procedure','Editorial propia','{}','2026-10-27')");
   sqlite.exec(proposalSql([source], ['procedure:301', 'procedure:local'], '2026-10-27', 'local'));
   assert.equal(sqlite.prepare("SELECT incoming_source_json FROM documents WHERE id='procedure:local'").get()?.incoming_source_json, null);

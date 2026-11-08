@@ -47,9 +47,10 @@ por la web y la app, sin reconstruir el frontend. La app consulta
 conservando la última copia válida sin conexión. Los adjuntos nuevos se descargan por Wi-Fi;
 su descarga con datos móviles es manual.
 
-La sincronización mensual en `.github/workflows/update-content.yml` crea propuestas de
-origen pendientes de revisión editorial. `publish-content.yml` compila las revisiones
-aprobadas y despliega sus adjuntos con Wrangler antes de activar la publicación.
+La sincronización mensual y la publicación editorial se ejecutan en Cloudflare
+Workflows y se gestionan desde **Administración → Comprobaciones** y
+**Publicaciones**. Los cambios requieren revisión explícita y no generan PR.
+Véase [el backend editorial](docs/backend/README.md).
 
 ## Acceso para LLMs
 
@@ -84,12 +85,12 @@ O accede a /manual/301-parada-cardiorrespiratoria para leer un procedimiento.
 
 ## Integración y CI
 
-El trabajo sobre `main` exige una aprobación y el check requerido `build`. El workflow
+El trabajo sobre `main` se integra por PR con el check requerido `build`. El workflow
 `.github/workflows/ci.yml` conserva ese nombre, ejecuta lint, IDs, tests y build, y admite
 ejecución manual. La producción se sirve desde Cloudflare Workers y se despliega con
-`.github/workflows/deploy.yml` en cada push a `main`. El workflow mensual
-`update-content.yml` ya no abre PRs: valida el candidato oficial y lo encola como
-propuesta en el editor privado (D1) para su revisión y publicación.
+`.github/workflows/deploy.yml` en cada push a `main`. Cloudflare ejecuta las
+comprobaciones mensuales de las fuentes y prepara las publicaciones solicitadas
+desde **Administración**. Una comprobación solo genera propuestas para revisión.
 
 ## Stack técnico
 

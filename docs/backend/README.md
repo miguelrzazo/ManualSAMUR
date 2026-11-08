@@ -1,187 +1,140 @@
 # Backend editorial de Manual SAMUR
 
-## Decisiones acordadas
+La edición, detección de fuentes y publicación se ejecutan en Cloudflare. El
+[diseño](cloudflare-editorial-design.md) explica las decisiones y los límites.
+GitHub Actions conserva las pruebas y el despliegue de código; las entregas
+editoriales no requieren PR ni un workflow de GitHub.
 
-D1 es la fuente editorial. Varias personas editoras, autenticadas con Cloudflare
-Access, preparan, revisan y publican. Hay dos roles: **Administración** (además da de
-alta, cambia de rol o retira usuarios y consulta el registro de cambios) y **Edición**.
-`EDITOR_EMAIL` (secreto del Worker) es la persona propietaria: siempre administradora,
-no se puede desactivar desde la interfaz. El resto vive en la tabla `editors`. La ruta `/gestion-editorial` no aparece en la navegación,
-el lanzador de Access ni los buscadores. La autenticación se valida también dentro
-del Worker; ocultar la ruta no constituye un control de acceso.
+## Acceso
 
-Estados: borrador → en revisión → listo para publicar → publicado (activo) →
-archivado; archivo y restauración crean nuevas revisiones. Cada revisión guarda su
-autoría (`revisions.author`; `Sistema` para importaciones oficiales y activaciones) y
-cada acción queda en `audit_log`, que es solo de inserción y no contiene textos ni
-notas. No hay cuentas de lectores ni registro público: la web solo muestra la
-publicación activa. Las notas privadas
-y el historial completo solo salen por las APIs autenticadas. Las publicaciones
-contienen una proyección pública independiente, nunca filas editoriales completas.
+**Administración**, en el pie de la web, abre `/admin` y conduce a
+`/gestion-editorial` después de iniciar sesión con GitHub. El Worker solo admite
+cuentas con un correo verificado que coincida con la persona propietaria o con
+una cuenta editorial activa en D1. La sesión caduca a las ocho horas y los
+permisos se comprueban en cada petición.
 
-## Publicación
+`EDITOR_EMAIL` es la identidad propietaria, siempre administradora. Las demás
+cuentas se autorizan en D1 (`editors`) como **Administración** o **Edición**.
+No hay registro público ni contraseña compartida. Administración gestiona usuarios,
+auditoría y controles de fuentes. El editor conserva las revisiones con autoría,
+notas y referencias privadas. Cerrar sesión invalida la sesión en D1.
+
+Si faltan las credenciales de GitHub, la entrada informa de configuración pendiente
+y las APIs editoriales permanecen cerradas. El despliegue del Worker no acredita
+que el acceso de la persona propietaria se haya verificado.
+
+Configuración segura: [credentials.md](credentials.md).
+
+## Flujo de trabajo
 
 ```mermaid
 flowchart LR
-  S[Scraping mensual en GitHub] --> P[Propuesta de origen en D1]
-  P --> E[Editor privado: comparar y resolver]
-  E --> R[Revisiones aprobadas congeladas]
-  R --> C[GitHub: compilar y verificar]
-  C --> A[Wrangler: adjuntos estáticos inmutables]
-  C --> D[D1: paquete público y PDF]
-  A --> V[Activación atómica de la publicación]
-  D --> V
-  V --> W[Web y app: misma publicación]
+  S[Control manual o cron mensual] --> J[Workflows por particiones]
+  J --> P[Propuestas de fuente en D1]
+  P --> E[Comparar, editar y revisar]
+  E --> R[Revisiones listas congeladas]
+  R --> C[Workflows: compilar y verificar]
+  C --> A[Artefactos y adjuntos inmutables]
+  A --> V[Puntero público transaccional]
+  V --> U[Web, móvil y Watch]
 ```
 
-El frontend se compila al desplegar código. Publicar contenido después ejecuta
-`publish-content.yml`, sin reconstruir Next. Ese proceso compila las revisiones
-congeladas fuera del Worker, verifica el contrato móvil y los hashes, conserva los
-adjuntos históricos y genera el changelog en texto y PDF. Finalmente una operación
-D1 cambia el puntero público; los triggers rechazan paquetes incompletos o procesos
-basados en una publicación anterior. Los cambios hechos mientras se prepara una
-publicación permanecen como borradores y no entran accidentalmente en ella.
+**Comprobaciones** permite revisar todo el manual o indicar procedimientos
+concretos, consultar resultados, cancelar y reintentar fuentes fallidas. El cron
+mensual conserva el día 1 a las 04:00 UTC. Las comprobaciones continúan con la
+página cerrada y nunca publican automáticamente.
 
-El editor puede cancelar una preparación atascada. Un trabajo cancelado que termine
-más tarde no puede activar su publicación. Restaurar una publicación anterior crea
-otra publicación verificable; no borra el historial.
+La extracción usa las fuentes XWiki/HTML oficiales y conversión de texto PDF de
+Cloudflare. Se conservan parsers y guardas de identidad y volumen. Un PDF ambiguo,
+un origen incompleto o una tabla no reconocida requieren revisión manual. El
+informe diferencia resultados verificados y pendientes; el texto PDF recuperado
+puede consultarse de forma privada en los detalles. Una ausencia en el inventario
+no archiva por sí sola una ficha.
 
-Los paquetes JSON y PDF se almacenan divididos en filas D1. Cada sentencia de
-importación está por debajo de 100 KB. Los documentos y cada fuente están limitados
-a 450 KB para dejar margen al límite de fila de D1. Los archivos binarios se sirven
-desde el mismo Worker que la web; sus rutas incluyen SHA-256. Cada despliegue conserva los adjuntos históricos y de borradores antes de sustituir los assets. Un adjunto que ya
-no existe en origen y nunca tuvo bytes verificables sigue señalado como no disponible,
-sin inventar una copia offline. Los cambios en adjuntos verificables deben conservar
-los hashes aprobados: un archivo distinto en el checkout no puede sustituirlos.
+Los candidatos no sobrescriben el cuerpo revisado, notas ni título editorial.
+En **Contenidos** se comparan y resuelven, se editan con Tiptap WYSIWYG y se pasan
+por borrador → en revisión → listo para publicar. El Markdown con MDX o sintaxis
+especial conserva su edición de texto para evitar conversiones destructivas.
+**Anuncios de novedades** ofrece formularios y edición visual del detalle; conserva
+revisiones y se publica con la misma entrega.
 
-## Desarrollo local
+**Publicaciones** congela las revisiones elegidas y prepara snapshot, 22 conjuntos
+base, manifiesto, índices de relaciones, Markdown/LLM, historial y PDF. Una lista de
+colaboradores aprobada incorpora además el conjunto `colaboradores`. Los artefactos
+se derivan del contenido congelado, nunca de notas privadas o borradores vivos.
+La activación comprueba el padre y estado vigente en una transacción D1. Se verifica
+el puntero confirmado, no un supuesto recuento de filas modificadas por triggers.
+Cancelar impide una activación tardía; restaurar prepara una nueva entrega desde
+revisiones y adjuntos históricos. No se recompila Next ni se despliega el Worker
+para publicar contenido.
 
-Requiere Node 22.13+ y las dependencias raíz y móvil instaladas.
+## Trabajo por particiones
+
+`backend/src/workflow.ts` coordina instancias cortas enlazadas con identificadores
+deterministas: controles de cuatro tareas, compilación de doce documentos,
+relaciones de veinte fichas y conjuntos de datos individuales. La división también
+limita las llamadas acumuladas por instancia; persistir pasos dentro de una única
+instancia larga no evitó ese límite en la primera prueba remota.
+
+D1 conserva trabajos, generación de cancelación, tareas, inventario, reservas de
+almacenamiento y fragmentos. Los reintentos conservan candidatos y resultados ya
+verificados. Los errores no incluyen credenciales ni notas privadas. Un trabajo
+interrumpido debe consultarse en la interfaz; no equivale a un control sin cambios.
+
+## Imágenes y PDF
+
+Los assets estáticos e históricos anteriores se conservan al desplegar código.
+Los nuevos archivos se retienen en `CONTENT_ASSETS` (KV) por SHA-256 y se sirven
+bajo `/docs/_cloud/<hash>/<nombre>`, con MIME verificado, `nosniff`, ETag y soporte
+Range. Solo los archivos referenciados por una entrega publicada son públicos;
+una sesión editorial verificada puede consultar los borradores.
+
+KV es eventualmente consistente. El publicador espera propagación antes de activar;
+una región que todavía no vea los bytes responde 503 reintentable. El cliente no
+sustituye una copia verificada por otra identidad. No se usa la caché como única
+copia ni se elimina material referenciado para liberar espacio.
+
+Presupuestos de aplicación: 750 MiB de KV, 800 escrituras diarias y 25 MiB por
+archivo. Las cuotas gratuitas son compartidas con otros usos de la cuenta y pueden
+agotarse antes. No se habilitan R2, Containers ni un plan de pago. La conversión se
+limita a texto PDF; no se describen imágenes con modelos generativos.
+
+## Desarrollo y despliegue
 
 ```bash
 npm ci
 npm ci --prefix apps/mobile --ignore-scripts
 npm run build
-npm run backend:types
 npm run backend:migrate
-npm run backend:seed
-npm run backend:publish
+npm run backend:types
 npm run backend:dev
 ```
 
-`seed` solo acepta una base vacía. Las propuestas posteriores se importan con
-`npm run backend:propose`; no modifican el contenido revisado ni la publicación activa.
-No se incorpora un acceso de desarrollo que pueda saltarse Cloudflare Access.
-Las pruebas usan claves y bases SQLite sintéticas.
+Aplicar migraciones antes de arrancar el nuevo Worker. La configuración sin
+`--env production` usa recursos locales. El entorno remoto de staging se retiró.
+Para probar el cron local:
+`npx wrangler dev --test-scheduled` y `http://localhost:8787/__scheduled`.
+El binding AI es remoto: usar fixtures para pruebas de extracción locales.
 
-## Primer despliegue por CLI
-
-Los permisos y la entrada segura de credenciales están detallados en
-[credentials.md](credentials.md).
-
-1. Renovar OAuth con `npx wrangler login`. La cuenta debe continuar en Workers Free.
-2. Crear la base con `npx wrangler d1 create manualsamur-production` y guardar el
-   `database_id` devuelto en `wrangler.jsonc`, binding `env.production.DB`.
-3. Ejecutar:
-
-   ```bash
-   npx wrangler d1 migrations apply DB --remote --env production
-   npm run backend:seed -- --remote --env production
-   npm run backend:publish -- --remote --env production
-   npm run backend:types
-   npm run backend:dry-run
-   npm run backend:deploy
-   ```
-
-   La primera publicación despliega el Worker de archivos antes del principal.
-   No se puede ejecutar `seed` otra vez sobre datos editoriales existentes.
-4. Configurar Access con un token cargado de forma segura en el entorno que tenga
-   `Access: Apps and Policies Write`, además de los permisos de Workers necesarios
-   para guardar secretos. No introducir valores de credenciales en argumentos.
-   Debe existir una organización Zero Trust Free. Cargar también
-   `CLOUDFLARE_ACCOUNT_ID`, `EDITOR_EMAIL` (la persona propietaria),
-   `ACCESS_ALLOWED_EMAILS` (opcional, resto de correos editoriales separados por comas),
-   `ACCESS_TEAM_DOMAIN` y `PUBLICATION_ORIGIN` (el origen HTTPS real del Worker).
-   Ejecutar `npm run backend:access -- production`. El script configura las rutas
-   editorial y API bajo la misma aplicación/audiencia y guarda los tres secretos
-   con Wrangler. No cambia aplicaciones de Access ajenas. Este paso requiere
-   verificación real del proveedor; no se ha simulado una autenticación de producción.
-5. Guardar el secreto `PUBLICATION_GITHUB_TOKEN` con
-   `npx wrangler secret put PUBLICATION_GITHUB_TOKEN --env production`.
-   Usar un token limitado a Actions write en este repositorio para despachar el
-   workflow. Las escrituras de código no necesitan estar permitidas.
-6. Configurar en GitHub los secretos `CLOUDFLARE_API_TOKEN` y
-   `CLOUDFLARE_ACCOUNT_ID`, y la variable `PUBLICATION_ORIGIN`. El token de CI
-   necesita D1 write y Workers Scripts write para el Worker de archivos; no necesita
-   acceso a otros servicios. Sin estas credenciales los procesos remotos quedan
-   pendientes; la UI conserva los cambios y explica que no puede publicar.
-7. Comprobar la salud, el contrato móvil, una descarga de adjunto, el PDF público,
-   la denegación de acceso anónimo y el acceso de la identidad autorizada.
-8. Las nuevas builds móviles ya usan el origen Cloudflare de producción registrado
-   en `apps/mobile/app.json`. `EXPO_PUBLIC_MANUAL_CONTENT_ORIGIN` permite probar otro
-   entorno. No existe puente con la URL antigua de Vercel.
-
-Las configuraciones remotas, Access y los jobs GitHub deben probarse con las
-credenciales reales antes de considerar el sistema desplegado.
-
-## Límites gratuitos y recuperación
-
-Workers Free: 100.000 peticiones al día y 10 ms de CPU por invocación. D1 Free:
-500 MB por base, 5 millones de filas leídas y 100.000 escritas al día. No se activa
-R2, Workers AI ni un plan de pago. Alcanzar una cuota puede impedir operaciones;
-el cliente conserva su última versión verificada. El historial consume espacio:
-exportar y revisar el almacenamiento antes de aproximarse al límite de la base.
-El publicador se detiene si los adjuntos acumulados superan 19.000 archivos,
-400 MB o 25 MiB por archivo. No borra versiones para liberar espacio automáticamente.
-
-Antes de una operación de mantenimiento:
+Antes de migrar producción, exportar D1 a una ruta privada excluida de Git. El export
+incluye notas y borradores. La restauración de código no revierte por sí sola D1.
 
 ```bash
-npx wrangler d1 export DB --remote --env production --output /ruta/privada/manualsamur-backup.sql
+npx wrangler d1 migrations apply DB --remote --env production
+npm run backend:dry-run
+npm run backend:deploy
 ```
 
-El export incluye borradores y notas privadas: guardarlo fuera de Git y de artefactos
-públicos. La restauración editorial o de publicaciones no requiere borrar la base.
-Una reversión de código con Wrangler no revierte automáticamente el estado D1.
+El paso de preparación de assets conserva los adjuntos estáticos históricos y deja
+los archivos Cloudflare-native en KV. El CLI de importación/publicación antiguo
+queda para mantenimiento y bootstrap; el flujo de uso normal es el editor y sus
+Workflows. Los secretos de GitHub para desplegar código siguen siendo necesarios
+para `deploy.yml`; `PUBLICATION_GITHUB_TOKEN` deja de ser necesario.
 
-## Incidencias y verificación
+Verificación: `npm test`, `npm run lint`, `npm run backend:typecheck`,
+`npm run build`, `npm run backend:dry-run`, `npm run backend:startup` y navegador.
+Las mediciones locales no sustituyen la validación de CPU/cuotas, propagación KV,
+contrato móvil descargado y autenticación real en Cloudflare Free.
 
-- #27: backend/editor/publicación descritos arriba.
-- #110: APTA en pie y Acerca de, con enlace existente y aviso de adaptación no oficial.
-- #111: versión oficial del pie separada de fecha de edición y revisión XWiki.
-- #112: el [fallo de octubre](https://github.com/miguelrzazo/ManualSAMUR/actions/runs/36851391902/job/110333621597)
-  se debía a nueve adjuntos 404. Se corrigen referencias válidas entre páginas,
-  se conservan copias previas y se informan referencias inaccesibles. Algunas
-  referencias ya están mal formadas en origen; no se afirma que todas descarguen.
-  La importación se prepara en staging de archivos y conserva diagnósticos al fallar.
-  El flujo mensual crea propuestas D1; sustituye la generación de PR de contenido.
-- #29: [diseño del grafo](graph-design.md), sin nueva interfaz de grafo en esta entrega.
-
-Comprobaciones: `npm run lint`, `npm test`, `npm run mobile:content:validate`,
-`npm run mobile:typecheck`, `npm run backend:typecheck`, `npm run build`,
-`npm run validate:content-parity`, `npm run backend:dry-run`,
-`npm run backend:startup`, más navegador contra el Worker local.
-
-Fuentes: [Wrangler](https://developers.cloudflare.com/workers/wrangler/),
-[límites D1](https://developers.cloudflare.com/d1/platform/limits/),
-[precios Workers](https://developers.cloudflare.com/workers/platform/pricing/),
-[Access API](https://developers.cloudflare.com/api/resources/zero_trust/subresources/access/subresources/applications/).
-
-## Usuarios editoriales
-
-1. Una persona administradora da de alta el correo en **Gestión editorial → Usuarios**.
-2. El correo debe estar también en la política de Access: vuelve a ejecutar
-   `npm run backend:access -- production` con `ACCESS_ALLOWED_EMAILS` actualizado.
-   Access protege el borde; el Worker vuelve a comprobar la firma y la tabla
-   `editors`, así que retirar el acceso en la interfaz es inmediato aunque Access
-   siga dejando pasar el correo.
-3. **Registro de cambios** (solo administración) muestra quién hizo qué y cuándo.
-
-## Despliegue continuo
-
-`.github/workflows/deploy.yml` compila la web, aplica las migraciones D1 y ejecuta
-la preparación de adjuntos y `wrangler deploy --env production` en cada push a `main`, y comprueba las rutas
-principales en vivo. Necesita los secretos de repositorio `CLOUDFLARE_API_TOKEN`
-(D1 Edit + Workers Scripts Edit + Account Settings Read) y `CLOUDFLARE_ACCOUNT_ID`.
-Las cabeceras de `/docs/*.pdf` que antes estaban en `vercel.json` viven ahora en
-`public/_headers`. La API pública para clientes está en [public-api.md](public-api.md).
+La evidencia de despliegue se registra en [deployment.md](deployment.md).
+La API pública mantiene [su contrato](public-api.md).

@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import type { Element } from "domhandler";
 import { normalizeForSearch } from "./vademecum-utils.ts";
 
 const WIKI_BASE = "https://servpub.madrid.es";
@@ -104,11 +105,11 @@ function squeezeWhitespace(value: string) {
   return value.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
 }
 
-function getTagName(element: cheerio.Element) {
+function getTagName(element: Element) {
   return element?.type === "tag" ? element.tagName?.toLowerCase?.() ?? null : null;
 }
 
-function getNodeText($: ReturnType<typeof cheerio.load>, element: cheerio.Element) {
+function getNodeText($: ReturnType<typeof cheerio.load>, element: Element) {
   const tagName = getTagName(element);
   if (tagName === "ul" || tagName === "ol") {
     return $(element)
@@ -184,7 +185,7 @@ export function parseWikiDrugsFromHtml(html: string): WikiDrugEntry[] {
   let currentDrug: (Partial<WikiDrugEntry> & { noteSections?: string[] }) | null = null;
   let lastField: "dose" | "indication" | "contraindications" | "notes" | null = null;
 
-  const elements = (container.length ? container.children().toArray() : $.root().children().toArray()) as cheerio.Element[];
+  const elements = (container.length ? container.children().toArray() : $.root().children().toArray()) as unknown as Element[];
   for (const element of elements) {
     const tagName = getTagName(element);
     const text = getNodeText($, element);

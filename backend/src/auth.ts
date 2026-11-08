@@ -29,7 +29,11 @@ export async function verifyAccessIdentity(request: Request, env: AccessConfig):
   // EDITOR_EMAIL is required: without a bootstrap admin the editor stays closed.
   if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD || !env.EDITOR_EMAIL) return null;
   if (!/^[a-z0-9-]+\.cloudflareaccess\.com$/.test(env.ACCESS_TEAM_DOMAIN)) return null;
-  const token = request.headers.get('Cf-Access-Jwt-Assertion');
+  // Assets outside the Access application's path can carry the same signed
+  // session cookie. Verify it identically; the cookie alone is never trusted.
+  const cookie = request.headers.get('Cookie') || '';
+  const cookieToken = cookie.length <= 32768 ? cookie.match(/(?:^|;\s*)CF_Authorization=([A-Za-z0-9._-]+)/)?.[1] : undefined;
+  const token = request.headers.get('Cf-Access-Jwt-Assertion') || cookieToken;
   if (!token || token.length > 16384) return null;
   try {
     const [encodedHeader, encodedClaims, signature, extra] = token.split('.');

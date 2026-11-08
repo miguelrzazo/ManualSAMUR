@@ -2,7 +2,7 @@ name: Deploy to Cloudflare
 
 # Production web/API host: https://manualsamur.apta-academy.com
 # Replaces the former Vercel Git integration. Content publications (D1 + the
-# retained attachments) are activated separately by publish-content.yml.
+# retained attachments) are activated separately by Cloudflare Workflows.
 on:
   push:
     branches: [main]
@@ -71,6 +71,16 @@ jobs:
             echo "$path -> $status"
             test "$status" = "200"
           done
-          status=$(curl -s -o /dev/null -w '%{http_code}' "$origin/api/editor/session")
-          echo "/api/editor/session (anonymous) -> $status"
-          test "$status" = "401"
+          for path in /api/editor/session /api/editor/documents /api/editor/checks; do
+            status=$(curl --fail-with-body -s -o /dev/null -w '%{http_code}' "$origin$path" || true)
+            echo "$path (anonymous) -> $status"
+            test "$status" = "401"
+          done
+          # Follow the app redirect only. Never log OAuth state or cookies.
+          target=$(curl -sS -o /dev/null -w '%{redirect_url}' "$origin/admin")
+          test "$target" = "$origin/auth/github"
+          target=$(curl -sS -o /dev/null -w '%{redirect_url}' "$target")
+          case "$target" in
+            'https://github.com/login/oauth/authorize?'*) echo "GitHub OAuth entry verified" ;;
+            *) echo "::error::The admin entry did not reach GitHub OAuth"; exit 1 ;;
+          esac
